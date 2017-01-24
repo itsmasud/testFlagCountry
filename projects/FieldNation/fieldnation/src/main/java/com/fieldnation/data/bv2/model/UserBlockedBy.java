@@ -6,25 +6,32 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class Json4 {
-    private static final String TAG = "Json4";
+public class UserBlockedBy {
+    private static final String TAG = "UserBlockedBy";
 
-    @Json(name = "preference_value")
-    private Integer preferenceValue = null;
+    @Json(name = "name")
+    private String name;
 
-    public Json4() {
+    @Json(name = "id")
+    private Integer id;
+
+    public UserBlockedBy() {
     }
 
-    public Integer getPreferenceValue() {
-        return preferenceValue;
+    public String getName() {
+        return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static Json4 fromJson(JsonObject obj) {
+    public static UserBlockedBy fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Json4.class, obj);
+            return Unserializer.unserializeObject(UserBlockedBy.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -35,13 +42,12 @@ public class Json4 {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Json4 json4) {
+    public static JsonObject toJson(UserBlockedBy userBlockedBy) {
         try {
-            return Serializer.serializeObject(json4);
+            return Serializer.serializeObject(userBlockedBy);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 }
-

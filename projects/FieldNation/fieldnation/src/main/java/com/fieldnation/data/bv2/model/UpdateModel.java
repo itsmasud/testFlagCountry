@@ -10,19 +10,19 @@ public class UpdateModel {
     private static final String TAG = "UpdateModel";
 
     @Json(name = "metadata")
-    private UpdateModelMetadata metadata = null;
-
-    @Json(name = "timestamp")
-    private String timestamp = null;
+    private UpdateModelMetadata metadata;
 
     @Json(name = "service_name")
-    private String serviceName = null;
-
-    @Json(name = "version")
-    private String version = null;
+    private String serviceName;
 
     @Json(name = "params")
-    private UpdateModelParams params = null;
+    private UpdateModelParams params;
+
+    @Json(name = "version")
+    private String version;
+
+    @Json(name = "timestamp")
+    private String timestamp;
 
     public UpdateModel() {
     }
@@ -31,20 +31,20 @@ public class UpdateModel {
         return metadata;
     }
 
-    public String getTimestamp() {
-        return timestamp;
-    }
-
     public String getServiceName() {
         return serviceName;
+    }
+
+    public UpdateModelParams getParams() {
+        return params;
     }
 
     public String getVersion() {
         return version;
     }
 
-    public UpdateModelParams getParams() {
-        return params;
+    public String getTimestamp() {
+        return timestamp;
     }
 
     /*-*****************************-*/

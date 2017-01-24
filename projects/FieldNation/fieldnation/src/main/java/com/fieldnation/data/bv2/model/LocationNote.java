@@ -9,34 +9,22 @@ import com.fieldnation.fnlog.Log;
 public class LocationNote {
     private static final String TAG = "LocationNote";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "text")
-    private String text = null;
-
-    @Json(name = "created")
-    private String created = null;
-
     @Json(name = "private")
-    private Boolean _private = null;
+    private Boolean _private;
 
     @Json(name = "user_id")
-    private Integer userId = null;
+    private Integer userId;
+
+    @Json(name = "created")
+    private String created;
+
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "text")
+    private String text;
 
     public LocationNote() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public String getCreated() {
-        return created;
     }
 
     public Boolean getPrivate() {
@@ -45,6 +33,18 @@ public class LocationNote {
 
     public Integer getUserId() {
         return userId;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getText() {
+        return text;
     }
 
     /*-*****************************-*/
@@ -72,4 +72,3 @@ public class LocationNote {
         }
     }
 }
-

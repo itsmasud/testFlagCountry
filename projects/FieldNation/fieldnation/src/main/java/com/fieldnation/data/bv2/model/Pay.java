@@ -9,140 +9,140 @@ import com.fieldnation.fnlog.Log;
 public class Pay {
     private static final String TAG = "Pay";
 
-    @Json(name = "work_order_id")
-    private Integer workOrderId = null;
+    @Json(name = "number_of_devices")
+    private Double numberOfDevices;
 
-    @Json(name = "type")
-    private String type = null;
-
-    @Json(name = "correlation_id")
-    private String correlationId = null;
+    @Json(name = "fees")
+    private PayFees fees;
 
     @Json(name = "role")
-    private String role = null;
+    private String role;
+
+    @Json(name = "estimated_payment_date")
+    private Date estimatedPaymentDate;
+
+    @Json(name = "additional")
+    private PayBase additional;
+
+    @Json(name = "range")
+    private PayRange range;
+
+    @Json(name = "type")
+    private String type;
+
+    @Json(name = "labor_sum")
+    private Double laborSum;
+
+    @Json(name = "pricing_insights")
+    private PricingInsights pricingInsights;
+
+    @Json(name = "hold")
+    private Fee hold;
+
+    @Json(name = "total")
+    private Double total;
+
+    @Json(name = "status_id")
+    private Integer statusId;
+
+    @Json(name = "work_order_id")
+    private Integer workOrderId;
+
+    @Json(name = "correlation_id")
+    private String correlationId;
+
+    @Json(name = "payment")
+    private Fee payment;
 
     @Json(name = "actions")
     private String[] actions;
 
-    @Json(name = "base")
-    private PayBase base = null;
-
-    @Json(name = "additional")
-    private PayBase additional = null;
-
     @Json(name = "finance")
-    private PayFinance finance = null;
-
-    @Json(name = "range")
-    private PayRange range = null;
-
-    @Json(name = "status_id")
-    private Integer statusId = null;
-
-    @Json(name = "pricing_insights")
-    private PricingInsights pricingInsights = null;
+    private PayFinance finance;
 
     @Json(name = "reported_hours")
-    private Double reportedHours = null;
+    private Double reportedHours;
 
-    @Json(name = "number_of_devices")
-    private Double numberOfDevices = null;
-
-    @Json(name = "labor_sum")
-    private Double laborSum = null;
-
-    @Json(name = "total")
-    private Double total = null;
-
-    @Json(name = "estimated_payment_date")
-    private String estimatedPaymentDate = null;
-
-    @Json(name = "hold")
-    private Fee hold = null;
-
-    @Json(name = "payment")
-    private Fee payment = null;
-
-    @Json(name = "fees")
-    private PayFees fees = null;
+    @Json(name = "base")
+    private PayBase base;
 
     public Pay() {
-    }
-
-    public Integer getWorkOrderId() {
-        return workOrderId;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public String[] getActions() {
-        return actions;
-    }
-
-    public PayBase getBase() {
-        return base;
-    }
-
-    public PayBase getAdditional() {
-        return additional;
-    }
-
-    public PayFinance getFinance() {
-        return finance;
-    }
-
-    public PayRange getRange() {
-        return range;
-    }
-
-    public Integer getStatusId() {
-        return statusId;
-    }
-
-    public PricingInsights getPricingInsights() {
-        return pricingInsights;
-    }
-
-    public Double getReportedHours() {
-        return reportedHours;
     }
 
     public Double getNumberOfDevices() {
         return numberOfDevices;
     }
 
+    public PayFees getFees() {
+        return fees;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public Date getEstimatedPaymentDate() {
+        return estimatedPaymentDate;
+    }
+
+    public PayBase getAdditional() {
+        return additional;
+    }
+
+    public PayRange getRange() {
+        return range;
+    }
+
+    public String getType() {
+        return type;
+    }
+
     public Double getLaborSum() {
         return laborSum;
     }
 
-    public Double getTotal() {
-        return total;
-    }
-
-    public String getEstimatedPaymentDate() {
-        return estimatedPaymentDate;
+    public PricingInsights getPricingInsights() {
+        return pricingInsights;
     }
 
     public Fee getHold() {
         return hold;
     }
 
+    public Double getTotal() {
+        return total;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public Integer getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
     public Fee getPayment() {
         return payment;
     }
 
-    public PayFees getFees() {
-        return fees;
+    public String[] getActions() {
+        return actions;
+    }
+
+    public PayFinance getFinance() {
+        return finance;
+    }
+
+    public Double getReportedHours() {
+        return reportedHours;
+    }
+
+    public PayBase getBase() {
+        return base;
     }
 
     /*-*****************************-*/

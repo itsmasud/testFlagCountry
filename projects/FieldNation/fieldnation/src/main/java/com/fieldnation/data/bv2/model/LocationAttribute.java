@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class LocationAttribute {
     private static final String TAG = "LocationAttribute";
 
-    @Json(name = "key")
-    private String key = null;
+    @Json(name = "private")
+    private Boolean _private;
 
     @Json(name = "value")
-    private String value = null;
+    private String value;
 
-    @Json(name = "private")
-    private Boolean _private = null;
+    @Json(name = "key")
+    private String key;
 
     public LocationAttribute() {
     }
 
-    public String getKey() {
-        return key;
+    public Boolean getPrivate() {
+        return _private;
     }
 
     public String getValue() {
         return value;
     }
 
-    public Boolean getPrivate() {
-        return _private;
+    public String getKey() {
+        return key;
     }
 
     /*-*****************************-*/
@@ -58,4 +58,3 @@ public class LocationAttribute {
         }
     }
 }
-

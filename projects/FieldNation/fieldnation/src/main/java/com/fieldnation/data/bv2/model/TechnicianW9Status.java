@@ -10,10 +10,10 @@ public class TechnicianW9Status {
     private static final String TAG = "TechnicianW9Status";
 
     @Json(name = "status_name")
-    private String statusName = null;
+    private String statusName;
 
     @Json(name = "technician_w9_status_id")
-    private Integer technicianW9StatusId = null;
+    private Integer technicianW9StatusId;
 
     public TechnicianW9Status() {
     }

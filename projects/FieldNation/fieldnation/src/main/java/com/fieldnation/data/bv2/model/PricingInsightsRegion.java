@@ -9,42 +9,42 @@ import com.fieldnation.fnlog.Log;
 public class PricingInsightsRegion {
     private static final String TAG = "PricingInsightsRegion";
 
-    @Json(name = "name")
-    private String name = null;
-
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "distance")
-    private Double distance = null;
+    private Double distance;
 
-    @Json(name = "providers")
-    private PricingInsightsRegionProviders providers = null;
+    @Json(name = "name")
+    private String name;
 
     @Json(name = "average_rate")
-    private PricingInsightsRegionAverageRate averageRate = null;
+    private PricingInsightsRegionAverageRate averageRate;
+
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "providers")
+    private PricingInsightsRegionProviders providers;
 
     public PricingInsightsRegion() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public Double getDistance() {
         return distance;
     }
 
-    public PricingInsightsRegionProviders getProviders() {
-        return providers;
+    public String getName() {
+        return name;
     }
 
     public PricingInsightsRegionAverageRate getAverageRate() {
         return averageRate;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public PricingInsightsRegionProviders getProviders() {
+        return providers;
     }
 
     /*-*****************************-*/

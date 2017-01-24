@@ -9,75 +9,35 @@ import com.fieldnation.fnlog.Log;
 public class PayModifier {
     private static final String TAG = "PayModifier";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "charged")
-    private Boolean charged = null;
+    @Json(name = "calculation")
+    private CalculationEnum calculation;
 
     @Json(name = "amount")
-    private Double amount = null;
+    private Double amount;
 
     @Json(name = "modifier")
-    private Double modifier = null;
-
-    @Json(name = "calculation")
-    private CalculationEnum calculation = null;
+    private Double modifier;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
     @Json(name = "description")
-    private String description = null;
+    private String description;
+
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "charged")
+    private Boolean charged;
 
     @Json(name = "actions")
     private ActionsEnum[] actions;
 
-    public enum CalculationEnum {
-        @Json(name = "fixed")
-        FIXED("fixed"),
-        @Json(name = "percent")
-        PERCENT("percent");
-
-        private String value;
-
-        CalculationEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
-    public enum ActionsEnum {
-        @Json(name = "charge")
-        CHARGE("charge"),
-        @Json(name = "remove")
-        REMOVE("remove");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     public PayModifier() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public Boolean getCharged() {
-        return charged;
+    public CalculationEnum getCalculation() {
+        return calculation;
     }
 
     public Double getAmount() {
@@ -88,16 +48,20 @@ public class PayModifier {
         return modifier;
     }
 
-    public CalculationEnum getCalculation() {
-        return calculation;
-    }
-
     public String getName() {
         return name;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Boolean getCharged() {
+        return charged;
     }
 
     public ActionsEnum[] getActions() {

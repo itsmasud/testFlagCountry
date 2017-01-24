@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class EventUpdateScheduleByWorkOrder {
     private static final String TAG = "EventUpdateScheduleByWorkOrder";
 
-    @Json(name = "old")
-    private EventUpdateScheduleByWorkOrderOld old = null;
-
     @Json(name = "new")
-    private EventUpdateScheduleByWorkOrderOld _new = null;
+    private EventUpdateScheduleByWorkOrderNew _new;
+
+    @Json(name = "old")
+    private EventUpdateScheduleByWorkOrderOld old;
 
     public EventUpdateScheduleByWorkOrder() {
     }
 
-    public EventUpdateScheduleByWorkOrderOld getOld() {
-        return old;
+    public EventUpdateScheduleByWorkOrderNew getNew() {
+        return _new;
     }
 
-    public EventUpdateScheduleByWorkOrderOld getNew() {
-        return _new;
+    public EventUpdateScheduleByWorkOrderOld getOld() {
+        return old;
     }
 
     /*-*****************************-*/
@@ -51,4 +51,3 @@ public class EventUpdateScheduleByWorkOrder {
         }
     }
 }
-

@@ -10,13 +10,13 @@ public class UserUpcomingSchedule {
     private static final String TAG = "UserUpcomingSchedule";
 
     @Json(name = "date")
-    private String date = null;
+    private String date;
 
     @Json(name = "from")
-    private String from = null;
+    private String from;
 
     @Json(name = "to")
-    private String to = null;
+    private String to;
 
     public UserUpcomingSchedule() {
     }

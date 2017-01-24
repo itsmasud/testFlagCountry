@@ -10,13 +10,13 @@ public class StatusPublishStats {
     private static final String TAG = "StatusPublishStats";
 
     @Json(name = "routes")
-    private Integer routes = null;
-
-    @Json(name = "requests")
-    private Integer requests = null;
+    private Integer routes;
 
     @Json(name = "counter_offers")
-    private Integer counterOffers = null;
+    private Integer counterOffers;
+
+    @Json(name = "requests")
+    private Integer requests;
 
     public StatusPublishStats() {
     }
@@ -25,12 +25,12 @@ public class StatusPublishStats {
         return routes;
     }
 
-    public Integer getRequests() {
-        return requests;
-    }
-
     public Integer getCounterOffers() {
         return counterOffers;
+    }
+
+    public Integer getRequests() {
+        return requests;
     }
 
     /*-*****************************-*/

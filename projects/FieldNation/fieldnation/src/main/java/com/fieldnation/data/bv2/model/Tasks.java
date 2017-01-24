@@ -10,7 +10,7 @@ public class Tasks {
     private static final String TAG = "Tasks";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private Task[] results;

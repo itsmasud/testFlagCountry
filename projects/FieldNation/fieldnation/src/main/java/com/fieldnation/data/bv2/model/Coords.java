@@ -9,41 +9,25 @@ import com.fieldnation.fnlog.Log;
 public class Coords {
     private static final String TAG = "Coords";
 
-    @Json(name = "latitude")
-    private Double latitude = null;
-
-    @Json(name = "longitude")
-    private Double longitude = null;
-
-    @Json(name = "exact")
-    private Boolean exact = null;
-
-    @Json(name = "success")
-    private Boolean success = null;
-
     @Json(name = "search")
-    private String search = null;
+    private String search;
 
     @Json(name = "distance")
-    private Double distance = null;
+    private Double distance;
+
+    @Json(name = "success")
+    private Boolean success;
+
+    @Json(name = "latitude")
+    private Double latitude;
+
+    @Json(name = "exact")
+    private Boolean exact;
+
+    @Json(name = "longitude")
+    private Double longitude;
 
     public Coords() {
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public Boolean getExact() {
-        return exact;
-    }
-
-    public Boolean getSuccess() {
-        return success;
     }
 
     public String getSearch() {
@@ -52,6 +36,22 @@ public class Coords {
 
     public Double getDistance() {
         return distance;
+    }
+
+    public Boolean getSuccess() {
+        return success;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Boolean getExact() {
+        return exact;
+    }
+
+    public Double getLongitude() {
+        return longitude;
     }
 
     /*-*****************************-*/

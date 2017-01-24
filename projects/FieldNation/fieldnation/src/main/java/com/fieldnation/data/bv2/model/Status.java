@@ -9,31 +9,31 @@ import com.fieldnation.fnlog.Log;
 public class Status {
     private static final String TAG = "Status";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "display")
+    private String display;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
-    @Json(name = "display")
-    private String display = null;
+    @Json(name = "id")
+    private Integer id;
 
     @Json(name = "publish_stats")
-    private StatusPublishStats publishStats = null;
+    private StatusPublishStats publishStats;
 
     public Status() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getDisplay() {
+        return display;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getDisplay() {
-        return display;
+    public Integer getId() {
+        return id;
     }
 
     public StatusPublishStats getPublishStats() {

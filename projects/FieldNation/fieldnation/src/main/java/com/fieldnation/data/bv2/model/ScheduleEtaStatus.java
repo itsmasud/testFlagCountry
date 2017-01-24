@@ -7,35 +7,13 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 public class ScheduleEtaStatus {
-    public static final String TAG = "ScheduleEtaStatus";
+    private static final String TAG = "ScheduleEtaStatus";
 
     @Json(name = "name")
-    private NameEnum name = null;
+    private NameEnum name;
 
     @Json(name = "updated")
-    private String updated = null;
-
-    public enum NameEnum {
-        @Json(name = "unconfirmed")
-        UNCONFIRMED("unconfirmed"),
-        @Json(name = "confirmed")
-        CONFIRMED("confirmed"),
-        @Json(name = "readytogo")
-        READYTOGO("readytogo"),
-        @Json(name = "onmyway")
-        ONMYWAY("onmyway");
-
-        private String value;
-
-        NameEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    private Date updated;
 
     public ScheduleEtaStatus() {
     }
@@ -44,7 +22,7 @@ public class ScheduleEtaStatus {
         return name;
     }
 
-    public String getUpdated() {
+    public Date getUpdated() {
         return updated;
     }
 

@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class Project {
     private static final String TAG = "Project";
 
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "name")
-    private String name = null;
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     public Project() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

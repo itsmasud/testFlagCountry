@@ -9,62 +9,34 @@ import com.fieldnation.fnlog.Log;
 public class LocationCoordinates {
     private static final String TAG = "LocationCoordinates";
 
-    @Json(name = "type")
-    private String type = null;
-
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "latitude")
-    private Double latitude = null;
-
-    @Json(name = "longitude")
-    private Double longitude = null;
-
-    @Json(name = "exact")
-    private Boolean exact = null;
-
-    @Json(name = "city")
-    private String city = null;
-
-    @Json(name = "state")
-    private String state = null;
-
     @Json(name = "zip")
-    private String zip = null;
+    private String zip;
 
     @Json(name = "country")
-    private String country = null;
+    private String country;
+
+    @Json(name = "city")
+    private String city;
+
+    @Json(name = "latitude")
+    private Double latitude;
+
+    @Json(name = "exact")
+    private Boolean exact;
+
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "state")
+    private String state;
+
+    @Json(name = "type")
+    private String type;
+
+    @Json(name = "longitude")
+    private Double longitude;
 
     public LocationCoordinates() {
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public Boolean getExact() {
-        return exact;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
     }
 
     public String getZip() {
@@ -73,6 +45,34 @@ public class LocationCoordinates {
 
     public String getCountry() {
         return country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public Boolean getExact() {
+        return exact;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Double getLongitude() {
+        return longitude;
     }
 
     /*-*****************************-*/
@@ -100,4 +100,3 @@ public class LocationCoordinates {
         }
     }
 }
-

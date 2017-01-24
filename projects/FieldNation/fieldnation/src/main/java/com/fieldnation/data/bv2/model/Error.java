@@ -9,19 +9,23 @@ import com.fieldnation.fnlog.Log;
 public class Error {
     private static final String TAG = "Error";
 
-    @Json(name = "code")
-    private Integer code = null;
-
-    @Json(name = "message")
-    private String message = null;
-
     @Json(name = "trace")
     private ErrorTrace[] trace;
 
+    @Json(name = "code")
+    private Integer code;
+
+    @Json(name = "message")
+    private String message;
+
     @Json(name = "fields")
-    private String fields = null;
+    private String fields;
 
     public Error() {
+    }
+
+    public ErrorTrace[] getTrace() {
+        return trace;
     }
 
     public Integer getCode() {
@@ -30,10 +34,6 @@ public class Error {
 
     public String getMessage() {
         return message;
-    }
-
-    public ErrorTrace[] getTrace() {
-        return trace;
     }
 
     public String getFields() {
@@ -65,4 +65,3 @@ public class Error {
         }
     }
 }
-

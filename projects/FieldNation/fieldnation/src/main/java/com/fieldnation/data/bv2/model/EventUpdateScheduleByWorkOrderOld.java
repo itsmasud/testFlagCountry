@@ -10,16 +10,16 @@ public class EventUpdateScheduleByWorkOrderOld {
     private static final String TAG = "EventUpdateScheduleByWorkOrderOld";
 
     @Json(name = "mode")
-    private String mode = null;
+    private String mode;
 
     @Json(name = "start")
-    private String start = null;
+    private String start;
 
     @Json(name = "end")
-    private String end = null;
+    private String end;
 
     @Json(name = "time_zone")
-    private String timeZone = null;
+    private String timeZone;
 
     public EventUpdateScheduleByWorkOrderOld() {
     }
@@ -65,4 +65,3 @@ public class EventUpdateScheduleByWorkOrderOld {
         }
     }
 }
-

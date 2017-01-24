@@ -9,20 +9,16 @@ import com.fieldnation.fnlog.Log;
 public class Hold {
     private static final String TAG = "Hold";
 
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "reason")
-    private String reason = null;
+    private String reason;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     public Hold() {
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public String getReason() {
@@ -31,6 +27,10 @@ public class Hold {
 
     public String getName() {
         return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
@@ -58,4 +58,3 @@ public class Hold {
         }
     }
 }
-

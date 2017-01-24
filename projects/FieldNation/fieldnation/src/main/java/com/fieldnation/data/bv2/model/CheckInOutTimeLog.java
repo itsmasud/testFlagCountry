@@ -6,33 +6,25 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class TimeLogsConfirmed {
-    private static final String TAG = "TimeLogsConfirmed";
+public class CheckInOutTimeLog {
+    private static final String TAG = "CheckInOutTimeLog";
 
-    // TODO not sure of the datatype
-    @Json(name = "utc")
-    private Long utc = null;
+    @Json(name = "id")
+    private Integer id;
 
-    @Json(name = "local")
-    private Local local = null;
-
-    public TimeLogsConfirmed() {
+    public CheckInOutTimeLog() {
     }
 
-    public Long getUtc() {
-        return utc;
-    }
-
-    public Local getLocal() {
-        return local;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static TimeLogsConfirmed fromJson(JsonObject obj) {
+    public static CheckInOutTimeLog fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TimeLogsConfirmed.class, obj);
+            return Unserializer.unserializeObject(CheckInOutTimeLog.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -43,9 +35,9 @@ public class TimeLogsConfirmed {
         return toJson(this);
     }
 
-    public static JsonObject toJson(TimeLogsConfirmed timeLogsConfirmed) {
+    public static JsonObject toJson(CheckInOutTimeLog checkInOutTimeLog) {
         try {
-            return Serializer.serializeObject(timeLogsConfirmed);
+            return Serializer.serializeObject(checkInOutTimeLog);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

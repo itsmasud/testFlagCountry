@@ -7,50 +7,34 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 public class TimeLogs {
-    private static final String TAG = "";
+    private static final String TAG = "TimeLogs";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
-
-    @Json(name = "time_zone")
-    private TimeZone timeZone = null;
-
-    @Json(name = "should_verify")
-    private Boolean shouldVerify = null;
+    private ListEnvelope metadata;
 
     @Json(name = "hours")
-    private Double hours = null;
+    private Double hours;
 
-    @Json(name = "status")
-    private String status = null;
-
-    @Json(name = "confirmed")
-    private TimeLogsConfirmed confirmed = null;
+    @Json(name = "should_verify")
+    private Boolean shouldVerify;
 
     @Json(name = "onmyway")
-    private OnMyWay onmyway = null;
+    private OnMyWay onmyway;
+
+    @Json(name = "time_zone")
+    private TimeZone timeZone;
+
+    @Json(name = "confirmed")
+    private Date confirmed;
 
     @Json(name = "actions")
-    private ActionsEnum actions = null;
+    private ActionsEnum actions;
 
     @Json(name = "results")
     private TimeLog[] results;
 
-    public enum ActionsEnum {
-        @Json(name = "create")
-        CREATE("create");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "status")
+    private String status;
 
     public TimeLogs() {
     }
@@ -59,28 +43,24 @@ public class TimeLogs {
         return metadata;
     }
 
-    public TimeZone getTimeZone() {
-        return timeZone;
+    public Double getHours() {
+        return hours;
     }
 
     public Boolean getShouldVerify() {
         return shouldVerify;
     }
 
-    public Double getHours() {
-        return hours;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public TimeLogsConfirmed getConfirmed() {
-        return confirmed;
-    }
-
     public OnMyWay getOnmyway() {
         return onmyway;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public Date getConfirmed() {
+        return confirmed;
     }
 
     public ActionsEnum getActions() {
@@ -89,6 +69,10 @@ public class TimeLogs {
 
     public TimeLog[] getResults() {
         return results;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     /*-*****************************-*/

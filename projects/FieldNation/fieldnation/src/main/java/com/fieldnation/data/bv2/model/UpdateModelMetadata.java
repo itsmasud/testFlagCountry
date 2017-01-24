@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class UpdateModelMetadata {
     private static final String TAG = "UpdateModelMetadata";
 
-    @Json(name = "universal_context")
-    private UpdateModelMetadataUniversalContext universalContext = null;
-
     @Json(name = "data")
-    private UpdateModelMetadataData data = null;
+    private UpdateModelMetadataData data;
+
+    @Json(name = "universal_context")
+    private UpdateModelMetadataUniversalContext universalContext;
 
     public UpdateModelMetadata() {
     }
 
-    public UpdateModelMetadataUniversalContext getUniversalContext() {
-        return universalContext;
-    }
-
     public UpdateModelMetadataData getData() {
         return data;
+    }
+
+    public UpdateModelMetadataUniversalContext getUniversalContext() {
+        return universalContext;
     }
 
     /*-*****************************-*/

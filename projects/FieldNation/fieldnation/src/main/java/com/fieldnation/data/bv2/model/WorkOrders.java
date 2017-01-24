@@ -10,7 +10,7 @@ public class WorkOrders {
     private static final String TAG = "WorkOrders";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private WorkOrder[] results;

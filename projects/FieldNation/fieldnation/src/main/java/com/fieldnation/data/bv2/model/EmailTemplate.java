@@ -6,32 +6,32 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class InlineResponse200 {
-    private static final String TAG = "InlineResponse200";
+public class EmailTemplate {
+    private static final String TAG = "EmailTemplate";
 
-    @Json(name = "success")
-    private Boolean success = null;
+    @Json(name = "id")
+    private Integer id;
 
-    @Json(name = "error")
-    private Boolean error = null;
+    @Json(name = "label")
+    private String label;
 
-    public InlineResponse200() {
+    public EmailTemplate() {
     }
 
-    public Boolean getSuccess() {
-        return success;
+    public Integer getId() {
+        return id;
     }
 
-    public Boolean getError() {
-        return error;
+    public String getLabel() {
+        return label;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static InlineResponse200 fromJson(JsonObject obj) {
+    public static EmailTemplate fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(InlineResponse200.class, obj);
+            return Unserializer.unserializeObject(EmailTemplate.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -42,14 +42,12 @@ public class InlineResponse200 {
         return toJson(this);
     }
 
-    public static JsonObject toJson(InlineResponse200 inlineResponse200) {
+    public static JsonObject toJson(EmailTemplate emailTemplate) {
         try {
-            return Serializer.serializeObject(inlineResponse200);
+            return Serializer.serializeObject(emailTemplate);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
-
 }
-

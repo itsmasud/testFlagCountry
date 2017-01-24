@@ -10,7 +10,7 @@ public class TypesOfWork {
     private static final String TAG = "TypesOfWork";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private TypeOfWork[] results;

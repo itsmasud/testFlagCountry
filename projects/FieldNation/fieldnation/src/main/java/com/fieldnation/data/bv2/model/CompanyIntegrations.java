@@ -10,7 +10,7 @@ public class CompanyIntegrations {
     private static final String TAG = "CompanyIntegrations";
 
     @Json(name = "envelope")
-    private ListEnvelope envelope = null;
+    private ListEnvelope envelope;
 
     @Json(name = "results")
     private CompanyIntegration[] results;

@@ -6,25 +6,32 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class InlineResponse201 {
-    private static final String TAG = "InlineResponse201";
+public class Map {
+    private static final String TAG = "Map";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "href")
+    private String href;
 
-    public InlineResponse201() {
+    @Json(name = "url")
+    private String url;
+
+    public Map() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getHref() {
+        return href;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static InlineResponse201 fromJson(JsonObject obj) {
+    public static Map fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(InlineResponse201.class, obj);
+            return Unserializer.unserializeObject(Map.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -35,13 +42,12 @@ public class InlineResponse201 {
         return toJson(this);
     }
 
-    public static JsonObject toJson(InlineResponse201 inlineResponse201) {
+    public static JsonObject toJson(Map map) {
         try {
-            return Serializer.serializeObject(inlineResponse201);
+            return Serializer.serializeObject(map);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 }
-

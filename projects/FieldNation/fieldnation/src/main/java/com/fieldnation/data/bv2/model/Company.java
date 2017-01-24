@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class Company {
     private static final String TAG = "Company";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "name")
-    private String name = null;
-
     @Json(name = "features")
     private String[] features;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     public Company() {
     }
 
-    public Integer getId() {
-        return id;
+    public String[] getFeatures() {
+        return features;
     }
 
     public String getName() {
         return name;
     }
 
-    public String[] getFeatures() {
-        return features;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
@@ -58,4 +58,3 @@ public class Company {
         }
     }
 }
-

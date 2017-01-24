@@ -10,32 +10,16 @@ public class PayModifiers {
     private static final String TAG = "PayModifiers";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "sum")
-    private PayModifiersSum sum = null;
+    private PayModifiersSum sum;
 
     @Json(name = "actions")
     private ActionsEnum[] actions;
 
     @Json(name = "results")
     private PayModifier[] results;
-
-    public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
 
     public PayModifiers() {
     }

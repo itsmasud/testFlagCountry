@@ -6,32 +6,32 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class Json1 {
-    private static final String TAG = "Json1";
+public class Date {
+    private static final String TAG = "Date";
 
-    @Json(name = "country")
-    private String country = null;
+    @Json(name = "utc")
+    private Long utc;
 
-    @Json(name = "phone")
-    private String phone = null;
+    @Json(name = "local")
+    private Local local;
 
-    public Json1() {
+    public Date() {
     }
 
-    public String getCountry() {
-        return country;
+    public Long getUtc() {
+        return utc;
     }
 
-    public String getPhone() {
-        return phone;
+    public Local getLocal() {
+        return local;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static Json1 fromJson(JsonObject obj) {
+    public static Date fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Json1.class, obj);
+            return Unserializer.unserializeObject(Date.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -42,13 +42,12 @@ public class Json1 {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Json1 json1) {
+    public static JsonObject toJson(Date date) {
         try {
-            return Serializer.serializeObject(json1);
+            return Serializer.serializeObject(date);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 }
-

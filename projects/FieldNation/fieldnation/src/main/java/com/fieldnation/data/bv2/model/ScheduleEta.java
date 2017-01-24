@@ -7,47 +7,47 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 public class ScheduleEta {
-    public static final String TAG = "ScheduleEta";
-
-    @Json(name = "user")
-    private User user = null;
+    private static final String TAG = "ScheduleEta";
 
     @Json(name = "mode")
-    private Boolean mode = null;
-
-    @Json(name = "start")
-    private String start = null;
-
-    @Json(name = "end")
-    private String end = null;
+    private Boolean mode;
 
     @Json(name = "hour_estimate")
-    private Double hourEstimate = null;
+    private Double hourEstimate;
+
+    @Json(name = "start")
+    private Date start;
+
+    @Json(name = "end")
+    private Date end;
+
+    @Json(name = "user")
+    private User user;
 
     @Json(name = "status")
-    private ScheduleEtaStatus status = null;
+    private ScheduleEtaStatus status;
 
     public ScheduleEta() {
-    }
-
-    public User getUser() {
-        return user;
     }
 
     public Boolean getMode() {
         return mode;
     }
 
-    public String getStart() {
+    public Double getHourEstimate() {
+        return hourEstimate;
+    }
+
+    public Date getStart() {
         return start;
     }
 
-    public String getEnd() {
+    public Date getEnd() {
         return end;
     }
 
-    public Double getHourEstimate() {
-        return hourEstimate;
+    public User getUser() {
+        return user;
     }
 
     public ScheduleEtaStatus getStatus() {

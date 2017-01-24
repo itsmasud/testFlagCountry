@@ -9,77 +9,45 @@ import com.fieldnation.fnlog.Log;
 public class Schedule {
     private static final String TAG = "Schedule";
 
-    @Json(name = "work_order_id")
-    private Integer workOrderId = null;
-
-    @Json(name = "correlation_id")
-    private String correlationId = null;
-
-    @Json(name = "service_window")
-    private ScheduleServiceWindow serviceWindow = null;
+    @Json(name = "no_refresh")
+    private Boolean noRefresh;
 
     @Json(name = "eta")
-    private ScheduleEta eta = null;
-
-    @Json(name = "on_my_way")
-    private OnMyWay onMyWay = null;
-
-    @Json(name = "time_zone")
-    private TimeZone timeZone = null;
+    private ScheduleEta eta;
 
     @Json(name = "role")
-    private String role = null;
+    private String role;
 
     @Json(name = "status_id")
-    private Integer statusId = null;
+    private Integer statusId;
+
+    @Json(name = "work_order_id")
+    private Integer workOrderId;
+
+    @Json(name = "service_window")
+    private ScheduleServiceWindow serviceWindow;
+
+    @Json(name = "correlation_id")
+    private String correlationId;
+
+    @Json(name = "time_zone")
+    private TimeZone timeZone;
 
     @Json(name = "actions")
     private ActionsEnum[] actions;
 
-    @Json(name = "no_refresh")
-    private Boolean noRefresh = null;
-
-    public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "on_my_way")
+    private OnMyWay onMyWay;
 
     public Schedule() {
     }
 
-    public Integer getWorkOrderId() {
-        return workOrderId;
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
-    public ScheduleServiceWindow getServiceWindow() {
-        return serviceWindow;
+    public Boolean getNoRefresh() {
+        return noRefresh;
     }
 
     public ScheduleEta getEta() {
         return eta;
-    }
-
-    public OnMyWay getOnMyWay() {
-        return onMyWay;
-    }
-
-    public TimeZone getTimeZone() {
-        return timeZone;
     }
 
     public String getRole() {
@@ -90,12 +58,28 @@ public class Schedule {
         return statusId;
     }
 
+    public Integer getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public ScheduleServiceWindow getServiceWindow() {
+        return serviceWindow;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
     public ActionsEnum[] getActions() {
         return actions;
     }
 
-    public Boolean getNoRefresh() {
-        return noRefresh;
+    public OnMyWay getOnMyWay() {
+        return onMyWay;
     }
 
     /*-*****************************-*/

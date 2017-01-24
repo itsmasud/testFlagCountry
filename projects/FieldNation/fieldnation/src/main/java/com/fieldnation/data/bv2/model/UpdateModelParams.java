@@ -10,15 +10,15 @@ public class UpdateModelParams {
     private static final String TAG = "UpdateModelParams";
 
     @Json(name = "model")
-    private Object model = null;
+    private UpdateModelParamsModel model;
 
     @Json(name = "updateScheduleByWorkOrder")
-    private EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder = null;
+    private EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder;
 
     public UpdateModelParams() {
     }
 
-    public Object getModel() {
+    public UpdateModelParamsModel getModel() {
         return model;
     }
 

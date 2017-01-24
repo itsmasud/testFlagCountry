@@ -9,30 +9,22 @@ import com.fieldnation.fnlog.Log;
 public class UserCompany {
     private static final String TAG = "UserCompany";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "name")
-    private String name = null;
-
     @Json(name = "features")
     private String[] features;
 
     @Json(name = "technicians")
-    private Integer technicians = null;
+    private Integer technicians;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     @Json(name = "vendors")
     private Company[] vendors;
 
     public UserCompany() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String[] getFeatures() {
@@ -41,6 +33,14 @@ public class UserCompany {
 
     public Integer getTechnicians() {
         return technicians;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Company[] getVendors() {

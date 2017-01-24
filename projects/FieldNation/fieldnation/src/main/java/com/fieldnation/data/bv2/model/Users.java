@@ -10,7 +10,7 @@ public class Users {
     private static final String TAG = "Users";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private User[] results;

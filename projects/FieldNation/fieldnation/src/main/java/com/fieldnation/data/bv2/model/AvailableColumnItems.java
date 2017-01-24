@@ -9,31 +9,35 @@ import com.fieldnation.fnlog.Log;
 public class AvailableColumnItems {
     private static final String TAG = "AvailableColumnItems";
 
+    @Json(name = "icon")
+    private String icon;
+
     @Json(name = "id")
-    private String id = null;
+    private String id;
 
     @Json(name = "label")
-    private String label = null;
-
-    @Json(name = "group")
-    private String group = null;
-
-    @Json(name = "order")
-    private Integer order = null;
-
-    @Json(name = "icon")
-    private String icon = null;
-
-    @Json(name = "selected")
-    private Boolean selected = null;
+    private String label;
 
     @Json(name = "can_sort")
-    private Boolean canSort = null;
+    private Boolean canSort;
+
+    @Json(name = "selected")
+    private Boolean selected;
 
     @Json(name = "sort_dir")
-    private String sortDir = null;
+    private String sortDir;
+
+    @Json(name = "group")
+    private String group;
+
+    @Json(name = "order")
+    private Integer order;
 
     public AvailableColumnItems() {
+    }
+
+    public String getIcon() {
+        return icon;
     }
 
     public String getId() {
@@ -44,28 +48,24 @@ public class AvailableColumnItems {
         return label;
     }
 
-    public String getGroup() {
-        return group;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public String getIcon() {
-        return icon;
+    public Boolean getCanSort() {
+        return canSort;
     }
 
     public Boolean getSelected() {
         return selected;
     }
 
-    public Boolean getCanSort() {
-        return canSort;
-    }
-
     public String getSortDir() {
         return sortDir;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public Integer getOrder() {
+        return order;
     }
 
     /*-*****************************-*/
@@ -93,4 +93,3 @@ public class AvailableColumnItems {
         }
     }
 }
-

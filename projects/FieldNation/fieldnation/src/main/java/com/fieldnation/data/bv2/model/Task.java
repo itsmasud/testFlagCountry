@@ -9,110 +9,102 @@ import com.fieldnation.fnlog.Log;
 public class Task {
     private static final String TAG = "Task";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "alerts")
-    private TaskAlert[] alerts;
-
-    @Json(name = "label")
-    private String label = null;
-
-    @Json(name = "group")
-    private TaskGroup group = null;
-
-    @Json(name = "time_zone")
-    private TimeZone timeZone = null;
-
-    @Json(name = "actions")
-    private String[] actions;
-
-    @Json(name = "type")
-    private TaskType type = null;
-
-    @Json(name = "created")
-    private String created = null;
-
-    @Json(name = "author")
-    private User author = null;
-
-    @Json(name = "completed")
-    private Boolean completed = null;
-
-    @Json(name = "check_in")
-    private CheckInOut checkIn = null;
-
-    @Json(name = "check_out")
-    private CheckInOut checkOut = null;
-
     @Json(name = "closing_notes")
-    private String closingNotes = null;
+    private String closingNotes;
 
-    @Json(name = "confirmed")
-    private Boolean confirmed = null;
-
-    @Json(name = "ready_to_go")
-    private Boolean readyToGo = null;
-
-    @Json(name = "on_my_way")
-    private OnMyWay onMyWay = null;
+    @Json(name = "custom_field")
+    private CustomField customField;
 
     @Json(name = "attachments")
     private Attachment[] attachments;
 
-    @Json(name = "custom_field")
-    private CustomField customField = null;
-
-    @Json(name = "value")
-    private String value = null;
-
-    @Json(name = "phone")
-    private String phone = null;
-
-    @Json(name = "email")
-    private String email = null;
+    @Json(name = "shipment")
+    private Shipment shipment;
 
     @Json(name = "signature")
-    private Signature signature = null;
+    private Signature signature;
 
-    @Json(name = "shipment")
-    private Shipment shipment = null;
+    @Json(name = "created")
+    private Date created;
+
+    @Json(name = "author")
+    private User author;
+
+    @Json(name = "check_in")
+    private CheckInOut checkIn;
+
+    @Json(name = "ready_to_go")
+    private Boolean readyToGo;
+
+    @Json(name = "label")
+    private String label;
+
+    @Json(name = "completed")
+    private Boolean completed;
+
+    @Json(name = "time_zone")
+    private TimeZone timeZone;
+
+    @Json(name = "type")
+    private TaskType type;
+
+    @Json(name = "confirmed")
+    private Boolean confirmed;
+
+    @Json(name = "on_my_way")
+    private OnMyWay onMyWay;
+
+    @Json(name = "alerts")
+    private TaskAlert[] alerts;
+
+    @Json(name = "check_out")
+    private CheckInOut checkOut;
 
     @Json(name = "attachment")
-    private Attachment attachment = null;
+    private Attachment attachment;
+
+    @Json(name = "phone")
+    private String phone;
+
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "actions")
+    private String[] actions;
+
+    @Json(name = "value")
+    private String value;
+
+    @Json(name = "email")
+    private String email;
+
+    @Json(name = "group")
+    private TaskGroup group;
 
     public Task() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getClosingNotes() {
+        return closingNotes;
     }
 
-    public TaskAlert[] getAlerts() {
-        return alerts;
+    public CustomField getCustomField() {
+        return customField;
     }
 
-    public String getLabel() {
-        return label;
+    public Attachment[] getAttachments() {
+        return attachments;
     }
 
-    public TaskGroup getGroup() {
-        return group;
+    public Shipment getShipment() {
+        return shipment;
     }
 
-    public TimeZone getTimeZone() {
-        return timeZone;
+    public Signature getSignature() {
+        return signature;
     }
 
-    public String[] getActions() {
-        return actions;
-    }
-
-    public TaskType getType() {
-        return type;
-    }
-
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
@@ -120,64 +112,72 @@ public class Task {
         return author;
     }
 
-    public Boolean getCompleted() {
-        return completed;
-    }
-
     public CheckInOut getCheckIn() {
         return checkIn;
-    }
-
-    public CheckInOut getCheckOut() {
-        return checkOut;
-    }
-
-    public String getClosingNotes() {
-        return closingNotes;
-    }
-
-    public Boolean getConfirmed() {
-        return confirmed;
     }
 
     public Boolean getReadyToGo() {
         return readyToGo;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public TaskType getType() {
+        return type;
+    }
+
+    public Boolean getConfirmed() {
+        return confirmed;
+    }
+
     public OnMyWay getOnMyWay() {
         return onMyWay;
     }
 
-    public Attachment[] getAttachments() {
-        return attachments;
+    public TaskAlert[] getAlerts() {
+        return alerts;
     }
 
-    public CustomField getCustomField() {
-        return customField;
+    public CheckInOut getCheckOut() {
+        return checkOut;
     }
 
-    public String getValue() {
-        return value;
+    public Attachment getAttachment() {
+        return attachment;
     }
 
     public String getPhone() {
         return phone;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public String[] getActions() {
+        return actions;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
     public String getEmail() {
         return email;
     }
 
-    public Signature getSignature() {
-        return signature;
-    }
-
-    public Shipment getShipment() {
-        return shipment;
-    }
-
-    public Attachment getAttachment() {
-        return attachment;
+    public TaskGroup getGroup() {
+        return group;
     }
 
     /*-*****************************-*/

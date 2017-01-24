@@ -9,71 +9,51 @@ import com.fieldnation.fnlog.Log;
 public class Request {
     private static final String TAG = "Request";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "counter")
-    private Boolean counter = null;
-
-    @Json(name = "counter_notes")
-    private String counterNotes = null;
-
-    @Json(name = "active")
-    private Boolean active = null;
-
-    @Json(name = "created")
-    private String created = null;
+    @Json(name = "schedule")
+    private Schedule schedule;
 
     @Json(name = "expires")
-    private String expires = null;
-
-    @Json(name = "schedule")
-    private Schedule schedule = null;
+    private Date expires;
 
     @Json(name = "hour_estimate")
-    private Double hourEstimate = null;
+    private Double hourEstimate;
 
     @Json(name = "notes")
-    private String notes = null;
+    private String notes;
 
-    @Json(name = "user")
-    private User user = null;
+    @Json(name = "created")
+    private Date created;
 
-    @Json(name = "work_order")
-    private WorkOrder workOrder = null;
+    @Json(name = "active")
+    private Boolean active;
 
     @Json(name = "pay")
-    private Pay pay = null;
+    private Pay pay;
+
+    @Json(name = "counter_notes")
+    private String counterNotes;
+
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "counter")
+    private Boolean counter;
+
+    @Json(name = "user")
+    private User user;
+
+    @Json(name = "work_order")
+    private WorkOrder workOrder;
 
     public Request() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public Boolean getCounter() {
-        return counter;
-    }
-
-    public String getCounterNotes() {
-        return counterNotes;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public String getExpires() {
-        return expires;
-    }
-
     public Schedule getSchedule() {
         return schedule;
+    }
+
+    public Date getExpires() {
+        return expires;
     }
 
     public Double getHourEstimate() {
@@ -84,16 +64,36 @@ public class Request {
         return notes;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public Pay getPay() {
+        return pay;
+    }
+
+    public String getCounterNotes() {
+        return counterNotes;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Boolean getCounter() {
+        return counter;
+    }
+
     public User getUser() {
         return user;
     }
 
     public WorkOrder getWorkOrder() {
         return workOrder;
-    }
-
-    public Pay getPay() {
-        return pay;
     }
 
     /*-*****************************-*/

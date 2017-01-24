@@ -10,10 +10,10 @@ public class TaskGroup {
     private static final String TAG = "TaskGroup";
 
     @Json(name = "id")
-    private Integer id = null;
+    private Integer id;
 
     @Json(name = "label")
-    private String label = null;
+    private String label;
 
     public TaskGroup() {
     }

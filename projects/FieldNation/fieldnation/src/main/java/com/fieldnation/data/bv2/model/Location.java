@@ -9,119 +9,86 @@ import com.fieldnation.fnlog.Log;
 public class Location {
     private static final String TAG = "Location";
 
-    @Json(name = "work_order_id")
-    private Integer workOrderId = null;
-
-    @Json(name = "mode")
-    private ModeEnum mode = null;
-
-    @Json(name = "role")
-    private String role = null;
-
-    @Json(name = "actions")
-    private String actions = null;
-
-    @Json(name = "correlation_id")
-    private String correlationId = null;
-
-    @Json(name = "status_id")
-    private Integer statusId = null;
-
-    @Json(name = "address1")
-    private String address1 = null;
-
-    @Json(name = "address2")
-    private String address2 = null;
-
-    @Json(name = "city")
-    private String city = null;
-
-    @Json(name = "state")
-    private String state = null;
-
     @Json(name = "zip")
-    private String zip = null;
-
-    @Json(name = "country")
-    private String country = null;
-
-    @Json(name = "coordinates")
-    private Coords coordinates = null;
-
-    @Json(name = "type")
-    private UserBy type = null;
-
-    @Json(name = "save_location")
-    private String saveLocation = null;
+    private String zip;
 
     @Json(name = "save_location_group")
-    private Integer saveLocationGroup = null;
+    private Integer saveLocationGroup;
+
+    @Json(name = "country")
+    private String country;
+
+    @Json(name = "role")
+    private String role;
+
+    @Json(name = "address2")
+    private String address2;
+
+    @Json(name = "city")
+    private String city;
 
     @Json(name = "saved_location")
-    private StoredLocation savedLocation = null;
+    private StoredLocation savedLocation;
+
+    @Json(name = "address1")
+    private String address1;
+
+    @Json(name = "coordinates")
+    private Coords coordinates;
+
+    @Json(name = "type")
+    private LocationType type;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone = null;
+    private TimeZone timeZone;
+
+    @Json(name = "mode")
+    private ModeEnum mode;
+
+    @Json(name = "status_id")
+    private Integer statusId;
+
+    @Json(name = "save_location")
+    private String saveLocation;
+
+    @Json(name = "work_order_id")
+    private Integer workOrderId;
+
+    @Json(name = "correlation_id")
+    private String correlationId;
+
+    @Json(name = "state")
+    private String state;
+
+    @Json(name = "actions")
+    private String actions;
+
+    @Json(name = "map")
+    private Map map;
 
     @Json(name = "contacts")
     private Contact[] contacts;
 
-    // TODO not sure what this data type is
-    @Json(name = "map")
-    private String map = null;
-
     @Json(name = "validation")
-    private LocationValidation validation = null;
-
-    public enum ModeEnum {
-        @Json(name = "custom")
-        CUSTOM("custom"),
-        @Json(name = "remote")
-        REMOTE("remote"),
-        @Json(name = "location")
-        LOCATION("location");
-
-        private String value;
-
-        ModeEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    private LocationValidation validation;
 
     public Location() {
     }
 
-    public Integer getWorkOrderId() {
-        return workOrderId;
+    public String getZip() {
+        return zip;
     }
 
-    public ModeEnum getMode() {
-        return mode;
+    public Integer getSaveLocationGroup() {
+        return saveLocationGroup;
+    }
+
+    public String getCountry() {
+        return country;
     }
 
     public String getRole() {
         return role;
-    }
-
-    public String getActions() {
-        return actions;
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
-    public Integer getStatusId() {
-        return statusId;
-    }
-
-    public String getAddress1() {
-        return address1;
     }
 
     public String getAddress2() {
@@ -132,48 +99,64 @@ public class Location {
         return city;
     }
 
-    public String getState() {
-        return state;
+    public StoredLocation getSavedLocation() {
+        return savedLocation;
     }
 
-    public String getZip() {
-        return zip;
-    }
-
-    public String getCountry() {
-        return country;
+    public String getAddress1() {
+        return address1;
     }
 
     public Coords getCoordinates() {
         return coordinates;
     }
 
-    public UserBy getType() {
+    public LocationType getType() {
         return type;
-    }
-
-    public String getSaveLocation() {
-        return saveLocation;
-    }
-
-    public Integer getSaveLocationGroup() {
-        return saveLocationGroup;
-    }
-
-    public StoredLocation getSavedLocation() {
-        return savedLocation;
     }
 
     public TimeZone getTimeZone() {
         return timeZone;
     }
 
+    public ModeEnum getMode() {
+        return mode;
+    }
+
+    public Integer getStatusId() {
+        return statusId;
+    }
+
+    public String getSaveLocation() {
+        return saveLocation;
+    }
+
+    public Integer getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getActions() {
+        return actions;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
     public Contact[] getContacts() {
         return contacts;
     }
 
-    public String getMap() {
-        return map;
+    public LocationValidation getValidation() {
+        return validation;
     }
 
     /*-*****************************-*/

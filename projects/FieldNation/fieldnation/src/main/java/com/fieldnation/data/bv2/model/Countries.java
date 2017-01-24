@@ -10,7 +10,7 @@ public class Countries {
     private static final String TAG = "Countries";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private Country[] results;

@@ -10,10 +10,10 @@ public class UserJobs {
     private static final String TAG = "UserJobs";
 
     @Json(name = "marketplace")
-    private Integer marketplace = null;
+    private Integer marketplace;
 
     @Json(name = "company")
-    private Integer company = null;
+    private Integer company;
 
     public UserJobs() {
     }

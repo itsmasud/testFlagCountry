@@ -9,27 +9,19 @@ import com.fieldnation.fnlog.Log;
 public class MessageTo {
     private static final String TAG = "MessageTo";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "name")
-    private String name = null;
-
     @Json(name = "thumbnail")
-    private String thumbnail = null;
+    private String thumbnail;
 
     @Json(name = "role")
-    private String role = null;
+    private String role;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     public MessageTo() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getThumbnail() {
@@ -38,6 +30,14 @@ public class MessageTo {
 
     public String getRole() {
         return role;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

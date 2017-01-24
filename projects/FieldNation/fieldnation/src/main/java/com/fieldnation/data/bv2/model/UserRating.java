@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class UserRating {
     private static final String TAG = "UserRating";
 
-    @Json(name = "company")
-    private Integer company = null;
-
     @Json(name = "marketplace")
-    private Integer marketplace = null;
+    private Integer marketplace;
+
+    @Json(name = "company")
+    private Integer company;
 
     public UserRating() {
     }
 
-    public Integer getCompany() {
-        return company;
-    }
-
     public Integer getMarketplace() {
         return marketplace;
+    }
+
+    public Integer getCompany() {
+        return company;
     }
 
     /*-*****************************-*/

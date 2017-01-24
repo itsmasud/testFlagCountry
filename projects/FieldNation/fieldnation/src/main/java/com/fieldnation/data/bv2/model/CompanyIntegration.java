@@ -9,70 +9,70 @@ import com.fieldnation.fnlog.Log;
 public class CompanyIntegration {
     private static final String TAG = "CompanyIntegration";
 
-    @Json(name = "company_integration_id")
-    private String companyIntegrationId = null;
+    @Json(name = "api_pass")
+    private String apiPass;
 
     @Json(name = "company_id")
-    private String companyId = null;
-
-    @Json(name = "integration_type")
-    private String integrationType = null;
-
-    @Json(name = "active")
-    private Boolean active = null;
+    private String companyId;
 
     @Json(name = "api_key")
-    private String apiKey = null;
-
-    @Json(name = "api_pass")
-    private String apiPass = null;
-
-    @Json(name = "api_domain_name")
-    private String apiDomainName = null;
-
-    @Json(name = "disable_notifications")
-    private Boolean disableNotifications = null;
+    private String apiKey;
 
     @Json(name = "external_api_integration_id")
-    private String externalApiIntegrationId = null;
+    private String externalApiIntegrationId;
+
+    @Json(name = "disable_notifications")
+    private Boolean disableNotifications;
+
+    @Json(name = "active")
+    private Boolean active;
+
+    @Json(name = "api_domain_name")
+    private String apiDomainName;
+
+    @Json(name = "company_integration_id")
+    private String companyIntegrationId;
+
+    @Json(name = "integration_type")
+    private String integrationType;
 
     public CompanyIntegration() {
-    }
-
-    public String getCompanyIntegrationId() {
-        return companyIntegrationId;
-    }
-
-    public String getCompanyId() {
-        return companyId;
-    }
-
-    public String getIntegrationType() {
-        return integrationType;
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public String getApiKey() {
-        return apiKey;
     }
 
     public String getApiPass() {
         return apiPass;
     }
 
-    public String getApiDomainName() {
-        return apiDomainName;
+    public String getCompanyId() {
+        return companyId;
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public String getExternalApiIntegrationId() {
+        return externalApiIntegrationId;
     }
 
     public Boolean getDisableNotifications() {
         return disableNotifications;
     }
 
-    public String getExternalApiIntegrationId() {
-        return externalApiIntegrationId;
+    public Boolean getActive() {
+        return active;
+    }
+
+    public String getApiDomainName() {
+        return apiDomainName;
+    }
+
+    public String getCompanyIntegrationId() {
+        return companyIntegrationId;
+    }
+
+    public String getIntegrationType() {
+        return integrationType;
     }
 
     /*-*****************************-*/
@@ -100,4 +100,3 @@ public class CompanyIntegration {
         }
     }
 }
-

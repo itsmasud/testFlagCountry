@@ -6,32 +6,25 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class MilestonesCreated {
-    private static final String TAG = "MilestonesCreated";
+public class EmailTemplates {
+    private static final String TAG = "EmailTemplates";
 
-    @Json(name = "utc")
-    private String utc = null;
+    @Json(name = "results")
+    private EmailTemplate[] results;
 
-    @Json(name = "local")
-    private MilestonesCreatedLocal local = null;
-
-    public MilestonesCreated() {
+    public EmailTemplates() {
     }
 
-    public String getUtc() {
-        return utc;
-    }
-
-    public MilestonesCreatedLocal getLocal() {
-        return local;
+    public EmailTemplate[] getResults() {
+        return results;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static MilestonesCreated fromJson(JsonObject obj) {
+    public static EmailTemplates fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(MilestonesCreated.class, obj);
+            return Unserializer.unserializeObject(EmailTemplates.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -42,9 +35,9 @@ public class MilestonesCreated {
         return toJson(this);
     }
 
-    public static JsonObject toJson(MilestonesCreated milestonesCreated) {
+    public static JsonObject toJson(EmailTemplates emailTemplates) {
         try {
-            return Serializer.serializeObject(milestonesCreated);
+            return Serializer.serializeObject(emailTemplates);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

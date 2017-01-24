@@ -7,10 +7,10 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 public class Shipments {
-    public static final String TAG = "Shipments";
+    private static final String TAG = "Shipments";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private Shipment[] results;

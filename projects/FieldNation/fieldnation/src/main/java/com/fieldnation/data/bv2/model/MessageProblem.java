@@ -9,16 +9,20 @@ import com.fieldnation.fnlog.Log;
 public class MessageProblem {
     private static final String TAG = "MessageProblem";
 
+    @Json(name = "flag_id")
+    private Integer flagId;
+
     @Json(name = "type")
-    private MessageProblemType type = null;
+    private MessageProblemType type;
 
     @Json(name = "resolved")
-    private Boolean resolved = null;
-
-    @Json(name = "flag_id")
-    private Integer flagId = null;
+    private Boolean resolved;
 
     public MessageProblem() {
+    }
+
+    public Integer getFlagId() {
+        return flagId;
     }
 
     public MessageProblemType getType() {
@@ -27,10 +31,6 @@ public class MessageProblem {
 
     public Boolean getResolved() {
         return resolved;
-    }
-
-    public Integer getFlagId() {
-        return flagId;
     }
 
     /*-*****************************-*/

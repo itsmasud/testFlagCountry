@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class CountryState {
     private static final String TAG = "CountryState";
 
-    @Json(name = "required")
-    private Boolean required = null;
-
-    @Json(name = "label")
-    private String label = null;
-
     @Json(name = "values")
     private CountryStateValues[] values;
+
+    @Json(name = "label")
+    private String label;
+
+    @Json(name = "required")
+    private Boolean required;
 
     public CountryState() {
     }
 
-    public Boolean getRequired() {
-        return required;
+    public CountryStateValues[] getValues() {
+        return values;
     }
 
     public String getLabel() {
         return label;
     }
 
-    public CountryStateValues[] getValues() {
-        return values;
+    public Boolean getRequired() {
+        return required;
     }
 
     /*-*****************************-*/
@@ -58,4 +58,3 @@ public class CountryState {
         }
     }
 }
-

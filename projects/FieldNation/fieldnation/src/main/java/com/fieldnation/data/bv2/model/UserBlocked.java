@@ -10,10 +10,10 @@ public class UserBlocked {
     private static final String TAG = "UserBlocked";
 
     @Json(name = "at")
-    private String at = null;
+    private String at;
 
     @Json(name = "by")
-    private UserBy by = null;
+    private UserBlockedBy by;
 
     public UserBlocked() {
     }
@@ -22,7 +22,7 @@ public class UserBlocked {
         return at;
     }
 
-    public UserBy getBy() {
+    public UserBlockedBy getBy() {
         return by;
     }
 

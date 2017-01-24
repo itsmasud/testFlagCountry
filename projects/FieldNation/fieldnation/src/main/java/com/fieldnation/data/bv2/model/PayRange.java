@@ -10,10 +10,10 @@ public class PayRange {
     private static final String TAG = "PayRange";
 
     @Json(name = "min")
-    private Double min = null;
+    private Double min;
 
     @Json(name = "max")
-    private Double max = null;
+    private Double max;
 
     public PayRange() {
     }

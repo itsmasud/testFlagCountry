@@ -9,28 +9,33 @@ import com.fieldnation.fnlog.Log;
 public class ErrorTrace {
     private static final String TAG = "ErrorTrace";
 
-    @Json(name = "file")
-    private String file = null;
-
-    @Json(name = "line")
-    private Integer line = null;
-
-    @Json(name = "function")
-    private String function = null;
-
-    @Json(name = "class")
-    private String propertyClass = null;
-
-    @Json(name = "object")
-    private String object = null;
-
-    @Json(name = "type")
-    private String type = null;
-
     @Json(name = "args")
     private ErrorTraceArgs[] args;
 
+    @Json(name = "file")
+    private String file;
+
+    @Json(name = "line")
+    private Integer line;
+
+    @Json(name = "function")
+    private String function;
+
+    @Json(name = "type")
+    private String type;
+
+    @Json(name = "class")
+    private String _class;
+
+    // Todo data type not known
+    @Json(name = "object")
+    private String object;
+
     public ErrorTrace() {
+    }
+
+    public ErrorTraceArgs[] getArgs() {
+        return args;
     }
 
     public String getFile() {
@@ -45,20 +50,16 @@ public class ErrorTrace {
         return function;
     }
 
-    public String getPropertyClass() {
-        return propertyClass;
-    }
-
-    public String getObject() {
-        return object;
-    }
-
     public String getType() {
         return type;
     }
 
-    public ErrorTraceArgs[] getArgs() {
-        return args;
+    public String getClassName() {
+        return _class;
+    }
+
+    public String getObject() {
+        return object;
     }
 
     /*-*****************************-*/
@@ -86,4 +87,3 @@ public class ErrorTrace {
         }
     }
 }
-

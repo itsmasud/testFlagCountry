@@ -9,42 +9,42 @@ import com.fieldnation.fnlog.Log;
 public class ShipmentCarrier {
     private static final String TAG = "ShipmentCarrier";
 
-    @Json(name = "name")
-    private String name = null;
+    @Json(name = "arrived")
+    private Date arrived;
 
     @Json(name = "other")
-    private String other = null;
-
-    @Json(name = "tracking")
-    private String tracking = null;
+    private String other;
 
     @Json(name = "arrival")
-    private String arrival = null;
+    private Date arrival;
 
-    @Json(name = "arrived")
-    private String arrived = null;
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "tracking")
+    private String tracking;
 
     public ShipmentCarrier() {
     }
 
-    public String getName() {
-        return name;
+    public Date getArrived() {
+        return arrived;
     }
 
     public String getOther() {
         return other;
     }
 
-    public String getTracking() {
-        return tracking;
-    }
-
-    public String getArrival() {
+    public Date getArrival() {
         return arrival;
     }
 
-    public String getArrived() {
-        return arrived;
+    public String getName() {
+        return name;
+    }
+
+    public String getTracking() {
+        return tracking;
     }
 
     /*-*****************************-*/

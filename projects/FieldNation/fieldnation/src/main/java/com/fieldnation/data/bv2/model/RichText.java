@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class RichText {
     private static final String TAG = "RichText";
 
-    @Json(name = "html")
-    private String html = null;
-
     @Json(name = "markdown")
-    private String markdown = null;
+    private String markdown;
+
+    @Json(name = "html")
+    private String html;
 
     public RichText() {
     }
 
-    public String getHtml() {
-        return html;
-    }
-
     public String getMarkdown() {
         return markdown;
+    }
+
+    public String getHtml() {
+        return html;
     }
 
     /*-*****************************-*/

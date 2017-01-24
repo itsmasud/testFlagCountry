@@ -10,13 +10,13 @@ public class TaskAlert {
     private static final String TAG = "TaskAlert";
 
     @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "email")
-    private String email = null;
+    private Integer id;
 
     @Json(name = "sent")
-    private Long sent = null;
+    private Long sent;
+
+    @Json(name = "email")
+    private String email;
 
     public TaskAlert() {
     }
@@ -25,12 +25,12 @@ public class TaskAlert {
         return id;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public Long getSent() {
         return sent;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     /*-*****************************-*/

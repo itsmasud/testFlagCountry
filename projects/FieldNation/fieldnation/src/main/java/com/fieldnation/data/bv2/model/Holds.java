@@ -9,14 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class Holds {
     private static final String TAG = "Holds";
 
-    @Json(name = "holds")
-    private Hold[] holds;
+    @Json(name = "metadata")
+    private ListEnvelope metadata;
+
+    @Json(name = "results")
+    private Hold[] results;
 
     public Holds() {
     }
 
-    public Hold[] getHolds() {
-        return holds;
+    public ListEnvelope getMetadata() {
+        return metadata;
+    }
+
+    public Hold[] getResults() {
+        return results;
     }
 
     /*-*****************************-*/
@@ -44,4 +51,3 @@ public class Holds {
         }
     }
 }
-

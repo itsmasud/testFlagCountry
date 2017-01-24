@@ -9,80 +9,56 @@ import com.fieldnation.fnlog.Log;
 public class Expense {
     private static final String TAG = "Expense";
 
-    @Json(name = "description")
-    private String description = null;
-
-    @Json(name = "quantity")
-    private Integer quantity = null;
-
-    @Json(name = "status")
-    private StatusEnum status = null;
+    @Json(name = "reason")
+    private String reason;
 
     @Json(name = "status_description")
-    private String statusDescription = null;
-
-    @Json(name = "category")
-    private UserBy category = null;
-
-    @Json(name = "added")
-    private String added = null;
-
-    @Json(name = "author")
-    private User author = null;
-
-    @Json(name = "company_expense")
-    private ExpenseCompanyExpense companyExpense = null;
+    private String statusDescription;
 
     @Json(name = "amount")
-    private Double amount = null;
+    private Double amount;
 
-    @Json(name = "reason")
-    private String reason = null;
+    @Json(name = "quantity")
+    private Integer quantity;
 
-    public enum StatusEnum {
-        @Json(name = "new")
-        NEW("new"),
-        @Json(name = "approved")
-        APPROVED("approved"),
-        @Json(name = "disapproved")
-        DISAPPROVED("disapproved");
+    @Json(name = "added")
+    private Date added;
 
-        private String value;
+    @Json(name = "author")
+    private User author;
 
-        StatusEnum(String value) {
-            this.value = value;
-        }
+    @Json(name = "description")
+    private String description;
 
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "category")
+    private ExpenseCategory category;
+
+    @Json(name = "status")
+    private StatusEnum status;
+
+    @Json(name = "company_expense")
+    private ExpenseCompanyExpense companyExpense;
 
     public Expense() {
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public Integer getQuantity() {
-        return quantity;
-    }
-
-    public StatusEnum getStatus() {
-        return status;
+    public String getReason() {
+        return reason;
     }
 
     public String getStatusDescription() {
         return statusDescription;
     }
 
-    public UserBy getCategory() {
-        return category;
+    public Double getAmount() {
+        return amount;
     }
 
-    public String getAdded() {
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public Date getAdded() {
         return added;
     }
 
@@ -90,16 +66,20 @@ public class Expense {
         return author;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public ExpenseCategory getCategory() {
+        return category;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
+    }
+
     public ExpenseCompanyExpense getCompanyExpense() {
         return companyExpense;
-    }
-
-    public Double getAmount() {
-        return amount;
-    }
-
-    public String getReason() {
-        return reason;
     }
 
     /*-*****************************-*/
@@ -127,4 +107,3 @@ public class Expense {
         }
     }
 }
-

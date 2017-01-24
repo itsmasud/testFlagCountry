@@ -6,53 +6,48 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-import java.util.List;
-
-/**
- * Assignee
- */
 public class Assignee {
     private static final String TAG = "Assignee";
 
-    @Json(name = "correlation_id")
-    private String correlationId = null;
-
     @Json(name = "role")
-    private String role = null;
-
-    @Json(name = "user")
-    private User user = null;
-
-    @Json(name = "work_order_id")
-    private Integer workOrderId = null;
+    private String role;
 
     @Json(name = "status_id")
-    private Integer statusId = null;
+    private Integer statusId;
+
+    @Json(name = "work_order_id")
+    private Integer workOrderId;
+
+    @Json(name = "correlation_id")
+    private String correlationId;
+
+    @Json(name = "user")
+    private User user;
 
     @Json(name = "actions")
-    private String[] actions = null;
+    private String[] actions;
 
     public Assignee() {
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
     }
 
     public String getRole() {
         return role;
     }
 
-    public User getUser() {
-        return user;
+    public Integer getStatusId() {
+        return statusId;
     }
 
     public Integer getWorkOrderId() {
         return workOrderId;
     }
 
-    public Integer getStatusId() {
-        return statusId;
+    public String getCorrelationId() {
+        return correlationId;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public String[] getActions() {

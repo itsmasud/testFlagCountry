@@ -10,13 +10,13 @@ public class PayModifiersSum {
     private static final String TAG = "PayModifiersSum";
 
     @Json(name = "all")
-    private Double all = null;
-
-    @Json(name = "charged")
-    private Double charged = null;
+    private Double all;
 
     @Json(name = "uncharged")
-    private Double uncharged = null;
+    private Double uncharged;
+
+    @Json(name = "charged")
+    private Double charged;
 
     public PayModifiersSum() {
     }
@@ -25,12 +25,12 @@ public class PayModifiersSum {
         return all;
     }
 
-    public Double getCharged() {
-        return charged;
-    }
-
     public Double getUncharged() {
         return uncharged;
+    }
+
+    public Double getCharged() {
+        return charged;
     }
 
     /*-*****************************-*/

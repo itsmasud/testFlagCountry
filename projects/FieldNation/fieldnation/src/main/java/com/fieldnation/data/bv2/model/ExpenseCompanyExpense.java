@@ -9,23 +9,23 @@ import com.fieldnation.fnlog.Log;
 public class ExpenseCompanyExpense {
     private static final String TAG = "ExpenseCompanyExpense";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "api_code")
+    private String apiCode;
 
     @Json(name = "expense_amount")
-    private Double expenseAmount = null;
+    private Double expenseAmount;
 
     @Json(name = "hidden_tags")
-    private String hiddenTags = null;
+    private String hiddenTags;
 
-    @Json(name = "api_code")
-    private String apiCode = null;
+    @Json(name = "id")
+    private Integer id;
 
     public ExpenseCompanyExpense() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getApiCode() {
+        return apiCode;
     }
 
     public Double getExpenseAmount() {
@@ -36,8 +36,8 @@ public class ExpenseCompanyExpense {
         return hiddenTags;
     }
 
-    public String getApiCode() {
-        return apiCode;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
@@ -65,4 +65,3 @@ public class ExpenseCompanyExpense {
         }
     }
 }
-

@@ -10,7 +10,7 @@ public class UpdateModelMetadataUniversalContext {
     private static final String TAG = "UpdateModelMetadataUniversalContext";
 
     @Json(name = "correlation_id")
-    private String correlationId = null;
+    private String correlationId;
 
     public UpdateModelMetadataUniversalContext() {
     }

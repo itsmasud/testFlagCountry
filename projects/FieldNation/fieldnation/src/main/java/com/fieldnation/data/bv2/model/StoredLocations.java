@@ -9,62 +9,22 @@ import com.fieldnation.fnlog.Log;
 public class StoredLocations {
     private static final String TAG = "StoredLocations";
 
-    @Json(name = "work_order_id")
-    private Integer workOrderId = null;
-
     @Json(name = "mode")
-    private ModeEnum mode = null;
+    private ModeEnum mode;
 
     @Json(name = "role")
-    private String role = null;
+    private String role;
+
+    @Json(name = "work_order_id")
+    private Integer workOrderId;
 
     @Json(name = "actions")
-    private ActionsEnum actions = null;
+    private ActionsEnum actions;
 
     @Json(name = "results")
     private Location[] results;
 
-    public enum ModeEnum {
-        @Json(name = "custom")
-        CUSTOM("custom"),
-        @Json(name = "location")
-        LOCATION("location"),
-        @Json(name = "remote")
-        REMOTE("remote");
-
-        private String value;
-
-        ModeEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
-    public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     public StoredLocations() {
-    }
-
-    public Integer getWorkOrderId() {
-        return workOrderId;
     }
 
     public ModeEnum getMode() {
@@ -73,6 +33,10 @@ public class StoredLocations {
 
     public String getRole() {
         return role;
+    }
+
+    public Integer getWorkOrderId() {
+        return workOrderId;
     }
 
     public ActionsEnum getActions() {

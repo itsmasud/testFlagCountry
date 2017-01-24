@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class LocationType {
     private static final String TAG = "LocationType";
 
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "name")
-    private String name = null;
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     public LocationType() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

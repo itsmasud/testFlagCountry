@@ -9,63 +9,63 @@ import com.fieldnation.fnlog.Log;
 public class OnMyWay {
     private static final String TAG = "OnMyWay";
 
-    @Json(name = "active")
-    private Boolean active = null;
-
-    @Json(name = "created")
-    private String created = null;
-
-    @Json(name = "drive_time")
-    private Integer driveTime = null;
-
     @Json(name = "distance")
-    private Double distance = null;
-
-    @Json(name = "status")
-    private String status = null;
+    private Double distance;
 
     @Json(name = "substatus")
-    private String substatus = null;
+    private String substatus;
+
+    @Json(name = "created")
+    private Date created;
 
     @Json(name = "estimated_delay")
-    private Integer estimatedDelay = null;
+    private Integer estimatedDelay;
+
+    @Json(name = "active")
+    private Boolean active;
+
+    @Json(name = "drive_time")
+    private Integer driveTime;
 
     @Json(name = "coords")
-    private Coords coords = null;
+    private Coords coords;
+
+    @Json(name = "status")
+    private String status;
 
     public OnMyWay() {
-    }
-
-    public Boolean getActive() {
-        return active;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public Integer getDriveTime() {
-        return driveTime;
     }
 
     public Double getDistance() {
         return distance;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public String getSubstatus() {
         return substatus;
+    }
+
+    public Date getCreated() {
+        return created;
     }
 
     public Integer getEstimatedDelay() {
         return estimatedDelay;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public Integer getDriveTime() {
+        return driveTime;
+    }
+
     public Coords getCoords() {
         return coords;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     /*-*****************************-*/

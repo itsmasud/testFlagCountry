@@ -10,10 +10,10 @@ public class SelectionRule {
     private static final String TAG = "SelectionRule";
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
     @Json(name = "id")
-    private Integer id = null;
+    private Integer id;
 
     public SelectionRule() {
     }

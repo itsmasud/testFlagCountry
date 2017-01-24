@@ -9,56 +9,38 @@ import com.fieldnation.fnlog.Log;
 public class Fee {
     private static final String TAG = "Fee";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "calculation")
+    private CalculationEnum calculation;
 
     @Json(name = "amount")
-    private Double amount = null;
-
-    @Json(name = "calculation")
-    private CalculationEnum calculation = null;
+    private Double amount;
 
     @Json(name = "modifier")
-    private Double modifier = null;
+    private Double modifier;
+
+    @Json(name = "id")
+    private Integer id;
 
     @Json(name = "charged")
-    private Boolean charged = null;
-
-    public enum CalculationEnum {
-        @Json(name = "percent")
-        PERCENT("percent"),
-        @Json(name = "fixed")
-        FIXED("fixed");
-
-        private String value;
-
-        CalculationEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    private Boolean charged;
 
     public Fee() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public Double getAmount() {
-        return amount;
     }
 
     public CalculationEnum getCalculation() {
         return calculation;
     }
 
+    public Double getAmount() {
+        return amount;
+    }
+
     public Double getModifier() {
         return modifier;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public Boolean getCharged() {
@@ -90,4 +72,3 @@ public class Fee {
         }
     }
 }
-

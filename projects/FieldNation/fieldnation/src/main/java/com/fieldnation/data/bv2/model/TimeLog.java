@@ -9,100 +9,84 @@ import com.fieldnation.fnlog.Log;
 public class TimeLog {
     private static final String TAG = "TimeLog";
 
-    @Json(name = "work_order_id")
-    private Integer workOrderId = null;
-
-    @Json(name = "time_zone")
-    private TimeZone timeZone = null;
-
-    @Json(name = "in")
-    private CheckInOut in = null;
-
-    @Json(name = "out")
-    private CheckInOut out = null;
-
-    @Json(name = "devices")
-    private Double devices = null;
+    @Json(name = "logged_by")
+    private User loggedBy;
 
     @Json(name = "hours")
-    private Double hours = null;
+    private Double hours;
+
+    @Json(name = "work_order_id")
+    private Integer workOrderId;
+
+    @Json(name = "in")
+    private CheckInOut in;
+
+    @Json(name = "devices")
+    private Double devices;
 
     @Json(name = "verified")
-    private Boolean verified = null;
+    private Boolean verified;
 
-    @Json(name = "was_late")
-    private Boolean wasLate = null;
-
-    @Json(name = "logged_by")
-    private User loggedBy = null;
-
-    @Json(name = "on_my_way")
-    private OnMyWay onMyWay = null;
+    @Json(name = "time_zone")
+    private TimeZone timeZone;
 
     @Json(name = "actions")
     private ActionsEnum[] actions;
 
-    public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
+    @Json(name = "was_late")
+    private Boolean wasLate;
 
-        private String value;
+    @Json(name = "out")
+    private CheckInOut out;
 
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "on_my_way")
+    private OnMyWay onMyWay;
 
     public TimeLog() {
-    }
-
-    public Integer getWorkOrderId() {
-        return workOrderId;
-    }
-
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    public CheckInOut getIn() {
-        return in;
-    }
-
-    public CheckInOut getOut() {
-        return out;
-    }
-
-    public Double getDevices() {
-        return devices;
-    }
-
-    public Double getHours() {
-        return hours;
-    }
-
-    public Boolean getVerified() {
-        return verified;
-    }
-
-    public Boolean getWasLate() {
-        return wasLate;
     }
 
     public User getLoggedBy() {
         return loggedBy;
     }
 
-    public OnMyWay getOnMyWay() {
-        return onMyWay;
+    public Double getHours() {
+        return hours;
+    }
+
+    public Integer getWorkOrderId() {
+        return workOrderId;
+    }
+
+    public CheckInOut getIn() {
+        return in;
+    }
+
+    public Double getDevices() {
+        return devices;
+    }
+
+    public Boolean getVerified() {
+        return verified;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
     }
 
     public ActionsEnum[] getActions() {
         return actions;
+    }
+
+    public Boolean getWasLate() {
+        return wasLate;
+    }
+
+    public CheckInOut getOut() {
+        return out;
+    }
+
+    public OnMyWay getOnMyWay() {
+        return onMyWay;
     }
 
     /*-*****************************-*/

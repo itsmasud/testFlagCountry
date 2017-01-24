@@ -9,116 +9,64 @@ import com.fieldnation.fnlog.Log;
 public class StoredLocation {
     private static final String TAG = "StoredLocation";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "name")
-    private String name = null;
-
-    @Json(name = "company")
-    private Company company = null;
-
-    @Json(name = "group")
-    private LocationGroup group = null;
-
-    @Json(name = "type")
-    private LocationType type = null;
-
-    @Json(name = "address1")
-    private String address1 = null;
-
-    @Json(name = "address2")
-    private String address2 = null;
-
-    @Json(name = "city")
-    private String city = null;
-
-    @Json(name = "state")
-    private String state = null;
-
     @Json(name = "zip")
-    private String zip = null;
+    private String zip;
 
     @Json(name = "country")
-    private String country = null;
-
-    @Json(name = "time_zone")
-    private TimeZone timeZone = null;
-
-    @Json(name = "contact")
-    private Contact contact = null;
+    private String country;
 
     @Json(name = "notes")
-    private LocationNote[] notes = null;
+    private LocationNote[] notes;
+
+    @Json(name = "address2")
+    private String address2;
+
+    @Json(name = "city")
+    private String city;
+
+    @Json(name = "address1")
+    private String address1;
 
     @Json(name = "active")
-    private Boolean active = null;
+    private Boolean active;
 
-    @Json(name = "client")
-    private Company client = null;
+    @Json(name = "type")
+    private LocationType type;
+
+    @Json(name = "time_zone")
+    private TimeZone timeZone;
 
     @Json(name = "geo")
-    private Coords geo = null;
+    private Coords geo;
+
+    @Json(name = "contact")
+    private Contact contact;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "client")
+    private Company client;
+
+    @Json(name = "company")
+    private Company company;
 
     @Json(name = "attributes")
     private LocationAttribute[] attributes;
 
+    @Json(name = "id")
+    private Integer id;
+
+    @Json(name = "state")
+    private String state;
+
     @Json(name = "actions")
     private ActionsEnum[] actions;
 
-    public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "group")
+    private LocationGroup group;
 
     public StoredLocation() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Company getCompany() {
-        return company;
-    }
-
-    public LocationGroup getGroup() {
-        return group;
-    }
-
-    public LocationType getType() {
-        return type;
-    }
-
-    public String getAddress1() {
-        return address1;
-    }
-
-    public String getAddress2() {
-        return address2;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getState() {
-        return state;
     }
 
     public String getZip() {
@@ -129,36 +77,72 @@ public class StoredLocation {
         return country;
     }
 
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    public Contact getContact() {
-        return contact;
-    }
-
     public LocationNote[] getNotes() {
         return notes;
+    }
+
+    public String getAddress2() {
+        return address2;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getAddress1() {
+        return address1;
     }
 
     public Boolean getActive() {
         return active;
     }
 
-    public Company getClient() {
-        return client;
+    public LocationType getType() {
+        return type;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
     }
 
     public Coords getGeo() {
         return geo;
     }
 
+    public Contact getContact() {
+        return contact;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Company getClient() {
+        return client;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
     public LocationAttribute[] getAttributes() {
         return attributes;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public String getState() {
+        return state;
+    }
+
     public ActionsEnum[] getActions() {
         return actions;
+    }
+
+    public LocationGroup getGroup() {
+        return group;
     }
 
     /*-*****************************-*/

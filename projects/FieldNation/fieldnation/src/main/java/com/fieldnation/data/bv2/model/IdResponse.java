@@ -10,7 +10,7 @@ public class IdResponse {
     private static final String TAG = "IdResponse";
 
     @Json(name = "id")
-    private Integer id = null;
+    private Integer id;
 
     public IdResponse() {
     }
@@ -44,4 +44,3 @@ public class IdResponse {
         }
     }
 }
-

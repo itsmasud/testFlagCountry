@@ -10,13 +10,13 @@ public class PricingInsightsRegionAverageRate {
     private static final String TAG = "PricingInsightsRegionAverageRate";
 
     @Json(name = "first_quartile")
-    private Double firstQuartile = null;
+    private Double firstQuartile;
 
     @Json(name = "median")
-    private Double median = null;
+    private Double median;
 
     @Json(name = "third_quartile")
-    private Double thirdQuartile = null;
+    private Double thirdQuartile;
 
     public PricingInsightsRegionAverageRate() {
     }

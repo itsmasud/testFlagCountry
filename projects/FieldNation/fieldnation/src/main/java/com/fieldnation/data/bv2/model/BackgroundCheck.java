@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class BackgroundCheck {
     private static final String TAG = "BackgroundCheck";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "expires")
+    private String expires;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
-    @Json(name = "expires")
-    private String expires = null;
+    @Json(name = "id")
+    private Integer id;
 
     public BackgroundCheck() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getExpires() {
+        return expires;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getExpires() {
-        return expires;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

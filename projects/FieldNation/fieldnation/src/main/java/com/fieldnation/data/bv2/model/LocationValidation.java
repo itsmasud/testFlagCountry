@@ -10,7 +10,7 @@ public class LocationValidation {
     private static final String TAG = "LocationValidation";
 
     @Json(name = "is_valid")
-    private Boolean isValid = null;
+    private Boolean isValid;
 
     @Json(name = "messages")
     private String[] messages;
@@ -51,4 +51,3 @@ public class LocationValidation {
         }
     }
 }
-

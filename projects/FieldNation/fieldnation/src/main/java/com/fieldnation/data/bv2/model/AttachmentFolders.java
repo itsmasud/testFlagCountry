@@ -10,7 +10,7 @@ public class AttachmentFolders {
     private static final String TAG = "AttachmentFolders";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private AttachmentFolder[] results;

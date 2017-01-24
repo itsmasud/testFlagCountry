@@ -10,7 +10,7 @@ public class SwapResponse {
     private static final String TAG = "SwapResponse";
 
     @Json(name = "success")
-    private Boolean success = null;
+    private Boolean success;
 
     public SwapResponse() {
     }

@@ -9,23 +9,23 @@ import com.fieldnation.fnlog.Log;
 public class TimeZone {
     private static final String TAG = "TimeZone";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "offset")
+    private Double offset;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
     @Json(name = "short")
-    private String _short = null;
+    private String _short;
 
-    @Json(name = "offset")
-    private Double offset = null;
+    @Json(name = "id")
+    private Integer id;
 
     public TimeZone() {
     }
 
-    public Integer getId() {
-        return id;
+    public Double getOffset() {
+        return offset;
     }
 
     public String getName() {
@@ -36,8 +36,8 @@ public class TimeZone {
         return _short;
     }
 
-    public Double getOffset() {
-        return offset;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

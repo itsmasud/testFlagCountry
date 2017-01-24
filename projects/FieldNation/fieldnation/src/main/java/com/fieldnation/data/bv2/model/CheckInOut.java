@@ -10,55 +10,55 @@ public class CheckInOut {
     private static final String TAG = "CheckInOut";
 
     @Json(name = "time_log")
-    private InlineResponse201 timeLog = null;
-
-    @Json(name = "created")
-    private String created = null;
+    private CheckInOutTimeLog timeLog;
 
     @Json(name = "actor")
-    private User actor = null;
-
-    @Json(name = "coords")
-    private Coords coords = null;
+    private User actor;
 
     @Json(name = "distance")
-    private Double distance = null;
+    private Double distance;
 
-    @Json(name = "distance_from_check_in")
-    private Double distanceFromCheckIn = null;
+    @Json(name = "created")
+    private Date created;
 
     @Json(name = "verified")
-    private Boolean verified = null;
+    private Boolean verified;
+
+    @Json(name = "distance_from_check_in")
+    private Double distanceFromCheckIn;
+
+    @Json(name = "coords")
+    private Coords coords;
 
     public CheckInOut() {
     }
 
-    public InlineResponse201 getTimeLog() {
+    public CheckInOutTimeLog getTimeLog() {
         return timeLog;
-    }
-
-    public String getCreated() {
-        return created;
     }
 
     public User getActor() {
         return actor;
     }
 
-    public Coords getCoords() {
-        return coords;
-    }
-
     public Double getDistance() {
         return distance;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public Boolean getVerified() {
+        return verified;
     }
 
     public Double getDistanceFromCheckIn() {
         return distanceFromCheckIn;
     }
 
-    public Boolean getVerified() {
-        return verified;
+    public Coords getCoords() {
+        return coords;
     }
 
     /*-*****************************-*/

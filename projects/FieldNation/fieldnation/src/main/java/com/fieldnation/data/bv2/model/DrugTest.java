@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class DrugTest {
     private static final String TAG = "DrugTest";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "expires")
+    private String expires;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
-    @Json(name = "expires")
-    private String expires = null;
+    @Json(name = "id")
+    private Integer id;
 
     public DrugTest() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getExpires() {
+        return expires;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getExpires() {
-        return expires;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
@@ -58,4 +58,3 @@ public class DrugTest {
         }
     }
 }
-

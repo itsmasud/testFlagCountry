@@ -9,53 +9,49 @@ import com.fieldnation.fnlog.Log;
 public class Route {
     private static final String TAG = "Route";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "user")
-    private User user = null;
-
-    @Json(name = "created")
-    private String created = null;
-
     @Json(name = "schedule")
-    private Schedule schedule = null;
+    private Schedule schedule;
 
     @Json(name = "notes")
-    private String notes = null;
+    private String notes;
+
+    @Json(name = "created")
+    private Date created;
+
+    @Json(name = "id")
+    private Integer id;
 
     @Json(name = "counter")
-    private Boolean counter = null;
+    private Boolean counter;
+
+    @Json(name = "user")
+    private User user;
 
     public Route() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public String getCreated() {
-        return created;
     }
 
     public Schedule getSchedule() {
         return schedule;
     }
 
-    public void setSchedule(Schedule schedule) {
-        this.schedule = schedule;
-    }
-
     public String getNotes() {
         return notes;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
     public Boolean getCounter() {
         return counter;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     /*-*****************************-*/

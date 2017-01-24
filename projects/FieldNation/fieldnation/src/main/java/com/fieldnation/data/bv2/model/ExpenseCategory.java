@@ -6,32 +6,32 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UserBy {
-    private static final String TAG = "UserBy";
-
-    @Json(name = "id")
-    private Integer id = null;
+public class ExpenseCategory {
+    private static final String TAG = "ExpenseCategory";
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
-    public UserBy() {
-    }
+    @Json(name = "id")
+    private Integer id;
 
-    public Integer getId() {
-        return id;
+    public ExpenseCategory() {
     }
 
     public String getName() {
         return name;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static UserBy fromJson(JsonObject obj) {
+    public static ExpenseCategory fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserBy.class, obj);
+            return Unserializer.unserializeObject(ExpenseCategory.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -42,9 +42,9 @@ public class UserBy {
         return toJson(this);
     }
 
-    public static JsonObject toJson(UserBy userBy) {
+    public static JsonObject toJson(ExpenseCategory expenseCategory) {
         try {
-            return Serializer.serializeObject(userBy);
+            return Serializer.serializeObject(expenseCategory);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

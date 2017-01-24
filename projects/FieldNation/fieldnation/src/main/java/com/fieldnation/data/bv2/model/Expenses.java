@@ -10,7 +10,7 @@ public class Expenses {
     private static final String TAG = "Expenses";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private Expense[] results;
@@ -51,4 +51,3 @@ public class Expenses {
         }
     }
 }
-

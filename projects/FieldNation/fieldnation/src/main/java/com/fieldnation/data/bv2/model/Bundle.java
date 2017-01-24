@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class Bundle {
     private static final String TAG = "Bundle";
 
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "count")
-    private Integer count = null;
+    private Integer count;
+
+    @Json(name = "id")
+    private Integer id;
 
     public Bundle() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public Integer getCount() {
         return count;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
@@ -51,4 +51,3 @@ public class Bundle {
         }
     }
 }
-

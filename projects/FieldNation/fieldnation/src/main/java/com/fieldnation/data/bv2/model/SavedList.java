@@ -9,74 +9,56 @@ import com.fieldnation.fnlog.Log;
 public class SavedList {
     private static final String TAG = "SavedList";
 
-    @Json(name = "id")
-    private String id = null;
-
-    @Json(name = "count")
-    private Integer count = null;
-
     @Json(name = "default")
-    private Boolean _default = null;
-
-    @Json(name = "sort")
-    private String sort = null;
-
-    @Json(name = "order")
-    private OrderEnum order = null;
+    private Boolean _default;
 
     @Json(name = "columns")
-    private String columns = null;
+    private String columns;
+
+    @Json(name = "count")
+    private Integer count;
+
+    @Json(name = "id")
+    private String id;
+
+    @Json(name = "sort")
+    private String sort;
 
     @Json(name = "label")
-    private String label = null;
+    private String label;
 
-    public enum OrderEnum {
-        @Json(name = "asc")
-        ASC("asc"),
-        @Json(name = "desc")
-        DESC("desc");
-
-        private String value;
-
-        OrderEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "order")
+    private OrderEnum order;
 
     public SavedList() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Integer getCount() {
-        return count;
     }
 
     public Boolean getDefault() {
         return _default;
     }
 
-    public String getSort() {
-        return sort;
-    }
-
-    public OrderEnum getOrder() {
-        return order;
-    }
-
     public String getColumns() {
         return columns;
     }
 
+    public Integer getCount() {
+        return count;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getSort() {
+        return sort;
+    }
+
     public String getLabel() {
         return label;
+    }
+
+    public OrderEnum getOrder() {
+        return order;
     }
 
     /*-*****************************-*/

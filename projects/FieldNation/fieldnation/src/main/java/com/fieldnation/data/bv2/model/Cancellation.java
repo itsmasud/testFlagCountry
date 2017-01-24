@@ -10,10 +10,10 @@ public class Cancellation {
     private static final String TAG = "Cancellation";
 
     @Json(name = "cancel_reason")
-    private Integer cancelReason = null;
+    private Integer cancelReason;
 
     @Json(name = "notes")
-    private String notes = null;
+    private String notes;
 
     public Cancellation() {
     }
@@ -51,4 +51,3 @@ public class Cancellation {
         }
     }
 }
-

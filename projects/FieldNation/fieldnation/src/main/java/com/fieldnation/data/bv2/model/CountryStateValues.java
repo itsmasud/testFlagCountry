@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class CountryStateValues {
     private static final String TAG = "CountryStateValues";
 
-    @Json(name = "value")
-    private String value = null;
-
     @Json(name = "label")
-    private String label = null;
+    private String label;
+
+    @Json(name = "value")
+    private String value;
 
     public CountryStateValues() {
     }
 
-    public String getValue() {
-        return value;
-    }
-
     public String getLabel() {
         return label;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     /*-*****************************-*/

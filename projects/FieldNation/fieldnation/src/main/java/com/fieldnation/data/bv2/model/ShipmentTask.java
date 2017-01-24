@@ -10,7 +10,7 @@ public class ShipmentTask {
     private static final String TAG = "ShipmentTask";
 
     @Json(name = "id")
-    private Double id = null;
+    private Double id;
 
     public ShipmentTask() {
     }

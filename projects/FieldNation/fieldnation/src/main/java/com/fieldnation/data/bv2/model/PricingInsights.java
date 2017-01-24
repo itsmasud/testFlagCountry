@@ -10,7 +10,7 @@ public class PricingInsights {
     private static final String TAG = "PricingInsights";
 
     @Json(name = "region")
-    private PricingInsightsRegion region = null;
+    private PricingInsightsRegion region;
 
     public PricingInsights() {
     }

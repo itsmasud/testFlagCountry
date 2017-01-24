@@ -9,48 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class ScheduleServiceWindow {
     private static final String TAG = "ScheduleServiceWindow";
 
+    @Json(name = "mode")
+    private ModeEnum mode;
+
     @Json(name = "start")
-    private String start = null;
+    private Date start;
 
     @Json(name = "end")
-    private String end = null;
-
-    @Json(name = "mode")
-    private ModeEnum mode = null;
-
-    public enum ModeEnum {
-        @Json(name = "hours")
-        HOURS("hours"),
-        @Json(name = "between")
-        BETWEEN("between"),
-        @Json(name = "exact")
-        EXACT("exact");
-
-        private String value;
-
-        ModeEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    private Date end;
 
     public ScheduleServiceWindow() {
     }
 
-    public String getStart() {
+    public ModeEnum getMode() {
+        return mode;
+    }
+
+    public Date getStart() {
         return start;
     }
 
-    public String getEnd() {
+    public Date getEnd() {
         return end;
-    }
-
-    public ModeEnum getMode() {
-        return mode;
     }
 
     /*-*****************************-*/

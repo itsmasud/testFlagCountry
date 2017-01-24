@@ -6,46 +6,30 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-/**
- * AttachmentFolder
- */
 public class AttachmentFolder {
     private static final String TAG = "AttachmentFolder";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "type")
-    private TypeEnum type = null;
+    @Json(name = "task")
+    private Task task;
 
     @Json(name = "name")
-    private String name = null;
+    private String name;
 
-    @Json(name = "notes")
-    private String notes = null;
+    @Json(name = "id")
+    private Integer id;
 
-    @Json(name = "task")
-    private Task task = null;
-
-    public enum TypeEnum {
-        @Json(name = "slot")
-        SLOT("slot"),
-        @Json(name = "document")
-        DOCUMENT("document");
-
-        private String value;
-
-        TypeEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "type")
+    private TypeEnum type;
 
     public AttachmentFolder() {
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Integer getId() {
@@ -54,18 +38,6 @@ public class AttachmentFolder {
 
     public TypeEnum getType() {
         return type;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public Task getTask() {
-        return task;
     }
 
     /*-*****************************-*/
@@ -93,4 +65,3 @@ public class AttachmentFolder {
         }
     }
 }
-

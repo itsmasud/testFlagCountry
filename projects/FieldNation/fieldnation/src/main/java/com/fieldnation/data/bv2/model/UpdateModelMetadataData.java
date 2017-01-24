@@ -10,22 +10,22 @@ public class UpdateModelMetadataData {
     private static final String TAG = "UpdateModelMetadataData";
 
     @Json(name = "route")
-    private String route = null;
+    private String route;
 
     @Json(name = "role")
-    private String role = null;
-
-    @Json(name = "user_id")
-    private Integer userId = null;
+    private String role;
 
     @Json(name = "company_id")
-    private Integer companyId = null;
+    private Integer companyId;
+
+    @Json(name = "user_id")
+    private Integer userId;
 
     @Json(name = "group_id")
-    private Integer groupId = null;
+    private Integer groupId;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId = null;
+    private Integer workOrderId;
 
     public UpdateModelMetadataData() {
     }
@@ -38,12 +38,12 @@ public class UpdateModelMetadataData {
         return role;
     }
 
-    public Integer getUserId() {
-        return userId;
-    }
-
     public Integer getCompanyId() {
         return companyId;
+    }
+
+    public Integer getUserId() {
+        return userId;
     }
 
     public Integer getGroupId() {

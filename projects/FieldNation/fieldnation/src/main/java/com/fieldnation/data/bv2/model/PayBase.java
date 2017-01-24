@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class PayBase {
     private static final String TAG = "PayBase";
 
-    @Json(name = "units")
-    private Double units = null;
-
     @Json(name = "amount")
-    private Double amount = null;
+    private Double amount;
+
+    @Json(name = "units")
+    private Double units;
 
     public PayBase() {
     }
 
-    public Double getUnits() {
-        return units;
-    }
-
     public Double getAmount() {
         return amount;
+    }
+
+    public Double getUnits() {
+        return units;
     }
 
     /*-*****************************-*/

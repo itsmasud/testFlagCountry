@@ -9,11 +9,11 @@ import com.fieldnation.fnlog.Log;
 public class Contacts {
     private static final String TAG = "Contacts";
 
-    @Json(name = "correlation_id")
-    private String correlationId = null;
-
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
+
+    @Json(name = "correlation_id")
+    private String correlationId;
 
     @Json(name = "results")
     private Contact[] results;
@@ -24,12 +24,12 @@ public class Contacts {
     public Contacts() {
     }
 
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
     public ListEnvelope getMetadata() {
         return metadata;
+    }
+
+    public String getCorrelationId() {
+        return correlationId;
     }
 
     public Contact[] getResults() {

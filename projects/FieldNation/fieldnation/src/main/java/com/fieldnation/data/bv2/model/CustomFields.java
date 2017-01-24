@@ -10,7 +10,7 @@ public class CustomFields {
     private static final String TAG = "CustomFields";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private CustomFieldCategory[] results;
@@ -51,4 +51,3 @@ public class CustomFields {
         }
     }
 }
-

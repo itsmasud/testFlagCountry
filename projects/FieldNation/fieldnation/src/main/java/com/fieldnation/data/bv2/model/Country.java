@@ -9,40 +9,36 @@ import com.fieldnation.fnlog.Log;
 public class Country {
     private static final String TAG = "Country";
 
-    @Json(name = "name")
-    private String name = null;
+    @Json(name = "zip")
+    private CountryAddress1 zip;
 
     @Json(name = "iso")
-    private String iso = null;
-
-    @Json(name = "address1")
-    private CountryAddress1 address1 = null;
+    private String iso;
 
     @Json(name = "address2")
-    private CountryAddress1 address2 = null;
+    private CountryAddress1 address2;
 
     @Json(name = "city")
-    private CountryAddress1 city = null;
+    private CountryAddress1 city;
+
+    @Json(name = "address1")
+    private CountryAddress1 address1;
+
+    @Json(name = "name")
+    private String name;
 
     @Json(name = "state")
-    private CountryState state = null;
-
-    @Json(name = "zip")
-    private CountryAddress1 zip = null;
+    private CountryState state;
 
     public Country() {
     }
 
-    public String getName() {
-        return name;
+    public CountryAddress1 getZip() {
+        return zip;
     }
 
     public String getIso() {
         return iso;
-    }
-
-    public CountryAddress1 getAddress1() {
-        return address1;
     }
 
     public CountryAddress1 getAddress2() {
@@ -53,12 +49,16 @@ public class Country {
         return city;
     }
 
-    public CountryState getState() {
-        return state;
+    public CountryAddress1 getAddress1() {
+        return address1;
     }
 
-    public CountryAddress1 getZip() {
-        return zip;
+    public String getName() {
+        return name;
+    }
+
+    public CountryState getState() {
+        return state;
     }
 
     /*-*****************************-*/
@@ -86,4 +86,3 @@ public class Country {
         }
     }
 }
-

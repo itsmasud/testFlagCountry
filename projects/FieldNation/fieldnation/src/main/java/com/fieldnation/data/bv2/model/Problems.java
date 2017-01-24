@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class Problems {
     private static final String TAG = "Problems";
 
-    @Json(name = "problem_id")
-    private Integer problemId = null;
-
-    @Json(name = "reason")
-    private String reason = null;
-
     @Json(name = "next")
     private ProblemsNext[] next;
+
+    @Json(name = "reason")
+    private String reason;
+
+    @Json(name = "problem_id")
+    private Integer problemId;
 
     public Problems() {
     }
 
-    public Integer getProblemId() {
-        return problemId;
+    public ProblemsNext[] getNext() {
+        return next;
     }
 
     public String getReason() {
         return reason;
     }
 
-    public ProblemsNext[] getNext() {
-        return next;
+    public Integer getProblemId() {
+        return problemId;
     }
 
     /*-*****************************-*/

@@ -6,81 +6,65 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-/**
- * Attachment
- */
 public class Attachment {
     private static final String TAG = "Attachment";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "folder_id")
-    private Integer folderId = null;
+    @Json(name = "status_description")
+    private String statusDescription;
 
     @Json(name = "file")
-    private String file = null;
+    private File file;
 
-    @Json(name = "created")
-    private String created = null;
-
-    @Json(name = "author")
-    private User author = null;
-
-    @Json(name = "reviewer")
-    private User reviewer = null;
-
-    @Json(name = "status")
-    private StatusEnum status = null;
-
-    @Json(name = "status_description")
-    private String statusDescription = null;
-
-    @Json(name = "show_before_assignment")
-    private Boolean showBeforeAssignment = null;
+    @Json(name = "notes")
+    private String notes;
 
     @Json(name = "task")
-    private Task task = null;
+    private Task task;
+
+    @Json(name = "created")
+    private Date created;
+
+    @Json(name = "author")
+    private User author;
+
+    @Json(name = "show_before_assignment")
+    private Boolean showBeforeAssignment;
 
     @Json(name = "reviewed")
-    private String reviewed = null;
+    private Date reviewed;
 
-    public enum StatusEnum {
-        @Json(name = "pending")
-        PENDING("pending"),
-        @Json(name = "approved")
-        APPROVED("approved"),
-        @Json(name = "denied")
-        DENIED("denied");
+    @Json(name = "id")
+    private Integer id;
 
-        private String value;
+    @Json(name = "reviewer")
+    private User reviewer;
 
-        StatusEnum(String value) {
-            this.value = value;
-        }
+    @Json(name = "folder_id")
+    private Integer folderId;
 
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    @Json(name = "status")
+    private StatusEnum status;
 
     public Attachment() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getStatusDescription() {
+        return statusDescription;
     }
 
-    public Integer getFolderId() {
-        return folderId;
-    }
-
-    public String getFile() {
+    public File getFile() {
         return file;
     }
 
-    public String getCreated() {
+    public String getNotes() {
+        return notes;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public Date getCreated() {
         return created;
     }
 
@@ -88,28 +72,28 @@ public class Attachment {
         return author;
     }
 
-    public User getReviewer() {
-        return reviewer;
-    }
-
-    public StatusEnum getStatus() {
-        return status;
-    }
-
-    public String getStatusDescription() {
-        return statusDescription;
-    }
-
     public Boolean getShowBeforeAssignment() {
         return showBeforeAssignment;
     }
 
-    public Task getTask() {
-        return task;
+    public Date getReviewed() {
+        return reviewed;
     }
 
-    public String getReviewed() {
-        return reviewed;
+    public Integer getId() {
+        return id;
+    }
+
+    public User getReviewer() {
+        return reviewer;
+    }
+
+    public Integer getFolderId() {
+        return folderId;
+    }
+
+    public StatusEnum getStatus() {
+        return status;
     }
 
     /*-*****************************-*/
@@ -137,4 +121,3 @@ public class Attachment {
         }
     }
 }
-

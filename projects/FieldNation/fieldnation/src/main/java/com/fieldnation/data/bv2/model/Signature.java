@@ -9,40 +9,56 @@ import com.fieldnation.fnlog.Log;
 public class Signature {
     private static final String TAG = "Signature";
 
-    @Json(name = "name")
-    private String name = null;
-
-    @Json(name = "format")
-    private String format = null;
-
     @Json(name = "closing_notes")
-    private String closingNotes = null;
+    private String closingNotes;
+
+    @Json(name = "task")
+    private Task task;
 
     @Json(name = "data")
-    private String data = null;
-
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "hash")
-    private String hash = null;
+    private String data;
 
     @Json(name = "created")
-    private String created = null;
+    private Date created;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "format")
+    private String format;
+
+    @Json(name = "id")
+    private Integer id;
 
     @Json(name = "worklog")
-    private String worklog = null;
+    private String worklog;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone = null;
+    private TimeZone timeZone;
 
     @Json(name = "actions")
     private String[] actions;
 
-    @Json(name = "task")
-    private Task task = null;
+    @Json(name = "hash")
+    private String hash;
 
     public Signature() {
+    }
+
+    public String getClosingNotes() {
+        return closingNotes;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public String getData() {
+        return data;
+    }
+
+    public Date getCreated() {
+        return created;
     }
 
     public String getName() {
@@ -53,24 +69,8 @@ public class Signature {
         return format;
     }
 
-    public String getClosingNotes() {
-        return closingNotes;
-    }
-
-    public String getData() {
-        return data;
-    }
-
     public Integer getId() {
         return id;
-    }
-
-    public String getHash() {
-        return hash;
-    }
-
-    public String getCreated() {
-        return created;
     }
 
     public String getWorklog() {
@@ -85,8 +85,8 @@ public class Signature {
         return actions;
     }
 
-    public Task getTask() {
-        return task;
+    public String getHash() {
+        return hash;
     }
 
     /*-*****************************-*/

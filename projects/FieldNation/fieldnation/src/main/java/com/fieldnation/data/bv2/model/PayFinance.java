@@ -9,35 +9,35 @@ import com.fieldnation.fnlog.Log;
 public class PayFinance {
     private static final String TAG = "PayFinance";
 
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "terms")
-    private String terms = null;
-
-    @Json(name = "description")
-    private String description = null;
+    private String terms;
 
     @Json(name = "limit")
-    private Double limit = null;
+    private Double limit;
+
+    @Json(name = "description")
+    private String description;
+
+    @Json(name = "id")
+    private Integer id;
 
     public PayFinance() {
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public String getTerms() {
         return terms;
     }
 
+    public Double getLimit() {
+        return limit;
+    }
+
     public String getDescription() {
         return description;
     }
 
-    public Double getLimit() {
-        return limit;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class AvailableColumn {
     private static final String TAG = "AvailableColumn";
 
-    @Json(name = "group")
-    private String group = null;
-
     @Json(name = "items")
     private AvailableColumnItems[] items;
 
-    private AvailableColumn() {
-    }
+    @Json(name = "group")
+    private String group;
 
-    public String getGroup() {
-        return group;
+    public AvailableColumn() {
     }
 
     public AvailableColumnItems[] getItems() {
         return items;
+    }
+
+    public String getGroup() {
+        return group;
     }
 
     /*-*****************************-*/

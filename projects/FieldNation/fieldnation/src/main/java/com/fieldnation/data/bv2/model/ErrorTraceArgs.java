@@ -10,10 +10,10 @@ public class ErrorTraceArgs {
     private static final String TAG = "ErrorTraceArgs";
 
     @Json(name = "status_code")
-    private Integer statusCode = null;
+    private Integer statusCode;
 
     @Json(name = "message")
-    private String message = null;
+    private String message;
 
     public ErrorTraceArgs() {
     }
@@ -51,4 +51,3 @@ public class ErrorTraceArgs {
         }
     }
 }
-

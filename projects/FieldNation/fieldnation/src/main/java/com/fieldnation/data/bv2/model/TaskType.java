@@ -10,13 +10,13 @@ public class TaskType {
     private static final String TAG = "TaskType";
 
     @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "key")
-    private String key = null;
+    private Integer id;
 
     @Json(name = "title")
-    private String title = null;
+    private String title;
+
+    @Json(name = "key")
+    private String key;
 
     public TaskType() {
     }
@@ -25,12 +25,12 @@ public class TaskType {
         return id;
     }
 
-    public String getKey() {
-        return key;
-    }
-
     public String getTitle() {
         return title;
+    }
+
+    public String getKey() {
+        return key;
     }
 
     /*-*****************************-*/

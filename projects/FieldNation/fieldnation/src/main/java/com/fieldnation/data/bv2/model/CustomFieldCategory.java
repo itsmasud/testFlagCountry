@@ -10,16 +10,16 @@ public class CustomFieldCategory {
     private static final String TAG = "CustomFieldCategory";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
-
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "name")
-    private String name = null;
+    private ListEnvelope metadata;
 
     @Json(name = "role")
-    private String role = null;
+    private String role;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     @Json(name = "results")
     private CustomField[] results;
@@ -31,16 +31,16 @@ public class CustomFieldCategory {
         return metadata;
     }
 
-    public Integer getId() {
-        return id;
+    public String getRole() {
+        return role;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getRole() {
-        return role;
+    public Integer getId() {
+        return id;
     }
 
     public CustomField[] getResults() {
@@ -72,4 +72,3 @@ public class CustomFieldCategory {
         }
     }
 }
-

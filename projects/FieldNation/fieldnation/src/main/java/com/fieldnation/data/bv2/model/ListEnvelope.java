@@ -9,94 +9,53 @@ import com.fieldnation.fnlog.Log;
 public class ListEnvelope {
     private static final String TAG = "ListEnvelope";
 
-    @Json(name = "total")
-    private Integer total = null;
+    @Json(name = "per_page")
+    private Integer perPage;
 
-    @Json(name = "page")
-    private Integer page = null;
+    @Json(name = "total")
+    private Integer total;
+
+    @Json(name = "view")
+    private ViewEnum view;
 
     @Json(name = "pages")
-    private Integer pages = null;
-
-    @Json(name = "per_page")
-    private Integer perPage = null;
+    private Integer pages;
 
     @Json(name = "columns")
-    private String columns = null;
+    private String columns;
 
     @Json(name = "available_columns")
     private AvailableColumn[] availableColumns;
 
-    @Json(name = "list")
-    private String list = null;
-
-    @Json(name = "view")
-    private ViewEnum view = null;
+    @Json(name = "page")
+    private Integer page;
 
     @Json(name = "sort")
-    private String sort = null;
+    private String sort;
+
+    @Json(name = "list")
+    private String list;
 
     @Json(name = "order")
-    private OrderEnum order = null;
-
-
-    public enum ViewEnum {
-        @Json(name = "map")
-        MAP("map"),
-        @Json(name = "list")
-        LIST("list"),
-        @Json(name = "schedule")
-        SCHEDULE("schedule"),
-        @Json(name = "card")
-        CARD("card");
-
-        private String value;
-
-        ViewEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
-    public enum OrderEnum {
-        @Json(name = "asc")
-        ASC("asc"),
-        @Json(name = "desc")
-        DESC("desc");
-
-        private String value;
-
-        OrderEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    private OrderEnum order;
 
     public ListEnvelope() {
+    }
+
+    public Integer getPerPage() {
+        return perPage;
     }
 
     public Integer getTotal() {
         return total;
     }
 
-    public Integer getPage() {
-        return page;
+    public ViewEnum getView() {
+        return view;
     }
 
     public Integer getPages() {
         return pages;
-    }
-
-    public Integer getPerPage() {
-        return perPage;
     }
 
     public String getColumns() {
@@ -107,16 +66,16 @@ public class ListEnvelope {
         return availableColumns;
     }
 
-    public String getList() {
-        return list;
-    }
-
-    public ViewEnum getView() {
-        return view;
+    public Integer getPage() {
+        return page;
     }
 
     public String getSort() {
         return sort;
+    }
+
+    public String getList() {
+        return list;
     }
 
     public OrderEnum getOrder() {
@@ -148,4 +107,3 @@ public class ListEnvelope {
         }
     }
 }
-

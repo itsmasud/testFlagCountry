@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class MessageProblemType {
     private static final String TAG = "MessageProblemType";
 
-    @Json(name = "id")
-    private Integer id = null;
-
     @Json(name = "description")
-    private String description = null;
+    private String description;
+
+    @Json(name = "id")
+    private Integer id;
 
     public MessageProblemType() {
     }
 
-    public Integer getId() {
-        return id;
-    }
-
     public String getDescription() {
         return description;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/
@@ -51,4 +51,3 @@ public class MessageProblemType {
         }
     }
 }
-

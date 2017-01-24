@@ -9,21 +9,21 @@ import com.fieldnation.fnlog.Log;
 public class CountryAddress1 {
     private static final String TAG = "CountryAddress1";
 
-    @Json(name = "required")
-    private Boolean required = null;
-
     @Json(name = "label")
-    private String label = null;
+    private String label;
+
+    @Json(name = "required")
+    private Boolean required;
 
     public CountryAddress1() {
     }
 
-    public Boolean getRequired() {
-        return required;
-    }
-
     public String getLabel() {
         return label;
+    }
+
+    public Boolean getRequired() {
+        return required;
     }
 
     /*-*****************************-*/

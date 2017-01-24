@@ -10,10 +10,10 @@ public class Local {
     private static final String TAG = "Local";
 
     @Json(name = "date")
-    private String date = null;
+    private String date;
 
     @Json(name = "time")
-    private String time = null;
+    private String time;
 
     public Local() {
     }

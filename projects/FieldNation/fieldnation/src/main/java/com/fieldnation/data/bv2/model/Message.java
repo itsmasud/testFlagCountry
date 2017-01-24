@@ -9,40 +9,64 @@ import com.fieldnation.fnlog.Log;
 public class Message {
     private static final String TAG = "Message";
 
-    @Json(name = "from")
-    private MessageFrom from = null;
-
-    @Json(name = "to")
-    private MessageTo to = null;
-
     @Json(name = "role")
-    private String role = null;
-
-    @Json(name = "msg_id")
-    private Integer msgId = null;
-
-    @Json(name = "parent_id")
-    private Boolean parentId = null;
+    private String role;
 
     @Json(name = "read")
-    private Boolean read = null;
-
-    @Json(name = "created")
-    private TimeLogsConfirmed created = null;
-
-    @Json(name = "message")
-    private String message = null;
+    private Boolean read;
 
     @Json(name = "problem")
-    private MessageProblem problem = null;
+    private MessageProblem problem;
+
+    @Json(name = "replies")
+    private Message replies;
+
+    @Json(name = "parent_id")
+    private Boolean parentId;
+
+    @Json(name = "created")
+    private Date created;
+
+    @Json(name = "from")
+    private MessageFrom from;
+
+    @Json(name = "to")
+    private MessageTo to;
+
+    @Json(name = "msg_id")
+    private Integer msgId;
+
+    @Json(name = "message")
+    private String message;
 
     @Json(name = "actions")
     private String[] actions;
 
-    @Json(name = "replies")
-    private Message replies = null;
-
     public Message() {
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public Boolean getRead() {
+        return read;
+    }
+
+    public MessageProblem getProblem() {
+        return problem;
+    }
+
+    public Message getReplies() {
+        return replies;
+    }
+
+    public Boolean getParentId() {
+        return parentId;
+    }
+
+    public Date getCreated() {
+        return created;
     }
 
     public MessageFrom getFrom() {
@@ -53,40 +77,16 @@ public class Message {
         return to;
     }
 
-    public String getRole() {
-        return role;
-    }
-
     public Integer getMsgId() {
         return msgId;
-    }
-
-    public Boolean getParentId() {
-        return parentId;
-    }
-
-    public Boolean getRead() {
-        return read;
-    }
-
-    public TimeLogsConfirmed getCreated() {
-        return created;
     }
 
     public String getMessage() {
         return message;
     }
 
-    public MessageProblem getProblem() {
-        return problem;
-    }
-
     public String[] getActions() {
         return actions;
-    }
-
-    public Message getReplies() {
-        return replies;
     }
 
     /*-*****************************-*/
@@ -114,4 +114,3 @@ public class Message {
         }
     }
 }
-

@@ -9,38 +9,38 @@ import com.fieldnation.fnlog.Log;
 public class PayFees {
     private static final String TAG = "PayFees";
 
-    @Json(name = "cancellation")
-    private Fee cancellation = null;
-
     @Json(name = "insurance")
-    private Fee insurance = null;
+    private Fee insurance;
 
-    @Json(name = "flat")
-    private Fee flat = null;
+    @Json(name = "cancellation")
+    private Fee cancellation;
 
     @Json(name = "provider")
-    private Fee provider = null;
+    private Fee provider;
+
+    @Json(name = "flat")
+    private Fee flat;
 
     @Json(name = "buyer")
-    private Fee buyer = null;
+    private Fee buyer;
 
     public PayFees() {
-    }
-
-    public Fee getCancellation() {
-        return cancellation;
     }
 
     public Fee getInsurance() {
         return insurance;
     }
 
-    public Fee getFlat() {
-        return flat;
+    public Fee getCancellation() {
+        return cancellation;
     }
 
     public Fee getProvider() {
         return provider;
+    }
+
+    public Fee getFlat() {
+        return flat;
     }
 
     public Fee getBuyer() {

@@ -10,35 +10,19 @@ public class Messages {
     private static final String TAG = "Messages";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
+
+    @Json(name = "problem_reported")
+    private Boolean problemReported;
+
+    @Json(name = "sum")
+    private Integer sum;
 
     @Json(name = "actions")
     private ActionsEnum[] actions;
 
     @Json(name = "results")
-    private Message results = null;
-
-    @Json(name = "sum")
-    private Integer sum = null;
-
-    @Json(name = "problem_reported")
-    private Boolean problemReported = null;
-
-    public enum ActionsEnum {
-        @Json(name = "add")
-        ADD("add");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
+    private Message results;
 
     public Messages() {
     }
@@ -47,20 +31,20 @@ public class Messages {
         return metadata;
     }
 
-    public ActionsEnum[] getActions() {
-        return actions;
-    }
-
-    public Message getResults() {
-        return results;
+    public Boolean getProblemReported() {
+        return problemReported;
     }
 
     public Integer getSum() {
         return sum;
     }
 
-    public Boolean getProblemReported() {
-        return problemReported;
+    public ActionsEnum[] getActions() {
+        return actions;
+    }
+
+    public Message getResults() {
+        return results;
     }
 
     /*-*****************************-*/
@@ -88,4 +72,3 @@ public class Messages {
         }
     }
 }
-

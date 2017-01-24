@@ -9,49 +9,49 @@ import com.fieldnation.fnlog.Log;
 public class Contact {
     private static final String TAG = "Contact";
 
-    @Json(name = "name")
-    private String name = null;
+    @Json(name = "ext")
+    private String ext;
 
     @Json(name = "role")
-    private String role = null;
-
-    @Json(name = "phone")
-    private String phone = null;
-
-    @Json(name = "ext")
-    private String ext = null;
-
-    @Json(name = "email")
-    private String email = null;
+    private String role;
 
     @Json(name = "notes")
-    private String notes = null;
+    private String notes;
+
+    @Json(name = "phone")
+    private String phone;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "email")
+    private String email;
 
     public Contact() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public String getPhone() {
-        return phone;
     }
 
     public String getExt() {
         return ext;
     }
 
-    public String getEmail() {
-        return email;
+    public String getRole() {
+        return role;
     }
 
     public String getNotes() {
         return notes;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     /*-*****************************-*/
@@ -79,4 +79,3 @@ public class Contact {
         }
     }
 }
-

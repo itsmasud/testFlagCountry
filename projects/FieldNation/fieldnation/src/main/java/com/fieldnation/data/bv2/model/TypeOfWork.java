@@ -9,28 +9,28 @@ import com.fieldnation.fnlog.Log;
 public class TypeOfWork {
     private static final String TAG = "TypeOfWork";
 
-    @Json(name = "id")
-    private Integer id = null;
+    @Json(name = "name")
+    private String name;
 
     @Json(name = "industry")
-    private String industry = null;
+    private String industry;
 
-    @Json(name = "name")
-    private String name = null;
+    @Json(name = "id")
+    private Integer id;
 
     public TypeOfWork() {
     }
 
-    public Integer getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     public String getIndustry() {
         return industry;
     }
 
-    public String getName() {
-        return name;
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

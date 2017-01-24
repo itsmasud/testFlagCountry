@@ -10,7 +10,7 @@ public class Pays {
     private static final String TAG = "Pays";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata = null;
+    private ListEnvelope metadata;
 
     @Json(name = "results")
     private Pay[] results;

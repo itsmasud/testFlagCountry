@@ -9,35 +9,35 @@ import com.fieldnation.fnlog.Log;
 public class UserPreferredGroups {
     private static final String TAG = "UserPreferredGroups";
 
-    @Json(name = "id")
-    private Integer id = null;
-
-    @Json(name = "name")
-    private String name = null;
-
     @Json(name = "notes")
-    private String notes = null;
+    private String notes;
 
     @Json(name = "created")
-    private String created = null;
+    private Date created;
+
+    @Json(name = "name")
+    private String name;
+
+    @Json(name = "id")
+    private Integer id;
 
     public UserPreferredGroups() {
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getNotes() {
         return notes;
     }
 
-    public String getCreated() {
+    public Date getCreated() {
         return created;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     /*-*****************************-*/

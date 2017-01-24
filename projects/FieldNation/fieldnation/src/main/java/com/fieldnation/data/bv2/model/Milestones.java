@@ -9,84 +9,84 @@ import com.fieldnation.fnlog.Log;
 public class Milestones {
     private static final String TAG = "Milestones";
 
-    @Json(name = "time_to_dispatch")
-    private Double timeToDispatch = null;
-
-    @Json(name = "time_to_work_done")
-    private Double timeToWorkDone = null;
-
-    @Json(name = "time_alive")
-    private Double timeAlive = null;
-
-    @Json(name = "created")
-    private MilestonesCreated created = null;
-
-    @Json(name = "published")
-    private MilestonesCreated published = null;
-
     @Json(name = "routed")
-    private MilestonesCreated routed = null;
-
-    @Json(name = "assigned")
-    private MilestonesCreated assigned = null;
-
-    @Json(name = "workdone")
-    private MilestonesCreated workdone = null;
-
-    @Json(name = "approved")
-    private MilestonesCreated approved = null;
-
-    @Json(name = "paid")
-    private MilestonesCreated paid = null;
+    private Date routed;
 
     @Json(name = "canceled")
-    private MilestonesCreated canceled = null;
+    private Date canceled;
+
+    @Json(name = "approved")
+    private Date approved;
+
+    @Json(name = "time_to_work_done")
+    private Double timeToWorkDone;
+
+    @Json(name = "created")
+    private Date created;
+
+    @Json(name = "time_to_dispatch")
+    private Double timeToDispatch;
+
+    @Json(name = "paid")
+    private Date paid;
+
+    @Json(name = "workdone")
+    private Date workdone;
+
+    @Json(name = "assigned")
+    private Date assigned;
+
+    @Json(name = "published")
+    private Date published;
+
+    @Json(name = "time_alive")
+    private Double timeAlive;
 
     public Milestones() {
     }
 
-    public Double getTimeToDispatch() {
-        return timeToDispatch;
+    public Date getRouted() {
+        return routed;
+    }
+
+    public Date getCanceled() {
+        return canceled;
+    }
+
+    public Date getApproved() {
+        return approved;
     }
 
     public Double getTimeToWorkDone() {
         return timeToWorkDone;
     }
 
-    public Double getTimeAlive() {
-        return timeAlive;
-    }
-
-    public MilestonesCreated getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public MilestonesCreated getPublished() {
-        return published;
+    public Double getTimeToDispatch() {
+        return timeToDispatch;
     }
 
-    public MilestonesCreated getRouted() {
-        return routed;
-    }
-
-    public MilestonesCreated getAssigned() {
-        return assigned;
-    }
-
-    public MilestonesCreated getWorkdone() {
-        return workdone;
-    }
-
-    public MilestonesCreated getApproved() {
-        return approved;
-    }
-
-    public MilestonesCreated getPaid() {
+    public Date getPaid() {
         return paid;
     }
 
-    public MilestonesCreated getCanceled() {
-        return canceled;
+    public Date getWorkdone() {
+        return workdone;
+    }
+
+    public Date getAssigned() {
+        return assigned;
+    }
+
+    public Date getPublished() {
+        return published;
+    }
+
+    public Double getTimeAlive() {
+        return timeAlive;
     }
 
     /*-*****************************-*/
