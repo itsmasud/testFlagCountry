@@ -43,6 +43,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private static final String STATE_CUSTOM_FIELD_TEXT = "CustomFieldDialog:STATE_CUSTOM_FIELD_TEXT";
     private static final String STATE_CUSTOM_FIELD_NUMBER = "CustomFieldDialog:STATE_CUSTOM_FIELD_NUMBER";
     private static final String STATE_CUSTOM_FIELD_PHONE_NUMBER = "CustomFieldDialog:STATE_CUSTOM_FIELD_PHONE_NUMBER";
+    private static final String STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED = "CustomFieldDialog:STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED";
 
     // UI
     private TextView _titleTextView;
@@ -63,7 +64,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private Listener _listener;
     private Calendar _pickerCal;
     private Calendar _expirationDate;
-    private int _itemSelectedPosition;
+    private int _itemSelectedPosition = -1;
     private String _customFieldDateData;
     private String _customFieldDateTimeData;
     private String _customFieldTimeData;
@@ -105,6 +106,9 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_PHONE_NUMBER))
                 _customFieldPhoneNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_PHONE_NUMBER);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED))
+                _itemSelectedPosition = savedInstanceState.getInt(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED);
 
 
         }
@@ -162,6 +166,13 @@ public class CustomFieldDialog extends DialogFragmentBase {
                         _textEditText.setText(_customFieldPhoneNumberData);
                     }
                     break;
+
+                case LIST:
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED)) {
+                        _itemSelectedPosition = savedInstanceState.getInt(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED);
+                    }
+                    break;
+
             }
 
         }
@@ -210,6 +221,11 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
                     _customFieldPhoneNumberData = _textEditText.getText().toString();
                     outState.putString(STATE_CUSTOM_FIELD_PHONE_NUMBER, _customFieldPhoneNumberData);
+                }
+                break;
+            case LIST:
+                if (_itemSelectedPosition != -1) {
+                    outState.putInt(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED, _itemSelectedPosition);
                 }
                 break;
         }
@@ -286,6 +302,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     public void show(CustomField customField) {
         _customField = customField;
+        _itemSelectedPosition = -1;
         super.show();
     }
 
@@ -414,11 +431,13 @@ public class CustomFieldDialog extends DialogFragmentBase {
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
                                 _spinner.setSelection(i);
-                                _itemSelectedPosition = i;
                                 break;
                             }
                         }
                     }
+                    if (_itemSelectedPosition != -1)
+                        _spinner.setSelection(_itemSelectedPosition);
+
                 }
                 break;
         }
