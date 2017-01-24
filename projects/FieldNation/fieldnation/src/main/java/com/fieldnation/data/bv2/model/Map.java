@@ -1,5 +1,6 @@
 package com.fieldnation.data.bv2.model;
 
+import com.fieldnation.data.bv2.client.WorkOrderListQuery;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
