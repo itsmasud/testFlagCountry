@@ -10,174 +10,174 @@ public class Task {
     private static final String TAG = "Task";
 
     @Json(name = "closing_notes")
-    private String closingNotes;
+    private String _closingNotes;
 
     @Json(name = "custom_field")
-    private CustomField customField;
+    private CustomField _customField;
 
     @Json(name = "attachments")
-    private Attachment[] attachments;
+    private Attachment[] _attachments;
 
     @Json(name = "shipment")
-    private Shipment shipment;
+    private Shipment _shipment;
 
     @Json(name = "signature")
-    private Signature signature;
+    private Signature _signature;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "author")
-    private User author;
+    private User _author;
 
     @Json(name = "check_in")
-    private CheckInOut checkIn;
+    private CheckInOut _checkIn;
 
     @Json(name = "ready_to_go")
-    private Boolean readyToGo;
+    private Boolean _readyToGo;
 
     @Json(name = "label")
-    private String label;
+    private String _label;
 
     @Json(name = "completed")
-    private Boolean completed;
+    private Boolean _completed;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "type")
-    private TaskType type;
+    private TaskType _type;
 
     @Json(name = "confirmed")
-    private Boolean confirmed;
+    private Boolean _confirmed;
 
     @Json(name = "on_my_way")
-    private OnMyWay onMyWay;
+    private OnMyWay _onMyWay;
 
     @Json(name = "alerts")
-    private TaskAlert[] alerts;
+    private TaskAlert[] _alerts;
 
     @Json(name = "check_out")
-    private CheckInOut checkOut;
+    private CheckInOut _checkOut;
 
     @Json(name = "attachment")
-    private Attachment attachment;
+    private Attachment _attachment;
 
     @Json(name = "phone")
-    private String phone;
+    private String _phone;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     @Json(name = "value")
-    private String value;
+    private String _value;
 
     @Json(name = "email")
-    private String email;
+    private String _email;
 
     @Json(name = "group")
-    private TaskGroup group;
+    private TaskGroup _group;
 
     public Task() {
     }
 
     public String getClosingNotes() {
-        return closingNotes;
+        return _closingNotes;
     }
 
     public CustomField getCustomField() {
-        return customField;
+        return _customField;
     }
 
     public Attachment[] getAttachments() {
-        return attachments;
+        return _attachments;
     }
 
     public Shipment getShipment() {
-        return shipment;
+        return _shipment;
     }
 
     public Signature getSignature() {
-        return signature;
+        return _signature;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public User getAuthor() {
-        return author;
+        return _author;
     }
 
     public CheckInOut getCheckIn() {
-        return checkIn;
+        return _checkIn;
     }
 
     public Boolean getReadyToGo() {
-        return readyToGo;
+        return _readyToGo;
     }
 
     public String getLabel() {
-        return label;
+        return _label;
     }
 
     public Boolean getCompleted() {
-        return completed;
+        return _completed;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public TaskType getType() {
-        return type;
+        return _type;
     }
 
     public Boolean getConfirmed() {
-        return confirmed;
+        return _confirmed;
     }
 
     public OnMyWay getOnMyWay() {
-        return onMyWay;
+        return _onMyWay;
     }
 
     public TaskAlert[] getAlerts() {
-        return alerts;
+        return _alerts;
     }
 
     public CheckInOut getCheckOut() {
-        return checkOut;
+        return _checkOut;
     }
 
     public Attachment getAttachment() {
-        return attachment;
+        return _attachment;
     }
 
     public String getPhone() {
-        return phone;
+        return _phone;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public String getValue() {
-        return value;
+        return _value;
     }
 
     public String getEmail() {
-        return email;
+        return _email;
     }
 
     public TaskGroup getGroup() {
-        return group;
+        return _group;
     }
 
     /*-*****************************-*/
@@ -187,7 +187,7 @@ public class Task {
         try {
             return Unserializer.unserializeObject(Task.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -200,7 +200,7 @@ public class Task {
         try {
             return Serializer.serializeObject(task);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

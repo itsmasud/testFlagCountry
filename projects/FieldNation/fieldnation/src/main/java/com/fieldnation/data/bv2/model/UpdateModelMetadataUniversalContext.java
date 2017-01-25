@@ -10,13 +10,13 @@ public class UpdateModelMetadataUniversalContext {
     private static final String TAG = "UpdateModelMetadataUniversalContext";
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     public UpdateModelMetadataUniversalContext() {
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class UpdateModelMetadataUniversalContext {
         try {
             return Unserializer.unserializeObject(UpdateModelMetadataUniversalContext.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class UpdateModelMetadataUniversalContext {
         try {
             return Serializer.serializeObject(updateModelMetadataUniversalContext);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

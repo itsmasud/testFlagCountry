@@ -10,27 +10,27 @@ public class UserUpcomingSchedule {
     private static final String TAG = "UserUpcomingSchedule";
 
     @Json(name = "date")
-    private String date;
+    private String _date;
 
     @Json(name = "from")
-    private String from;
+    private String _from;
 
     @Json(name = "to")
-    private String to;
+    private String _to;
 
     public UserUpcomingSchedule() {
     }
 
     public String getDate() {
-        return date;
+        return _date;
     }
 
     public String getFrom() {
-        return from;
+        return _from;
     }
 
     public String getTo() {
-        return to;
+        return _to;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class UserUpcomingSchedule {
         try {
             return Unserializer.unserializeObject(UserUpcomingSchedule.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class UserUpcomingSchedule {
         try {
             return Serializer.serializeObject(userUpcomingSchedule);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

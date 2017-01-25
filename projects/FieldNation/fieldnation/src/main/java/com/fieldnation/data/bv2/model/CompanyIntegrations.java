@@ -10,20 +10,20 @@ public class CompanyIntegrations {
     private static final String TAG = "CompanyIntegrations";
 
     @Json(name = "envelope")
-    private ListEnvelope envelope;
+    private ListEnvelope _envelope;
 
     @Json(name = "results")
-    private CompanyIntegration[] results;
+    private CompanyIntegration[] _results;
 
     public CompanyIntegrations() {
     }
 
     public ListEnvelope getEnvelope() {
-        return envelope;
+        return _envelope;
     }
 
     public CompanyIntegration[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class CompanyIntegrations {
         try {
             return Unserializer.unserializeObject(CompanyIntegrations.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class CompanyIntegrations {
         try {
             return Serializer.serializeObject(companyIntegrations);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

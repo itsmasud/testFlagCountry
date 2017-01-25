@@ -10,20 +10,20 @@ public class PayIncreases {
     private static final String TAG = "PayIncreases";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private PayIncrease[] results;
+    private PayIncrease[] _results;
 
     public PayIncreases() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public PayIncrease[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class PayIncreases {
         try {
             return Unserializer.unserializeObject(PayIncreases.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class PayIncreases {
         try {
             return Serializer.serializeObject(payIncreases);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

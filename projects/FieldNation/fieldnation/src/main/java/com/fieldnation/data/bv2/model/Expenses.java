@@ -10,20 +10,20 @@ public class Expenses {
     private static final String TAG = "Expenses";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private Expense[] results;
+    private Expense[] _results;
 
     public Expenses() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public Expense[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class Expenses {
         try {
             return Unserializer.unserializeObject(Expenses.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class Expenses {
         try {
             return Serializer.serializeObject(expenses);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

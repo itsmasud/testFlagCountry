@@ -10,20 +10,20 @@ public class PayBase {
     private static final String TAG = "PayBase";
 
     @Json(name = "amount")
-    private Double amount;
+    private Double _amount;
 
     @Json(name = "units")
-    private Double units;
+    private Double _units;
 
     public PayBase() {
     }
 
     public Double getAmount() {
-        return amount;
+        return _amount;
     }
 
     public Double getUnits() {
-        return units;
+        return _units;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class PayBase {
         try {
             return Unserializer.unserializeObject(PayBase.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class PayBase {
         try {
             return Serializer.serializeObject(payBase);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

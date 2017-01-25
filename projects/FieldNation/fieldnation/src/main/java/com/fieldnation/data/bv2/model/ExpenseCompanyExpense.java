@@ -10,34 +10,34 @@ public class ExpenseCompanyExpense {
     private static final String TAG = "ExpenseCompanyExpense";
 
     @Json(name = "api_code")
-    private String apiCode;
+    private String _apiCode;
 
     @Json(name = "expense_amount")
-    private Double expenseAmount;
+    private Double _expenseAmount;
 
     @Json(name = "hidden_tags")
-    private String hiddenTags;
+    private String _hiddenTags;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public ExpenseCompanyExpense() {
     }
 
     public String getApiCode() {
-        return apiCode;
+        return _apiCode;
     }
 
     public Double getExpenseAmount() {
-        return expenseAmount;
+        return _expenseAmount;
     }
 
     public String getHiddenTags() {
-        return hiddenTags;
+        return _hiddenTags;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class ExpenseCompanyExpense {
         try {
             return Unserializer.unserializeObject(ExpenseCompanyExpense.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class ExpenseCompanyExpense {
         try {
             return Serializer.serializeObject(expenseCompanyExpense);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

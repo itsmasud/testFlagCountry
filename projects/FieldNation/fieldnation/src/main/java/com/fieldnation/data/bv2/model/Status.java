@@ -10,34 +10,34 @@ public class Status {
     private static final String TAG = "Status";
 
     @Json(name = "display")
-    private String display;
+    private String _display;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "publish_stats")
-    private StatusPublishStats publishStats;
+    private StatusPublishStats _publishStats;
 
     public Status() {
     }
 
     public String getDisplay() {
-        return display;
+        return _display;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public StatusPublishStats getPublishStats() {
-        return publishStats;
+        return _publishStats;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class Status {
         try {
             return Unserializer.unserializeObject(Status.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class Status {
         try {
             return Serializer.serializeObject(status);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

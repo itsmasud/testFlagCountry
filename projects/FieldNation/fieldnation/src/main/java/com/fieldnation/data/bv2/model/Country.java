@@ -10,55 +10,55 @@ public class Country {
     private static final String TAG = "Country";
 
     @Json(name = "zip")
-    private CountryAddress1 zip;
+    private CountryZip _zip;
 
     @Json(name = "iso")
-    private String iso;
+    private String _iso;
 
     @Json(name = "address2")
-    private CountryAddress1 address2;
+    private CountryAddress2 _address2;
 
     @Json(name = "city")
-    private CountryAddress1 city;
+    private CountryCity _city;
 
     @Json(name = "address1")
-    private CountryAddress1 address1;
+    private CountryAddress1 _address1;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "state")
-    private CountryState state;
+    private CountryState _state;
 
     public Country() {
     }
 
-    public CountryAddress1 getZip() {
-        return zip;
+    public CountryZip getZip() {
+        return _zip;
     }
 
     public String getIso() {
-        return iso;
+        return _iso;
     }
 
-    public CountryAddress1 getAddress2() {
-        return address2;
+    public CountryAddress2 getAddress2() {
+        return _address2;
     }
 
-    public CountryAddress1 getCity() {
-        return city;
+    public CountryCity getCity() {
+        return _city;
     }
 
     public CountryAddress1 getAddress1() {
-        return address1;
+        return _address1;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public CountryState getState() {
-        return state;
+        return _state;
     }
 
     /*-*****************************-*/
@@ -68,7 +68,7 @@ public class Country {
         try {
             return Unserializer.unserializeObject(Country.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -81,7 +81,7 @@ public class Country {
         try {
             return Serializer.serializeObject(country);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

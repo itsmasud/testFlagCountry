@@ -10,69 +10,69 @@ public class CompanyIntegration {
     private static final String TAG = "CompanyIntegration";
 
     @Json(name = "api_pass")
-    private String apiPass;
+    private String _apiPass;
 
     @Json(name = "company_id")
-    private String companyId;
+    private String _companyId;
 
     @Json(name = "api_key")
-    private String apiKey;
+    private String _apiKey;
 
     @Json(name = "external_api_integration_id")
-    private String externalApiIntegrationId;
+    private String _externalApiIntegrationId;
 
     @Json(name = "disable_notifications")
-    private Boolean disableNotifications;
+    private Boolean _disableNotifications;
 
     @Json(name = "active")
-    private Boolean active;
+    private Boolean _active;
 
     @Json(name = "api_domain_name")
-    private String apiDomainName;
+    private String _apiDomainName;
 
     @Json(name = "company_integration_id")
-    private String companyIntegrationId;
+    private String _companyIntegrationId;
 
     @Json(name = "integration_type")
-    private String integrationType;
+    private String _integrationType;
 
     public CompanyIntegration() {
     }
 
     public String getApiPass() {
-        return apiPass;
+        return _apiPass;
     }
 
     public String getCompanyId() {
-        return companyId;
+        return _companyId;
     }
 
     public String getApiKey() {
-        return apiKey;
+        return _apiKey;
     }
 
     public String getExternalApiIntegrationId() {
-        return externalApiIntegrationId;
+        return _externalApiIntegrationId;
     }
 
     public Boolean getDisableNotifications() {
-        return disableNotifications;
+        return _disableNotifications;
     }
 
     public Boolean getActive() {
-        return active;
+        return _active;
     }
 
     public String getApiDomainName() {
-        return apiDomainName;
+        return _apiDomainName;
     }
 
     public String getCompanyIntegrationId() {
-        return companyIntegrationId;
+        return _companyIntegrationId;
     }
 
     public String getIntegrationType() {
-        return integrationType;
+        return _integrationType;
     }
 
     /*-*****************************-*/
@@ -82,7 +82,7 @@ public class CompanyIntegration {
         try {
             return Unserializer.unserializeObject(CompanyIntegration.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -95,7 +95,7 @@ public class CompanyIntegration {
         try {
             return Serializer.serializeObject(companyIntegration);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

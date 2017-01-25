@@ -10,41 +10,41 @@ public class UpdateModel {
     private static final String TAG = "UpdateModel";
 
     @Json(name = "metadata")
-    private UpdateModelMetadata metadata;
+    private UpdateModelMetadata _metadata;
 
     @Json(name = "service_name")
-    private String serviceName;
+    private String _serviceName;
 
     @Json(name = "params")
-    private UpdateModelParams params;
+    private UpdateModelParams _params;
 
     @Json(name = "version")
-    private String version;
+    private String _version;
 
     @Json(name = "timestamp")
-    private String timestamp;
+    private String _timestamp;
 
     public UpdateModel() {
     }
 
     public UpdateModelMetadata getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public String getServiceName() {
-        return serviceName;
+        return _serviceName;
     }
 
     public UpdateModelParams getParams() {
-        return params;
+        return _params;
     }
 
     public String getVersion() {
-        return version;
+        return _version;
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return _timestamp;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class UpdateModel {
         try {
             return Unserializer.unserializeObject(UpdateModel.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class UpdateModel {
         try {
             return Serializer.serializeObject(updateModel);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

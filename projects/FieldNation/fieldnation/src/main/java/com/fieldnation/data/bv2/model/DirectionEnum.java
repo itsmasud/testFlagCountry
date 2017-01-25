@@ -3,10 +3,10 @@ package com.fieldnation.data.bv2.model;
 import com.fieldnation.fnjson.annotations.Json;
 
 public enum DirectionEnum {
-    @Json(name = "to site")
-    TO_SITE("to site"),
-    @Json(name = "from site")
-    FROM_SITE("from site");
+    @Json(name = "from_site")
+    FROM_SITE("from_site"),
+    @Json(name = "to_site")
+    TO_SITE("to_site");
 
     private String value;
 

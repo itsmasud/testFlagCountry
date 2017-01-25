@@ -10,20 +10,20 @@ public class MessageProblemType {
     private static final String TAG = "MessageProblemType";
 
     @Json(name = "description")
-    private String description;
+    private String _description;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public MessageProblemType() {
     }
 
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class MessageProblemType {
         try {
             return Unserializer.unserializeObject(MessageProblemType.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class MessageProblemType {
         try {
             return Serializer.serializeObject(messageProblemType);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

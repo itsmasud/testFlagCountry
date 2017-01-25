@@ -10,41 +10,41 @@ public class StoredLocations {
     private static final String TAG = "StoredLocations";
 
     @Json(name = "mode")
-    private ModeEnum mode;
+    private ModeEnum _mode;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "actions")
-    private ActionsEnum actions;
+    private ActionsEnum _actions;
 
     @Json(name = "results")
-    private Location[] results;
+    private Location[] _results;
 
     public StoredLocations() {
     }
 
     public ModeEnum getMode() {
-        return mode;
+        return _mode;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public ActionsEnum getActions() {
-        return actions;
+        return _actions;
     }
 
     public Location[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class StoredLocations {
         try {
             return Unserializer.unserializeObject(StoredLocations.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class StoredLocations {
         try {
             return Serializer.serializeObject(storedLocations);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

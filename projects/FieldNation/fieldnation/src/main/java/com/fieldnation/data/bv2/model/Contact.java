@@ -10,48 +10,48 @@ public class Contact {
     private static final String TAG = "Contact";
 
     @Json(name = "ext")
-    private String ext;
+    private String _ext;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     @Json(name = "phone")
-    private String phone;
+    private String _phone;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "email")
-    private String email;
+    private String _email;
 
     public Contact() {
     }
 
     public String getExt() {
-        return ext;
+        return _ext;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     public String getPhone() {
-        return phone;
+        return _phone;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getEmail() {
-        return email;
+        return _email;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class Contact {
         try {
             return Unserializer.unserializeObject(Contact.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class Contact {
         try {
             return Serializer.serializeObject(contact);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

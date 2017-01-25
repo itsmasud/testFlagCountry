@@ -10,139 +10,139 @@ public class Pay {
     private static final String TAG = "Pay";
 
     @Json(name = "number_of_devices")
-    private Double numberOfDevices;
+    private Double _numberOfDevices;
 
     @Json(name = "fees")
-    private PayFees fees;
+    private PayFees _fees;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "estimated_payment_date")
-    private Date estimatedPaymentDate;
+    private Date _estimatedPaymentDate;
 
     @Json(name = "additional")
-    private PayBase additional;
+    private PayAdditional _additional;
 
     @Json(name = "range")
-    private PayRange range;
+    private PayRange _range;
 
     @Json(name = "type")
-    private String type;
+    private String _type;
 
     @Json(name = "labor_sum")
-    private Double laborSum;
+    private Double _laborSum;
 
     @Json(name = "pricing_insights")
-    private PricingInsights pricingInsights;
+    private PricingInsights _pricingInsights;
 
     @Json(name = "hold")
-    private Fee hold;
+    private Fee _hold;
 
     @Json(name = "total")
-    private Double total;
+    private Double _total;
 
     @Json(name = "status_id")
-    private Integer statusId;
+    private Integer _statusId;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     @Json(name = "payment")
-    private Fee payment;
+    private Fee _payment;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     @Json(name = "finance")
-    private PayFinance finance;
+    private PayFinance _finance;
 
     @Json(name = "reported_hours")
-    private Double reportedHours;
+    private Double _reportedHours;
 
     @Json(name = "base")
-    private PayBase base;
+    private PayBase _base;
 
     public Pay() {
     }
 
     public Double getNumberOfDevices() {
-        return numberOfDevices;
+        return _numberOfDevices;
     }
 
     public PayFees getFees() {
-        return fees;
+        return _fees;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public Date getEstimatedPaymentDate() {
-        return estimatedPaymentDate;
+        return _estimatedPaymentDate;
     }
 
-    public PayBase getAdditional() {
-        return additional;
+    public PayAdditional getAdditional() {
+        return _additional;
     }
 
     public PayRange getRange() {
-        return range;
+        return _range;
     }
 
     public String getType() {
-        return type;
+        return _type;
     }
 
     public Double getLaborSum() {
-        return laborSum;
+        return _laborSum;
     }
 
     public PricingInsights getPricingInsights() {
-        return pricingInsights;
+        return _pricingInsights;
     }
 
     public Fee getHold() {
-        return hold;
+        return _hold;
     }
 
     public Double getTotal() {
-        return total;
+        return _total;
     }
 
     public Integer getStatusId() {
-        return statusId;
+        return _statusId;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     public Fee getPayment() {
-        return payment;
+        return _payment;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public PayFinance getFinance() {
-        return finance;
+        return _finance;
     }
 
     public Double getReportedHours() {
-        return reportedHours;
+        return _reportedHours;
     }
 
     public PayBase getBase() {
-        return base;
+        return _base;
     }
 
     /*-*****************************-*/
@@ -152,7 +152,7 @@ public class Pay {
         try {
             return Unserializer.unserializeObject(Pay.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -165,7 +165,7 @@ public class Pay {
         try {
             return Serializer.serializeObject(pay);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

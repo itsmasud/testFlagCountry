@@ -10,20 +10,20 @@ public class WorkOrders {
     private static final String TAG = "WorkOrders";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private WorkOrder[] results;
+    private WorkOrder[] _results;
 
     public WorkOrders() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public WorkOrder[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class WorkOrders {
         try {
             return Unserializer.unserializeObject(WorkOrders.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class WorkOrders {
         try {
             return Serializer.serializeObject(workOrders);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

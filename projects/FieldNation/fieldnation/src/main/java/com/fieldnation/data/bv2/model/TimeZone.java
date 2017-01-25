@@ -10,26 +10,26 @@ public class TimeZone {
     private static final String TAG = "TimeZone";
 
     @Json(name = "offset")
-    private Double offset;
+    private Double _offset;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "short")
     private String _short;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public TimeZone() {
     }
 
     public Double getOffset() {
-        return offset;
+        return _offset;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getShort() {
@@ -37,7 +37,7 @@ public class TimeZone {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class TimeZone {
         try {
             return Unserializer.unserializeObject(TimeZone.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class TimeZone {
         try {
             return Serializer.serializeObject(timeZone);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

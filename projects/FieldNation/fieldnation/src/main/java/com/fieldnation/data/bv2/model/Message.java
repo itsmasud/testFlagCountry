@@ -10,83 +10,83 @@ public class Message {
     private static final String TAG = "Message";
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "read")
-    private Boolean read;
+    private Boolean _read;
 
     @Json(name = "problem")
-    private MessageProblem problem;
+    private MessageProblem _problem;
 
     @Json(name = "replies")
-    private Message replies;
+    private Message _replies;
 
     @Json(name = "parent_id")
-    private Boolean parentId;
+    private Boolean _parentId;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "from")
-    private MessageFrom from;
+    private MessageFrom _from;
 
     @Json(name = "to")
-    private MessageTo to;
+    private MessageTo _to;
 
     @Json(name = "msg_id")
-    private Integer msgId;
+    private Integer _msgId;
 
     @Json(name = "message")
-    private String message;
+    private String _message;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     public Message() {
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public Boolean getRead() {
-        return read;
+        return _read;
     }
 
     public MessageProblem getProblem() {
-        return problem;
+        return _problem;
     }
 
     public Message getReplies() {
-        return replies;
+        return _replies;
     }
 
     public Boolean getParentId() {
-        return parentId;
+        return _parentId;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public MessageFrom getFrom() {
-        return from;
+        return _from;
     }
 
     public MessageTo getTo() {
-        return to;
+        return _to;
     }
 
     public Integer getMsgId() {
-        return msgId;
+        return _msgId;
     }
 
     public String getMessage() {
-        return message;
+        return _message;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -96,7 +96,7 @@ public class Message {
         try {
             return Unserializer.unserializeObject(Message.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class Message {
         try {
             return Serializer.serializeObject(message);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,27 +10,27 @@ public class PricingInsightsRegionAverageRate {
     private static final String TAG = "PricingInsightsRegionAverageRate";
 
     @Json(name = "first_quartile")
-    private Double firstQuartile;
+    private Double _firstQuartile;
 
     @Json(name = "median")
-    private Double median;
+    private Double _median;
 
     @Json(name = "third_quartile")
-    private Double thirdQuartile;
+    private Double _thirdQuartile;
 
     public PricingInsightsRegionAverageRate() {
     }
 
     public Double getFirstQuartile() {
-        return firstQuartile;
+        return _firstQuartile;
     }
 
     public Double getMedian() {
-        return median;
+        return _median;
     }
 
     public Double getThirdQuartile() {
-        return thirdQuartile;
+        return _thirdQuartile;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class PricingInsightsRegionAverageRate {
         try {
             return Unserializer.unserializeObject(PricingInsightsRegionAverageRate.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class PricingInsightsRegionAverageRate {
         try {
             return Serializer.serializeObject(pricingInsightsRegionAverageRate);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

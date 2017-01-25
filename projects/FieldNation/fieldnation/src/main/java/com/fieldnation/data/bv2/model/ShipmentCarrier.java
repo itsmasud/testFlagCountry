@@ -10,41 +10,41 @@ public class ShipmentCarrier {
     private static final String TAG = "ShipmentCarrier";
 
     @Json(name = "arrived")
-    private Date arrived;
+    private Date _arrived;
 
     @Json(name = "other")
-    private String other;
+    private String _other;
 
     @Json(name = "arrival")
-    private Date arrival;
+    private Date _arrival;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "tracking")
-    private String tracking;
+    private String _tracking;
 
     public ShipmentCarrier() {
     }
 
     public Date getArrived() {
-        return arrived;
+        return _arrived;
     }
 
     public String getOther() {
-        return other;
+        return _other;
     }
 
     public Date getArrival() {
-        return arrival;
+        return _arrival;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getTracking() {
-        return tracking;
+        return _tracking;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class ShipmentCarrier {
         try {
             return Unserializer.unserializeObject(ShipmentCarrier.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class ShipmentCarrier {
         try {
             return Serializer.serializeObject(shipmentCarrier);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,20 +10,20 @@ public class ScheduleEtaStatus {
     private static final String TAG = "ScheduleEtaStatus";
 
     @Json(name = "name")
-    private NameEnum name;
+    private NameEnum _name;
 
     @Json(name = "updated")
-    private Date updated;
+    private Date _updated;
 
     public ScheduleEtaStatus() {
     }
 
     public NameEnum getName() {
-        return name;
+        return _name;
     }
 
     public Date getUpdated() {
-        return updated;
+        return _updated;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class ScheduleEtaStatus {
         try {
             return Unserializer.unserializeObject(ScheduleEtaStatus.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class ScheduleEtaStatus {
         try {
             return Serializer.serializeObject(scheduleEtaStatus);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

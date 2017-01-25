@@ -10,34 +10,34 @@ public class PayFinance {
     private static final String TAG = "PayFinance";
 
     @Json(name = "terms")
-    private String terms;
+    private String _terms;
 
     @Json(name = "limit")
-    private Double limit;
+    private Double _limit;
 
     @Json(name = "description")
-    private String description;
+    private String _description;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public PayFinance() {
     }
 
     public String getTerms() {
-        return terms;
+        return _terms;
     }
 
     public Double getLimit() {
-        return limit;
+        return _limit;
     }
 
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class PayFinance {
         try {
             return Unserializer.unserializeObject(PayFinance.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class PayFinance {
         try {
             return Serializer.serializeObject(payFinance);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

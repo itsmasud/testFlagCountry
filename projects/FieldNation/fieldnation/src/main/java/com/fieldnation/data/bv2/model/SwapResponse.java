@@ -10,13 +10,13 @@ public class SwapResponse {
     private static final String TAG = "SwapResponse";
 
     @Json(name = "success")
-    private Boolean success;
+    private Boolean _success;
 
     public SwapResponse() {
     }
 
     public Boolean getSuccess() {
-        return success;
+        return _success;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class SwapResponse {
         try {
             return Unserializer.unserializeObject(SwapResponse.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class SwapResponse {
         try {
             return Serializer.serializeObject(swapResponse);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

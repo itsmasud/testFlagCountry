@@ -10,34 +10,34 @@ public class UserPreferredGroups {
     private static final String TAG = "UserPreferredGroups";
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public UserPreferredGroups() {
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class UserPreferredGroups {
         try {
             return Unserializer.unserializeObject(UserPreferredGroups.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class UserPreferredGroups {
         try {
             return Serializer.serializeObject(userPreferredGroups);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

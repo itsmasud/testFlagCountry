@@ -13,10 +13,10 @@ public class LocationAttribute {
     private Boolean _private;
 
     @Json(name = "value")
-    private String value;
+    private String _value;
 
     @Json(name = "key")
-    private String key;
+    private String _key;
 
     public LocationAttribute() {
     }
@@ -26,11 +26,11 @@ public class LocationAttribute {
     }
 
     public String getValue() {
-        return value;
+        return _value;
     }
 
     public String getKey() {
-        return key;
+        return _key;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class LocationAttribute {
         try {
             return Unserializer.unserializeObject(LocationAttribute.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class LocationAttribute {
         try {
             return Serializer.serializeObject(locationAttribute);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

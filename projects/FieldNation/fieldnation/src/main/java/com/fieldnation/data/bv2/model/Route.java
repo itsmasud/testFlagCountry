@@ -10,48 +10,48 @@ public class Route {
     private static final String TAG = "Route";
 
     @Json(name = "schedule")
-    private Schedule schedule;
+    private Schedule _schedule;
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "counter")
-    private Boolean counter;
+    private Boolean _counter;
 
     @Json(name = "user")
-    private User user;
+    private User _user;
 
     public Route() {
     }
 
     public Schedule getSchedule() {
-        return schedule;
+        return _schedule;
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Boolean getCounter() {
-        return counter;
+        return _counter;
     }
 
     public User getUser() {
-        return user;
+        return _user;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class Route {
         try {
             return Unserializer.unserializeObject(Route.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class Route {
         try {
             return Serializer.serializeObject(route);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

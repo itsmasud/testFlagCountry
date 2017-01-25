@@ -10,27 +10,27 @@ public class TypeOfWork {
     private static final String TAG = "TypeOfWork";
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "industry")
-    private String industry;
+    private String _industry;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public TypeOfWork() {
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getIndustry() {
-        return industry;
+        return _industry;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class TypeOfWork {
         try {
             return Unserializer.unserializeObject(TypeOfWork.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class TypeOfWork {
         try {
             return Serializer.serializeObject(typeOfWork);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

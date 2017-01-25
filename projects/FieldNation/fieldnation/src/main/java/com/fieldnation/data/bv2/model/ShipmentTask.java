@@ -10,13 +10,13 @@ public class ShipmentTask {
     private static final String TAG = "ShipmentTask";
 
     @Json(name = "id")
-    private Double id;
+    private Double _id;
 
     public ShipmentTask() {
     }
 
     public Double getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class ShipmentTask {
         try {
             return Unserializer.unserializeObject(ShipmentTask.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class ShipmentTask {
         try {
             return Serializer.serializeObject(shipmentTask);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

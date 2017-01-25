@@ -10,20 +10,20 @@ public class Cancellation {
     private static final String TAG = "Cancellation";
 
     @Json(name = "cancel_reason")
-    private Integer cancelReason;
+    private Integer _cancelReason;
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     public Cancellation() {
     }
 
     public Integer getCancelReason() {
-        return cancelReason;
+        return _cancelReason;
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class Cancellation {
         try {
             return Unserializer.unserializeObject(Cancellation.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class Cancellation {
         try {
             return Serializer.serializeObject(cancellation);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

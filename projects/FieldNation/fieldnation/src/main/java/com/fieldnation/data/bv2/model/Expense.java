@@ -10,76 +10,76 @@ public class Expense {
     private static final String TAG = "Expense";
 
     @Json(name = "reason")
-    private String reason;
+    private String _reason;
 
     @Json(name = "status_description")
-    private String statusDescription;
+    private String _statusDescription;
 
     @Json(name = "amount")
-    private Double amount;
+    private Double _amount;
 
     @Json(name = "quantity")
-    private Integer quantity;
+    private Integer _quantity;
 
     @Json(name = "added")
-    private Date added;
+    private Date _added;
 
     @Json(name = "author")
-    private User author;
+    private User _author;
 
     @Json(name = "description")
-    private String description;
+    private String _description;
 
     @Json(name = "category")
-    private ExpenseCategory category;
+    private ExpenseCategory _category;
 
     @Json(name = "status")
-    private StatusEnum status;
+    private StatusEnum _status;
 
     @Json(name = "company_expense")
-    private ExpenseCompanyExpense companyExpense;
+    private ExpenseCompanyExpense _companyExpense;
 
     public Expense() {
     }
 
     public String getReason() {
-        return reason;
+        return _reason;
     }
 
     public String getStatusDescription() {
-        return statusDescription;
+        return _statusDescription;
     }
 
     public Double getAmount() {
-        return amount;
+        return _amount;
     }
 
     public Integer getQuantity() {
-        return quantity;
+        return _quantity;
     }
 
     public Date getAdded() {
-        return added;
+        return _added;
     }
 
     public User getAuthor() {
-        return author;
+        return _author;
     }
 
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     public ExpenseCategory getCategory() {
-        return category;
+        return _category;
     }
 
     public StatusEnum getStatus() {
-        return status;
+        return _status;
     }
 
     public ExpenseCompanyExpense getCompanyExpense() {
-        return companyExpense;
+        return _companyExpense;
     }
 
     /*-*****************************-*/
@@ -89,7 +89,7 @@ public class Expense {
         try {
             return Unserializer.unserializeObject(Expense.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -102,7 +102,7 @@ public class Expense {
         try {
             return Serializer.serializeObject(expense);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

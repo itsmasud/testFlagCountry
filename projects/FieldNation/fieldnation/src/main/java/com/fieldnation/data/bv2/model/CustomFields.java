@@ -10,20 +10,20 @@ public class CustomFields {
     private static final String TAG = "CustomFields";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private CustomFieldCategory[] results;
+    private CustomFieldCategory[] _results;
 
     public CustomFields() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public CustomFieldCategory[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class CustomFields {
         try {
             return Unserializer.unserializeObject(CustomFields.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class CustomFields {
         try {
             return Serializer.serializeObject(customFields);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

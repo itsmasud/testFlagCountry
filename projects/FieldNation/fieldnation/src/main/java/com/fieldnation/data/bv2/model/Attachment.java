@@ -10,90 +10,90 @@ public class Attachment {
     private static final String TAG = "Attachment";
 
     @Json(name = "status_description")
-    private String statusDescription;
+    private String _statusDescription;
 
     @Json(name = "file")
-    private File file;
+    private File _file;
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     @Json(name = "task")
-    private Task task;
+    private Task _task;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "author")
-    private User author;
+    private User _author;
 
     @Json(name = "show_before_assignment")
-    private Boolean showBeforeAssignment;
+    private Boolean _showBeforeAssignment;
 
     @Json(name = "reviewed")
-    private Date reviewed;
+    private Date _reviewed;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "reviewer")
-    private User reviewer;
+    private User _reviewer;
 
     @Json(name = "folder_id")
-    private Integer folderId;
+    private Integer _folderId;
 
     @Json(name = "status")
-    private StatusEnum status;
+    private StatusEnum _status;
 
     public Attachment() {
     }
 
     public String getStatusDescription() {
-        return statusDescription;
+        return _statusDescription;
     }
 
     public File getFile() {
-        return file;
+        return _file;
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     public Task getTask() {
-        return task;
+        return _task;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public User getAuthor() {
-        return author;
+        return _author;
     }
 
     public Boolean getShowBeforeAssignment() {
-        return showBeforeAssignment;
+        return _showBeforeAssignment;
     }
 
     public Date getReviewed() {
-        return reviewed;
+        return _reviewed;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public User getReviewer() {
-        return reviewer;
+        return _reviewer;
     }
 
     public Integer getFolderId() {
-        return folderId;
+        return _folderId;
     }
 
     public StatusEnum getStatus() {
-        return status;
+        return _status;
     }
 
     /*-*****************************-*/
@@ -103,7 +103,7 @@ public class Attachment {
         try {
             return Unserializer.unserializeObject(Attachment.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class Attachment {
         try {
             return Serializer.serializeObject(attachment);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

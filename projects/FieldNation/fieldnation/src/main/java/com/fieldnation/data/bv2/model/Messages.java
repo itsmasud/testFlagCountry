@@ -10,41 +10,41 @@ public class Messages {
     private static final String TAG = "Messages";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "problem_reported")
-    private Boolean problemReported;
+    private Boolean _problemReported;
 
     @Json(name = "sum")
-    private Integer sum;
+    private Integer _sum;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "results")
-    private Message results;
+    private Message _results;
 
     public Messages() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public Boolean getProblemReported() {
-        return problemReported;
+        return _problemReported;
     }
 
     public Integer getSum() {
-        return sum;
+        return _sum;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public Message getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class Messages {
         try {
             return Unserializer.unserializeObject(Messages.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class Messages {
         try {
             return Serializer.serializeObject(messages);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

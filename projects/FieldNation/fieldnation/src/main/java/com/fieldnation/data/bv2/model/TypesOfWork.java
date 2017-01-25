@@ -10,20 +10,20 @@ public class TypesOfWork {
     private static final String TAG = "TypesOfWork";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private TypeOfWork[] results;
+    private TypeOfWork[] _results;
 
     public TypesOfWork() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public TypeOfWork[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class TypesOfWork {
         try {
             return Unserializer.unserializeObject(TypesOfWork.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class TypesOfWork {
         try {
             return Serializer.serializeObject(typesOfWork);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

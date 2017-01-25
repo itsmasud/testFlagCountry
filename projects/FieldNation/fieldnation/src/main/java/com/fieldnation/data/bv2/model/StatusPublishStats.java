@@ -10,27 +10,27 @@ public class StatusPublishStats {
     private static final String TAG = "StatusPublishStats";
 
     @Json(name = "routes")
-    private Integer routes;
+    private Integer _routes;
 
     @Json(name = "counter_offers")
-    private Integer counterOffers;
+    private Integer _counterOffers;
 
     @Json(name = "requests")
-    private Integer requests;
+    private Integer _requests;
 
     public StatusPublishStats() {
     }
 
     public Integer getRoutes() {
-        return routes;
+        return _routes;
     }
 
     public Integer getCounterOffers() {
-        return counterOffers;
+        return _counterOffers;
     }
 
     public Integer getRequests() {
-        return requests;
+        return _requests;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class StatusPublishStats {
         try {
             return Unserializer.unserializeObject(StatusPublishStats.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class StatusPublishStats {
         try {
             return Serializer.serializeObject(statusPublishStats);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

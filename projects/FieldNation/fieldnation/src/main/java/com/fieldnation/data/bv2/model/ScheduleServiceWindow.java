@@ -10,27 +10,27 @@ public class ScheduleServiceWindow {
     private static final String TAG = "ScheduleServiceWindow";
 
     @Json(name = "mode")
-    private ModeEnum mode;
+    private ModeEnum _mode;
 
     @Json(name = "start")
-    private Date start;
+    private Date _start;
 
     @Json(name = "end")
-    private Date end;
+    private Date _end;
 
     public ScheduleServiceWindow() {
     }
 
     public ModeEnum getMode() {
-        return mode;
+        return _mode;
     }
 
     public Date getStart() {
-        return start;
+        return _start;
     }
 
     public Date getEnd() {
-        return end;
+        return _end;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class ScheduleServiceWindow {
         try {
             return Unserializer.unserializeObject(ScheduleServiceWindow.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class ScheduleServiceWindow {
         try {
             return Serializer.serializeObject(scheduleServiceWindow);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,41 +10,41 @@ public class PricingInsightsRegion {
     private static final String TAG = "PricingInsightsRegion";
 
     @Json(name = "distance")
-    private Double distance;
+    private Double _distance;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "average_rate")
-    private PricingInsightsRegionAverageRate averageRate;
+    private PricingInsightsRegionAverageRate _averageRate;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "providers")
-    private PricingInsightsRegionProviders providers;
+    private PricingInsightsRegionProviders _providers;
 
     public PricingInsightsRegion() {
     }
 
     public Double getDistance() {
-        return distance;
+        return _distance;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public PricingInsightsRegionAverageRate getAverageRate() {
-        return averageRate;
+        return _averageRate;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public PricingInsightsRegionProviders getProviders() {
-        return providers;
+        return _providers;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class PricingInsightsRegion {
         try {
             return Unserializer.unserializeObject(PricingInsightsRegion.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class PricingInsightsRegion {
         try {
             return Serializer.serializeObject(pricingInsightsRegion);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

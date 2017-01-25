@@ -3,30 +3,26 @@ package com.fieldnation.data.bv2.model;
 import com.fieldnation.fnjson.annotations.Json;
 
 public enum StatusEnum {
-    @Json(name = "Lost")
-    LOST("Lost"),
     @Json(name = "new")
     NEW("new"),
-    /* TODO need to find source
-        @Json(name = "New")
-        NEW("New"),
-    */
+    @Json(name = "arrived")
+    ARRIVED("arrived"),
     @Json(name = "approved")
     APPROVED("approved"),
-    @Json(name = "En Route")
-    EN_ROUTE("En Route"),
     @Json(name = "declined")
     DECLINED("declined"),
+    @Json(name = "lost")
+    LOST("lost"),
     @Json(name = "pending")
     PENDING("pending"),
-    @Json(name = "Arrived")
-    ARRIVED("Arrived"),
-    @Json(name = "Error")
-    ERROR("Error"),
+    @Json(name = "en_route")
+    EN_ROUTE("en_route"),
     @Json(name = "accepted")
     ACCEPTED("accepted"),
     @Json(name = "denied")
     DENIED("denied"),
+    @Json(name = "error")
+    ERROR("error"),
     @Json(name = "disapproved")
     DISAPPROVED("disapproved");
 

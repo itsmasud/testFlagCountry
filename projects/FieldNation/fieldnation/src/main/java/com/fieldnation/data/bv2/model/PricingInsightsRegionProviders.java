@@ -10,13 +10,13 @@ public class PricingInsightsRegionProviders {
     private static final String TAG = "PricingInsightsRegionProviders";
 
     @Json(name = "marketplace")
-    private Integer marketplace;
+    private Integer _marketplace;
 
     public PricingInsightsRegionProviders() {
     }
 
     public Integer getMarketplace() {
-        return marketplace;
+        return _marketplace;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class PricingInsightsRegionProviders {
         try {
             return Unserializer.unserializeObject(PricingInsightsRegionProviders.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class PricingInsightsRegionProviders {
         try {
             return Serializer.serializeObject(pricingInsightsRegionProviders);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

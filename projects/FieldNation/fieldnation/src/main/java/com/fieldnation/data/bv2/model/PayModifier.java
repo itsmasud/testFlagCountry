@@ -10,62 +10,62 @@ public class PayModifier {
     private static final String TAG = "PayModifier";
 
     @Json(name = "calculation")
-    private CalculationEnum calculation;
+    private CalculationEnum _calculation;
 
     @Json(name = "amount")
-    private Double amount;
+    private Double _amount;
 
     @Json(name = "modifier")
-    private Double modifier;
+    private Double _modifier;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "description")
-    private String description;
+    private String _description;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "charged")
-    private Boolean charged;
+    private Boolean _charged;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     public PayModifier() {
     }
 
     public CalculationEnum getCalculation() {
-        return calculation;
+        return _calculation;
     }
 
     public Double getAmount() {
-        return amount;
+        return _amount;
     }
 
     public Double getModifier() {
-        return modifier;
+        return _modifier;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Boolean getCharged() {
-        return charged;
+        return _charged;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -75,7 +75,7 @@ public class PayModifier {
         try {
             return Unserializer.unserializeObject(PayModifier.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class PayModifier {
         try {
             return Serializer.serializeObject(payModifier);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

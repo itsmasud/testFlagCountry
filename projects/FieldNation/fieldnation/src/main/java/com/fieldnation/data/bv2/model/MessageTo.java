@@ -10,34 +10,34 @@ public class MessageTo {
     private static final String TAG = "MessageTo";
 
     @Json(name = "thumbnail")
-    private String thumbnail;
+    private String _thumbnail;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public MessageTo() {
     }
 
     public String getThumbnail() {
-        return thumbnail;
+        return _thumbnail;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class MessageTo {
         try {
             return Unserializer.unserializeObject(MessageTo.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class MessageTo {
         try {
             return Serializer.serializeObject(messageTo);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

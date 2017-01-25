@@ -10,216 +10,216 @@ public class WorkOrder {
     private static final String TAG = "WorkOrder";
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "attachments")
-    private AttachmentFolders attachments;
+    private AttachmentFolders _attachments;
 
     @Json(name = "project")
-    private Project project;
+    private Project _project;
 
     @Json(name = "description")
-    private RichText description;
+    private RichText _description;
 
     @Json(name = "networks")
-    private String[] networks;
+    private String[] _networks;
 
     @Json(name = "title")
-    private String title;
+    private String _title;
 
     @Json(name = "client")
-    private Company client;
+    private Company _client;
 
     @Json(name = "company")
-    private Company company;
+    private Company _company;
 
     @Json(name = "w2")
-    private Boolean w2;
+    private Boolean _w2;
 
     @Json(name = "policy_and_procedures")
-    private RichText policyAndProcedures;
+    private RichText _policyAndProcedures;
 
     @Json(name = "bundle")
-    private Bundle bundle;
+    private Bundle _bundle;
 
     @Json(name = "tasks")
-    private Tasks tasks;
+    private Tasks _tasks;
 
     @Json(name = "confidential")
-    private RichText confidential;
+    private RichText _confidential;
 
     @Json(name = "standard_instructions")
-    private RichText standardInstructions;
+    private RichText _standardInstructions;
 
     @Json(name = "manager")
-    private Manager manager;
+    private Manager _manager;
 
     @Json(name = "custom_fields")
-    private CustomFields customFields;
+    private CustomFields _customFields;
 
     @Json(name = "type_of_work")
-    private TypeOfWork typeOfWork;
+    private TypeOfWork _typeOfWork;
 
     @Json(name = "pay")
-    private Pays pay;
+    private Pays _pay;
 
     @Json(name = "shipments")
-    private Shipments shipments;
+    private Shipments _shipments;
 
     @Json(name = "schedule")
-    private Schedule schedule;
+    private Schedule _schedule;
 
     @Json(name = "selection_rule")
-    private SelectionRule selectionRule;
+    private SelectionRule _selectionRule;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     @Json(name = "messages")
-    private Messages messages;
+    private Messages _messages;
 
     @Json(name = "holds")
-    private Holds holds;
+    private Holds _holds;
 
     @Json(name = "location")
-    private Location location;
+    private Location _location;
 
     @Json(name = "assignee")
-    private Assignee assignee;
+    private Assignee _assignee;
 
     @Json(name = "milestones")
-    private Milestones milestones;
+    private Milestones _milestones;
 
     @Json(name = "contacts")
-    private Contacts contacts;
+    private Contacts _contacts;
 
     @Json(name = "status")
-    private Status status;
+    private Status _status;
 
     public WorkOrder() {
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public AttachmentFolders getAttachments() {
-        return attachments;
+        return _attachments;
     }
 
     public Project getProject() {
-        return project;
+        return _project;
     }
 
     public RichText getDescription() {
-        return description;
+        return _description;
     }
 
     public String[] getNetworks() {
-        return networks;
+        return _networks;
     }
 
     public String getTitle() {
-        return title;
+        return _title;
     }
 
     public Company getClient() {
-        return client;
+        return _client;
     }
 
     public Company getCompany() {
-        return company;
+        return _company;
     }
 
     public Boolean getW2() {
-        return w2;
+        return _w2;
     }
 
     public RichText getPolicyAndProcedures() {
-        return policyAndProcedures;
+        return _policyAndProcedures;
     }
 
     public Bundle getBundle() {
-        return bundle;
+        return _bundle;
     }
 
     public Tasks getTasks() {
-        return tasks;
+        return _tasks;
     }
 
     public RichText getConfidential() {
-        return confidential;
+        return _confidential;
     }
 
     public RichText getStandardInstructions() {
-        return standardInstructions;
+        return _standardInstructions;
     }
 
     public Manager getManager() {
-        return manager;
+        return _manager;
     }
 
     public CustomFields getCustomFields() {
-        return customFields;
+        return _customFields;
     }
 
     public TypeOfWork getTypeOfWork() {
-        return typeOfWork;
+        return _typeOfWork;
     }
 
     public Pays getPay() {
-        return pay;
+        return _pay;
     }
 
     public Shipments getShipments() {
-        return shipments;
+        return _shipments;
     }
 
     public Schedule getSchedule() {
-        return schedule;
+        return _schedule;
     }
 
     public SelectionRule getSelectionRule() {
-        return selectionRule;
+        return _selectionRule;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     public Messages getMessages() {
-        return messages;
+        return _messages;
     }
 
     public Holds getHolds() {
-        return holds;
+        return _holds;
     }
 
     public Location getLocation() {
-        return location;
+        return _location;
     }
 
     public Assignee getAssignee() {
-        return assignee;
+        return _assignee;
     }
 
     public Milestones getMilestones() {
-        return milestones;
+        return _milestones;
     }
 
     public Contacts getContacts() {
-        return contacts;
+        return _contacts;
     }
 
     public Status getStatus() {
-        return status;
+        return _status;
     }
 
     /*-*****************************-*/
@@ -229,7 +229,7 @@ public class WorkOrder {
         try {
             return Unserializer.unserializeObject(WorkOrder.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -242,7 +242,7 @@ public class WorkOrder {
         try {
             return Serializer.serializeObject(workOrder);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

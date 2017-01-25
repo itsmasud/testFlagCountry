@@ -10,34 +10,34 @@ public class Contacts {
     private static final String TAG = "Contacts";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     @Json(name = "results")
-    private Contact[] results;
+    private Contact[] _results;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     public Contacts() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     public Contact[] getResults() {
-        return results;
+        return _results;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class Contacts {
         try {
             return Unserializer.unserializeObject(Contacts.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class Contacts {
         try {
             return Serializer.serializeObject(contacts);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

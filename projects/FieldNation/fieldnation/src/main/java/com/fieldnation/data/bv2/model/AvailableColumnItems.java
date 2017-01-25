@@ -10,62 +10,62 @@ public class AvailableColumnItems {
     private static final String TAG = "AvailableColumnItems";
 
     @Json(name = "icon")
-    private String icon;
+    private String _icon;
 
     @Json(name = "id")
-    private String id;
+    private String _id;
 
     @Json(name = "label")
-    private String label;
+    private String _label;
 
     @Json(name = "can_sort")
-    private Boolean canSort;
+    private Boolean _canSort;
 
     @Json(name = "selected")
-    private Boolean selected;
+    private Boolean _selected;
 
     @Json(name = "sort_dir")
-    private String sortDir;
+    private String _sortDir;
 
     @Json(name = "group")
-    private String group;
+    private String _group;
 
     @Json(name = "order")
-    private Integer order;
+    private Integer _order;
 
     public AvailableColumnItems() {
     }
 
     public String getIcon() {
-        return icon;
+        return _icon;
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public String getLabel() {
-        return label;
+        return _label;
     }
 
     public Boolean getCanSort() {
-        return canSort;
+        return _canSort;
     }
 
     public Boolean getSelected() {
-        return selected;
+        return _selected;
     }
 
     public String getSortDir() {
-        return sortDir;
+        return _sortDir;
     }
 
     public String getGroup() {
-        return group;
+        return _group;
     }
 
     public Integer getOrder() {
-        return order;
+        return _order;
     }
 
     /*-*****************************-*/
@@ -75,7 +75,7 @@ public class AvailableColumnItems {
         try {
             return Unserializer.unserializeObject(AvailableColumnItems.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class AvailableColumnItems {
         try {
             return Serializer.serializeObject(availableColumnItems);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

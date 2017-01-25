@@ -10,34 +10,34 @@ public class AttachmentFolder {
     private static final String TAG = "AttachmentFolder";
 
     @Json(name = "task")
-    private Task task;
+    private Task _task;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "type")
-    private TypeEnum type;
+    private TypeEnum _type;
 
     public AttachmentFolder() {
     }
 
     public Task getTask() {
-        return task;
+        return _task;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public TypeEnum getType() {
-        return type;
+        return _type;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class AttachmentFolder {
         try {
             return Unserializer.unserializeObject(AttachmentFolder.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class AttachmentFolder {
         try {
             return Serializer.serializeObject(attachmentFolder);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

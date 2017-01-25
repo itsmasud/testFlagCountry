@@ -10,20 +10,20 @@ public class UpdateModelParams {
     private static final String TAG = "UpdateModelParams";
 
     @Json(name = "model")
-    private UpdateModelParamsModel model;
+    private UpdateModelParamsModel _model;
 
     @Json(name = "updateScheduleByWorkOrder")
-    private EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder;
+    private EventUpdateScheduleByWorkOrder _updateScheduleByWorkOrder;
 
     public UpdateModelParams() {
     }
 
     public UpdateModelParamsModel getModel() {
-        return model;
+        return _model;
     }
 
     public EventUpdateScheduleByWorkOrder getUpdateScheduleByWorkOrder() {
-        return updateScheduleByWorkOrder;
+        return _updateScheduleByWorkOrder;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class UpdateModelParams {
         try {
             return Unserializer.unserializeObject(UpdateModelParams.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class UpdateModelParams {
         try {
             return Serializer.serializeObject(updateModelParams);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

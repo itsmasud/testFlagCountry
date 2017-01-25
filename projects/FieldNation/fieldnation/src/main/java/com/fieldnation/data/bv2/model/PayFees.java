@@ -10,41 +10,41 @@ public class PayFees {
     private static final String TAG = "PayFees";
 
     @Json(name = "insurance")
-    private Fee insurance;
+    private Fee _insurance;
 
     @Json(name = "cancellation")
-    private Fee cancellation;
+    private Fee _cancellation;
 
     @Json(name = "provider")
-    private Fee provider;
+    private Fee _provider;
 
     @Json(name = "flat")
-    private Fee flat;
+    private Fee _flat;
 
     @Json(name = "buyer")
-    private Fee buyer;
+    private Fee _buyer;
 
     public PayFees() {
     }
 
     public Fee getInsurance() {
-        return insurance;
+        return _insurance;
     }
 
     public Fee getCancellation() {
-        return cancellation;
+        return _cancellation;
     }
 
     public Fee getProvider() {
-        return provider;
+        return _provider;
     }
 
     public Fee getFlat() {
-        return flat;
+        return _flat;
     }
 
     public Fee getBuyer() {
-        return buyer;
+        return _buyer;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class PayFees {
         try {
             return Unserializer.unserializeObject(PayFees.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class PayFees {
         try {
             return Serializer.serializeObject(payFees);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

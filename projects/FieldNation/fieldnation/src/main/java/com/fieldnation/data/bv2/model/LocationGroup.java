@@ -10,20 +10,20 @@ public class LocationGroup {
     private static final String TAG = "LocationGroup";
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public LocationGroup() {
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class LocationGroup {
         try {
             return Unserializer.unserializeObject(LocationGroup.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class LocationGroup {
         try {
             return Serializer.serializeObject(locationGroup);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

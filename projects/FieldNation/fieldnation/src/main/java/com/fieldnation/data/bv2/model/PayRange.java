@@ -10,20 +10,20 @@ public class PayRange {
     private static final String TAG = "PayRange";
 
     @Json(name = "min")
-    private Double min;
+    private Double _min;
 
     @Json(name = "max")
-    private Double max;
+    private Double _max;
 
     public PayRange() {
     }
 
     public Double getMin() {
-        return min;
+        return _min;
     }
 
     public Double getMax() {
-        return max;
+        return _max;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class PayRange {
         try {
             return Unserializer.unserializeObject(PayRange.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class PayRange {
         try {
             return Serializer.serializeObject(payRange);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

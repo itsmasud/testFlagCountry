@@ -6,34 +6,34 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class TechnicianW9Status {
-    private static final String TAG = "TechnicianW9Status";
+public class technicianW9Status {
+    private static final String TAG = "technicianW9Status";
 
     @Json(name = "status_name")
-    private String statusName;
+    private String _statusName;
 
     @Json(name = "technician_w9_status_id")
-    private Integer technicianW9StatusId;
+    private Integer _technicianW9StatusId;
 
-    public TechnicianW9Status() {
+    public technicianW9Status() {
     }
 
     public String getStatusName() {
-        return statusName;
+        return _statusName;
     }
 
     public Integer getTechnicianW9StatusId() {
-        return technicianW9StatusId;
+        return _technicianW9StatusId;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static TechnicianW9Status fromJson(JsonObject obj) {
+    public static technicianW9Status fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TechnicianW9Status.class, obj);
+            return Unserializer.unserializeObject(technicianW9Status.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -42,11 +42,11 @@ public class TechnicianW9Status {
         return toJson(this);
     }
 
-    public static JsonObject toJson(TechnicianW9Status technicianW9Status) {
+    public static JsonObject toJson(technicianW9Status technicianW9Status) {
         try {
             return Serializer.serializeObject(technicianW9Status);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

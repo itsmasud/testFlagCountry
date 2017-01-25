@@ -10,76 +10,76 @@ public class File {
     private static final String TAG = "File";
 
     @Json(name = "thumbnail")
-    private String thumbnail;
+    private String _thumbnail;
 
     @Json(name = "size_bytes")
-    private Integer sizeBytes;
+    private Integer _sizeBytes;
 
     @Json(name = "mime")
-    private String mime;
+    private String _mime;
 
     @Json(name = "preview_full")
-    private String previewFull;
+    private String _previewFull;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "icon")
-    private String icon;
+    private String _icon;
 
     @Json(name = "link")
-    private String link;
+    private String _link;
 
     @Json(name = "description")
-    private String description;
+    private String _description;
 
     @Json(name = "storage")
-    private StorageEnum storage;
+    private StorageEnum _storage;
 
     @Json(name = "type")
-    private TypeEnum type;
+    private TypeEnum _type;
 
     public File() {
     }
 
     public String getThumbnail() {
-        return thumbnail;
+        return _thumbnail;
     }
 
     public Integer getSizeBytes() {
-        return sizeBytes;
+        return _sizeBytes;
     }
 
     public String getMime() {
-        return mime;
+        return _mime;
     }
 
     public String getPreviewFull() {
-        return previewFull;
+        return _previewFull;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getIcon() {
-        return icon;
+        return _icon;
     }
 
     public String getLink() {
-        return link;
+        return _link;
     }
 
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     public StorageEnum getStorage() {
-        return storage;
+        return _storage;
     }
 
     public TypeEnum getType() {
-        return type;
+        return _type;
     }
 
     /*-*****************************-*/
@@ -89,7 +89,7 @@ public class File {
         try {
             return Unserializer.unserializeObject(File.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -102,7 +102,7 @@ public class File {
         try {
             return Serializer.serializeObject(file);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

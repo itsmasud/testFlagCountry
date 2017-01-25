@@ -13,16 +13,16 @@ public class LocationNote {
     private Boolean _private;
 
     @Json(name = "user_id")
-    private Integer userId;
+    private Integer _userId;
 
     @Json(name = "created")
-    private String created;
+    private String _created;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "text")
-    private String text;
+    private String _text;
 
     public LocationNote() {
     }
@@ -32,19 +32,19 @@ public class LocationNote {
     }
 
     public Integer getUserId() {
-        return userId;
+        return _userId;
     }
 
     public String getCreated() {
-        return created;
+        return _created;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getText() {
-        return text;
+        return _text;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class LocationNote {
         try {
             return Unserializer.unserializeObject(LocationNote.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class LocationNote {
         try {
             return Serializer.serializeObject(locationNote);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

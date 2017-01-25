@@ -10,27 +10,27 @@ public class Hold {
     private static final String TAG = "Hold";
 
     @Json(name = "reason")
-    private String reason;
+    private String _reason;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public Hold() {
     }
 
     public String getReason() {
-        return reason;
+        return _reason;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class Hold {
         try {
             return Unserializer.unserializeObject(Hold.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class Hold {
         try {
             return Serializer.serializeObject(hold);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

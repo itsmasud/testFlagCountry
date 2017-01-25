@@ -10,48 +10,48 @@ public class ScheduleEta {
     private static final String TAG = "ScheduleEta";
 
     @Json(name = "mode")
-    private Boolean mode;
+    private Boolean _mode;
 
     @Json(name = "hour_estimate")
-    private Double hourEstimate;
+    private Double _hourEstimate;
 
     @Json(name = "start")
-    private Date start;
+    private Date _start;
 
     @Json(name = "end")
-    private Date end;
+    private Date _end;
 
     @Json(name = "user")
-    private User user;
+    private User _user;
 
     @Json(name = "status")
-    private ScheduleEtaStatus status;
+    private ScheduleEtaStatus _status;
 
     public ScheduleEta() {
     }
 
     public Boolean getMode() {
-        return mode;
+        return _mode;
     }
 
     public Double getHourEstimate() {
-        return hourEstimate;
+        return _hourEstimate;
     }
 
     public Date getStart() {
-        return start;
+        return _start;
     }
 
     public Date getEnd() {
-        return end;
+        return _end;
     }
 
     public User getUser() {
-        return user;
+        return _user;
     }
 
     public ScheduleEtaStatus getStatus() {
-        return status;
+        return _status;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class ScheduleEta {
         try {
             return Unserializer.unserializeObject(ScheduleEta.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class ScheduleEta {
         try {
             return Serializer.serializeObject(scheduleEta);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,48 +10,48 @@ public class MessageFrom {
     private static final String TAG = "MessageFrom";
 
     @Json(name = "thumbnail")
-    private String thumbnail;
+    private String _thumbnail;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "hideWoManager")
-    private Boolean hideWoManager;
+    private Boolean _hideWoManager;
 
     @Json(name = "msgLink")
-    private String msgLink;
+    private String _msgLink;
 
     public MessageFrom() {
     }
 
     public String getThumbnail() {
-        return thumbnail;
+        return _thumbnail;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Boolean getHideWoManager() {
-        return hideWoManager;
+        return _hideWoManager;
     }
 
     public String getMsgLink() {
-        return msgLink;
+        return _msgLink;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class MessageFrom {
         try {
             return Unserializer.unserializeObject(MessageFrom.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class MessageFrom {
         try {
             return Serializer.serializeObject(messageFrom);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

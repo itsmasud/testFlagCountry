@@ -10,83 +10,83 @@ public class TimeLog {
     private static final String TAG = "TimeLog";
 
     @Json(name = "logged_by")
-    private User loggedBy;
+    private User _loggedBy;
 
     @Json(name = "hours")
-    private Double hours;
+    private Double _hours;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "in")
-    private CheckInOut in;
+    private CheckInOut _in;
 
     @Json(name = "devices")
-    private Double devices;
+    private Double _devices;
 
     @Json(name = "verified")
-    private Boolean verified;
+    private Boolean _verified;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "was_late")
-    private Boolean wasLate;
+    private Boolean _wasLate;
 
     @Json(name = "out")
-    private CheckInOut out;
+    private CheckInOut _out;
 
     @Json(name = "on_my_way")
-    private OnMyWay onMyWay;
+    private OnMyWay _onMyWay;
 
     public TimeLog() {
     }
 
     public User getLoggedBy() {
-        return loggedBy;
+        return _loggedBy;
     }
 
     public Double getHours() {
-        return hours;
+        return _hours;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public CheckInOut getIn() {
-        return in;
+        return _in;
     }
 
     public Double getDevices() {
-        return devices;
+        return _devices;
     }
 
     public Boolean getVerified() {
-        return verified;
+        return _verified;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public Boolean getWasLate() {
-        return wasLate;
+        return _wasLate;
     }
 
     public CheckInOut getOut() {
-        return out;
+        return _out;
     }
 
     public OnMyWay getOnMyWay() {
-        return onMyWay;
+        return _onMyWay;
     }
 
     /*-*****************************-*/
@@ -96,7 +96,7 @@ public class TimeLog {
         try {
             return Unserializer.unserializeObject(TimeLog.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class TimeLog {
         try {
             return Serializer.serializeObject(timeLog);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

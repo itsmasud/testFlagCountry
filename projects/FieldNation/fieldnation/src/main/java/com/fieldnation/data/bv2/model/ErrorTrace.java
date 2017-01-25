@@ -10,56 +10,55 @@ public class ErrorTrace {
     private static final String TAG = "ErrorTrace";
 
     @Json(name = "args")
-    private ErrorTraceArgs[] args;
+    private ErrorTraceArgs[] _args;
 
     @Json(name = "file")
-    private String file;
+    private String _file;
 
     @Json(name = "line")
-    private Integer line;
+    private Integer _line;
 
     @Json(name = "function")
-    private String function;
+    private String _function;
 
     @Json(name = "type")
-    private String type;
+    private String _type;
 
     @Json(name = "class")
     private String _class;
 
-    // Todo data type not known
     @Json(name = "object")
-    private String object;
+    private ErrorTraceObject _object;
 
     public ErrorTrace() {
     }
 
     public ErrorTraceArgs[] getArgs() {
-        return args;
+        return _args;
     }
 
     public String getFile() {
-        return file;
+        return _file;
     }
 
     public Integer getLine() {
-        return line;
+        return _line;
     }
 
     public String getFunction() {
-        return function;
+        return _function;
     }
 
     public String getType() {
-        return type;
+        return _type;
     }
 
-    public String getClassName() {
+    public String getClass() {
         return _class;
     }
 
-    public String getObject() {
-        return object;
+    public ErrorTraceObject getObject() {
+        return _object;
     }
 
     /*-*****************************-*/
@@ -69,7 +68,7 @@ public class ErrorTrace {
         try {
             return Unserializer.unserializeObject(ErrorTrace.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -82,7 +81,7 @@ public class ErrorTrace {
         try {
             return Serializer.serializeObject(errorTrace);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

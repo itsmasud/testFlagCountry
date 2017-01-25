@@ -10,62 +10,62 @@ public class PayIncrease {
     private static final String TAG = "PayIncrease";
 
     @Json(name = "status_description")
-    private String statusDescription;
+    private String _statusDescription;
 
     @Json(name = "author")
-    private User author;
+    private User _author;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "description")
-    private String description;
+    private String _description;
 
     @Json(name = "pay")
-    private Pay pay;
+    private Pay _pay;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "status")
-    private StatusEnum status;
+    private StatusEnum _status;
 
     public PayIncrease() {
     }
 
     public String getStatusDescription() {
-        return statusDescription;
+        return _statusDescription;
     }
 
     public User getAuthor() {
-        return author;
+        return _author;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public String getDescription() {
-        return description;
+        return _description;
     }
 
     public Pay getPay() {
-        return pay;
+        return _pay;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public StatusEnum getStatus() {
-        return status;
+        return _status;
     }
 
     /*-*****************************-*/
@@ -75,7 +75,7 @@ public class PayIncrease {
         try {
             return Unserializer.unserializeObject(PayIncrease.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class PayIncrease {
         try {
             return Serializer.serializeObject(payIncrease);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

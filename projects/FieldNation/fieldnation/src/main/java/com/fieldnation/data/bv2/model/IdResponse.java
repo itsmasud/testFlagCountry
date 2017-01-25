@@ -10,13 +10,13 @@ public class IdResponse {
     private static final String TAG = "IdResponse";
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public IdResponse() {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class IdResponse {
         try {
             return Unserializer.unserializeObject(IdResponse.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class IdResponse {
         try {
             return Serializer.serializeObject(idResponse);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,13 +10,13 @@ public class EmailTemplates {
     private static final String TAG = "EmailTemplates";
 
     @Json(name = "results")
-    private EmailTemplate[] results;
+    private EmailTemplate[] _results;
 
     public EmailTemplates() {
     }
 
     public EmailTemplate[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class EmailTemplates {
         try {
             return Unserializer.unserializeObject(EmailTemplates.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class EmailTemplates {
         try {
             return Serializer.serializeObject(emailTemplates);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

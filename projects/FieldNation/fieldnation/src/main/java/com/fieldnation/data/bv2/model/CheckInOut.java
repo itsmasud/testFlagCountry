@@ -10,55 +10,55 @@ public class CheckInOut {
     private static final String TAG = "CheckInOut";
 
     @Json(name = "time_log")
-    private CheckInOutTimeLog timeLog;
+    private CheckInOutTimeLog _timeLog;
 
     @Json(name = "actor")
-    private User actor;
+    private User _actor;
 
     @Json(name = "distance")
-    private Double distance;
+    private Double _distance;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "verified")
-    private Boolean verified;
+    private Boolean _verified;
 
     @Json(name = "distance_from_check_in")
-    private Double distanceFromCheckIn;
+    private Double _distanceFromCheckIn;
 
     @Json(name = "coords")
-    private Coords coords;
+    private Coords _coords;
 
     public CheckInOut() {
     }
 
     public CheckInOutTimeLog getTimeLog() {
-        return timeLog;
+        return _timeLog;
     }
 
     public User getActor() {
-        return actor;
+        return _actor;
     }
 
     public Double getDistance() {
-        return distance;
+        return _distance;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public Boolean getVerified() {
-        return verified;
+        return _verified;
     }
 
     public Double getDistanceFromCheckIn() {
-        return distanceFromCheckIn;
+        return _distanceFromCheckIn;
     }
 
     public Coords getCoords() {
-        return coords;
+        return _coords;
     }
 
     /*-*****************************-*/
@@ -68,7 +68,7 @@ public class CheckInOut {
         try {
             return Unserializer.unserializeObject(CheckInOut.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -81,7 +81,7 @@ public class CheckInOut {
         try {
             return Serializer.serializeObject(checkInOut);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

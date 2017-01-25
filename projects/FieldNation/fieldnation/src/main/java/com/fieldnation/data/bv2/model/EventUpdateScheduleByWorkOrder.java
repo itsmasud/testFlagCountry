@@ -13,7 +13,7 @@ public class EventUpdateScheduleByWorkOrder {
     private EventUpdateScheduleByWorkOrderNew _new;
 
     @Json(name = "old")
-    private EventUpdateScheduleByWorkOrderOld old;
+    private EventUpdateScheduleByWorkOrderOld _old;
 
     public EventUpdateScheduleByWorkOrder() {
     }
@@ -23,7 +23,7 @@ public class EventUpdateScheduleByWorkOrder {
     }
 
     public EventUpdateScheduleByWorkOrderOld getOld() {
-        return old;
+        return _old;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class EventUpdateScheduleByWorkOrder {
         try {
             return Unserializer.unserializeObject(EventUpdateScheduleByWorkOrder.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class EventUpdateScheduleByWorkOrder {
         try {
             return Serializer.serializeObject(eventUpdateScheduleByWorkOrder);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

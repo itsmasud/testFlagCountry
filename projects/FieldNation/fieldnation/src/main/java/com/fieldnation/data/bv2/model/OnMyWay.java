@@ -10,62 +10,62 @@ public class OnMyWay {
     private static final String TAG = "OnMyWay";
 
     @Json(name = "distance")
-    private Double distance;
+    private Double _distance;
 
     @Json(name = "substatus")
-    private String substatus;
+    private String _substatus;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "estimated_delay")
-    private Integer estimatedDelay;
+    private Integer _estimatedDelay;
 
     @Json(name = "active")
-    private Boolean active;
+    private Boolean _active;
 
     @Json(name = "drive_time")
-    private Integer driveTime;
+    private Integer _driveTime;
 
     @Json(name = "coords")
-    private Coords coords;
+    private Coords _coords;
 
     @Json(name = "status")
-    private String status;
+    private String _status;
 
     public OnMyWay() {
     }
 
     public Double getDistance() {
-        return distance;
+        return _distance;
     }
 
     public String getSubstatus() {
-        return substatus;
+        return _substatus;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public Integer getEstimatedDelay() {
-        return estimatedDelay;
+        return _estimatedDelay;
     }
 
     public Boolean getActive() {
-        return active;
+        return _active;
     }
 
     public Integer getDriveTime() {
-        return driveTime;
+        return _driveTime;
     }
 
     public Coords getCoords() {
-        return coords;
+        return _coords;
     }
 
     public String getStatus() {
-        return status;
+        return _status;
     }
 
     /*-*****************************-*/
@@ -75,7 +75,7 @@ public class OnMyWay {
         try {
             return Unserializer.unserializeObject(OnMyWay.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class OnMyWay {
         try {
             return Serializer.serializeObject(onMyWay);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

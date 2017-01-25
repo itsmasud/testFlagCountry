@@ -10,139 +10,139 @@ public class StoredLocation {
     private static final String TAG = "StoredLocation";
 
     @Json(name = "zip")
-    private String zip;
+    private String _zip;
 
     @Json(name = "country")
-    private String country;
+    private String _country;
 
     @Json(name = "notes")
-    private LocationNote[] notes;
+    private LocationNote[] _notes;
 
     @Json(name = "address2")
-    private String address2;
+    private String _address2;
 
     @Json(name = "city")
-    private String city;
+    private String _city;
 
     @Json(name = "address1")
-    private String address1;
+    private String _address1;
 
     @Json(name = "active")
-    private Boolean active;
+    private Boolean _active;
 
     @Json(name = "type")
-    private LocationType type;
+    private LocationType _type;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "geo")
-    private Coords geo;
+    private Coords _geo;
 
     @Json(name = "contact")
-    private Contact contact;
+    private Contact _contact;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "client")
-    private Company client;
+    private Company _client;
 
     @Json(name = "company")
-    private Company company;
+    private Company _company;
 
     @Json(name = "attributes")
-    private LocationAttribute[] attributes;
+    private LocationAttribute[] _attributes;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "state")
-    private String state;
+    private String _state;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "group")
-    private LocationGroup group;
+    private LocationGroup _group;
 
     public StoredLocation() {
     }
 
     public String getZip() {
-        return zip;
+        return _zip;
     }
 
     public String getCountry() {
-        return country;
+        return _country;
     }
 
     public LocationNote[] getNotes() {
-        return notes;
+        return _notes;
     }
 
     public String getAddress2() {
-        return address2;
+        return _address2;
     }
 
     public String getCity() {
-        return city;
+        return _city;
     }
 
     public String getAddress1() {
-        return address1;
+        return _address1;
     }
 
     public Boolean getActive() {
-        return active;
+        return _active;
     }
 
     public LocationType getType() {
-        return type;
+        return _type;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public Coords getGeo() {
-        return geo;
+        return _geo;
     }
 
     public Contact getContact() {
-        return contact;
+        return _contact;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Company getClient() {
-        return client;
+        return _client;
     }
 
     public Company getCompany() {
-        return company;
+        return _company;
     }
 
     public LocationAttribute[] getAttributes() {
-        return attributes;
+        return _attributes;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getState() {
-        return state;
+        return _state;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public LocationGroup getGroup() {
-        return group;
+        return _group;
     }
 
     /*-*****************************-*/
@@ -152,7 +152,7 @@ public class StoredLocation {
         try {
             return Unserializer.unserializeObject(StoredLocation.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -165,7 +165,7 @@ public class StoredLocation {
         try {
             return Serializer.serializeObject(storedLocation);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

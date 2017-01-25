@@ -10,27 +10,27 @@ public class TaskType {
     private static final String TAG = "TaskType";
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "title")
-    private String title;
+    private String _title;
 
     @Json(name = "key")
-    private String key;
+    private String _key;
 
     public TaskType() {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getTitle() {
-        return title;
+        return _title;
     }
 
     public String getKey() {
-        return key;
+        return _key;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class TaskType {
         try {
             return Unserializer.unserializeObject(TaskType.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class TaskType {
         try {
             return Serializer.serializeObject(taskType);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

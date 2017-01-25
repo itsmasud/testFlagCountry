@@ -10,20 +10,20 @@ public class RichText {
     private static final String TAG = "RichText";
 
     @Json(name = "markdown")
-    private String markdown;
+    private String _markdown;
 
     @Json(name = "html")
-    private String html;
+    private String _html;
 
     public RichText() {
     }
 
     public String getMarkdown() {
-        return markdown;
+        return _markdown;
     }
 
     public String getHtml() {
-        return html;
+        return _html;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class RichText {
         try {
             return Unserializer.unserializeObject(RichText.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class RichText {
         try {
             return Serializer.serializeObject(richText);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

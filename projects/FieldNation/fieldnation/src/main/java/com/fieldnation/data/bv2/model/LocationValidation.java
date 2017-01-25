@@ -10,20 +10,20 @@ public class LocationValidation {
     private static final String TAG = "LocationValidation";
 
     @Json(name = "is_valid")
-    private Boolean isValid;
+    private Boolean _isValid;
 
     @Json(name = "messages")
-    private String[] messages;
+    private String[] _messages;
 
     public LocationValidation() {
     }
 
     public Boolean getIsValid() {
-        return isValid;
+        return _isValid;
     }
 
     public String[] getMessages() {
-        return messages;
+        return _messages;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class LocationValidation {
         try {
             return Unserializer.unserializeObject(LocationValidation.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class LocationValidation {
         try {
             return Serializer.serializeObject(locationValidation);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

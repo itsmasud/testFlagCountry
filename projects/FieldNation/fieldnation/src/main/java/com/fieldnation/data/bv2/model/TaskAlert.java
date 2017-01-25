@@ -10,27 +10,27 @@ public class TaskAlert {
     private static final String TAG = "TaskAlert";
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "sent")
-    private Long sent;
+    private Long _sent;
 
     @Json(name = "email")
-    private String email;
+    private String _email;
 
     public TaskAlert() {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Long getSent() {
-        return sent;
+        return _sent;
     }
 
     public String getEmail() {
-        return email;
+        return _email;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class TaskAlert {
         try {
             return Unserializer.unserializeObject(TaskAlert.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class TaskAlert {
         try {
             return Serializer.serializeObject(taskAlert);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

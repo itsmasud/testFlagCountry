@@ -10,20 +10,20 @@ public class ProblemsNext {
     private static final String TAG = "ProblemsNext";
 
     @Json(name = "reason")
-    private String reason;
+    private String _reason;
 
     @Json(name = "problem_id")
-    private Integer problemId;
+    private Integer _problemId;
 
     public ProblemsNext() {
     }
 
     public String getReason() {
-        return reason;
+        return _reason;
     }
 
     public Integer getProblemId() {
-        return problemId;
+        return _problemId;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class ProblemsNext {
         try {
             return Unserializer.unserializeObject(ProblemsNext.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class ProblemsNext {
         try {
             return Serializer.serializeObject(problemsNext);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

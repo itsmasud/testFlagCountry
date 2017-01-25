@@ -10,20 +10,20 @@ public class CountryStateValues {
     private static final String TAG = "CountryStateValues";
 
     @Json(name = "label")
-    private String label;
+    private String _label;
 
     @Json(name = "value")
-    private String value;
+    private String _value;
 
     public CountryStateValues() {
     }
 
     public String getLabel() {
-        return label;
+        return _label;
     }
 
     public String getValue() {
-        return value;
+        return _value;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class CountryStateValues {
         try {
             return Unserializer.unserializeObject(CountryStateValues.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class CountryStateValues {
         try {
             return Serializer.serializeObject(countryStateValues);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

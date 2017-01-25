@@ -13,22 +13,22 @@ public class SavedList {
     private Boolean _default;
 
     @Json(name = "columns")
-    private String columns;
+    private String _columns;
 
     @Json(name = "count")
-    private Integer count;
+    private Integer _count;
 
     @Json(name = "id")
-    private String id;
+    private String _id;
 
     @Json(name = "sort")
-    private String sort;
+    private String _sort;
 
     @Json(name = "label")
-    private String label;
+    private String _label;
 
     @Json(name = "order")
-    private OrderEnum order;
+    private OrderEnum _order;
 
     public SavedList() {
     }
@@ -38,27 +38,27 @@ public class SavedList {
     }
 
     public String getColumns() {
-        return columns;
+        return _columns;
     }
 
     public Integer getCount() {
-        return count;
+        return _count;
     }
 
     public String getId() {
-        return id;
+        return _id;
     }
 
     public String getSort() {
-        return sort;
+        return _sort;
     }
 
     public String getLabel() {
-        return label;
+        return _label;
     }
 
     public OrderEnum getOrder() {
-        return order;
+        return _order;
     }
 
     /*-*****************************-*/
@@ -68,7 +68,7 @@ public class SavedList {
         try {
             return Unserializer.unserializeObject(SavedList.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -81,7 +81,7 @@ public class SavedList {
         try {
             return Serializer.serializeObject(savedList);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

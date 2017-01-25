@@ -10,34 +10,34 @@ public class EventUpdateScheduleByWorkOrderOld {
     private static final String TAG = "EventUpdateScheduleByWorkOrderOld";
 
     @Json(name = "mode")
-    private String mode;
+    private String _mode;
 
     @Json(name = "start")
-    private String start;
+    private String _start;
 
     @Json(name = "end")
-    private String end;
+    private String _end;
 
     @Json(name = "time_zone")
-    private String timeZone;
+    private String _timeZone;
 
     public EventUpdateScheduleByWorkOrderOld() {
     }
 
     public String getMode() {
-        return mode;
+        return _mode;
     }
 
     public String getStart() {
-        return start;
+        return _start;
     }
 
     public String getEnd() {
-        return end;
+        return _end;
     }
 
     public String getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class EventUpdateScheduleByWorkOrderOld {
         try {
             return Unserializer.unserializeObject(EventUpdateScheduleByWorkOrderOld.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class EventUpdateScheduleByWorkOrderOld {
         try {
             return Serializer.serializeObject(eventUpdateScheduleByWorkOrderOld);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

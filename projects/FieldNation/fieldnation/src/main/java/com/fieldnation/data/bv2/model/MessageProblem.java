@@ -10,27 +10,27 @@ public class MessageProblem {
     private static final String TAG = "MessageProblem";
 
     @Json(name = "flag_id")
-    private Integer flagId;
+    private Integer _flagId;
 
     @Json(name = "type")
-    private MessageProblemType type;
+    private MessageProblemType _type;
 
     @Json(name = "resolved")
-    private Boolean resolved;
+    private Boolean _resolved;
 
     public MessageProblem() {
     }
 
     public Integer getFlagId() {
-        return flagId;
+        return _flagId;
     }
 
     public MessageProblemType getType() {
-        return type;
+        return _type;
     }
 
     public Boolean getResolved() {
-        return resolved;
+        return _resolved;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class MessageProblem {
         try {
             return Unserializer.unserializeObject(MessageProblem.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class MessageProblem {
         try {
             return Serializer.serializeObject(messageProblem);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

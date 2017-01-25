@@ -10,27 +10,27 @@ public class Shipments {
     private static final String TAG = "Shipments";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private Shipment[] results;
+    private Shipment[] _results;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     public Shipments() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public Shipment[] getResults() {
-        return results;
+        return _results;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class Shipments {
         try {
             return Unserializer.unserializeObject(Shipments.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class Shipments {
         try {
             return Serializer.serializeObject(shipments);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

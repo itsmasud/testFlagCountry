@@ -10,13 +10,13 @@ public class CheckInOutTimeLog {
     private static final String TAG = "CheckInOutTimeLog";
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public CheckInOutTimeLog() {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -26,7 +26,7 @@ public class CheckInOutTimeLog {
         try {
             return Unserializer.unserializeObject(CheckInOutTimeLog.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -39,7 +39,7 @@ public class CheckInOutTimeLog {
         try {
             return Serializer.serializeObject(checkInOutTimeLog);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

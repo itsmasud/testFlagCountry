@@ -10,153 +10,153 @@ public class Location {
     private static final String TAG = "Location";
 
     @Json(name = "zip")
-    private String zip;
+    private String _zip;
 
     @Json(name = "save_location_group")
-    private Integer saveLocationGroup;
+    private Integer _saveLocationGroup;
 
     @Json(name = "country")
-    private String country;
+    private String _country;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "address2")
-    private String address2;
+    private String _address2;
 
     @Json(name = "city")
-    private String city;
+    private String _city;
 
     @Json(name = "saved_location")
-    private StoredLocation savedLocation;
+    private StoredLocation _savedLocation;
 
     @Json(name = "address1")
-    private String address1;
+    private String _address1;
 
     @Json(name = "coordinates")
-    private Coords coordinates;
+    private Coords _coordinates;
 
     @Json(name = "type")
-    private LocationType type;
+    private LocationType _type;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "mode")
-    private ModeEnum mode;
+    private ModeEnum _mode;
 
     @Json(name = "status_id")
-    private Integer statusId;
+    private Integer _statusId;
 
     @Json(name = "save_location")
-    private String saveLocation;
+    private String _saveLocation;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     @Json(name = "state")
-    private String state;
+    private String _state;
 
     @Json(name = "actions")
-    private String actions;
+    private String _actions;
 
     @Json(name = "map")
-    private Map map;
+    private Map _map;
 
     @Json(name = "contacts")
-    private Contact[] contacts;
+    private Contact[] _contacts;
 
     @Json(name = "validation")
-    private LocationValidation validation;
+    private LocationValidation _validation;
 
     public Location() {
     }
 
     public String getZip() {
-        return zip;
+        return _zip;
     }
 
     public Integer getSaveLocationGroup() {
-        return saveLocationGroup;
+        return _saveLocationGroup;
     }
 
     public String getCountry() {
-        return country;
+        return _country;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public String getAddress2() {
-        return address2;
+        return _address2;
     }
 
     public String getCity() {
-        return city;
+        return _city;
     }
 
     public StoredLocation getSavedLocation() {
-        return savedLocation;
+        return _savedLocation;
     }
 
     public String getAddress1() {
-        return address1;
+        return _address1;
     }
 
     public Coords getCoordinates() {
-        return coordinates;
+        return _coordinates;
     }
 
     public LocationType getType() {
-        return type;
+        return _type;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public ModeEnum getMode() {
-        return mode;
+        return _mode;
     }
 
     public Integer getStatusId() {
-        return statusId;
+        return _statusId;
     }
 
     public String getSaveLocation() {
-        return saveLocation;
+        return _saveLocation;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     public String getState() {
-        return state;
+        return _state;
     }
 
     public String getActions() {
-        return actions;
+        return _actions;
     }
 
     public Map getMap() {
-        return map;
+        return _map;
     }
 
     public Contact[] getContacts() {
-        return contacts;
+        return _contacts;
     }
 
     public LocationValidation getValidation() {
-        return validation;
+        return _validation;
     }
 
     /*-*****************************-*/
@@ -166,7 +166,7 @@ public class Location {
         try {
             return Unserializer.unserializeObject(Location.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -179,7 +179,7 @@ public class Location {
         try {
             return Serializer.serializeObject(location);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

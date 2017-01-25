@@ -10,69 +10,69 @@ public class Manager {
     private static final String TAG = "Manager";
 
     @Json(name = "phone")
-    private String phone;
+    private String _phone;
 
     @Json(name = "ratings")
-    private Double ratings;
+    private Double _ratings;
 
     @Json(name = "review_period_days")
-    private Integer reviewPeriodDays;
+    private Integer _reviewPeriodDays;
 
     @Json(name = "rating")
-    private Double rating;
+    private Double _rating;
 
     @Json(name = "last_name")
-    private String lastName;
+    private String _lastName;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "approval_days")
-    private Integer approvalDays;
+    private Integer _approvalDays;
 
     @Json(name = "first_name")
-    private String firstName;
+    private String _firstName;
 
     @Json(name = "email")
-    private String email;
+    private String _email;
 
     public Manager() {
     }
 
     public String getPhone() {
-        return phone;
+        return _phone;
     }
 
     public Double getRatings() {
-        return ratings;
+        return _ratings;
     }
 
     public Integer getReviewPeriodDays() {
-        return reviewPeriodDays;
+        return _reviewPeriodDays;
     }
 
     public Double getRating() {
-        return rating;
+        return _rating;
     }
 
     public String getLastName() {
-        return lastName;
+        return _lastName;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Integer getApprovalDays() {
-        return approvalDays;
+        return _approvalDays;
     }
 
     public String getFirstName() {
-        return firstName;
+        return _firstName;
     }
 
     public String getEmail() {
-        return email;
+        return _email;
     }
 
     /*-*****************************-*/
@@ -82,7 +82,7 @@ public class Manager {
         try {
             return Unserializer.unserializeObject(Manager.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -95,7 +95,7 @@ public class Manager {
         try {
             return Serializer.serializeObject(manager);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

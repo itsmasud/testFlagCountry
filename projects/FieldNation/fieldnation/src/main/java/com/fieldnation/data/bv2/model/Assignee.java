@@ -10,48 +10,48 @@ public class Assignee {
     private static final String TAG = "Assignee";
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "status_id")
-    private Integer statusId;
+    private Integer _statusId;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     @Json(name = "user")
-    private User user;
+    private User _user;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     public Assignee() {
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public Integer getStatusId() {
-        return statusId;
+        return _statusId;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     public User getUser() {
-        return user;
+        return _user;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class Assignee {
         try {
             return Unserializer.unserializeObject(Assignee.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class Assignee {
         try {
             return Serializer.serializeObject(assignee);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

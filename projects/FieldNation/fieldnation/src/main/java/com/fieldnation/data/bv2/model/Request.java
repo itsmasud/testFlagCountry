@@ -10,90 +10,90 @@ public class Request {
     private static final String TAG = "Request";
 
     @Json(name = "schedule")
-    private Schedule schedule;
+    private Schedule _schedule;
 
     @Json(name = "expires")
-    private Date expires;
+    private Date _expires;
 
     @Json(name = "hour_estimate")
-    private Double hourEstimate;
+    private Double _hourEstimate;
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "active")
-    private Boolean active;
+    private Boolean _active;
 
     @Json(name = "pay")
-    private Pay pay;
+    private Pay _pay;
 
     @Json(name = "counter_notes")
-    private String counterNotes;
+    private String _counterNotes;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "counter")
-    private Boolean counter;
+    private Boolean _counter;
 
     @Json(name = "user")
-    private User user;
+    private User _user;
 
     @Json(name = "work_order")
-    private WorkOrder workOrder;
+    private WorkOrder _workOrder;
 
     public Request() {
     }
 
     public Schedule getSchedule() {
-        return schedule;
+        return _schedule;
     }
 
     public Date getExpires() {
-        return expires;
+        return _expires;
     }
 
     public Double getHourEstimate() {
-        return hourEstimate;
+        return _hourEstimate;
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public Boolean getActive() {
-        return active;
+        return _active;
     }
 
     public Pay getPay() {
-        return pay;
+        return _pay;
     }
 
     public String getCounterNotes() {
-        return counterNotes;
+        return _counterNotes;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Boolean getCounter() {
-        return counter;
+        return _counter;
     }
 
     public User getUser() {
-        return user;
+        return _user;
     }
 
     public WorkOrder getWorkOrder() {
-        return workOrder;
+        return _workOrder;
     }
 
     /*-*****************************-*/
@@ -103,7 +103,7 @@ public class Request {
         try {
             return Unserializer.unserializeObject(Request.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -116,7 +116,7 @@ public class Request {
         try {
             return Serializer.serializeObject(request);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,41 +10,41 @@ public class CustomFieldCategory {
     private static final String TAG = "CustomFieldCategory";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "results")
-    private CustomField[] results;
+    private CustomField[] _results;
 
     public CustomFieldCategory() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public CustomField[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class CustomFieldCategory {
         try {
             return Unserializer.unserializeObject(CustomFieldCategory.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class CustomFieldCategory {
         try {
             return Serializer.serializeObject(customFieldCategory);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

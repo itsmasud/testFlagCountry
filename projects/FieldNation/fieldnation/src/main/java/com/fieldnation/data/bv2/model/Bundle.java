@@ -10,20 +10,20 @@ public class Bundle {
     private static final String TAG = "Bundle";
 
     @Json(name = "count")
-    private Integer count;
+    private Integer _count;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public Bundle() {
     }
 
     public Integer getCount() {
-        return count;
+        return _count;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class Bundle {
         try {
             return Unserializer.unserializeObject(Bundle.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class Bundle {
         try {
             return Serializer.serializeObject(bundle);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

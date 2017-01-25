@@ -10,48 +10,48 @@ public class UpdateModelMetadataData {
     private static final String TAG = "UpdateModelMetadataData";
 
     @Json(name = "route")
-    private String route;
+    private String _route;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "company_id")
-    private Integer companyId;
+    private Integer _companyId;
 
     @Json(name = "user_id")
-    private Integer userId;
+    private Integer _userId;
 
     @Json(name = "group_id")
-    private Integer groupId;
+    private Integer _groupId;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     public UpdateModelMetadataData() {
     }
 
     public String getRoute() {
-        return route;
+        return _route;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public Integer getCompanyId() {
-        return companyId;
+        return _companyId;
     }
 
     public Integer getUserId() {
-        return userId;
+        return _userId;
     }
 
     public Integer getGroupId() {
-        return groupId;
+        return _groupId;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class UpdateModelMetadataData {
         try {
             return Unserializer.unserializeObject(UpdateModelMetadataData.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class UpdateModelMetadataData {
         try {
             return Serializer.serializeObject(updateModelMetadataData);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

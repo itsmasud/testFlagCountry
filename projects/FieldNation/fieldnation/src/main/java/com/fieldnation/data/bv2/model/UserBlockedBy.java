@@ -10,20 +10,20 @@ public class UserBlockedBy {
     private static final String TAG = "UserBlockedBy";
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public UserBlockedBy() {
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class UserBlockedBy {
         try {
             return Unserializer.unserializeObject(UserBlockedBy.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class UserBlockedBy {
         try {
             return Serializer.serializeObject(userBlockedBy);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

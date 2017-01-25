@@ -10,20 +10,20 @@ public class Local {
     private static final String TAG = "Local";
 
     @Json(name = "date")
-    private String date;
+    private String _date;
 
     @Json(name = "time")
-    private String time;
+    private String _time;
 
     public Local() {
     }
 
     public String getDate() {
-        return date;
+        return _date;
     }
 
     public String getTime() {
-        return time;
+        return _time;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class Local {
         try {
             return Unserializer.unserializeObject(Local.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class Local {
         try {
             return Serializer.serializeObject(local);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

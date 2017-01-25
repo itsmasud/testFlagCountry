@@ -10,20 +10,20 @@ public class CountryAddress1 {
     private static final String TAG = "CountryAddress1";
 
     @Json(name = "label")
-    private String label;
+    private String _label;
 
     @Json(name = "required")
-    private Boolean required;
+    private Boolean _required;
 
     public CountryAddress1() {
     }
 
     public String getLabel() {
-        return label;
+        return _label;
     }
 
     public Boolean getRequired() {
-        return required;
+        return _required;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class CountryAddress1 {
         try {
             return Unserializer.unserializeObject(CountryAddress1.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class CountryAddress1 {
         try {
             return Serializer.serializeObject(countryAddress1);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

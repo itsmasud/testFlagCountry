@@ -10,83 +10,83 @@ public class Signature {
     private static final String TAG = "Signature";
 
     @Json(name = "closing_notes")
-    private String closingNotes;
+    private String _closingNotes;
 
     @Json(name = "task")
-    private Task task;
+    private Task _task;
 
     @Json(name = "data")
-    private String data;
+    private String _data;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "format")
-    private String format;
+    private String _format;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "worklog")
-    private String worklog;
+    private String _worklog;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     @Json(name = "hash")
-    private String hash;
+    private String _hash;
 
     public Signature() {
     }
 
     public String getClosingNotes() {
-        return closingNotes;
+        return _closingNotes;
     }
 
     public Task getTask() {
-        return task;
+        return _task;
     }
 
     public String getData() {
-        return data;
+        return _data;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String getFormat() {
-        return format;
+        return _format;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getWorklog() {
-        return worklog;
+        return _worklog;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public String getHash() {
-        return hash;
+        return _hash;
     }
 
     /*-*****************************-*/
@@ -96,7 +96,7 @@ public class Signature {
         try {
             return Unserializer.unserializeObject(Signature.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class Signature {
         try {
             return Serializer.serializeObject(signature);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

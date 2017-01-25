@@ -10,20 +10,20 @@ public class UserJobs {
     private static final String TAG = "UserJobs";
 
     @Json(name = "marketplace")
-    private Integer marketplace;
+    private Integer _marketplace;
 
     @Json(name = "company")
-    private Integer company;
+    private Integer _company;
 
     public UserJobs() {
     }
 
     public Integer getMarketplace() {
-        return marketplace;
+        return _marketplace;
     }
 
     public Integer getCompany() {
-        return company;
+        return _company;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class UserJobs {
         try {
             return Unserializer.unserializeObject(UserJobs.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class UserJobs {
         try {
             return Serializer.serializeObject(userJobs);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

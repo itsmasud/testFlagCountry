@@ -1,6 +1,5 @@
 package com.fieldnation.data.bv2.model;
 
-import com.fieldnation.data.bv2.client.WorkOrderListQuery;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -11,20 +10,20 @@ public class Map {
     private static final String TAG = "Map";
 
     @Json(name = "href")
-    private String href;
+    private String _href;
 
     @Json(name = "url")
-    private String url;
+    private String _url;
 
     public Map() {
     }
 
     public String getHref() {
-        return href;
+        return _href;
     }
 
     public String getUrl() {
-        return url;
+        return _url;
     }
 
     /*-*****************************-*/
@@ -34,7 +33,7 @@ public class Map {
         try {
             return Unserializer.unserializeObject(Map.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -47,7 +46,7 @@ public class Map {
         try {
             return Serializer.serializeObject(map);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

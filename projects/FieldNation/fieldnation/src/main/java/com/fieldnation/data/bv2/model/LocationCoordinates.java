@@ -10,69 +10,69 @@ public class LocationCoordinates {
     private static final String TAG = "LocationCoordinates";
 
     @Json(name = "zip")
-    private String zip;
+    private String _zip;
 
     @Json(name = "country")
-    private String country;
+    private String _country;
 
     @Json(name = "city")
-    private String city;
+    private String _city;
 
     @Json(name = "latitude")
-    private Double latitude;
+    private Double _latitude;
 
     @Json(name = "exact")
-    private Boolean exact;
+    private Boolean _exact;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "state")
-    private String state;
+    private String _state;
 
     @Json(name = "type")
-    private String type;
+    private String _type;
 
     @Json(name = "longitude")
-    private Double longitude;
+    private Double _longitude;
 
     public LocationCoordinates() {
     }
 
     public String getZip() {
-        return zip;
+        return _zip;
     }
 
     public String getCountry() {
-        return country;
+        return _country;
     }
 
     public String getCity() {
-        return city;
+        return _city;
     }
 
     public Double getLatitude() {
-        return latitude;
+        return _latitude;
     }
 
     public Boolean getExact() {
-        return exact;
+        return _exact;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getState() {
-        return state;
+        return _state;
     }
 
     public String getType() {
-        return type;
+        return _type;
     }
 
     public Double getLongitude() {
-        return longitude;
+        return _longitude;
     }
 
     /*-*****************************-*/
@@ -82,7 +82,7 @@ public class LocationCoordinates {
         try {
             return Unserializer.unserializeObject(LocationCoordinates.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -95,7 +95,7 @@ public class LocationCoordinates {
         try {
             return Serializer.serializeObject(locationCoordinates);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

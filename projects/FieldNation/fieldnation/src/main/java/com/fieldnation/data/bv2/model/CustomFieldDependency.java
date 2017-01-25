@@ -10,27 +10,27 @@ public class CustomFieldDependency {
     private static final String TAG = "CustomFieldDependency";
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "value")
-    private String value;
+    private String _value;
 
     @Json(name = "operator")
-    private OperatorEnum operator;
+    private OperatorEnum _operator;
 
     public CustomFieldDependency() {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getValue() {
-        return value;
+        return _value;
     }
 
     public OperatorEnum getOperator() {
-        return operator;
+        return _operator;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class CustomFieldDependency {
         try {
             return Unserializer.unserializeObject(CustomFieldDependency.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class CustomFieldDependency {
         try {
             return Serializer.serializeObject(customFieldDependency);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,83 +10,83 @@ public class CustomField {
     private static final String TAG = "CustomField";
 
     @Json(name = "role")
-    private RoleEnum role;
+    private RoleEnum _role;
 
     @Json(name = "dependency")
-    private CustomFieldDependency dependency;
+    private CustomFieldDependency _dependency;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "options")
-    private String[] options;
+    private String[] _options;
 
     @Json(name = "flags")
-    private FlagsEnum[] flags;
+    private FlagsEnum[] _flags;
 
     @Json(name = "tip")
-    private String tip;
+    private String _tip;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "type")
-    private TypeEnum type;
+    private TypeEnum _type;
 
     @Json(name = "category")
-    private String category;
+    private String _category;
 
     @Json(name = "value")
-    private String value;
+    private String _value;
 
     @Json(name = "actions")
-    private ActionsEnum actions;
+    private ActionsEnum _actions;
 
     public CustomField() {
     }
 
     public RoleEnum getRole() {
-        return role;
+        return _role;
     }
 
     public CustomFieldDependency getDependency() {
-        return dependency;
+        return _dependency;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public String[] getOptions() {
-        return options;
+        return _options;
     }
 
     public FlagsEnum[] getFlags() {
-        return flags;
+        return _flags;
     }
 
     public String getTip() {
-        return tip;
+        return _tip;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public TypeEnum getType() {
-        return type;
+        return _type;
     }
 
     public String getCategory() {
-        return category;
+        return _category;
     }
 
     public String getValue() {
-        return value;
+        return _value;
     }
 
     public ActionsEnum getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -96,7 +96,7 @@ public class CustomField {
         try {
             return Unserializer.unserializeObject(CustomField.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -109,7 +109,7 @@ public class CustomField {
         try {
             return Serializer.serializeObject(customField);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

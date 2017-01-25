@@ -10,41 +10,41 @@ public class Fee {
     private static final String TAG = "Fee";
 
     @Json(name = "calculation")
-    private CalculationEnum calculation;
+    private CalculationEnum _calculation;
 
     @Json(name = "amount")
-    private Double amount;
+    private Double _amount;
 
     @Json(name = "modifier")
-    private Double modifier;
+    private Double _modifier;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "charged")
-    private Boolean charged;
+    private Boolean _charged;
 
     public Fee() {
     }
 
     public CalculationEnum getCalculation() {
-        return calculation;
+        return _calculation;
     }
 
     public Double getAmount() {
-        return amount;
+        return _amount;
     }
 
     public Double getModifier() {
-        return modifier;
+        return _modifier;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Boolean getCharged() {
-        return charged;
+        return _charged;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class Fee {
         try {
             return Unserializer.unserializeObject(Fee.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class Fee {
         try {
             return Serializer.serializeObject(fee);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

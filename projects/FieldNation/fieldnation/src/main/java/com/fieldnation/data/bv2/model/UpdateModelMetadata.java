@@ -10,20 +10,20 @@ public class UpdateModelMetadata {
     private static final String TAG = "UpdateModelMetadata";
 
     @Json(name = "data")
-    private UpdateModelMetadataData data;
+    private UpdateModelMetadataData _data;
 
     @Json(name = "universal_context")
-    private UpdateModelMetadataUniversalContext universalContext;
+    private UpdateModelMetadataUniversalContext _universalContext;
 
     public UpdateModelMetadata() {
     }
 
     public UpdateModelMetadataData getData() {
-        return data;
+        return _data;
     }
 
     public UpdateModelMetadataUniversalContext getUniversalContext() {
-        return universalContext;
+        return _universalContext;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class UpdateModelMetadata {
         try {
             return Unserializer.unserializeObject(UpdateModelMetadata.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class UpdateModelMetadata {
         try {
             return Serializer.serializeObject(updateModelMetadata);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,48 +10,48 @@ public class Coords {
     private static final String TAG = "Coords";
 
     @Json(name = "search")
-    private String search;
+    private String _search;
 
     @Json(name = "distance")
-    private Double distance;
+    private Double _distance;
 
     @Json(name = "success")
-    private Boolean success;
+    private Boolean _success;
 
     @Json(name = "latitude")
-    private Double latitude;
+    private Double _latitude;
 
     @Json(name = "exact")
-    private Boolean exact;
+    private Boolean _exact;
 
     @Json(name = "longitude")
-    private Double longitude;
+    private Double _longitude;
 
     public Coords() {
     }
 
     public String getSearch() {
-        return search;
+        return _search;
     }
 
     public Double getDistance() {
-        return distance;
+        return _distance;
     }
 
     public Boolean getSuccess() {
-        return success;
+        return _success;
     }
 
     public Double getLatitude() {
-        return latitude;
+        return _latitude;
     }
 
     public Boolean getExact() {
-        return exact;
+        return _exact;
     }
 
     public Double getLongitude() {
-        return longitude;
+        return _longitude;
     }
 
     /*-*****************************-*/
@@ -61,7 +61,7 @@ public class Coords {
         try {
             return Unserializer.unserializeObject(Coords.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -74,7 +74,7 @@ public class Coords {
         try {
             return Serializer.serializeObject(coords);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

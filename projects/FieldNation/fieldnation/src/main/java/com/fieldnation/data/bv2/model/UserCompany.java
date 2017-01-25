@@ -10,41 +10,41 @@ public class UserCompany {
     private static final String TAG = "UserCompany";
 
     @Json(name = "features")
-    private String[] features;
+    private String[] _features;
 
     @Json(name = "technicians")
-    private Integer technicians;
+    private Integer _technicians;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "vendors")
-    private Company[] vendors;
+    private Company[] _vendors;
 
     public UserCompany() {
     }
 
     public String[] getFeatures() {
-        return features;
+        return _features;
     }
 
     public Integer getTechnicians() {
-        return technicians;
+        return _technicians;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public Company[] getVendors() {
-        return vendors;
+        return _vendors;
     }
 
     /*-*****************************-*/
@@ -54,7 +54,7 @@ public class UserCompany {
         try {
             return Unserializer.unserializeObject(UserCompany.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -67,7 +67,7 @@ public class UserCompany {
         try {
             return Serializer.serializeObject(userCompany);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

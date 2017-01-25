@@ -10,27 +10,27 @@ public class PayModifiersSum {
     private static final String TAG = "PayModifiersSum";
 
     @Json(name = "all")
-    private Double all;
+    private Double _all;
 
     @Json(name = "uncharged")
-    private Double uncharged;
+    private Double _uncharged;
 
     @Json(name = "charged")
-    private Double charged;
+    private Double _charged;
 
     public PayModifiersSum() {
     }
 
     public Double getAll() {
-        return all;
+        return _all;
     }
 
     public Double getUncharged() {
-        return uncharged;
+        return _uncharged;
     }
 
     public Double getCharged() {
-        return charged;
+        return _charged;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class PayModifiersSum {
         try {
             return Unserializer.unserializeObject(PayModifiersSum.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class PayModifiersSum {
         try {
             return Serializer.serializeObject(payModifiersSum);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

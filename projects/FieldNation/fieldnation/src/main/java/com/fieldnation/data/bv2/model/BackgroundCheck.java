@@ -10,27 +10,27 @@ public class BackgroundCheck {
     private static final String TAG = "BackgroundCheck";
 
     @Json(name = "expires")
-    private String expires;
+    private String _expires;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public BackgroundCheck() {
     }
 
     public String getExpires() {
-        return expires;
+        return _expires;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class BackgroundCheck {
         try {
             return Unserializer.unserializeObject(BackgroundCheck.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class BackgroundCheck {
         try {
             return Serializer.serializeObject(backgroundCheck);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

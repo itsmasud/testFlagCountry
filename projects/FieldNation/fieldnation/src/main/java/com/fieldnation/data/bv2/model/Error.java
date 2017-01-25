@@ -10,34 +10,34 @@ public class Error {
     private static final String TAG = "Error";
 
     @Json(name = "trace")
-    private ErrorTrace[] trace;
+    private ErrorTrace[] _trace;
 
     @Json(name = "code")
-    private Integer code;
+    private Integer _code;
 
     @Json(name = "message")
-    private String message;
+    private String _message;
 
     @Json(name = "fields")
-    private String fields;
+    private String _fields;
 
     public Error() {
     }
 
     public ErrorTrace[] getTrace() {
-        return trace;
+        return _trace;
     }
 
     public Integer getCode() {
-        return code;
+        return _code;
     }
 
     public String getMessage() {
-        return message;
+        return _message;
     }
 
     public String getFields() {
-        return fields;
+        return _fields;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class Error {
         try {
             return Unserializer.unserializeObject(Error.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class Error {
         try {
             return Serializer.serializeObject(error);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,230 +10,230 @@ public class User {
     private static final String TAG = "User";
 
     @Json(name = "country")
-    private String country;
+    private String _country;
 
     @Json(name = "request")
-    private Request request;
+    private Request _request;
 
     @Json(name = "notes")
-    private String notes;
+    private String _notes;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "city")
-    private String city;
+    private String _city;
 
     @Json(name = "rating")
-    private UserRating rating;
+    private UserRating _rating;
 
     @Json(name = "background_checks")
-    private BackgroundCheck[] backgroundChecks;
+    private BackgroundCheck[] _backgroundChecks;
 
     @Json(name = "preferred_groups")
-    private UserPreferredGroups[] preferredGroups;
+    private UserPreferredGroups[] _preferredGroups;
 
     @Json(name = "blocked")
-    private UserBlocked[] blocked;
+    private UserBlocked[] _blocked;
 
     @Json(name = "managed")
-    private Boolean managed;
+    private Boolean _managed;
 
     @Json(name = "client")
-    private Company client;
+    private Company _client;
 
     @Json(name = "company")
-    private UserCompany company;
+    private UserCompany _company;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "state")
-    private String state;
+    private String _state;
 
     @Json(name = "protec")
-    private Boolean protec;
+    private Boolean _protec;
 
     @Json(name = "first_name")
-    private String firstName;
+    private String _firstName;
 
     @Json(name = "worker_compensation")
-    private Boolean workerCompensation;
+    private Boolean _workerCompensation;
 
     @Json(name = "coords")
-    private Coords coords;
+    private Coords _coords;
 
     @Json(name = "email")
-    private String email;
+    private String _email;
 
     @Json(name = "worked_with")
-    private Boolean workedWith;
+    private Boolean _workedWith;
 
     @Json(name = "zip")
-    private String zip;
+    private String _zip;
 
     @Json(name = "drug_tests")
-    private DrugTest[] drugTests;
+    private DrugTest[] _drugTests;
 
     @Json(name = "upcoming_schedule")
-    private UserUpcomingSchedule[] upcomingSchedule;
+    private UserUpcomingSchedule[] _upcomingSchedule;
 
     @Json(name = "thumbnail")
-    private String thumbnail;
+    private String _thumbnail;
 
     @Json(name = "website")
-    private String website;
+    private String _website;
 
     @Json(name = "address")
-    private String address;
+    private String _address;
 
     @Json(name = "jobs")
-    private UserJobs jobs;
+    private UserJobs _jobs;
 
     @Json(name = "last_name")
-    private String lastName;
+    private String _lastName;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "route")
-    private Route route;
+    private Route _route;
 
     @Json(name = "phone")
-    private String phone;
+    private String _phone;
 
     @Json(name = "last_active")
-    private Date lastActive;
+    private Date _lastActive;
 
     public User() {
     }
 
     public String getCountry() {
-        return country;
+        return _country;
     }
 
     public Request getRequest() {
-        return request;
+        return _request;
     }
 
     public String getNotes() {
-        return notes;
+        return _notes;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public String getCity() {
-        return city;
+        return _city;
     }
 
     public UserRating getRating() {
-        return rating;
+        return _rating;
     }
 
     public BackgroundCheck[] getBackgroundChecks() {
-        return backgroundChecks;
+        return _backgroundChecks;
     }
 
     public UserPreferredGroups[] getPreferredGroups() {
-        return preferredGroups;
+        return _preferredGroups;
     }
 
     public UserBlocked[] getBlocked() {
-        return blocked;
+        return _blocked;
     }
 
     public Boolean getManaged() {
-        return managed;
+        return _managed;
     }
 
     public Company getClient() {
-        return client;
+        return _client;
     }
 
     public UserCompany getCompany() {
-        return company;
+        return _company;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getState() {
-        return state;
+        return _state;
     }
 
     public Boolean getProtec() {
-        return protec;
+        return _protec;
     }
 
     public String getFirstName() {
-        return firstName;
+        return _firstName;
     }
 
     public Boolean getWorkerCompensation() {
-        return workerCompensation;
+        return _workerCompensation;
     }
 
     public Coords getCoords() {
-        return coords;
+        return _coords;
     }
 
     public String getEmail() {
-        return email;
+        return _email;
     }
 
     public Boolean getWorkedWith() {
-        return workedWith;
+        return _workedWith;
     }
 
     public String getZip() {
-        return zip;
+        return _zip;
     }
 
     public DrugTest[] getDrugTests() {
-        return drugTests;
+        return _drugTests;
     }
 
     public UserUpcomingSchedule[] getUpcomingSchedule() {
-        return upcomingSchedule;
+        return _upcomingSchedule;
     }
 
     public String getThumbnail() {
-        return thumbnail;
+        return _thumbnail;
     }
 
     public String getWebsite() {
-        return website;
+        return _website;
     }
 
     public String getAddress() {
-        return address;
+        return _address;
     }
 
     public UserJobs getJobs() {
-        return jobs;
+        return _jobs;
     }
 
     public String getLastName() {
-        return lastName;
+        return _lastName;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public Route getRoute() {
-        return route;
+        return _route;
     }
 
     public String getPhone() {
-        return phone;
+        return _phone;
     }
 
     public Date getLastActive() {
-        return lastActive;
+        return _lastActive;
     }
 
     /*-*****************************-*/
@@ -243,7 +243,7 @@ public class User {
         try {
             return Unserializer.unserializeObject(User.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -256,7 +256,7 @@ public class User {
         try {
             return Serializer.serializeObject(user);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

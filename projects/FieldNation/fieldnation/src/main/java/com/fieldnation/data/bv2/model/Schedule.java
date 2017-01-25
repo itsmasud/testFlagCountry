@@ -10,76 +10,76 @@ public class Schedule {
     private static final String TAG = "Schedule";
 
     @Json(name = "no_refresh")
-    private Boolean noRefresh;
+    private Boolean _noRefresh;
 
     @Json(name = "eta")
-    private ScheduleEta eta;
+    private ScheduleEta _eta;
 
     @Json(name = "role")
-    private String role;
+    private String _role;
 
     @Json(name = "status_id")
-    private Integer statusId;
+    private Integer _statusId;
 
     @Json(name = "work_order_id")
-    private Integer workOrderId;
+    private Integer _workOrderId;
 
     @Json(name = "service_window")
-    private ScheduleServiceWindow serviceWindow;
+    private ScheduleServiceWindow _serviceWindow;
 
     @Json(name = "correlation_id")
-    private String correlationId;
+    private String _correlationId;
 
     @Json(name = "time_zone")
-    private TimeZone timeZone;
+    private TimeZone _timeZone;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "on_my_way")
-    private OnMyWay onMyWay;
+    private OnMyWay _onMyWay;
 
     public Schedule() {
     }
 
     public Boolean getNoRefresh() {
-        return noRefresh;
+        return _noRefresh;
     }
 
     public ScheduleEta getEta() {
-        return eta;
+        return _eta;
     }
 
     public String getRole() {
-        return role;
+        return _role;
     }
 
     public Integer getStatusId() {
-        return statusId;
+        return _statusId;
     }
 
     public Integer getWorkOrderId() {
-        return workOrderId;
+        return _workOrderId;
     }
 
     public ScheduleServiceWindow getServiceWindow() {
-        return serviceWindow;
+        return _serviceWindow;
     }
 
     public String getCorrelationId() {
-        return correlationId;
+        return _correlationId;
     }
 
     public TimeZone getTimeZone() {
-        return timeZone;
+        return _timeZone;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public OnMyWay getOnMyWay() {
-        return onMyWay;
+        return _onMyWay;
     }
 
     /*-*****************************-*/
@@ -89,7 +89,7 @@ public class Schedule {
         try {
             return Unserializer.unserializeObject(Schedule.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -102,7 +102,7 @@ public class Schedule {
         try {
             return Serializer.serializeObject(schedule);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,62 +10,62 @@ public class Shipment {
     private static final String TAG = "Shipment";
 
     @Json(name = "carrier")
-    private ShipmentCarrier carrier;
+    private ShipmentCarrier _carrier;
 
     @Json(name = "task")
-    private ShipmentTask task;
+    private ShipmentTask _task;
 
     @Json(name = "created")
-    private Date created;
+    private Date _created;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "user")
-    private User user;
+    private User _user;
 
     @Json(name = "direction")
-    private DirectionEnum direction;
+    private DirectionEnum _direction;
 
     @Json(name = "status")
-    private StatusEnum status;
+    private StatusEnum _status;
 
     public Shipment() {
     }
 
     public ShipmentCarrier getCarrier() {
-        return carrier;
+        return _carrier;
     }
 
     public ShipmentTask getTask() {
-        return task;
+        return _task;
     }
 
     public Date getCreated() {
-        return created;
+        return _created;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public User getUser() {
-        return user;
+        return _user;
     }
 
     public DirectionEnum getDirection() {
-        return direction;
+        return _direction;
     }
 
     public StatusEnum getStatus() {
-        return status;
+        return _status;
     }
 
     /*-*****************************-*/
@@ -75,7 +75,7 @@ public class Shipment {
         try {
             return Unserializer.unserializeObject(Shipment.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -88,7 +88,7 @@ public class Shipment {
         try {
             return Serializer.serializeObject(shipment);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,76 +10,76 @@ public class ListEnvelope {
     private static final String TAG = "ListEnvelope";
 
     @Json(name = "per_page")
-    private Integer perPage;
+    private Integer _perPage;
 
     @Json(name = "total")
-    private Integer total;
+    private Integer _total;
 
     @Json(name = "view")
-    private ViewEnum view;
+    private ViewEnum _view;
 
     @Json(name = "pages")
-    private Integer pages;
+    private Integer _pages;
 
     @Json(name = "columns")
-    private String columns;
+    private String _columns;
 
     @Json(name = "available_columns")
-    private AvailableColumn[] availableColumns;
+    private AvailableColumn[] _availableColumns;
 
     @Json(name = "page")
-    private Integer page;
+    private Integer _page;
 
     @Json(name = "sort")
-    private String sort;
+    private String _sort;
 
     @Json(name = "list")
-    private String list;
+    private String _list;
 
     @Json(name = "order")
-    private OrderEnum order;
+    private OrderEnum _order;
 
     public ListEnvelope() {
     }
 
     public Integer getPerPage() {
-        return perPage;
+        return _perPage;
     }
 
     public Integer getTotal() {
-        return total;
+        return _total;
     }
 
     public ViewEnum getView() {
-        return view;
+        return _view;
     }
 
     public Integer getPages() {
-        return pages;
+        return _pages;
     }
 
     public String getColumns() {
-        return columns;
+        return _columns;
     }
 
     public AvailableColumn[] getAvailableColumns() {
-        return availableColumns;
+        return _availableColumns;
     }
 
     public Integer getPage() {
-        return page;
+        return _page;
     }
 
     public String getSort() {
-        return sort;
+        return _sort;
     }
 
     public String getList() {
-        return list;
+        return _list;
     }
 
     public OrderEnum getOrder() {
-        return order;
+        return _order;
     }
 
     /*-*****************************-*/
@@ -89,7 +89,7 @@ public class ListEnvelope {
         try {
             return Unserializer.unserializeObject(ListEnvelope.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -102,7 +102,7 @@ public class ListEnvelope {
         try {
             return Serializer.serializeObject(listEnvelope);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,27 +10,27 @@ public class AttachmentFolders {
     private static final String TAG = "AttachmentFolders";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private AttachmentFolder[] results;
+    private AttachmentFolder[] _results;
 
     @Json(name = "actions")
-    private String[] actions;
+    private String[] _actions;
 
     public AttachmentFolders() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public AttachmentFolder[] getResults() {
-        return results;
+        return _results;
     }
 
     public String[] getActions() {
-        return actions;
+        return _actions;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class AttachmentFolders {
         try {
             return Unserializer.unserializeObject(AttachmentFolders.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class AttachmentFolders {
         try {
             return Serializer.serializeObject(attachmentFolders);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

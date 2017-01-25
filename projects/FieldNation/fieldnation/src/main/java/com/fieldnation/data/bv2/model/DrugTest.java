@@ -10,27 +10,27 @@ public class DrugTest {
     private static final String TAG = "DrugTest";
 
     @Json(name = "expires")
-    private String expires;
+    private String _expires;
 
     @Json(name = "name")
-    private String name;
+    private String _name;
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     public DrugTest() {
     }
 
     public String getExpires() {
-        return expires;
+        return _expires;
     }
 
     public String getName() {
-        return name;
+        return _name;
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     /*-*****************************-*/
@@ -40,7 +40,7 @@ public class DrugTest {
         try {
             return Unserializer.unserializeObject(DrugTest.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -53,7 +53,7 @@ public class DrugTest {
         try {
             return Serializer.serializeObject(drugTest);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

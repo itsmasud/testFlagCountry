@@ -10,20 +10,20 @@ public class TaskGroup {
     private static final String TAG = "TaskGroup";
 
     @Json(name = "id")
-    private Integer id;
+    private Integer _id;
 
     @Json(name = "label")
-    private String label;
+    private String _label;
 
     public TaskGroup() {
     }
 
     public Integer getId() {
-        return id;
+        return _id;
     }
 
     public String getLabel() {
-        return label;
+        return _label;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class TaskGroup {
         try {
             return Unserializer.unserializeObject(TaskGroup.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class TaskGroup {
         try {
             return Serializer.serializeObject(taskGroup);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

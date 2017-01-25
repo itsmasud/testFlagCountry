@@ -10,20 +10,20 @@ public class ErrorTraceArgs {
     private static final String TAG = "ErrorTraceArgs";
 
     @Json(name = "status_code")
-    private Integer statusCode;
+    private Integer _statusCode;
 
     @Json(name = "message")
-    private String message;
+    private String _message;
 
     public ErrorTraceArgs() {
     }
 
     public Integer getStatusCode() {
-        return statusCode;
+        return _statusCode;
     }
 
     public String getMessage() {
-        return message;
+        return _message;
     }
 
     /*-*****************************-*/
@@ -33,7 +33,7 @@ public class ErrorTraceArgs {
         try {
             return Unserializer.unserializeObject(ErrorTraceArgs.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -46,7 +46,7 @@ public class ErrorTraceArgs {
         try {
             return Serializer.serializeObject(errorTraceArgs);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }

@@ -10,34 +10,34 @@ public class PayModifiers {
     private static final String TAG = "PayModifiers";
 
     @Json(name = "metadata")
-    private ListEnvelope metadata;
+    private ListEnvelope _metadata;
 
     @Json(name = "sum")
-    private PayModifiersSum sum;
+    private PayModifiersSum _sum;
 
     @Json(name = "actions")
-    private ActionsEnum[] actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "results")
-    private PayModifier[] results;
+    private PayModifier[] _results;
 
     public PayModifiers() {
     }
 
     public ListEnvelope getMetadata() {
-        return metadata;
+        return _metadata;
     }
 
     public PayModifiersSum getSum() {
-        return sum;
+        return _sum;
     }
 
     public ActionsEnum[] getActions() {
-        return actions;
+        return _actions;
     }
 
     public PayModifier[] getResults() {
-        return results;
+        return _results;
     }
 
     /*-*****************************-*/
@@ -47,7 +47,7 @@ public class PayModifiers {
         try {
             return Unserializer.unserializeObject(PayModifiers.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
@@ -60,7 +60,7 @@ public class PayModifiers {
         try {
             return Serializer.serializeObject(payModifiers);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(TAG, TAG, ex);
             return null;
         }
     }
