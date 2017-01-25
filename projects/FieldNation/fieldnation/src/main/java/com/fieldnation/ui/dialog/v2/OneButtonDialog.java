@@ -11,11 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fndialog.Controller.Listener;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by Michael on 9/19/2016.
@@ -84,9 +85,7 @@ public class OneButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        Bundle response = new Bundle();
-        response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
-        onResult(response);
+        _onPrimaryDispatcher.dispatch(getUid(), null);
         super.cancel();
 
         if (onCancel())
@@ -97,9 +96,7 @@ public class OneButtonDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_primaryButton_onClick");
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
-            onResult(response);
+            _onCanceledDispatcher.dispatch(getUid(), null);
             if (onPrimaryClick())
                 dismiss(true);
         }
@@ -113,62 +110,84 @@ public class OneButtonDialog extends SimpleDialog {
         return true;
     }
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-
-        public Controller(Context context, String uid) {
-            super(context, OneButtonDialog.class, uid);
-        }
-
-        public Controller(Context context, Class<? extends Dialog> klass, String uid) {
-            super(context, klass, uid);
-        }
-
-        public static void show(Context context, String uid, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
-            show(context, uid, OneButtonDialog.class, context.getString(titleResId), context.getString(bodyResId),
-                    context.getString(buttonResId), isCancelable);
-        }
-
-        public static void show(Context context, String uid, Class<? extends Dialog> klass, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
-            show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
-                    context.getString(buttonResId), isCancelable);
-        }
-
-        public static void show(Context context, String uid, String title, String body, String button, boolean isCancelable) {
-            show(context, uid, OneButtonDialog.class, title, body, button, isCancelable);
-        }
-
-        public static void show(Context context, String uid, Class<? extends Dialog> klass, String title, String body, String button, boolean isCancelable) {
-            Bundle params = new Bundle();
-            params.putString(PARAM_TITLE, title);
-            params.putString(PARAM_BODY, body);
-            params.putString(PARAM_BUTTON, button);
-            params.putBoolean(PARAM_CANCELABLE, isCancelable);
-
-            show(context, uid, klass, params);
-        }
-
-        public static void dismiss(Context context, String uid) {
-            dismiss(context, uid);
-        }
+    public static void show(Context context, String uid, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
+        show(context, uid, OneButtonDialog.class, context.getString(titleResId), context.getString(bodyResId),
+                context.getString(buttonResId), isCancelable);
     }
 
-    public static abstract class ControllerListener implements Listener {
+    public static void show(Context context, String uid, Class<? extends Dialog> klass, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
+        show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
+                context.getString(buttonResId), isCancelable);
+    }
+
+    public static void show(Context context, String uid, String title, String body, String button, boolean isCancelable) {
+        show(context, uid, OneButtonDialog.class, title, body, button, isCancelable);
+    }
+
+    public static void show(Context context, String uid, Class<? extends Dialog> klass, String title, String body, String button, boolean isCancelable) {
+        Bundle params = new Bundle();
+        params.putString(PARAM_TITLE, title);
+        params.putString(PARAM_BODY, body);
+        params.putString(PARAM_BUTTON, button);
+        params.putBoolean(PARAM_CANCELABLE, isCancelable);
+
+        Controller.show(context, uid, klass, params);
+    }
+
+    public static void dismiss(Context context, String uid) {
+        Controller.dismiss(context, uid);
+    }
+
+    /*-************************************-*/
+    /*-         Primary Listener           -*/
+    /*-************************************-*/
+    public interface OnPrimaryListener {
+        void onPrimary();
+    }
+
+    private static KeyedDispatcher<OnPrimaryListener> _onPrimaryDispatcher = new KeyedDispatcher<OnPrimaryListener>() {
         @Override
-        public void onComplete(Bundle response) {
-            switch (response.getInt(PARAM_RESPONSE)) {
-                case PARAM_RESPONSE_PRIMARY:
-                    onPrimary();
-                    break;
-                case PARAM_RESPONSE_CANCEL:
-                    onCancel();
-                    break;
-                default:
-                    break;
-            }
+        public void onDispatch(OnPrimaryListener listener, Object... parameters) {
+            listener.onPrimary();
         }
+    };
 
-        public abstract void onPrimary();
-
-        public abstract void onCancel();
+    public static void addOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
+        _onPrimaryDispatcher.add(uid, onPrimaryListener);
     }
+
+    public static void removeOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
+        _onPrimaryDispatcher.remove(uid, onPrimaryListener);
+    }
+
+    public static void removeAllOnPrimaryListener(String uid) {
+        _onPrimaryDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Canceled Listener           -*/
+    /*-*************************************-*/
+    public interface OnCanceledListener {
+        void onCanceled();
+    }
+
+    private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
+        @Override
+        public void onDispatch(OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled();
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
+    }
+
 }

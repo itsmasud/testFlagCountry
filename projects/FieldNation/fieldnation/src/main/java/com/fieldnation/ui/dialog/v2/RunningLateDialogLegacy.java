@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.v2.Schedule;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -30,6 +31,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
 
 import java.util.Calendar;
 
@@ -195,6 +197,7 @@ public class RunningLateDialogLegacy extends SimpleDialog {
                     int delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
                     WorkorderClient.actionRunningLate(App.get(), _workOrder.getWorkorderId(), "Running late. Will be there in " + delayMin + "min", delayMin * 60);
                     ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
+                    _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkorderId(), delayMin);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                     ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
@@ -203,6 +206,7 @@ public class RunningLateDialogLegacy extends SimpleDialog {
                 try {
                     int delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
                     WorkorderClient.actionRunningLate(App.get(), _workOrder.getWorkorderId(), "Running late. Will be there in " + delayMin + "min", delayMin * 60);
+                    _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkorderId(), delayMin);
                     ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -241,18 +245,37 @@ public class RunningLateDialogLegacy extends SimpleDialog {
     };
 
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context, String uid, Workorder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable(PARAM_WORKORDER, workOrder);
 
-        public Controller(Context context) {
-            super(context, RunningLateDialogLegacy.class, null);
+        Controller.show(context, uid, RunningLateDialogLegacy.class, params);
+    }
+
+    /*-************************-*/
+    /*-         Send           -*/
+    /*-************************-*/
+    public interface OnSendListener {
+        void onSend(long workOrderId, int delayMin);
+    }
+
+    private static KeyedDispatcher<OnSendListener> _onSendDispatcher = new KeyedDispatcher<OnSendListener>() {
+        @Override
+        public void onDispatch(OnSendListener listener, Object... parameters) {
+            listener.onSend((Long) parameters[0], (Integer) parameters[1]);
         }
+    };
 
-        public static void show(Context context, Workorder workOrder) {
-            Bundle params = new Bundle();
-            params.putParcelable(PARAM_WORKORDER, workOrder);
+    public static void addOnSendListener(String uid, OnSendListener onSendListener) {
+        _onSendDispatcher.add(uid, onSendListener);
+    }
 
-            show(context, null, RunningLateDialogLegacy.class, params);
-        }
+    public static void removeOnSendListener(String uid, OnSendListener onSendListener) {
+        _onSendDispatcher.remove(uid, onSendListener);
+    }
+
+    public static void removeAllOnSendListeners(String uid) {
+        _onSendDispatcher.removeAll(uid);
     }
 
 }

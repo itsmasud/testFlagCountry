@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
@@ -87,13 +88,7 @@ public class SearchDialog extends SimpleDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context) {
-            super(context, SearchDialog.class, null);
-        }
-
-        public static void show(Context context) {
-            show(context, null, SearchDialog.class, null);
-        }
+    public static void show(Context context) {
+        Controller.show(context, null, SearchDialog.class, null);
     }
 }

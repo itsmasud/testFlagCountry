@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by mc on 11/8/16.
@@ -23,24 +24,44 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
         Parcelable extraData = getExtraData();
 
         if (extraData != null && extraData instanceof Bundle) {
-            WorkorderClient.actionIncomplete(App.get(), ((Bundle) extraData).getLong("workOrderId"));
+            Long workOrderId = ((Bundle) extraData).getLong("workOrderId");
+            WorkorderClient.actionIncomplete(App.get(), workOrderId);
+            _onMarkIncompleteDispatcher.dispatch(getUid(), workOrderId);
         }
-
         return true;
     }
 
-    public static class Controller extends TwoButtonDialog.Controller {
+    public static void show(Context context, String uid, long workOrderId) {
+        Bundle extraData = new Bundle();
+        extraData.putLong("workOrderId", workOrderId);
 
-        public Controller(Context context, String uid) {
-            super(context, MarkIncompleteWarningDialog.class, uid);
+        show(context, uid, MarkIncompleteWarningDialog.class, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
+                R.string.btn_continue, R.string.btn_cancel, true, extraData);
+    }
+
+    /*-***********************************-*/
+    /*-         Mark Incomplete           -*/
+    /*-***********************************-*/
+    public interface OnMarkIncompleteListener {
+        void onMarkIncomplete(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnMarkIncompleteListener> _onMarkIncompleteDispatcher = new KeyedDispatcher<OnMarkIncompleteListener>() {
+        @Override
+        public void onDispatch(OnMarkIncompleteListener listener, Object... parameters) {
+            listener.onMarkIncomplete((Long) parameters[0]);
         }
+    };
 
-        public static void show(Context context, long workOrderId) {
-            Bundle extraData = new Bundle();
-            extraData.putLong("workOrderId", workOrderId);
+    public static void addOnMarkIncompleteListener(String uid, OnMarkIncompleteListener onMarkIncompleteListener) {
+        _onMarkIncompleteDispatcher.add(uid, onMarkIncompleteListener);
+    }
 
-            show(context, null, MarkIncompleteWarningDialog.class, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
-                    R.string.btn_continue, R.string.btn_cancel, true, extraData);
-        }
+    public static void removeOnMarkIncompleteListener(String uid, OnMarkIncompleteListener onMarkIncompleteListener) {
+        _onMarkIncompleteDispatcher.remove(uid, onMarkIncompleteListener);
+    }
+
+    public static void removeAllOnMarkIncompleteListener(String uid) {
+        _onMarkIncompleteDispatcher.removeAll(uid);
     }
 }

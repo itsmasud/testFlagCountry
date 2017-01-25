@@ -33,7 +33,9 @@ public abstract class SimpleDialog implements Dialog {
 
     // Listeners
     private DismissListener _dismissListener;
-    private ResultListener _resultListener;
+
+    // Data
+    private String _uid;
 
     public SimpleDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -92,6 +94,16 @@ public abstract class SimpleDialog implements Dialog {
 
     @Override
     public void onStop() {
+    }
+
+    @Override
+    public String getUid() {
+        return _uid;
+    }
+
+    @Override
+    public void setUid(String uid) {
+        _uid = uid;
     }
 
     @Override
@@ -158,14 +170,4 @@ public abstract class SimpleDialog implements Dialog {
             }
         }
     };
-
-    @Override
-    public void setResultListener(ResultListener listener) {
-        _resultListener = listener;
-    }
-
-    public void onResult(Bundle response) {
-        if (_resultListener != null)
-            _resultListener.onResult(this, response);
-    }
 }

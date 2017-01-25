@@ -68,6 +68,17 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
+    public static byte[] pComplete(long workOrderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pComplete");
+            obj.put("workorderId", workOrderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
     public static byte[] pTimeLog(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pTimeLog");
@@ -147,14 +158,28 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+    public static byte[] pAccept(long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
         try {
-            JsonObject obj = new JsonObject("action", "pAssignment");
+            JsonObject obj = new JsonObject("action", "pAccept");
             obj.put("workorderId", workorderId);
             obj.put("startTimeIso8601", startTimeIso8601);
             obj.put("endTimeIso8601", endTimeIso8601);
             obj.put("note", note);
             obj.put("isEditEta", isEditEta);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static byte[] pConfirm(long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
+        try {
+            JsonObject obj = new JsonObject("action", "pConfirm");
+            obj.put("workorderId", workorderId);
+            obj.put("startTimeIso8601", startTimeIso8601);
+            obj.put("endTimeIso8601", endTimeIso8601);
+            obj.put("note", note);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -358,6 +383,8 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     return onGetSignature(context, result, transaction, params, httpResult, throwable);
                 case "pAction":
                     return onAction(context, result, transaction, params, httpResult, throwable);
+                case "pComplete":
+                    return onMarkComplete(context, result, transaction, params, httpResult, throwable);
                 case "pTimeLog":
                     return onTimeLog(context, result, transaction, params, httpResult, throwable);
                 case "pCheckIn":
@@ -376,8 +403,10 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     return onGetBundle(context, result, transaction, params, httpResult, throwable);
                 case "pUploadDeliverable":
                     return onUploadDeliverable(context, result, transaction, params, httpResult, throwable);
-                case "pAssignment":
-                    return onAssignment(context, result, transaction, params, httpResult, throwable);
+                case "pAccept":
+                    return onAccept(context, result, transaction, params, httpResult, throwable);
+                case "pConfirm":
+                    return onConfirm(context, result, transaction, params, httpResult, throwable);
                 case "pActionCreateShipment":
                     return onCreateShipment(context, result, transaction, params, httpResult, throwable);
                 case "pActionSuccessShipmentTask":
@@ -479,6 +508,73 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
+    private Result onMarkComplete(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onMarkComplete");
+        long workorderId = params.getLong("workorderId");
+
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "complete", false);
+            WorkorderClient.listTasks(context, workorderId, false);
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
+            WorkorderDispatch.action(context, workorderId, "complete", true);
+            WorkorderClient.get(context, workorderId, true, false);
+
+            if (haveErrorMessage(httpResult)) {
+                try {
+                    JsonObject error = httpResult.getJsonObject();
+
+                    JsonArray requirements = error.getJsonArray("requirements");
+
+                    if (requirements.size() > 0) {
+                        String first = requirements.getString(0);
+
+                        switch (first) {
+                            case "COMPLETION_STEP_CUSTOMFIELDS. ":
+                                ToastClient.toast(context, "Can't complete, must enter custom fields", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_DOCUMENTSUPLOAD. ":
+                                ToastClient.toast(context, "Can't complete, must upload a document", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_LOGTIME. ":
+                                ToastClient.toast(context, "Can't complete, must log time", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_LOGDEVICE. ":
+                                ToastClient.toast(context, "Can't complete, must log a device", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CHECKOUT. ":
+                                ToastClient.toast(context, "Can't complete, must check out", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CLOSINGNOTE. ":
+                                ToastClient.toast(context, "Can't complete, must enter closing", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CLOSEOUTREQUIREMENT. ":
+                                ToastClient.toast(context, "Can't complete, must complete close out requirements", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_TASKLISTS. ":
+                                ToastClient.toast(context, "Can't complete, must complete tasks", Toast.LENGTH_LONG);
+                                break;
+                            default:
+                                ToastClient.toast(context, "Can't complete, must finish work order", Toast.LENGTH_LONG);
+                                break;
+                        }
+                    } else {
+                        ToastClient.toast(context, "Can't complete, must finish work order", Toast.LENGTH_LONG);
+                    }
+                } catch (Exception ex) {
+                    ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+                }
+            } else {
+                ToastClient.toast(context, "Could not mark complete.", Toast.LENGTH_LONG);
+            }
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
+        }
+    }
+
     private Result onAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onAction");
         long workorderId = params.getLong("workorderId");
@@ -492,9 +588,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("closing-notes")) {
-                return onDetails(context, result, transaction, params, httpResult, throwable);
-
-            } else if (action.equals("complete")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("decline")) {
@@ -794,8 +887,8 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
-    private Result onAssignment(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
-        Log.v(TAG, "onAssignment");
+    private Result onAccept(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onAccept");
         long workorderId = params.getLong("workorderId");
         boolean isEditEta = params.getBoolean("isEditEta");
 
@@ -816,10 +909,39 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
             WorkorderDispatch.action(context, workorderId, "assignment", true);
 
-            Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
+            Intent intent = WorkorderTransactionBuilder.actionAcceptIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
             PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
             ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to accept work order"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
+        }
+    }
+
+    private Result onConfirm(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onConfirm");
+        long workorderId = params.getLong("workorderId");
+
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "assignment", false);
+
+            ToastClient.snackbar(context, "Success! You have confirmed this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
+            String startTimeIso8601 = params.getString("startTimeIso8601");
+            String endTimeIso8601 = params.getString("endTimeIso8601");
+            String note = params.getString("note");
+
+            WorkorderDispatch.action(context, workorderId, "assignment", true);
+
+            Intent intent = WorkorderTransactionBuilder.actionConfirmIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
+
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to confirm work order"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
             return Result.DELETE;
 
         } else {

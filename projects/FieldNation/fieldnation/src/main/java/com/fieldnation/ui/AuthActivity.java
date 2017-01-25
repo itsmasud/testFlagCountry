@@ -188,7 +188,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            UpdateDialog.Controller.show(App.get());
+            UpdateDialog.show(App.get());
         }
     };
 

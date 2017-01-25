@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fndialog.Dialog;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -28,6 +28,7 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by Michael on 10/5/2016.
@@ -35,6 +36,8 @@ import com.fieldnation.ui.HintSpinner;
 
 public class ReportProblemDialog extends SimpleDialog {
     private static final String TAG = "ReportProblemDialog";
+
+    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
 
     // State keys
     private static final String PARAM_WORKORDER_ID = "workOrderId";
@@ -473,7 +476,7 @@ public class ReportProblemDialog extends SimpleDialog {
 
             switch (_selectedProblem) {
                 case CANNOT_MAKE_ASSIGNMENT:
-                    CancelWarningDialog.Controller.show(App.get(), _workorder.getWorkorderId(), explanation);
+                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getWorkorderId(), explanation);
                     break;
 
                 case WILL_BE_LATE:
@@ -615,23 +618,43 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-
-        public Controller(Context context, Class<? extends Dialog> klass) {
-            super(context, klass, null);
-        }
-
-        public static void show(Context context, long workOrderId) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORKORDER_ID, workOrderId);
-            show(context, null, ReportProblemDialog.class, params);
-        }
-
-        public static void show(Context context, Workorder workorder) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
-            params.putParcelable(PARAM_WORKORDER, workorder);
-            show(context, null, ReportProblemDialog.class, params);
-        }
+    public static void show(Context context, String uid, long workOrderId) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORKORDER_ID, workOrderId);
+        Controller.show(context, uid, ReportProblemDialog.class, params);
     }
+
+    public static void show(Context context, String uid, Workorder workorder) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
+        params.putParcelable(PARAM_WORKORDER, workorder);
+        Controller.show(context, uid, ReportProblemDialog.class, params);
+    }
+
+    /*-************************-*/
+    /*-         Send           -*/
+    /*-************************-*/
+    public interface OnSendListener {
+        void onSend(long workorderId, String explanation, ReportProblemType type);
+    }
+
+    private static KeyedDispatcher<OnSendListener> _onSendDispatcher = new KeyedDispatcher<OnSendListener>() {
+        @Override
+        public void onDispatch(OnSendListener listener, Object... parameters) {
+            listener.onSend((Long) parameters[0], (String) parameters[1], (ReportProblemType) parameters[2]);
+        }
+    };
+
+    public static void addOnSendListener(String uid, OnSendListener onSendListener) {
+        _onSendDispatcher.add(uid, onSendListener);
+    }
+
+    public static void removeOnSendListener(String uid, OnSendListener onSendListener) {
+        _onSendDispatcher.remove(uid, onSendListener);
+    }
+
+    public static void removeAll(String uid) {
+        _onSendDispatcher.removeAll(uid);
+    }
+
 }

@@ -102,7 +102,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Share
         public boolean onPreferenceClick(Preference preference) {
             if (preference.getKey() != null && (preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
                 Log.e("GeneralSettingsFragment", "release things clicked");
-                WhatsNewDialog.Controller.show(App.get());
+                WhatsNewDialog.show(App.get());
                 return true;
             }
             return false;

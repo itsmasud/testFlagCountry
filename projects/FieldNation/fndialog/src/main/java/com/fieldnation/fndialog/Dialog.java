@@ -33,6 +33,10 @@ public interface Dialog {
 
     void onStop();
 
+    String getUid();
+
+    void setUid(String uid);
+
     /**
      * @return the View that contains the dialog
      */
@@ -83,11 +87,5 @@ public interface Dialog {
 
     interface DismissListener {
         void onDismissed(Dialog dialog);
-    }
-
-    void setResultListener(ResultListener listener);
-
-    interface ResultListener {
-        void onResult(Dialog dialog, Bundle response);
     }
 }

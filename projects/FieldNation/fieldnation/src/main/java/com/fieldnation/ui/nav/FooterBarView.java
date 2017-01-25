@@ -69,7 +69,7 @@ public class FooterBarView extends RelativeLayout {
         _testButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                WhatsNewDialog.Controller.show(App.get());
+                WhatsNewDialog.show(App.get());
             }
         });
         if (!BuildConfig.DEBUG)

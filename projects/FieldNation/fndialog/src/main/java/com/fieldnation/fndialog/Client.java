@@ -50,16 +50,6 @@ class Client extends TopicClient implements Constants {
         TopicService.dispatchEvent(context, TOPIC_ID_DISMISS_DIALOG, payload, Sticky.NONE);
     }
 
-    public static void dialogResult(Context context, String uid, Dialog dialog, Bundle response) {
-        Bundle payload = new Bundle();
-        payload.putString(PARAM_DIALOG_CLASS_NAME, dialog.getClass().getName());
-        payload.putBundle(PARAM_DIALOG_RESPONSE, response);
-        if (uid != null)
-            payload.putString(PARAM_DIALOG_UID, uid);
-
-        TopicClient.dispatchEvent(context, TOPIC_ID_DIALOG_COMPLETE + "/" + dialog.getClass().getName(), payload, Sticky.NONE);
-    }
-
     public static abstract class Listener extends TopicClient.Listener {
         private static final String TAG = "Client.Listener";
 

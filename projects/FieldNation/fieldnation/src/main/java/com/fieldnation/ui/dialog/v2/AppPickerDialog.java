@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,10 @@ import android.widget.ListView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.v2.AppPickerAdapter;
 import com.fieldnation.ui.v2.AppPickerPackage;
 import com.fieldnation.ui.v2.AppPickerRowView;
@@ -25,12 +26,6 @@ import java.util.Set;
 
 public class AppPickerDialog extends SimpleDialog {
     private static final String TAG = "AppPickerDialog";
-
-    // Params
-    private static final String PARAM_RESULT = "result";
-    private static final int PARAM_RESULT_OK = 0;
-    private static final String PARAM_VALUE = "value";
-
 
     // Ui
     private ListView _items;
@@ -91,44 +86,45 @@ public class AppPickerDialog extends SimpleDialog {
     private final AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {
         @Override
         public void onClick(AppPickerRowView row, Intent intent) {
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESULT, PARAM_RESULT_OK);
-            response.putParcelable(PARAM_VALUE, intent);
-            onResult(response);
+            _onOkDispatcher.dispatch(getUid(), intent);
             dismiss(true);
         }
     };
 
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context, String uid) {
+        Controller.show(context, uid, AppPickerDialog.class, null);
+    }
 
-        public Controller(Context context, String uid) {
-            super(context, AppPickerDialog.class, uid);
-        }
-
-        public static void show(Context context, String uid) {
-            show(context, uid, AppPickerDialog.class, null);
-        }
-
-        public static void dismiss(Context context) {
-            dismiss(context, null);
-        }
+    public static void dismiss(Context context) {
+        Controller.dismiss(context, null);
     }
 
 
-    public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {
+    /*-*********************************/
+    /*-         Ok Listener           -*/
+    /*-*********************************/
+    public interface OnOkListener {
+        void onOk(Intent pack);
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
         @Override
-        public void onComplete(Bundle response) {
-            switch (response.getInt(PARAM_RESULT)) {
-                case PARAM_RESULT_OK:
-                    onOk((Intent) response.getParcelable(PARAM_VALUE));
-                    break;
-            }
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk((Intent) parameters[0]);
         }
+    };
 
-        public abstract void onOk(Intent intent);
-
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
     }
 
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
 
 }

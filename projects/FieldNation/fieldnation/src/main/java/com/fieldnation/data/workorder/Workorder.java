@@ -162,6 +162,7 @@ public class Workorder implements Parcelable {
         if (getEstimatedSchedule() != null) {
             Estimate estimate = new Estimate();
             estimate.setArrival(getEstimatedSchedule().getStartTime());
+            estimate.setDuration(getEstimatedSchedule().getDuration());
             schedule.setEstimate(estimate);
         }
         return schedule;

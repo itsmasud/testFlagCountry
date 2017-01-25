@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
@@ -59,6 +60,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         if (getToolbarId() != 0) {
             Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
@@ -183,7 +186,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             App.get().setReleaseNoteShownReminded();
-            WhatsNewDialog.Controller.show(App.get());
+            WhatsNewDialog.show(App.get());
         }
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {
@@ -343,7 +346,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            UpdateDialog.Controller.show(App.get());
+            UpdateDialog.show(App.get());
         }
 
         @Override

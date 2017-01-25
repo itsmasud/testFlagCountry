@@ -26,7 +26,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
     private static final String STAG = "SavedSearchClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    private static final SavedSearchParams[] defaults;
+    public static final SavedSearchParams[] defaults;
 
     static {
         if (App.isNcns()) {
@@ -164,10 +164,11 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
         return register(TOPIC_ID_LIST);
     }
 
-    public static void save(SavedSearchParams savedSearchParams) {
+    public static void save(final SavedSearchParams savedSearchParams) {
         new AsyncTaskEx<SavedSearchParams, Object, Object>() {
             @Override
             protected Object doInBackground(SavedSearchParams... params) {
+                Log.v(STAG, params[0].toJson().display());
                 searchParams[params[0].id] = params[0];
                 JsonArray ja = new JsonArray();
                 for (int i = 0; i < searchParams.length; i++) {
@@ -204,7 +205,6 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                         Parcelable[] parcels = params[0].getParcelableArray("LIST");
                         for (Parcelable parcel : parcels) {
                             try {
-                                Log.v(STAG, parcel.getClass().getName());
                                 list.add((SavedSearchParams) parcel);
                             } catch (Exception ex) {
                             }

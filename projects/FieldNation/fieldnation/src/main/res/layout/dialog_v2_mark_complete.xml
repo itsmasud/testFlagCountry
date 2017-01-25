@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog.v3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/DialogTitle.v3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/mark_as_complete" />
+
+    <TextView
+        android:id="@+id/warning_textview"
+        style="@style/DialogBody.v3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:text="@string/mark_complete_warning" />
+
+    <LinearLayout
+        android:id="@+id/signature_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/warning_textview"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:orientation="vertical">
+
+        <View style="?attr/dialogDividerStyle" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                style="?attr/dialogBodyStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="0dp"
+                android:text="@string/collect_a_sign_off_signature" />
+
+            <TextView
+                style="?attr/dialogCaptionStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:text="@string/optional_caps" />
+        </RelativeLayout>
+
+        <TextView
+            style="@style/TextViewLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:text="@string/add_a_signature" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/continue_button"
+        style="@style/DialogButton.v3"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/signature_layout"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_continue" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/DialogButton.v3"
+        android:layout_below="@+id/signature_layout"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@+id/continue_button"
+        android:text="@string/btn_cancel" />
+
+</RelativeLayout>

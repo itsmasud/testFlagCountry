@@ -7,8 +7,10 @@ import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.RateMeView;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Michael on 10/4/2016.
@@ -21,14 +23,15 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     private static final Object HEADER = new Object();
     private static final Object EMPTY = new Object();
 
-    private RateMeView _rateMeView = null;
     private List<List<T>> _pages = new LinkedList<>();
-    private Class<T> _objectType;
+    private Set<Integer> _loadingPages = new HashSet<>();
     private List<Object> _displayList = new LinkedList<>();
+
+    private RateMeView _rateMeView = null;
+    private Class<T> _objectType;
     private int _rateMePosition = 5;
     private boolean _showRateMe = false;
-    private int _lastPage = 0;
-    private boolean _onLastPage = false;
+    private boolean _lastPage = false;
 
 
     public PagingAdapter(Class<T> clazz) {
@@ -41,11 +44,21 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         Log.v(TAG, "clear");
         _pages.clear();
         _displayList.clear();
-        _onLastPage = false;
+        _loadingPages.clear();
+        _lastPage = false;
         notifyDataSetChanged();
-        _lastPage = 0;
         rebuildList();
-        requestPage(0, false);
+    }
+
+    private void preRequestPage(int page, boolean allowCache) {
+        if (_lastPage)
+            return;
+
+        if (!_loadingPages.contains(page)
+                && (page >= _pages.size() || _pages.get(page) == null)) {
+            _loadingPages.add(page);
+            requestPage(page, allowCache);
+        }
     }
 
     public void setRateMeAllowed(boolean allowed) {
@@ -56,10 +69,27 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         }
     }
 
-    public void addObjects(int page, List<T> list) {
+    public void refreshAll() {
+        if (_pages.size() == 0) {
+            requestPage(0, false);
+        } else {
+            for (int i = 0; i < _pages.size(); i++) {
+                _loadingPages.add(i);
+                requestPage(i, false);
+            }
+        }
+    }
 
-        if (list == null || list.size() == 0) {
-            _onLastPage = true;
+    public void addObjects(int page, List<T> list) {
+        _loadingPages.remove(page);
+
+        if (list == null) {
+            _lastPage = true;
+            return;
+        }
+        if (page == 0 && list.size() == 0) {
+            _pages.clear();
+            rebuildList();
             return;
         }
 
@@ -140,12 +170,15 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
             }
             case BaseHolder.TYPE_EMPTY: {
                 onBindEmptyViewHolder(holder);
+                break;
             }
         }
 
-        if (position == (getItemCount() * 9) / 10 && !_onLastPage) {
-            _lastPage++;
-            requestPage(_lastPage + 1, false);
+        if (_pages.size() > 0 && getItemCount() > 0) {
+            int itemsPerPage = (getItemCount() / _pages.size());
+            if (position / itemsPerPage >= _pages.size() - 1) {
+                preRequestPage(_pages.size(), false);
+            }
         }
     }
 

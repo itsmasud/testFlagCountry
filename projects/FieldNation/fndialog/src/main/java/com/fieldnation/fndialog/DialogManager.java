@@ -56,6 +56,8 @@ public class DialogManager extends FrameLayout implements Constants {
     }
 
     private void init() {
+        setFocusable(true);
+        setFocusableInTouchMode(true);
     }
 
     /**
@@ -101,6 +103,7 @@ public class DialogManager extends FrameLayout implements Constants {
                     holder.params = params;
                     holder.savedState = dialogSavedState;
                     holder.uid = uid;
+                    holder.dialog.setUid(uid);
                     push(holder);
                 }
             }
@@ -242,7 +245,6 @@ public class DialogManager extends FrameLayout implements Constants {
 
             Dialog dialog = (Dialog) object;
             dialog.setDismissListener(_dismissListener);
-            dialog.setResultListener(_resultListener);
             dialog.getView().setVisibility(GONE);
             DialogHolder holder = new DialogHolder(dialog);
 
@@ -278,6 +280,7 @@ public class DialogManager extends FrameLayout implements Constants {
                 if (holder != null) {
                     holder.params = params;
                     holder.uid = uid;
+                    holder.dialog.setUid(uid);
                     push(holder);
                 }
             } catch (Exception ex) {
@@ -300,20 +303,6 @@ public class DialogManager extends FrameLayout implements Constants {
             remove(dialog);
         }
     };
-
-    private final Dialog.ResultListener _resultListener = new Dialog.ResultListener() {
-        @Override
-        public void onResult(Dialog dialog, Bundle response) {
-            for (int i = 0; i < _dialogStack.size(); i++) {
-                DialogHolder dh = _dialogStack.get(i);
-                if (dh.dialog.equals(dialog)) {
-                    Client.dialogResult(getContext(), dh.uid, dialog, response);
-                    return;
-                }
-            }
-        }
-    };
-
 
     private static class DialogHolder {
         public Dialog dialog;

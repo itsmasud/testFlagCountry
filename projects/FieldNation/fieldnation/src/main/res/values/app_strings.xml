@@ -86,6 +86,7 @@
     <string name="btn_read_less">READ LESS</string>
     <string name="btn_read_more">READ MORE</string>
     <string name="btn_ready_to_go">READY TO GO</string>
+    <string name="btn_ready">READY</string>
     <string name="brn_recognize_hold">RECOGNIZE HOLD</string>
     <string name="btn_reject">REJECT</string>
     <string name="btn_remote_work">REMOTE WORK</string>
@@ -450,7 +451,7 @@
     <string name="mark_as_incomplete">Mark as incomplete</string>
     <string name="mark_as_incomplete_full_warning">You are about to mark this work order as incomplete.\n\nWould you like to continue?</string>
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
-    <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
+    <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.\n\nWould you like to continue?</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
     <string name="marked_complete">Marked Complete</string>
     <string name="marketplace_access">Marketplace access</string>
@@ -512,6 +513,12 @@
 
     <string name="num_workorders_and_payments">%1$s %2$s</string>
 
+    <string name="payment_type_fixed">TOTAL</string>
+    <string name="payment_type_hourly">/ HOUR (%1$d)</string>
+    <string name="payment_type_blended">+ $%1$d /HR (%2$d)</string>
+    <string name="payment_type_device">/ DEVICE (%1$d)</string>
+
+
     <plurals name="num_other_payments">
         <item quantity="one">and 1 other payment</item>
         <item quantity="other">and %1$s other payments</item>
@@ -555,7 +562,7 @@
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="disclaimer_to_counter_offer">Only the counter offer terms previously selected can be enforced. Terms added within this field will be ignored.</string>
-    <string name="reason_for_request">Reason For Request (optional)</string>
+    <string name="reason_for_request">Reason (optional)</string>
     <string name="remote_work">Remote Work</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="request_bundle">Request Bundle</string>
@@ -855,6 +862,30 @@
         <item>Enter shipment tracking</item>
         <item>Download a File</item>
     </string-array>
+
+    <string-array name="expire_duration_titles">
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="expire_duration_values">
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
 
     <!-- If you change any of these, make sure you update
         com.fieldnation.service.data.workorder.ReportProblemType -->

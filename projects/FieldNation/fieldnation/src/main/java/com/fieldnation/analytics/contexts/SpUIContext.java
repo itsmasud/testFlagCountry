@@ -45,7 +45,7 @@ public class SpUIContext implements EventContext, SpContext {
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
-        dataMap.put("interface", "android");
+        dataMap.put("interface", "Android");
         dataMap.put("version", (BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
         dataMap.put("page", "na");
