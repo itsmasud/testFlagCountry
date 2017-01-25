@@ -113,7 +113,7 @@ public class UsersTransactionBuilder {
      * @param userId User ID
      * @param file Photo to upload
      */
-    public static void uploadProfilePhoto(Context context, int userId, File file) {
+    public static void uploadProfilePhoto(Context context, int userId, java.io.File file) {
     }
 
     /**
