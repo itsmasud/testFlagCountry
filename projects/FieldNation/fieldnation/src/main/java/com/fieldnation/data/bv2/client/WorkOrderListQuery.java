@@ -3,8 +3,6 @@ package com.fieldnation.data.bv2.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.bv2.model.Assignee;
-import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -12,7 +10,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by mc on 1/24/17.
+ * Created by dmgen from swagger on 1/24/17.
  */
 
 public class WorkOrderListQuery implements Parcelable {
