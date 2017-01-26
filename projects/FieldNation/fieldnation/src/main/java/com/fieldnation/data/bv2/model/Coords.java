@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class Coords {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class Coords implements Parcelable {
     private static final String TAG = "Coords";
 
     @Json(name = "search")
@@ -30,28 +37,82 @@ public class Coords {
     public Coords() {
     }
 
+    public void setSearch(String search) {
+        _search = search;
+    }
+
     public String getSearch() {
         return _search;
+    }
+
+    public Coords search(String search) {
+        _search = search;
+        return this;
+    }
+
+    public void setDistance(Double distance) {
+        _distance = distance;
     }
 
     public Double getDistance() {
         return _distance;
     }
 
+    public Coords distance(Double distance) {
+        _distance = distance;
+        return this;
+    }
+
+    public void setSuccess(Boolean success) {
+        _success = success;
+    }
+
     public Boolean getSuccess() {
         return _success;
+    }
+
+    public Coords success(Boolean success) {
+        _success = success;
+        return this;
+    }
+
+    public void setLatitude(Double latitude) {
+        _latitude = latitude;
     }
 
     public Double getLatitude() {
         return _latitude;
     }
 
+    public Coords latitude(Double latitude) {
+        _latitude = latitude;
+        return this;
+    }
+
+    public void setExact(Boolean exact) {
+        _exact = exact;
+    }
+
     public Boolean getExact() {
         return _exact;
     }
 
+    public Coords exact(Boolean exact) {
+        _exact = exact;
+        return this;
+    }
+
+    public void setLongitude(Double longitude) {
+        _longitude = longitude;
+    }
+
     public Double getLongitude() {
         return _longitude;
+    }
+
+    public Coords longitude(Double longitude) {
+        _longitude = longitude;
+        return this;
     }
 
     /*-*****************************-*/
@@ -77,5 +138,36 @@ public class Coords {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<Coords> CREATOR = new Parcelable.Creator<Coords>() {
+
+        @Override
+        public Coords createFromParcel(Parcel source) {
+            try {
+                return Coords.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public Coords[] newArray(int size) {
+            return new Coords[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

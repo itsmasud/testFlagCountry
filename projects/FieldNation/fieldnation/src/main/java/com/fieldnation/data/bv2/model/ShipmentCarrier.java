@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class ShipmentCarrier {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class ShipmentCarrier implements Parcelable {
     private static final String TAG = "ShipmentCarrier";
 
     @Json(name = "arrived")
@@ -27,24 +34,69 @@ public class ShipmentCarrier {
     public ShipmentCarrier() {
     }
 
+    public void setArrived(Date arrived) {
+        _arrived = arrived;
+    }
+
     public Date getArrived() {
         return _arrived;
+    }
+
+    public ShipmentCarrier arrived(Date arrived) {
+        _arrived = arrived;
+        return this;
+    }
+
+    public void setOther(String other) {
+        _other = other;
     }
 
     public String getOther() {
         return _other;
     }
 
+    public ShipmentCarrier other(String other) {
+        _other = other;
+        return this;
+    }
+
+    public void setArrival(Date arrival) {
+        _arrival = arrival;
+    }
+
     public Date getArrival() {
         return _arrival;
+    }
+
+    public ShipmentCarrier arrival(Date arrival) {
+        _arrival = arrival;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
     }
 
     public String getName() {
         return _name;
     }
 
+    public ShipmentCarrier name(String name) {
+        _name = name;
+        return this;
+    }
+
+    public void setTracking(String tracking) {
+        _tracking = tracking;
+    }
+
     public String getTracking() {
         return _tracking;
+    }
+
+    public ShipmentCarrier tracking(String tracking) {
+        _tracking = tracking;
+        return this;
     }
 
     /*-*****************************-*/
@@ -70,5 +122,36 @@ public class ShipmentCarrier {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<ShipmentCarrier> CREATOR = new Parcelable.Creator<ShipmentCarrier>() {
+
+        @Override
+        public ShipmentCarrier createFromParcel(Parcel source) {
+            try {
+                return ShipmentCarrier.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public ShipmentCarrier[] newArray(int size) {
+            return new ShipmentCarrier[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

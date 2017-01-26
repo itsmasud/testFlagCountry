@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UserJobs {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class UserJobs implements Parcelable {
     private static final String TAG = "UserJobs";
 
     @Json(name = "marketplace")
@@ -18,12 +25,30 @@ public class UserJobs {
     public UserJobs() {
     }
 
+    public void setMarketplace(Integer marketplace) {
+        _marketplace = marketplace;
+    }
+
     public Integer getMarketplace() {
         return _marketplace;
     }
 
+    public UserJobs marketplace(Integer marketplace) {
+        _marketplace = marketplace;
+        return this;
+    }
+
+    public void setCompany(Integer company) {
+        _company = company;
+    }
+
     public Integer getCompany() {
         return _company;
+    }
+
+    public UserJobs company(Integer company) {
+        _company = company;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class UserJobs {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UserJobs> CREATOR = new Parcelable.Creator<UserJobs>() {
+
+        @Override
+        public UserJobs createFromParcel(Parcel source) {
+            try {
+                return UserJobs.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UserJobs[] newArray(int size) {
+            return new UserJobs[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

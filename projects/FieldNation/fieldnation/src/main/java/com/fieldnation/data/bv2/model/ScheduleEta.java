@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class ScheduleEta {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class ScheduleEta implements Parcelable {
     private static final String TAG = "ScheduleEta";
 
     @Json(name = "mode")
@@ -30,28 +37,82 @@ public class ScheduleEta {
     public ScheduleEta() {
     }
 
+    public void setMode(Boolean mode) {
+        _mode = mode;
+    }
+
     public Boolean getMode() {
         return _mode;
+    }
+
+    public ScheduleEta mode(Boolean mode) {
+        _mode = mode;
+        return this;
+    }
+
+    public void setHourEstimate(Double hourEstimate) {
+        _hourEstimate = hourEstimate;
     }
 
     public Double getHourEstimate() {
         return _hourEstimate;
     }
 
+    public ScheduleEta hourEstimate(Double hourEstimate) {
+        _hourEstimate = hourEstimate;
+        return this;
+    }
+
+    public void setStart(Date start) {
+        _start = start;
+    }
+
     public Date getStart() {
         return _start;
+    }
+
+    public ScheduleEta start(Date start) {
+        _start = start;
+        return this;
+    }
+
+    public void setEnd(Date end) {
+        _end = end;
     }
 
     public Date getEnd() {
         return _end;
     }
 
+    public ScheduleEta end(Date end) {
+        _end = end;
+        return this;
+    }
+
+    public void setUser(User user) {
+        _user = user;
+    }
+
     public User getUser() {
         return _user;
     }
 
+    public ScheduleEta user(User user) {
+        _user = user;
+        return this;
+    }
+
+    public void setStatus(ScheduleEtaStatus status) {
+        _status = status;
+    }
+
     public ScheduleEtaStatus getStatus() {
         return _status;
+    }
+
+    public ScheduleEta status(ScheduleEtaStatus status) {
+        _status = status;
+        return this;
     }
 
     /*-*****************************-*/
@@ -77,5 +138,36 @@ public class ScheduleEta {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<ScheduleEta> CREATOR = new Parcelable.Creator<ScheduleEta>() {
+
+        @Override
+        public ScheduleEta createFromParcel(Parcel source) {
+            try {
+                return ScheduleEta.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public ScheduleEta[] newArray(int size) {
+            return new ScheduleEta[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

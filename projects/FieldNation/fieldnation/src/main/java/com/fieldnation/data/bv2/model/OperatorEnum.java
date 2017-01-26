@@ -2,6 +2,10 @@ package com.fieldnation.data.bv2.model;
 
 import com.fieldnation.fnjson.annotations.Json;
 
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
 public enum OperatorEnum {
     @Json(name = "less_than_equals")
     LESS_THAN_EQUALS("less_than_equals"),

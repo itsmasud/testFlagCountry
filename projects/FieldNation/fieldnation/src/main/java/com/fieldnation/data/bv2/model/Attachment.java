@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class Attachment {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class Attachment implements Parcelable {
     private static final String TAG = "Attachment";
 
     @Json(name = "status_description")
@@ -48,52 +55,160 @@ public class Attachment {
     public Attachment() {
     }
 
+    public void setStatusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
+    }
+
     public String getStatusDescription() {
         return _statusDescription;
+    }
+
+    public Attachment statusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
+        return this;
+    }
+
+    public void setFile(File file) {
+        _file = file;
     }
 
     public File getFile() {
         return _file;
     }
 
+    public Attachment file(File file) {
+        _file = file;
+        return this;
+    }
+
+    public void setNotes(String notes) {
+        _notes = notes;
+    }
+
     public String getNotes() {
         return _notes;
+    }
+
+    public Attachment notes(String notes) {
+        _notes = notes;
+        return this;
+    }
+
+    public void setTask(Task task) {
+        _task = task;
     }
 
     public Task getTask() {
         return _task;
     }
 
+    public Attachment task(Task task) {
+        _task = task;
+        return this;
+    }
+
+    public void setCreated(Date created) {
+        _created = created;
+    }
+
     public Date getCreated() {
         return _created;
+    }
+
+    public Attachment created(Date created) {
+        _created = created;
+        return this;
+    }
+
+    public void setAuthor(User author) {
+        _author = author;
     }
 
     public User getAuthor() {
         return _author;
     }
 
+    public Attachment author(User author) {
+        _author = author;
+        return this;
+    }
+
+    public void setShowBeforeAssignment(Boolean showBeforeAssignment) {
+        _showBeforeAssignment = showBeforeAssignment;
+    }
+
     public Boolean getShowBeforeAssignment() {
         return _showBeforeAssignment;
+    }
+
+    public Attachment showBeforeAssignment(Boolean showBeforeAssignment) {
+        _showBeforeAssignment = showBeforeAssignment;
+        return this;
+    }
+
+    public void setReviewed(Date reviewed) {
+        _reviewed = reviewed;
     }
 
     public Date getReviewed() {
         return _reviewed;
     }
 
+    public Attachment reviewed(Date reviewed) {
+        _reviewed = reviewed;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
     public Integer getId() {
         return _id;
+    }
+
+    public Attachment id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setReviewer(User reviewer) {
+        _reviewer = reviewer;
     }
 
     public User getReviewer() {
         return _reviewer;
     }
 
+    public Attachment reviewer(User reviewer) {
+        _reviewer = reviewer;
+        return this;
+    }
+
+    public void setFolderId(Integer folderId) {
+        _folderId = folderId;
+    }
+
     public Integer getFolderId() {
         return _folderId;
     }
 
+    public Attachment folderId(Integer folderId) {
+        _folderId = folderId;
+        return this;
+    }
+
+    public void setStatus(StatusEnum status) {
+        _status = status;
+    }
+
     public StatusEnum getStatus() {
         return _status;
+    }
+
+    public Attachment status(StatusEnum status) {
+        _status = status;
+        return this;
     }
 
     /*-*****************************-*/
@@ -119,5 +234,36 @@ public class Attachment {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<Attachment> CREATOR = new Parcelable.Creator<Attachment>() {
+
+        @Override
+        public Attachment createFromParcel(Parcel source) {
+            try {
+                return Attachment.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public Attachment[] newArray(int size) {
+            return new Attachment[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

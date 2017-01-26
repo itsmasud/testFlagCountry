@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class technicianW9Status {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class technicianW9Status implements Parcelable {
     private static final String TAG = "technicianW9Status";
 
     @Json(name = "status_name")
@@ -18,12 +25,30 @@ public class technicianW9Status {
     public technicianW9Status() {
     }
 
+    public void setStatusName(String statusName) {
+        _statusName = statusName;
+    }
+
     public String getStatusName() {
         return _statusName;
     }
 
+    public technicianW9Status statusName(String statusName) {
+        _statusName = statusName;
+        return this;
+    }
+
+    public void setTechnicianW9StatusId(Integer technicianW9StatusId) {
+        _technicianW9StatusId = technicianW9StatusId;
+    }
+
     public Integer getTechnicianW9StatusId() {
         return _technicianW9StatusId;
+    }
+
+    public technicianW9Status technicianW9StatusId(Integer technicianW9StatusId) {
+        _technicianW9StatusId = technicianW9StatusId;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class technicianW9Status {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<technicianW9Status> CREATOR = new Parcelable.Creator<technicianW9Status>() {
+
+        @Override
+        public technicianW9Status createFromParcel(Parcel source) {
+            try {
+                return technicianW9Status.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public technicianW9Status[] newArray(int size) {
+            return new technicianW9Status[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

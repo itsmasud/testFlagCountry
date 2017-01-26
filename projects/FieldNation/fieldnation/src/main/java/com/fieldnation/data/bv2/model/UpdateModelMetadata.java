@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UpdateModelMetadata {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class UpdateModelMetadata implements Parcelable {
     private static final String TAG = "UpdateModelMetadata";
 
     @Json(name = "data")
@@ -18,12 +25,30 @@ public class UpdateModelMetadata {
     public UpdateModelMetadata() {
     }
 
+    public void setData(UpdateModelMetadataData data) {
+        _data = data;
+    }
+
     public UpdateModelMetadataData getData() {
         return _data;
     }
 
+    public UpdateModelMetadata data(UpdateModelMetadataData data) {
+        _data = data;
+        return this;
+    }
+
+    public void setUniversalContext(UpdateModelMetadataUniversalContext universalContext) {
+        _universalContext = universalContext;
+    }
+
     public UpdateModelMetadataUniversalContext getUniversalContext() {
         return _universalContext;
+    }
+
+    public UpdateModelMetadata universalContext(UpdateModelMetadataUniversalContext universalContext) {
+        _universalContext = universalContext;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class UpdateModelMetadata {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UpdateModelMetadata> CREATOR = new Parcelable.Creator<UpdateModelMetadata>() {
+
+        @Override
+        public UpdateModelMetadata createFromParcel(Parcel source) {
+            try {
+                return UpdateModelMetadata.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UpdateModelMetadata[] newArray(int size) {
+            return new UpdateModelMetadata[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

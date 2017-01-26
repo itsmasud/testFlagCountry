@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UpdateModel {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class UpdateModel implements Parcelable {
     private static final String TAG = "UpdateModel";
 
     @Json(name = "metadata")
@@ -27,24 +34,69 @@ public class UpdateModel {
     public UpdateModel() {
     }
 
+    public void setMetadata(UpdateModelMetadata metadata) {
+        _metadata = metadata;
+    }
+
     public UpdateModelMetadata getMetadata() {
         return _metadata;
+    }
+
+    public UpdateModel metadata(UpdateModelMetadata metadata) {
+        _metadata = metadata;
+        return this;
+    }
+
+    public void setServiceName(String serviceName) {
+        _serviceName = serviceName;
     }
 
     public String getServiceName() {
         return _serviceName;
     }
 
+    public UpdateModel serviceName(String serviceName) {
+        _serviceName = serviceName;
+        return this;
+    }
+
+    public void setParams(UpdateModelParams params) {
+        _params = params;
+    }
+
     public UpdateModelParams getParams() {
         return _params;
+    }
+
+    public UpdateModel params(UpdateModelParams params) {
+        _params = params;
+        return this;
+    }
+
+    public void setVersion(String version) {
+        _version = version;
     }
 
     public String getVersion() {
         return _version;
     }
 
+    public UpdateModel version(String version) {
+        _version = version;
+        return this;
+    }
+
+    public void setTimestamp(String timestamp) {
+        _timestamp = timestamp;
+    }
+
     public String getTimestamp() {
         return _timestamp;
+    }
+
+    public UpdateModel timestamp(String timestamp) {
+        _timestamp = timestamp;
+        return this;
     }
 
     /*-*****************************-*/
@@ -70,5 +122,36 @@ public class UpdateModel {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UpdateModel> CREATOR = new Parcelable.Creator<UpdateModel>() {
+
+        @Override
+        public UpdateModel createFromParcel(Parcel source) {
+            try {
+                return UpdateModel.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UpdateModel[] newArray(int size) {
+            return new UpdateModel[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

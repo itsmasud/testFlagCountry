@@ -2,16 +2,12 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 
-import com.fieldnation.data.bv2.model.*;
-import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransaction;
-
 /**
- * Created by dmgen from swagger on 1/25/17.
+ * Created by dmgen from swagger on 1/26/17.
  */
 
-public class MapsTransactionBuilder {
-    private static final String TAG = "MapsTransactionBuilder";
+public class MapsWebApi {
+    private static final String TAG = "MapsWebApi";
 
     /**
      * This endpoint returns a list of exact coordinates as well as additional info such as the address and whether the coordinates are an exact match.

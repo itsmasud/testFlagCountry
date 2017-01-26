@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class CountryZip {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class CountryZip implements Parcelable {
     private static final String TAG = "CountryZip";
 
     @Json(name = "label")
@@ -18,12 +25,30 @@ public class CountryZip {
     public CountryZip() {
     }
 
+    public void setLabel(String label) {
+        _label = label;
+    }
+
     public String getLabel() {
         return _label;
     }
 
+    public CountryZip label(String label) {
+        _label = label;
+        return this;
+    }
+
+    public void setRequired(Boolean required) {
+        _required = required;
+    }
+
     public Boolean getRequired() {
         return _required;
+    }
+
+    public CountryZip required(Boolean required) {
+        _required = required;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class CountryZip {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<CountryZip> CREATOR = new Parcelable.Creator<CountryZip>() {
+
+        @Override
+        public CountryZip createFromParcel(Parcel source) {
+            try {
+                return CountryZip.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public CountryZip[] newArray(int size) {
+            return new CountryZip[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

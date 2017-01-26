@@ -2,16 +2,34 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 
-import com.fieldnation.data.bv2.model.*;
-import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.data.bv2.model.Assignee;
+import com.fieldnation.data.bv2.model.Attachment;
+import com.fieldnation.data.bv2.model.AttachmentFolder;
+import com.fieldnation.data.bv2.model.Cancellation;
+import com.fieldnation.data.bv2.model.Contact;
+import com.fieldnation.data.bv2.model.CustomField;
+import com.fieldnation.data.bv2.model.Expense;
+import com.fieldnation.data.bv2.model.Location;
+import com.fieldnation.data.bv2.model.Message;
+import com.fieldnation.data.bv2.model.Pay;
+import com.fieldnation.data.bv2.model.PayIncrease;
+import com.fieldnation.data.bv2.model.PayModifier;
+import com.fieldnation.data.bv2.model.Request;
+import com.fieldnation.data.bv2.model.Route;
+import com.fieldnation.data.bv2.model.Schedule;
+import com.fieldnation.data.bv2.model.Shipment;
+import com.fieldnation.data.bv2.model.Signature;
+import com.fieldnation.data.bv2.model.Task;
+import com.fieldnation.data.bv2.model.TaskAlert;
+import com.fieldnation.data.bv2.model.TimeLog;
+import com.fieldnation.data.bv2.model.WorkOrder;
 
 /**
- * Created by dmgen from swagger on 1/25/17.
+ * Created by dmgen from swagger on 1/26/17.
  */
 
-public class WorkordersTransactionBuilder {
-    private static final String TAG = "WorkordersTransactionBuilder";
+public class WorkordersWebApi {
+    private static final String TAG = "WorkordersWebApi";
 
     /**
      * Reverts a work order to draft status
@@ -19,6 +37,15 @@ public class WorkordersTransactionBuilder {
      * @param workOrderId ID of work order
      */
     public static void revertWorkOrderToDraft(Context context, int workOrderId) {
+    }
+
+    /**
+     * Reverts a work order to draft status
+     *
+     * @param workOrderId ID of work order
+     * @param async       Async (Optional)
+     */
+    public static void revertWorkOrderToDraft(Context context, int workOrderId, Boolean async) {
     }
 
     /**
@@ -50,11 +77,31 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Update a custom field value on a work order
+     *
+     * @param workOrderId   Work Order ID
+     * @param customFieldId Custom field ID
+     * @param customField   Custom field
+     * @param async         Async (Optional)
+     */
+    public static void updateCustomField(Context context, int workOrderId, int customFieldId, CustomField customField, Boolean async) {
+    }
+
+    /**
      * Marks a work order complete and moves it to work done status
      *
      * @param workOrderId ID of work order
      */
     public static void completeWorkOrder(Context context, int workOrderId) {
+    }
+
+    /**
+     * Marks a work order complete and moves it to work done status
+     *
+     * @param workOrderId ID of work order
+     * @param async       Async (Optional)
+     */
+    public static void completeWorkOrder(Context context, int workOrderId, Boolean async) {
     }
 
     /**
@@ -67,12 +114,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Marks a work order incomplete and moves it to work done status
+     *
+     * @param workOrderId ID of work order
+     * @param reason      Reason
+     * @param async       Async (Optional)
+     */
+    public static void incompleteWorkOrder(Context context, int workOrderId, String reason, Boolean async) {
+    }
+
+    /**
      * Adds an expense on a work order
      *
      * @param workOrderId ID of work order
      * @param expense     Expense
      */
     public static void addExpense(Context context, int workOrderId, Expense expense) {
+    }
+
+    /**
+     * Adds an expense on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param expense     Expense
+     * @param async       Asynchroneous (Optional)
+     */
+    public static void addExpense(Context context, int workOrderId, Expense expense, Boolean async) {
     }
 
     /**
@@ -95,6 +162,18 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Uploads a file by an attachment folder
+     *
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param attachment  Folder
+     * @param file        File
+     * @param async       Async (Optional)
+     */
+    public static void addAttachment(Context context, int workOrderId, int folderId, String attachment, java.io.File file, Boolean async) {
+    }
+
+    /**
      * Gets an attachment folder and its contents
      *
      * @param workOrderId Work order id
@@ -113,6 +192,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Deletes an attachment folder
+     *
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param async       Async (Optional)
+     */
+    public static void deleteFolder(Context context, int workOrderId, int folderId, Boolean async) {
+    }
+
+    /**
      * Updates an attachment folder
      *
      * @param workOrderId Work order id
@@ -123,9 +212,28 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Updates an attachment folder
+     *
+     * @param workOrderId Work order id
+     * @param folderId    Folder id
+     * @param folder      Folder
+     * @param async       Async (Optional)
+     */
+    public static void updateFolder(Context context, int workOrderId, int folderId, AttachmentFolder folder, Boolean async) {
+    }
+
+    /**
      * Returns a list of work orders.
      */
     public static void getWorkOrders(Context context) {
+    }
+
+    /**
+     * Returns a list of work orders.
+     *
+     * @param getWorkOrdersOptions Additional optional parameters
+     */
+    public static void getWorkOrders(Context context, getWorkOrdersOptions getWorkOrdersOptions) {
     }
 
     /**
@@ -135,6 +243,16 @@ public class WorkordersTransactionBuilder {
      * @param workorderHoursId ID of work order hour
      */
     public static void verifyTimeLog(Context context, int workOrderId, int workorderHoursId) {
+    }
+
+    /**
+     * Verify time log for assigned work order
+     *
+     * @param workOrderId      ID of work order
+     * @param workorderHoursId ID of work order hour
+     * @param async            Return the model in the response (slower) (Optional)
+     */
+    public static void verifyTimeLog(Context context, int workOrderId, int workorderHoursId, Boolean async) {
     }
 
     /**
@@ -166,12 +284,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Get pay increase for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param increaseId  ID of work order increase
+     * @param async       Async (Optional)
+     */
+    public static void getIncrease(Context context, int workOrderId, int increaseId, Boolean async) {
+    }
+
+    /**
      * Delete pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
      * @param increaseId  ID of work order increase
      */
     public static void deleteIncrease(Context context, int workOrderId, int increaseId) {
+    }
+
+    /**
+     * Delete pay increase for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param increaseId  ID of work order increase
+     * @param async       Async (Optional)
+     */
+    public static void deleteIncrease(Context context, int workOrderId, int increaseId, Boolean async) {
     }
 
     /**
@@ -185,6 +323,17 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Update pay increase for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param increaseId  ID of work order increase
+     * @param increase    Increase structure for update
+     * @param async       Async (Optional)
+     */
+    public static void updateIncrease(Context context, int workOrderId, int increaseId, PayIncrease increase, Boolean async) {
+    }
+
+    /**
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
@@ -194,12 +343,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Delete an expense from a work order
+     *
+     * @param workOrderId ID of work order
+     * @param expenseId   ID of expense
+     * @param async       Asynchroneous (Optional)
+     */
+    public static void deleteExpense(Context context, int workOrderId, int expenseId, Boolean async) {
+    }
+
+    /**
      * Update an Expense of a Work order
      *
      * @param workOrderId ID of work order
      * @param expenseId   ID of expense
      */
     public static void updateExpense(Context context, int workOrderId, int expenseId) {
+    }
+
+    /**
+     * Update an Expense of a Work order
+     *
+     * @param workOrderId          ID of work order
+     * @param expenseId            ID of expense
+     * @param updateExpenseOptions Additional optional parameters
+     */
+    public static void updateExpense(Context context, int workOrderId, int expenseId, updateExpenseOptions updateExpenseOptions) {
     }
 
     /**
@@ -225,6 +394,16 @@ public class WorkordersTransactionBuilder {
      * @param pay         Pay
      */
     public static void updatePay(Context context, int workOrderId, Pay pay) {
+    }
+
+    /**
+     * Updates the pay of a work order, or requests an adjustment
+     *
+     * @param workOrderId ID of work order
+     * @param pay         Pay
+     * @param async       Async (Optional)
+     */
+    public static void updatePay(Context context, int workOrderId, Pay pay, Boolean async) {
     }
 
     /**
@@ -262,6 +441,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Add signature by work order
+     *
+     * @param workOrderId ID of work order
+     * @param signature   Signature JSON
+     * @param async       async (Optional)
+     */
+    public static void addSignature(Context context, int workOrderId, Signature signature, Boolean async) {
+    }
+
+    /**
      * Returns a list of signatures uploaded by the assigned provider
      *
      * @param workOrderId ID of work order
@@ -278,12 +467,31 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Gets list of providers available for a work order
+     *
+     * @param workOrderId         ID of work order
+     * @param getProvidersOptions Additional optional parameters
+     */
+    public static void getProviders(Context context, String workOrderId, getProvidersOptions getProvidersOptions) {
+    }
+
+    /**
      * Adds a message to a work order
      *
      * @param workOrderId ID of work order
      * @param json        JSON payload
      */
     public static void addMessage(Context context, String workOrderId, Message json) {
+    }
+
+    /**
+     * Adds a message to a work order
+     *
+     * @param workOrderId ID of work order
+     * @param json        JSON payload
+     * @param async       Async (Optional)
+     */
+    public static void addMessage(Context context, String workOrderId, Message json, Boolean async) {
     }
 
     /**
@@ -327,6 +535,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Update all time logs for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param timeLog     Check in information
+     * @param async       Return the model in the response (slower) (Optional)
+     */
+    public static void updateAllTimeLogs(Context context, int workOrderId, TimeLog timeLog, Boolean async) {
+    }
+
+    /**
      * Gets a work order by its id
      *
      * @param workOrderId ID of work order
@@ -344,12 +562,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Deletes a work order by its id
+     *
+     * @param workOrderId  ID of work order
+     * @param cancellation Cancellation reasons
+     * @param async        Async (Optional)
+     */
+    public static void deleteWorkOrder(Context context, int workOrderId, Cancellation cancellation, Boolean async) {
+    }
+
+    /**
      * Updates a work order by its id
      *
      * @param workOrderId ID of work order
      * @param workOrder   Work order model
      */
     public static void updateWorkOrder(Context context, int workOrderId, WorkOrder workOrder) {
+    }
+
+    /**
+     * Updates a work order by its id
+     *
+     * @param workOrderId ID of work order
+     * @param workOrder   Work order model
+     * @param async       Asynchroneous (Optional)
+     */
+    public static void updateWorkOrder(Context context, int workOrderId, WorkOrder workOrder, Boolean async) {
     }
 
     /**
@@ -371,12 +609,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Delete signature by work order and signature
+     *
+     * @param workOrderId ID of work order
+     * @param signatureId ID of signature
+     * @param async       async (Optional)
+     */
+    public static void deleteSignature(Context context, int workOrderId, int signatureId, Boolean async) {
+    }
+
+    /**
      * Adds an attachment folder
      *
      * @param workOrderId Work order id
      * @param folder      Folder
      */
     public static void addFolder(Context context, int workOrderId, AttachmentFolder folder) {
+    }
+
+    /**
+     * Adds an attachment folder
+     *
+     * @param workOrderId Work order id
+     * @param folder      Folder
+     * @param async       Async (Optional)
+     */
+    public static void addFolder(Context context, int workOrderId, AttachmentFolder folder, Boolean async) {
     }
 
     /**
@@ -425,6 +683,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Remove time log for assigned work order
+     *
+     * @param workOrderId      ID of work order
+     * @param workorderHoursId ID of work order hour
+     * @param async            Return the model in the response (slower) (Optional)
+     */
+    public static void removeTimeLog(Context context, int workOrderId, int workorderHoursId, Boolean async) {
+    }
+
+    /**
      * Update time log for assigned work order.
      *
      * @param workOrderId      ID of work order
@@ -432,6 +700,17 @@ public class WorkordersTransactionBuilder {
      * @param timeLog          Check in information
      */
     public static void updateTimeLog(Context context, int workOrderId, int workorderHoursId, TimeLog timeLog) {
+    }
+
+    /**
+     * Update time log for assigned work order.
+     *
+     * @param workOrderId      ID of work order
+     * @param workorderHoursId ID of work order hour
+     * @param timeLog          Check in information
+     * @param async            Return the model in the response (slower) (Optional)
+     */
+    public static void updateTimeLog(Context context, int workOrderId, int workorderHoursId, TimeLog timeLog, Boolean async) {
     }
 
     /**
@@ -455,6 +734,17 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Deletes an attachment folder and its contents
+     *
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
+     * @param attachmentId File id
+     * @param async        Async (Optional)
+     */
+    public static void deleteAttachment(Context context, int workOrderId, int folderId, int attachmentId, Boolean async) {
+    }
+
+    /**
      * Updates an attachment folder and its contents
      *
      * @param workOrderId  Work order id
@@ -466,12 +756,34 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Updates an attachment folder and its contents
+     *
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
+     * @param attachmentId File id
+     * @param attachment   Attachment
+     * @param async        Async (Optional)
+     */
+    public static void updateAttachment(Context context, int workOrderId, int folderId, int attachmentId, Attachment attachment, Boolean async) {
+    }
+
+    /**
      * Assign a user to a work order
      *
      * @param workOrderId Work order id
      * @param assignee    JSON Model
      */
     public static void assignUser(Context context, int workOrderId, Assignee assignee) {
+    }
+
+    /**
+     * Assign a user to a work order
+     *
+     * @param workOrderId Work order id
+     * @param assignee    JSON Model
+     * @param async       Async (Optional)
+     */
+    public static void assignUser(Context context, int workOrderId, Assignee assignee, Boolean async) {
     }
 
     /**
@@ -492,6 +804,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Unassign user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param assignee    JSON Model
+     * @param async       Async (Optional)
+     */
+    public static void unassignUser(Context context, int workOrderId, Assignee assignee, Boolean async) {
+    }
+
+    /**
      * Publishes a work order to the marketplace where it can garner requests.
      *
      * @param workOrderId ID of work order
@@ -500,11 +822,29 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Publishes a work order to the marketplace where it can garner requests.
+     *
+     * @param workOrderId ID of work order
+     * @param async       Async (Optional)
+     */
+    public static void publish(Context context, int workOrderId, Boolean async) {
+    }
+
+    /**
      * Unpublishes a work order from the marketplace so that no requests or counter-offers can be made. Moves to draft unless it was also routed.
      *
      * @param workOrderId ID of work order
      */
     public static void unpublish(Context context, int workOrderId) {
+    }
+
+    /**
+     * Unpublishes a work order from the marketplace so that no requests or counter-offers can be made. Moves to draft unless it was also routed.
+     *
+     * @param workOrderId ID of work order
+     * @param async       Async (Optional)
+     */
+    public static void unpublish(Context context, int workOrderId, Boolean async) {
     }
 
     /**
@@ -524,11 +864,29 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Approves a completed work order and moves it to paid status
+     *
+     * @param workOrderId ID of work order
+     * @param async       Async (Optional)
+     */
+    public static void approveWorkOrder(Context context, int workOrderId, Boolean async) {
+    }
+
+    /**
      * Unapproves a completed work order and moves it to work done status
      *
      * @param workOrderId ID of work order
      */
     public static void unapproveWorkOrder(Context context, int workOrderId) {
+    }
+
+    /**
+     * Unapproves a completed work order and moves it to work done status
+     *
+     * @param workOrderId ID of work order
+     * @param async       Async (Optional)
+     */
+    public static void unapproveWorkOrder(Context context, int workOrderId, Boolean async) {
     }
 
     /**
@@ -550,6 +908,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Deletes a shipment from a work order
+     *
+     * @param workOrderId Work order id
+     * @param shipmentId  Shipment id
+     * @param async       Async (Optional)
+     */
+    public static void deleteShipment(Context context, int workOrderId, int shipmentId, Boolean async) {
+    }
+
+    /**
      * Updates a shipment attached to a work order
      *
      * @param workOrderId Work order id
@@ -560,12 +928,33 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Updates a shipment attached to a work order
+     *
+     * @param workOrderId Work order id
+     * @param shipmentId  Shipment id
+     * @param shipment    Shipment
+     * @param async       Async (Optional)
+     */
+    public static void updateShipment(Context context, int workOrderId, int shipmentId, Shipment shipment, Boolean async) {
+    }
+
+    /**
      * Adds a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
      * @param workOrderId Work Order ID
      * @param penaltyId   Penalty ID
      */
     public static void addPenalty(Context context, int workOrderId, int penaltyId) {
+    }
+
+    /**
+     * Adds a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
+     *
+     * @param workOrderId Work Order ID
+     * @param penaltyId   Penalty ID
+     * @param penalty     Penalty (Optional)
+     */
+    public static void addPenalty(Context context, int workOrderId, int penaltyId, PayModifier penalty) {
     }
 
     /**
@@ -596,6 +985,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Updates a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
+     *
+     * @param workOrderId Work Order ID
+     * @param penaltyId   Penalty ID
+     * @param penalty     Penalty (Optional)
+     */
+    public static void updatePenalty(Context context, int workOrderId, int penaltyId, PayModifier penalty) {
+    }
+
+    /**
      * Decline work order swap request.
      */
     public static void declineSwapRequest(Context context) {
@@ -609,6 +1008,17 @@ public class WorkordersTransactionBuilder {
      * @param json        JSON payload
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json) {
+    }
+
+    /**
+     * Reply a message on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param messageId   ID of work order message
+     * @param json        JSON payload
+     * @param async       Async (Optional)
+     */
+    public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async) {
     }
 
     /**
@@ -696,12 +1106,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Request or un-hide a request for a work order
+     *
+     * @param workOrderId Work order id
+     * @param request     JSON Model
+     * @param async       Async (Optional)
+     */
+    public static void request(Context context, int workOrderId, Request request, Boolean async) {
+    }
+
+    /**
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
      * @param request     JSON Model
      */
     public static void removeRequest(Context context, int workOrderId, Request request) {
+    }
+
+    /**
+     * Removes or hides a request by a user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param request     JSON Model
+     * @param async       Async (Optional)
+     */
+    public static void removeRequest(Context context, int workOrderId, Request request, Boolean async) {
     }
 
     /**
@@ -746,12 +1176,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Updates the service schedule or eta of a work order (depending on your role)
+     *
+     * @param workOrderId ID of work order
+     * @param schedule    JSON Payload
+     * @param async       Async (Optional)
+     */
+    public static void updateSchedule(Context context, int workOrderId, Schedule schedule, Boolean async) {
+    }
+
+    /**
      * Updates any holds on a work order.
      *
      * @param workOrderId ID of work order
      * @param holds       Holds
      */
     public static void updateHolds(Context context, int workOrderId, String holds) {
+    }
+
+    /**
+     * Updates any holds on a work order.
+     *
+     * @param workOrderId ID of work order
+     * @param holds       Holds
+     * @param async       Async (Optional)
+     */
+    public static void updateHolds(Context context, int workOrderId, String holds, Boolean async) {
     }
 
     /**
@@ -762,6 +1212,17 @@ public class WorkordersTransactionBuilder {
      * @param json        JSON payload
      */
     public static void resolveReopenReportProblem(Context context, int workOrderId, int flagId, Message json) {
+    }
+
+    /**
+     * Resolve or Reopen a problem reported to work order
+     *
+     * @param workOrderId ID of work order
+     * @param flagId      ID of report problem flag
+     * @param json        JSON payload
+     * @param async       Async (Optional)
+     */
+    public static void resolveReopenReportProblem(Context context, int workOrderId, int flagId, Message json, Boolean async) {
     }
 
     /**
@@ -830,6 +1291,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Adds a shipment to a work order
+     *
+     * @param workOrderId Work order id
+     * @param shipment    Shipment
+     * @param async       Async (Optional)
+     */
+    public static void addShipment(Context context, int workOrderId, Shipment shipment, Boolean async) {
+    }
+
+    /**
      * Get a list of shipments on a work order
      *
      * @param workOrderId Work order id
@@ -855,12 +1326,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Route a user to a work order
+     *
+     * @param workOrderId Work order id
+     * @param route       JSON Model
+     * @param async       Async (Optional)
+     */
+    public static void routeUser(Context context, int workOrderId, Route route, Boolean async) {
+    }
+
+    /**
      * Unroute a user from a work order
      *
      * @param workOrderId Work order id
      * @param route       JSON Model
      */
     public static void unRouteUser(Context context, int workOrderId, Route route) {
+    }
+
+    /**
+     * Unroute a user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param route       JSON Model
+     * @param async       Async (Optional)
+     */
+    public static void unRouteUser(Context context, int workOrderId, Route route, Boolean async) {
     }
 
     /**
@@ -884,6 +1375,16 @@ public class WorkordersTransactionBuilder {
      * @param json        JSON payload
      */
     public static void reportProblem(Context context, String workOrderId, Message json) {
+    }
+
+    /**
+     * Report a problem to a work order
+     *
+     * @param workOrderId ID of work order
+     * @param json        JSON payload
+     * @param async       Async (Optional)
+     */
+    public static void reportProblem(Context context, String workOrderId, Message json, Boolean async) {
     }
 
     /**
@@ -912,6 +1413,16 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Updates the location of a work order (depending on your role)
+     *
+     * @param workOrderId ID of work order
+     * @param location    JSON Payload
+     * @param async       Async (Optional)
+     */
+    public static void updateLocation(Context context, int workOrderId, Location location, Boolean async) {
+    }
+
+    /**
      * Adds a bonus on a work order which can conditionally increase the amount paid to the provider upon conditions being met
      *
      * @param workOrderId ID of work order
@@ -921,12 +1432,32 @@ public class WorkordersTransactionBuilder {
     }
 
     /**
+     * Adds a bonus on a work order which can conditionally increase the amount paid to the provider upon conditions being met
+     *
+     * @param workOrderId ID of work order
+     * @param bonusId     Bonus ID
+     * @param bonus       Bonus (Optional)
+     */
+    public static void addBonus(Context context, int workOrderId, int bonusId, PayModifier bonus) {
+    }
+
+    /**
      * Gets a bonus for a work order
      *
      * @param workOrderId ID of work order
      * @param bonusId     Bonus ID
      */
     public static void getBonus(Context context, int workOrderId, int bonusId) {
+    }
+
+    /**
+     * Gets a bonus for a work order
+     *
+     * @param workOrderId ID of work order
+     * @param bonusId     Bonus ID
+     * @param bonus       Bonus (Optional)
+     */
+    public static void getBonus(Context context, int workOrderId, int bonusId, PayModifier bonus) {
     }
 
     /**

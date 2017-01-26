@@ -2,22 +2,20 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 
-import com.fieldnation.data.bv2.model.*;
-import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.data.bv2.model.UserTaxInfoUpdate;
 
 /**
- * Created by dmgen from swagger on 1/25/17.
+ * Created by dmgen from swagger on 1/26/17.
  */
 
-public class UsersTransactionBuilder {
-    private static final String TAG = "UsersTransactionBuilder";
+public class UsersWebApi {
+    private static final String TAG = "UsersWebApi";
 
     /**
      * Send account verification code via text message
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaSms(Context context, int userId, String json) {
     }
@@ -26,7 +24,7 @@ public class UsersTransactionBuilder {
      * Send account activation link
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendAccountActivationLink(Context context, int userId, String json) {
     }
@@ -51,7 +49,7 @@ public class UsersTransactionBuilder {
      * Update tax info.
      *
      * @param userId User ID
-     * @param json Json User tax info object for updating
+     * @param json   Json User tax info object for updating
      */
     public static void updateTax(Context context, int userId, UserTaxInfoUpdate json) {
     }
@@ -91,9 +89,9 @@ public class UsersTransactionBuilder {
     /**
      * Set user preference
      *
-     * @param userId User ID
+     * @param userId     User ID
      * @param preference Preference Key
-     * @param json JSON Model
+     * @param json       JSON Model
      */
     public static void setUserPreference(Context context, int userId, String preference, String json) {
     }
@@ -101,7 +99,7 @@ public class UsersTransactionBuilder {
     /**
      * Get user preference value
      *
-     * @param userId User ID
+     * @param userId     User ID
      * @param preference Preference Key
      */
     public static void getUserPreferenceValue(Context context, int userId, String preference) {
@@ -111,7 +109,7 @@ public class UsersTransactionBuilder {
      * Upload profile photo
      *
      * @param userId User ID
-     * @param file Photo to upload
+     * @param file   Photo to upload
      */
     public static void uploadProfilePhoto(Context context, int userId, java.io.File file) {
     }
@@ -144,7 +142,7 @@ public class UsersTransactionBuilder {
      * Send account verification code via phone call
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaVoiceCall(Context context, int userId, String json) {
     }
@@ -153,7 +151,7 @@ public class UsersTransactionBuilder {
      * Add types of work to profile
      *
      * @param userId User ID
-     * @param json JSON model
+     * @param json   JSON model
      */
     public static void addTypesOfWork(Context context, int userId, String json) {
     }
@@ -170,7 +168,7 @@ public class UsersTransactionBuilder {
      * Verify account
      *
      * @param userId User ID
-     * @param json Json Payload
+     * @param json   Json Payload
      */
     public static void verifyAccount(Context context, int userId, String json) {
     }

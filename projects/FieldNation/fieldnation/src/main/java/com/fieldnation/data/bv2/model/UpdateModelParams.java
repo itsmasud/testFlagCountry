@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UpdateModelParams {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class UpdateModelParams implements Parcelable {
     private static final String TAG = "UpdateModelParams";
 
     @Json(name = "model")
@@ -18,12 +25,30 @@ public class UpdateModelParams {
     public UpdateModelParams() {
     }
 
+    public void setModel(UpdateModelParamsModel model) {
+        _model = model;
+    }
+
     public UpdateModelParamsModel getModel() {
         return _model;
     }
 
+    public UpdateModelParams model(UpdateModelParamsModel model) {
+        _model = model;
+        return this;
+    }
+
+    public void setUpdateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) {
+        _updateScheduleByWorkOrder = updateScheduleByWorkOrder;
+    }
+
     public EventUpdateScheduleByWorkOrder getUpdateScheduleByWorkOrder() {
         return _updateScheduleByWorkOrder;
+    }
+
+    public UpdateModelParams updateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) {
+        _updateScheduleByWorkOrder = updateScheduleByWorkOrder;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class UpdateModelParams {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UpdateModelParams> CREATOR = new Parcelable.Creator<UpdateModelParams>() {
+
+        @Override
+        public UpdateModelParams createFromParcel(Parcel source) {
+            try {
+                return UpdateModelParams.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UpdateModelParams[] newArray(int size) {
+            return new UpdateModelParams[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

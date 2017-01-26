@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class CountryState {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class CountryState implements Parcelable {
     private static final String TAG = "CountryState";
 
     @Json(name = "values")
@@ -21,16 +28,43 @@ public class CountryState {
     public CountryState() {
     }
 
+    public void setValues(CountryStateValues[] values) {
+        _values = values;
+    }
+
     public CountryStateValues[] getValues() {
         return _values;
+    }
+
+    public CountryState values(CountryStateValues[] values) {
+        _values = values;
+        return this;
+    }
+
+    public void setLabel(String label) {
+        _label = label;
     }
 
     public String getLabel() {
         return _label;
     }
 
+    public CountryState label(String label) {
+        _label = label;
+        return this;
+    }
+
+    public void setRequired(Boolean required) {
+        _required = required;
+    }
+
     public Boolean getRequired() {
         return _required;
+    }
+
+    public CountryState required(Boolean required) {
+        _required = required;
+        return this;
     }
 
     /*-*****************************-*/
@@ -56,5 +90,36 @@ public class CountryState {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<CountryState> CREATOR = new Parcelable.Creator<CountryState>() {
+
+        @Override
+        public CountryState createFromParcel(Parcel source) {
+            try {
+                return CountryState.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public CountryState[] newArray(int size) {
+            return new CountryState[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class ListEnvelope {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class ListEnvelope implements Parcelable {
     private static final String TAG = "ListEnvelope";
 
     @Json(name = "per_page")
@@ -42,44 +49,134 @@ public class ListEnvelope {
     public ListEnvelope() {
     }
 
+    public void setPerPage(Integer perPage) {
+        _perPage = perPage;
+    }
+
     public Integer getPerPage() {
         return _perPage;
+    }
+
+    public ListEnvelope perPage(Integer perPage) {
+        _perPage = perPage;
+        return this;
+    }
+
+    public void setTotal(Integer total) {
+        _total = total;
     }
 
     public Integer getTotal() {
         return _total;
     }
 
+    public ListEnvelope total(Integer total) {
+        _total = total;
+        return this;
+    }
+
+    public void setView(ViewEnum view) {
+        _view = view;
+    }
+
     public ViewEnum getView() {
         return _view;
+    }
+
+    public ListEnvelope view(ViewEnum view) {
+        _view = view;
+        return this;
+    }
+
+    public void setPages(Integer pages) {
+        _pages = pages;
     }
 
     public Integer getPages() {
         return _pages;
     }
 
+    public ListEnvelope pages(Integer pages) {
+        _pages = pages;
+        return this;
+    }
+
+    public void setColumns(String columns) {
+        _columns = columns;
+    }
+
     public String getColumns() {
         return _columns;
+    }
+
+    public ListEnvelope columns(String columns) {
+        _columns = columns;
+        return this;
+    }
+
+    public void setAvailableColumns(AvailableColumn[] availableColumns) {
+        _availableColumns = availableColumns;
     }
 
     public AvailableColumn[] getAvailableColumns() {
         return _availableColumns;
     }
 
+    public ListEnvelope availableColumns(AvailableColumn[] availableColumns) {
+        _availableColumns = availableColumns;
+        return this;
+    }
+
+    public void setPage(Integer page) {
+        _page = page;
+    }
+
     public Integer getPage() {
         return _page;
+    }
+
+    public ListEnvelope page(Integer page) {
+        _page = page;
+        return this;
+    }
+
+    public void setSort(String sort) {
+        _sort = sort;
     }
 
     public String getSort() {
         return _sort;
     }
 
+    public ListEnvelope sort(String sort) {
+        _sort = sort;
+        return this;
+    }
+
+    public void setList(String list) {
+        _list = list;
+    }
+
     public String getList() {
         return _list;
     }
 
+    public ListEnvelope list(String list) {
+        _list = list;
+        return this;
+    }
+
+    public void setOrder(OrderEnum order) {
+        _order = order;
+    }
+
     public OrderEnum getOrder() {
         return _order;
+    }
+
+    public ListEnvelope order(OrderEnum order) {
+        _order = order;
+        return this;
     }
 
     /*-*****************************-*/
@@ -105,5 +202,36 @@ public class ListEnvelope {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<ListEnvelope> CREATOR = new Parcelable.Creator<ListEnvelope>() {
+
+        @Override
+        public ListEnvelope createFromParcel(Parcel source) {
+            try {
+                return ListEnvelope.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public ListEnvelope[] newArray(int size) {
+            return new ListEnvelope[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

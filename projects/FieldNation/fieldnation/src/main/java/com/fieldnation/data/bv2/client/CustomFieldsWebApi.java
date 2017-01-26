@@ -2,23 +2,21 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 
-import com.fieldnation.data.bv2.model.*;
-import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.data.bv2.model.CustomField;
 
 /**
- * Created by dmgen from swagger on 1/25/17.
+ * Created by dmgen from swagger on 1/26/17.
  */
 
-public class CustomFieldsTransactionBuilder {
-    private static final String TAG = "CustomFieldsTransactionBuilder";
+public class CustomFieldsWebApi {
+    private static final String TAG = "CustomFieldsWebApi";
 
     /**
      * Updates a work order custom field's visibility for a single client
      *
      * @param customFieldId Custom field id
-     * @param clientId Client id
-     * @param visibility Visibility (visible or hidden)
+     * @param clientId      Client id
+     * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, int customFieldId, int clientId, String visibility) {
     }
@@ -27,7 +25,7 @@ public class CustomFieldsTransactionBuilder {
      * Updates a work order custom field's visibility for all projects and clients
      *
      * @param customFieldId Custom field id
-     * @param visibility Visibility (visible or hidden)
+     * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, int customFieldId, String visibility) {
     }
@@ -44,7 +42,7 @@ public class CustomFieldsTransactionBuilder {
      * Updates a work order custom field
      *
      * @param customFieldId Custom field id
-     * @param json JSON Model
+     * @param json          JSON Model
      */
     public static void updateCustomField(Context context, int customFieldId, CustomField json) {
     }
@@ -59,7 +57,6 @@ public class CustomFieldsTransactionBuilder {
 
     /**
      * Gets a list of work order custom fields
-     *
      */
     public static void getCustomFields(Context context) {
     }
@@ -68,10 +65,10 @@ public class CustomFieldsTransactionBuilder {
      * Updates a work order custom field's visibility for a single project
      *
      * @param customFieldId Custom field id
-     * @param projectId Project id
-     * @param visibility Visibility (visible or hidden)
+     * @param projectId     Project id
+     * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, int customFieldId, int projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProject(Context context, int customFieldId, int projectId, String visibility) {
     }
 
 }

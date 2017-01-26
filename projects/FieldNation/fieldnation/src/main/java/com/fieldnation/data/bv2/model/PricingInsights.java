@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class PricingInsights {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class PricingInsights implements Parcelable {
     private static final String TAG = "PricingInsights";
 
     @Json(name = "region")
@@ -15,8 +22,17 @@ public class PricingInsights {
     public PricingInsights() {
     }
 
+    public void setRegion(PricingInsightsRegion region) {
+        _region = region;
+    }
+
     public PricingInsightsRegion getRegion() {
         return _region;
+    }
+
+    public PricingInsights region(PricingInsightsRegion region) {
+        _region = region;
+        return this;
     }
 
     /*-*****************************-*/
@@ -42,5 +58,36 @@ public class PricingInsights {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<PricingInsights> CREATOR = new Parcelable.Creator<PricingInsights>() {
+
+        @Override
+        public PricingInsights createFromParcel(Parcel source) {
+            try {
+                return PricingInsights.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public PricingInsights[] newArray(int size) {
+            return new PricingInsights[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

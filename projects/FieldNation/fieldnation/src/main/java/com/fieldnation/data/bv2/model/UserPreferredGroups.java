@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UserPreferredGroups {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class UserPreferredGroups implements Parcelable {
     private static final String TAG = "UserPreferredGroups";
 
     @Json(name = "notes")
@@ -24,20 +31,56 @@ public class UserPreferredGroups {
     public UserPreferredGroups() {
     }
 
+    public void setNotes(String notes) {
+        _notes = notes;
+    }
+
     public String getNotes() {
         return _notes;
+    }
+
+    public UserPreferredGroups notes(String notes) {
+        _notes = notes;
+        return this;
+    }
+
+    public void setCreated(Date created) {
+        _created = created;
     }
 
     public Date getCreated() {
         return _created;
     }
 
+    public UserPreferredGroups created(Date created) {
+        _created = created;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
     public String getName() {
         return _name;
     }
 
+    public UserPreferredGroups name(String name) {
+        _name = name;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
     public Integer getId() {
         return _id;
+    }
+
+    public UserPreferredGroups id(Integer id) {
+        _id = id;
+        return this;
     }
 
     /*-*****************************-*/
@@ -63,5 +106,36 @@ public class UserPreferredGroups {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UserPreferredGroups> CREATOR = new Parcelable.Creator<UserPreferredGroups>() {
+
+        @Override
+        public UserPreferredGroups createFromParcel(Parcel source) {
+            try {
+                return UserPreferredGroups.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UserPreferredGroups[] newArray(int size) {
+            return new UserPreferredGroups[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

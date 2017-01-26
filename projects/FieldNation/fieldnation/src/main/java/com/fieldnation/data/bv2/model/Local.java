@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class Local {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class Local implements Parcelable {
     private static final String TAG = "Local";
 
     @Json(name = "date")
@@ -18,12 +25,30 @@ public class Local {
     public Local() {
     }
 
+    public void setDate(String date) {
+        _date = date;
+    }
+
     public String getDate() {
         return _date;
     }
 
+    public Local date(String date) {
+        _date = date;
+        return this;
+    }
+
+    public void setTime(String time) {
+        _time = time;
+    }
+
     public String getTime() {
         return _time;
+    }
+
+    public Local time(String time) {
+        _time = time;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class Local {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<Local> CREATOR = new Parcelable.Creator<Local>() {
+
+        @Override
+        public Local createFromParcel(Parcel source) {
+            try {
+                return Local.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public Local[] newArray(int size) {
+            return new Local[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

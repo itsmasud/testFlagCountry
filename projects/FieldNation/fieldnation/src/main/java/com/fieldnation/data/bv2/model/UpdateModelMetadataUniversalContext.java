@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class UpdateModelMetadataUniversalContext {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class UpdateModelMetadataUniversalContext implements Parcelable {
     private static final String TAG = "UpdateModelMetadataUniversalContext";
 
     @Json(name = "correlation_id")
@@ -15,8 +22,17 @@ public class UpdateModelMetadataUniversalContext {
     public UpdateModelMetadataUniversalContext() {
     }
 
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
     public String getCorrelationId() {
         return _correlationId;
+    }
+
+    public UpdateModelMetadataUniversalContext correlationId(String correlationId) {
+        _correlationId = correlationId;
+        return this;
     }
 
     /*-*****************************-*/
@@ -42,5 +58,36 @@ public class UpdateModelMetadataUniversalContext {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UpdateModelMetadataUniversalContext> CREATOR = new Parcelable.Creator<UpdateModelMetadataUniversalContext>() {
+
+        @Override
+        public UpdateModelMetadataUniversalContext createFromParcel(Parcel source) {
+            try {
+                return UpdateModelMetadataUniversalContext.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UpdateModelMetadataUniversalContext[] newArray(int size) {
+            return new UpdateModelMetadataUniversalContext[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

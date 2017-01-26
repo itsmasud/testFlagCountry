@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class PayModifiers {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class PayModifiers implements Parcelable {
     private static final String TAG = "PayModifiers";
 
     @Json(name = "metadata")
@@ -24,20 +31,56 @@ public class PayModifiers {
     public PayModifiers() {
     }
 
+    public void setMetadata(ListEnvelope metadata) {
+        _metadata = metadata;
+    }
+
     public ListEnvelope getMetadata() {
         return _metadata;
+    }
+
+    public PayModifiers metadata(ListEnvelope metadata) {
+        _metadata = metadata;
+        return this;
+    }
+
+    public void setSum(PayModifiersSum sum) {
+        _sum = sum;
     }
 
     public PayModifiersSum getSum() {
         return _sum;
     }
 
+    public PayModifiers sum(PayModifiersSum sum) {
+        _sum = sum;
+        return this;
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
+    public PayModifiers actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setResults(PayModifier[] results) {
+        _results = results;
+    }
+
     public PayModifier[] getResults() {
         return _results;
+    }
+
+    public PayModifiers results(PayModifier[] results) {
+        _results = results;
+        return this;
     }
 
     /*-*****************************-*/
@@ -63,5 +106,36 @@ public class PayModifiers {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<PayModifiers> CREATOR = new Parcelable.Creator<PayModifiers>() {
+
+        @Override
+        public PayModifiers createFromParcel(Parcel source) {
+            try {
+                return PayModifiers.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public PayModifiers[] newArray(int size) {
+            return new PayModifiers[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

@@ -1,12 +1,19 @@
 package com.fieldnation.data.bv2.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-public class CountryAddress2 {
+/**
+ * Created by dmgen from swagger on 1/26/17.
+ */
+
+public class CountryAddress2 implements Parcelable {
     private static final String TAG = "CountryAddress2";
 
     @Json(name = "label")
@@ -18,12 +25,30 @@ public class CountryAddress2 {
     public CountryAddress2() {
     }
 
+    public void setLabel(String label) {
+        _label = label;
+    }
+
     public String getLabel() {
         return _label;
     }
 
+    public CountryAddress2 label(String label) {
+        _label = label;
+        return this;
+    }
+
+    public void setRequired(Boolean required) {
+        _required = required;
+    }
+
     public Boolean getRequired() {
         return _required;
+    }
+
+    public CountryAddress2 required(Boolean required) {
+        _required = required;
+        return this;
     }
 
     /*-*****************************-*/
@@ -49,5 +74,36 @@ public class CountryAddress2 {
             Log.v(TAG, TAG, ex);
             return null;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<CountryAddress2> CREATOR = new Parcelable.Creator<CountryAddress2>() {
+
+        @Override
+        public CountryAddress2 createFromParcel(Parcel source) {
+            try {
+                return CountryAddress2.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public CountryAddress2[] newArray(int size) {
+            return new CountryAddress2[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }
