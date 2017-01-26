@@ -1,6 +1,7 @@
 package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -25,17 +26,20 @@ public class LocationsWebApi {
      */
     public static void addNotes(Context context, Integer locationId, LocationNote json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/locations/" + locationId + "/notes");
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/notes")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/locations/" + locationId + "/notes")
-                            .body(json.toJson().toString())
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -53,17 +57,20 @@ public class LocationsWebApi {
      */
     public static void addAttribute(Context context, Integer locationId, Integer attribute, LocationAttribute json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute)
-                            .body(json.toJson().toString())
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -80,16 +87,17 @@ public class LocationsWebApi {
      */
     public static void removeAttribute(Context context, Integer locationId, Integer attribute, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("DELETE")
-                            .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -104,16 +112,17 @@ public class LocationsWebApi {
      */
     public static void getCountries(Context context, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/locations/countries");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations/countries")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/locations/countries")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -129,17 +138,20 @@ public class LocationsWebApi {
      */
     public static void addLocations(Context context, StoredLocation json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/locations");
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/locations")
-                            .body(json.toJson().toString())
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -154,16 +166,17 @@ public class LocationsWebApi {
      */
     public static void getLocations(Context context, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/locations");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/locations")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -180,16 +193,17 @@ public class LocationsWebApi {
      */
     public static void removeNote(Context context, Integer locationId, Integer noteId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/notes/{note_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("DELETE")
-                            .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -206,6 +220,26 @@ public class LocationsWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updateNote(Context context, Integer locationId, Integer noteId, LocationNote json, boolean isBackground) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId);
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/locations/{location_id}/notes/{note_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -216,16 +250,17 @@ public class LocationsWebApi {
      */
     public static void removeLocation(Context context, Integer locationId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/locations/" + locationId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("DELETE")
-                            .path("/api/rest/v2/locations/" + locationId)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -240,6 +275,23 @@ public class LocationsWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updateLocation(Context context, Integer locationId, boolean isBackground) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/locations/" + locationId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/locations/{location_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
 }

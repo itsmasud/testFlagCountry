@@ -1,6 +1,7 @@
 package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -25,17 +26,18 @@ public class CompanyWebApi {
      */
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/" + companyId + "/integrations")
+                    .urlParams("?access_token=" + accessToken);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/company/" + companyId + "/integrations")
-                            .urlParams("?access_token=" + accessToken)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {

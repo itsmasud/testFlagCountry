@@ -1,6 +1,7 @@
 package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -25,17 +26,20 @@ public class UsersWebApi {
      */
     public static void sendVerificationCodeViaSms(Context context, Integer userId, String json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/verify/text");
+
+            if (json != null)
+                builder.body(json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/verify/text")
-                            .body(json)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -52,17 +56,20 @@ public class UsersWebApi {
      */
     public static void sendAccountActivationLink(Context context, Integer userId, String json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/verify/email");
+
+            if (json != null)
+                builder.body(json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/verify/email")
-                            .body(json)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -77,6 +84,23 @@ public class UsersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updateSettings(Context context, Integer userId, boolean isBackground) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PATCH")
+                    .path("/api/rest/v2/users/" + userId + "/settings");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -87,16 +111,17 @@ public class UsersWebApi {
      */
     public static void getSettings(Context context, Integer userId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/settings");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/settings")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + userId + "/settings")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -113,17 +138,20 @@ public class UsersWebApi {
      */
     public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/tax");
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/tax")
-                            .body(json.toJson().toString())
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -139,16 +167,17 @@ public class UsersWebApi {
      */
     public static void getTax(Context context, Integer userId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/tax");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tax")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + userId + "/tax")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -163,6 +192,23 @@ public class UsersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updatePay(Context context, Integer userId, boolean isBackground) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PATCH")
+                    .path("/api/rest/v2/users/" + userId + "/pay");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -173,16 +219,17 @@ public class UsersWebApi {
      */
     public static void addPay(Context context, Integer userId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/pay");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/pay")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -198,16 +245,17 @@ public class UsersWebApi {
      */
     public static void getPay(Context context, Integer userId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/pay");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + userId + "/pay")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -225,17 +273,20 @@ public class UsersWebApi {
      */
     public static void setUserPreference(Context context, Integer userId, String preference, String json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
+
+            if (json != null)
+                builder.body(json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/preferences/" + preference)
-                            .body(json)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -252,16 +303,17 @@ public class UsersWebApi {
      */
     public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + userId + "/preferences/" + preference)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -278,16 +330,18 @@ public class UsersWebApi {
      */
     public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/profile/avatar")
+                    .multipartFile("file", file.getName(), Uri.fromFile(file));
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/profile/avatar")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -302,6 +356,23 @@ public class UsersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updateTour(Context context, Integer userId, boolean isBackground) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PATCH")
+                    .path("/api/rest/v2/users/" + userId + "/tour");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -312,16 +383,17 @@ public class UsersWebApi {
      */
     public static void getTour(Context context, Integer userId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/tour");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tour")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + userId + "/tour")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -337,16 +409,17 @@ public class UsersWebApi {
      */
     public static void getUser(Context context, String user, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + user);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + user)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -363,17 +436,20 @@ public class UsersWebApi {
      */
     public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/verify/phone");
+
+            if (json != null)
+                builder.body(json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/verify/phone")
-                            .body(json)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -390,17 +466,20 @@ public class UsersWebApi {
      */
     public static void addTypesOfWork(Context context, Integer userId, String json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/types-of-work");
+
+            if (json != null)
+                builder.body(json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/types-of-work")
-                            .body(json)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -416,16 +495,17 @@ public class UsersWebApi {
      */
     public static void getUserTypesOfWork(Context context, Integer userId, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/types-of-work");
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/types-of-work")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v2/users/" + userId + "/types-of-work")
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -442,17 +522,20 @@ public class UsersWebApi {
      */
     public static void verifyAccount(Context context, Integer userId, String json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/verify/2fa");
+
+            if (json != null)
+                builder.body(json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/users/" + userId + "/verify/2fa")
-                            .body(json)
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {

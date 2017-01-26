@@ -1,6 +1,7 @@
 package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -26,18 +27,21 @@ public class SystemWebApi {
      */
     public static void updateModel(Context context, String path, String event, KeyValue json, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/system/update-model")
+                    .urlParams("?path=" + path + "&event=" + event);
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/system/update-model")
-                            .urlParams("?path=" + path + "&event=" + event)
-                            .body(json.toJson().toString())
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
@@ -56,18 +60,21 @@ public class SystemWebApi {
      */
     public static void updateModel(Context context, String path, String event, KeyValue json, Boolean async, boolean isBackground) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/system/update-model")
+                    .urlParams("?path=" + path + "&event=" + event + "&async=" + async);
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .path("/api/rest/v2/system/update-model")
-                            .urlParams("?path=" + path + "&event=" + event + "&async=" + async)
-                            .body(json.toJson().toString())
-                    ).build();
+                    .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
