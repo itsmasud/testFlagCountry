@@ -2,7 +2,12 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 
-import com.fieldnation.data.bv2.model.PayModifier;
+import com.fieldnation.data.bv2.model.*;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.transaction.Priority;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by dmgen from swagger on 1/26/17.
@@ -13,25 +18,45 @@ public class PenaltiesWebApi {
 
     /**
      * Add a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
+     *
+     * @param isBackground indicates that this call is low priority
      */
-    public static void addPenalty(Context context) {
+    public static void addPenalty(Context context, boolean isBackground) {
     }
 
     /**
      * Removes a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
      * @param penaltyId Penalty ID
+     * @param isBackground indicates that this call is low priority
      */
-    public static void removePenalty(Context context, int penaltyId) {
+    public static void removePenalty(Context context, int penaltyId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//penalties/{penalty_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/penalties/" + penaltyId)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
      * Update a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
      * @param penaltyId Penalty ID
-     * @param json      JSON Model
+     * @param json JSON Model
+     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePenalty(Context context, String penaltyId, PayModifier json) {
+    public static void updatePenalty(Context context, String penaltyId, PayModifier json, boolean isBackground) {
     }
 
 }

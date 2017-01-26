@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,7 +16,7 @@ public class Date implements Parcelable {
     private static final String TAG = "Date";
 
     @Json(name = "utc")
-    private Long _utc;
+    private Utc _utc;
 
     @Json(name = "local")
     private Local _local;
@@ -25,15 +24,15 @@ public class Date implements Parcelable {
     public Date() {
     }
 
-    public void setUtc(Long utc) {
+    public void setUtc(Utc utc) {
         _utc = utc;
     }
 
-    public Long getUtc() {
+    public Utc getUtc() {
         return _utc;
     }
 
-    public Date utc(Long utc) {
+    public Date utc(Utc utc) {
         _utc = utc;
         return this;
     }

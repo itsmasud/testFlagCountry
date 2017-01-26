@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -25,16 +24,16 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     public EventUpdateScheduleByWorkOrder() {
     }
 
-    public void setNew(EventUpdateScheduleByWorkOrderNew new_) {
-        _new = new_;
+    public void setNew(EventUpdateScheduleByWorkOrderNew new) {
+        _new = new;
     }
 
     public EventUpdateScheduleByWorkOrderNew getNew() {
         return _new;
     }
 
-    public EventUpdateScheduleByWorkOrder new_(EventUpdateScheduleByWorkOrderNew new_) {
-        _new = new_;
+    public EventUpdateScheduleByWorkOrder new(EventUpdateScheduleByWorkOrderNew new) {
+        _new = new;
         return this;
     }
 

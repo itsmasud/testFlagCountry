@@ -3,7 +3,7 @@ package com.fieldnation.data.bv2.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.bv2.model.Expense;
+import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -14,8 +14,8 @@ import com.fieldnation.fnlog.Log;
  * Created by dmgen from swagger on 1/26/17.
  */
 
-public class updateExpenseOptions implements Parcelable {
-    private static final String TAG = "updateExpenseOptions";
+public class UpdateExpenseOptions implements Parcelable {
+    private static final String TAG = "UpdateExpenseOptions";
 
     @Json(name = "async")
     private Boolean _async;
@@ -23,7 +23,7 @@ public class updateExpenseOptions implements Parcelable {
     @Json(name = "expense")
     private Expense _expense;
 
-    public updateExpenseOptions() {
+    public UpdateExpenseOptions() {
     }
 
     public void setAsync(Boolean async) {
@@ -34,7 +34,7 @@ public class updateExpenseOptions implements Parcelable {
         return _async;
     }
 
-    public updateExpenseOptions async(Boolean async) {
+    public UpdateExpenseOptions async(Boolean async) {
         _async = async;
         return this;
     }
@@ -47,7 +47,7 @@ public class updateExpenseOptions implements Parcelable {
         return _expense;
     }
 
-    public updateExpenseOptions expense(Expense expense) {
+    public UpdateExpenseOptions expense(Expense expense) {
         _expense = expense;
         return this;
     }
@@ -55,9 +55,9 @@ public class updateExpenseOptions implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static updateExpenseOptions fromJson(JsonObject obj) {
+    public static UpdateExpenseOptions fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(updateExpenseOptions.class, obj);
+            return Unserializer.unserializeObject(UpdateExpenseOptions.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -68,7 +68,7 @@ public class updateExpenseOptions implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(updateExpenseOptions updateExpenseOptions) {
+    public static JsonObject toJson(UpdateExpenseOptions updateExpenseOptions) {
         try {
             return Serializer.serializeObject(updateExpenseOptions);
         } catch (Exception ex) {
@@ -80,12 +80,12 @@ public class updateExpenseOptions implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<updateExpenseOptions> CREATOR = new Parcelable.Creator<updateExpenseOptions>() {
+    public static final Parcelable.Creator<UpdateExpenseOptions> CREATOR = new Parcelable.Creator<UpdateExpenseOptions>() {
 
         @Override
-        public updateExpenseOptions createFromParcel(Parcel source) {
+        public UpdateExpenseOptions createFromParcel(Parcel source) {
             try {
-                return updateExpenseOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return UpdateExpenseOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -93,8 +93,8 @@ public class updateExpenseOptions implements Parcelable {
         }
 
         @Override
-        public updateExpenseOptions[] newArray(int size) {
-            return new updateExpenseOptions[size];
+        public UpdateExpenseOptions[] newArray(int size) {
+            return new UpdateExpenseOptions[size];
         }
     };
 

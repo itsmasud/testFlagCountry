@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -57,16 +56,16 @@ public class TimeZone implements Parcelable {
         return this;
     }
 
-    public void setShort(String short_) {
-        _short = short_;
+    public void setShort(String short) {
+        _short = short;
     }
 
     public String getShort() {
         return _short;
     }
 
-    public TimeZone short_(String short_) {
-        _short = short_;
+    public TimeZone short(String short) {
+        _short = short;
         return this;
     }
 

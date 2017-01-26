@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -34,16 +33,16 @@ public class LocationNote implements Parcelable {
     public LocationNote() {
     }
 
-    public void setPrivate(Boolean private_) {
-        _private = private_;
+    public void setPrivate(Boolean private) {
+        _private = private;
     }
 
     public Boolean getPrivate() {
         return _private;
     }
 
-    public LocationNote private_(Boolean private_) {
-        _private = private_;
+    public LocationNote private(Boolean private) {
+        _private = private;
         return this;
     }
 

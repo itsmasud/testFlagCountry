@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,7 +19,7 @@ public class TaskAlert implements Parcelable {
     private Integer _id;
 
     @Json(name = "sent")
-    private Long _sent;
+    private Utc _sent;
 
     @Json(name = "email")
     private String _email;
@@ -41,15 +40,15 @@ public class TaskAlert implements Parcelable {
         return this;
     }
 
-    public void setSent(Long sent) {
+    public void setSent(Utc sent) {
         _sent = sent;
     }
 
-    public Long getSent() {
+    public Utc getSent() {
         return _sent;
     }
 
-    public TaskAlert sent(Long sent) {
+    public TaskAlert sent(Utc sent) {
         _sent = sent;
         return this;
     }

@@ -3,6 +3,7 @@ package com.fieldnation.data.bv2.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -13,8 +14,8 @@ import com.fieldnation.fnlog.Log;
  * Created by dmgen from swagger on 1/26/17.
  */
 
-public class getWorkOrdersOptions implements Parcelable {
-    private static final String TAG = "getWorkOrdersOptions";
+public class GetWorkOrdersOptions implements Parcelable {
+    private static final String TAG = "GetWorkOrdersOptions";
 
     @Json(name = "list")
     private String _list;
@@ -169,7 +170,7 @@ public class getWorkOrdersOptions implements Parcelable {
     @Json(name = "fSearch")
     private String _fSearch;
 
-    public getWorkOrdersOptions() {
+    public GetWorkOrdersOptions() {
     }
 
     public void setList(String list) {
@@ -180,7 +181,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _list;
     }
 
-    public getWorkOrdersOptions list(String list) {
+    public GetWorkOrdersOptions list(String list) {
         _list = list;
         return this;
     }
@@ -193,7 +194,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _columns;
     }
 
-    public getWorkOrdersOptions columns(String columns) {
+    public GetWorkOrdersOptions columns(String columns) {
         _columns = columns;
         return this;
     }
@@ -206,7 +207,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _page;
     }
 
-    public getWorkOrdersOptions page(int page) {
+    public GetWorkOrdersOptions page(int page) {
         _page = page;
         return this;
     }
@@ -219,7 +220,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _perPage;
     }
 
-    public getWorkOrdersOptions perPage(int perPage) {
+    public GetWorkOrdersOptions perPage(int perPage) {
         _perPage = perPage;
         return this;
     }
@@ -232,7 +233,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _view;
     }
 
-    public getWorkOrdersOptions view(String view) {
+    public GetWorkOrdersOptions view(String view) {
         _view = view;
         return this;
     }
@@ -245,7 +246,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _sticky;
     }
 
-    public getWorkOrdersOptions sticky(Boolean sticky) {
+    public GetWorkOrdersOptions sticky(Boolean sticky) {
         _sticky = sticky;
         return this;
     }
@@ -258,7 +259,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _sort;
     }
 
-    public getWorkOrdersOptions sort(String sort) {
+    public GetWorkOrdersOptions sort(String sort) {
         _sort = sort;
         return this;
     }
@@ -271,7 +272,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _order;
     }
 
-    public getWorkOrdersOptions order(String order) {
+    public GetWorkOrdersOptions order(String order) {
         _order = order;
         return this;
     }
@@ -284,7 +285,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _f;
     }
 
-    public getWorkOrdersOptions f(String f) {
+    public GetWorkOrdersOptions f(String f) {
         _f = f;
         return this;
     }
@@ -297,7 +298,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fMaxApprovalTime;
     }
 
-    public getWorkOrdersOptions fMaxApprovalTime(int fMaxApprovalTime) {
+    public GetWorkOrdersOptions fMaxApprovalTime(int fMaxApprovalTime) {
         _fMaxApprovalTime = fMaxApprovalTime;
         return this;
     }
@@ -310,7 +311,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fRating;
     }
 
-    public getWorkOrdersOptions fRating(String fRating) {
+    public GetWorkOrdersOptions fRating(String fRating) {
         _fRating = fRating;
         return this;
     }
@@ -323,7 +324,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fRequests;
     }
 
-    public getWorkOrdersOptions fRequests(Boolean fRequests) {
+    public GetWorkOrdersOptions fRequests(Boolean fRequests) {
         _fRequests = fRequests;
         return this;
     }
@@ -336,7 +337,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fCounterOffers;
     }
 
-    public getWorkOrdersOptions fCounterOffers(Boolean fCounterOffers) {
+    public GetWorkOrdersOptions fCounterOffers(Boolean fCounterOffers) {
         _fCounterOffers = fCounterOffers;
         return this;
     }
@@ -349,7 +350,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fHourly;
     }
 
-    public getWorkOrdersOptions fHourly(String fHourly) {
+    public GetWorkOrdersOptions fHourly(String fHourly) {
         _fHourly = fHourly;
         return this;
     }
@@ -362,7 +363,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fFixed;
     }
 
-    public getWorkOrdersOptions fFixed(String fFixed) {
+    public GetWorkOrdersOptions fFixed(String fFixed) {
         _fFixed = fFixed;
         return this;
     }
@@ -375,7 +376,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fDevice;
     }
 
-    public getWorkOrdersOptions fDevice(String fDevice) {
+    public GetWorkOrdersOptions fDevice(String fDevice) {
         _fDevice = fDevice;
         return this;
     }
@@ -388,7 +389,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fPay;
     }
 
-    public getWorkOrdersOptions fPay(String fPay) {
+    public GetWorkOrdersOptions fPay(String fPay) {
         _fPay = fPay;
         return this;
     }
@@ -401,7 +402,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fTemplates;
     }
 
-    public getWorkOrdersOptions fTemplates(String fTemplates) {
+    public GetWorkOrdersOptions fTemplates(String fTemplates) {
         _fTemplates = fTemplates;
         return this;
     }
@@ -414,7 +415,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fTypeOfWork;
     }
 
-    public getWorkOrdersOptions fTypeOfWork(String fTypeOfWork) {
+    public GetWorkOrdersOptions fTypeOfWork(String fTypeOfWork) {
         _fTypeOfWork = fTypeOfWork;
         return this;
     }
@@ -427,7 +428,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fTimeZone;
     }
 
-    public getWorkOrdersOptions fTimeZone(String fTimeZone) {
+    public GetWorkOrdersOptions fTimeZone(String fTimeZone) {
         _fTimeZone = fTimeZone;
         return this;
     }
@@ -440,7 +441,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fMode;
     }
 
-    public getWorkOrdersOptions fMode(String fMode) {
+    public GetWorkOrdersOptions fMode(String fMode) {
         _fMode = fMode;
         return this;
     }
@@ -453,7 +454,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fCompany;
     }
 
-    public getWorkOrdersOptions fCompany(String fCompany) {
+    public GetWorkOrdersOptions fCompany(String fCompany) {
         _fCompany = fCompany;
         return this;
     }
@@ -466,7 +467,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fWorkedWith;
     }
 
-    public getWorkOrdersOptions fWorkedWith(String fWorkedWith) {
+    public GetWorkOrdersOptions fWorkedWith(String fWorkedWith) {
         _fWorkedWith = fWorkedWith;
         return this;
     }
@@ -479,7 +480,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fManager;
     }
 
-    public getWorkOrdersOptions fManager(String fManager) {
+    public GetWorkOrdersOptions fManager(String fManager) {
         _fManager = fManager;
         return this;
     }
@@ -492,7 +493,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fClient;
     }
 
-    public getWorkOrdersOptions fClient(String fClient) {
+    public GetWorkOrdersOptions fClient(String fClient) {
         _fClient = fClient;
         return this;
     }
@@ -505,7 +506,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fProject;
     }
 
-    public getWorkOrdersOptions fProject(String fProject) {
+    public GetWorkOrdersOptions fProject(String fProject) {
         _fProject = fProject;
         return this;
     }
@@ -518,7 +519,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fApprovalWindow;
     }
 
-    public getWorkOrdersOptions fApprovalWindow(String fApprovalWindow) {
+    public GetWorkOrdersOptions fApprovalWindow(String fApprovalWindow) {
         _fApprovalWindow = fApprovalWindow;
         return this;
     }
@@ -531,7 +532,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fReviewWindow;
     }
 
-    public getWorkOrdersOptions fReviewWindow(String fReviewWindow) {
+    public GetWorkOrdersOptions fReviewWindow(String fReviewWindow) {
         _fReviewWindow = fReviewWindow;
         return this;
     }
@@ -544,7 +545,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fNetwork;
     }
 
-    public getWorkOrdersOptions fNetwork(String fNetwork) {
+    public GetWorkOrdersOptions fNetwork(String fNetwork) {
         _fNetwork = fNetwork;
         return this;
     }
@@ -557,7 +558,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fAutoAssign;
     }
 
-    public getWorkOrdersOptions fAutoAssign(String fAutoAssign) {
+    public GetWorkOrdersOptions fAutoAssign(String fAutoAssign) {
         _fAutoAssign = fAutoAssign;
         return this;
     }
@@ -570,7 +571,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fSchedule;
     }
 
-    public getWorkOrdersOptions fSchedule(String fSchedule) {
+    public GetWorkOrdersOptions fSchedule(String fSchedule) {
         _fSchedule = fSchedule;
         return this;
     }
@@ -583,7 +584,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fCreated;
     }
 
-    public getWorkOrdersOptions fCreated(String fCreated) {
+    public GetWorkOrdersOptions fCreated(String fCreated) {
         _fCreated = fCreated;
         return this;
     }
@@ -596,7 +597,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fPublished;
     }
 
-    public getWorkOrdersOptions fPublished(String fPublished) {
+    public GetWorkOrdersOptions fPublished(String fPublished) {
         _fPublished = fPublished;
         return this;
     }
@@ -609,7 +610,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fRouted;
     }
 
-    public getWorkOrdersOptions fRouted(String fRouted) {
+    public GetWorkOrdersOptions fRouted(String fRouted) {
         _fRouted = fRouted;
         return this;
     }
@@ -622,7 +623,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fPublishedRouted;
     }
 
-    public getWorkOrdersOptions fPublishedRouted(String fPublishedRouted) {
+    public GetWorkOrdersOptions fPublishedRouted(String fPublishedRouted) {
         _fPublishedRouted = fPublishedRouted;
         return this;
     }
@@ -635,7 +636,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fCompleted;
     }
 
-    public getWorkOrdersOptions fCompleted(String fCompleted) {
+    public GetWorkOrdersOptions fCompleted(String fCompleted) {
         _fCompleted = fCompleted;
         return this;
     }
@@ -648,7 +649,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fApprovedCancelled;
     }
 
-    public getWorkOrdersOptions fApprovedCancelled(String fApprovedCancelled) {
+    public GetWorkOrdersOptions fApprovedCancelled(String fApprovedCancelled) {
         _fApprovedCancelled = fApprovedCancelled;
         return this;
     }
@@ -661,7 +662,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fConfirmed;
     }
 
-    public getWorkOrdersOptions fConfirmed(String fConfirmed) {
+    public GetWorkOrdersOptions fConfirmed(String fConfirmed) {
         _fConfirmed = fConfirmed;
         return this;
     }
@@ -674,7 +675,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fAssigned;
     }
 
-    public getWorkOrdersOptions fAssigned(String fAssigned) {
+    public GetWorkOrdersOptions fAssigned(String fAssigned) {
         _fAssigned = fAssigned;
         return this;
     }
@@ -687,7 +688,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fSavedLocation;
     }
 
-    public getWorkOrdersOptions fSavedLocation(String fSavedLocation) {
+    public GetWorkOrdersOptions fSavedLocation(String fSavedLocation) {
         _fSavedLocation = fSavedLocation;
         return this;
     }
@@ -700,7 +701,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fSavedLocationGroup;
     }
 
-    public getWorkOrdersOptions fSavedLocationGroup(String fSavedLocationGroup) {
+    public GetWorkOrdersOptions fSavedLocationGroup(String fSavedLocationGroup) {
         _fSavedLocationGroup = fSavedLocationGroup;
         return this;
     }
@@ -713,7 +714,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fCity;
     }
 
-    public getWorkOrdersOptions fCity(String fCity) {
+    public GetWorkOrdersOptions fCity(String fCity) {
         _fCity = fCity;
         return this;
     }
@@ -726,7 +727,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fState;
     }
 
-    public getWorkOrdersOptions fState(String fState) {
+    public GetWorkOrdersOptions fState(String fState) {
         _fState = fState;
         return this;
     }
@@ -739,7 +740,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fPostalCode;
     }
 
-    public getWorkOrdersOptions fPostalCode(String fPostalCode) {
+    public GetWorkOrdersOptions fPostalCode(String fPostalCode) {
         _fPostalCode = fPostalCode;
         return this;
     }
@@ -752,7 +753,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fCountry;
     }
 
-    public getWorkOrdersOptions fCountry(String fCountry) {
+    public GetWorkOrdersOptions fCountry(String fCountry) {
         _fCountry = fCountry;
         return this;
     }
@@ -765,7 +766,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fFlags;
     }
 
-    public getWorkOrdersOptions fFlags(String fFlags) {
+    public GetWorkOrdersOptions fFlags(String fFlags) {
         _fFlags = fFlags;
         return this;
     }
@@ -778,7 +779,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fAssignment;
     }
 
-    public getWorkOrdersOptions fAssignment(String fAssignment) {
+    public GetWorkOrdersOptions fAssignment(String fAssignment) {
         _fAssignment = fAssignment;
         return this;
     }
@@ -791,7 +792,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fConfirmation;
     }
 
-    public getWorkOrdersOptions fConfirmation(String fConfirmation) {
+    public GetWorkOrdersOptions fConfirmation(String fConfirmation) {
         _fConfirmation = fConfirmation;
         return this;
     }
@@ -804,7 +805,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fFinancing;
     }
 
-    public getWorkOrdersOptions fFinancing(String fFinancing) {
+    public GetWorkOrdersOptions fFinancing(String fFinancing) {
         _fFinancing = fFinancing;
         return this;
     }
@@ -817,7 +818,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fGeo;
     }
 
-    public getWorkOrdersOptions fGeo(String fGeo) {
+    public GetWorkOrdersOptions fGeo(String fGeo) {
         _fGeo = fGeo;
         return this;
     }
@@ -830,7 +831,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return _fSearch;
     }
 
-    public getWorkOrdersOptions fSearch(String fSearch) {
+    public GetWorkOrdersOptions fSearch(String fSearch) {
         _fSearch = fSearch;
         return this;
     }
@@ -838,9 +839,9 @@ public class getWorkOrdersOptions implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static getWorkOrdersOptions fromJson(JsonObject obj) {
+    public static GetWorkOrdersOptions fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(getWorkOrdersOptions.class, obj);
+            return Unserializer.unserializeObject(GetWorkOrdersOptions.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -851,7 +852,7 @@ public class getWorkOrdersOptions implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(getWorkOrdersOptions getWorkOrdersOptions) {
+    public static JsonObject toJson(GetWorkOrdersOptions getWorkOrdersOptions) {
         try {
             return Serializer.serializeObject(getWorkOrdersOptions);
         } catch (Exception ex) {
@@ -863,12 +864,12 @@ public class getWorkOrdersOptions implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<getWorkOrdersOptions> CREATOR = new Parcelable.Creator<getWorkOrdersOptions>() {
+    public static final Parcelable.Creator<GetWorkOrdersOptions> CREATOR = new Parcelable.Creator<GetWorkOrdersOptions>() {
 
         @Override
-        public getWorkOrdersOptions createFromParcel(Parcel source) {
+        public GetWorkOrdersOptions createFromParcel(Parcel source) {
             try {
-                return getWorkOrdersOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return GetWorkOrdersOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -876,8 +877,8 @@ public class getWorkOrdersOptions implements Parcelable {
         }
 
         @Override
-        public getWorkOrdersOptions[] newArray(int size) {
-            return new getWorkOrdersOptions[size];
+        public GetWorkOrdersOptions[] newArray(int size) {
+            return new GetWorkOrdersOptions[size];
         }
     };
 

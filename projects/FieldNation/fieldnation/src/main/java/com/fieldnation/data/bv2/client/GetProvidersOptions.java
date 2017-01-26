@@ -3,6 +3,7 @@ package com.fieldnation.data.bv2.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -13,8 +14,8 @@ import com.fieldnation.fnlog.Log;
  * Created by dmgen from swagger on 1/26/17.
  */
 
-public class getProvidersOptions implements Parcelable {
-    private static final String TAG = "getProvidersOptions";
+public class GetProvidersOptions implements Parcelable {
+    private static final String TAG = "GetProvidersOptions";
 
     @Json(name = "sticky")
     private Boolean _sticky;
@@ -25,7 +26,7 @@ public class getProvidersOptions implements Parcelable {
     @Json(name = "view")
     private String _view;
 
-    public getProvidersOptions() {
+    public GetProvidersOptions() {
     }
 
     public void setSticky(Boolean sticky) {
@@ -36,7 +37,7 @@ public class getProvidersOptions implements Parcelable {
         return _sticky;
     }
 
-    public getProvidersOptions sticky(Boolean sticky) {
+    public GetProvidersOptions sticky(Boolean sticky) {
         _sticky = sticky;
         return this;
     }
@@ -49,7 +50,7 @@ public class getProvidersOptions implements Parcelable {
         return _defaultView;
     }
 
-    public getProvidersOptions defaultView(String defaultView) {
+    public GetProvidersOptions defaultView(String defaultView) {
         _defaultView = defaultView;
         return this;
     }
@@ -62,7 +63,7 @@ public class getProvidersOptions implements Parcelable {
         return _view;
     }
 
-    public getProvidersOptions view(String view) {
+    public GetProvidersOptions view(String view) {
         _view = view;
         return this;
     }
@@ -70,9 +71,9 @@ public class getProvidersOptions implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static getProvidersOptions fromJson(JsonObject obj) {
+    public static GetProvidersOptions fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(getProvidersOptions.class, obj);
+            return Unserializer.unserializeObject(GetProvidersOptions.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -83,7 +84,7 @@ public class getProvidersOptions implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(getProvidersOptions getProvidersOptions) {
+    public static JsonObject toJson(GetProvidersOptions getProvidersOptions) {
         try {
             return Serializer.serializeObject(getProvidersOptions);
         } catch (Exception ex) {
@@ -95,12 +96,12 @@ public class getProvidersOptions implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<getProvidersOptions> CREATOR = new Parcelable.Creator<getProvidersOptions>() {
+    public static final Parcelable.Creator<GetProvidersOptions> CREATOR = new Parcelable.Creator<GetProvidersOptions>() {
 
         @Override
-        public getProvidersOptions createFromParcel(Parcel source) {
+        public GetProvidersOptions createFromParcel(Parcel source) {
             try {
-                return getProvidersOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return GetProvidersOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -108,8 +109,8 @@ public class getProvidersOptions implements Parcelable {
         }
 
         @Override
-        public getProvidersOptions[] newArray(int size) {
-            return new getProvidersOptions[size];
+        public GetProvidersOptions[] newArray(int size) {
+            return new GetProvidersOptions[size];
         }
     };
 

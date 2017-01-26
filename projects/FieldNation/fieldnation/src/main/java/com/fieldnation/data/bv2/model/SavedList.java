@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -40,16 +39,16 @@ public class SavedList implements Parcelable {
     public SavedList() {
     }
 
-    public void setDefault(Boolean default_) {
-        _default = default_;
+    public void setDefault(Boolean default) {
+        _default = default;
     }
 
     public Boolean getDefault() {
         return _default;
     }
 
-    public SavedList default_(Boolean default_) {
-        _default = default_;
+    public SavedList default(Boolean default) {
+        _default = default;
         return this;
     }
 

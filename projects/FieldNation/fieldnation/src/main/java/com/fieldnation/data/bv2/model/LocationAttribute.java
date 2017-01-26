@@ -1,5 +1,4 @@
 package com.fieldnation.data.bv2.model;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -28,16 +27,16 @@ public class LocationAttribute implements Parcelable {
     public LocationAttribute() {
     }
 
-    public void setPrivate(Boolean private_) {
-        _private = private_;
+    public void setPrivate(Boolean private) {
+        _private = private;
     }
 
     public Boolean getPrivate() {
         return _private;
     }
 
-    public LocationAttribute private_(Boolean private_) {
-        _private = private_;
+    public LocationAttribute private(Boolean private) {
+        _private = private;
         return this;
     }
 
