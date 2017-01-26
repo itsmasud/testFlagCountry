@@ -20,9 +20,8 @@ public class PenaltiesWebApi {
     /**
      * Add a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addPenalty(Context context, boolean isBackground) {
+    public static void addPenalty(Context context) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -33,7 +32,6 @@ public class PenaltiesWebApi {
                     .timingKey("POST//api/rest/v2/penalties")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -46,9 +44,8 @@ public class PenaltiesWebApi {
      * Removes a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
      * @param penaltyId Penalty ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removePenalty(Context context, Integer penaltyId, boolean isBackground) {
+    public static void removePenalty(Context context, Integer penaltyId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -59,7 +56,6 @@ public class PenaltiesWebApi {
                     .timingKey("DELETE//api/rest/v2/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -73,9 +69,8 @@ public class PenaltiesWebApi {
      *
      * @param penaltyId Penalty ID
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePenalty(Context context, String penaltyId, PayModifier json, boolean isBackground) {
+    public static void updatePenalty(Context context, String penaltyId, PayModifier json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -89,7 +84,6 @@ public class PenaltiesWebApi {
                     .timingKey("PUT//api/rest/v2/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);

@@ -1,8 +1,9 @@
 package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
+import android.net.Uri;
 
-import com.fieldnation.data.bv2.model.CustomField;
+import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
@@ -20,11 +21,10 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field's visibility for a single client
      *
      * @param customFieldId Custom field id
-     * @param clientId      Client id
-     * @param visibility    Visibility (visible or hidden)
-     * @param isBackground  indicates that this call is low priority
+     * @param clientId Client id
+     * @param visibility Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility, boolean isBackground) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -35,7 +35,6 @@ public class CustomFieldsWebApi {
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/client/{client_id}/{visibility}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -48,10 +47,9 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field's visibility for all projects and clients
      *
      * @param customFieldId Custom field id
-     * @param visibility    Visibility (visible or hidden)
-     * @param isBackground  indicates that this call is low priority
+     * @param visibility Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility, boolean isBackground) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -62,7 +60,6 @@ public class CustomFieldsWebApi {
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/{visibility}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -75,9 +72,8 @@ public class CustomFieldsWebApi {
      * Removes a work order custom field
      *
      * @param customFieldId Custom field id
-     * @param isBackground  indicates that this call is low priority
      */
-    public static void removeCustomField(Context context, Integer customFieldId, boolean isBackground) {
+    public static void removeCustomField(Context context, Integer customFieldId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -88,7 +84,6 @@ public class CustomFieldsWebApi {
                     .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -101,10 +96,9 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field
      *
      * @param customFieldId Custom field id
-     * @param json          JSON Model
-     * @param isBackground  indicates that this call is low priority
+     * @param json JSON Model
      */
-    public static void updateCustomField(Context context, Integer customFieldId, CustomField json, boolean isBackground) {
+    public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -118,7 +112,6 @@ public class CustomFieldsWebApi {
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -130,10 +123,9 @@ public class CustomFieldsWebApi {
     /**
      * Adds a work order custom field
      *
-     * @param json         JSON Model
-     * @param isBackground indicates that this call is low priority
+     * @param json JSON Model
      */
-    public static void addCustomField(Context context, CustomField json, boolean isBackground) {
+    public static void addCustomField(Context context, CustomField json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -147,7 +139,6 @@ public class CustomFieldsWebApi {
                     .timingKey("POST//api/rest/v2/custom-fields")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -185,11 +176,10 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field's visibility for a single project
      *
      * @param customFieldId Custom field id
-     * @param projectId     Project id
-     * @param visibility    Visibility (visible or hidden)
-     * @param isBackground  indicates that this call is low priority
+     * @param projectId Project id
+     * @param visibility Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibilityByProject(Context context, Integer customFieldId, Integer projectId, String visibility, boolean isBackground) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer projectId, String visibility) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -200,7 +190,6 @@ public class CustomFieldsWebApi {
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/project/{project_id}/{visibility}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);

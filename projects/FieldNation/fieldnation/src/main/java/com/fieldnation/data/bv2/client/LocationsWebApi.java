@@ -22,9 +22,8 @@ public class LocationsWebApi {
      *
      * @param locationId Location id
      * @param json Notes
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addNotes(Context context, Integer locationId, LocationNote json, boolean isBackground) {
+    public static void addNotes(Context context, Integer locationId, LocationNote json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -38,7 +37,6 @@ public class LocationsWebApi {
                     .timingKey("POST//api/rest/v2/locations/{location_id}/notes")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -53,9 +51,8 @@ public class LocationsWebApi {
      * @param locationId Location id
      * @param attribute Attribute
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addAttribute(Context context, Integer locationId, Integer attribute, LocationAttribute json, boolean isBackground) {
+    public static void addAttribute(Context context, Integer locationId, Integer attribute, LocationAttribute json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -69,7 +66,6 @@ public class LocationsWebApi {
                     .timingKey("POST//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -83,9 +79,8 @@ public class LocationsWebApi {
      *
      * @param locationId Location id
      * @param attribute Attribute
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeAttribute(Context context, Integer locationId, Integer attribute, boolean isBackground) {
+    public static void removeAttribute(Context context, Integer locationId, Integer attribute) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -96,7 +91,6 @@ public class LocationsWebApi {
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -134,9 +128,8 @@ public class LocationsWebApi {
      * Add a location to company
      *
      * @param json JSON payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addLocations(Context context, StoredLocation json, boolean isBackground) {
+    public static void addLocations(Context context, StoredLocation json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -150,7 +143,6 @@ public class LocationsWebApi {
                     .timingKey("POST//api/rest/v2/locations")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -189,9 +181,8 @@ public class LocationsWebApi {
      *
      * @param locationId Location id
      * @param noteId Location note id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeNote(Context context, Integer locationId, Integer noteId, boolean isBackground) {
+    public static void removeNote(Context context, Integer locationId, Integer noteId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -202,7 +193,6 @@ public class LocationsWebApi {
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/notes/{note_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -217,9 +207,8 @@ public class LocationsWebApi {
      * @param locationId Location id
      * @param noteId Location note id
      * @param json Notes
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateNote(Context context, Integer locationId, Integer noteId, LocationNote json, boolean isBackground) {
+    public static void updateNote(Context context, Integer locationId, Integer noteId, LocationNote json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -233,7 +222,6 @@ public class LocationsWebApi {
                     .timingKey("PUT//api/rest/v2/locations/{location_id}/notes/{note_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -246,9 +234,8 @@ public class LocationsWebApi {
      * Soft deletes a stored location
      *
      * @param locationId Location id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeLocation(Context context, Integer locationId, boolean isBackground) {
+    public static void removeLocation(Context context, Integer locationId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -259,7 +246,6 @@ public class LocationsWebApi {
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -272,9 +258,8 @@ public class LocationsWebApi {
      * Updates a stored location
      *
      * @param locationId Location id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateLocation(Context context, Integer locationId, boolean isBackground) {
+    public static void updateLocation(Context context, Integer locationId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -285,7 +270,6 @@ public class LocationsWebApi {
                     .timingKey("PUT//api/rest/v2/locations/{location_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);

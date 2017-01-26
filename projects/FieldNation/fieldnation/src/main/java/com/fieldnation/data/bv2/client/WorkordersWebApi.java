@@ -21,9 +21,8 @@ public class WorkordersWebApi {
      * Reverts a work order to draft status
      *
      * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
      */
-    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, boolean isBackground) {
+    public static void revertWorkOrderToDraft(Context context, Integer workOrderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -34,7 +33,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/draft")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -48,9 +46,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -62,7 +59,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/draft")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -76,9 +72,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param taskId Task id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void incompleteTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+    public static void incompleteTask(Context context, Integer workOrderId, Integer taskId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -89,7 +84,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/incomplete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -131,9 +125,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work Order ID
      * @param customFieldId Custom field ID
      * @param customField Custom field
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, boolean isBackground) {
+    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -147,7 +140,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -163,9 +155,8 @@ public class WorkordersWebApi {
      * @param customFieldId Custom field ID
      * @param customField Custom field
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async, boolean isBackground) {
+    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -180,7 +171,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -193,9 +183,8 @@ public class WorkordersWebApi {
      * Marks a work order complete and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
      */
-    public static void completeWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
+    public static void completeWorkOrder(Context context, Integer workOrderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -206,7 +195,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -220,9 +208,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+    public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -234,7 +221,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -248,9 +234,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param reason Reason
-     * @param isBackground indicates that this call is low priority
      */
-    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, boolean isBackground) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -262,7 +247,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -277,9 +261,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param reason Reason
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, Boolean async, boolean isBackground) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -291,7 +274,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -305,9 +287,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param expense Expense
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addExpense(Context context, Integer workOrderId, Expense expense, boolean isBackground) {
+    public static void addExpense(Context context, Integer workOrderId, Expense expense) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -321,7 +302,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -336,9 +316,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param expense Expense
      * @param async Asynchroneous (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async, boolean isBackground) {
+    public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -353,7 +332,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -395,9 +373,8 @@ public class WorkordersWebApi {
      * @param folderId Folder id
      * @param attachment Folder
      * @param file File
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, boolean isBackground) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -409,7 +386,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -426,9 +402,8 @@ public class WorkordersWebApi {
      * @param attachment Folder
      * @param file File
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, Boolean async, boolean isBackground) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -441,7 +416,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -482,9 +456,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param folderId Folder id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, boolean isBackground) {
+    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -495,7 +468,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -510,9 +482,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param folderId Folder id
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async, boolean isBackground) {
+    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -524,7 +495,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -539,9 +509,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param folderId Folder id
      * @param folder Folder
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, boolean isBackground) {
+    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -555,7 +524,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -571,9 +539,8 @@ public class WorkordersWebApi {
      * @param folderId Folder id
      * @param folder Folder
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async, boolean isBackground) {
+    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -588,7 +555,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -705,9 +671,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param isBackground indicates that this call is low priority
      */
-    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, boolean isBackground) {
+    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -718,7 +683,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}/verify")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -733,9 +697,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
      * @param async Return the model in the response (slower) (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async, boolean isBackground) {
+    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -747,7 +710,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}/verify")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -761,9 +723,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param contactId Contact id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeContact(Context context, Integer workOrderId, Integer contactId, boolean isBackground) {
+    public static void removeContact(Context context, Integer workOrderId, Integer contactId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -774,7 +735,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/contacts/{contact_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -789,9 +749,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param contactId Contact id
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json, boolean isBackground) {
+    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -805,7 +764,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/contacts/{contact_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -875,9 +833,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param increaseId ID of work order increase
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
+    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -888,7 +845,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -903,9 +859,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param increaseId ID of work order increase
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
+    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -917,7 +872,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -932,9 +886,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param increaseId ID of work order increase
      * @param increase Increase structure for update
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, boolean isBackground) {
+    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -948,7 +901,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -964,9 +916,8 @@ public class WorkordersWebApi {
      * @param increaseId ID of work order increase
      * @param increase Increase structure for update
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async, boolean isBackground) {
+    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -981,7 +932,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -995,9 +945,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param expenseId ID of expense
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, boolean isBackground) {
+    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1008,7 +957,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1023,9 +971,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param expenseId ID of expense
      * @param async Asynchroneous (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async, boolean isBackground) {
+    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1037,7 +984,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1051,9 +997,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param expenseId ID of expense
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, boolean isBackground) {
+    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1064,7 +1009,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1079,9 +1023,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param expenseId ID of expense
      * @param updateExpenseOptions Additional optional parameters
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions, boolean isBackground) {
+    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1097,7 +1040,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1163,9 +1105,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param pay Pay
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePay(Context context, Integer workOrderId, Pay pay, boolean isBackground) {
+    public static void updatePay(Context context, Integer workOrderId, Pay pay) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1179,7 +1120,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1194,9 +1134,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param pay Pay
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async, boolean isBackground) {
+    public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1211,7 +1150,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1225,9 +1163,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addTask(Context context, Integer workOrderId, Task json, boolean isBackground) {
+    public static void addTask(Context context, Integer workOrderId, Task json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1241,7 +1178,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1307,9 +1243,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param signature Signature JSON
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addSignature(Context context, Integer workOrderId, Signature signature, boolean isBackground) {
+    public static void addSignature(Context context, Integer workOrderId, Signature signature) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1323,7 +1258,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1338,9 +1272,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param signature Signature JSON
      * @param async async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async, boolean isBackground) {
+    public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1355,7 +1288,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1452,9 +1384,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param json JSON payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addMessage(Context context, String workOrderId, Message json, boolean isBackground) {
+    public static void addMessage(Context context, String workOrderId, Message json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1468,7 +1399,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1483,9 +1413,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param json JSON payload
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addMessage(Context context, String workOrderId, Message json, Boolean async, boolean isBackground) {
+    public static void addMessage(Context context, String workOrderId, Message json, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1500,7 +1429,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1538,9 +1466,8 @@ public class WorkordersWebApi {
     /**
      * Cancel work order swap request.
      *
-     * @param isBackground indicates that this call is low priority
      */
-    public static void cancelSwapRequest(Context context, boolean isBackground) {
+    public static void cancelSwapRequest(Context context) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1551,7 +1478,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1565,9 +1491,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param timeLog Check in information
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog, boolean isBackground) {
+    public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1581,7 +1506,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1621,9 +1545,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param timeLog Check in information
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, boolean isBackground) {
+    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1637,7 +1560,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1652,9 +1574,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param timeLog Check in information
      * @param async Return the model in the response (slower) (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async, boolean isBackground) {
+    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1669,7 +1590,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1709,9 +1629,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param cancellation Cancellation reasons
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, boolean isBackground) {
+    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1725,7 +1644,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1740,9 +1658,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param cancellation Cancellation reasons
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async, boolean isBackground) {
+    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1757,7 +1674,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1771,9 +1687,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param workOrder Work order model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, boolean isBackground) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1787,7 +1702,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1802,9 +1716,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param workOrder Work order model
      * @param async Asynchroneous (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async, boolean isBackground) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1819,7 +1732,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1860,9 +1772,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param signatureId ID of signature
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
+    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1873,7 +1784,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1888,9 +1798,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param signatureId ID of signature
      * @param async async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async, boolean isBackground) {
+    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1902,7 +1811,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1916,9 +1824,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param folder Folder
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, boolean isBackground) {
+    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1932,7 +1839,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1947,9 +1853,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param folder Folder
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async, boolean isBackground) {
+    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -1964,7 +1869,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2004,9 +1908,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param taskId Task id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void completeTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+    public static void completeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2017,7 +1920,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2031,9 +1933,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param discountId ID of the discount
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeDiscount(Context context, Integer workOrderId, Integer discountId, boolean isBackground) {
+    public static void removeDiscount(Context context, Integer workOrderId, Integer discountId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2044,7 +1945,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2059,9 +1959,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param discountId ID of the discount
      * @param json Payload of the discount
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json, boolean isBackground) {
+    public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2075,7 +1974,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2089,9 +1987,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, boolean isBackground) {
+    public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2102,7 +1999,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2117,9 +2013,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
      * @param async Return the model in the response (slower) (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async, boolean isBackground) {
+    public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2131,7 +2026,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2146,9 +2040,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
      * @param timeLog Check in information
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, boolean isBackground) {
+    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2162,7 +2055,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2178,9 +2070,8 @@ public class WorkordersWebApi {
      * @param workorderHoursId ID of work order hour
      * @param timeLog Check in information
      * @param async Return the model in the response (slower) (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async, boolean isBackground) {
+    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2195,7 +2086,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2238,9 +2128,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param folderId Folder id
      * @param attachmentId File id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean isBackground) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2251,7 +2140,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2267,9 +2155,8 @@ public class WorkordersWebApi {
      * @param folderId Folder id
      * @param attachmentId File id
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async, boolean isBackground) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2281,7 +2168,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2297,9 +2183,8 @@ public class WorkordersWebApi {
      * @param folderId Folder id
      * @param attachmentId File id
      * @param attachment Attachment
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, boolean isBackground) {
+    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2313,7 +2198,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2330,9 +2214,8 @@ public class WorkordersWebApi {
      * @param attachmentId File id
      * @param attachment Attachment
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async, boolean isBackground) {
+    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2347,7 +2230,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2361,9 +2243,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param assignee JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, boolean isBackground) {
+    public static void assignUser(Context context, Integer workOrderId, Assignee assignee) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2377,7 +2258,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2392,9 +2272,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param assignee JSON Model
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, boolean isBackground) {
+    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2409,7 +2288,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2449,9 +2327,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param assignee JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, boolean isBackground) {
+    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2465,7 +2342,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2480,9 +2356,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param assignee JSON Model
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, boolean isBackground) {
+    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2497,7 +2372,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2510,9 +2384,8 @@ public class WorkordersWebApi {
      * Publishes a work order to the marketplace where it can garner requests.
      *
      * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
      */
-    public static void publish(Context context, Integer workOrderId, boolean isBackground) {
+    public static void publish(Context context, Integer workOrderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2523,7 +2396,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2537,9 +2409,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void publish(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+    public static void publish(Context context, Integer workOrderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2551,7 +2422,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2564,9 +2434,8 @@ public class WorkordersWebApi {
      * Unpublishes a work order from the marketplace so that no requests or counter-offers can be made. Moves to draft unless it was also routed.
      *
      * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unpublish(Context context, Integer workOrderId, boolean isBackground) {
+    public static void unpublish(Context context, Integer workOrderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2577,7 +2446,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/publish")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2591,9 +2459,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unpublish(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+    public static void unpublish(Context context, Integer workOrderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2605,7 +2472,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/publish")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2644,9 +2510,8 @@ public class WorkordersWebApi {
      * Approves a completed work order and moves it to paid status
      *
      * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
      */
-    public static void approveWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
+    public static void approveWorkOrder(Context context, Integer workOrderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2657,7 +2522,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/approve")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2671,9 +2535,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+    public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2685,7 +2548,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/approve")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2698,9 +2560,8 @@ public class WorkordersWebApi {
      * Unapproves a completed work order and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unapproveWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
+    public static void unapproveWorkOrder(Context context, Integer workOrderId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2711,7 +2572,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/approve")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2725,9 +2585,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+    public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2739,7 +2598,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/approve")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2753,9 +2611,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param increaseId ID of work order increase
-     * @param isBackground indicates that this call is low priority
      */
-    public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
+    public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2766,7 +2623,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}/accept")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2780,9 +2636,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param shipmentId Shipment id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, boolean isBackground) {
+    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2793,7 +2648,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2808,9 +2662,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param shipmentId Shipment id
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async, boolean isBackground) {
+    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2822,7 +2675,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2837,9 +2689,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param shipmentId Shipment id
      * @param shipment Shipment
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, boolean isBackground) {
+    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2853,7 +2704,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2869,9 +2719,8 @@ public class WorkordersWebApi {
      * @param shipmentId Shipment id
      * @param shipment Shipment
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async, boolean isBackground) {
+    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2886,7 +2735,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2900,9 +2748,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work Order ID
      * @param penaltyId Penalty ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
+    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2913,7 +2760,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2928,9 +2774,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work Order ID
      * @param penaltyId Penalty ID
      * @param penalty Penalty (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty, boolean isBackground) {
+    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2944,7 +2789,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2985,9 +2829,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of Work Order
      * @param penaltyId Penalty ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removePenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
+    public static void removePenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -2998,7 +2841,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3012,9 +2854,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work Order ID
      * @param penaltyId Penalty ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
+    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3025,7 +2866,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3040,9 +2880,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work Order ID
      * @param penaltyId Penalty ID
      * @param penalty Penalty (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty, boolean isBackground) {
+    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3056,7 +2895,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3068,9 +2906,8 @@ public class WorkordersWebApi {
     /**
      * Decline work order swap request.
      *
-     * @param isBackground indicates that this call is low priority
      */
-    public static void declineSwapRequest(Context context, boolean isBackground) {
+    public static void declineSwapRequest(Context context) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3081,7 +2918,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/decline")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3096,9 +2932,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param messageId ID of work order message
      * @param json JSON payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void replyMessage(Context context, String workOrderId, String messageId, Message json, boolean isBackground) {
+    public static void replyMessage(Context context, String workOrderId, String messageId, Message json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3112,7 +2947,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3128,9 +2962,8 @@ public class WorkordersWebApi {
      * @param messageId ID of work order message
      * @param json JSON payload
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async, boolean isBackground) {
+    public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3145,7 +2978,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3159,9 +2991,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param messageId ID of work order message
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeMessage(Context context, String workOrderId, String messageId, boolean isBackground) {
+    public static void removeMessage(Context context, String workOrderId, String messageId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3172,7 +3003,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3187,9 +3017,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param messageId ID of work order message
      * @param json JSON payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateMessage(Context context, String workOrderId, String messageId, Message json, boolean isBackground) {
+    public static void updateMessage(Context context, String workOrderId, String messageId, Message json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3203,7 +3032,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3244,9 +3072,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param taskId Task id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+    public static void removeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3257,7 +3084,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3272,9 +3098,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param taskId Task id
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json, boolean isBackground) {
+    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3288,7 +3113,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3302,9 +3126,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param increaseId ID of work order increase
-     * @param isBackground indicates that this call is low priority
      */
-    public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
+    public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3315,7 +3138,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}/deny")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3330,9 +3152,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param taskId Task id
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json, boolean isBackground) {
+    public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3346,7 +3167,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3360,9 +3180,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param taskId Task id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeAlerts(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+    public static void removeAlerts(Context context, Integer workOrderId, Integer taskId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3373,7 +3192,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3387,9 +3205,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param request JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void request(Context context, Integer workOrderId, Request request, boolean isBackground) {
+    public static void request(Context context, Integer workOrderId, Request request) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3403,7 +3220,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/requests")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3418,9 +3234,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param request JSON Model
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void request(Context context, Integer workOrderId, Request request, Boolean async, boolean isBackground) {
+    public static void request(Context context, Integer workOrderId, Request request, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3435,7 +3250,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/requests")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3449,9 +3263,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param request JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeRequest(Context context, Integer workOrderId, Request request, boolean isBackground) {
+    public static void removeRequest(Context context, Integer workOrderId, Request request) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3465,7 +3278,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3480,9 +3292,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param request JSON Model
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeRequest(Context context, Integer workOrderId, Request request, Boolean async, boolean isBackground) {
+    public static void removeRequest(Context context, Integer workOrderId, Request request, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3497,7 +3308,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3509,9 +3319,8 @@ public class WorkordersWebApi {
     /**
      * Accept work order swap request.
      *
-     * @param isBackground indicates that this call is low priority
      */
-    public static void acceptSwapRequest(Context context, boolean isBackground) {
+    public static void acceptSwapRequest(Context context) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3522,7 +3331,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/accept")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3563,9 +3371,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param taskId Task id
      * @param alertId Alert id
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeAlert(Context context, Integer workOrderId, Integer taskId, Integer alertId, boolean isBackground) {
+    public static void removeAlert(Context context, Integer workOrderId, Integer taskId, Integer alertId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3576,7 +3383,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts/{alert_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3616,9 +3422,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param schedule JSON Payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, boolean isBackground) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3632,7 +3437,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/schedule")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3647,9 +3451,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param schedule JSON Payload
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async, boolean isBackground) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3664,7 +3467,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/schedule")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3678,9 +3480,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param holds Holds
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateHolds(Context context, Integer workOrderId, String holds, boolean isBackground) {
+    public static void updateHolds(Context context, Integer workOrderId, String holds) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3694,7 +3495,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/holds")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3709,9 +3509,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param holds Holds
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateHolds(Context context, Integer workOrderId, String holds, Boolean async, boolean isBackground) {
+    public static void updateHolds(Context context, Integer workOrderId, String holds, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3726,7 +3525,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/holds")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3741,9 +3539,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param flagId ID of report problem flag
      * @param json JSON payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, boolean isBackground) {
+    public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3757,7 +3554,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/report-problem/{flag_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3773,9 +3569,8 @@ public class WorkordersWebApi {
      * @param flagId ID of report problem flag
      * @param json JSON payload
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, Boolean async, boolean isBackground) {
+    public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3790,7 +3585,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/report-problem/{flag_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3804,9 +3598,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param json Payload of the discount
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addDiscount(Context context, Integer workOrderId, PayModifier json, boolean isBackground) {
+    public static void addDiscount(Context context, Integer workOrderId, PayModifier json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3820,7 +3613,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3862,9 +3654,8 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param targetTaskId Target task id
      * @param position before or after target task
-     * @param isBackground indicates that this call is low priority
      */
-    public static void reorderTask(Context context, Integer workOrderId, Integer taskId, Integer targetTaskId, String position, boolean isBackground) {
+    public static void reorderTask(Context context, Integer workOrderId, Integer taskId, Integer targetTaskId, String position) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3875,7 +3666,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/reorder/{position}/{target_task_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3891,9 +3681,8 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param group New group
      * @param destination beginning or end (position in new group)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination, boolean isBackground) {
+    public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3904,7 +3693,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/group/{group}/{destination}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3918,9 +3706,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addContact(Context context, Integer workOrderId, Contact json, boolean isBackground) {
+    public static void addContact(Context context, Integer workOrderId, Contact json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3934,7 +3721,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/contacts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -3974,9 +3760,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param shipment Shipment
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, boolean isBackground) {
+    public static void addShipment(Context context, Integer workOrderId, Shipment shipment) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -3990,7 +3775,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4005,9 +3789,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param shipment Shipment
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async, boolean isBackground) {
+    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4022,7 +3805,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4088,9 +3870,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param route JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void routeUser(Context context, Integer workOrderId, Route route, boolean isBackground) {
+    public static void routeUser(Context context, Integer workOrderId, Route route) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4104,7 +3885,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/route")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4119,9 +3899,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param route JSON Model
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async, boolean isBackground) {
+    public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4136,7 +3915,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/route")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4150,9 +3928,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work order id
      * @param route JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unRouteUser(Context context, Integer workOrderId, Route route, boolean isBackground) {
+    public static void unRouteUser(Context context, Integer workOrderId, Route route) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4166,7 +3943,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/route")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4181,9 +3957,8 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param route JSON Model
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async, boolean isBackground) {
+    public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4198,7 +3973,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/route")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4263,9 +4037,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param json JSON payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void reportProblem(Context context, String workOrderId, Message json, boolean isBackground) {
+    public static void reportProblem(Context context, String workOrderId, Message json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4279,7 +4052,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/report-problem/messages")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4294,9 +4066,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param json JSON payload
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void reportProblem(Context context, String workOrderId, Message json, Boolean async, boolean isBackground) {
+    public static void reportProblem(Context context, String workOrderId, Message json, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4311,7 +4082,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/report-problem/messages")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4377,9 +4147,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param location JSON Payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateLocation(Context context, Integer workOrderId, Location location, boolean isBackground) {
+    public static void updateLocation(Context context, Integer workOrderId, Location location) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4393,7 +4162,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/location")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4408,9 +4176,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param location JSON Payload
      * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async, boolean isBackground) {
+    public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4425,7 +4192,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/location")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4439,9 +4205,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param bonusId Bonus ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
+    public static void addBonus(Context context, Integer workOrderId, Integer bonusId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4452,7 +4217,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4467,9 +4231,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param bonusId Bonus ID
      * @param bonus Bonus (Optional)
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
+    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4483,7 +4246,6 @@ public class WorkordersWebApi {
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4555,9 +4317,8 @@ public class WorkordersWebApi {
      *
      * @param workOrderId Work Order ID
      * @param bonusId Bonus ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void removeBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
+    public static void removeBonus(Context context, Integer workOrderId, Integer bonusId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4568,7 +4329,6 @@ public class WorkordersWebApi {
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -4583,9 +4343,8 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param bonusId Bonus ID
      * @param bonus Bonus
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
+    public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4599,7 +4358,6 @@ public class WorkordersWebApi {
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);

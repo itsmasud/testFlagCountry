@@ -22,9 +22,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param json JSON Payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void sendVerificationCodeViaSms(Context context, Integer userId, String json, boolean isBackground) {
+    public static void sendVerificationCodeViaSms(Context context, Integer userId, String json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -38,7 +37,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -52,9 +50,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param json JSON Payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void sendAccountActivationLink(Context context, Integer userId, String json, boolean isBackground) {
+    public static void sendAccountActivationLink(Context context, Integer userId, String json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -68,7 +65,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -81,9 +77,8 @@ public class UsersWebApi {
      * Submit individual updates to the tour state as a user onboards the site.
      *
      * @param userId User ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateSettings(Context context, Integer userId, boolean isBackground) {
+    public static void updateSettings(Context context, Integer userId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -94,7 +89,6 @@ public class UsersWebApi {
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -134,9 +128,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param json Json User tax info object for updating
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json, boolean isBackground) {
+    public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -150,7 +143,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -189,9 +181,8 @@ public class UsersWebApi {
      * Submit individual updates to the tour state as a user onboards the site.
      *
      * @param userId User ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updatePay(Context context, Integer userId, boolean isBackground) {
+    public static void updatePay(Context context, Integer userId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -202,7 +193,6 @@ public class UsersWebApi {
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -215,9 +205,8 @@ public class UsersWebApi {
      * Submit individual updates to the tour state as a user onboards the site.
      *
      * @param userId User ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addPay(Context context, Integer userId, boolean isBackground) {
+    public static void addPay(Context context, Integer userId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -228,7 +217,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -269,9 +257,8 @@ public class UsersWebApi {
      * @param userId User ID
      * @param preference Preference Key
      * @param json JSON Model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void setUserPreference(Context context, Integer userId, String preference, String json, boolean isBackground) {
+    public static void setUserPreference(Context context, Integer userId, String preference, String json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -285,7 +272,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -326,9 +312,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param file Photo to upload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file, boolean isBackground) {
+    public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -340,7 +325,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -353,9 +337,8 @@ public class UsersWebApi {
      * Submit individual updates to the tour state as a user onboards the site.
      *
      * @param userId User ID
-     * @param isBackground indicates that this call is low priority
      */
-    public static void updateTour(Context context, Integer userId, boolean isBackground) {
+    public static void updateTour(Context context, Integer userId) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -366,7 +349,6 @@ public class UsersWebApi {
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -432,9 +414,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param json JSON Payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json, boolean isBackground) {
+    public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -448,7 +429,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -462,9 +442,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param json JSON model
-     * @param isBackground indicates that this call is low priority
      */
-    public static void addTypesOfWork(Context context, Integer userId, String json, boolean isBackground) {
+    public static void addTypesOfWork(Context context, Integer userId, String json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -478,7 +457,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -518,9 +496,8 @@ public class UsersWebApi {
      *
      * @param userId User ID
      * @param json Json Payload
-     * @param isBackground indicates that this call is low priority
      */
-    public static void verifyAccount(Context context, Integer userId, String json, boolean isBackground) {
+    public static void verifyAccount(Context context, Integer userId, String json) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -534,7 +511,6 @@ public class UsersWebApi {
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .isSyncCall(isBackground)
                     .request(builder).build();
 
             WebTransactionService.queueTransaction(context, transaction);
