@@ -242,6 +242,10 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void list(List<SavedSearchParams> savedSearchParams) {
             if (_currentSearch == null) {
+                if (savedSearchParams == null || savedSearchParams.size() == 0) {
+                    SavedSearchClient.list();
+                    return;
+                }
                 _currentSearch = savedSearchParams.get(0);
                 _recyclerView.startSearch(_currentSearch);
                 NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));

@@ -194,6 +194,8 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
     /*-             Listener             -*/
     /*-**********************************-*/
     public static abstract class Listener extends TopicClient.Listener {
+        private static final String TAG = "SavedSearchClient.Listener";
+        
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             if (topicId.startsWith(TOPIC_ID_LIST)) {
@@ -207,6 +209,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                             try {
                                 list.add((SavedSearchParams) parcel);
                             } catch (Exception ex) {
+                                Log.v(TAG, ex);
                             }
                         }
 

@@ -18,6 +18,7 @@ import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -136,6 +137,11 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void startSearch(SavedSearchParams searchParams) {
         _searchParams = searchParams;
+
+        if (_searchParams == null) {
+            SavedSearchClient.list();
+            return;
+        }
 
         if (_searchParams.uiLocationSpinner == 1 && _location != null) {
             _searchParams.location(_location.getLatitude(), _location.getLongitude());
