@@ -56,16 +56,16 @@ public class TimeZone implements Parcelable {
         return this;
     }
 
-    public void setShort(String short) {
-        _short = short;
+    public void setShort(String shortt) {
+        _short = shortt;
     }
 
     public String getShort() {
         return _short;
     }
 
-    public TimeZone short(String short) {
-        _short = short;
+    public TimeZone shortt(String shortt) {
+        _short = shortt;
         return this;
     }
 

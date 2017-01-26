@@ -27,16 +27,16 @@ public class LocationAttribute implements Parcelable {
     public LocationAttribute() {
     }
 
-    public void setPrivate(Boolean private) {
-        _private = private;
+    public void setPrivate(Boolean privatee) {
+        _private = privatee;
     }
 
     public Boolean getPrivate() {
         return _private;
     }
 
-    public LocationAttribute private(Boolean private) {
-        _private = private;
+    public LocationAttribute privatee(Boolean privatee) {
+        _private = privatee;
         return this;
     }
 

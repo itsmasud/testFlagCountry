@@ -22,17 +22,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void revertWorkOrderToDraft(Context context, int workOrderId, boolean isBackground) {
+    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/draft")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/draft")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/draft")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/draft")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -48,17 +48,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void revertWorkOrderToDraft(Context context, int workOrderId, Boolean async, boolean isBackground) {
+    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/draft")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/draft")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/draft")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/draft")
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -75,7 +75,23 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param isBackground indicates that this call is low priority
      */
-    public static void incompleteTask(Context context, int workOrderId, int taskId, boolean isBackground) {
+    public static void incompleteTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/incomplete")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/incomplete")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -85,17 +101,17 @@ public class WorkordersWebApi {
      * @param customFieldId Custom field id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getCustomField(Context context, int workOrderId, int customFieldId, boolean isBackground) {
+    public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/custom_fields/{custom_field_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -112,7 +128,7 @@ public class WorkordersWebApi {
      * @param customField Custom field
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateCustomField(Context context, int workOrderId, int customFieldId, CustomField customField, boolean isBackground) {
+    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, boolean isBackground) {
     }
 
     /**
@@ -124,7 +140,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateCustomField(Context context, int workOrderId, int customFieldId, CustomField customField, Boolean async, boolean isBackground) {
+    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -133,7 +149,23 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void completeWorkOrder(Context context, int workOrderId, boolean isBackground) {
+    public static void completeWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/complete")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/complete")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -143,7 +175,24 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void completeWorkOrder(Context context, int workOrderId, Boolean async, boolean isBackground) {
+    public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/complete")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/complete")
+                            .urlParams("?async=" + async)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -153,17 +202,17 @@ public class WorkordersWebApi {
      * @param reason Reason
      * @param isBackground indicates that this call is low priority
      */
-    public static void incompleteWorkOrder(Context context, int workOrderId, String reason, boolean isBackground) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/complete")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/complete")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/complete")
                             .urlParams("?reason=" + reason)
                     ).build();
 
@@ -181,17 +230,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void incompleteWorkOrder(Context context, int workOrderId, String reason, Boolean async, boolean isBackground) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/complete")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/complete")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/complete")
                             .urlParams("?reason=" + reason + "&async=" + async)
                     ).build();
 
@@ -208,7 +257,24 @@ public class WorkordersWebApi {
      * @param expense Expense
      * @param isBackground indicates that this call is low priority
      */
-    public static void addExpense(Context context, int workOrderId, Expense expense, boolean isBackground) {
+    public static void addExpense(Context context, Integer workOrderId, Expense expense, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/expenses")
+                            .body(expense.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -219,7 +285,25 @@ public class WorkordersWebApi {
      * @param async Asynchroneous (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addExpense(Context context, int workOrderId, Expense expense, Boolean async, boolean isBackground) {
+    public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/expenses")
+                            .urlParams("?async=" + async)
+                            .body(expense.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -228,17 +312,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getExpenses(Context context, int workOrderId, boolean isBackground) {
+    public static void getExpenses(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/expenses")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/expenses")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/expenses")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/expenses")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -256,7 +340,23 @@ public class WorkordersWebApi {
      * @param file File
      * @param isBackground indicates that this call is low priority
      */
-    public static void addAttachment(Context context, int workOrderId, int folderId, String attachment, java.io.File file, boolean isBackground) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -269,7 +369,24 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addAttachment(Context context, int workOrderId, int folderId, String attachment, java.io.File file, Boolean async, boolean isBackground) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
+                            .urlParams("?async=" + async)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -279,17 +396,17 @@ public class WorkordersWebApi {
      * @param folderId Folder id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getFolder(Context context, int workOrderId, int folderId, boolean isBackground) {
+    public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/attachments/{folder_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/attachments/" + folderId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -305,17 +422,17 @@ public class WorkordersWebApi {
      * @param folderId Folder id
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteFolder(Context context, int workOrderId, int folderId, boolean isBackground) {
+    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/attachments/{folder_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/attachments/" + folderId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -332,17 +449,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteFolder(Context context, int workOrderId, int folderId, Boolean async, boolean isBackground) {
+    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/attachments/{folder_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/attachments/" + folderId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -360,7 +477,7 @@ public class WorkordersWebApi {
      * @param folder Folder
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateFolder(Context context, int workOrderId, int folderId, AttachmentFolder folder, boolean isBackground) {
+    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, boolean isBackground) {
     }
 
     /**
@@ -372,7 +489,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateFolder(Context context, int workOrderId, int folderId, AttachmentFolder folder, Boolean async, boolean isBackground) {
+    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -383,14 +500,14 @@ public class WorkordersWebApi {
     public static void getWorkOrders(Context context, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders")
+                    .timingKey("GET//api/rest/v2/workorders")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders")
+                            .path("/api/rest/v2/workorders")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -408,15 +525,66 @@ public class WorkordersWebApi {
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders")
+                    .timingKey("GET//api/rest/v2/workorders")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders")
-                            .urlParams("?list=" + getWorkOrdersOptions.getList() + "&columns=" + getWorkOrdersOptions.getColumns() + "&page=" + getWorkOrdersOptions.getPage() + "&per_page=" + getWorkOrdersOptions.getPerPage() + "&view=" + getWorkOrdersOptions.getView() + "&sticky=" + getWorkOrdersOptions.getSticky() + "&sort=" + getWorkOrdersOptions.getSort() + "&order=" + getWorkOrdersOptions.getOrder() + "&f_=" + getWorkOrdersOptions.getF() + "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() + "&f_rating=" + getWorkOrdersOptions.getFRating() + "&f_requests=" + getWorkOrdersOptions.getFRequests() + "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() + "&f_hourly=" + getWorkOrdersOptions.getFHourly() + "&f_fixed=" + getWorkOrdersOptions.getFFixed() + "&f_device=" + getWorkOrdersOptions.getFDevice() + "&f_pay=" + getWorkOrdersOptions.getFPay() + "&f_templates=" + getWorkOrdersOptions.getFTemplates() + "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() + "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() + "&f_mode=" + getWorkOrdersOptions.getFMode() + "&f_company=" + getWorkOrdersOptions.getFCompany() + "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() + "&f_manager=" + getWorkOrdersOptions.getFManager() + "&f_client=" + getWorkOrdersOptions.getFClient() + "&f_project=" + getWorkOrdersOptions.getFProject() + "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() + "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() + "&f_network=" + getWorkOrdersOptions.getFNetwork() + "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() + "&f_schedule=" + getWorkOrdersOptions.getFSchedule() + "&f_created=" + getWorkOrdersOptions.getFCreated() + "&f_published=" + getWorkOrdersOptions.getFPublished() + "&f_routed=" + getWorkOrdersOptions.getFRouted() + "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() + "&f_completed=" + getWorkOrdersOptions.getFCompleted() + "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() + "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() + "&f_assigned=" + getWorkOrdersOptions.getFAssigned() + "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() + "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() + "&f_city=" + getWorkOrdersOptions.getFCity() + "&f_state=" + getWorkOrdersOptions.getFState() + "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() + "&f_country=" + getWorkOrdersOptions.getFCountry() + "&f_flags=" + getWorkOrdersOptions.getFFlags() + "&f_assignment=" + getWorkOrdersOptions.getFAssignment() + "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() + "&f_financing=" + getWorkOrdersOptions.getFFinancing() + "&f_geo=" + getWorkOrdersOptions.getFGeo() + "&f_search=" + getWorkOrdersOptions.getFSearch())
+                            .path("/api/rest/v2/workorders")
+                            .urlParams((getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+                                    + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
+                                    + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
+                                    + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
+                                    + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
+                                    + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
+                                    + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
+                                    + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
+                                    + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                                    + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
+                                    + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                                    + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
+                                    + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                                    + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
+                                    + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
+                                    + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
+                                    + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
+                                    + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
+                                    + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
+                                    + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
+                                    + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
+                                    + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
+                                    + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
+                                    + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
+                                    + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
+                                    + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
+                                    + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
+                                    + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
+                                    + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
+                                    + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
+                                    + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
+                                    + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
+                                    + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
+                                    + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
+                                    + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
+                                    + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
+                                    + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
+                                    + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
+                                    + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
+                                    + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
+                                    + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
+                                    + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
+                                    + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
+                                    + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
+                                    + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
+                                    + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
+                                    + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
+                                    + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
+                                    + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
+                                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                                    + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+                                   )
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -432,7 +600,7 @@ public class WorkordersWebApi {
      * @param workorderHoursId ID of work order hour
      * @param isBackground indicates that this call is low priority
      */
-    public static void verifyTimeLog(Context context, int workOrderId, int workorderHoursId, boolean isBackground) {
+    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, boolean isBackground) {
     }
 
     /**
@@ -443,7 +611,7 @@ public class WorkordersWebApi {
      * @param async Return the model in the response (slower) (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void verifyTimeLog(Context context, int workOrderId, int workorderHoursId, Boolean async, boolean isBackground) {
+    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -453,17 +621,17 @@ public class WorkordersWebApi {
      * @param contactId Contact id
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeContact(Context context, int workOrderId, int contactId, boolean isBackground) {
+    public static void removeContact(Context context, Integer workOrderId, Integer contactId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/contacts/{contact_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/contacts/{contact_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/contacts/" + contactId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -480,7 +648,7 @@ public class WorkordersWebApi {
      * @param json JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateContact(Context context, int workOrderId, int contactId, Contact json, boolean isBackground) {
+    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json, boolean isBackground) {
     }
 
     /**
@@ -490,17 +658,17 @@ public class WorkordersWebApi {
      * @param increaseId ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
-    public static void getIncrease(Context context, int workOrderId, int increaseId, boolean isBackground) {
+    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/increases/{increase_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/increases/" + increaseId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -517,17 +685,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void getIncrease(Context context, int workOrderId, int increaseId, Boolean async, boolean isBackground) {
+    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/increases/{increase_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/increases/" + increaseId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -544,17 +712,17 @@ public class WorkordersWebApi {
      * @param increaseId ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteIncrease(Context context, int workOrderId, int increaseId, boolean isBackground) {
+    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/increases/{increase_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/increases/" + increaseId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -571,17 +739,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteIncrease(Context context, int workOrderId, int increaseId, Boolean async, boolean isBackground) {
+    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/increases/{increase_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/increases/" + increaseId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -599,7 +767,7 @@ public class WorkordersWebApi {
      * @param increase Increase structure for update
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateIncrease(Context context, int workOrderId, int increaseId, PayIncrease increase, boolean isBackground) {
+    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, boolean isBackground) {
     }
 
     /**
@@ -611,7 +779,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateIncrease(Context context, int workOrderId, int increaseId, PayIncrease increase, Boolean async, boolean isBackground) {
+    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -621,17 +789,17 @@ public class WorkordersWebApi {
      * @param expenseId ID of expense
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteExpense(Context context, int workOrderId, int expenseId, boolean isBackground) {
+    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/expenses/{expense_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/expenses/" + expenseId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -648,17 +816,17 @@ public class WorkordersWebApi {
      * @param async Asynchroneous (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteExpense(Context context, int workOrderId, int expenseId, Boolean async, boolean isBackground) {
+    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/expenses/{expense_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/expenses/" + expenseId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -675,7 +843,7 @@ public class WorkordersWebApi {
      * @param expenseId ID of expense
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateExpense(Context context, int workOrderId, int expenseId, boolean isBackground) {
+    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, boolean isBackground) {
     }
 
     /**
@@ -686,7 +854,7 @@ public class WorkordersWebApi {
      * @param updateExpenseOptions Additional optional parameters
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateExpense(Context context, int workOrderId, int expenseId, UpdateExpenseOptions updateExpenseOptions, boolean isBackground) {
+    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions, boolean isBackground) {
     }
 
     /**
@@ -695,17 +863,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getIncreases(Context context, int workOrderId, boolean isBackground) {
+    public static void getIncreases(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/increases")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/increases")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/increases")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -720,17 +888,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPay(Context context, int workOrderId, boolean isBackground) {
+    public static void getPay(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/pay")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/pay")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/pay")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/pay")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -746,7 +914,7 @@ public class WorkordersWebApi {
      * @param pay Pay
      * @param isBackground indicates that this call is low priority
      */
-    public static void updatePay(Context context, int workOrderId, Pay pay, boolean isBackground) {
+    public static void updatePay(Context context, Integer workOrderId, Pay pay, boolean isBackground) {
     }
 
     /**
@@ -757,7 +925,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updatePay(Context context, int workOrderId, Pay pay, Boolean async, boolean isBackground) {
+    public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -767,7 +935,24 @@ public class WorkordersWebApi {
      * @param json JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void addTask(Context context, int workOrderId, Task json, boolean isBackground) {
+    public static void addTask(Context context, Integer workOrderId, Task json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -776,17 +961,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTasks(Context context, int workOrderId, boolean isBackground) {
+    public static void getTasks(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/tasks")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/tasks")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -801,17 +986,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of Work Order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getMilestones(Context context, int workOrderId, boolean isBackground) {
+    public static void getMilestones(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/milestones")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/milestones")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/milestones")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/milestones")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -827,7 +1012,24 @@ public class WorkordersWebApi {
      * @param signature Signature JSON
      * @param isBackground indicates that this call is low priority
      */
-    public static void addSignature(Context context, int workOrderId, Signature signature, boolean isBackground) {
+    public static void addSignature(Context context, Integer workOrderId, Signature signature, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/signatures")
+                            .body(signature.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -838,7 +1040,25 @@ public class WorkordersWebApi {
      * @param async async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addSignature(Context context, int workOrderId, Signature signature, Boolean async, boolean isBackground) {
+    public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/signatures")
+                            .urlParams("?async=" + async)
+                            .body(signature.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -847,17 +1067,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSignatures(Context context, int workOrderId, boolean isBackground) {
+    public static void getSignatures(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/signatures")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/signatures")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/signatures")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -875,14 +1095,14 @@ public class WorkordersWebApi {
     public static void getProviders(Context context, String workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/providers")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/providers")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/providers")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -901,15 +1121,18 @@ public class WorkordersWebApi {
     public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/providers")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/providers")
-                            .urlParams("?sticky=" + getProvidersOptions.getSticky() + "&default_view=" + getProvidersOptions.getDefaultView() + "&view=" + getProvidersOptions.getView())
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/providers")
+                            .urlParams((getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
+                                    + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
+                                    + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
+                                   )
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -926,6 +1149,23 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void addMessage(Context context, String workOrderId, Message json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/messages")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -937,6 +1177,24 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void addMessage(Context context, String workOrderId, Message json, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/messages")
+                            .urlParams("?async=" + async)
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -948,14 +1206,14 @@ public class WorkordersWebApi {
     public static void getMessages(Context context, String workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/messages")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/messages")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/messages")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/messages")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -970,6 +1228,22 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void cancelSwapRequest(Context context, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -979,7 +1253,24 @@ public class WorkordersWebApi {
      * @param timeLog Check in information
      * @param isBackground indicates that this call is low priority
      */
-    public static void addTimeLog(Context context, int workOrderId, TimeLog timeLog, boolean isBackground) {
+    public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/time_logs")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/time_logs")
+                            .body(timeLog.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -988,17 +1279,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTimeLogs(Context context, int workOrderId, boolean isBackground) {
+    public static void getTimeLogs(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/time_logs")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/time_logs")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/time_logs")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/time_logs")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1014,7 +1305,7 @@ public class WorkordersWebApi {
      * @param timeLog Check in information
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateAllTimeLogs(Context context, int workOrderId, TimeLog timeLog, boolean isBackground) {
+    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, boolean isBackground) {
     }
 
     /**
@@ -1025,7 +1316,7 @@ public class WorkordersWebApi {
      * @param async Return the model in the response (slower) (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateAllTimeLogs(Context context, int workOrderId, TimeLog timeLog, Boolean async, boolean isBackground) {
+    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -1034,17 +1325,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getWorkOrder(Context context, int workOrderId, boolean isBackground) {
+    public static void getWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId)
+                            .path("/api/rest/v2/workorders/" + workOrderId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1060,17 +1351,18 @@ public class WorkordersWebApi {
      * @param cancellation Cancellation reasons
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteWorkOrder(Context context, int workOrderId, Cancellation cancellation, boolean isBackground) {
+    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId)
+                            .path("/api/rest/v2/workorders/" + workOrderId)
+                            .body(cancellation.toJson().toString())
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1087,18 +1379,19 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteWorkOrder(Context context, int workOrderId, Cancellation cancellation, Boolean async, boolean isBackground) {
+    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId)
+                            .path("/api/rest/v2/workorders/" + workOrderId)
                             .urlParams("?async=" + async)
+                            .body(cancellation.toJson().toString())
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1114,7 +1407,7 @@ public class WorkordersWebApi {
      * @param workOrder Work order model
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateWorkOrder(Context context, int workOrderId, WorkOrder workOrder, boolean isBackground) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, boolean isBackground) {
     }
 
     /**
@@ -1125,7 +1418,7 @@ public class WorkordersWebApi {
      * @param async Asynchroneous (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateWorkOrder(Context context, int workOrderId, WorkOrder workOrder, Boolean async, boolean isBackground) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -1135,17 +1428,17 @@ public class WorkordersWebApi {
      * @param signatureId ID of signature
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSignature(Context context, int workOrderId, int signatureId, boolean isBackground) {
+    public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/signatures/{signature_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/signatures/" + signatureId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1161,17 +1454,17 @@ public class WorkordersWebApi {
      * @param signatureId ID of signature
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteSignature(Context context, int workOrderId, int signatureId, boolean isBackground) {
+    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/signatures/{signature_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/signatures/" + signatureId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1188,17 +1481,17 @@ public class WorkordersWebApi {
      * @param async async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteSignature(Context context, int workOrderId, int signatureId, Boolean async, boolean isBackground) {
+    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/signatures/{signature_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/signatures/" + signatureId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1215,7 +1508,24 @@ public class WorkordersWebApi {
      * @param folder Folder
      * @param isBackground indicates that this call is low priority
      */
-    public static void addFolder(Context context, int workOrderId, AttachmentFolder folder, boolean isBackground) {
+    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments")
+                            .body(folder.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1226,7 +1536,25 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addFolder(Context context, int workOrderId, AttachmentFolder folder, Boolean async, boolean isBackground) {
+    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments")
+                            .urlParams("?async=" + async)
+                            .body(folder.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1235,17 +1563,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getAttachments(Context context, int workOrderId, boolean isBackground) {
+    public static void getAttachments(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/attachments")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/attachments")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1261,7 +1589,23 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param isBackground indicates that this call is low priority
      */
-    public static void completeTask(Context context, int workOrderId, int taskId, boolean isBackground) {
+    public static void completeTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/complete")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/complete")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1271,17 +1615,17 @@ public class WorkordersWebApi {
      * @param discountId ID of the discount
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeDiscount(Context context, int workOrderId, int discountId, boolean isBackground) {
+    public static void removeDiscount(Context context, Integer workOrderId, Integer discountId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/discounts/{discount_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/discounts/" + discountId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1298,7 +1642,7 @@ public class WorkordersWebApi {
      * @param json Payload of the discount
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateDiscount(Context context, int workOrderId, int discountId, PayModifier json, boolean isBackground) {
+    public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json, boolean isBackground) {
     }
 
     /**
@@ -1308,17 +1652,17 @@ public class WorkordersWebApi {
      * @param workorderHoursId ID of work order hour
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeTimeLog(Context context, int workOrderId, int workorderHoursId, boolean isBackground) {
+    public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1335,17 +1679,17 @@ public class WorkordersWebApi {
      * @param async Return the model in the response (slower) (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeTimeLog(Context context, int workOrderId, int workorderHoursId, Boolean async, boolean isBackground) {
+    public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/time_logs/{workorder_hours_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1363,7 +1707,7 @@ public class WorkordersWebApi {
      * @param timeLog Check in information
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateTimeLog(Context context, int workOrderId, int workorderHoursId, TimeLog timeLog, boolean isBackground) {
+    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, boolean isBackground) {
     }
 
     /**
@@ -1375,7 +1719,7 @@ public class WorkordersWebApi {
      * @param async Return the model in the response (slower) (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateTimeLog(Context context, int workOrderId, int workorderHoursId, TimeLog timeLog, Boolean async, boolean isBackground) {
+    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -1386,17 +1730,17 @@ public class WorkordersWebApi {
      * @param attachmentId File id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getFile(Context context, int workOrderId, int folderId, int attachmentId, boolean isBackground) {
+    public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1413,17 +1757,17 @@ public class WorkordersWebApi {
      * @param attachmentId File id
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteAttachment(Context context, int workOrderId, int folderId, int attachmentId, boolean isBackground) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1441,17 +1785,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteAttachment(Context context, int workOrderId, int folderId, int attachmentId, Boolean async, boolean isBackground) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1470,7 +1814,7 @@ public class WorkordersWebApi {
      * @param attachment Attachment
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateAttachment(Context context, int workOrderId, int folderId, int attachmentId, Attachment attachment, boolean isBackground) {
+    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, boolean isBackground) {
     }
 
     /**
@@ -1483,7 +1827,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateAttachment(Context context, int workOrderId, int folderId, int attachmentId, Attachment attachment, Boolean async, boolean isBackground) {
+    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -1493,7 +1837,24 @@ public class WorkordersWebApi {
      * @param assignee JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void assignUser(Context context, int workOrderId, Assignee assignee, boolean isBackground) {
+    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/assignee")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/assignee")
+                            .body(assignee.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1504,7 +1865,25 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void assignUser(Context context, int workOrderId, Assignee assignee, Boolean async, boolean isBackground) {
+    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/assignee")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/assignee")
+                            .urlParams("?async=" + async)
+                            .body(assignee.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1513,17 +1892,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getAssignee(Context context, int workOrderId, boolean isBackground) {
+    public static void getAssignee(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/assignee")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/assignee")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/assignee")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1539,17 +1918,18 @@ public class WorkordersWebApi {
      * @param assignee JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void unassignUser(Context context, int workOrderId, Assignee assignee, boolean isBackground) {
+    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/assignee")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/assignee")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/assignee")
+                            .body(assignee.toJson().toString())
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1566,17 +1946,70 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void unassignUser(Context context, int workOrderId, Assignee assignee, Boolean async, boolean isBackground) {
+    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/assignee")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/assignee")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/assignee")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/assignee")
+                            .urlParams("?async=" + async)
+                            .body(assignee.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Publishes a work order to the marketplace where it can garner requests.
+     *
+     * @param workOrderId ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void publish(Context context, Integer workOrderId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/publish")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Publishes a work order to the marketplace where it can garner requests.
+     *
+     * @param workOrderId ID of work order
+     * @param async Async (Optional)
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void publish(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/publish")
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1587,41 +2020,22 @@ public class WorkordersWebApi {
     }
 
     /**
-     * Publishes a work order to the marketplace where it can garner requests.
-     *
-     * @param workOrderId ID of work order
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void publish(Context context, int workOrderId, boolean isBackground) {
-    }
-
-    /**
-     * Publishes a work order to the marketplace where it can garner requests.
-     *
-     * @param workOrderId ID of work order
-     * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void publish(Context context, int workOrderId, Boolean async, boolean isBackground) {
-    }
-
-    /**
      * Unpublishes a work order from the marketplace so that no requests or counter-offers can be made. Moves to draft unless it was also routed.
      *
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void unpublish(Context context, int workOrderId, boolean isBackground) {
+    public static void unpublish(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/publish")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/publish")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/publish")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/publish")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1637,17 +2051,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void unpublish(Context context, int workOrderId, Boolean async, boolean isBackground) {
+    public static void unpublish(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/publish")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/publish")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/publish")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/publish")
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1663,17 +2077,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getStatus(Context context, int workOrderId, boolean isBackground) {
+    public static void getStatus(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/status")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/status")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/status")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/status")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1688,7 +2102,23 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void approveWorkOrder(Context context, int workOrderId, boolean isBackground) {
+    public static void approveWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/approve")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/approve")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1698,7 +2128,24 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void approveWorkOrder(Context context, int workOrderId, Boolean async, boolean isBackground) {
+    public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/approve")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/approve")
+                            .urlParams("?async=" + async)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1707,17 +2154,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void unapproveWorkOrder(Context context, int workOrderId, boolean isBackground) {
+    public static void unapproveWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/approve")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/approve")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/approve")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/approve")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1733,17 +2180,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void unapproveWorkOrder(Context context, int workOrderId, Boolean async, boolean isBackground) {
+    public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/approve")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/approve")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/approve")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/approve")
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1760,7 +2207,7 @@ public class WorkordersWebApi {
      * @param increaseId ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
-    public static void acceptIncrease(Context context, int workOrderId, int increaseId, boolean isBackground) {
+    public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
     }
 
     /**
@@ -1770,17 +2217,17 @@ public class WorkordersWebApi {
      * @param shipmentId Shipment id
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteShipment(Context context, int workOrderId, int shipmentId, boolean isBackground) {
+    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/shipments/{shipment_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/shipments/" + shipmentId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1797,17 +2244,17 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void deleteShipment(Context context, int workOrderId, int shipmentId, Boolean async, boolean isBackground) {
+    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/shipments/{shipment_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/shipments/" + shipmentId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId)
                             .urlParams("?async=" + async)
                     ).build();
 
@@ -1825,7 +2272,7 @@ public class WorkordersWebApi {
      * @param shipment Shipment
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateShipment(Context context, int workOrderId, int shipmentId, Shipment shipment, boolean isBackground) {
+    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, boolean isBackground) {
     }
 
     /**
@@ -1837,7 +2284,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateShipment(Context context, int workOrderId, int shipmentId, Shipment shipment, Boolean async, boolean isBackground) {
+    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -1847,7 +2294,23 @@ public class WorkordersWebApi {
      * @param penaltyId Penalty ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void addPenalty(Context context, int workOrderId, int penaltyId, boolean isBackground) {
+    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1858,7 +2321,24 @@ public class WorkordersWebApi {
      * @param penalty Penalty (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addPenalty(Context context, int workOrderId, int penaltyId, PayModifier penalty, boolean isBackground) {
+    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId)
+                            .body(penalty.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1868,17 +2348,17 @@ public class WorkordersWebApi {
      * @param penaltyId Penalty ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPenalty(Context context, int workOrderId, int penaltyId, boolean isBackground) {
+    public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/penalties/{penalty_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/penalties/" + penaltyId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1894,17 +2374,17 @@ public class WorkordersWebApi {
      * @param penaltyId Penalty ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void removePenalty(Context context, int workOrderId, int penaltyId, boolean isBackground) {
+    public static void removePenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/penalties/{penalty_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/penalties/" + penaltyId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -1920,7 +2400,7 @@ public class WorkordersWebApi {
      * @param penaltyId Penalty ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void updatePenalty(Context context, int workOrderId, int penaltyId, boolean isBackground) {
+    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
     }
 
     /**
@@ -1931,7 +2411,7 @@ public class WorkordersWebApi {
      * @param penalty Penalty (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updatePenalty(Context context, int workOrderId, int penaltyId, PayModifier penalty, boolean isBackground) {
+    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty, boolean isBackground) {
     }
 
     /**
@@ -1940,6 +2420,22 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void declineSwapRequest(Context context, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/decline")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/decline")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1951,6 +2447,23 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId)
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1963,6 +2476,24 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId)
+                            .urlParams("?async=" + async)
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -1975,14 +2506,14 @@ public class WorkordersWebApi {
     public static void removeMessage(Context context, String workOrderId, String messageId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/messages/{message_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/messages/" + messageId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2009,17 +2540,17 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTask(Context context, int workOrderId, int taskId, boolean isBackground) {
+    public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/tasks/{task_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/tasks/" + taskId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2035,17 +2566,17 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeTask(Context context, int workOrderId, int taskId, boolean isBackground) {
+    public static void removeTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/tasks/{task_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/tasks/" + taskId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2062,7 +2593,7 @@ public class WorkordersWebApi {
      * @param json JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateTask(Context context, int workOrderId, int taskId, Task json, boolean isBackground) {
+    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json, boolean isBackground) {
     }
 
     /**
@@ -2072,7 +2603,7 @@ public class WorkordersWebApi {
      * @param increaseId ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
-    public static void denyIncrease(Context context, int workOrderId, int increaseId, boolean isBackground) {
+    public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
     }
 
     /**
@@ -2083,7 +2614,24 @@ public class WorkordersWebApi {
      * @param json JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void addAlertToWorkOrderAndTask(Context context, int workOrderId, int taskId, TaskAlert json, boolean isBackground) {
+    public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2093,17 +2641,17 @@ public class WorkordersWebApi {
      * @param taskId Task id
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeAlerts(Context context, int workOrderId, int taskId, boolean isBackground) {
+    public static void removeAlerts(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/tasks/{task_id}/alerts")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2119,7 +2667,24 @@ public class WorkordersWebApi {
      * @param request JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void request(Context context, int workOrderId, Request request, boolean isBackground) {
+    public static void request(Context context, Integer workOrderId, Request request, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/requests")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/requests")
+                            .body(request.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2130,55 +2695,75 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void request(Context context, int workOrderId, Request request, Boolean async, boolean isBackground) {
-    }
-
-    /**
-     * Removes or hides a request by a user from a work order
-     *
-     * @param workOrderId Work order id
-     * @param request JSON Model
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void removeRequest(Context context, int workOrderId, Request request, boolean isBackground) {
+    public static void request(Context context, Integer workOrderId, Request request, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/requests")
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/requests")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
-                            .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/requests")
-                    ).build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    /**
-     * Removes or hides a request by a user from a work order
-     *
-     * @param workOrderId Work order id
-     * @param request JSON Model
-     * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void removeRequest(Context context, int workOrderId, Request request, Boolean async, boolean isBackground) {
-        try {
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/requests")
-                    .priority(Priority.HIGH)
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/requests")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/requests")
                             .urlParams("?async=" + async)
+                            .body(request.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Removes or hides a request by a user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param request JSON Model
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void removeRequest(Context context, Integer workOrderId, Request request, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/requests")
+                            .body(request.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Removes or hides a request by a user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param request JSON Model
+     * @param async Async (Optional)
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void removeRequest(Context context, Integer workOrderId, Request request, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/requests")
+                            .urlParams("?async=" + async)
+                            .body(request.toJson().toString())
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2193,6 +2778,22 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void acceptSwapRequest(Context context, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/accept")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/accept")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2201,17 +2802,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getCustomFields(Context context, int workOrderId, boolean isBackground) {
+    public static void getCustomFields(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/custom_fields")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/custom_fields")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/custom_fields")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2228,17 +2829,17 @@ public class WorkordersWebApi {
      * @param alertId Alert id
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeAlert(Context context, int workOrderId, int taskId, int alertId, boolean isBackground) {
+    public static void removeAlert(Context context, Integer workOrderId, Integer taskId, Integer alertId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/tasks/{task_id}/alerts/{alert_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts/{alert_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts/" + alertId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts/" + alertId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2253,17 +2854,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSchedule(Context context, int workOrderId, boolean isBackground) {
+    public static void getSchedule(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/schedule")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/schedule")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/schedule")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/schedule")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2279,7 +2880,7 @@ public class WorkordersWebApi {
      * @param schedule JSON Payload
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateSchedule(Context context, int workOrderId, Schedule schedule, boolean isBackground) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, boolean isBackground) {
     }
 
     /**
@@ -2290,7 +2891,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateSchedule(Context context, int workOrderId, Schedule schedule, Boolean async, boolean isBackground) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -2300,7 +2901,7 @@ public class WorkordersWebApi {
      * @param holds Holds
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateHolds(Context context, int workOrderId, String holds, boolean isBackground) {
+    public static void updateHolds(Context context, Integer workOrderId, String holds, boolean isBackground) {
     }
 
     /**
@@ -2311,7 +2912,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateHolds(Context context, int workOrderId, String holds, Boolean async, boolean isBackground) {
+    public static void updateHolds(Context context, Integer workOrderId, String holds, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -2322,7 +2923,7 @@ public class WorkordersWebApi {
      * @param json JSON payload
      * @param isBackground indicates that this call is low priority
      */
-    public static void resolveReopenReportProblem(Context context, int workOrderId, int flagId, Message json, boolean isBackground) {
+    public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, boolean isBackground) {
     }
 
     /**
@@ -2334,7 +2935,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void resolveReopenReportProblem(Context context, int workOrderId, int flagId, Message json, Boolean async, boolean isBackground) {
+    public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -2344,7 +2945,24 @@ public class WorkordersWebApi {
      * @param json Payload of the discount
      * @param isBackground indicates that this call is low priority
      */
-    public static void addDiscount(Context context, int workOrderId, PayModifier json, boolean isBackground) {
+    public static void addDiscount(Context context, Integer workOrderId, PayModifier json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/discounts")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2353,17 +2971,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getDiscounts(Context context, int workOrderId, boolean isBackground) {
+    public static void getDiscounts(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/discounts")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/discounts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/discounts")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/discounts")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2381,7 +2999,7 @@ public class WorkordersWebApi {
      * @param position before or after target task
      * @param isBackground indicates that this call is low priority
      */
-    public static void reorderTask(Context context, int workOrderId, int taskId, int targetTaskId, String position, boolean isBackground) {
+    public static void reorderTask(Context context, Integer workOrderId, Integer taskId, Integer targetTaskId, String position, boolean isBackground) {
     }
 
     /**
@@ -2393,7 +3011,7 @@ public class WorkordersWebApi {
      * @param destination beginning or end (position in new group)
      * @param isBackground indicates that this call is low priority
      */
-    public static void groupTask(Context context, int workOrderId, int taskId, String group, String destination, boolean isBackground) {
+    public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination, boolean isBackground) {
     }
 
     /**
@@ -2403,7 +3021,24 @@ public class WorkordersWebApi {
      * @param json JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void addContact(Context context, int workOrderId, Contact json, boolean isBackground) {
+    public static void addContact(Context context, Integer workOrderId, Contact json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/contacts")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/contacts")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2412,17 +3047,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getContacts(Context context, int workOrderId, boolean isBackground) {
+    public static void getContacts(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/contacts")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/contacts")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/contacts")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/contacts")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2438,7 +3073,24 @@ public class WorkordersWebApi {
      * @param shipment Shipment
      * @param isBackground indicates that this call is low priority
      */
-    public static void addShipment(Context context, int workOrderId, Shipment shipment, boolean isBackground) {
+    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/shipments")
+                            .body(shipment.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2449,7 +3101,25 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addShipment(Context context, int workOrderId, Shipment shipment, Boolean async, boolean isBackground) {
+    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/shipments")
+                            .urlParams("?async=" + async)
+                            .body(shipment.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2458,17 +3128,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getShipments(Context context, int workOrderId, boolean isBackground) {
+    public static void getShipments(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/shipments")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/shipments")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/shipments")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/shipments")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2483,17 +3153,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work Order ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPenalties(Context context, int workOrderId, boolean isBackground) {
+    public static void getPenalties(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/penalties")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/penalties")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/penalties")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2509,7 +3179,24 @@ public class WorkordersWebApi {
      * @param route JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void routeUser(Context context, int workOrderId, Route route, boolean isBackground) {
+    public static void routeUser(Context context, Integer workOrderId, Route route, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/route")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/route")
+                            .body(route.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2520,55 +3207,75 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void routeUser(Context context, int workOrderId, Route route, Boolean async, boolean isBackground) {
-    }
-
-    /**
-     * Unroute a user from a work order
-     *
-     * @param workOrderId Work order id
-     * @param route JSON Model
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void unRouteUser(Context context, int workOrderId, Route route, boolean isBackground) {
+    public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/route")
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/route")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
-                            .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/route")
-                    ).build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    /**
-     * Unroute a user from a work order
-     *
-     * @param workOrderId Work order id
-     * @param route JSON Model
-     * @param async Async (Optional)
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void unRouteUser(Context context, int workOrderId, Route route, Boolean async, boolean isBackground) {
-        try {
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/route")
-                    .priority(Priority.HIGH)
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/route")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/route")
                             .urlParams("?async=" + async)
+                            .body(route.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Unroute a user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param route JSON Model
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void unRouteUser(Context context, Integer workOrderId, Route route, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/route")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/route")
+                            .body(route.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    /**
+     * Unroute a user from a work order
+     *
+     * @param workOrderId Work order id
+     * @param route JSON Model
+     * @param async Async (Optional)
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/route")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("DELETE")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/route")
+                            .urlParams("?async=" + async)
+                            .body(route.toJson().toString())
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2585,14 +3292,14 @@ public class WorkordersWebApi {
     public static void getWorkOrderLists(Context context, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/lists")
+                    .timingKey("GET//api/rest/v2/workorders/lists")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/lists")
+                            .path("/api/rest/v2/workorders/lists")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2610,14 +3317,14 @@ public class WorkordersWebApi {
     public static void getProblemReasons(Context context, String workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/problems/messages")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems/messages")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/problems/messages")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/problems/messages")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2634,6 +3341,23 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void reportProblem(Context context, String workOrderId, Message json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/report-problem/messages")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/report-problem/messages")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2645,6 +3369,24 @@ public class WorkordersWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void reportProblem(Context context, String workOrderId, Message json, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/report-problem/messages")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/report-problem/messages")
+                            .urlParams("?async=" + async)
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2653,17 +3395,17 @@ public class WorkordersWebApi {
      * @param workOrderId Work Order ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getBonuses(Context context, int workOrderId, boolean isBackground) {
+    public static void getBonuses(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/bonuses")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/bonuses")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/bonuses")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2678,17 +3420,17 @@ public class WorkordersWebApi {
      * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getLocation(Context context, int workOrderId, boolean isBackground) {
+    public static void getLocation(Context context, Integer workOrderId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/location")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/location")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/location")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/location")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2704,7 +3446,7 @@ public class WorkordersWebApi {
      * @param location JSON Payload
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateLocation(Context context, int workOrderId, Location location, boolean isBackground) {
+    public static void updateLocation(Context context, Integer workOrderId, Location location, boolean isBackground) {
     }
 
     /**
@@ -2715,7 +3457,7 @@ public class WorkordersWebApi {
      * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateLocation(Context context, int workOrderId, Location location, Boolean async, boolean isBackground) {
+    public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async, boolean isBackground) {
     }
 
     /**
@@ -2725,7 +3467,23 @@ public class WorkordersWebApi {
      * @param bonusId Bonus ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void addBonus(Context context, int workOrderId, int bonusId, boolean isBackground) {
+    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId)
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2736,7 +3494,24 @@ public class WorkordersWebApi {
      * @param bonus Bonus (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void addBonus(Context context, int workOrderId, int bonusId, PayModifier bonus, boolean isBackground) {
+    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId)
+                            .body(bonus.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -2746,17 +3521,17 @@ public class WorkordersWebApi {
      * @param bonusId Bonus ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getBonus(Context context, int workOrderId, int bonusId, boolean isBackground) {
+    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/bonuses/{bonus_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/bonuses/" + bonusId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2773,17 +3548,18 @@ public class WorkordersWebApi {
      * @param bonus Bonus (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void getBonus(Context context, int workOrderId, int bonusId, PayModifier bonus, boolean isBackground) {
+    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//workorders/{work_order_id}/bonuses/{bonus_id}")
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/workorders/" + workOrderId + "/bonuses/" + bonusId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId)
+                            .body(bonus.toJson().toString())
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2799,17 +3575,17 @@ public class WorkordersWebApi {
      * @param bonusId Bonus ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeBonus(Context context, int workOrderId, int bonusId, boolean isBackground) {
+    public static void removeBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//workorders/{work_order_id}/bonuses/{bonus_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/workorders/" + workOrderId + "/bonuses/" + bonusId)
+                            .path("/api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -2826,7 +3602,7 @@ public class WorkordersWebApi {
      * @param bonus Bonus
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateBonus(Context context, int workOrderId, int bonusId, PayModifier bonus, boolean isBackground) {
+    public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
     }
 
 }

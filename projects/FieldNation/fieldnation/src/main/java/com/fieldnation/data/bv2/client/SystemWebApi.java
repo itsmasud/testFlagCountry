@@ -25,6 +25,24 @@ public class SystemWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updateModel(Context context, String path, String event, KeyValue json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/system/update-model")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/system/update-model")
+                            .urlParams("?path=" + path + "&event=" + event)
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -37,6 +55,24 @@ public class SystemWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void updateModel(Context context, String path, String event, KeyValue json, Boolean async, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/system/update-model")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/system/update-model")
+                            .urlParams("?path=" + path + "&event=" + event + "&async=" + async)
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
 }

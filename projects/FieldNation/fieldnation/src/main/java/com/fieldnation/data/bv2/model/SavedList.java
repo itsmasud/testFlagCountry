@@ -39,16 +39,16 @@ public class SavedList implements Parcelable {
     public SavedList() {
     }
 
-    public void setDefault(Boolean default) {
-        _default = default;
+    public void setDefault(Boolean defaultt) {
+        _default = defaultt;
     }
 
     public Boolean getDefault() {
         return _default;
     }
 
-    public SavedList default(Boolean default) {
-        _default = default;
+    public SavedList defaultt(Boolean defaultt) {
+        _default = defaultt;
         return this;
     }
 

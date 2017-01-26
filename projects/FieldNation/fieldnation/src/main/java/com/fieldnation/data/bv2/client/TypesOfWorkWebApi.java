@@ -24,14 +24,14 @@ public class TypesOfWorkWebApi {
     public static void getTypesOfWork(Context context, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//types-of-work")
+                    .timingKey("GET//api/rest/v2/types-of-work")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/types-of-work")
+                            .path("/api/rest/v2/types-of-work")
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);

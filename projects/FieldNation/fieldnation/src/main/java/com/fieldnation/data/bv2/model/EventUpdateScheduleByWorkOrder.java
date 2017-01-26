@@ -24,16 +24,16 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     public EventUpdateScheduleByWorkOrder() {
     }
 
-    public void setNew(EventUpdateScheduleByWorkOrderNew new) {
-        _new = new;
+    public void setNew(EventUpdateScheduleByWorkOrderNew neww) {
+        _new = neww;
     }
 
     public EventUpdateScheduleByWorkOrderNew getNew() {
         return _new;
     }
 
-    public EventUpdateScheduleByWorkOrder new(EventUpdateScheduleByWorkOrderNew new) {
-        _new = new;
+    public EventUpdateScheduleByWorkOrder neww(EventUpdateScheduleByWorkOrderNew neww) {
+        _new = neww;
         return this;
     }
 

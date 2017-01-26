@@ -24,10 +24,10 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _columns;
 
     @Json(name = "page")
-    private int _page;
+    private Integer _page;
 
     @Json(name = "perPage")
-    private int _perPage;
+    private Integer _perPage;
 
     @Json(name = "view")
     private String _view;
@@ -45,7 +45,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _f;
 
     @Json(name = "fMaxApprovalTime")
-    private int _fMaxApprovalTime;
+    private Integer _fMaxApprovalTime;
 
     @Json(name = "fRating")
     private String _fRating;
@@ -199,28 +199,28 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
-    public void setPage(int page) {
+    public void setPage(Integer page) {
         _page = page;
     }
 
-    public int getPage() {
+    public Integer getPage() {
         return _page;
     }
 
-    public GetWorkOrdersOptions page(int page) {
+    public GetWorkOrdersOptions page(Integer page) {
         _page = page;
         return this;
     }
 
-    public void setPerPage(int perPage) {
+    public void setPerPage(Integer perPage) {
         _perPage = perPage;
     }
 
-    public int getPerPage() {
+    public Integer getPerPage() {
         return _perPage;
     }
 
-    public GetWorkOrdersOptions perPage(int perPage) {
+    public GetWorkOrdersOptions perPage(Integer perPage) {
         _perPage = perPage;
         return this;
     }
@@ -290,15 +290,15 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
-    public void setFMaxApprovalTime(int fMaxApprovalTime) {
+    public void setFMaxApprovalTime(Integer fMaxApprovalTime) {
         _fMaxApprovalTime = fMaxApprovalTime;
     }
 
-    public int getFMaxApprovalTime() {
+    public Integer getFMaxApprovalTime() {
         return _fMaxApprovalTime;
     }
 
-    public GetWorkOrdersOptions fMaxApprovalTime(int fMaxApprovalTime) {
+    public GetWorkOrdersOptions fMaxApprovalTime(Integer fMaxApprovalTime) {
         _fMaxApprovalTime = fMaxApprovalTime;
         return this;
     }

@@ -1,4 +1,5 @@
 package com.fieldnation.data.bv2.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -104,16 +105,16 @@ public class ErrorTrace implements Parcelable {
         return this;
     }
 
-    public void setClass(String class) {
-        _class = class;
+    public void setClass(String clazz) {
+        _class = clazz;
     }
 
-    public String getClass() {
+    public String getClazz() {
         return _class;
     }
 
-    public ErrorTrace class(String class) {
-        _class = class;
+    public ErrorTrace clazz(String clazz) {
+        _class = clazz;
         return this;
     }
 

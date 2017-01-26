@@ -25,14 +25,14 @@ public class MapsWebApi {
     public static void getMaps(Context context, String type, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//maps/search")
+                    .timingKey("GET//api/rest/v2/maps/search")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/maps/search")
+                            .path("/api/rest/v2/maps/search")
                             .urlParams("?type=" + type)
                     ).build();
 

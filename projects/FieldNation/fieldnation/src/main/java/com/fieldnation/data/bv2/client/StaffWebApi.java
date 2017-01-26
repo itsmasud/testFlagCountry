@@ -25,14 +25,14 @@ public class StaffWebApi {
     public static void getEmailTemplates(Context context, String category, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//staff/email-templates/category/{category}")
+                    .timingKey("GET//api/rest/v2/staff/email-templates/category/{category}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/staff/email-templates/category/" + category)
+                            .path("/api/rest/v2/staff/email-templates/category/" + category)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);

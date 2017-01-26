@@ -26,14 +26,14 @@ public class CompanyWebApi {
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//company/{company_id}/integrations")
+                    .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .path("/company/" + companyId + "/integrations")
+                            .path("/api/rest/v2/company/" + companyId + "/integrations")
                             .urlParams("?access_token=" + accessToken)
                     ).build();
 

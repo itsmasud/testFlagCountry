@@ -22,17 +22,17 @@ public class BonusesWebApi {
      * @param bonusId ID of Bonus
      * @param isBackground indicates that this call is low priority
      */
-    public static void removeBonus(Context context, int bonusId, boolean isBackground) {
+    public static void removeBonus(Context context, Integer bonusId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//bonuses/{bonus_id}")
+                    .timingKey("DELETE//api/rest/v2/bonuses/{bonus_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/bonuses/" + bonusId)
+                            .path("/api/rest/v2/bonuses/" + bonusId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -48,7 +48,7 @@ public class BonusesWebApi {
      * @param json JSON Model
      * @param isBackground indicates that this call is low priority
      */
-    public static void updateBonus(Context context, int bonusId, PayModifier json, boolean isBackground) {
+    public static void updateBonus(Context context, Integer bonusId, PayModifier json, boolean isBackground) {
     }
 
     /**
@@ -58,6 +58,23 @@ public class BonusesWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void addBonus(Context context, PayModifier json, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/bonuses")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/bonuses")
+                            .body(json.toJson().toString())
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
 }

@@ -22,6 +22,22 @@ public class PenaltiesWebApi {
      * @param isBackground indicates that this call is low priority
      */
     public static void addPenalty(Context context, boolean isBackground) {
+        try {
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/penalties")
+                    .priority(Priority.HIGH)
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("POST")
+                            .path("/api/rest/v2/penalties")
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /**
@@ -30,17 +46,17 @@ public class PenaltiesWebApi {
      * @param penaltyId Penalty ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void removePenalty(Context context, int penaltyId, boolean isBackground) {
+    public static void removePenalty(Context context, Integer penaltyId, boolean isBackground) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//penalties/{penalty_id}")
+                    .timingKey("DELETE//api/rest/v2/penalties/{penalty_id}")
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .path("/penalties/" + penaltyId)
+                            .path("/api/rest/v2/penalties/" + penaltyId)
                     ).build();
 
             WebTransactionService.queueTransaction(context, transaction);

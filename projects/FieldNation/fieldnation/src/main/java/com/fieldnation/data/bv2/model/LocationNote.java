@@ -33,16 +33,16 @@ public class LocationNote implements Parcelable {
     public LocationNote() {
     }
 
-    public void setPrivate(Boolean private) {
-        _private = private;
+    public void setPrivate(Boolean privatee) {
+        _private = privatee;
     }
 
     public Boolean getPrivate() {
         return _private;
     }
 
-    public LocationNote private(Boolean private) {
-        _private = private;
+    public LocationNote privatee(Boolean privatee) {
+        _private = privatee;
         return this;
     }
 
