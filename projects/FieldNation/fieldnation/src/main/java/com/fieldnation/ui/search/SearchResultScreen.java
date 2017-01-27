@@ -136,12 +136,12 @@ public class SearchResultScreen extends RelativeLayout {
     }
 
     public void startSearch(SavedSearchParams searchParams) {
-        _searchParams = searchParams;
-
-        if (_searchParams == null) {
+        if (searchParams == null) {
             SavedSearchClient.list();
             return;
         }
+
+        _searchParams = searchParams;
 
         if (_searchParams.uiLocationSpinner == 1 && _location != null) {
             _searchParams.location(_location.getLatitude(), _location.getLongitude());
