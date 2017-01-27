@@ -6,17 +6,30 @@ import android.net.Uri;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/27/17.
  */
 
-public class UsersWebApi {
-    private static final String TAG = "UsersWebApi";
+public class UsersWebApi extends TopicClient {
+    private static final String STAG = "UsersWebApi";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
+
+    public UsersWebApi(Listener listener) {
+        super(listener);
+    }
+
+    @Override
+    public String getUserTag() {
+        return TAG;
+    }
     /**
      * Send account verification code via text message
      *
@@ -35,16 +48,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/text"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subSendVerificationCodeViaSms(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/text"));
+    }
     /**
      * Send account activation link
      *
@@ -63,16 +81,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/email"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subSendAccountActivationLink(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/email"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -87,16 +110,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
+                    .key(misc.md5("PATCH/" + "/api/rest/v2/users/" + userId + "/settings"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdateSettings(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PATCH/" + "/api/rest/v2/users/" + userId + "/settings"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -112,17 +140,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/settings")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/settings"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetSettings(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/settings"));
+    }
     /**
      * Update tax info.
      *
@@ -141,16 +174,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/tax"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdateTax(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/tax"));
+    }
     /**
      * Get tax info
      *
@@ -166,17 +204,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tax")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/tax"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetTax(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/tax"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -191,16 +234,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
+                    .key(misc.md5("PATCH/" + "/api/rest/v2/users/" + userId + "/pay"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdatePay(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PATCH/" + "/api/rest/v2/users/" + userId + "/pay"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -215,16 +263,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/pay"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subAddPay(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/pay"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -240,17 +293,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/pay")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/pay"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetPay(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/pay"));
+    }
     /**
      * Set user preference
      *
@@ -270,16 +328,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/preferences/" + preference))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subSetUserPreference(Integer userId, String preference) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/preferences/" + preference));
+    }
     /**
      * Get user preference value
      *
@@ -296,17 +359,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/preferences/" + preference))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetUserPreferenceValue(Integer userId, String preference) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/preferences/" + preference));
+    }
     /**
      * Upload profile photo
      *
@@ -323,16 +391,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/profile/avatar"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUploadProfilePhoto(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/profile/avatar"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -347,16 +420,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
+                    .key(misc.md5("PATCH/" + "/api/rest/v2/users/" + userId + "/tour"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdateTour(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PATCH/" + "/api/rest/v2/users/" + userId + "/tour"));
+    }
     /**
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -372,17 +450,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tour")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/tour"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetTour(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/tour"));
+    }
     /**
      * Returns summary details about a user profile.
      *
@@ -398,17 +481,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user}")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + user))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetUser(String user) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + user));
+    }
     /**
      * Send account verification code via phone call
      *
@@ -427,16 +515,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/phone"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subSendVerificationCodeViaVoiceCall(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/phone"));
+    }
     /**
      * Add types of work to profile
      *
@@ -455,16 +548,21 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/types-of-work"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subAddTypesOfWork(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/types-of-work"));
+    }
     /**
      * Get all types of work of a specific user
      *
@@ -480,17 +578,22 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/types-of-work")
+                    .key(misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/types-of-work"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subGetUserTypesOfWork(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/users/" + userId + "/types-of-work"));
+    }
     /**
      * Verify account
      *
@@ -509,14 +612,19 @@ public class UsersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
+                    .key(misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/2fa"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subVerifyAccount(Integer userId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/users/" + userId + "/verify/2fa"));
+    }
 }

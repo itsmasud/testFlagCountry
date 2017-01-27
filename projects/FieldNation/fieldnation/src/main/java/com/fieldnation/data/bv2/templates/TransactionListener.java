@@ -6,6 +6,8 @@ import android.os.Bundle;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 
@@ -61,18 +63,21 @@ public class TransactionListener extends WebTransactionListener {
 
                 Bundle bundle = new Bundle();
 
-                bundle.putString("actionId", "timingKey?");
+                bundle.putString("key", transaction.getKey());
 
                 if (httpResult.isFile()) {
                 } else {
                     bundle.putByteArray("successByteArray", httpResult.getByteArray());
                 }
 
+                TopicService.dispatchEvent(context, "TOPIC_ID_API_V2/" + transaction.getKey(), bundle, Sticky.TEMP);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
 
             return Result.CONTINUE;
+        } else if (result == Result.DELETE) {
+            Log.v(TAG, "break!");
         }
         return super.onComplete(context, result, transaction, httpResult, throwable);
     }

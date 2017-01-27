@@ -5,16 +5,30 @@ import android.content.Context;
 import com.fieldnation.data.bv2.model.CustomField;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/27/17.
  */
 
-public class CustomFieldsWebApi {
-    private static final String TAG = "CustomFieldsWebApi";
+public class CustomFieldsWebApi extends TopicClient {
+    private static final String STAG = "CustomFieldsWebApi";
+    private final String TAG = UniqueTag.makeTag(STAG);
+
+
+    public CustomFieldsWebApi(Listener listener) {
+        super(listener);
+    }
+
+    @Override
+    public String getUserTag() {
+        return TAG;
+    }
 
     /**
      * Updates a work order custom field's visibility for a single client
@@ -32,14 +46,20 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/client/{client_id}/{visibility}")
+                    .key(misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
+    }
+
+    public boolean subUpdateCustomFieldVisibility(Integer customFieldId, Integer clientId, String visibility) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility));
     }
 
     /**
@@ -57,14 +77,20 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/{visibility}")
+                    .key(misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
+    }
+
+    public boolean subUpdateCustomFieldVisibility(Integer customFieldId, String visibility) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility));
     }
 
     /**
@@ -81,14 +107,20 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
+                    .key(misc.md5("DELETE/" + "/api/rest/v2/custom-fields/" + customFieldId))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
+    }
+
+    public boolean subRemoveCustomField(Integer customFieldId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("DELETE/" + "/api/rest/v2/custom-fields/" + customFieldId));
     }
 
     /**
@@ -109,14 +141,20 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}")
+                    .key(misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
+    }
+
+    public boolean subUpdateCustomField(Integer customFieldId) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId));
     }
 
     /**
@@ -136,14 +174,20 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/custom-fields")
+                    .key(misc.md5("POST/" + "/api/rest/v2/custom-fields"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
+    }
+
+    public boolean subAddCustomField() {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/custom-fields"));
     }
 
     /**
@@ -160,15 +204,21 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/custom-fields")
+                    .key(misc.md5("GET/" + "/api/rest/v2/custom-fields"))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
+    }
+
+    public boolean subGetCustomFields() {
+        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/custom-fields"));
     }
 
     /**
@@ -187,14 +237,19 @@ public class CustomFieldsWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/project/{project_id}/{visibility}")
+                    .key(misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdateCustomFieldVisibilityByProject(Integer customFieldId, Integer projectId, String visibility) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("PUT/" + "/api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility));
+    }
 }

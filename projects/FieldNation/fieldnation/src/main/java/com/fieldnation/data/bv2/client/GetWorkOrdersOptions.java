@@ -11,7 +11,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/27/17.
  */
 
 public class GetWorkOrdersOptions implements Parcelable {

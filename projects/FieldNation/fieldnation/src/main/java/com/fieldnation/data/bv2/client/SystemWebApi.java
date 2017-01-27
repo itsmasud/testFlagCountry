@@ -6,17 +6,30 @@ import android.net.Uri;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/27/17.
  */
 
-public class SystemWebApi {
-    private static final String TAG = "SystemWebApi";
+public class SystemWebApi extends TopicClient {
+    private static final String STAG = "SystemWebApi";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
+
+    public SystemWebApi(Listener listener) {
+        super(listener);
+    }
+
+    @Override
+    public String getUserTag() {
+        return TAG;
+    }
     /**
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
@@ -37,16 +50,21 @@ public class SystemWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
+                    .key(misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdateModel(String path, String event) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event));
+    }
     /**
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
@@ -68,14 +86,19 @@ public class SystemWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
+                    .key(misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event + "&async=" + async))
                     .priority(Priority.HIGH)
                     .useAuth(true)
-                    .request(builder).build();
+                    .request(builder)
+                    .build();
 
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            Log.v(STAG, ex);
         }
     }
 
+    public boolean subUpdateModel(String path, String event, Boolean async) {
+        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event + "&async=" + async));
+    }
 }
