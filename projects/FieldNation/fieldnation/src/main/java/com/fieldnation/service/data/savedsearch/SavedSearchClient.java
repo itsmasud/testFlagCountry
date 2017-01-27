@@ -224,7 +224,6 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
 
                     @Override
                     protected void onPostExecute(List<SavedSearchParams> savedSearchParams) {
-                        // something bad happened, re-run
                         list(savedSearchParams);
                     }
                 }.executeEx((Bundle) payload);
