@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -33,6 +35,8 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -50,12 +54,11 @@ public class EtaDialog extends FullScreenDialog {
     private static final String TAG = "EtaDialog";
 
     // Dialog Uids
-    private static final String UID_EXIPRY_DIALOG = TAG + ".ExpiryDialog";
     private static final String UID_DURATION_DIALOG = TAG + ".DurationDialog";
 
     // State
     private static final String STATE_DURATION = "STATE_DURATION";
-    private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
+    private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
     private static final String STATE_NOTE = "STATE_NOTE";
     private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
     private static final String STATE_ETA_CALENDAR = "STATE_ETA_CALENDAR";
@@ -70,7 +73,7 @@ public class EtaDialog extends FullScreenDialog {
     public static final String PARAM_SCHEDULE = "schedule";
 
     private final static int MIN_JOB_DURATION = 900000;
-    private final static int MIN_EXPIRING_DURATION = 900000;
+//    private final static int MIN_EXPIRING_DURATION = 900000;
     private final static int INVALID_NUMBER = -1;
     private final int ONE_DAY = 86400000;
 
@@ -80,7 +83,8 @@ public class EtaDialog extends FullScreenDialog {
 
     private TextView _termsWarningTextView;
     private RelativeLayout _expirationLayout;
-    private Button _expirationButton;
+    private CheckBox _expiresCheckBox;
+    private HintSpinner _expireSpinner;
 
     private TextView _scheduleTextView;
 
@@ -105,8 +109,12 @@ public class EtaDialog extends FullScreenDialog {
     // User data
     private Calendar _etaStart;
     private long _durationMilliseconds = INVALID_NUMBER;
-    private long _expiringDurationMilliseconds = INVALID_NUMBER;
+    private long _expiringDurationSeconds = INVALID_NUMBER;
     private boolean _isSwitchOn = true;
+    private int _currentPosition = 1;
+    private int[] _durations;
+    private boolean _expires;
+
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -131,7 +139,8 @@ public class EtaDialog extends FullScreenDialog {
 
         // Expiration stuff
         _expirationLayout = (RelativeLayout) v.findViewById(R.id.request_layout); // expiration layout
-        _expirationButton = (Button) v.findViewById(R.id.expiration_button);
+        _expiresCheckBox = (CheckBox) v.findViewById(R.id.expires_checkbox);
+        _expireSpinner = (HintSpinner) v.findViewById(R.id.expire_duration_spinner);
 
         // schedule description
         _scheduleTextView = (TextView) v.findViewById(R.id.schedule_textview);
@@ -145,12 +154,16 @@ public class EtaDialog extends FullScreenDialog {
         _durationButton = (Button) v.findViewById(R.id.duration_button);
         _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
 
+        _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.expire_duration_values);
+
         return v;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Log.e(TAG, "onResume");
+
         // Dialog setup, start them off with today
         _etaStartTimePicker = new TimePickerDialog(_expirationLayout.getContext(), _etaStartTime_onSet,
                 _etaStart.get(Calendar.HOUR_OF_DAY),
@@ -164,7 +177,11 @@ public class EtaDialog extends FullScreenDialog {
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
-        _expirationButton.setOnClickListener(_expiringButton_onClick);
+        _expiresCheckBox.setOnClickListener(_expires_onClick);
+        _expireSpinner.setOnItemSelectedListener(_expireSpinner_selected);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(_expirationLayout.getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _expireSpinner.setAdapter(adapter);
 
         _etaSwitch.setOnCheckedChangeListener(_switch_onChange);
 
@@ -173,16 +190,20 @@ public class EtaDialog extends FullScreenDialog {
         _durationButton.setOnClickListener(_duration_onClick);
 
         DurationDialog.addOnOkListener(UID_DURATION_DIALOG, _durationDialog_onOk);
-        DurationDialog.addOnOkListener(UID_EXIPRY_DIALOG, _expiryDialog_onOk);
 
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (_currentPosition != INVALID_NUMBER) {
+            _expiringDurationSeconds = _durations[_currentPosition];
+            _expireSpinner.setSelection(_currentPosition);
+        }
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
         DurationDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationDialog_onOk);
-        DurationDialog.removeOnOkListener(UID_EXIPRY_DIALOG, _expiryDialog_onOk);
     }
 
     @Override
@@ -211,8 +232,7 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        if (_expiringDurationMilliseconds != INVALID_NUMBER)
-            outState.putLong(STATE_EXPIRATION_DURATION, _expiringDurationMilliseconds);
+        outState.putInt(STATE_SPINNER_POSITION, _currentPosition);
 
         // ETA stuff
         if (_durationMilliseconds != INVALID_NUMBER)
@@ -229,8 +249,9 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        if (savedState.containsKey(STATE_EXPIRATION_DURATION))
-            _expiringDurationMilliseconds = savedState.getLong(STATE_EXPIRATION_DURATION);
+        Log.e(TAG, "onRestoreDialogState");
+        if (savedState.containsKey(STATE_SPINNER_POSITION))
+            _currentPosition = savedState.getInt(STATE_SPINNER_POSITION);
 
         // ETA stuff
         if (savedState.containsKey(STATE_DURATION))
@@ -345,18 +366,13 @@ public class EtaDialog extends FullScreenDialog {
             }
         } catch (Exception e) {
         }
-
-//        if (_durationMilliseconds == INVALID_NUMBER) {
-//            _durationMilliseconds = 60 * 60 * 1000; // 1 hr
-//        }
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
 
-
-        if (_expiringDurationMilliseconds == INVALID_NUMBER) {
-            _expirationButton.setText(R.string.btn_never);
-        } else {
-            _expirationButton.setText(misc.convertMsToHuman(_expiringDurationMilliseconds));
-        }
+//        if (_expiringDurationSeconds == INVALID_NUMBER) {
+//            _expirationButton.setText(R.string.btn_never);
+//        } else {
+//            _expirationButton.setText(misc.convertMsToHuman(_expiringDurationSeconds));
+//        }
     }
 
     private boolean isValidEta(final Calendar arrival) {
@@ -662,25 +678,37 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _expiringButton_onClick = new View.OnClickListener() {
+//    private final View.OnClickListener _expiringButton_onClick = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            DurationDialog.show(App.get(), UID_EXIPRY_DIALOG);
+//        }
+//    };
+
+    private final AdapterView.OnItemSelectedListener _expireSpinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onClick(View v) {
-            DurationDialog.show(App.get(), UID_EXIPRY_DIALOG);
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            _currentPosition = position;
+            _expiringDurationSeconds = _durations[position];
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            _currentPosition = 1;
         }
     };
 
-    private final DurationDialog.OnOkListener _expiryDialog_onOk = new DurationDialog.OnOkListener() {
+    private final View.OnClickListener _expires_onClick = new View.OnClickListener() {
         @Override
-        public void onOk(long milliseconds) {
-            Log.v(TAG, "_expiryDialog_listener.onOk");
-            if (milliseconds < MIN_EXPIRING_DURATION) {
-                ToastClient.toast(App.get(), R.string.toast_minimum_expiring_duration, Toast.LENGTH_LONG);
-                return;
+        public void onClick(View v) {
+            _expires = _expiresCheckBox.isChecked();
+
+            if (!_expires) {
+                _expiringDurationSeconds = INVALID_NUMBER;
             }
-            _expiringDurationMilliseconds = milliseconds;
-            populateUi();
         }
     };
+
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
@@ -715,7 +743,7 @@ public class EtaDialog extends FullScreenDialog {
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
-                                    _expiringDurationMilliseconds / 1000,
+                                    _expiringDurationSeconds,
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
@@ -723,7 +751,7 @@ public class EtaDialog extends FullScreenDialog {
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
-                                    _expiringDurationMilliseconds / 1000,
+                                    _expiringDurationSeconds,
                                     null, null,
                                     _noteEditText.getText().toString().trim());
                         }
