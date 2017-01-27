@@ -124,10 +124,29 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
-                StoredObject so = StoredObject.get(App.get(), App.getProfileId(), "SavedSearch", 0);
+                if (searchParams == null || searchParams.length == 0 || searchParams[0] == null) {
+                    Log.v(STAG, "Trying to load from disk");
 
-                if (so == null) {
-                    // create defaults if none in database
+                    StoredObject so = StoredObject.get(App.get(), App.getProfileId(), "SavedSearch", 0);
+
+                    if (so != null) {
+                        // loading from StoredObject
+                        try {
+                            JsonArray ja = new JsonArray(so.getData());
+                            searchParams = new SavedSearchParams[ja.size()];
+
+                            for (int i = 0; i < ja.size(); i++) {
+                                searchParams[i] = SavedSearchParams.fromJson(ja.getJsonObject(i));
+                            }
+                        } catch (Exception ex) {
+                            Log.v(STAG, ex);
+                        }
+                    }
+                }
+
+                // There was a problem loading from disk, so load defaults
+                if (searchParams == null || searchParams.length == 0 || searchParams[0] == null) {
+                    Log.v(STAG, "Load from disk failed, loading defaults");
                     searchParams = new SavedSearchParams[defaults.length];
                     JsonArray ja = new JsonArray();
                     for (int i = 0; i < defaults.length; i++) {
@@ -136,19 +155,6 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                         ja.add(obj);
                     }
                     StoredObject.put(App.get(), App.getProfileId(), "SavedSearch", 0, ja.toByteArray());
-
-                } else {
-                    // loading from StoredObject
-                    try {
-                        JsonArray ja = new JsonArray(so.getData());
-                        searchParams = new SavedSearchParams[ja.size()];
-
-                        for (int i = 0; i < ja.size(); i++) {
-                            searchParams[i] = SavedSearchParams.fromJson(ja.getJsonObject(i));
-                        }
-                    } catch (Exception ex) {
-                        Log.v(STAG, ex);
-                    }
                 }
 
                 // sending the data
@@ -194,6 +200,8 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
     /*-             Listener             -*/
     /*-**********************************-*/
     public static abstract class Listener extends TopicClient.Listener {
+        private static final String TAG = "SavedSearchClient.Listener";
+
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             if (topicId.startsWith(TOPIC_ID_LIST)) {
@@ -207,6 +215,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                             try {
                                 list.add((SavedSearchParams) parcel);
                             } catch (Exception ex) {
+                                Log.v(TAG, ex);
                             }
                         }
 
