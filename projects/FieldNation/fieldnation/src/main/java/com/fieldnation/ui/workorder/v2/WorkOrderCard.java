@@ -16,6 +16,7 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.data.bv2.client.WorkordersWebApi;
 import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.Range;
@@ -787,7 +788,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId().intValue(), false);
         }
     };
 

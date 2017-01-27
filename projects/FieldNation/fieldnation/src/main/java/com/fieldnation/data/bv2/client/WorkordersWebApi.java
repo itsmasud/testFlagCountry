@@ -3,7 +3,29 @@ package com.fieldnation.data.bv2.client;
 import android.content.Context;
 import android.net.Uri;
 
-import com.fieldnation.data.bv2.model.*;
+import com.fieldnation.data.bv2.model.Assignee;
+import com.fieldnation.data.bv2.model.Attachment;
+import com.fieldnation.data.bv2.model.AttachmentFolder;
+import com.fieldnation.data.bv2.model.Cancellation;
+import com.fieldnation.data.bv2.model.Contact;
+import com.fieldnation.data.bv2.model.CustomField;
+import com.fieldnation.data.bv2.model.Error;
+import com.fieldnation.data.bv2.model.Expense;
+import com.fieldnation.data.bv2.model.Location;
+import com.fieldnation.data.bv2.model.Message;
+import com.fieldnation.data.bv2.model.Pay;
+import com.fieldnation.data.bv2.model.PayIncrease;
+import com.fieldnation.data.bv2.model.PayModifier;
+import com.fieldnation.data.bv2.model.Request;
+import com.fieldnation.data.bv2.model.Route;
+import com.fieldnation.data.bv2.model.Schedule;
+import com.fieldnation.data.bv2.model.Shipment;
+import com.fieldnation.data.bv2.model.Signature;
+import com.fieldnation.data.bv2.model.Task;
+import com.fieldnation.data.bv2.model.TaskAlert;
+import com.fieldnation.data.bv2.model.TimeLog;
+import com.fieldnation.data.bv2.model.WorkOrder;
+import com.fieldnation.data.bv2.templates.TransactionListener;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
@@ -45,7 +67,7 @@ public class WorkordersWebApi {
      * Reverts a work order to draft status
      *
      * @param workOrderId ID of work order
-     * @param async Async (Optional)
+     * @param async       Async (Optional)
      */
     public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async) {
         try {
@@ -71,7 +93,7 @@ public class WorkordersWebApi {
      * Marks a task associated with a work order as incomplete
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
+     * @param taskId      Task id
      */
     public static void incompleteTask(Context context, Integer workOrderId, Integer taskId) {
         try {
@@ -95,9 +117,9 @@ public class WorkordersWebApi {
     /**
      * Get a custom field by work order and custom field
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId   ID of work order
      * @param customFieldId Custom field id
-     * @param isBackground indicates that this call is low priority
+     * @param isBackground  indicates that this call is low priority
      */
     public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean isBackground) {
         try {
@@ -122,9 +144,9 @@ public class WorkordersWebApi {
     /**
      * Update a custom field value on a work order
      *
-     * @param workOrderId Work Order ID
+     * @param workOrderId   Work Order ID
      * @param customFieldId Custom field ID
-     * @param customField Custom field
+     * @param customField   Custom field
      */
     public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField) {
         try {
@@ -151,10 +173,10 @@ public class WorkordersWebApi {
     /**
      * Update a custom field value on a work order
      *
-     * @param workOrderId Work Order ID
+     * @param workOrderId   Work Order ID
      * @param customFieldId Custom field ID
-     * @param customField Custom field
-     * @param async Async (Optional)
+     * @param customField   Custom field
+     * @param async         Async (Optional)
      */
     public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async) {
         try {
@@ -207,7 +229,7 @@ public class WorkordersWebApi {
      * Marks a work order complete and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param async Async (Optional)
+     * @param async       Async (Optional)
      */
     public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
@@ -233,7 +255,7 @@ public class WorkordersWebApi {
      * Marks a work order incomplete and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param reason Reason
+     * @param reason      Reason
      */
     public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason) {
         try {
@@ -259,8 +281,8 @@ public class WorkordersWebApi {
      * Marks a work order incomplete and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param reason Reason
-     * @param async Async (Optional)
+     * @param reason      Reason
+     * @param async       Async (Optional)
      */
     public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, Boolean async) {
         try {
@@ -286,7 +308,7 @@ public class WorkordersWebApi {
      * Adds an expense on a work order
      *
      * @param workOrderId ID of work order
-     * @param expense Expense
+     * @param expense     Expense
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense) {
         try {
@@ -314,8 +336,8 @@ public class WorkordersWebApi {
      * Adds an expense on a work order
      *
      * @param workOrderId ID of work order
-     * @param expense Expense
-     * @param async Asynchroneous (Optional)
+     * @param expense     Expense
+     * @param async       Asynchroneous (Optional)
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async) {
         try {
@@ -343,7 +365,7 @@ public class WorkordersWebApi {
     /**
      * Get all expenses of a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getExpenses(Context context, Integer workOrderId, boolean isBackground) {
@@ -370,9 +392,9 @@ public class WorkordersWebApi {
      * Uploads a file by an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId Folder id
-     * @param attachment Folder
-     * @param file File
+     * @param folderId    Folder id
+     * @param attachment  Folder
+     * @param file        File
      */
     public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file) {
         try {
@@ -380,7 +402,7 @@ public class WorkordersWebApi {
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment)                    .multipartFile("file", file.getName(), Uri.fromFile(file));
+                    .multipartField("attachment", attachment).multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
@@ -398,10 +420,10 @@ public class WorkordersWebApi {
      * Uploads a file by an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId Folder id
-     * @param attachment Folder
-     * @param file File
-     * @param async Async (Optional)
+     * @param folderId    Folder id
+     * @param attachment  Folder
+     * @param file        File
+     * @param async       Async (Optional)
      */
     public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, Boolean async) {
         try {
@@ -410,7 +432,7 @@ public class WorkordersWebApi {
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .urlParams("?async=" + async)
-                    .multipartField("attachment", attachment)                    .multipartFile("file", file.getName(), Uri.fromFile(file));
+                    .multipartField("attachment", attachment).multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
@@ -427,8 +449,8 @@ public class WorkordersWebApi {
     /**
      * Gets an attachment folder and its contents
      *
-     * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
      * @param isBackground indicates that this call is low priority
      */
     public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean isBackground) {
@@ -455,7 +477,7 @@ public class WorkordersWebApi {
      * Deletes an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param folderId    Folder id
      */
     public static void deleteFolder(Context context, Integer workOrderId, Integer folderId) {
         try {
@@ -480,8 +502,8 @@ public class WorkordersWebApi {
      * Deletes an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId Folder id
-     * @param async Async (Optional)
+     * @param folderId    Folder id
+     * @param async       Async (Optional)
      */
     public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async) {
         try {
@@ -507,8 +529,8 @@ public class WorkordersWebApi {
      * Updates an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId Folder id
-     * @param folder Folder
+     * @param folderId    Folder id
+     * @param folder      Folder
      */
     public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder) {
         try {
@@ -536,9 +558,9 @@ public class WorkordersWebApi {
      * Updates an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId Folder id
-     * @param folder Folder
-     * @param async Async (Optional)
+     * @param folderId    Folder id
+     * @param folder      Folder
+     * @param async       Async (Optional)
      */
     public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async) {
         try {
@@ -592,7 +614,7 @@ public class WorkordersWebApi {
      * Returns a list of work orders.
      *
      * @param getWorkOrdersOptions Additional optional parameters
-     * @param isBackground indicates that this call is low priority
+     * @param isBackground         indicates that this call is low priority
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean isBackground) {
         try {
@@ -601,57 +623,57 @@ public class WorkordersWebApi {
                     .method("GET")
                     .path("/api/rest/v2/workorders")
                     .urlParams((getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
-                                    + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
-                                    + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
-                                    + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
-                                    + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
-                                    + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
-                                    + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
-                                    + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
-                                    + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
-                                    + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
-                                    + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
-                                    + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
-                                    + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
-                                    + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
-                                    + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
-                                    + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
-                                    + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
-                                    + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
-                                    + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
-                                    + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
-                                    + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
-                                    + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
-                                    + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
-                                    + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
-                                    + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
-                                    + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
-                                    + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
-                                    + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
-                                    + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
-                                    + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
-                                    + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
-                                    + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
-                                    + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
-                                    + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
-                                    + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
-                                    + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
-                                    + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
-                                    + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
-                                    + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
-                                    + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
-                                    + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
-                                    + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
-                                    + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
-                                    + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
-                                    + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
-                                    + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
-                                    + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
-                                    + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
-                                    + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
-                                    + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
-                                   );
+                            + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
+                            + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
+                            + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
+                            + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
+                            + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
+                            + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
+                            + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
+                            + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                            + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
+                            + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                            + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
+                            + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                            + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
+                            + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
+                            + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
+                            + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
+                            + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
+                            + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
+                            + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
+                            + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
+                            + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
+                            + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
+                            + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
+                            + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
+                            + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
+                            + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
+                            + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
+                            + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
+                            + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
+                            + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
+                            + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
+                            + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
+                            + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
+                            + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
+                            + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
+                            + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
+                            + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
+                            + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
+                            + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
+                            + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
+                            + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
+                            + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
+                            + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
+                            + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
+                            + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
+                            + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
+                            + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
+                            + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
+                            + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                            + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+                    );
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
@@ -669,7 +691,7 @@ public class WorkordersWebApi {
     /**
      * Verify time log for assigned work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
      */
     public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
@@ -694,9 +716,9 @@ public class WorkordersWebApi {
     /**
      * Verify time log for assigned work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param async Return the model in the response (slower) (Optional)
+     * @param async            Return the model in the response (slower) (Optional)
      */
     public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
@@ -722,7 +744,7 @@ public class WorkordersWebApi {
      * Removes a work order contact
      *
      * @param workOrderId Work order id
-     * @param contactId Contact id
+     * @param contactId   Contact id
      */
     public static void removeContact(Context context, Integer workOrderId, Integer contactId) {
         try {
@@ -747,8 +769,8 @@ public class WorkordersWebApi {
      * Updates a work order contact
      *
      * @param workOrderId Work order id
-     * @param contactId Contact id
-     * @param json JSON Model
+     * @param contactId   Contact id
+     * @param json        JSON Model
      */
     public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json) {
         try {
@@ -775,8 +797,8 @@ public class WorkordersWebApi {
     /**
      * Get pay increase for assigned work order.
      *
-     * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
+     * @param workOrderId  ID of work order
+     * @param increaseId   ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
@@ -802,9 +824,9 @@ public class WorkordersWebApi {
     /**
      * Get pay increase for assigned work order.
      *
-     * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
-     * @param async Async (Optional)
+     * @param workOrderId  ID of work order
+     * @param increaseId   ID of work order increase
+     * @param async        Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
@@ -832,7 +854,7 @@ public class WorkordersWebApi {
      * Delete pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
+     * @param increaseId  ID of work order increase
      */
     public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
@@ -857,8 +879,8 @@ public class WorkordersWebApi {
      * Delete pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
-     * @param async Async (Optional)
+     * @param increaseId  ID of work order increase
+     * @param async       Async (Optional)
      */
     public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async) {
         try {
@@ -884,8 +906,8 @@ public class WorkordersWebApi {
      * Update pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
-     * @param increase Increase structure for update
+     * @param increaseId  ID of work order increase
+     * @param increase    Increase structure for update
      */
     public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase) {
         try {
@@ -913,9 +935,9 @@ public class WorkordersWebApi {
      * Update pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
-     * @param increase Increase structure for update
-     * @param async Async (Optional)
+     * @param increaseId  ID of work order increase
+     * @param increase    Increase structure for update
+     * @param async       Async (Optional)
      */
     public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async) {
         try {
@@ -944,7 +966,7 @@ public class WorkordersWebApi {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId ID of expense
+     * @param expenseId   ID of expense
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
@@ -969,8 +991,8 @@ public class WorkordersWebApi {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId ID of expense
-     * @param async Asynchroneous (Optional)
+     * @param expenseId   ID of expense
+     * @param async       Asynchroneous (Optional)
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async) {
         try {
@@ -996,7 +1018,7 @@ public class WorkordersWebApi {
      * Update an Expense of a Work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId ID of expense
+     * @param expenseId   ID of expense
      */
     public static void updateExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
@@ -1020,8 +1042,8 @@ public class WorkordersWebApi {
     /**
      * Update an Expense of a Work order
      *
-     * @param workOrderId ID of work order
-     * @param expenseId ID of expense
+     * @param workOrderId          ID of work order
+     * @param expenseId            ID of expense
      * @param updateExpenseOptions Additional optional parameters
      */
     public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions) {
@@ -1031,7 +1053,7 @@ public class WorkordersWebApi {
                     .method("PUT")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                     .urlParams((updateExpenseOptions.getAsync() != null ? "?async=" + updateExpenseOptions.getAsync() : "")
-                                   );
+                    );
 
             if (updateExpenseOptions.getExpense() != null)
                 builder.body(updateExpenseOptions.getExpense().toJson().toString());
@@ -1051,7 +1073,7 @@ public class WorkordersWebApi {
     /**
      * Returns a list of pay increases requested by the assigned provider.
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getIncreases(Context context, Integer workOrderId, boolean isBackground) {
@@ -1077,7 +1099,7 @@ public class WorkordersWebApi {
     /**
      * Gets the pay for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getPay(Context context, Integer workOrderId, boolean isBackground) {
@@ -1104,7 +1126,7 @@ public class WorkordersWebApi {
      * Updates the pay of a work order, or requests an adjustment
      *
      * @param workOrderId ID of work order
-     * @param pay Pay
+     * @param pay         Pay
      */
     public static void updatePay(Context context, Integer workOrderId, Pay pay) {
         try {
@@ -1132,8 +1154,8 @@ public class WorkordersWebApi {
      * Updates the pay of a work order, or requests an adjustment
      *
      * @param workOrderId ID of work order
-     * @param pay Pay
-     * @param async Async (Optional)
+     * @param pay         Pay
+     * @param async       Async (Optional)
      */
     public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async) {
         try {
@@ -1162,7 +1184,7 @@ public class WorkordersWebApi {
      * Adds a task to a work order
      *
      * @param workOrderId Work order id
-     * @param json JSON Model
+     * @param json        JSON Model
      */
     public static void addTask(Context context, Integer workOrderId, Task json) {
         try {
@@ -1189,7 +1211,7 @@ public class WorkordersWebApi {
     /**
      * Get a list of a work order's tasks
      *
-     * @param workOrderId Work order id
+     * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getTasks(Context context, Integer workOrderId, boolean isBackground) {
@@ -1215,7 +1237,7 @@ public class WorkordersWebApi {
     /**
      * Get the milestones of a work order
      *
-     * @param workOrderId ID of Work Order
+     * @param workOrderId  ID of Work Order
      * @param isBackground indicates that this call is low priority
      */
     public static void getMilestones(Context context, Integer workOrderId, boolean isBackground) {
@@ -1242,7 +1264,7 @@ public class WorkordersWebApi {
      * Add signature by work order
      *
      * @param workOrderId ID of work order
-     * @param signature Signature JSON
+     * @param signature   Signature JSON
      */
     public static void addSignature(Context context, Integer workOrderId, Signature signature) {
         try {
@@ -1270,8 +1292,8 @@ public class WorkordersWebApi {
      * Add signature by work order
      *
      * @param workOrderId ID of work order
-     * @param signature Signature JSON
-     * @param async async (Optional)
+     * @param signature   Signature JSON
+     * @param async       async (Optional)
      */
     public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async) {
         try {
@@ -1299,7 +1321,7 @@ public class WorkordersWebApi {
     /**
      * Returns a list of signatures uploaded by the assigned provider
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getSignatures(Context context, Integer workOrderId, boolean isBackground) {
@@ -1325,7 +1347,7 @@ public class WorkordersWebApi {
     /**
      * Gets list of providers available for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getProviders(Context context, String workOrderId, boolean isBackground) {
@@ -1351,9 +1373,9 @@ public class WorkordersWebApi {
     /**
      * Gets list of providers available for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId         ID of work order
      * @param getProvidersOptions Additional optional parameters
-     * @param isBackground indicates that this call is low priority
+     * @param isBackground        indicates that this call is low priority
      */
     public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean isBackground) {
         try {
@@ -1362,9 +1384,9 @@ public class WorkordersWebApi {
                     .method("GET")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/providers")
                     .urlParams((getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
-                                    + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
-                                    + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-                                   );
+                            + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
+                            + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
+                    );
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
@@ -1383,7 +1405,7 @@ public class WorkordersWebApi {
      * Adds a message to a work order
      *
      * @param workOrderId ID of work order
-     * @param json JSON payload
+     * @param json        JSON payload
      */
     public static void addMessage(Context context, String workOrderId, Message json) {
         try {
@@ -1411,8 +1433,8 @@ public class WorkordersWebApi {
      * Adds a message to a work order
      *
      * @param workOrderId ID of work order
-     * @param json JSON payload
-     * @param async Async (Optional)
+     * @param json        JSON payload
+     * @param async       Async (Optional)
      */
     public static void addMessage(Context context, String workOrderId, Message json, Boolean async) {
         try {
@@ -1440,7 +1462,7 @@ public class WorkordersWebApi {
     /**
      * Gets a list of work order messages
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getMessages(Context context, String workOrderId, boolean isBackground) {
@@ -1465,7 +1487,6 @@ public class WorkordersWebApi {
 
     /**
      * Cancel work order swap request.
-     *
      */
     public static void cancelSwapRequest(Context context) {
         try {
@@ -1490,7 +1511,7 @@ public class WorkordersWebApi {
      * Add time log for work order.
      *
      * @param workOrderId ID of work order
-     * @param timeLog Check in information
+     * @param timeLog     Check in information
      */
     public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
@@ -1517,7 +1538,7 @@ public class WorkordersWebApi {
     /**
      * Returns a list of time logs applied by the assigned provider
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getTimeLogs(Context context, Integer workOrderId, boolean isBackground) {
@@ -1544,7 +1565,7 @@ public class WorkordersWebApi {
      * Update all time logs for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param timeLog Check in information
+     * @param timeLog     Check in information
      */
     public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
@@ -1572,8 +1593,8 @@ public class WorkordersWebApi {
      * Update all time logs for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param timeLog Check in information
-     * @param async Return the model in the response (slower) (Optional)
+     * @param timeLog     Check in information
+     * @param async       Return the model in the response (slower) (Optional)
      */
     public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async) {
         try {
@@ -1601,7 +1622,7 @@ public class WorkordersWebApi {
     /**
      * Gets a work order by its id
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
@@ -1613,6 +1634,8 @@ public class WorkordersWebApi {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}")
+                    .listener(TransactionListener.class)
+                    .listenerParams(TransactionListener.params(WorkordersWebApi.class, "getWorkOrder()", WorkOrder.class, Error.class))
                     .priority(Priority.HIGH)
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -1627,7 +1650,7 @@ public class WorkordersWebApi {
     /**
      * Deletes a work order by its id
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param cancellation Cancellation reasons
      */
     public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation) {
@@ -1655,9 +1678,9 @@ public class WorkordersWebApi {
     /**
      * Deletes a work order by its id
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param cancellation Cancellation reasons
-     * @param async Async (Optional)
+     * @param async        Async (Optional)
      */
     public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async) {
         try {
@@ -1686,7 +1709,7 @@ public class WorkordersWebApi {
      * Updates a work order by its id
      *
      * @param workOrderId ID of work order
-     * @param workOrder Work order model
+     * @param workOrder   Work order model
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder) {
         try {
@@ -1714,8 +1737,8 @@ public class WorkordersWebApi {
      * Updates a work order by its id
      *
      * @param workOrderId ID of work order
-     * @param workOrder Work order model
-     * @param async Asynchroneous (Optional)
+     * @param workOrder   Work order model
+     * @param async       Asynchroneous (Optional)
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async) {
         try {
@@ -1743,8 +1766,8 @@ public class WorkordersWebApi {
     /**
      * Gets a single signature uploaded by the assigned provider
      *
-     * @param workOrderId ID of work order
-     * @param signatureId ID of signature
+     * @param workOrderId  ID of work order
+     * @param signatureId  ID of signature
      * @param isBackground indicates that this call is low priority
      */
     public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
@@ -1797,7 +1820,7 @@ public class WorkordersWebApi {
      *
      * @param workOrderId ID of work order
      * @param signatureId ID of signature
-     * @param async async (Optional)
+     * @param async       async (Optional)
      */
     public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async) {
         try {
@@ -1823,7 +1846,7 @@ public class WorkordersWebApi {
      * Adds an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folder Folder
+     * @param folder      Folder
      */
     public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder) {
         try {
@@ -1851,8 +1874,8 @@ public class WorkordersWebApi {
      * Adds an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folder Folder
-     * @param async Async (Optional)
+     * @param folder      Folder
+     * @param async       Async (Optional)
      */
     public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async) {
         try {
@@ -1880,7 +1903,7 @@ public class WorkordersWebApi {
     /**
      * Gets a list of attachment folders which contain files and deliverables for the work order
      *
-     * @param workOrderId Work order id
+     * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getAttachments(Context context, Integer workOrderId, boolean isBackground) {
@@ -1907,7 +1930,7 @@ public class WorkordersWebApi {
      * Completes a task associated with a work order
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
+     * @param taskId      Task id
      */
     public static void completeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
@@ -1932,7 +1955,7 @@ public class WorkordersWebApi {
      * Allows an assigned provider to removes a discount they previously applied from a work order, increasing the amount they will be paid.
      *
      * @param workOrderId ID of work order
-     * @param discountId ID of the discount
+     * @param discountId  ID of the discount
      */
     public static void removeDiscount(Context context, Integer workOrderId, Integer discountId) {
         try {
@@ -1957,8 +1980,8 @@ public class WorkordersWebApi {
      * Updates the amount or description of a discount applied to the work order.
      *
      * @param workOrderId ID of work order
-     * @param discountId ID of the discount
-     * @param json Payload of the discount
+     * @param discountId  ID of the discount
+     * @param json        Payload of the discount
      */
     public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json) {
         try {
@@ -1985,7 +2008,7 @@ public class WorkordersWebApi {
     /**
      * Remove time log for assigned work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
      */
     public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
@@ -2010,9 +2033,9 @@ public class WorkordersWebApi {
     /**
      * Remove time log for assigned work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param async Return the model in the response (slower) (Optional)
+     * @param async            Return the model in the response (slower) (Optional)
      */
     public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
@@ -2037,9 +2060,9 @@ public class WorkordersWebApi {
     /**
      * Update time log for assigned work order.
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param timeLog Check in information
+     * @param timeLog          Check in information
      */
     public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog) {
         try {
@@ -2066,10 +2089,10 @@ public class WorkordersWebApi {
     /**
      * Update time log for assigned work order.
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param timeLog Check in information
-     * @param async Return the model in the response (slower) (Optional)
+     * @param timeLog          Check in information
+     * @param async            Return the model in the response (slower) (Optional)
      */
     public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async) {
         try {
@@ -2097,8 +2120,8 @@ public class WorkordersWebApi {
     /**
      * Gets an attachment folder and its contents
      *
-     * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
      * @param attachmentId File id
      * @param isBackground indicates that this call is low priority
      */
@@ -2125,8 +2148,8 @@ public class WorkordersWebApi {
     /**
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
      * @param attachmentId File id
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId) {
@@ -2151,10 +2174,10 @@ public class WorkordersWebApi {
     /**
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
      * @param attachmentId File id
-     * @param async Async (Optional)
+     * @param async        Async (Optional)
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async) {
         try {
@@ -2179,10 +2202,10 @@ public class WorkordersWebApi {
     /**
      * Updates an attachment folder and its contents
      *
-     * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
      * @param attachmentId File id
-     * @param attachment Attachment
+     * @param attachment   Attachment
      */
     public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment) {
         try {
@@ -2209,11 +2232,11 @@ public class WorkordersWebApi {
     /**
      * Updates an attachment folder and its contents
      *
-     * @param workOrderId Work order id
-     * @param folderId Folder id
+     * @param workOrderId  Work order id
+     * @param folderId     Folder id
      * @param attachmentId File id
-     * @param attachment Attachment
-     * @param async Async (Optional)
+     * @param attachment   Attachment
+     * @param async        Async (Optional)
      */
     public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async) {
         try {
@@ -2242,7 +2265,7 @@ public class WorkordersWebApi {
      * Assign a user to a work order
      *
      * @param workOrderId Work order id
-     * @param assignee JSON Model
+     * @param assignee    JSON Model
      */
     public static void assignUser(Context context, Integer workOrderId, Assignee assignee) {
         try {
@@ -2270,8 +2293,8 @@ public class WorkordersWebApi {
      * Assign a user to a work order
      *
      * @param workOrderId Work order id
-     * @param assignee JSON Model
-     * @param async Async (Optional)
+     * @param assignee    JSON Model
+     * @param async       Async (Optional)
      */
     public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
         try {
@@ -2299,7 +2322,7 @@ public class WorkordersWebApi {
     /**
      * Get assignee of a work order
      *
-     * @param workOrderId Work order id
+     * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getAssignee(Context context, Integer workOrderId, boolean isBackground) {
@@ -2326,7 +2349,7 @@ public class WorkordersWebApi {
      * Unassign user from a work order
      *
      * @param workOrderId Work order id
-     * @param assignee JSON Model
+     * @param assignee    JSON Model
      */
     public static void unassignUser(Context context, Integer workOrderId, Assignee assignee) {
         try {
@@ -2354,8 +2377,8 @@ public class WorkordersWebApi {
      * Unassign user from a work order
      *
      * @param workOrderId Work order id
-     * @param assignee JSON Model
-     * @param async Async (Optional)
+     * @param assignee    JSON Model
+     * @param async       Async (Optional)
      */
     public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
         try {
@@ -2408,7 +2431,7 @@ public class WorkordersWebApi {
      * Publishes a work order to the marketplace where it can garner requests.
      *
      * @param workOrderId ID of work order
-     * @param async Async (Optional)
+     * @param async       Async (Optional)
      */
     public static void publish(Context context, Integer workOrderId, Boolean async) {
         try {
@@ -2458,7 +2481,7 @@ public class WorkordersWebApi {
      * Unpublishes a work order from the marketplace so that no requests or counter-offers can be made. Moves to draft unless it was also routed.
      *
      * @param workOrderId ID of work order
-     * @param async Async (Optional)
+     * @param async       Async (Optional)
      */
     public static void unpublish(Context context, Integer workOrderId, Boolean async) {
         try {
@@ -2483,7 +2506,7 @@ public class WorkordersWebApi {
     /**
      * Gets the current real-time status for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getStatus(Context context, Integer workOrderId, boolean isBackground) {
@@ -2534,7 +2557,7 @@ public class WorkordersWebApi {
      * Approves a completed work order and moves it to paid status
      *
      * @param workOrderId ID of work order
-     * @param async Async (Optional)
+     * @param async       Async (Optional)
      */
     public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
@@ -2584,7 +2607,7 @@ public class WorkordersWebApi {
      * Unapproves a completed work order and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param async Async (Optional)
+     * @param async       Async (Optional)
      */
     public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
@@ -2610,7 +2633,7 @@ public class WorkordersWebApi {
      * Accept pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
+     * @param increaseId  ID of work order increase
      */
     public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
@@ -2635,7 +2658,7 @@ public class WorkordersWebApi {
      * Deletes a shipment from a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId Shipment id
+     * @param shipmentId  Shipment id
      */
     public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId) {
         try {
@@ -2660,8 +2683,8 @@ public class WorkordersWebApi {
      * Deletes a shipment from a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId Shipment id
-     * @param async Async (Optional)
+     * @param shipmentId  Shipment id
+     * @param async       Async (Optional)
      */
     public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async) {
         try {
@@ -2687,8 +2710,8 @@ public class WorkordersWebApi {
      * Updates a shipment attached to a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId Shipment id
-     * @param shipment Shipment
+     * @param shipmentId  Shipment id
+     * @param shipment    Shipment
      */
     public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment) {
         try {
@@ -2716,9 +2739,9 @@ public class WorkordersWebApi {
      * Updates a shipment attached to a work order
      *
      * @param workOrderId Work order id
-     * @param shipmentId Shipment id
-     * @param shipment Shipment
-     * @param async Async (Optional)
+     * @param shipmentId  Shipment id
+     * @param shipment    Shipment
+     * @param async       Async (Optional)
      */
     public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async) {
         try {
@@ -2747,7 +2770,7 @@ public class WorkordersWebApi {
      * Adds a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
      * @param workOrderId Work Order ID
-     * @param penaltyId Penalty ID
+     * @param penaltyId   Penalty ID
      */
     public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
@@ -2772,8 +2795,8 @@ public class WorkordersWebApi {
      * Adds a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
      * @param workOrderId Work Order ID
-     * @param penaltyId Penalty ID
-     * @param penalty Penalty (Optional)
+     * @param penaltyId   Penalty ID
+     * @param penalty     Penalty (Optional)
      */
     public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
         try {
@@ -2800,8 +2823,8 @@ public class WorkordersWebApi {
     /**
      * Gets a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
-     * @param workOrderId Work Order ID
-     * @param penaltyId Penalty ID
+     * @param workOrderId  Work Order ID
+     * @param penaltyId    Penalty ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
@@ -2828,7 +2851,7 @@ public class WorkordersWebApi {
      * Removes a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
      * @param workOrderId ID of Work Order
-     * @param penaltyId Penalty ID
+     * @param penaltyId   Penalty ID
      */
     public static void removePenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
@@ -2853,7 +2876,7 @@ public class WorkordersWebApi {
      * Updates a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
      * @param workOrderId Work Order ID
-     * @param penaltyId Penalty ID
+     * @param penaltyId   Penalty ID
      */
     public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
@@ -2878,8 +2901,8 @@ public class WorkordersWebApi {
      * Updates a penalty option which would allow the raising of the amount paid to the provider if a condition being met.
      *
      * @param workOrderId Work Order ID
-     * @param penaltyId Penalty ID
-     * @param penalty Penalty (Optional)
+     * @param penaltyId   Penalty ID
+     * @param penalty     Penalty (Optional)
      */
     public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
         try {
@@ -2905,7 +2928,6 @@ public class WorkordersWebApi {
 
     /**
      * Decline work order swap request.
-     *
      */
     public static void declineSwapRequest(Context context) {
         try {
@@ -2930,8 +2952,8 @@ public class WorkordersWebApi {
      * Reply a message on a work order
      *
      * @param workOrderId ID of work order
-     * @param messageId ID of work order message
-     * @param json JSON payload
+     * @param messageId   ID of work order message
+     * @param json        JSON payload
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json) {
         try {
@@ -2959,9 +2981,9 @@ public class WorkordersWebApi {
      * Reply a message on a work order
      *
      * @param workOrderId ID of work order
-     * @param messageId ID of work order message
-     * @param json JSON payload
-     * @param async Async (Optional)
+     * @param messageId   ID of work order message
+     * @param json        JSON payload
+     * @param async       Async (Optional)
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async) {
         try {
@@ -2990,7 +3012,7 @@ public class WorkordersWebApi {
      * Removes a message on a work order
      *
      * @param workOrderId ID of work order
-     * @param messageId ID of work order message
+     * @param messageId   ID of work order message
      */
     public static void removeMessage(Context context, String workOrderId, String messageId) {
         try {
@@ -3015,8 +3037,8 @@ public class WorkordersWebApi {
      * Updates a message on a work order
      *
      * @param workOrderId ID of work order
-     * @param messageId ID of work order message
-     * @param json JSON payload
+     * @param messageId   ID of work order message
+     * @param json        JSON payload
      */
     public static void updateMessage(Context context, String workOrderId, String messageId, Message json) {
         try {
@@ -3043,8 +3065,8 @@ public class WorkordersWebApi {
     /**
      * Get a task by work order
      *
-     * @param workOrderId Work order id
-     * @param taskId Task id
+     * @param workOrderId  Work order id
+     * @param taskId       Task id
      * @param isBackground indicates that this call is low priority
      */
     public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
@@ -3071,7 +3093,7 @@ public class WorkordersWebApi {
      * Remove a work order's task
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
+     * @param taskId      Task id
      */
     public static void removeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
@@ -3096,8 +3118,8 @@ public class WorkordersWebApi {
      * Updates a work order's task
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
-     * @param json JSON Model
+     * @param taskId      Task id
+     * @param json        JSON Model
      */
     public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json) {
         try {
@@ -3125,7 +3147,7 @@ public class WorkordersWebApi {
      * Deny pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId ID of work order increase
+     * @param increaseId  ID of work order increase
      */
     public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
@@ -3150,8 +3172,8 @@ public class WorkordersWebApi {
      * Sets up an alert to be fired upon the completion of a task associated with a work order
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
-     * @param json JSON Model
+     * @param taskId      Task id
+     * @param json        JSON Model
      */
     public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json) {
         try {
@@ -3179,7 +3201,7 @@ public class WorkordersWebApi {
      * Removes all alerts associated with a single task on a work order
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
+     * @param taskId      Task id
      */
     public static void removeAlerts(Context context, Integer workOrderId, Integer taskId) {
         try {
@@ -3204,7 +3226,7 @@ public class WorkordersWebApi {
      * Request or un-hide a request for a work order
      *
      * @param workOrderId Work order id
-     * @param request JSON Model
+     * @param request     JSON Model
      */
     public static void request(Context context, Integer workOrderId, Request request) {
         try {
@@ -3232,8 +3254,8 @@ public class WorkordersWebApi {
      * Request or un-hide a request for a work order
      *
      * @param workOrderId Work order id
-     * @param request JSON Model
-     * @param async Async (Optional)
+     * @param request     JSON Model
+     * @param async       Async (Optional)
      */
     public static void request(Context context, Integer workOrderId, Request request, Boolean async) {
         try {
@@ -3262,7 +3284,7 @@ public class WorkordersWebApi {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param request JSON Model
+     * @param request     JSON Model
      */
     public static void removeRequest(Context context, Integer workOrderId, Request request) {
         try {
@@ -3290,8 +3312,8 @@ public class WorkordersWebApi {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param request JSON Model
-     * @param async Async (Optional)
+     * @param request     JSON Model
+     * @param async       Async (Optional)
      */
     public static void removeRequest(Context context, Integer workOrderId, Request request, Boolean async) {
         try {
@@ -3318,7 +3340,6 @@ public class WorkordersWebApi {
 
     /**
      * Accept work order swap request.
-     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -3342,7 +3363,7 @@ public class WorkordersWebApi {
     /**
      * Get a list of custom fields and their values for a work order.
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getCustomFields(Context context, Integer workOrderId, boolean isBackground) {
@@ -3369,8 +3390,8 @@ public class WorkordersWebApi {
      * Removes a single alert associated with a single task on a work order
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
-     * @param alertId Alert id
+     * @param taskId      Task id
+     * @param alertId     Alert id
      */
     public static void removeAlert(Context context, Integer workOrderId, Integer taskId, Integer alertId) {
         try {
@@ -3394,7 +3415,7 @@ public class WorkordersWebApi {
     /**
      * Gets the service schedule for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getSchedule(Context context, Integer workOrderId, boolean isBackground) {
@@ -3421,7 +3442,7 @@ public class WorkordersWebApi {
      * Updates the service schedule or eta of a work order (depending on your role)
      *
      * @param workOrderId ID of work order
-     * @param schedule JSON Payload
+     * @param schedule    JSON Payload
      */
     public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule) {
         try {
@@ -3449,8 +3470,8 @@ public class WorkordersWebApi {
      * Updates the service schedule or eta of a work order (depending on your role)
      *
      * @param workOrderId ID of work order
-     * @param schedule JSON Payload
-     * @param async Async (Optional)
+     * @param schedule    JSON Payload
+     * @param async       Async (Optional)
      */
     public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async) {
         try {
@@ -3479,7 +3500,7 @@ public class WorkordersWebApi {
      * Updates any holds on a work order.
      *
      * @param workOrderId ID of work order
-     * @param holds Holds
+     * @param holds       Holds
      */
     public static void updateHolds(Context context, Integer workOrderId, String holds) {
         try {
@@ -3507,8 +3528,8 @@ public class WorkordersWebApi {
      * Updates any holds on a work order.
      *
      * @param workOrderId ID of work order
-     * @param holds Holds
-     * @param async Async (Optional)
+     * @param holds       Holds
+     * @param async       Async (Optional)
      */
     public static void updateHolds(Context context, Integer workOrderId, String holds, Boolean async) {
         try {
@@ -3537,8 +3558,8 @@ public class WorkordersWebApi {
      * Resolve or Reopen a problem reported to work order
      *
      * @param workOrderId ID of work order
-     * @param flagId ID of report problem flag
-     * @param json JSON payload
+     * @param flagId      ID of report problem flag
+     * @param json        JSON payload
      */
     public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json) {
         try {
@@ -3566,9 +3587,9 @@ public class WorkordersWebApi {
      * Resolve or Reopen a problem reported to work order
      *
      * @param workOrderId ID of work order
-     * @param flagId ID of report problem flag
-     * @param json JSON payload
-     * @param async Async (Optional)
+     * @param flagId      ID of report problem flag
+     * @param json        JSON payload
+     * @param async       Async (Optional)
      */
     public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, Boolean async) {
         try {
@@ -3597,7 +3618,7 @@ public class WorkordersWebApi {
      * Assigned provider route to adds and apply a discount to a work order which reduces the amount they will be paid.
      *
      * @param workOrderId ID of work order
-     * @param json Payload of the discount
+     * @param json        Payload of the discount
      */
     public static void addDiscount(Context context, Integer workOrderId, PayModifier json) {
         try {
@@ -3624,7 +3645,7 @@ public class WorkordersWebApi {
     /**
      * Returns a list of discounts applied by the assigned provider to reduce the payout of the work order.
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getDiscounts(Context context, Integer workOrderId, boolean isBackground) {
@@ -3650,10 +3671,10 @@ public class WorkordersWebApi {
     /**
      * Reorders a task associated with a work order to a position before or after a target task
      *
-     * @param workOrderId Work order id
-     * @param taskId Task id
+     * @param workOrderId  Work order id
+     * @param taskId       Task id
      * @param targetTaskId Target task id
-     * @param position before or after target task
+     * @param position     before or after target task
      */
     public static void reorderTask(Context context, Integer workOrderId, Integer taskId, Integer targetTaskId, String position) {
         try {
@@ -3678,8 +3699,8 @@ public class WorkordersWebApi {
      * Regroups a task associated with a work order
      *
      * @param workOrderId Work order id
-     * @param taskId Task id
-     * @param group New group
+     * @param taskId      Task id
+     * @param group       New group
      * @param destination beginning or end (position in new group)
      */
     public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination) {
@@ -3705,7 +3726,7 @@ public class WorkordersWebApi {
      * Adds a contact to a work order
      *
      * @param workOrderId Work order id
-     * @param json JSON Model
+     * @param json        JSON Model
      */
     public static void addContact(Context context, Integer workOrderId, Contact json) {
         try {
@@ -3732,7 +3753,7 @@ public class WorkordersWebApi {
     /**
      * Get a list of contacts on a work order
      *
-     * @param workOrderId Work order id
+     * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getContacts(Context context, Integer workOrderId, boolean isBackground) {
@@ -3759,7 +3780,7 @@ public class WorkordersWebApi {
      * Adds a shipment to a work order
      *
      * @param workOrderId Work order id
-     * @param shipment Shipment
+     * @param shipment    Shipment
      */
     public static void addShipment(Context context, Integer workOrderId, Shipment shipment) {
         try {
@@ -3787,8 +3808,8 @@ public class WorkordersWebApi {
      * Adds a shipment to a work order
      *
      * @param workOrderId Work order id
-     * @param shipment Shipment
-     * @param async Async (Optional)
+     * @param shipment    Shipment
+     * @param async       Async (Optional)
      */
     public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async) {
         try {
@@ -3816,7 +3837,7 @@ public class WorkordersWebApi {
     /**
      * Get a list of shipments on a work order
      *
-     * @param workOrderId Work order id
+     * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getShipments(Context context, Integer workOrderId, boolean isBackground) {
@@ -3842,7 +3863,7 @@ public class WorkordersWebApi {
     /**
      * Get a list of penalties and their applied status for a work order
      *
-     * @param workOrderId Work Order ID
+     * @param workOrderId  Work Order ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getPenalties(Context context, Integer workOrderId, boolean isBackground) {
@@ -3869,7 +3890,7 @@ public class WorkordersWebApi {
      * Route a user to a work order
      *
      * @param workOrderId Work order id
-     * @param route JSON Model
+     * @param route       JSON Model
      */
     public static void routeUser(Context context, Integer workOrderId, Route route) {
         try {
@@ -3897,8 +3918,8 @@ public class WorkordersWebApi {
      * Route a user to a work order
      *
      * @param workOrderId Work order id
-     * @param route JSON Model
-     * @param async Async (Optional)
+     * @param route       JSON Model
+     * @param async       Async (Optional)
      */
     public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async) {
         try {
@@ -3927,7 +3948,7 @@ public class WorkordersWebApi {
      * Unroute a user from a work order
      *
      * @param workOrderId Work order id
-     * @param route JSON Model
+     * @param route       JSON Model
      */
     public static void unRouteUser(Context context, Integer workOrderId, Route route) {
         try {
@@ -3955,8 +3976,8 @@ public class WorkordersWebApi {
      * Unroute a user from a work order
      *
      * @param workOrderId Work order id
-     * @param route JSON Model
-     * @param async Async (Optional)
+     * @param route       JSON Model
+     * @param async       Async (Optional)
      */
     public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async) {
         try {
@@ -4009,7 +4030,7 @@ public class WorkordersWebApi {
     /**
      * Gets list of problem reasons by work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getProblemReasons(Context context, String workOrderId, boolean isBackground) {
@@ -4036,7 +4057,7 @@ public class WorkordersWebApi {
      * Report a problem to a work order
      *
      * @param workOrderId ID of work order
-     * @param json JSON payload
+     * @param json        JSON payload
      */
     public static void reportProblem(Context context, String workOrderId, Message json) {
         try {
@@ -4064,8 +4085,8 @@ public class WorkordersWebApi {
      * Report a problem to a work order
      *
      * @param workOrderId ID of work order
-     * @param json JSON payload
-     * @param async Async (Optional)
+     * @param json        JSON payload
+     * @param async       Async (Optional)
      */
     public static void reportProblem(Context context, String workOrderId, Message json, Boolean async) {
         try {
@@ -4093,7 +4114,7 @@ public class WorkordersWebApi {
     /**
      * Get a list of available bonuses on a work order that can be applied to increase the amount paid to the provider upon conditions being met
      *
-     * @param workOrderId Work Order ID
+     * @param workOrderId  Work Order ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getBonuses(Context context, Integer workOrderId, boolean isBackground) {
@@ -4119,7 +4140,7 @@ public class WorkordersWebApi {
     /**
      * Gets the address and geo information for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getLocation(Context context, Integer workOrderId, boolean isBackground) {
@@ -4146,7 +4167,7 @@ public class WorkordersWebApi {
      * Updates the location of a work order (depending on your role)
      *
      * @param workOrderId ID of work order
-     * @param location JSON Payload
+     * @param location    JSON Payload
      */
     public static void updateLocation(Context context, Integer workOrderId, Location location) {
         try {
@@ -4174,8 +4195,8 @@ public class WorkordersWebApi {
      * Updates the location of a work order (depending on your role)
      *
      * @param workOrderId ID of work order
-     * @param location JSON Payload
-     * @param async Async (Optional)
+     * @param location    JSON Payload
+     * @param async       Async (Optional)
      */
     public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async) {
         try {
@@ -4204,7 +4225,7 @@ public class WorkordersWebApi {
      * Adds a bonus on a work order which can conditionally increase the amount paid to the provider upon conditions being met
      *
      * @param workOrderId ID of work order
-     * @param bonusId Bonus ID
+     * @param bonusId     Bonus ID
      */
     public static void addBonus(Context context, Integer workOrderId, Integer bonusId) {
         try {
@@ -4229,8 +4250,8 @@ public class WorkordersWebApi {
      * Adds a bonus on a work order which can conditionally increase the amount paid to the provider upon conditions being met
      *
      * @param workOrderId ID of work order
-     * @param bonusId Bonus ID
-     * @param bonus Bonus (Optional)
+     * @param bonusId     Bonus ID
+     * @param bonus       Bonus (Optional)
      */
     public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
         try {
@@ -4257,8 +4278,8 @@ public class WorkordersWebApi {
     /**
      * Gets a bonus for a work order
      *
-     * @param workOrderId ID of work order
-     * @param bonusId Bonus ID
+     * @param workOrderId  ID of work order
+     * @param bonusId      Bonus ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
@@ -4284,9 +4305,9 @@ public class WorkordersWebApi {
     /**
      * Gets a bonus for a work order
      *
-     * @param workOrderId ID of work order
-     * @param bonusId Bonus ID
-     * @param bonus Bonus (Optional)
+     * @param workOrderId  ID of work order
+     * @param bonusId      Bonus ID
+     * @param bonus        Bonus (Optional)
      * @param isBackground indicates that this call is low priority
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
@@ -4316,7 +4337,7 @@ public class WorkordersWebApi {
      * Removes a bonus from a work order
      *
      * @param workOrderId Work Order ID
-     * @param bonusId Bonus ID
+     * @param bonusId     Bonus ID
      */
     public static void removeBonus(Context context, Integer workOrderId, Integer bonusId) {
         try {
@@ -4341,8 +4362,8 @@ public class WorkordersWebApi {
      * Updates a bonus on a work order which can conditionally increase the amount paid to the provider upon conditions being met
      *
      * @param workOrderId ID of work order
-     * @param bonusId Bonus ID
-     * @param bonus Bonus
+     * @param bonusId     Bonus ID
+     * @param bonus       Bonus
      */
     public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
         try {

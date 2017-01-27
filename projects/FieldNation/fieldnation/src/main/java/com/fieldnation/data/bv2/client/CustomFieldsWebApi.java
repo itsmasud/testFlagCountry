@@ -1,9 +1,8 @@
 package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
-import android.net.Uri;
 
-import com.fieldnation.data.bv2.model.*;
+import com.fieldnation.data.bv2.model.CustomField;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
@@ -21,8 +20,8 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field's visibility for a single client
      *
      * @param customFieldId Custom field id
-     * @param clientId Client id
-     * @param visibility Visibility (visible or hidden)
+     * @param clientId      Client id
+     * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
         try {
@@ -47,7 +46,7 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field's visibility for all projects and clients
      *
      * @param customFieldId Custom field id
-     * @param visibility Visibility (visible or hidden)
+     * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
         try {
@@ -96,7 +95,7 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field
      *
      * @param customFieldId Custom field id
-     * @param json JSON Model
+     * @param json          JSON Model
      */
     public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
         try {
@@ -176,10 +175,10 @@ public class CustomFieldsWebApi {
      * Updates a work order custom field's visibility for a single project
      *
      * @param customFieldId Custom field id
-     * @param projectId Project id
-     * @param visibility Visibility (visible or hidden)
+     * @param projectId     Project id
+     * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProject(Context context, Integer customFieldId, Integer projectId, String visibility) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
