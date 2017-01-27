@@ -195,7 +195,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
     /*-**********************************-*/
     public static abstract class Listener extends TopicClient.Listener {
         private static final String TAG = "SavedSearchClient.Listener";
-        
+
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             if (topicId.startsWith(TOPIC_ID_LIST)) {
@@ -218,7 +218,11 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
 
                     @Override
                     protected void onPostExecute(List<SavedSearchParams> savedSearchParams) {
-                        list(savedSearchParams);
+                        // something bad happened, re-run
+                        if (savedSearchParams == null || savedSearchParams.size() == 0 || savedSearchParams.get(0) == null)
+                            SavedSearchClient.list();
+                        else
+                            list(savedSearchParams);
                     }
                 }.executeEx((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_SAVED)) {
