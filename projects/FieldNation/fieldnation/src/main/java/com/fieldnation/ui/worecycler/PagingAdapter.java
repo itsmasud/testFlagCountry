@@ -176,7 +176,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
 
         if (_pages.size() > 0 && getItemCount() > 0) {
             int itemsPerPage = (getItemCount() / _pages.size());
-            if (itemsPerPage == 0 || position / itemsPerPage >= _pages.size() - 1) {
+            if (itemsPerPage != 0 && position / itemsPerPage >= _pages.size() - 1) {
                 preRequestPage(_pages.size(), false);
             }
         }
