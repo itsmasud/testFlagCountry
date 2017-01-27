@@ -135,6 +135,10 @@ public class SearchResultScreen extends RelativeLayout {
     }
 
     public void startSearch(SavedSearchParams searchParams) {
+        if (searchParams == null) {
+            return;
+        }
+
         _searchParams = searchParams;
 
         if (_searchParams.uiLocationSpinner == 1 && _location != null) {
