@@ -56,20 +56,32 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/when_does_this_request_expire" />
 
-                <Button
-                    android:id="@+id/expiration_button"
-                    style="@style/SpinnerButton"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/requestExpire_textview"
-                    android:text="@string/btn_never" />
+                    android:orientation="horizontal">
 
-                <View
-                    android:id="@+id/divider"
-                    style="@style/DividerSpinnerFull"
-                    android:layout_below="@+id/expiration_button"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_material_spinner_bottom_line" />
+                    <CheckBox
+                        android:id="@+id/expires_checkbox"
+                        style="?attr/tileCheckBoxStyle"
+                        android:layout_width="wrap_content"
+                        android:text="Offer expires"
+                        android:visibility="visible" />
+
+                    <com.fieldnation.ui.HintSpinner
+                        android:id="@+id/expire_duration_spinner"
+                        style="@style/Widget.AppCompat.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="@+id/expires_checkbox"
+                        android:layout_below="@+id/requestExpire_textview"
+                        android:layout_gravity="center_vertical"
+                        android:hint="30 mins"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+
             </RelativeLayout>
 
             <TextView

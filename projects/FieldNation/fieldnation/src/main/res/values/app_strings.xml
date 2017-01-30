@@ -134,7 +134,6 @@
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_missing_carrier_name">Please provide a carrier name</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
-    <string name="toast_minimum_expiring_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
     <string name="toast_must_select_category">Please select a category</string>
