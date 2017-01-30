@@ -89,6 +89,9 @@ public class StaffWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onStaffWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onGetEmailTemplates(byte[] data, boolean success, Error error) {
         }
 
@@ -137,6 +140,7 @@ public class StaffWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onStaffWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "getEmailTemplates":
                         listener.onGetEmailTemplates((byte[]) successObject, success, (Error) failObject);

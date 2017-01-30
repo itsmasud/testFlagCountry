@@ -272,7 +272,7 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param projectId     Project id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProject(Context context, Integer customFieldId, Integer projectId, String visibility) {
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -286,7 +286,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility,
-                                    CustomFieldsWebApi.class, "updateCustomFieldVisibilityByProjectId"))
+                                    CustomFieldsWebApi.class, "updateCustomFieldVisibilityByProject"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -297,7 +297,7 @@ public class CustomFieldsWebApi extends TopicClient {
         }
     }
 
-    public boolean subUpdateCustomFieldVisibilityByProjectId(Integer customFieldId, Integer projectId, String visibility) {
+    public boolean subUpdateCustomFieldVisibilityByProject(Integer customFieldId, Integer projectId, String visibility) {
         return register("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
     }
 
@@ -311,10 +311,13 @@ public class CustomFieldsWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onCustomFieldsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onUpdateCustomFieldVisibility(byte[] data, boolean success, Error error) {
         }
 
-        public void onUpdateCustomFieldVisibilityByProjectId(byte[] data, boolean success, Error error) {
+        public void onUpdateCustomFieldVisibilityByProject(byte[] data, boolean success, Error error) {
         }
 
         public void onRemoveCustomField(byte[] data, boolean success, Error error) {
@@ -328,6 +331,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
         public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
         }
+
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -360,7 +364,7 @@ public class CustomFieldsWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "updateCustomFieldVisibilityByProjectId":
+                    case "updateCustomFieldVisibilityByProject":
                         if (success)
                             successObject = data;
                         else
@@ -403,12 +407,13 @@ public class CustomFieldsWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onCustomFieldsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "updateCustomFieldVisibility":
                         listener.onUpdateCustomFieldVisibility((byte[]) successObject, success, (Error) failObject);
                         break;
-                    case "updateCustomFieldVisibilityByProjectId":
-                        listener.onUpdateCustomFieldVisibilityByProjectId((byte[]) successObject, success, (Error) failObject);
+                    case "updateCustomFieldVisibilityByProject":
+                        listener.onUpdateCustomFieldVisibilityByProject((byte[]) successObject, success, (Error) failObject);
                         break;
                     case "removeCustomField":
                         listener.onRemoveCustomField((byte[]) successObject, success, (Error) failObject);

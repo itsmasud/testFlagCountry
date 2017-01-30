@@ -131,6 +131,9 @@ public class SystemWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onSystemWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onUpdateModel(UpdateModel updateModel, boolean success, Error error) {
         }
 
@@ -179,6 +182,7 @@ public class SystemWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onSystemWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "updateModel":
                         listener.onUpdateModel((UpdateModel) successObject, success, (Error) failObject);

@@ -90,6 +90,9 @@ public class MapsWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onMapsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onGetMaps(byte[] data, boolean success, Error error) {
         }
 
@@ -138,6 +141,7 @@ public class MapsWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onMapsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "getMaps":
                         listener.onGetMaps((byte[]) successObject, success, (Error) failObject);

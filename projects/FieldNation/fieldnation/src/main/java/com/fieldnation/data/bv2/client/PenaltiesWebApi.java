@@ -160,6 +160,9 @@ public class PenaltiesWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onPenaltiesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onAddPenalty(PayModifier payModifier, boolean success, Error error) {
         }
 
@@ -226,6 +229,7 @@ public class PenaltiesWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onPenaltiesWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "addPenalty":
                         listener.onAddPenalty((PayModifier) successObject, success, (Error) failObject);

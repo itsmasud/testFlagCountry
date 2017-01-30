@@ -763,6 +763,9 @@ public class UsersWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onUsersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onSendVerificationCodeViaSms(byte[] data, boolean success, Error error) {
         }
 
@@ -973,6 +976,7 @@ public class UsersWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onUsersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "sendVerificationCodeViaSms":
                         listener.onSendVerificationCodeViaSms((byte[]) successObject, success, (Error) failObject);

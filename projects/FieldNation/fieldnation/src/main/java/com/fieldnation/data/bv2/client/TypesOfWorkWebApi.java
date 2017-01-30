@@ -88,6 +88,9 @@ public class TypesOfWorkWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onTypesOfWorkWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onGetTypesOfWork(TypesOfWork typesOfWork, boolean success, Error error) {
         }
 
@@ -136,6 +139,7 @@ public class TypesOfWorkWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onTypesOfWorkWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "getTypesOfWork":
                         listener.onGetTypesOfWork((TypesOfWork) successObject, success, (Error) failObject);

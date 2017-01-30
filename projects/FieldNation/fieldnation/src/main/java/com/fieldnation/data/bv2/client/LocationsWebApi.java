@@ -423,6 +423,9 @@ public class LocationsWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onLocationsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onAddNotes(byte[] data, boolean success, Error error) {
         }
 
@@ -552,6 +555,7 @@ public class LocationsWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onLocationsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "addNotes":
                         listener.onAddNotes((byte[]) successObject, success, (Error) failObject);

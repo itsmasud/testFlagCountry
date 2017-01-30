@@ -91,6 +91,9 @@ public class CompanyWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onCompanyWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
         }
 
@@ -139,6 +142,7 @@ public class CompanyWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onCompanyWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "getIntegrations":
                         listener.onGetIntegrations((CompanyIntegrations) successObject, success, (Error) failObject);

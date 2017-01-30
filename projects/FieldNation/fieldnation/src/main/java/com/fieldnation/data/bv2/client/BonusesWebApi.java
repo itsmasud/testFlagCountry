@@ -164,6 +164,9 @@ public class BonusesWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onBonusesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onRemoveBonus(byte[] data, boolean success, Error error) {
         }
 
@@ -230,6 +233,7 @@ public class BonusesWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onBonusesWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "removeBonus":
                         listener.onRemoveBonus((byte[]) successObject, success, (Error) failObject);

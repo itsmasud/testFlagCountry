@@ -45,6 +45,7 @@ import com.fieldnation.data.bv2.model.TimeLogs;
 import com.fieldnation.data.bv2.model.WorkOrder;
 import com.fieldnation.data.bv2.model.WorkOrders;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -6011,6 +6012,9 @@ public class WorkordersWebApi extends TopicClient {
             new AsyncParser(this, (Bundle) payload);
         }
 
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        }
+
         public void onRevertWorkOrderToDraft(byte[] data, boolean success, Error error) {
         }
 
@@ -6095,7 +6099,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onAddSignature(byte[] data, boolean success, Error error) {
         }
 
-        public void onGetSignatures(Signature[] signatures, boolean success, Error error) {
+        public void onGetSignatures(JsonArray signatures, boolean success, Error error) {
         }
 
         public void onGetProviders(byte[] data, boolean success, Error error) {
@@ -6523,14 +6527,12 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-/*
                     case "getSignatures":
                         if (success)
-                            successObject = Signatures.fromJson(new JsonObject(data));
+                            successObject = new JsonArray(data);
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-*/
                     case "getProviders":
                         if (success)
                             successObject = data;
@@ -7006,6 +7008,7 @@ public class WorkordersWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                listener.onWorkordersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "revertWorkOrderToDraft":
                         listener.onRevertWorkOrderToDraft((byte[]) successObject, success, (Error) failObject);
@@ -7091,9 +7094,9 @@ public class WorkordersWebApi extends TopicClient {
                     case "addSignature":
                         listener.onAddSignature((byte[]) successObject, success, (Error) failObject);
                         break;
-//                    case "getSignatures":
-//                        listener.onGetSignatures((Signatures) successObject, success, (Error) failObject);
-//                        break;
+                    case "getSignatures":
+                        listener.onGetSignatures((JsonArray) successObject, success, (Error) failObject);
+                        break;
                     case "getProviders":
                         listener.onGetProviders((byte[]) successObject, success, (Error) failObject);
                         break;
@@ -7175,11 +7178,9 @@ public class WorkordersWebApi extends TopicClient {
                     case "unpublish":
                         listener.onUnpublish((byte[]) successObject, success, (Error) failObject);
                         break;
-/*
                     case "getStatus":
-                        listener.onGetStatus((Status) successObject, success, (Error) failObject);
+                        listener.onGetStatus((com.fieldnation.data.bv2.model.Status) successObject, success, (Error) failObject);
                         break;
-*/
                     case "approveWorkOrder":
                         listener.onApproveWorkOrder((byte[]) successObject, success, (Error) failObject);
                         break;
