@@ -2,11 +2,18 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
 
+import com.fieldnation.data.bv2.listener.TransactionListener;
+import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
+import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
@@ -14,7 +21,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/27/17.
+ * Created by dmgen from swagger on 1/30/17.
  */
 
 public class MapsWebApi extends TopicClient {
@@ -30,7 +37,13 @@ public class MapsWebApi extends TopicClient {
     public String getUserTag() {
         return TAG;
     }
+
+    public boolean subMapsWebApi(){
+        return register("TOPIC_ID_WEB_API_V2/MapsWebApi");
+    }
+
     /**
+     * Swagger operationId: getMaps
      * This endpoint returns a list of exact coordinates as well as additional info such as the address and whether the coordinates are an exact match.
      *
      * @param type Type and id of the item being looked up separated by a colon, e.g. workorder:21
@@ -46,8 +59,12 @@ public class MapsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/maps/search")
-                    .key(misc.md5("GET/" + "/api/rest/v2/maps/search" + "?type=" + type))
+                    .key(misc.md5("GET//api/rest/v2/maps/search?type=" + type))
                     .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/maps/search",
+                                    MapsWebApi.class, "getMaps"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -59,7 +76,79 @@ public class MapsWebApi extends TopicClient {
         }
     }
 
-    public boolean subGetMaps(String type) {
-        return register("TOPIC_ID_API_V2/" + misc.md5("GET/" + "/api/rest/v2/maps/search" + "?type=" + type));
+    public boolean subGetMaps() {
+        return register("TOPIC_ID_WEB_API_V2/maps/search");
+    }
+
+
+    /*-**********************************-*/
+    /*-             Listener             -*/
+    /*-**********************************-*/
+    public static abstract class Listener extends TopicClient.Listener {
+        @Override
+        public void onEvent(String topicId, Parcelable payload) {
+            new AsyncParser(this, (Bundle) payload);
+        }
+
+        public void onGetMaps(byte[] data, boolean success, Error error) {
+        }
+
+    }
+
+    private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
+        private static final String TAG = "MapsWebApi.AsyncParser";
+
+        private Listener listener;
+        private TransactionParams transactionParams;
+        private boolean success;
+        private byte[] data;
+
+        private Object successObject;
+        private Object failObject;
+
+        public AsyncParser(Listener listener, Bundle bundle) {
+            this.listener = listener;
+            transactionParams = bundle.getParcelable("params");
+            success = bundle.getBoolean("success");
+            data = bundle.getByteArray("data");
+
+            executeEx();
+        }
+
+        @Override
+        protected Object doInBackground(Object... params) {
+            try {
+                switch (transactionParams.apiFunction) {
+                    case "getMaps":
+                        if (success)
+                            successObject = data;
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    default:
+                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                        break;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            try {
+                switch (transactionParams.apiFunction) {
+                    case "getMaps":
+                        listener.onGetMaps((byte[]) successObject, success, (Error) failObject);
+                        break;
+                    default:
+                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                        break;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-package com.fieldnation.data.bv2.model;
+package com.fieldnation.data.bv2.listener;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -9,37 +10,30 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by mc on 1/27/17.
  */
 
-public class CheckInOutTimeLog implements Parcelable {
-    private static final String TAG = "CheckInOutTimeLog";
+public class TransactionParams implements Parcelable {
+    private static final String TAG = "TransactionParams";
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "topicId")
+    public String topicId;
 
-    public CheckInOutTimeLog() {
-    }
+    @Json(name = "apiClass")
+    public String apiClassName;
 
-    public void setId(Integer id) {
-        _id = id;
-    }
+    @Json(name = "apiFunction")
+    public String apiFunction;
 
-    public Integer getId() {
-        return _id;
-    }
-
-    public CheckInOutTimeLog id(Integer id) {
-        _id = id;
-        return this;
+    public TransactionParams() {
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static CheckInOutTimeLog fromJson(JsonObject obj) {
+    public static TransactionParams fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CheckInOutTimeLog.class, obj);
+            return Unserializer.unserializeObject(TransactionParams.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -50,9 +44,9 @@ public class CheckInOutTimeLog implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(CheckInOutTimeLog checkInOutTimeLog) {
+    public static JsonObject toJson(TransactionParams transactionParams) {
         try {
-            return Serializer.serializeObject(checkInOutTimeLog);
+            return Serializer.serializeObject(transactionParams);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -62,12 +56,12 @@ public class CheckInOutTimeLog implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<CheckInOutTimeLog> CREATOR = new Parcelable.Creator<CheckInOutTimeLog>() {
+    public static final Parcelable.Creator<TransactionParams> CREATOR = new Parcelable.Creator<TransactionParams>() {
 
         @Override
-        public CheckInOutTimeLog createFromParcel(Parcel source) {
+        public TransactionParams createFromParcel(Parcel source) {
             try {
-                return CheckInOutTimeLog.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return TransactionParams.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -75,8 +69,8 @@ public class CheckInOutTimeLog implements Parcelable {
         }
 
         @Override
-        public CheckInOutTimeLog[] newArray(int size) {
-            return new CheckInOutTimeLog[size];
+        public TransactionParams[] newArray(int size) {
+            return new TransactionParams[size];
         }
     };
 

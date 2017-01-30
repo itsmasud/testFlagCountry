@@ -1,4 +1,4 @@
-package com.fieldnation.data.bv2.templates;
+package com.fieldnation.data.bv2.listener;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -19,24 +19,17 @@ public class TransactionListener extends WebTransactionListener {
     private static final String TAG = "TransactionListener";
 
     /**
-     * @param apiClass     (Required) the api function's class that spawned the call
-     * @param apiFunction  (Required) The api function's name that spawned the call
-     * @param successClass (Optional) the data model that a successful call returns
-     * @param errorClass   (Optional) the data model that an error response returns
+     * @param apiClass    (Required) the api function's class that spawned the call
+     * @param apiFunction (Required) The api function's name that spawned the call
      * @return
      */
-    public static byte[] params(Class<?> apiClass, String apiFunction, Class<?> successClass, Class<?> errorClass) {
+    public static byte[] params(String topicId, Class<?> apiClass, String apiFunction) {
         try {
             TransactionParams params = new TransactionParams();
 
+            params.topicId = topicId;
             params.apiClassName = apiClass.getName();
             params.apiFunction = apiFunction;
-
-            if (successClass != null)
-                params.successClassName = successClass.getName();
-
-            if (errorClass != null)
-                params.errorClassName = errorClass.getName();
 
             return params.toJson().toByteArray();
         } catch (Exception ex) {
@@ -62,15 +55,16 @@ public class TransactionListener extends WebTransactionListener {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
 
                 Bundle bundle = new Bundle();
-
-                bundle.putString("key", transaction.getKey());
+                bundle.putParcelable("params", params);
 
                 if (httpResult.isFile()) {
+                    throw new Exception("Can't handle a file yet!");
                 } else {
-                    bundle.putByteArray("successByteArray", httpResult.getByteArray());
+                    bundle.putByteArray("data", httpResult.getByteArray());
                 }
+                bundle.putBoolean("success", true);
 
-                TopicService.dispatchEvent(context, "TOPIC_ID_API_V2/" + transaction.getKey(), bundle, Sticky.TEMP);
+                TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

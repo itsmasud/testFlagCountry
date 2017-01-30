@@ -2,11 +2,18 @@ package com.fieldnation.data.bv2.client;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
 
+import com.fieldnation.data.bv2.listener.TransactionListener;
+import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
+import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
@@ -14,7 +21,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/27/17.
+ * Created by dmgen from swagger on 1/30/17.
  */
 
 public class SystemWebApi extends TopicClient {
@@ -30,7 +37,13 @@ public class SystemWebApi extends TopicClient {
     public String getUserTag() {
         return TAG;
     }
+
+    public boolean subSystemWebApi(){
+        return register("TOPIC_ID_WEB_API_V2/SystemWebApi");
+    }
+
     /**
+     * Swagger operationId: updateModel
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
      * @param path The route for obtaining the new model
@@ -50,8 +63,12 @@ public class SystemWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
-                    .key(misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event))
+                    .key(misc.md5("POST//api/rest/v2/system/update-model?path=" + path + "&event=" + event))
                     .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/system/update-model",
+                                    SystemWebApi.class, "updateModel"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -62,10 +79,12 @@ public class SystemWebApi extends TopicClient {
         }
     }
 
-    public boolean subUpdateModel(String path, String event) {
-        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event));
+    public boolean subUpdateModel() {
+        return register("TOPIC_ID_WEB_API_V2/system/update-model");
     }
+
     /**
+     * Swagger operationId: updateModel
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
      * @param path The route for obtaining the new model
@@ -86,8 +105,12 @@ public class SystemWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
-                    .key(misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event + "&async=" + async))
+                    .key(misc.md5("POST//api/rest/v2/system/update-model?path=" + path + "&event=" + event + "&async=" + async))
                     .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/system/update-model",
+                                    SystemWebApi.class, "updateModel"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -98,7 +121,75 @@ public class SystemWebApi extends TopicClient {
         }
     }
 
-    public boolean subUpdateModel(String path, String event, Boolean async) {
-        return register("TOPIC_ID_API_V2/" + misc.md5("POST/" + "/api/rest/v2/system/update-model" + "?path=" + path + "&event=" + event + "&async=" + async));
+
+    /*-**********************************-*/
+    /*-             Listener             -*/
+    /*-**********************************-*/
+    public static abstract class Listener extends TopicClient.Listener {
+        @Override
+        public void onEvent(String topicId, Parcelable payload) {
+            new AsyncParser(this, (Bundle) payload);
+        }
+
+        public void onUpdateModel(UpdateModel updateModel, boolean success, Error error) {
+        }
+
+    }
+
+    private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
+        private static final String TAG = "SystemWebApi.AsyncParser";
+
+        private Listener listener;
+        private TransactionParams transactionParams;
+        private boolean success;
+        private byte[] data;
+
+        private Object successObject;
+        private Object failObject;
+
+        public AsyncParser(Listener listener, Bundle bundle) {
+            this.listener = listener;
+            transactionParams = bundle.getParcelable("params");
+            success = bundle.getBoolean("success");
+            data = bundle.getByteArray("data");
+
+            executeEx();
+        }
+
+        @Override
+        protected Object doInBackground(Object... params) {
+            try {
+                switch (transactionParams.apiFunction) {
+                    case "updateModel":
+                        if (success)
+                            successObject = UpdateModel.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    default:
+                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                        break;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            try {
+                switch (transactionParams.apiFunction) {
+                    case "updateModel":
+                        listener.onUpdateModel((UpdateModel) successObject, success, (Error) failObject);
+                        break;
+                    default:
+                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                        break;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/30/17.
  */
 
 public class ErrorTrace implements Parcelable {
@@ -109,7 +109,7 @@ public class ErrorTrace implements Parcelable {
         _class = clazz;
     }
 
-    public String getClazz() {
+    public String getErrorClass() {
         return _class;
     }
 
