@@ -29,7 +29,9 @@ public interface ProfileConstants {
     String PARAM_USER_ID = "PARAM_USER_ID";
     String PARAM_ALLOW_CACHE = "PARAM_ALLOW_CACHE";
     String PARAM_IS_CACHED = "PARAM_IS_CACHED";
-    String PARAM_IS_PHOTO_PATH = "PARAM_IS_PHOTO_PATH";
+    String PARAM_FILE_NAME = "PARAM_FILE_NAME";
+    String PARAM_PHOTO_PATH = "PARAM_PHOTO_PATH";
+    String PARAM_URI = "PARAM_URI";
     String PARAM_IS_COMPLETE = "PARAM_IS_COMPLETE";
 
     String PSO_MESSAGE_PAGE = "MessagePage";

@@ -24,6 +24,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
@@ -34,6 +35,7 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
+import com.fieldnation.ui.RefreshView;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -52,6 +54,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private View _root;
+    private RefreshView _refreshView;
     private ProfilePicView _picView;
     private TextView _profileIdTextView;
     private TextView _profileNameTextView;
@@ -92,6 +95,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
 
+        _refreshView = (RefreshView) _root.findViewById(R.id.refresh_view);
+
         _profileIdTextView = (TextView) _root.findViewById(R.id.profile_id_textview);
         _profileNameTextView = (TextView) _root.findViewById(R.id.profile_name_textview);
         _phoneNoEditText = (EditText) _root.findViewById(R.id.phone_edittext);
@@ -104,6 +109,17 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         return _root;
     }
+
+    private void setLoading(boolean loading) {
+        if (loading) {
+            _toolbar.setEnabled(false);
+            _refreshView.startRefreshing();
+        } else {
+            _toolbar.setEnabled(true);
+            _refreshView.refreshComplete();
+        }
+    }
+
 
     @Override
     public void onSaveDialogState(Bundle outState) {
@@ -232,7 +248,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _profile.getPhoto().getThumb();
+            String url = _profile.getPhoto().getLarge();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
                 _photos.subGet(url, true, false);
@@ -275,7 +291,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("*/*");
+            intent.setType("image/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
             AppPickerDialog.addIntent(intent, "Get Content");
 
@@ -287,6 +303,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
             AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG);
         }
     };
+
 
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
@@ -311,37 +328,19 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
                 _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
                 _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
-//                setLoading(true);
+                setLoading(true);
 
                 if (data == null) {
                     Log.v(TAG, "Image uploading taken by camera");
                     _tempUri = null;
                     FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(_tempFile));
-                    ProfileClient.uploadProfilePhoto(App.get(), _tempFile.getAbsolutePath());
+                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), _tempFile.getAbsolutePath(), _tempFile.getName());
                 } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        ClipData clipData = data.getClipData();
-
-                        if (clipData != null) {
-                            int count = clipData.getItemCount();
-                            Intent intent = new Intent();
-                            Uri uri = null;
-
-                            _tempUri = clipData.getItemAt(0).getUri();
-                            _tempFile = null;
-                            FileCacheClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
-                        } else {
-                            Log.v(TAG, "Single local/ non-local file upload");
-                            _tempUri = data.getData();
-                            _tempFile = null;
-                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
-                        }
-                    } else {
-                        Log.v(TAG, "Android version is pre-4.3");
-                        _tempUri = data.getData();
-                        _tempFile = null;
-                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
-                    }
+                    Log.v(TAG, "Single local/ non-local file upload");
+                    _tempUri = data.getData();
+                    _tempFile = null;
+                    FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
+                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -378,6 +377,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filename) {
             _picView.setProfilePic(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400)));
+            setLoading(false);
         }
     };
 

@@ -85,7 +85,7 @@ public class ProfileDispatch implements ProfileConstants {
     public static void uploadProfilePhoto(Context context,String filePath, boolean isComplete, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
-        bundle.putString(PARAM_IS_PHOTO_PATH, filePath);
+        bundle.putString(PARAM_PHOTO_PATH, filePath);
         bundle.putBoolean(PARAM_IS_COMPLETE, isComplete);
         bundle.putBoolean(PARAM_ERROR, failed);
 

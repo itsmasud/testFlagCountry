@@ -106,7 +106,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _linkContainerView = findViewById(R.id.link_container);
 
         _profileMenu = findViewById(R.id.profile_view);
-        //_profileMenu.setOnClickListener(_profile_onClick);
+        _profileMenu.setOnClickListener(_profile_onClick);
 
         _paymentMenu = findViewById(R.id.payments_menu);
         _paymentMenu.setOnClickListener(_payment_onClick);
@@ -157,6 +157,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     public void setListener(Listener listener) {
         _listener = listener;
     }
+
 
     @Override
     protected void onDetachedFromWindow() {

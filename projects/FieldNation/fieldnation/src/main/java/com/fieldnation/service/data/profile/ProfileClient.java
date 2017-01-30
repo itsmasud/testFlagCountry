@@ -2,6 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 
@@ -132,17 +133,37 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         return register(topicId);
     }
 
-    public static void uploadProfilePhoto(Context context, String filePath){
+    public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename){
         Log.v(STAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(context, filePath, false, false);
 
         Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
-        intent.putExtra(PARAM_IS_PHOTO_PATH, filePath);
+        intent.putExtra(PARAM_PROFILE_ID, profileId);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        intent.putExtra(PARAM_PHOTO_PATH, filePath);
         context.startService(intent);
 
     }
+
+    public static void uploadProfilePhoto(Context context, long profileId, String filename, Uri uri){
+        Log.v(STAG, "uploadProfilePhoto");
+
+        ProfileDispatch.uploadProfilePhoto(context, filename, false, false);
+
+        Intent intent = new Intent(context, ProfileService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
+        intent.putExtra(PARAM_PROFILE_ID, profileId);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        intent.putExtra(PARAM_URI, uri);
+        context.startService(intent);
+
+
+
+
+    }
+
 
     /*-*********************************-*/
     /*-             Actions             -*/
@@ -202,11 +223,11 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         private void preUploadPhoto(Bundle payload) {
             if (payload.containsKey(PARAM_ERROR) && payload.getBoolean(PARAM_ERROR)) {
                 preUploadPhoto(
-                        payload.getString(PARAM_IS_PHOTO_PATH),
+                        payload.getString(PARAM_PHOTO_PATH),
                         payload.getBoolean(PARAM_IS_COMPLETE), true);
             } else {
                 preUploadPhoto(
-                        payload.getString(PARAM_IS_PHOTO_PATH),
+                        payload.getString(PARAM_PHOTO_PATH),
                         payload.getBoolean(PARAM_IS_COMPLETE), false);
             }
         }
