@@ -8,8 +8,12 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 /**
  * Created by mc on 1/27/17.
@@ -58,7 +62,8 @@ public class TransactionListener extends WebTransactionListener {
                 bundle.putParcelable("params", params);
 
                 if (httpResult.isFile()) {
-                    throw new Exception("Can't handle a file yet!");
+                    File file = httpResult.getFile();
+                    bundle.putByteArray("data", StreamUtils.readAllFromStream(new FileInputStream(file), (int) file.length(), 1000));
                 } else {
                     bundle.putByteArray("data", httpResult.getByteArray());
                 }
