@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/fn_primary_bg">
 
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp"
+        android:elevation="0dp" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         style="?attr/fnToolbarStyle"

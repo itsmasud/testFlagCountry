@@ -1,14 +1,23 @@
 package com.fieldnation.service.data.profile;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.workorder.WorkorderDispatch;
+import com.fieldnation.service.data.workorder.WorkorderTransactionListener;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+
+import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -200,4 +209,64 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             Log.v(TAG, ex);
         }
     }
+
+    // returns the deliverable details
+    public static void uploadProfilePhoto(Context context, String filename, String filePath, long profileId) {
+        Log.v(TAG, "uploadProfilePhoto file");
+        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
+        uploadProfilePhoto(context, upFile, filename, filePath, profileId);
+    }
+
+    public static void uploadProfilePhoto(Context context, InputStream inputStream, String filename, String filePath, long profileId) {
+        Log.v(TAG, "uploadProfilePhoto uri");
+        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, inputStream, "uploadTemp.dat");
+        uploadProfilePhoto(context, upFile, filename, filePath, profileId);
+    }
+
+    public static void uploadProfilePhoto(Context context, StoredObject upFile, String filename, String filePath, long profileId) {
+        Log.v(TAG, "uploadProfilePhoto uri");
+
+        if (upFile == null) {
+            ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
+            Log.logException(new Exception("PA-332 - UpFile is null"));
+            ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
+            return;
+        }
+
+
+        if (upFile.isFile() && upFile.getFile() != null) {
+            if (upFile.getFile().length() > 100000000) { // 100 MB?
+                StoredObject.delete(context, upFile);
+                ToastClient.toast(context, "File is too long: " + filePath, Toast.LENGTH_LONG);
+                ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
+                return;
+            }
+        }
+
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + profileId + "/profile/avatar")
+                    .multipartFile("file", filename, upFile)
+                    .doNotRead();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST/api/rest/v2/users/[profileId]/profile/avatar")
+                    .priority(Priority.LOW)
+                    .listener(ProfileTransactionListener.class)
+                    .listenerParams(ProfileTransactionListener.pUploadPhoto(profileId, filename))
+                    .useAuth(true)
+                    .request(builder)
+                    .setWifiRequired(App.get().onlyUploadWithWifi())
+                    .setTrack(true)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+
 }

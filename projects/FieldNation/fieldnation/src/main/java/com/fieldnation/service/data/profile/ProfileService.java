@@ -1,6 +1,7 @@
 package com.fieldnation.service.data.profile;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonArray;
@@ -8,6 +9,8 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.MultiThreadedService;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 
 /**
  * Created by Michael Carver on 3/13/2015.
@@ -39,6 +42,9 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
                     break;
                 case PARAM_ACTION_LIST_MESSAGES:
                     listMessages(intent);
+                    break;
+                case PARAM_ACTION_PHOTO_UPLOAD:
+                    uploadProfilePhoto(intent);
                     break;
             }
         }
@@ -126,5 +132,28 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
             ProfileTransactionBuilder.listMessages(this, page, isSync);
         }
     }
+
+
+    private void uploadProfilePhoto(Intent intent) {
+        long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
+        String filename = intent.getStringExtra(PARAM_FILE_NAME);
+        String filePath = intent.getStringExtra(PARAM_PHOTO_PATH);
+        Uri uri = intent.getParcelableExtra(PARAM_URI);
+
+        if (uri != null) {
+            try {
+                StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
+                if (cache != null) {
+                    ProfileTransactionBuilder.uploadProfilePhoto(this, cache, filename, filePath, profileId);
+                } else {
+                    ProfileTransactionBuilder.uploadProfilePhoto(this, this.getContentResolver().openInputStream(uri), filename, filePath, profileId);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else
+            ProfileTransactionBuilder.uploadProfilePhoto(this, filename, filePath, profileId);
+    }
+
 
 }
