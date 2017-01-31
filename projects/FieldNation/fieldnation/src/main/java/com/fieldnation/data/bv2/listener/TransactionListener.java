@@ -72,10 +72,13 @@ public class TransactionListener extends WebTransactionListener {
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+                // TODO error!
             }
 
             return Result.CONTINUE;
         } else if (result == Result.DELETE) {
+            Log.v(TAG, "break!");
+        } else if (result == Result.RETRY) {
             Log.v(TAG, "break!");
         }
         return super.onComplete(context, result, transaction, httpResult, throwable);

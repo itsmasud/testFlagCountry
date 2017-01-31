@@ -1,4 +1,5 @@
 package com.fieldnation.data.bv2.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,7 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by dmgen from swagger on 1/31/17.
@@ -418,4 +420,22 @@ public class Location implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
     }
+
+   	/*-*************************************************-*/
+    /*-				Human Generated Code				-*/
+    /*-*************************************************-*/
+
+    public String getCityState() {
+        if (misc.isEmptyOrNull(_city) && misc.isEmptyOrNull(_state))
+            // both empty
+            return "";
+        else if (misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state))
+            // have state
+            return _state;
+        else if (!misc.isEmptyOrNull(_city) && misc.isEmptyOrNull(_state))
+            return _city;
+        else
+            return _city + ", " + _state;
+    }
+
 }

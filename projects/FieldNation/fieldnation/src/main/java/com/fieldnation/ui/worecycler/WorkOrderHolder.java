@@ -2,7 +2,7 @@ package com.fieldnation.ui.worecycler;
 
 import android.view.View;
 
-import com.fieldnation.ui.workorder.v2.WorkOrderCard;
+import com.fieldnation.ui.workorder.v2_old.WorkOrderCard;
 
 /**
  * Created by Michael on 3/11/2016.
