@@ -3,9 +3,11 @@ package com.fieldnation.fnjson;
 import com.fieldnation.fnjson.annotations.CollectionParameterType;
 import com.fieldnation.fnjson.annotations.Json;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -87,6 +89,9 @@ public class Unserializer {
      * @throws Exception
      */
     private static Object unserialize(Class<?> targetClass, Object source, Object defaultValue, Class<?> collectionType) throws Exception {
+        if (ReflectionUtils.isEnum(targetClass)) {
+            return unserializeEnum((Class<Enum>) targetClass, source.toString());
+        }
         if (ReflectionUtils.isPrimitive(targetClass)) {
             return unserializePrimitive(targetClass, source.toString());
         }
@@ -109,6 +114,27 @@ public class Unserializer {
 
         // this object is none of the above. try unserializing the object it represents
         return unserializeObject(targetClass, (JsonObject) source);
+    }
+
+    private static Enum unserializeEnum(Class<Enum> targetClazz, String source) throws NoSuchFieldException {
+        if (source == null)
+            return null;
+
+        if (source.equals(""))
+            return null;
+
+        Enum[] constants = targetClazz.getEnumConstants();
+        for (Enum constant : constants) {
+            Field field = targetClazz.getField(constant.name());
+
+            Json annotation = ReflectionUtils.getAnnotation(field, Json.class);
+            if (annotation == null)
+                continue;
+
+            if (annotation.name().equals(source))
+                return constant;
+        }
+        return null;
     }
 
     /**
@@ -209,3 +235,4 @@ public class Unserializer {
         return defaultValue;
     }
 }
+

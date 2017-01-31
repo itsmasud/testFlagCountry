@@ -29,6 +29,9 @@ import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.data.bv2.client.WorkordersWebApi;
+import com.fieldnation.data.bv2.model.Error;
+import com.fieldnation.data.bv2.model.WorkOrders;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -177,6 +180,7 @@ public class WorkFragment extends WorkorderFragment {
     // Data
     private WorkorderClient _workorderClient;
     private FileCacheClient _fileCacheClient;
+    private WorkordersWebApi _workorderApi;
     private File _tempFile;
     private Uri _tempUri;
     private GpsLocationService _gpsLocationService;
@@ -423,6 +427,9 @@ public class WorkFragment extends WorkorderFragment {
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
 
+        _workorderApi = new WorkordersWebApi(_workordersWebApi_listener);
+        _workorderApi.connect(App.get());
+
         _gpsLocationService = new GpsLocationService(getActivity());
 
         while (_untilAdded.size() > 0) {
@@ -449,6 +456,9 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
+
+        if (_workorderApi != null && _workorderApi.isConnected())
+            _workorderApi.disconnect(App.get());
 
         super.onDetach();
     }
@@ -934,7 +944,26 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
+            //WorkordersWebApi.getWorkOrders(App.get(), false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workorder.getWorkorderId().intValue(), false);
+        }
+    };
+
+    private final WorkordersWebApi.Listener _workordersWebApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workorderApi.subGetWorkOrders();
+            _workorderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+            Log.v(TAG, "onGetWorkOrders");
+        }
+
+        @Override
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "onWorkordersWebApi");
         }
     };
 

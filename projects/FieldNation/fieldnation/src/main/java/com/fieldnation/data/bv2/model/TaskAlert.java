@@ -1,0 +1,125 @@
+package com.fieldnation.data.bv2.model;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+
+/**
+ * Created by dmgen from swagger on 1/30/17.
+ */
+
+public class TaskAlert implements Parcelable {
+    private static final String TAG = "TaskAlert";
+
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "sent")
+    private Long _sent;
+
+    @Json(name = "email")
+    private String _email;
+
+    public TaskAlert() {
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public TaskAlert id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setSent(Long sent) {
+        _sent = sent;
+    }
+
+    public Long getSent() {
+        return _sent;
+    }
+
+    public TaskAlert sent(Long sent) {
+        _sent = sent;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        _email = email;
+    }
+
+    public String getEmail() {
+        return _email;
+    }
+
+    public TaskAlert email(String email) {
+        _email = email;
+        return this;
+    }
+
+    /*-*****************************-*/
+    /*-             Json            -*/
+    /*-*****************************-*/
+    public static TaskAlert fromJson(JsonObject obj) {
+        try {
+            return Unserializer.unserializeObject(TaskAlert.class, obj);
+        } catch (Exception ex) {
+            Log.v(TAG, TAG, ex);
+            return null;
+        }
+    }
+
+    public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(TaskAlert taskAlert) {
+        try {
+            return Serializer.serializeObject(taskAlert);
+        } catch (Exception ex) {
+            Log.v(TAG, TAG, ex);
+            return null;
+        }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<TaskAlert> CREATOR = new Parcelable.Creator<TaskAlert>() {
+
+        @Override
+        public TaskAlert createFromParcel(Parcel source) {
+            try {
+                return TaskAlert.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public TaskAlert[] newArray(int size) {
+            return new TaskAlert[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
+    }
+}
