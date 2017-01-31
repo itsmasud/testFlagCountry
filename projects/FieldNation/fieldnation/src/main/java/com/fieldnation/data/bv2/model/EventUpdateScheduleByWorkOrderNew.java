@@ -2,6 +2,7 @@ package com.fieldnation.data.bv2.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -9,7 +10,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
@@ -85,6 +86,14 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static EventUpdateScheduleByWorkOrderNew[] fromJsonArray(JsonArray array) {
+        EventUpdateScheduleByWorkOrderNew[] list = new EventUpdateScheduleByWorkOrderNew[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            list[i] = fromJson(array.getJsonObject(i));
+        }
+        return list;
+    }
+
     public static EventUpdateScheduleByWorkOrderNew fromJson(JsonObject obj) {
         try {
             return Unserializer.unserializeObject(EventUpdateScheduleByWorkOrderNew.class, obj);

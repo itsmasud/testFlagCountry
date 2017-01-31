@@ -10,6 +10,7 @@ import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class MapsWebApi extends TopicClient {
@@ -93,7 +94,7 @@ public class MapsWebApi extends TopicClient {
         public void onMapsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onGetMaps(byte[] data, boolean success, Error error) {
+        public void onGetMaps(LocationCoordinates[] locationCoordinates, boolean success, Error error) {
         }
 
     }
@@ -124,7 +125,7 @@ public class MapsWebApi extends TopicClient {
                 switch (transactionParams.apiFunction) {
                     case "getMaps":
                         if (success)
-                            successObject = data;
+                            successObject = LocationCoordinates.fromJsonArray(new JsonArray(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -144,7 +145,7 @@ public class MapsWebApi extends TopicClient {
                 listener.onMapsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "getMaps":
-                        listener.onGetMaps((byte[]) successObject, success, (Error) failObject);
+                        listener.onGetMaps((LocationCoordinates[]) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

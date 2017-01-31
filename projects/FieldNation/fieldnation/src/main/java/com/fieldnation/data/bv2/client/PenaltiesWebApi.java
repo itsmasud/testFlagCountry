@@ -10,6 +10,7 @@ import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class PenaltiesWebApi extends TopicClient {
@@ -166,10 +167,10 @@ public class PenaltiesWebApi extends TopicClient {
         public void onAddPenalty(PayModifier payModifier, boolean success, Error error) {
         }
 
-        public void onRemovePenalty(byte[] data, boolean success, Error error) {
+        public void onRemovePenalty(boolean success, Error error) {
         }
 
-        public void onUpdatePenalty(byte[] data, boolean success, Error error) {
+        public void onUpdatePenalty(boolean success, Error error) {
         }
 
     }
@@ -205,15 +206,11 @@ public class PenaltiesWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removePenalty":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updatePenalty":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -235,10 +232,10 @@ public class PenaltiesWebApi extends TopicClient {
                         listener.onAddPenalty((PayModifier) successObject, success, (Error) failObject);
                         break;
                     case "removePenalty":
-                        listener.onRemovePenalty((byte[]) successObject, success, (Error) failObject);
+                        listener.onRemovePenalty(success, (Error) failObject);
                         break;
                     case "updatePenalty":
-                        listener.onUpdatePenalty((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdatePenalty(success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

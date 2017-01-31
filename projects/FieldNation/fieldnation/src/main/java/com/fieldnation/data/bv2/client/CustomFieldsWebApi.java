@@ -22,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class CustomFieldsWebApi extends TopicClient {
@@ -314,16 +314,16 @@ public class CustomFieldsWebApi extends TopicClient {
         public void onCustomFieldsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onUpdateCustomFieldVisibility(byte[] data, boolean success, Error error) {
+        public void onUpdateCustomFieldVisibility(boolean success, Error error) {
         }
 
-        public void onUpdateCustomFieldVisibilityByProject(byte[] data, boolean success, Error error) {
+        public void onUpdateCustomFieldVisibilityByProject(boolean success, Error error) {
         }
 
-        public void onRemoveCustomField(byte[] data, boolean success, Error error) {
+        public void onRemoveCustomField(boolean success, Error error) {
         }
 
-        public void onUpdateCustomField(byte[] data, boolean success, Error error) {
+        public void onUpdateCustomField(boolean success, Error error) {
         }
 
         public void onAddCustomField(IdResponse idResponse, boolean success, Error error) {
@@ -359,27 +359,19 @@ public class CustomFieldsWebApi extends TopicClient {
             try {
                 switch (transactionParams.apiFunction) {
                     case "updateCustomFieldVisibility":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateCustomFieldVisibilityByProject":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeCustomField":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateCustomField":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addCustomField":
@@ -410,16 +402,16 @@ public class CustomFieldsWebApi extends TopicClient {
                 listener.onCustomFieldsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "updateCustomFieldVisibility":
-                        listener.onUpdateCustomFieldVisibility((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateCustomFieldVisibility(success, (Error) failObject);
                         break;
                     case "updateCustomFieldVisibilityByProject":
-                        listener.onUpdateCustomFieldVisibilityByProject((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateCustomFieldVisibilityByProject(success, (Error) failObject);
                         break;
                     case "removeCustomField":
-                        listener.onRemoveCustomField((byte[]) successObject, success, (Error) failObject);
+                        listener.onRemoveCustomField(success, (Error) failObject);
                         break;
                     case "updateCustomField":
-                        listener.onUpdateCustomField((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateCustomField(success, (Error) failObject);
                         break;
                     case "addCustomField":
                         listener.onAddCustomField((IdResponse) successObject, success, (Error) failObject);

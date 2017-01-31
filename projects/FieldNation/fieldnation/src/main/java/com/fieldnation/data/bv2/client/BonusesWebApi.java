@@ -10,6 +10,7 @@ import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class BonusesWebApi extends TopicClient {
@@ -167,10 +168,10 @@ public class BonusesWebApi extends TopicClient {
         public void onBonusesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onRemoveBonus(byte[] data, boolean success, Error error) {
+        public void onRemoveBonus(boolean success, Error error) {
         }
 
-        public void onUpdateBonus(byte[] data, boolean success, Error error) {
+        public void onUpdateBonus(boolean success, Error error) {
         }
 
         public void onAddBonus(IdResponse idResponse, boolean success, Error error) {
@@ -203,15 +204,11 @@ public class BonusesWebApi extends TopicClient {
             try {
                 switch (transactionParams.apiFunction) {
                     case "removeBonus":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateBonus":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addBonus":
@@ -236,10 +233,10 @@ public class BonusesWebApi extends TopicClient {
                 listener.onBonusesWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "removeBonus":
-                        listener.onRemoveBonus((byte[]) successObject, success, (Error) failObject);
+                        listener.onRemoveBonus(success, (Error) failObject);
                         break;
                     case "updateBonus":
-                        listener.onUpdateBonus((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateBonus(success, (Error) failObject);
                         break;
                     case "addBonus":
                         listener.onAddBonus((IdResponse) successObject, success, (Error) failObject);

@@ -31,6 +31,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.bv2.client.WorkordersWebApi;
 import com.fieldnation.data.bv2.model.Error;
+import com.fieldnation.data.bv2.model.SavedList;
 import com.fieldnation.data.bv2.model.WorkOrders;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
@@ -276,7 +277,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
         _payDialog.setListener(_payDialog_listener);
-
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -945,7 +945,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
             //WorkordersWebApi.getWorkOrders(App.get(), false);
-            WorkordersWebApi.getWorkOrder(App.get(), _workorder.getWorkorderId().intValue(), false);
+            //WorkordersWebApi.getWorkOrder(App.get(), _workorder.getWorkorderId().intValue(), false);
+            WorkordersWebApi.getWorkOrderLists(App.get(), false);
         }
     };
 
@@ -954,6 +955,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onConnected() {
             _workorderApi.subGetWorkOrders();
             _workorderApi.subWorkordersWebApi();
+            _workorderApi.subGetWorkOrderLists();
         }
 
         @Override
@@ -964,6 +966,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi");
+        }
+
+        @Override
+        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
+            Log.v(TAG, "onGetWorkOrderLists");
         }
     };
 

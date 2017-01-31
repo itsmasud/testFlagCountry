@@ -2,6 +2,7 @@ package com.fieldnation.data.bv2.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -9,7 +10,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class PayFees implements Parcelable {
@@ -101,6 +102,14 @@ public class PayFees implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static PayFees[] fromJsonArray(JsonArray array) {
+        PayFees[] list = new PayFees[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            list[i] = fromJson(array.getJsonObject(i));
+        }
+        return list;
+    }
+
     public static PayFees fromJson(JsonObject obj) {
         try {
             return Unserializer.unserializeObject(PayFees.class, obj);

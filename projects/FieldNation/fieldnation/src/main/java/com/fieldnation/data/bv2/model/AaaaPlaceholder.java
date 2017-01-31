@@ -13,42 +13,26 @@ import com.fieldnation.fnlog.Log;
  * Created by dmgen from swagger on 1/31/17.
  */
 
-public class SwapResponse implements Parcelable {
-    private static final String TAG = "SwapResponse";
+public class AaaaPlaceholder implements Parcelable {
+    private static final String TAG = "AaaaPlaceholder";
 
-    @Json(name = "success")
-    private Boolean _success;
-
-    public SwapResponse() {
-    }
-
-    public void setSuccess(Boolean success) {
-        _success = success;
-    }
-
-    public Boolean getSuccess() {
-        return _success;
-    }
-
-    public SwapResponse success(Boolean success) {
-        _success = success;
-        return this;
+    public AaaaPlaceholder() {
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static SwapResponse[] fromJsonArray(JsonArray array) {
-        SwapResponse[] list = new SwapResponse[array.size()];
+    public static AaaaPlaceholder[] fromJsonArray(JsonArray array) {
+        AaaaPlaceholder[] list = new AaaaPlaceholder[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static SwapResponse fromJson(JsonObject obj) {
+    public static AaaaPlaceholder fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(SwapResponse.class, obj);
+            return Unserializer.unserializeObject(AaaaPlaceholder.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -59,9 +43,9 @@ public class SwapResponse implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(SwapResponse swapResponse) {
+    public static JsonObject toJson(AaaaPlaceholder aaaaPlaceholder) {
         try {
-            return Serializer.serializeObject(swapResponse);
+            return Serializer.serializeObject(aaaaPlaceholder);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -71,12 +55,12 @@ public class SwapResponse implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<SwapResponse> CREATOR = new Parcelable.Creator<SwapResponse>() {
+    public static final Parcelable.Creator<AaaaPlaceholder> CREATOR = new Parcelable.Creator<AaaaPlaceholder>() {
 
         @Override
-        public SwapResponse createFromParcel(Parcel source) {
+        public AaaaPlaceholder createFromParcel(Parcel source) {
             try {
-                return SwapResponse.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return AaaaPlaceholder.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -84,8 +68,8 @@ public class SwapResponse implements Parcelable {
         }
 
         @Override
-        public SwapResponse[] newArray(int size) {
-            return new SwapResponse[size];
+        public AaaaPlaceholder[] newArray(int size) {
+            return new AaaaPlaceholder[size];
         }
     };
 

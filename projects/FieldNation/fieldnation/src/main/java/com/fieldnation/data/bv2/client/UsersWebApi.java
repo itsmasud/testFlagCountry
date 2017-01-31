@@ -10,6 +10,7 @@ import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class UsersWebApi extends TopicClient {
@@ -766,10 +767,10 @@ public class UsersWebApi extends TopicClient {
         public void onUsersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onSendVerificationCodeViaSms(byte[] data, boolean success, Error error) {
+        public void onSendVerificationCodeViaSms(boolean success, Error error) {
         }
 
-        public void onSendAccountActivationLink(byte[] data, boolean success, Error error) {
+        public void onSendAccountActivationLink(boolean success, Error error) {
         }
 
         public void onUpdateSettings(User user, boolean success, Error error) {
@@ -778,7 +779,7 @@ public class UsersWebApi extends TopicClient {
         public void onGetSettings(User user, boolean success, Error error) {
         }
 
-        public void onUpdateTax(byte[] data, boolean success, Error error) {
+        public void onUpdateTax(boolean success, Error error) {
         }
 
         public void onGetTax(UserTaxInfo userTaxInfo, boolean success, Error error) {
@@ -793,16 +794,16 @@ public class UsersWebApi extends TopicClient {
         public void onGetPay(User user, boolean success, Error error) {
         }
 
-        public void onSetUserPreference(byte[] data, boolean success, Error error) {
+        public void onSetUserPreference(boolean success, Error error) {
         }
 
-        public void onGetUserPreferenceValue(byte[] data, boolean success, Error error) {
+        public void onGetUserPreferenceValue(AaaaPlaceholder aaaaPlaceholder, boolean success, Error error) {
         }
 
-        public void onUploadProfilePhoto(byte[] data, boolean success, Error error) {
+        public void onUploadProfilePhoto(boolean success, Error error) {
         }
 
-        public void onUpdateTour(byte[] data, boolean success, Error error) {
+        public void onUpdateTour(User user, boolean success, Error error) {
         }
 
         public void onGetTour(User user, boolean success, Error error) {
@@ -811,16 +812,16 @@ public class UsersWebApi extends TopicClient {
         public void onGetUser(User user, boolean success, Error error) {
         }
 
-        public void onSendVerificationCodeViaVoiceCall(byte[] data, boolean success, Error error) {
+        public void onSendVerificationCodeViaVoiceCall(boolean success, Error error) {
         }
 
-        public void onAddTypesOfWork(byte[] data, boolean success, Error error) {
+        public void onAddTypesOfWork(boolean success, Error error) {
         }
 
         public void onGetUserTypesOfWork(TypesOfWork typesOfWork, boolean success, Error error) {
         }
 
-        public void onVerifyAccount(byte[] data, boolean success, Error error) {
+        public void onVerifyAccount(boolean success, Error error) {
         }
 
     }
@@ -850,15 +851,11 @@ public class UsersWebApi extends TopicClient {
             try {
                 switch (transactionParams.apiFunction) {
                     case "sendVerificationCodeViaSms":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "sendAccountActivationLink":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateSettings":
@@ -874,9 +871,7 @@ public class UsersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateTax":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "getTax":
@@ -904,26 +899,22 @@ public class UsersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "setUserPreference":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "getUserPreferenceValue":
                         if (success)
-                            successObject = data;
+                            successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "uploadProfilePhoto":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateTour":
                         if (success)
-                            successObject = data;
+                            successObject = User.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -940,15 +931,11 @@ public class UsersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "sendVerificationCodeViaVoiceCall":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addTypesOfWork":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "getUserTypesOfWork":
@@ -958,9 +945,7 @@ public class UsersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "verifyAccount":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -979,10 +964,10 @@ public class UsersWebApi extends TopicClient {
                 listener.onUsersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "sendVerificationCodeViaSms":
-                        listener.onSendVerificationCodeViaSms((byte[]) successObject, success, (Error) failObject);
+                        listener.onSendVerificationCodeViaSms(success, (Error) failObject);
                         break;
                     case "sendAccountActivationLink":
-                        listener.onSendAccountActivationLink((byte[]) successObject, success, (Error) failObject);
+                        listener.onSendAccountActivationLink(success, (Error) failObject);
                         break;
                     case "updateSettings":
                         listener.onUpdateSettings((User) successObject, success, (Error) failObject);
@@ -991,7 +976,7 @@ public class UsersWebApi extends TopicClient {
                         listener.onGetSettings((User) successObject, success, (Error) failObject);
                         break;
                     case "updateTax":
-                        listener.onUpdateTax((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateTax(success, (Error) failObject);
                         break;
                     case "getTax":
                         listener.onGetTax((UserTaxInfo) successObject, success, (Error) failObject);
@@ -1006,16 +991,16 @@ public class UsersWebApi extends TopicClient {
                         listener.onGetPay((User) successObject, success, (Error) failObject);
                         break;
                     case "setUserPreference":
-                        listener.onSetUserPreference((byte[]) successObject, success, (Error) failObject);
+                        listener.onSetUserPreference(success, (Error) failObject);
                         break;
                     case "getUserPreferenceValue":
-                        listener.onGetUserPreferenceValue((byte[]) successObject, success, (Error) failObject);
+                        listener.onGetUserPreferenceValue((AaaaPlaceholder) successObject, success, (Error) failObject);
                         break;
                     case "uploadProfilePhoto":
-                        listener.onUploadProfilePhoto((byte[]) successObject, success, (Error) failObject);
+                        listener.onUploadProfilePhoto(success, (Error) failObject);
                         break;
                     case "updateTour":
-                        listener.onUpdateTour((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateTour((User) successObject, success, (Error) failObject);
                         break;
                     case "getTour":
                         listener.onGetTour((User) successObject, success, (Error) failObject);
@@ -1024,16 +1009,16 @@ public class UsersWebApi extends TopicClient {
                         listener.onGetUser((User) successObject, success, (Error) failObject);
                         break;
                     case "sendVerificationCodeViaVoiceCall":
-                        listener.onSendVerificationCodeViaVoiceCall((byte[]) successObject, success, (Error) failObject);
+                        listener.onSendVerificationCodeViaVoiceCall(success, (Error) failObject);
                         break;
                     case "addTypesOfWork":
-                        listener.onAddTypesOfWork((byte[]) successObject, success, (Error) failObject);
+                        listener.onAddTypesOfWork(success, (Error) failObject);
                         break;
                     case "getUserTypesOfWork":
                         listener.onGetUserTypesOfWork((TypesOfWork) successObject, success, (Error) failObject);
                         break;
                     case "verifyAccount":
-                        listener.onVerifyAccount((byte[]) successObject, success, (Error) failObject);
+                        listener.onVerifyAccount(success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

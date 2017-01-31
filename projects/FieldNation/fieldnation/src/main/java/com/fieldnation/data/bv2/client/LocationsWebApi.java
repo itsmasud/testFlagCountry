@@ -10,6 +10,7 @@ import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class LocationsWebApi extends TopicClient {
@@ -426,13 +427,13 @@ public class LocationsWebApi extends TopicClient {
         public void onLocationsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onAddNotes(byte[] data, boolean success, Error error) {
+        public void onAddNotes(boolean success, Error error) {
         }
 
         public void onAddAttribute(IdResponse idResponse, boolean success, Error error) {
         }
 
-        public void onRemoveAttribute(byte[] data, boolean success, Error error) {
+        public void onRemoveAttribute(boolean success, Error error) {
         }
 
         public void onGetCountries(Countries countries, boolean success, Error error) {
@@ -444,16 +445,16 @@ public class LocationsWebApi extends TopicClient {
         public void onGetLocations(StoredLocations storedLocations, boolean success, Error error) {
         }
 
-        public void onRemoveNote(byte[] data, boolean success, Error error) {
+        public void onRemoveNote(boolean success, Error error) {
         }
 
-        public void onUpdateNote(byte[] data, boolean success, Error error) {
+        public void onUpdateNote(boolean success, Error error) {
         }
 
-        public void onRemoveLocation(byte[] data, boolean success, Error error) {
+        public void onRemoveLocation(boolean success, Error error) {
         }
 
-        public void onUpdateLocation(byte[] data, boolean success, Error error) {
+        public void onUpdateLocation(boolean success, Error error) {
         }
 
     }
@@ -483,9 +484,7 @@ public class LocationsWebApi extends TopicClient {
             try {
                 switch (transactionParams.apiFunction) {
                     case "addNotes":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addAttribute":
@@ -495,9 +494,7 @@ public class LocationsWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeAttribute":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "getCountries":
@@ -519,27 +516,19 @@ public class LocationsWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeNote":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateNote":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeLocation":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateLocation":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -558,13 +547,13 @@ public class LocationsWebApi extends TopicClient {
                 listener.onLocationsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "addNotes":
-                        listener.onAddNotes((byte[]) successObject, success, (Error) failObject);
+                        listener.onAddNotes(success, (Error) failObject);
                         break;
                     case "addAttribute":
                         listener.onAddAttribute((IdResponse) successObject, success, (Error) failObject);
                         break;
                     case "removeAttribute":
-                        listener.onRemoveAttribute((byte[]) successObject, success, (Error) failObject);
+                        listener.onRemoveAttribute(success, (Error) failObject);
                         break;
                     case "getCountries":
                         listener.onGetCountries((Countries) successObject, success, (Error) failObject);
@@ -576,16 +565,16 @@ public class LocationsWebApi extends TopicClient {
                         listener.onGetLocations((StoredLocations) successObject, success, (Error) failObject);
                         break;
                     case "removeNote":
-                        listener.onRemoveNote((byte[]) successObject, success, (Error) failObject);
+                        listener.onRemoveNote(success, (Error) failObject);
                         break;
                     case "updateNote":
-                        listener.onUpdateNote((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateNote(success, (Error) failObject);
                         break;
                     case "removeLocation":
-                        listener.onRemoveLocation((byte[]) successObject, success, (Error) failObject);
+                        listener.onRemoveLocation(success, (Error) failObject);
                         break;
                     case "updateLocation":
-                        listener.onUpdateLocation((byte[]) successObject, success, (Error) failObject);
+                        listener.onUpdateLocation(success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

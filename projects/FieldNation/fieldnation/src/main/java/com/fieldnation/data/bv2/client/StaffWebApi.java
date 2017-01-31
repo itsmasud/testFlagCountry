@@ -10,6 +10,7 @@ import com.fieldnation.data.bv2.listener.TransactionParams;
 import com.fieldnation.data.bv2.model.*;
 import com.fieldnation.data.bv2.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,7 +22,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
- * Created by dmgen from swagger on 1/30/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class StaffWebApi extends TopicClient {
@@ -92,7 +93,7 @@ public class StaffWebApi extends TopicClient {
         public void onStaffWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onGetEmailTemplates(byte[] data, boolean success, Error error) {
+        public void onGetEmailTemplates(boolean success, Error error) {
         }
 
     }
@@ -122,9 +123,7 @@ public class StaffWebApi extends TopicClient {
             try {
                 switch (transactionParams.apiFunction) {
                     case "getEmailTemplates":
-                        if (success)
-                            successObject = data;
-                        else
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -143,7 +142,7 @@ public class StaffWebApi extends TopicClient {
                 listener.onStaffWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "getEmailTemplates":
-                        listener.onGetEmailTemplates((byte[]) successObject, success, (Error) failObject);
+                        listener.onGetEmailTemplates(success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

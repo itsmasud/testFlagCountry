@@ -2,6 +2,7 @@ package com.fieldnation.data.bv2.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -9,7 +10,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/26/17.
+ * Created by dmgen from swagger on 1/31/17.
  */
 
 public class ListEnvelope implements Parcelable {
@@ -181,6 +182,14 @@ public class ListEnvelope implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static ListEnvelope[] fromJsonArray(JsonArray array) {
+        ListEnvelope[] list = new ListEnvelope[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            list[i] = fromJson(array.getJsonObject(i));
+        }
+        return list;
+    }
+
     public static ListEnvelope fromJson(JsonObject obj) {
         try {
             return Unserializer.unserializeObject(ListEnvelope.class, obj);
