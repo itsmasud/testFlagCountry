@@ -314,8 +314,8 @@ public class WorkOrderCard extends RelativeLayout {
                 _payTypeTextView.setText(getResources().getString(R.string.payment_type_hourly, pay.getUnits().intValue()));
                 break;
             case "blended":
-                _amountTextView.setText(misc.toShortCurrency(pay.getAmount() + pay.getAdditionalAmount() * pay.getAdditionalUnits()));
-                _payTypeTextView.setText(getResources().getString(R.string.payment_type_blended, pay.getAdditionalUnits().intValue(), pay.getAdditionalAmount().intValue()));
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText(getResources().getString(R.string.payment_type_blended, pay.getAdditionalAmount().intValue(), pay.getAdditionalUnits().intValue()));
                 break;
             case "device":
                 _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
