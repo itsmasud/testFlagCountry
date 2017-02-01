@@ -52,7 +52,7 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
         child.setBottom(y + h);
     }
 
-    void startShowingAnimation(final View child) {
+    public void startShowingAnimation(final View child) {
         if (_mode == MODE_SHOWN || _mode == MODE_ANIMATING)
             return;
         _mode = MODE_ANIMATING;
@@ -80,7 +80,7 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
         _showingAnimation.start();
     }
 
-    void startHidingAnimation(final View child) {
+    public void startHidingAnimation(final View child) {
         if (_mode == MODE_HIDDEN || _mode == MODE_ANIMATING)
             return;
         _mode = MODE_ANIMATING;

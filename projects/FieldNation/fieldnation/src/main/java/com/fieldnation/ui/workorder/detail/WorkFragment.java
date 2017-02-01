@@ -29,10 +29,6 @@ import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.bv2.client.WorkordersWebApi;
-import com.fieldnation.data.bv2.model.Error;
-import com.fieldnation.data.bv2.model.SavedList;
-import com.fieldnation.data.bv2.model.WorkOrders;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -102,6 +98,10 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.WorkOrders;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -961,6 +961,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
             Log.v(TAG, "onGetWorkOrders");
+
         }
 
         @Override

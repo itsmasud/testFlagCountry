@@ -17,7 +17,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.nav.NavActivity;
+import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
  * Created by michael.carver on 12/18/2014.
