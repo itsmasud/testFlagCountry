@@ -12,13 +12,13 @@
         android:layout_above="@+id/footer_view"
         android:layout_alignParentTop="true">
 
-        <com.fieldnation.ui.search.SearchResultScreen
+        <com.fieldnation.v2.ui.search.SearchResultScreen
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        <com.fieldnation.ui.nav.SavedSearchList
+        <com.fieldnation.v2.ui.nav.SavedSearchList
             android:id="@+id/searchesView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

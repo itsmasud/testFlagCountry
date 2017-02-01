@@ -64,7 +64,7 @@ public class SavedSearchTracker {
         TrackerBase.show(context, SCREEN, null);
     }
 
-    public static void onListChanged(Context context, final SavedSearchParams savedSearchParams) {
+    public static void onListChanged(Context context, final String searchTitle) {
         TrackerBase.unstructuredEvent(context, new TrackerBase.Identity() {
             @Override
             public String page() {
@@ -73,7 +73,7 @@ public class SavedSearchTracker {
 
             @Override
             public String identity() {
-                return savedSearchParams.title + " Saved Search";
+                return searchTitle + " Saved Search";
             }
 
             @Override
@@ -96,7 +96,7 @@ public class SavedSearchTracker {
         onShow(context);
         SavedSearchParams[] list = SavedSearchClient.defaults;
         for (SavedSearchParams p : list) {
-            onListChanged(context, p);
+            onListChanged(context, p.title);
         }
         for (Item item : Item.values()) {
             onClick(context, item);

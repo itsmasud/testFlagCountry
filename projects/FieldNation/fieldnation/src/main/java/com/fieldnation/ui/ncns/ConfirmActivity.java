@@ -19,8 +19,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.nav.NavActivity;
 import com.fieldnation.ui.search.SearchResultScreen;
+import com.fieldnation.v2.ui.nav.NavActivity;
 
 import java.util.List;
 

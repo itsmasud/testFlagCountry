@@ -52,7 +52,7 @@
             android:exported="false"
             android:process=":frontside" />
         <activity
-            android:name=".ui.nav.NavActivity"
+            android:name=".v2.ui.nav.NavActivity"
             android:exported="false"
             android:process=":frontside" />
         <activity

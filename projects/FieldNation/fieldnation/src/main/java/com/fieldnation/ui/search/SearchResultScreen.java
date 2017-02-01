@@ -25,7 +25,7 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
-import com.fieldnation.ui.workorder.v2_old.WorkOrderCard;
+import com.fieldnation.ui.workorder.v2.WorkOrderCard;
 
 import java.util.List;
 
