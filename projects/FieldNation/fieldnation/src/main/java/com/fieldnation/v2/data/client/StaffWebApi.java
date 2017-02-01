@@ -17,10 +17,7 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
 
 /**
  * Created by dmgen from swagger on 2/01/17.
@@ -48,7 +45,7 @@ public class StaffWebApi extends TopicClient {
      * Swagger operationId: getEmailTemplates
      * Get email templates by category.
      *
-     * @param category email category
+     * @param category     email category
      * @param isBackground indicates that this call is low priority
      */
     public static void getEmailTemplates(Context context, String category, boolean isBackground) {

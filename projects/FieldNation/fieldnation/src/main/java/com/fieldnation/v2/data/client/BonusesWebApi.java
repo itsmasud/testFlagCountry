@@ -14,11 +14,8 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.IdResponse;
 import com.fieldnation.v2.data.model.PayModifier;
@@ -87,7 +84,7 @@ public class BonusesWebApi extends TopicClient {
      * Updates a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
      * @param bonusId Bonus ID
-     * @param json JSON Model
+     * @param json    JSON Model
      */
     public static void updateBonus(Context context, Integer bonusId, PayModifier json) {
         try {
