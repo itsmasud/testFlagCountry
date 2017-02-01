@@ -12,15 +12,20 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.bv2.client.WorkordersWebApi;
+import com.fieldnation.data.v2.ListEnvelope;
+import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
+import com.fieldnation.ui.workorder.v2_old.WorkOrderCard;
 
 import java.util.List;
 
@@ -35,8 +40,9 @@ public class SearchResultScreen extends RelativeLayout {
     private RefreshView _refreshView;
 
     // Service
-    private WorkordersWebApi _workOrderClient;
+    private WorkOrderClient _workOrderClient;
     private SimpleGps _simpleGps;
+    private WorkorderClient _workorderClientV1;
 
     // Data
     private SavedSearchParams _searchParams;
@@ -73,8 +79,10 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
 
-        _workOrderClient = new WorkordersWebApi(_workordersWebApi_listener);
+        _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+        _workorderClientV1 = new WorkorderClient(_workorderClientV1_listener);
+        _workorderClientV1.connect(App.get());
 
         post(new Runnable() {
             @Override
