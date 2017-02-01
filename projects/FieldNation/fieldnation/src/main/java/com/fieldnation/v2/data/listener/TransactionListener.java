@@ -3,11 +3,13 @@ package com.fieldnation.v2.data.listener;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
@@ -70,6 +72,16 @@ public class TransactionListener extends WebTransactionListener {
                 bundle.putBoolean("success", true);
 
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
+
+                String method = new JsonObject(transaction.getRequestString()).getString("method");
+                if (method.equals("GET")) {
+                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray());
+                    if (httpResult.isFile()) {
+                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getFile(), transaction.getKey());
+                    } else {
+                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray());
+                    }
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 // TODO error!

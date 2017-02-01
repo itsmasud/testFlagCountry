@@ -14,14 +14,17 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.IdResponse;
 import com.fieldnation.v2.data.model.PayModifier;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class BonusesWebApi extends TopicClient {
@@ -50,6 +53,8 @@ public class BonusesWebApi extends TopicClient {
      */
     public static void removeBonus(Context context, Integer bonusId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -57,7 +62,7 @@ public class BonusesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/bonuses/{bonus_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -82,10 +87,12 @@ public class BonusesWebApi extends TopicClient {
      * Updates a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
      * @param bonusId Bonus ID
-     * @param json    JSON Model
+     * @param json JSON Model
      */
     public static void updateBonus(Context context, Integer bonusId, PayModifier json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -96,7 +103,7 @@ public class BonusesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/bonuses/{bonus_id}")
-                    .key(misc.md5("PUT//api/rest/v2/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -124,6 +131,8 @@ public class BonusesWebApi extends TopicClient {
      */
     public static void addBonus(Context context, PayModifier json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/bonuses");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -134,7 +143,7 @@ public class BonusesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/bonuses")
-                    .key(misc.md5("POST//api/rest/v2/bonuses"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

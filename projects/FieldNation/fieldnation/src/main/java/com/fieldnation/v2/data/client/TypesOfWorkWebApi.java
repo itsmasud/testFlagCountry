@@ -4,10 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -18,9 +14,14 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.TypesOfWork;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class TypesOfWorkWebApi extends TopicClient {
@@ -37,7 +38,7 @@ public class TypesOfWorkWebApi extends TopicClient {
         return TAG;
     }
 
-    public boolean subTypesOfWorkWebApi(){
+    public boolean subTypesOfWorkWebApi() {
         return register("TOPIC_ID_WEB_API_V2/TypesOfWorkWebApi");
     }
 
@@ -49,6 +50,8 @@ public class TypesOfWorkWebApi extends TopicClient {
      */
     public static void getTypesOfWork(Context context, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/types-of-work");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -56,7 +59,7 @@ public class TypesOfWorkWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/types-of-work")
-                    .key(misc.md5("GET//api/rest/v2/types-of-work"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -68,6 +71,8 @@ public class TypesOfWorkWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }

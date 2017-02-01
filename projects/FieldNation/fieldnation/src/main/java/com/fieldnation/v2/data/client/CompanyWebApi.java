@@ -4,10 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -18,9 +14,14 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.CompanyIntegrations;
+import com.fieldnation.v2.data.model.Error;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class CompanyWebApi extends TopicClient {
@@ -37,7 +38,7 @@ public class CompanyWebApi extends TopicClient {
         return TAG;
     }
 
-    public boolean subCompanyWebApi(){
+    public boolean subCompanyWebApi() {
         return register("TOPIC_ID_WEB_API_V2/CompanyWebApi");
     }
 
@@ -45,12 +46,14 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getIntegrations
      * Get a list of all company_integrations for a company.
      *
-     * @param companyId null
-     * @param accessToken null
+     * @param companyId    null
+     * @param accessToken  null
      * @param isBackground indicates that this call is low priority
      */
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -59,7 +62,7 @@ public class CompanyWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
-                    .key(misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -71,6 +74,8 @@ public class CompanyWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }

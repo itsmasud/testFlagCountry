@@ -4,10 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -18,9 +14,19 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Countries;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.IdResponse;
+import com.fieldnation.v2.data.model.LocationAttribute;
+import com.fieldnation.v2.data.model.LocationNote;
+import com.fieldnation.v2.data.model.StoredLocation;
+import com.fieldnation.v2.data.model.StoredLocations;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class LocationsWebApi extends TopicClient {
@@ -37,7 +43,7 @@ public class LocationsWebApi extends TopicClient {
         return TAG;
     }
 
-    public boolean subLocationsWebApi(){
+    public boolean subLocationsWebApi() {
         return register("TOPIC_ID_WEB_API_V2/LocationsWebApi");
     }
 
@@ -46,10 +52,12 @@ public class LocationsWebApi extends TopicClient {
      * Adds a note to a stored location
      *
      * @param locationId Location id
-     * @param json Notes
+     * @param json       Notes
      */
     public static void addNotes(Context context, Integer locationId, LocationNote json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/locations/" + locationId + "/notes");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -60,7 +68,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/notes")
-                    .key(misc.md5("POST//api/rest/v2/locations/" + locationId + "/notes"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -85,11 +93,13 @@ public class LocationsWebApi extends TopicClient {
      * Adds an attribute to a stored location
      *
      * @param locationId Location id
-     * @param attribute Attribute
-     * @param json JSON Model
+     * @param attribute  Attribute
+     * @param json       JSON Model
      */
     public static void addAttribute(Context context, Integer locationId, Integer attribute, LocationAttribute json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -100,7 +110,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/attributes/{attribute}")
-                    .key(misc.md5("POST//api/rest/v2/locations/" + locationId + "/attributes/" + attribute))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -125,10 +135,12 @@ public class LocationsWebApi extends TopicClient {
      * Removes an attribute from a stored location
      *
      * @param locationId Location id
-     * @param attribute Attribute
+     * @param attribute  Attribute
      */
     public static void removeAttribute(Context context, Integer locationId, Integer attribute) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -136,7 +148,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/attributes/{attribute}")
-                    .key(misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/attributes/" + attribute))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -164,6 +176,8 @@ public class LocationsWebApi extends TopicClient {
      */
     public static void getCountries(Context context, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/locations/countries");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -171,7 +185,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations/countries")
-                    .key(misc.md5("GET//api/rest/v2/locations/countries"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -183,6 +197,8 @@ public class LocationsWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -200,6 +216,8 @@ public class LocationsWebApi extends TopicClient {
      */
     public static void addLocations(Context context, StoredLocation json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/locations");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -210,7 +228,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations")
-                    .key(misc.md5("POST//api/rest/v2/locations"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -238,6 +256,8 @@ public class LocationsWebApi extends TopicClient {
      */
     public static void getLocations(Context context, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/locations");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -245,7 +265,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations")
-                    .key(misc.md5("GET//api/rest/v2/locations"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -257,6 +277,8 @@ public class LocationsWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -271,10 +293,12 @@ public class LocationsWebApi extends TopicClient {
      * Removes a note attached to a stored location
      *
      * @param locationId Location id
-     * @param noteId Location note id
+     * @param noteId     Location note id
      */
     public static void removeNote(Context context, Integer locationId, Integer noteId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/notes/" + noteId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -282,7 +306,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/notes/{note_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/notes/" + noteId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -307,11 +331,13 @@ public class LocationsWebApi extends TopicClient {
      * Updates a note attached to a stored location
      *
      * @param locationId Location id
-     * @param noteId Location note id
-     * @param json Notes
+     * @param noteId     Location note id
+     * @param json       Notes
      */
     public static void updateNote(Context context, Integer locationId, Integer noteId, LocationNote json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/locations/" + locationId + "/notes/" + noteId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -322,7 +348,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}/notes/{note_id}")
-                    .key(misc.md5("PUT//api/rest/v2/locations/" + locationId + "/notes/" + noteId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -350,6 +376,8 @@ public class LocationsWebApi extends TopicClient {
      */
     public static void removeLocation(Context context, Integer locationId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -357,7 +385,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/locations/" + locationId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -385,6 +413,8 @@ public class LocationsWebApi extends TopicClient {
      */
     public static void updateLocation(Context context, Integer locationId) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/locations/" + locationId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -392,7 +422,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}")
-                    .key(misc.md5("PUT//api/rest/v2/locations/" + locationId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

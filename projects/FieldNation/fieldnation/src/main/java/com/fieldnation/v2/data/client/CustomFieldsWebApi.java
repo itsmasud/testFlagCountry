@@ -4,12 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
-import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -20,9 +14,16 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.IdResponse;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class CustomFieldsWebApi extends TopicClient {
@@ -53,6 +54,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -60,7 +63,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/client/{client_id}/{visibility}")
-                    .key(misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -89,6 +92,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -96,7 +101,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/{visibility}")
-                    .key(misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -124,6 +129,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void removeCustomField(Context context, Integer customFieldId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -131,7 +138,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -160,6 +167,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -170,7 +179,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}")
-                    .key(misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -198,6 +207,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void addCustomField(Context context, CustomField json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/custom-fields");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -208,7 +219,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/custom-fields")
-                    .key(misc.md5("POST//api/rest/v2/custom-fields"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -236,6 +247,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void getCustomFields(Context context, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/custom-fields");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -243,7 +256,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/custom-fields")
-                    .key(misc.md5("GET//api/rest/v2/custom-fields"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -255,6 +268,8 @@ public class CustomFieldsWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -274,6 +289,8 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void updateCustomFieldVisibilityByProject(Context context, Integer customFieldId, Integer projectId, String visibility) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -281,7 +298,7 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/project/{project_id}/{visibility}")
-                    .key(misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

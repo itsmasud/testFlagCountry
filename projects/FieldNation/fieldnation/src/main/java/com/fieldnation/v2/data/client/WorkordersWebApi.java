@@ -16,6 +16,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.AaaaPlaceholder;
@@ -61,7 +62,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class WorkordersWebApi extends TopicClient {
@@ -90,6 +91,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void revertWorkOrderToDraft(Context context, Integer workOrderId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/draft");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -97,7 +100,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/draft")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/draft"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -126,6 +129,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/draft?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -134,7 +139,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/draft")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/draft?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -159,6 +164,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void incompleteTask(Context context, Integer workOrderId, Integer taskId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/incomplete");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -166,7 +173,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/incomplete")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/incomplete"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -196,6 +203,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -203,7 +212,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -215,6 +224,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -234,6 +245,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -244,7 +257,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -275,6 +288,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -286,7 +301,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/custom_fields/{custom_field_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -310,6 +325,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void completeWorkOrder(Context context, Integer workOrderId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/complete");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -317,7 +334,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/complete")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/complete"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -346,6 +363,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/complete?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -354,7 +373,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/complete")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/complete?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -379,6 +398,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete?reason=" + reason);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -387,7 +408,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete?reason=" + reason))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -417,6 +438,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete?reason=" + reason + "&async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -425,7 +448,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete?reason=" + reason + "&async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -450,6 +473,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/expenses");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -460,7 +485,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/expenses"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -490,6 +515,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/expenses?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -501,7 +528,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/expenses")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/expenses?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -526,6 +553,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getExpenses(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -533,7 +562,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/expenses")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -545,6 +574,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -565,15 +596,18 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment).multipartFile("file", file.getName(), Uri.fromFile(file));
+                    .multipartField("attachment", attachment)
+                    .multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -605,16 +639,19 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
                     .urlParams("?async=" + async)
-                    .multipartField("attachment", attachment).multipartFile("file", file.getName(), Uri.fromFile(file));
+                    .multipartField("attachment", attachment)
+                    .multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -640,6 +677,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -647,7 +686,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -659,6 +698,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -677,6 +718,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteFolder(Context context, Integer workOrderId, Integer folderId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -684,7 +727,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -714,6 +757,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -722,7 +767,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -748,6 +793,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -758,7 +805,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -789,6 +836,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -800,7 +849,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -824,6 +873,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrders(Context context, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -831,7 +882,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
-                    .key(misc.md5("GET//api/rest/v2/workorders"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -843,6 +894,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -861,6 +914,59 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+                    + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
+                    + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
+                    + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
+                    + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
+                    + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
+                    + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
+                    + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
+                    + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                    + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
+                    + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                    + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
+                    + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                    + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
+                    + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
+                    + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
+                    + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
+                    + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
+                    + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
+                    + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
+                    + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
+                    + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
+                    + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
+                    + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
+                    + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
+                    + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
+                    + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
+                    + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
+                    + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
+                    + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
+                    + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
+                    + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
+                    + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
+                    + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
+                    + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
+                    + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
+                    + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
+                    + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
+                    + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
+                    + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
+                    + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
+                    + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
+                    + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
+                    + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
+                    + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
+                    + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
+                    + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
+                    + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
+                    + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
+                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                    + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+            );
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -920,58 +1026,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
-                    .key(misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
-                            + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
-                            + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
-                            + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
-                            + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
-                            + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
-                            + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
-                            + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
-                            + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
-                            + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
-                            + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
-                            + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
-                            + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
-                            + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
-                            + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
-                            + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
-                            + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
-                            + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
-                            + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
-                            + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
-                            + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
-                            + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
-                            + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
-                            + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
-                            + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
-                            + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
-                            + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
-                            + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
-                            + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
-                            + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
-                            + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
-                            + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
-                            + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
-                            + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
-                            + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
-                            + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
-                            + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
-                            + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
-                            + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
-                            + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
-                            + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
-                            + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
-                            + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
-                            + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
-                            + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
-                            + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
-                            + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
-                            + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
-                            + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                            + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
-                            + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
-                    ))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -983,6 +1038,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -997,6 +1054,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1004,7 +1063,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}/verify")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1034,6 +1093,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1042,7 +1103,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}/verify")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1067,6 +1128,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeContact(Context context, Integer workOrderId, Integer contactId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -1074,7 +1137,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/contacts/{contact_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1104,6 +1167,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1114,7 +1179,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/contacts/{contact_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1144,6 +1209,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1151,7 +1218,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1163,6 +1230,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1183,6 +1252,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1191,7 +1262,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1203,6 +1274,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1217,6 +1290,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -1224,7 +1299,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1254,6 +1329,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -1262,7 +1339,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1288,6 +1365,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1298,7 +1377,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1329,6 +1408,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1340,7 +1421,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1365,6 +1446,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -1372,7 +1455,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1402,6 +1485,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -1410,7 +1495,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1435,6 +1520,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1442,7 +1529,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1472,6 +1559,9 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "" + (updateExpenseOptions.getAsync() != null ? "?async=" + updateExpenseOptions.getAsync() : "")
+            );
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1484,8 +1574,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/expenses/{expense_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "" + (updateExpenseOptions.getAsync() != null ? "?async=" + updateExpenseOptions.getAsync() : "")
-                    ))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1510,6 +1599,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getIncreases(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1517,7 +1608,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/increases")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1529,6 +1620,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1547,6 +1640,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getPay(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1554,7 +1649,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/pay")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1566,6 +1661,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1584,6 +1681,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updatePay(Context context, Integer workOrderId, Pay pay) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/pay");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1594,7 +1693,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/pay")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/pay"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1624,6 +1723,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/pay?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -1635,7 +1736,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/pay")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/pay?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1660,6 +1761,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addTask(Context context, Integer workOrderId, Task json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1670,7 +1773,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1699,6 +1802,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTasks(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1706,7 +1811,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1718,6 +1823,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1736,6 +1843,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getMilestones(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1743,7 +1852,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/milestones")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1755,6 +1864,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1773,6 +1884,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addSignature(Context context, Integer workOrderId, Signature signature) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/signatures");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1783,7 +1896,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/signatures"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1813,6 +1926,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/signatures?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1824,7 +1939,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/signatures")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/signatures?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1849,6 +1964,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getSignatures(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1856,7 +1973,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1868,6 +1985,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1886,6 +2005,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getProviders(Context context, String workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1893,7 +2014,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1905,6 +2026,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1924,6 +2047,11 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
+                    + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
+                    + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
+            );
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -1935,10 +2063,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
-                            + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
-                            + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-                    ))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1950,6 +2075,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -1964,6 +2091,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addMessage(Context context, String workOrderId, Message json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1974,7 +2103,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2004,6 +2133,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addMessage(Context context, String workOrderId, Message json, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -2015,7 +2146,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2040,6 +2171,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getMessages(Context context, String workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -2047,7 +2180,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/messages")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2059,6 +2192,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2074,6 +2209,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void cancelSwapRequest(Context context) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -2081,7 +2218,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel")
-                    .key(misc.md5("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2110,6 +2247,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/time_logs");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -2120,7 +2259,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/time_logs")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/time_logs"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2149,6 +2288,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTimeLogs(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -2156,7 +2297,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/time_logs")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2168,6 +2309,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2186,6 +2329,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2196,7 +2341,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2226,6 +2371,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2237,7 +2384,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2262,6 +2409,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -2269,7 +2418,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2281,6 +2430,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2299,6 +2450,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2309,7 +2462,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2339,6 +2492,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2350,7 +2505,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2375,6 +2530,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2385,7 +2542,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2415,6 +2572,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2426,7 +2585,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2452,6 +2611,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -2459,7 +2620,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2471,6 +2632,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2489,6 +2652,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2496,7 +2661,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2526,6 +2691,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2534,7 +2701,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/signatures/{signature_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2559,6 +2726,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -2569,7 +2738,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2599,6 +2768,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -2610,7 +2781,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/attachments")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2635,6 +2806,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getAttachments(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -2642,7 +2815,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2654,6 +2827,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2672,6 +2847,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void completeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/complete");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -2679,7 +2856,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/complete")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/complete"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2708,6 +2885,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeDiscount(Context context, Integer workOrderId, Integer discountId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2715,7 +2894,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2745,6 +2924,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2755,7 +2936,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/discounts/{discount_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2784,6 +2965,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2791,7 +2974,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2821,6 +3004,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2829,7 +3014,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2855,6 +3040,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2865,7 +3052,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2896,6 +3083,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -2907,7 +3096,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/time_logs/{workorder_hours_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2934,6 +3123,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -2941,7 +3132,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -2953,6 +3144,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2972,6 +3165,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -2979,7 +3174,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3010,6 +3205,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3018,7 +3215,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3045,6 +3242,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3055,7 +3254,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3087,6 +3286,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3098,7 +3299,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/attachments/{folder_id}/{attachment_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3123,6 +3324,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void assignUser(Context context, Integer workOrderId, Assignee assignee) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/assignee");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3133,7 +3336,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/assignee")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/assignee"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3163,6 +3366,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/assignee?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3174,7 +3379,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/assignee")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/assignee?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3199,6 +3404,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getAssignee(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -3206,7 +3413,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/assignee")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3218,6 +3425,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3236,6 +3445,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unassignUser(Context context, Integer workOrderId, Assignee assignee) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/assignee");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3246,7 +3457,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/assignee")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/assignee"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3276,6 +3487,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/assignee?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3287,7 +3500,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/assignee")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/assignee?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3311,6 +3524,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void publish(Context context, Integer workOrderId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3318,7 +3533,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3347,6 +3562,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void publish(Context context, Integer workOrderId, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3355,7 +3572,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3379,6 +3596,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unpublish(Context context, Integer workOrderId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/publish");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3386,7 +3605,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/publish")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/publish"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3415,6 +3634,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unpublish(Context context, Integer workOrderId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3423,7 +3644,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/publish")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3448,6 +3669,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getStatus(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -3455,7 +3678,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/status")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3467,6 +3690,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3484,6 +3709,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void approveWorkOrder(Context context, Integer workOrderId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/approve");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3491,7 +3718,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/approve")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/approve"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3520,6 +3747,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/approve?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3528,7 +3757,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/approve")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/approve?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3552,6 +3781,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unapproveWorkOrder(Context context, Integer workOrderId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/approve");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3559,7 +3790,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/approve")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/approve"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3588,6 +3819,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/approve?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3596,7 +3829,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/approve")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/approve?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3621,6 +3854,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/accept");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3628,7 +3863,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}/accept")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/accept"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3657,6 +3892,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3664,7 +3901,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3694,6 +3931,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3702,7 +3941,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3728,6 +3967,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3738,7 +3979,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3769,6 +4010,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3780,7 +4023,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/shipments/{shipment_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3805,6 +4048,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3812,7 +4057,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3842,6 +4087,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -3852,7 +4099,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3878,6 +4125,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -3885,7 +4134,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3897,6 +4146,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3915,6 +4166,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removePenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -3922,7 +4175,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3951,6 +4204,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3958,7 +4213,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -3988,6 +4243,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -3998,7 +4255,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/penalties/{penalty_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4020,6 +4277,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void declineSwapRequest(Context context) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/decline");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4027,7 +4286,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/decline")
-                    .key(misc.md5("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/decline"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4057,6 +4316,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4067,7 +4328,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4098,6 +4359,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4109,7 +4372,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4134,6 +4397,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeMessage(Context context, String workOrderId, String messageId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -4141,7 +4406,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4171,6 +4436,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateMessage(Context context, String workOrderId, String messageId, Message json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4181,7 +4448,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/messages/{message_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4211,6 +4478,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -4218,7 +4487,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4230,6 +4499,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -4248,6 +4519,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -4255,7 +4528,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4285,6 +4558,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4295,7 +4570,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4324,6 +4599,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/deny");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4331,7 +4608,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}/deny")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/deny"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4361,6 +4638,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4371,7 +4650,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4400,6 +4679,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeAlerts(Context context, Integer workOrderId, Integer taskId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -4407,7 +4688,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4436,6 +4717,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void request(Context context, Integer workOrderId, Request request) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/requests");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4446,7 +4729,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/requests")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/requests"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4476,6 +4759,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void request(Context context, Integer workOrderId, Request request, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/requests?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4487,7 +4772,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/requests")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/requests?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4512,6 +4797,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeRequest(Context context, Integer workOrderId, Request request) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -4522,7 +4809,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4552,6 +4839,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeRequest(Context context, Integer workOrderId, Request request, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -4563,7 +4852,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4585,6 +4874,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void acceptSwapRequest(Context context) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/accept");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4592,7 +4883,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/accept")
-                    .key(misc.md5("POST//api/rest/v2/workorders/{work_order_id}/swaps/{swap_request_id}/accept"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4621,6 +4912,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getCustomFields(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -4628,7 +4921,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/custom_fields")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4640,6 +4933,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -4659,6 +4954,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeAlert(Context context, Integer workOrderId, Integer taskId, Integer alertId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts/" + alertId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -4666,7 +4963,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/alerts/{alert_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts/" + alertId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4695,6 +4992,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getSchedule(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -4702,7 +5001,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/schedule")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4714,6 +5013,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -4732,6 +5033,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4742,7 +5045,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/schedule")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4772,6 +5075,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4783,7 +5088,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/schedule")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4808,6 +5113,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateHolds(Context context, Integer workOrderId, String holds) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4818,7 +5125,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/holds")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4848,6 +5155,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateHolds(Context context, Integer workOrderId, String holds, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4859,7 +5168,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/holds")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4885,6 +5194,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/report-problem/" + flagId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4895,7 +5206,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/report-problem/{flag_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/report-problem/" + flagId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4926,6 +5237,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void resolveReopenReportProblem(Context context, Integer workOrderId, Integer flagId, Message json, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/report-problem/" + flagId + "?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -4937,7 +5250,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/report-problem/{flag_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/report-problem/" + flagId + "?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -4962,6 +5275,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addDiscount(Context context, Integer workOrderId, PayModifier json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/discounts");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -4972,7 +5287,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/discounts")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/discounts"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5001,6 +5316,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getDiscounts(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5008,7 +5325,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/discounts")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5020,6 +5337,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5040,6 +5359,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void reorderTask(Context context, Integer workOrderId, Integer taskId, Integer targetTaskId, String position) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/reorder/" + position + "/" + targetTaskId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -5047,7 +5368,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/reorder/{position}/{target_task_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/reorder/" + position + "/" + targetTaskId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5078,6 +5399,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/group/" + group + "/" + destination);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -5085,7 +5408,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/group/{group}/{destination}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/group/" + group + "/" + destination))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5114,6 +5437,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addContact(Context context, Integer workOrderId, Contact json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/contacts");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5124,7 +5449,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/contacts")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/contacts"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5153,6 +5478,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getContacts(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5160,7 +5487,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/contacts")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5172,6 +5499,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5190,6 +5519,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addShipment(Context context, Integer workOrderId, Shipment shipment) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/shipments");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5200,7 +5531,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/shipments"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5230,6 +5561,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/shipments?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5241,7 +5574,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/shipments")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/shipments?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5266,6 +5599,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getShipments(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5273,7 +5608,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/shipments")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5285,6 +5620,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5303,6 +5640,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getPenalties(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5310,7 +5649,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/penalties")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5322,6 +5661,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5340,6 +5681,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void routeUser(Context context, Integer workOrderId, Route route) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/route");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5350,7 +5693,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/route")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/route"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5380,6 +5723,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/route?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5391,7 +5736,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/route")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/route?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5416,6 +5761,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unRouteUser(Context context, Integer workOrderId, Route route) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/route");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -5426,7 +5773,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/route")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/route"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5456,6 +5803,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/route?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -5467,7 +5816,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/route")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/route?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5491,6 +5840,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrderLists(Context context, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/lists");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5498,7 +5849,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/lists")
-                    .key(misc.md5("GET//api/rest/v2/workorders/lists"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5510,6 +5861,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5528,6 +5881,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getProblemReasons(Context context, String workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/messages");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5535,7 +5890,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/problems/messages")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/messages"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5547,6 +5902,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5565,6 +5922,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void reportProblem(Context context, String workOrderId, Message json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/report-problem/messages");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5575,7 +5934,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/report-problem/messages")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/report-problem/messages"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5605,6 +5964,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void reportProblem(Context context, String workOrderId, Message json, Boolean async) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/report-problem/messages?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5616,7 +5977,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/report-problem/messages")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/report-problem/messages?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5641,6 +6002,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getBonuses(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5648,7 +6011,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5660,6 +6023,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5678,6 +6043,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getLocation(Context context, Integer workOrderId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5685,7 +6052,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/location")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5697,6 +6064,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5715,6 +6084,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateLocation(Context context, Integer workOrderId, Location location) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/location");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -5725,7 +6096,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/location")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/location"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5755,6 +6126,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/location?async=" + async);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -5766,7 +6139,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/location")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/location?async=" + async))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5791,6 +6164,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addBonus(Context context, Integer workOrderId, Integer bonusId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5798,7 +6173,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5828,6 +6203,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
         try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -5838,7 +6215,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
-                    .key(misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5864,6 +6241,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5871,7 +6250,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5883,6 +6262,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5903,6 +6284,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -5913,7 +6296,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
-                    .key(misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5925,6 +6308,8 @@ public class WorkordersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -5939,6 +6324,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeBonus(Context context, Integer workOrderId, Integer bonusId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -5946,7 +6333,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -5976,6 +6363,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -5986,7 +6375,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/bonuses/{bonus_id}")
-                    .key(misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

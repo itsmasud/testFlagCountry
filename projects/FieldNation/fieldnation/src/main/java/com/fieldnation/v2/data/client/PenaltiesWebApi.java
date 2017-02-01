@@ -4,10 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -18,9 +14,13 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.PayModifier;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class PenaltiesWebApi extends TopicClient {
@@ -37,17 +37,18 @@ public class PenaltiesWebApi extends TopicClient {
         return TAG;
     }
 
-    public boolean subPenaltiesWebApi(){
+    public boolean subPenaltiesWebApi() {
         return register("TOPIC_ID_WEB_API_V2/PenaltiesWebApi");
     }
 
     /**
      * Swagger operationId: addPenalty
      * Add a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
-     *
      */
     public static void addPenalty(Context context) {
         try {
+            String key = misc.md5("POST//api/rest/v2/penalties");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -55,7 +56,7 @@ public class PenaltiesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/penalties")
-                    .key(misc.md5("POST//api/rest/v2/penalties"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -83,6 +84,8 @@ public class PenaltiesWebApi extends TopicClient {
      */
     public static void removePenalty(Context context, Integer penaltyId) {
         try {
+            String key = misc.md5("DELETE//api/rest/v2/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -90,7 +93,7 @@ public class PenaltiesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/penalties/{penalty_id}")
-                    .key(misc.md5("DELETE//api/rest/v2/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -115,10 +118,12 @@ public class PenaltiesWebApi extends TopicClient {
      * Update a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
      * @param penaltyId Penalty ID
-     * @param json JSON Model
+     * @param json      JSON Model
      */
     public static void updatePenalty(Context context, String penaltyId, PayModifier json) {
         try {
+            String key = misc.md5("PUT//api/rest/v2/penalties/" + penaltyId);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -129,7 +134,7 @@ public class PenaltiesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/penalties/{penalty_id}")
-                    .key(misc.md5("PUT//api/rest/v2/penalties/" + penaltyId))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(

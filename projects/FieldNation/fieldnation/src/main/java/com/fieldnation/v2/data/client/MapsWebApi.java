@@ -4,10 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -19,9 +15,14 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.LocationCoordinates;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class MapsWebApi extends TopicClient {
@@ -38,7 +39,7 @@ public class MapsWebApi extends TopicClient {
         return TAG;
     }
 
-    public boolean subMapsWebApi(){
+    public boolean subMapsWebApi() {
         return register("TOPIC_ID_WEB_API_V2/MapsWebApi");
     }
 
@@ -46,11 +47,13 @@ public class MapsWebApi extends TopicClient {
      * Swagger operationId: getMaps
      * This endpoint returns a list of exact coordinates as well as additional info such as the address and whether the coordinates are an exact match.
      *
-     * @param type Type and id of the item being looked up separated by a colon, e.g. workorder:21
+     * @param type         Type and id of the item being looked up separated by a colon, e.g. workorder:21
      * @param isBackground indicates that this call is low priority
      */
     public static void getMaps(Context context, String type, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/maps/search?type=" + type);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -59,7 +62,7 @@ public class MapsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/maps/search")
-                    .key(misc.md5("GET//api/rest/v2/maps/search?type=" + type))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -71,6 +74,8 @@ public class MapsWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }

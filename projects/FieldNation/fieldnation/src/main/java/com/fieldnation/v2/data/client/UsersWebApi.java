@@ -5,10 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.listener.TransactionListener;
-import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -19,9 +15,18 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
+import com.fieldnation.v2.data.listener.TransactionListener;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.AaaaPlaceholder;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.TypesOfWork;
+import com.fieldnation.v2.data.model.User;
+import com.fieldnation.v2.data.model.UserTaxInfo;
+import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/01/17.
  */
 
 public class UsersWebApi extends TopicClient {
@@ -38,7 +43,7 @@ public class UsersWebApi extends TopicClient {
         return TAG;
     }
 
-    public boolean subUsersWebApi(){
+    public boolean subUsersWebApi() {
         return register("TOPIC_ID_WEB_API_V2/UsersWebApi");
     }
 
@@ -47,10 +52,12 @@ public class UsersWebApi extends TopicClient {
      * Send account verification code via text message
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaSms(Context context, Integer userId, String json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/text");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -61,7 +68,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/verify/text"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -86,10 +93,12 @@ public class UsersWebApi extends TopicClient {
      * Send account activation link
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendAccountActivationLink(Context context, Integer userId, String json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -100,7 +109,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -128,6 +137,8 @@ public class UsersWebApi extends TopicClient {
      */
     public static void updateSettings(Context context, Integer userId) {
         try {
+            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/settings");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PATCH")
@@ -135,7 +146,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
-                    .key(misc.md5("PATCH//api/rest/v2/users/" + userId + "/settings"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -159,11 +170,13 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getSettingsByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getSettings(Context context, Integer userId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -171,7 +184,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/settings")
-                    .key(misc.md5("GET//api/rest/v2/users/" + userId + "/settings"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -183,6 +196,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -197,10 +212,12 @@ public class UsersWebApi extends TopicClient {
      * Update tax info.
      *
      * @param userId User ID
-     * @param json Json User tax info object for updating
+     * @param json   Json User tax info object for updating
      */
     public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/tax");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -211,7 +228,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/tax"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -235,11 +252,13 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getTaxByUser
      * Get tax info
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getTax(Context context, Integer userId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -247,7 +266,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tax")
-                    .key(misc.md5("GET//api/rest/v2/users/" + userId + "/tax"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -259,6 +278,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -276,6 +297,8 @@ public class UsersWebApi extends TopicClient {
      */
     public static void updatePay(Context context, Integer userId) {
         try {
+            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/pay");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PATCH")
@@ -283,7 +306,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
-                    .key(misc.md5("PATCH//api/rest/v2/users/" + userId + "/pay"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -311,6 +334,8 @@ public class UsersWebApi extends TopicClient {
      */
     public static void addPay(Context context, Integer userId) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/pay");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -318,7 +343,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/pay"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -342,11 +367,13 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getPayByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getPay(Context context, Integer userId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -354,7 +381,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/pay")
-                    .key(misc.md5("GET//api/rest/v2/users/" + userId + "/pay"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -366,6 +393,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -379,12 +408,14 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: setUserPreference
      * Set user preference
      *
-     * @param userId User ID
+     * @param userId     User ID
      * @param preference Preference Key
-     * @param json JSON Model
+     * @param json       JSON Model
      */
     public static void setUserPreference(Context context, Integer userId, String preference, String json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -395,7 +426,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -419,12 +450,14 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getUserPreferenceValueByKey
      * Get user preference value
      *
-     * @param userId User ID
-     * @param preference Preference Key
+     * @param userId       User ID
+     * @param preference   Preference Key
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -432,7 +465,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
-                    .key(misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -444,6 +477,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -458,10 +493,12 @@ public class UsersWebApi extends TopicClient {
      * Upload profile photo
      *
      * @param userId User ID
-     * @param file Photo to upload
+     * @param file   Photo to upload
      */
     public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -470,7 +507,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -498,6 +535,8 @@ public class UsersWebApi extends TopicClient {
      */
     public static void updateTour(Context context, Integer userId) {
         try {
+            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PATCH")
@@ -505,7 +544,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
-                    .key(misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -529,11 +568,13 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getTourByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getTour(Context context, Integer userId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -541,7 +582,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tour")
-                    .key(misc.md5("GET//api/rest/v2/users/" + userId + "/tour"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -553,6 +594,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -566,11 +609,13 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getUser
      * Returns summary details about a user profile.
      *
-     * @param user User ID
+     * @param user         User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getUser(Context context, String user, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + user);
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -578,7 +623,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user}")
-                    .key(misc.md5("GET//api/rest/v2/users/" + user))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -590,6 +635,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -604,10 +651,12 @@ public class UsersWebApi extends TopicClient {
      * Send account verification code via phone call
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -618,7 +667,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -643,10 +692,12 @@ public class UsersWebApi extends TopicClient {
      * Add types of work to profile
      *
      * @param userId User ID
-     * @param json JSON model
+     * @param json   JSON model
      */
     public static void addTypesOfWork(Context context, Integer userId, String json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/types-of-work");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -657,7 +708,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/types-of-work"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -681,11 +732,13 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getUserTypesOfWork
      * Get all types of work of a specific user
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserTypesOfWork(Context context, Integer userId, boolean isBackground) {
         try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
@@ -693,7 +746,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/types-of-work")
-                    .key(misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -705,6 +758,8 @@ public class UsersWebApi extends TopicClient {
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -719,10 +774,12 @@ public class UsersWebApi extends TopicClient {
      * Verify account
      *
      * @param userId User ID
-     * @param json Json Payload
+     * @param json   Json Payload
      */
     public static void verifyAccount(Context context, Integer userId, String json) {
         try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/2fa");
+
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -733,7 +790,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
-                    .key(misc.md5("POST//api/rest/v2/users/" + userId + "/verify/2fa"))
+                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
