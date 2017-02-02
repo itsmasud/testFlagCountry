@@ -33,6 +33,9 @@ import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
+import com.fieldnation.v2.data.model.CheckInOut;
+import com.fieldnation.v2.data.model.CheckInOutTimeLog;
+import com.fieldnation.v2.data.model.TimeLog;
 
 import java.util.Calendar;
 
@@ -157,7 +160,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
         _spinner.setOnItemSelectedListener(_spinner_selected);
-
     }
 
     @Override

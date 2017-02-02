@@ -12,15 +12,29 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
+import com.fieldnation.service.data.workorder.ReportProblemType;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
+import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
+import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.dialog.v2.RunningLateDialog;
+import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.ActionsEnum;
 import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -106,36 +120,32 @@ public class WorkOrderCard extends RelativeLayout {
         if (!BuildConfig.DEBUG)
             _testButton.setVisibility(GONE);
 
-/*
-        DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
+        // DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
-        EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
+        // EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
+        // EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
+        // EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING, _markIncompleteWarningDialog_onMarkIncomplete);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.addOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
-*/
 
         setOnClickListener(_this_onClick);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-/*
-        DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
+        // DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
-        EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
+        // EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
+        // EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
+        // EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING, _markIncompleteWarningDialog_onMarkIncomplete);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.removeOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
-*/
 
         super.onDetachedFromWindow();
     }
@@ -178,12 +188,12 @@ public class WorkOrderCard extends RelativeLayout {
         _hyphenTextView.setVisibility(GONE);
         _time2TextView.setVisibility(GONE);
         _date2TextView.setVisibility(GONE);
-/*
+
         if (_workOrder.getSchedule() != null) {
-            if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
+            if (_workOrder.getSchedule().getEta() != null && _workOrder.getSchedule().getEta().getStart() != null) {
                 // estimated
                 try {
-                    Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
+                    Calendar cal = _workOrder.getSchedule().getEta().getStart().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
 
                     _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
@@ -194,9 +204,9 @@ public class WorkOrderCard extends RelativeLayout {
                 }
 
                 // exact
-            } else if (_workOrder.getSchedule().getExact() != null) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ModeEnum.EXACT) {
                 try {
-                    Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
+                    Calendar cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
                     _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
@@ -206,46 +216,44 @@ public class WorkOrderCard extends RelativeLayout {
                 }
 
                 // range
-            } else if (_workOrder.getSchedule().getRange() != null) {
-                if (_workOrder.getSchedule().getRange().getType() == Range.Type.BUSINESS) {
-                    // business
-                    try {
-                        Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
-                        Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
-                        _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
-                                + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ModeEnum.HOURS) {
+                // business
+                try {
+                    Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                    Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+                    _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
+                            + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
 
-                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
-                                + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                        _timeTextView.setVisibility(GONE);
-                        _dateTextView.setVisibility(GONE);
-                    }
-
-                } else {
-                    // normal range
-                    try {
-                        Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
-                        Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
-                        _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
-                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
-                        _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
-                        _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
-                        _hyphenTextView.setVisibility(VISIBLE);
-                        _time2TextView.setVisibility(VISIBLE);
-                        _date2TextView.setVisibility(VISIBLE);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                        _timeTextView.setVisibility(GONE);
-                        _dateTextView.setVisibility(GONE);
-                    }
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                            + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                    _timeTextView.setVisibility(GONE);
+                    _dateTextView.setVisibility(GONE);
                 }
+
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ModeEnum.BETWEEN) {
+                // normal range
+                try {
+                    Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                    Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+                    _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
+                    _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+                    _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
+                    _hyphenTextView.setVisibility(VISIBLE);
+                    _time2TextView.setVisibility(VISIBLE);
+                    _date2TextView.setVisibility(VISIBLE);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                    _timeTextView.setVisibility(GONE);
+                    _dateTextView.setVisibility(GONE);
+                }
+
             } else {
                 _timeTextView.setText("");
             }
         }
-*/
     }
 
     private void populateLocation() {
@@ -335,51 +343,47 @@ TODO         if (pay.getStatus() != null) {
     }
 
     private void populateButtons() {
-/*
-        // Primary actions
-        _primaryButton.setVisibility(GONE);
-        if (_workOrder.getPrimaryActions() != null
-                && _workOrder.getPrimaryActions().length > 0) {
+        ActionsEnum[] actions = _workOrder.getSortedActions();
 
-            Action[] actions = _workOrder.getPrimaryActions();
-            if (actions != null) {
-                for (Action action : actions) {
-                    if (populatePrimaryButton(_primaryButton, action))
-                        break;
-                }
-            }
-        }
+        _primaryButton.setVisibility(GONE);
 
         for (Button button : _secondaryButtons) {
             button.setVisibility(GONE);
         }
 
-        if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            int i = 0; // action index
-            int j = 0; // button index
-            // assign supported actions to buttons until no more actions or no more buttons
-            Action[] actions = _workOrder.getSecondaryActions();
-            while (i < actions.length && j < _secondaryButtons.length) {
-                Action action = actions[i];
-
-                // only if the action has been assigned do we move to the next button
-                if (populateSecondaryButton(_secondaryButtons[j], action)) {
-                    j++;
-                }
-                i++;
-            }
+        if (actions == null || actions.length == 0) {
+            return;
         }
-*/
+
+        // Primary actions
+        for (ActionsEnum action : actions) {
+            if (populatePrimaryButton(_primaryButton, action))
+                break;
+        }
+
+        int i = 0; // action index
+        int j = 0; // button index
+        // assign supported actions to buttons until no more actions or no more buttons
+        while (i < actions.length && j < _secondaryButtons.length) {
+            ActionsEnum action = actions[i];
+
+            // only if the action has been assigned do we move to the next button
+            if (populateSecondaryButton(_secondaryButtons[j], action)) {
+                j++;
+            }
+            i++;
+        }
     }
 
-/*
-    private boolean populatePrimaryButton(Button button, Action action) {
-        switch (action.getType()) {
+
+    private boolean populatePrimaryButton(Button button, ActionsEnum action) {
+        switch (action) {
             case ACCEPT:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_accept_onClick);
                 button.setText(R.string.btn_accept);
                 break;
+/*
             case CONFIRM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_confirm_onClick);
@@ -400,7 +404,8 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_readyToGo_onClick);
                 button.setText(R.string.btn_ready);
                 break;
-            case REPORT_PROBLEM:
+*/
+            case REPORT_A_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_reportProblem_onClick);
                 button.setText(R.string.btn_report_problem);
@@ -410,21 +415,25 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_request_onClick);
                 button.setText(R.string.btn_request);
                 break;
+/*
             case VIEW_BUNDLE:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_viewBundle_onClick);
                 button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
                 break;
-            case ACK_HOLD:
+*/
+            case ACKNOWLEDGE:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_ackHold_onClick);
                 button.setText("ACKNOWLEDGE HOLD");
                 break;
+/*
             case WITHDRAW:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_withdraw_onClick);
                 button.setText("WITHDRAW");
                 break;
+*/
             case CHECK_IN:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_checkIn_onClick);
@@ -440,7 +449,6 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_incomplete_onClick);
                 button.setText("INCOMPLETE");
                 break;
-*/
 /*
                 case MARK_COMPLETE:
                     button.setVisibility(VISIBLE);
@@ -456,7 +464,7 @@ TODO         if (pay.getStatus() != null) {
                     button.setOnClickListener(_viewPayment_onClick);
                     button.setText("VIEW PAYMENT");
                     break;
-*//*
+*/
 
             default:
                 return false;
@@ -471,8 +479,9 @@ TODO         if (pay.getStatus() != null) {
     // circle-x-solid
     // problem-solid
     // time-issue-solid
-    private boolean populateSecondaryButton(IconFontButton button, Action action) {
-        switch (action.getType()) {
+    private boolean populateSecondaryButton(IconFontButton button, ActionsEnum action) {
+        switch (action) {
+/*
             case DECLINE:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_circle_x_solid);
@@ -483,298 +492,334 @@ TODO         if (pay.getStatus() != null) {
                 button.setText(R.string.icon_time_issue_solid);
                 button.setOnClickListener(_runningLate_onClick);
                 break;
-            case REPORT_PROBLEM:
+*/
+            case REPORT_A_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
                 break;
+/*
             case PHONE:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_phone_solid);
                 button.setOnClickListener(_phone_onClick);
                 break;
-            case MESSAGE:
+*/
+            case MESSAGING:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_chat_solid);
                 button.setOnClickListener(_message_onClick);
                 break;
+/*
             case MAP:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_map_location_solid);
                 button.setOnClickListener(_map_onClick);
                 break;
+*/
             default:
                 button.setVisibility(GONE);
                 return false;
         }
         return true;
     }
+
+
+    private final OnClickListener _incomplete_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
+                    WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrder.getWorkOrderId());
+
+            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMLPETE, _workOrder.getWorkOrderId());
+        }
+    };
+
+    private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteWarningDialog_onMarkIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
+        @Override
+        public void onMarkIncomplete(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
+                        WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getWorkOrderId());
+        }
+    };
+
+    private final OnClickListener _ackHold_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
+            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
+        }
+    };
+
+    private final OnClickListener _checkIn_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getWorkOrderId());
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                        _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            } else {
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            }
+        }
+    };
+
+
+    private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
+        @Override
+        public void onCheckIn(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, (int) workOrderId);
+        }
+    };
+
+
+    private final OnClickListener _checkOut_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getWorkOrderId());
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                        _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            } else {
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            }
+        }
+    };
+
+
+    private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
+        @Override
+        public void onCheckOut(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, (int) workOrderId);
+        }
+    };
+
+
+    private final OnClickListener _request_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getWorkOrderId());
+            // TODO EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+        }
+    };
+
+
+/*
+    private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
+        @Override
+        public void onRequested(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, (int) workOrderId);
+        }
+    };
 */
 
-    /*
-        private final OnClickListener _incomplete_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
-                        WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrder.getId());
 
-                MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMLPETE, _workOrder.getId());
+    private final OnClickListener _accept_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getWorkOrderId());
+            // TODO EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+        }
+    };
+
+/*
+    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
+        @Override
+        public void onAccepted(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, (int) workOrderId);
+        }
+    };
+*/
+
+/*
+    private final OnClickListener _confirm_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+        }
+    };
+*/
+
+/*
+    private final EtaDialog.OnConfirmedListener _etaDialog_onConfirm = new EtaDialog.OnConfirmedListener() {
+        @Override
+        public void onConfirmed(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
+        }
+    };
+*/
+
+/*
+    private final OnClickListener _decline_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getWorkOrderId());
+            DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getWorkOrderId(), _workOrder.getOrg().getWorkOrderId());
+        }
+    };
+*/
+
+
+/*
+    private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
+        @Override
+        public void onDeclined(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, workOrderId);
+        }
+    };
+*/
+
+
+/*
+    private final OnClickListener _onMyWay_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
+            if (_location != null)
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), _location.getLatitude(), _location.getLongitude());
+            else
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), null, null);
+
+            try {
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        };
+        }
+    };
+*/
 
-        private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteWarningDialog_onMarkIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
-            @Override
-            public void onMarkIncomplete(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
-                            WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getId());
+/*
+    private final OnClickListener _viewBundle_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_BUNDLE, null, _workOrder.getWorkOrderId());
+            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getWorkOrderId());
+        }
+    };
+*/
+
+/*
+    private final OnClickListener _readyToGo_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getWorkOrderId());
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getWorkOrderId());
+        }
+    };
+*/
+
+    private final OnClickListener _reportProblem_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getWorkOrderId());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getWorkOrderId());
+        }
+    };
+
+    private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
+        @Override
+        public void onSend(long workorderId, String explanation, ReportProblemType type) {
+            if (_workOrder.getWorkOrderId() == workorderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, (int) workorderId);
+        }
+    };
+
+/*
+    private final OnClickListener _phone_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CALL_BUYER, null, _workOrder.getWorkOrderId());
+            try {
+                Contact contact = _workOrder.getContacts()[0];
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:" + contact.getPhoneNumber()));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(callIntent);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-        };
+        }
+    };
+*/
 
-        private final OnClickListener _ackHold_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
-                WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getId());
-            }
-        };
+    private final OnClickListener _withdraw_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getWorkOrderId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getWorkOrderId());
+        }
+    };
 
-        private final OnClickListener _checkIn_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getId());
-                if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
-                    CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
-                            _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-                } else {
-                    CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
-                            CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-                }
-            }
-        };
+    private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
+        @Override
+        public void onWithdraw(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, (int) workOrderId);
+        }
+    };
 
-        private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
-            @Override
-            public void onCheckIn(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
-            }
-        };
+    private final OnClickListener _message_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getWorkOrderId());
+            WorkorderActivity.startNew(App.get(), _workOrder.getWorkOrderId(), WorkorderActivity.TAB_MESSAGE);
+        }
+    };
 
-        private final OnClickListener _checkOut_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getId());
-                if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
-                    CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
-                            _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-                } else {
-                    CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
-                            CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-                }
-            }
-        };
+/*
+    private final OnClickListener _runningLate_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, null, _workOrder.getWorkOrderId());
+            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
+        }
+    };
+*/
 
-        private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
-            @Override
-            public void onCheckOut(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
-            }
-        };
+    private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
+        @Override
+        public void onSend(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
+        }
+    };
 
-        private final OnClickListener _request_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
-            }
-        };
-
-        private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
-            @Override
-            public void onRequested(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
-            }
-        };
-
-        private final OnClickListener _accept_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getId());
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
-            }
-        };
-
-        private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
-            @Override
-            public void onAccepted(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
-            }
-        };
-
-        private final OnClickListener _confirm_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getId());
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
-            }
-        };
-
-        private final EtaDialog.OnConfirmedListener _etaDialog_onConfirm = new EtaDialog.OnConfirmedListener() {
-            @Override
-            public void onConfirmed(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
-            }
-        };
-
-        private final OnClickListener _decline_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
-                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getId(), _workOrder.getOrg().getId());
-            }
-        };
-
-        private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
-            @Override
-            public void onDeclined(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, workOrderId);
-            }
-        };
-
-        private final OnClickListener _onMyWay_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
-                if (_location != null)
-                    WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), _location.getLatitude(), _location.getLongitude());
-                else
-                    WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), null, null);
-
-                try {
-                    GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        };
-
-        private final OnClickListener _viewBundle_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_BUNDLE, null, _workOrder.getId());
-                WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getId(), _workOrder.getBundle().getId());
-            }
-        };
-
-        private final OnClickListener _readyToGo_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getId());
-                WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
-            }
-        };
-
-        private final OnClickListener _reportProblem_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
-                ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
-            }
-        };
-
-        private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
-            @Override
-            public void onSend(long workorderId, String explanation, ReportProblemType type) {
-                if (_workOrder.getId() == workorderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
-            }
-        };
-
-        private final OnClickListener _phone_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CALL_BUYER, null, _workOrder.getId());
-                try {
-                    Contact contact = _workOrder.getContacts()[0];
-                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                    callIntent.setData(Uri.parse("tel:" + contact.getPhoneNumber()));
-                    callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    getContext().startActivity(callIntent);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            }
-        };
-
-        private final OnClickListener _withdraw_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
-                WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getId());
-            }
-        };
-
-        private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
-            @Override
-            public void onWithdraw(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
-            }
-        };
-
-        private final OnClickListener _message_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getId());
-                WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
-            }
-        };
-
-        private final OnClickListener _runningLate_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, null, _workOrder.getId());
-                RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
-            }
-        };
-
-        private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
-            @Override
-            public void onSend(long workOrderId) {
-                if (_workOrder.getId() == workOrderId)
-                    WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
-            }
-        };
-
-        private final OnClickListener _map_onClick = new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.DIRECTIONS, null, _workOrder.getId());
-                if (_workOrder != null) {
-                    com.fieldnation.data.v2.Location location = _workOrder.getLocation();
-                    if (location != null) {
-                        try {
-                            String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
-                            String _uriString = "geo:0,0?q=" + _fullAddress;
-                            Uri _uri = Uri.parse(_uriString);
-                            Intent intent = new Intent(Intent.ACTION_VIEW);
-                            intent.setData(_uri);
-                            ActivityResultClient.startActivity(App.get(), intent);
-                        } catch (Exception e) {
-                            Log.v(TAG, e);
-                            ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
-                        }
+/*
+    private final OnClickListener _map_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.DIRECTIONS, null, _workOrder.getWorkOrderId());
+            if (_workOrder != null) {
+                com.fieldnation.data.v2.Location location = _workOrder.getLocation();
+                if (location != null) {
+                    try {
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                        String _uriString = "geo:0,0?q=" + _fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(_uri);
+                        ActivityResultClient.startActivity(App.get(), intent);
+                    } catch (Exception e) {
+                        Log.v(TAG, e);
+                        ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
                     }
                 }
             }
-        };
-    */
+        }
+    };
+*/
+
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {

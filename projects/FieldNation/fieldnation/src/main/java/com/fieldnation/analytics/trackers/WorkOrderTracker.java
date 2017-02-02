@@ -476,11 +476,19 @@ public class WorkOrderTracker {
         });
     }
 
-    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Long workOrderId) {
+    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Integer workOrderId) {
         onActionButtonEvent(context, null, actionButton, action, workOrderId);
     }
 
+    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Long workOrderId) {
+        onActionButtonEvent(context, null, actionButton, action, workOrderId.intValue());
+    }
+
     public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton, Action action, Long workOrderId) {
+        onActionButtonEvent(context, searchTitle, actionButton, action, workOrderId.intValue());
+    }
+
+    public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton, Action action, Integer workOrderId) {
         Identity identity = actionButton.getIdentity();
         if (identity != null) {
             if (action != null && workOrderId != null) {
@@ -590,11 +598,11 @@ public class WorkOrderTracker {
         }
 
         for (ActionButton ab : ActionButton.values()) {
-            onActionButtonEvent(context, ab, ab.getAction(), 1L);
-            onActionButtonEvent(context, ab, null, 1L);
+            onActionButtonEvent(context, ab, ab.getAction(), 1);
+            onActionButtonEvent(context, ab, null, 1);
             for (SavedSearchParams p : list) {
-                onActionButtonEvent(context, p.title, ab, ab.getAction(), 1L);
-                onActionButtonEvent(context, p.title, ab, null, 1L);
+                onActionButtonEvent(context, p.title, ab, ab.getAction(), 1);
+                onActionButtonEvent(context, p.title, ab, null, 1);
             }
         }
 

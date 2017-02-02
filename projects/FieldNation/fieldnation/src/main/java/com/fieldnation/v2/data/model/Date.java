@@ -9,6 +9,10 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
+
+import java.text.ParseException;
+import java.util.Calendar;
 
 /**
  * Created by dmgen from swagger on 1/31/17.
@@ -30,13 +34,21 @@ public class Date implements Parcelable {
         _utc = utc;
     }
 
-    public String getUtc() {
+    public String getUtcString() {
         return _utc;
     }
 
     public Date utc(String utc) {
         _utc = utc;
         return this;
+    }
+
+    public Calendar getCalendar() throws ParseException {
+        return DateUtils.v2UtcToCalendar(_utc);
+    }
+
+    public long getUtc() throws ParseException {
+        return DateUtils.v2UtcToLong(_utc);
     }
 
     public void setLocal(Local local) {

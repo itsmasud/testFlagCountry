@@ -516,7 +516,7 @@ public class ActionBarTopView extends LinearLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE,
-                    null, _workorder.getWorkorderId());
+                    null, _workorder.getWorkorderId().intValue());
 
             WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
         }
@@ -535,7 +535,7 @@ public class ActionBarTopView extends LinearLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                    null, _workorder.getWorkorderId());
+                    null, _workorder.getWorkorderId().intValue());
 
             RunningLateDialogLegacy.show(App.get(), DIALOG_RUNNING_LATE_LEGACY, _workorder);
         }
@@ -546,7 +546,7 @@ public class ActionBarTopView extends LinearLayout {
         public void onSend(long workOrderId, int delayMin) {
             if (_workorder.getWorkorderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                        WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
+                        WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
         }
     };
 

@@ -10,6 +10,9 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 /**
  * Created by dmgen from swagger on 1/31/17.
  */
@@ -578,5 +581,24 @@ public class WorkOrder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public ActionsEnum[] getSortedActions() {
+        Arrays.sort(_actions, new Comparator<ActionsEnum>() {
+            @Override
+            public int compare(ActionsEnum lhs, ActionsEnum rhs) {
+                if (lhs.ordinal() < rhs.ordinal())
+                    return -1;
+                else if (lhs.ordinal() > rhs.ordinal())
+                    return 1;
+                else
+                    return 0;
+            }
+        });
+        return _actions;
     }
 }
