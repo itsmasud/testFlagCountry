@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -46,7 +47,23 @@ public class Expense implements Parcelable {
     @Json(name = "company_expense")
     private ExpenseCompanyExpense _companyExpense;
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     public Expense() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Expense actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setReason(String reason) {

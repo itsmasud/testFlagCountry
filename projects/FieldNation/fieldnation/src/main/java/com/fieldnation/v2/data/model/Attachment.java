@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -52,7 +53,23 @@ public class Attachment implements Parcelable {
     @Json(name = "status")
     private StatusEnum _status;
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     public Attachment() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Attachment actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setStatusDescription(String statusDescription) {

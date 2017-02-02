@@ -13,6 +13,8 @@ public enum ViewEnum {
     LIST("list"),
     @Json(name = "map")
     MAP("map"),
+    @Json(name = "model")
+    MODEL("model"),
     @Json(name = "card")
     CARD("card");
 

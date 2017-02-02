@@ -59,7 +59,11 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
 
     @Override
     protected void onPostExecute(Bundle bundle) {
-        if (bundle != null)
+        if (bundle != null) {
+            Log.v(TAG, "Data cache hit!");
             TopicService.dispatchEvent(_context, _transactionParams.topicId, bundle, Sticky.TEMP);
+        } else {
+            Log.v(TAG, "Data Cache Miss");
+        }
     }
 }

@@ -10,7 +10,9 @@ public enum OrderEnum {
     @Json(name = "asc")
     ASC("asc"),
     @Json(name = "desc")
-    DESC("desc");
+    DESC("desc"),
+    @Json(name = "false")
+    FALSE("false");
 
     private String value;
 

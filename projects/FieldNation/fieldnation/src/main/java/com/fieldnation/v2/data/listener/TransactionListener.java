@@ -75,11 +75,11 @@ public class TransactionListener extends WebTransactionListener {
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
-                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray());
+                    StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
                     if (httpResult.isFile()) {
-                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getFile(), transaction.getKey());
+                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getFile(), transaction.getKey(), true);
                     } else {
-                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray());
+                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray(), true);
                     }
                 }
             } catch (Exception ex) {

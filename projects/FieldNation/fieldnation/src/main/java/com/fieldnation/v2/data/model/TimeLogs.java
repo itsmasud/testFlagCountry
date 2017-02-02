@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -35,7 +36,7 @@ public class TimeLogs implements Parcelable {
     private Date _confirmed;
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "results")
     private TimeLog[] _results;
@@ -124,15 +125,15 @@ public class TimeLogs implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum actions) {
+    public void setActions(ActionsEnum[] actions) {
         _actions = actions;
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public TimeLogs actions(ActionsEnum actions) {
+    public TimeLogs actions(ActionsEnum[] actions) {
         _actions = actions;
         return this;
     }

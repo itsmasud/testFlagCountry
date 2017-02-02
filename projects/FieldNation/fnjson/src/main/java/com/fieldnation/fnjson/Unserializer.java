@@ -2,12 +2,11 @@ package com.fieldnation.fnjson;
 
 import com.fieldnation.fnjson.annotations.CollectionParameterType;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -16,6 +15,8 @@ import java.util.Collection;
  * This is a static class used to unserialize JsonObjects into real Java objects
  */
 public class Unserializer {
+    private static final String TAG = "Unserializer";
+
     /**
      * Instantiates targetClass and populates the fields within that class based on the contents of
      * the JsonObject.
@@ -116,7 +117,7 @@ public class Unserializer {
         return unserializeObject(targetClass, (JsonObject) source);
     }
 
-    private static Enum unserializeEnum(Class<Enum> targetClazz, String source) throws NoSuchFieldException {
+    private static Enum unserializeEnum(Class<Enum> targetClazz, String source) throws Exception {
         if (source == null)
             return null;
 
@@ -134,7 +135,13 @@ public class Unserializer {
             if (annotation.name().equals(source))
                 return constant;
         }
-        return null;
+
+        if (BuildConfig.DEBUG)
+            throw new Exception("unserializeEnum no constant for " + targetClazz.getName() + ":" + source);
+        else {
+            Log.v(TAG, "unserializeEnum no constant for " + targetClazz.getName() + ":" + source);
+            return null;
+        }
     }
 
     /**

@@ -26,7 +26,7 @@ public class Contacts implements Parcelable {
     private Contact[] _results;
 
     @Json(name = "actions")
-    private String[] _actions;
+    private ActionsEnum[] _actions;
 
     public Contacts() {
     }
@@ -70,15 +70,15 @@ public class Contacts implements Parcelable {
         return this;
     }
 
-    public void setActions(String[] actions) {
+    public void setActions(ActionsEnum[] actions) {
         _actions = actions;
     }
 
-    public String[] getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Contacts actions(String[] actions) {
+    public Contacts actions(ActionsEnum[] actions) {
         _actions = actions;
         return this;
     }

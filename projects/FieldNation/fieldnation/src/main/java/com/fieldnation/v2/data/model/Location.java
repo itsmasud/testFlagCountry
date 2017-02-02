@@ -70,7 +70,7 @@ public class Location implements Parcelable {
     private String _state;
 
     @Json(name = "actions")
-    private String _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "map")
     private Map _map;
@@ -305,15 +305,15 @@ public class Location implements Parcelable {
         return this;
     }
 
-    public void setActions(String actions) {
+    public void setActions(ActionsEnum[] actions) {
         _actions = actions;
     }
 
-    public String getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Location actions(String actions) {
+    public Location actions(ActionsEnum[] actions) {
         _actions = actions;
         return this;
     }

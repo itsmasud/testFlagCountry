@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -23,7 +24,7 @@ public class AttachmentFolders implements Parcelable {
     private AttachmentFolder[] _results;
 
     @Json(name = "actions")
-    private String[] _actions;
+    private ActionsEnum[] _actions;
 
     public AttachmentFolders() {
     }
@@ -54,15 +55,15 @@ public class AttachmentFolders implements Parcelable {
         return this;
     }
 
-    public void setActions(String[] actions) {
+    public void setActions(ActionsEnum[] actions) {
         _actions = actions;
     }
 
-    public String[] getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public AttachmentFolders actions(String[] actions) {
+    public AttachmentFolders actions(ActionsEnum[] actions) {
         _actions = actions;
         return this;
     }
@@ -130,4 +131,5 @@ public class AttachmentFolders implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
     }
+
 }

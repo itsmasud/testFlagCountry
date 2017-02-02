@@ -37,7 +37,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     public PagingAdapter(Class<T> clazz) {
         super();
         _objectType = clazz;
-        requestPage(0, false);
+        requestPage(1, false);
     }
 
     public void clear() {
@@ -71,7 +71,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
 
     public void refreshAll() {
         if (_pages.size() == 0) {
-            requestPage(0, false);
+            requestPage(1, false);
         } else {
             for (int i = 1; i < _pages.size(); i++) {
                 _loadingPages.add(i);

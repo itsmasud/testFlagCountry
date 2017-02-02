@@ -107,7 +107,23 @@ public class WorkOrder implements Parcelable {
     @Json(name = "status")
     private Status _status;
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     public WorkOrder() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public WorkOrder actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setRole(String role) {
