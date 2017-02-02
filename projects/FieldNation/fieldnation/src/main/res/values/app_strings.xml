@@ -191,6 +191,8 @@
     <string name="dialog_decline_title">Not interested</string>
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
+    <string name="dialog_duration_v2_title">Set duration</string>
+
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
