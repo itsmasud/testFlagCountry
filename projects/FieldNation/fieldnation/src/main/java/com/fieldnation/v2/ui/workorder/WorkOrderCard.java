@@ -357,7 +357,7 @@ TODO         if (pay.getStatus() != null) {
 
         // Primary actions
         for (ActionsEnum action : actions) {
-            if (populatePrimaryButton(_primaryButton, action))
+            if (action != null && populatePrimaryButton(_primaryButton, action))
                 break;
         }
 
@@ -368,7 +368,7 @@ TODO         if (pay.getStatus() != null) {
             ActionsEnum action = actions[i];
 
             // only if the action has been assigned do we move to the next button
-            if (populateSecondaryButton(_secondaryButtons[j], action)) {
+            if (action != null && populateSecondaryButton(_secondaryButtons[j], action)) {
                 j++;
             }
             i++;

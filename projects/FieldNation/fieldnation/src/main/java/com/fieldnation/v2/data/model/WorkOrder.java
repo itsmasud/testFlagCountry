@@ -591,6 +591,9 @@ public class WorkOrder implements Parcelable {
         Arrays.sort(_actions, new Comparator<ActionsEnum>() {
             @Override
             public int compare(ActionsEnum lhs, ActionsEnum rhs) {
+                if (lhs == null || rhs == null)
+                    return 0;
+                
                 if (lhs.ordinal() < rhs.ordinal())
                     return -1;
                 else if (lhs.ordinal() > rhs.ordinal())

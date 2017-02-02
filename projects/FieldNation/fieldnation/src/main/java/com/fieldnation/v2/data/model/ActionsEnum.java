@@ -12,12 +12,16 @@ public enum ActionsEnum {
     ACCEPT("accept"),
     @Json(name = "request")
     REQUEST("request"),
+    @Json(name = "withdraw_request")
+    WITHDRAW_REQUEST("withdraw_request"),
     @Json(name = "mark_complete")
     MARK_COMPLETE("mark_complete"),
     @Json(name = "mark_incomplete")
     MARK_INCOMPLETE("mark_incomplete"),
     @Json(name = "eta")
     ETA("eta"),
+    @Json(name = "confirm")
+    CONFIRM("confirm"),
     @Json(name = "acknowledge")
     ACKNOWLEDGE("acknowledge"),
     @Json(name = "check_in")
