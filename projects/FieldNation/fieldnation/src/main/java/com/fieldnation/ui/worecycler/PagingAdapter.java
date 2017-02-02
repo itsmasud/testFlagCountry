@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.RateMeView;
+import com.fieldnation.v2.ui.worecycler.BaseHolder;
+import com.fieldnation.v2.ui.worecycler.RateMeHolder;
 
 import java.util.HashSet;
 import java.util.LinkedList;

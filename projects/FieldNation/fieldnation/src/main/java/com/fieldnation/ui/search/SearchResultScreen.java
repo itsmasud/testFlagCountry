@@ -22,10 +22,10 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
+import com.fieldnation.v2.ui.worecycler.BaseHolder;
 
 import java.util.List;
 
