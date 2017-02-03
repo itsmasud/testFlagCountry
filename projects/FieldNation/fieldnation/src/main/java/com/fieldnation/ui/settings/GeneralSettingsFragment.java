@@ -15,7 +15,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.crawler.WebCrawlerService;
-import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
+import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 /**
  * Created by Michael Carver on 4/15/2015.

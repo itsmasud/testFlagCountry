@@ -14,7 +14,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
+import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
 
 /**
