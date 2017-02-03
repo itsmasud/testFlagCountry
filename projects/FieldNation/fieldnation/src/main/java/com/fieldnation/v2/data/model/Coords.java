@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -177,5 +178,18 @@ public class Coords implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public Coords(double latitude, double longitude) {
+        super();
+        _latitude = latitude;
+        _longitude = longitude;
+    }
+
+    public Coords(android.location.Location location) {
+        this(location.getLatitude(), location.getLongitude());
     }
 }

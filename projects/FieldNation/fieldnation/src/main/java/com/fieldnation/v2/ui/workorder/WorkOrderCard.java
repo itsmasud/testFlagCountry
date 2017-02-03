@@ -26,7 +26,6 @@ import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.ActionsEnum;
 import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Pay;
@@ -383,12 +382,13 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_accept_onClick);
                 button.setText(R.string.btn_accept);
                 break;
-/*
+
             case CONFIRM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_confirm_onClick);
                 button.setText(R.string.btn_confirm);
                 break;
+/*
             case ON_MY_WAY:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_onMyWay_onClick);
@@ -427,13 +427,11 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_ackHold_onClick);
                 button.setText("ACKNOWLEDGE HOLD");
                 break;
-/*
-            case WITHDRAW:
+            case WITHDRAW_REQUEST:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_withdraw_onClick);
                 button.setText("WITHDRAW");
                 break;
-*/
             case CHECK_IN:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_checkIn_onClick);
@@ -638,15 +636,13 @@ TODO         if (pay.getStatus() != null) {
     };
 */
 
-/*
     private final OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            // TODO EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
     };
-*/
 
 /*
     private final EtaDialog.OnConfirmedListener _etaDialog_onConfirm = new EtaDialog.OnConfirmedListener() {
@@ -823,7 +819,6 @@ TODO         if (pay.getStatus() != null) {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
         }
     };
 

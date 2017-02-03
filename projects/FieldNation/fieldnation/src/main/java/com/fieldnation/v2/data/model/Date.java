@@ -127,4 +127,13 @@ public class Date implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
     }
+
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public Date(Calendar calendar) {
+        super();
+        utc(DateUtils.v2CalToUtc(calendar));
+    }
 }
