@@ -18,6 +18,7 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 /**
  * Created by mc on 10/27/16.

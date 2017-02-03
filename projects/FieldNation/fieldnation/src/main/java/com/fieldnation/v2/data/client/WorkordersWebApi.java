@@ -393,17 +393,15 @@ public class WorkordersWebApi extends TopicClient {
      * Marks a work order incomplete and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param reason      Reason
      */
-    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete?reason=" + reason);
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete");
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/complete")
-                    .urlParams("?reason=" + reason);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/complete");
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")

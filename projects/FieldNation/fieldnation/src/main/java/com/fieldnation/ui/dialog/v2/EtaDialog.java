@@ -40,6 +40,7 @@ import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;

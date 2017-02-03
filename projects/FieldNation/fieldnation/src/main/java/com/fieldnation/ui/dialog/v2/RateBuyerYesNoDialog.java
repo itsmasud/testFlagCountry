@@ -2,17 +2,14 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fndialog.FullScreenDialog;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RateBuyerActivity;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
 /**
  * Created by mc on 1/20/17.

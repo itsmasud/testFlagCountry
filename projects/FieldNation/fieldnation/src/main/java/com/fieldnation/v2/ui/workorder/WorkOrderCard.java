@@ -20,7 +20,6 @@ import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
@@ -30,6 +29,7 @@ import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

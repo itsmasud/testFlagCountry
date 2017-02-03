@@ -9,6 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 /**
  * Created by Michael on 9/26/2016.

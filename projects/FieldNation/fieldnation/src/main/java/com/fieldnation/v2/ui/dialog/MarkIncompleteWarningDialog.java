@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog.v2;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,9 +7,8 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.KeyedDispatcher;
-import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
 
 /**
  * Created by mc on 11/8/16.
@@ -25,16 +24,16 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
         Parcelable extraData = getExtraData();
 
         if (extraData != null && extraData instanceof Bundle) {
-            Long workOrderId = ((Bundle) extraData).getLong("workOrderId");
-            WorkorderClient.actionIncomplete(App.get(), workOrderId);
+            Integer workOrderId = ((Bundle) extraData).getInt("workOrderId");
+            WorkordersWebApi.incompleteWorkOrder(App.get(), workOrderId);
             _onMarkIncompleteDispatcher.dispatch(getUid(), workOrderId);
         }
         return true;
     }
 
-    public static void show(Context context, String uid, long workOrderId) {
+    public static void show(Context context, String uid, int workOrderId) {
         Bundle extraData = new Bundle();
-        extraData.putLong("workOrderId", workOrderId);
+        extraData.putInt("workOrderId", workOrderId);
 
         show(context, uid, MarkIncompleteWarningDialog.class, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
                 R.string.btn_continue, R.string.btn_cancel, true, extraData);

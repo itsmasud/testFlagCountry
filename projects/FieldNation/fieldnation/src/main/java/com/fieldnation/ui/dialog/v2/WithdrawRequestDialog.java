@@ -9,6 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 
 /**
  * Created by mc on 11/7/16.
