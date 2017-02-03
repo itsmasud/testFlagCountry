@@ -405,14 +405,8 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            //_workOrderClient.clearTopic(topicId);
             _workOrderClient.clearTopicAll(topicId);
             super.onEvent(topicId, payload);
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onWorkordersWebApi " + methodName);
         }
 
         @Override
@@ -427,32 +421,6 @@ public class CheckInOutDialog extends FullScreenDialog {
             }
         }
     };
-
-/*
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            _workorderClient.subActions();
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            if (workorderId != _workorderId)
-                return;
-
-            if (action.equals("checkin") || action.equals("checkout"))
-                return;
-
-            Log.v(TAG, "_workorderClient_listener.onAction()");
-            _workorderClient.clearTopic(WorkorderConstants.TOPIC_ID_ACTION_COMPLETE);
-            setLoading(false);
-            if (failed) {
-            } else {
-                dismiss(true);
-            }
-        }
-    };
-*/
 
     // with location
     public static void show(Context context, String uid, WorkOrder workOrder, Location location, String dialogType) {
