@@ -19,7 +19,6 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.AaaaPlaceholder;
 import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
@@ -6409,16 +6408,10 @@ public class WorkordersWebApi extends TopicClient {
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
+        public void onWorkOrder(String methodName, WorkOrder workOrder, boolean success, Error error) {
+        }
+
         public void onRevertWorkOrderToDraft(boolean success, Error error) {
-        }
-
-        public void onIncompleteTask(boolean success, Error error) {
-        }
-
-        public void onGetCustomField(CustomField customField, boolean success, Error error) {
-        }
-
-        public void onUpdateCustomField(CustomField customField, boolean success, Error error) {
         }
 
         public void onCompleteWorkOrder(boolean success, Error error) {
@@ -6427,10 +6420,76 @@ public class WorkordersWebApi extends TopicClient {
         public void onIncompleteWorkOrder(boolean success, Error error) {
         }
 
+        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
+        }
+
+        public void onDeleteWorkOrder(boolean success, Error error) {
+        }
+
+        public void onUpdateWorkOrder(boolean success, Error error) {
+        }
+
+        public void onApproveWorkOrder(boolean success, Error error) {
+        }
+
+        public void onUnapproveWorkOrder(boolean success, Error error) {
+        }
+
+
+        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+        }
+
+
+        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
+        }
+
+
+        // Custom Fields
+        public void onCustomField(String methodName, CustomField customField, boolean success, Error error) {
+        }
+
+        public void onCustomFields(String methodName, CustomFields customField, boolean success, Error error) {
+        }
+
+
+        public void onGetCustomField(CustomField customField, boolean success, Error error) {
+        }
+
+        public void onUpdateCustomField(CustomField customField, boolean success, Error error) {
+        }
+
+        public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
+        }
+
+
+        // Expense
+        public void onExpense(String methodName, Expense expense, boolean success, Error error) {
+        }
+
+        public void onExpenses(String methodName, Expenses expenses, boolean success, Error error) {
+        }
+
         public void onAddExpense(Expense expense, boolean success, Error error) {
         }
 
         public void onGetExpenses(Expenses expenses, boolean success, Error error) {
+        }
+
+        public void onDeleteExpense(boolean success, Error error) {
+        }
+
+        public void onUpdateExpense(Expense expense, boolean success, Error error) {
+        }
+
+
+        // Attachment
+        public void onAttachment(String methodName, Attachment attachment, boolean success, Error error) {
+        }
+
+        public void onAttachmentFolder(String methodName, AttachmentFolder attachmentFolder, boolean success, Error error) {
+        }
+
+        public void onAttachmentFolders(String methodName, AttachmentFolders attachmentFolders, boolean success, Error error) {
         }
 
         public void onAddAttachment(Attachment attachment, boolean success, Error error) {
@@ -6445,18 +6504,93 @@ public class WorkordersWebApi extends TopicClient {
         public void onUpdateFolder(boolean success, Error error) {
         }
 
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+        public void onGetAttachments(AttachmentFolders attachmentFolders, boolean success, Error error) {
+        }
+
+        public void onGetFile(Attachment attachment, boolean success, Error error) {
+        }
+
+        public void onDeleteAttachment(boolean success, Error error) {
+        }
+
+        public void onUpdateAttachment(boolean success, Error error) {
+        }
+
+        public void onAddFolder(boolean success, Error error) {
+        }
+
+
+        // Time Log
+        public void onTimeLog(String methodName, TimeLog timeLog, boolean success, Error error) {
+        }
+
+        public void onTimeLogs(String methodName, TimeLogs timeLogs, boolean success, Error error) {
         }
 
         public void onVerifyTimeLog(boolean success, Error error) {
         }
 
+        public void onAddTimeLog(TimeLog timeLog, boolean success, Error error) {
+        }
+
+        public void onGetTimeLogs(TimeLogs timeLogs, boolean success, Error error) {
+        }
+
+        public void onUpdateAllTimeLogs(boolean success, Error error) {
+        }
+
+        public void onRemoveTimeLog(boolean success, Error error) {
+        }
+
+        public void onUpdateTimeLog(boolean success, Error error) {
+        }
+
+
+        // Task
+        public void onIncompleteTask(boolean success, Error error) {
+        }
+
+        public void onAddTask(IdResponse idResponse, boolean success, Error error) {
+        }
+
+        public void onGetTasks(Tasks tasks, boolean success, Error error) {
+        }
+
+        public void onCompleteTask(boolean success, Error error) {
+        }
+
+        public void onGetTask(Task task, boolean success, Error error) {
+        }
+
+        public void onRemoveTask(boolean success, Error error) {
+        }
+
+        public void onUpdateTask(boolean success, Error error) {
+        }
+
+        public void onAddAlertToWorkOrderAndTask(boolean success, Error error) {
+        }
+
+        public void onReorderTask(boolean success, Error error) {
+        }
+
+        public void onGroupTask(boolean success, Error error) {
+        }
+
+        // Contact
         public void onRemoveContact(boolean success, Error error) {
         }
 
         public void onUpdateContact(boolean success, Error error) {
         }
 
+        public void onAddContact(IdResponse idResponse, boolean success, Error error) {
+        }
+
+        public void onGetContacts(Contacts contacts, boolean success, Error error) {
+        }
+
+        // Increase
         public void onGetIncrease(PayIncrease payIncrease, boolean success, Error error) {
         }
 
@@ -6466,25 +6600,21 @@ public class WorkordersWebApi extends TopicClient {
         public void onUpdateIncrease(PayIncrease payIncrease, boolean success, Error error) {
         }
 
-        public void onDeleteExpense(boolean success, Error error) {
-        }
-
-        public void onUpdateExpense(Expense expense, boolean success, Error error) {
-        }
-
         public void onGetIncreases(PayIncreases payIncreases, boolean success, Error error) {
         }
 
+        public void onAcceptIncrease(boolean success, Error error) {
+        }
+
+        public void onDenyIncrease(boolean success, Error error) {
+        }
+
+
+        // Pay
         public void onGetPay(Pay pay, boolean success, Error error) {
         }
 
         public void onUpdatePay(boolean success, Error error) {
-        }
-
-        public void onAddTask(IdResponse idResponse, boolean success, Error error) {
-        }
-
-        public void onGetTasks(Tasks tasks, boolean success, Error error) {
         }
 
         public void onGetMilestones(Milestones milestones, boolean success, Error error) {
@@ -6508,58 +6638,16 @@ public class WorkordersWebApi extends TopicClient {
         public void onCancelSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
         }
 
-        public void onAddTimeLog(AaaaPlaceholder aaaaPlaceholder, boolean success, Error error) {
-        }
-
-        public void onGetTimeLogs(TimeLogs timeLogs, boolean success, Error error) {
-        }
-
-        public void onUpdateAllTimeLogs(boolean success, Error error) {
-        }
-
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-        }
-
-        public void onDeleteWorkOrder(boolean success, Error error) {
-        }
-
-        public void onUpdateWorkOrder(boolean success, Error error) {
-        }
-
         public void onGetSignature(Signature signature, boolean success, Error error) {
         }
 
         public void onDeleteSignature(boolean success, Error error) {
         }
 
-        public void onAddFolder(boolean success, Error error) {
-        }
-
-        public void onGetAttachments(AttachmentFolders attachmentFolders, boolean success, Error error) {
-        }
-
-        public void onCompleteTask(boolean success, Error error) {
-        }
-
         public void onRemoveDiscount(boolean success, Error error) {
         }
 
         public void onUpdateDiscount(IdResponse idResponse, boolean success, Error error) {
-        }
-
-        public void onRemoveTimeLog(boolean success, Error error) {
-        }
-
-        public void onUpdateTimeLog(boolean success, Error error) {
-        }
-
-        public void onGetFile(Attachment attachment, boolean success, Error error) {
-        }
-
-        public void onDeleteAttachment(boolean success, Error error) {
-        }
-
-        public void onUpdateAttachment(boolean success, Error error) {
         }
 
         public void onAssignUser(boolean success, Error error) {
@@ -6578,15 +6666,6 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onGetStatus(Status status, boolean success, Error error) {
-        }
-
-        public void onApproveWorkOrder(boolean success, Error error) {
-        }
-
-        public void onUnapproveWorkOrder(boolean success, Error error) {
-        }
-
-        public void onAcceptIncrease(boolean success, Error error) {
         }
 
         public void onDeleteShipment(boolean success, Error error) {
@@ -6619,21 +6698,6 @@ public class WorkordersWebApi extends TopicClient {
         public void onUpdateMessage(IdResponse idResponse, boolean success, Error error) {
         }
 
-        public void onGetTask(Task task, boolean success, Error error) {
-        }
-
-        public void onRemoveTask(boolean success, Error error) {
-        }
-
-        public void onUpdateTask(boolean success, Error error) {
-        }
-
-        public void onDenyIncrease(boolean success, Error error) {
-        }
-
-        public void onAddAlertToWorkOrderAndTask(boolean success, Error error) {
-        }
-
         public void onRemoveAlerts(boolean success, Error error) {
         }
 
@@ -6644,9 +6708,6 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onAcceptSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
-        }
-
-        public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
         }
 
         public void onRemoveAlert(boolean success, Error error) {
@@ -6670,18 +6731,6 @@ public class WorkordersWebApi extends TopicClient {
         public void onGetDiscounts(PayModifiers payModifiers, boolean success, Error error) {
         }
 
-        public void onReorderTask(boolean success, Error error) {
-        }
-
-        public void onGroupTask(boolean success, Error error) {
-        }
-
-        public void onAddContact(IdResponse idResponse, boolean success, Error error) {
-        }
-
-        public void onGetContacts(Contacts contacts, boolean success, Error error) {
-        }
-
         public void onAddShipment(IdResponse idResponse, boolean success, Error error) {
         }
 
@@ -6695,9 +6744,6 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onUnRouteUser(boolean success, Error error) {
-        }
-
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
         }
 
         public void onGetProblemReasons(Problems[] problems, boolean success, Error error) {
@@ -6929,7 +6975,7 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "addTimeLog":
                         if (success)
-                            successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
+                            successObject = TimeLog.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7288,6 +7334,9 @@ public class WorkordersWebApi extends TopicClient {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            if (successObject == null)
+                return null;
+
             return null;
         }
 
@@ -7296,54 +7345,192 @@ public class WorkordersWebApi extends TopicClient {
             try {
                 listener.onWorkordersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
+                    // Work Order
                     case "revertWorkOrderToDraft":
                         listener.onRevertWorkOrderToDraft(success, (Error) failObject);
-                        break;
-                    case "incompleteTask":
-                        listener.onIncompleteTask(success, (Error) failObject);
-                        break;
-                    case "getCustomField":
-                        listener.onGetCustomField((CustomField) successObject, success, (Error) failObject);
-                        break;
-                    case "updateCustomField":
-                        listener.onUpdateCustomField((CustomField) successObject, success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
                     case "completeWorkOrder":
                         listener.onCompleteWorkOrder(success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
                     case "incompleteWorkOrder":
                         listener.onIncompleteWorkOrder(success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
-                    case "addExpense":
-                        listener.onAddExpense((Expense) successObject, success, (Error) failObject);
+                    case "getWorkOrder":
+                        listener.onGetWorkOrder((WorkOrder) successObject, success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, (WorkOrder) successObject, success, (Error) failObject);
                         break;
-                    case "getExpenses":
-                        listener.onGetExpenses((Expenses) successObject, success, (Error) failObject);
+                    case "deleteWorkOrder":
+                        listener.onDeleteWorkOrder(success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
-                    case "addAttachment":
-                        listener.onAddAttachment((Attachment) successObject, success, (Error) failObject);
+                    case "updateWorkOrder":
+                        listener.onUpdateWorkOrder(success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
-                    case "getFolder":
-                        listener.onGetFolder((AttachmentFolder) successObject, success, (Error) failObject);
+                    case "approveWorkOrder":
+                        listener.onApproveWorkOrder(success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
-                    case "deleteFolder":
-                        listener.onDeleteFolder(success, (Error) failObject);
+                    case "unapproveWorkOrder":
+                        listener.onUnapproveWorkOrder(success, (Error) failObject);
+                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
-                    case "updateFolder":
-                        listener.onUpdateFolder(success, (Error) failObject);
-                        break;
+
                     case "getWorkOrders":
                         listener.onGetWorkOrders((WorkOrders) successObject, success, (Error) failObject);
                         break;
+
+                    case "getWorkOrderLists":
+                        listener.onGetWorkOrderLists((SavedList[]) successObject, success, (Error) failObject);
+                        break;
+
+                    // Custom Field
+                    case "getCustomField":
+                        listener.onGetCustomField((CustomField) successObject, success, (Error) failObject);
+                        listener.onCustomField(transactionParams.apiFunction, (CustomField) successObject, success, (Error) failObject);
+                        break;
+                    case "updateCustomField":
+                        listener.onUpdateCustomField((CustomField) successObject, success, (Error) failObject);
+                        listener.onCustomField(transactionParams.apiFunction, (CustomField) successObject, success, (Error) failObject);
+                        break;
+                    case "getCustomFields":
+                        listener.onGetCustomFields((CustomFields) successObject, success, (Error) failObject);
+                        listener.onCustomFields(transactionParams.apiFunction, (CustomFields) successObject, success, (Error) failObject);
+                        break;
+
+                    // Expense
+                    case "addExpense":
+                        listener.onAddExpense((Expense) successObject, success, (Error) failObject);
+                        listener.onExpense(transactionParams.apiFunction, (Expense) successObject, success, (Error) failObject);
+                        break;
+                    case "getExpenses":
+                        listener.onGetExpenses((Expenses) successObject, success, (Error) failObject);
+                        listener.onExpenses(transactionParams.apiFunction, (Expenses) successObject, success, (Error) failObject);
+                        break;
+                    case "updateExpense":
+                        listener.onUpdateExpense((Expense) successObject, success, (Error) failObject);
+                        listener.onExpense(transactionParams.apiFunction, (Expense) successObject, success, (Error) failObject);
+                        break;
+                    case "deleteExpense":
+                        listener.onDeleteExpense(success, (Error) failObject);
+                        listener.onExpense(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+
+                    // Attachment
+                    case "addAttachment":
+                        listener.onAddAttachment((Attachment) successObject, success, (Error) failObject);
+                        listener.onAttachment(transactionParams.apiFunction, (Attachment) successObject, success, (Error) failObject);
+                        break;
+                    case "getFile":
+                        listener.onGetFile((Attachment) successObject, success, (Error) failObject);
+                        listener.onAttachment(transactionParams.apiFunction, (Attachment) successObject, success, (Error) failObject);
+                        break;
+                    case "deleteAttachment":
+                        listener.onDeleteAttachment(success, (Error) failObject);
+                        listener.onAttachment(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+                    case "updateAttachment":
+                        listener.onUpdateAttachment(success, (Error) failObject);
+                        listener.onAttachment(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+
+                    case "getFolder":
+                        listener.onGetFolder((AttachmentFolder) successObject, success, (Error) failObject);
+                        listener.onAttachmentFolder(transactionParams.apiFunction, (AttachmentFolder) successObject, success, (Error) failObject);
+                        break;
+                    case "getAttachments":
+                        listener.onGetAttachments((AttachmentFolders) successObject, success, (Error) failObject);
+                        listener.onAttachmentFolders(transactionParams.apiFunction, (AttachmentFolders) successObject, success, (Error) failObject);
+                        break;
+                    case "deleteFolder":
+                        listener.onDeleteFolder(success, (Error) failObject);
+                        listener.onAttachmentFolder(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+                    case "updateFolder":
+                        listener.onUpdateFolder(success, (Error) failObject);
+                        listener.onAttachmentFolder(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+                    case "addFolder":
+                        listener.onAddFolder(success, (Error) failObject);
+                        listener.onAttachmentFolder(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+
+                    // Time Log
+                    case "addTimeLog":
+                        listener.onAddTimeLog((TimeLog) successObject, success, (Error) failObject);
+                        listener.onTimeLog(transactionParams.apiFunction, (TimeLog) successObject, success, (Error) failObject);
+                        break;
                     case "verifyTimeLog":
                         listener.onVerifyTimeLog(success, (Error) failObject);
+                        listener.onTimeLog(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
+                    case "removeTimeLog":
+                        listener.onRemoveTimeLog(success, (Error) failObject);
+                        listener.onTimeLog(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+                    case "updateTimeLog":
+                        listener.onUpdateTimeLog(success, (Error) failObject);
+                        listener.onTimeLog(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+                    case "getTimeLogs":
+                        listener.onGetTimeLogs((TimeLogs) successObject, success, (Error) failObject);
+                        listener.onTimeLogs(transactionParams.apiFunction, (TimeLogs) successObject, success, (Error) failObject);
+                        break;
+                    case "updateAllTimeLogs":
+                        listener.onUpdateAllTimeLogs(success, (Error) failObject);
+                        listener.onTimeLogs(transactionParams.apiFunction, null, success, (Error) failObject);
+                        break;
+
+                    // Task
+                    case "incompleteTask":
+                        listener.onIncompleteTask(success, (Error) failObject);
+                        break;
+                    case "addTask":
+                        listener.onAddTask((IdResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "getTasks":
+                        listener.onGetTasks((Tasks) successObject, success, (Error) failObject);
+                        break;
+                    case "completeTask":
+                        listener.onCompleteTask(success, (Error) failObject);
+                        break;
+                    case "getTask":
+                        listener.onGetTask((Task) successObject, success, (Error) failObject);
+                        break;
+                    case "removeTask":
+                        listener.onRemoveTask(success, (Error) failObject);
+                        break;
+                    case "updateTask":
+                        listener.onUpdateTask(success, (Error) failObject);
+                        break;
+                    case "addAlertToWorkOrderAndTask":
+                        listener.onAddAlertToWorkOrderAndTask(success, (Error) failObject);
+                        break;
+                    case "reorderTask":
+                        listener.onReorderTask(success, (Error) failObject);
+                        break;
+                    case "groupTask":
+                        listener.onGroupTask(success, (Error) failObject);
+                        break;
+
+                    // Contact
                     case "removeContact":
                         listener.onRemoveContact(success, (Error) failObject);
                         break;
                     case "updateContact":
                         listener.onUpdateContact(success, (Error) failObject);
                         break;
+                    case "addContact":
+                        listener.onAddContact((IdResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "getContacts":
+                        listener.onGetContacts((Contacts) successObject, success, (Error) failObject);
+                        break;
+
+                    // Increase
                     case "getIncrease":
                         listener.onGetIncrease((PayIncrease) successObject, success, (Error) failObject);
                         break;
@@ -7353,26 +7540,22 @@ public class WorkordersWebApi extends TopicClient {
                     case "updateIncrease":
                         listener.onUpdateIncrease((PayIncrease) successObject, success, (Error) failObject);
                         break;
-                    case "deleteExpense":
-                        listener.onDeleteExpense(success, (Error) failObject);
-                        break;
-                    case "updateExpense":
-                        listener.onUpdateExpense((Expense) successObject, success, (Error) failObject);
-                        break;
                     case "getIncreases":
                         listener.onGetIncreases((PayIncreases) successObject, success, (Error) failObject);
                         break;
+                    case "acceptIncrease":
+                        listener.onAcceptIncrease(success, (Error) failObject);
+                        break;
+                    case "denyIncrease":
+                        listener.onDenyIncrease(success, (Error) failObject);
+                        break;
+
+                    // Pay
                     case "getPay":
                         listener.onGetPay((Pay) successObject, success, (Error) failObject);
                         break;
                     case "updatePay":
                         listener.onUpdatePay(success, (Error) failObject);
-                        break;
-                    case "addTask":
-                        listener.onAddTask((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "getTasks":
-                        listener.onGetTasks((Tasks) successObject, success, (Error) failObject);
                         break;
                     case "getMilestones":
                         listener.onGetMilestones((Milestones) successObject, success, (Error) failObject);
@@ -7395,59 +7578,17 @@ public class WorkordersWebApi extends TopicClient {
                     case "cancelSwapRequest":
                         listener.onCancelSwapRequest((SwapResponse) successObject, success, (Error) failObject);
                         break;
-                    case "addTimeLog":
-                        listener.onAddTimeLog((AaaaPlaceholder) successObject, success, (Error) failObject);
-                        break;
-                    case "getTimeLogs":
-                        listener.onGetTimeLogs((TimeLogs) successObject, success, (Error) failObject);
-                        break;
-                    case "updateAllTimeLogs":
-                        listener.onUpdateAllTimeLogs(success, (Error) failObject);
-                        break;
-                    case "getWorkOrder":
-                        listener.onGetWorkOrder((WorkOrder) successObject, success, (Error) failObject);
-                        break;
-                    case "deleteWorkOrder":
-                        listener.onDeleteWorkOrder(success, (Error) failObject);
-                        break;
-                    case "updateWorkOrder":
-                        listener.onUpdateWorkOrder(success, (Error) failObject);
-                        break;
                     case "getSignature":
                         listener.onGetSignature((Signature) successObject, success, (Error) failObject);
                         break;
                     case "deleteSignature":
                         listener.onDeleteSignature(success, (Error) failObject);
                         break;
-                    case "addFolder":
-                        listener.onAddFolder(success, (Error) failObject);
-                        break;
-                    case "getAttachments":
-                        listener.onGetAttachments((AttachmentFolders) successObject, success, (Error) failObject);
-                        break;
-                    case "completeTask":
-                        listener.onCompleteTask(success, (Error) failObject);
-                        break;
                     case "removeDiscount":
                         listener.onRemoveDiscount(success, (Error) failObject);
                         break;
                     case "updateDiscount":
                         listener.onUpdateDiscount((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "removeTimeLog":
-                        listener.onRemoveTimeLog(success, (Error) failObject);
-                        break;
-                    case "updateTimeLog":
-                        listener.onUpdateTimeLog(success, (Error) failObject);
-                        break;
-                    case "getFile":
-                        listener.onGetFile((Attachment) successObject, success, (Error) failObject);
-                        break;
-                    case "deleteAttachment":
-                        listener.onDeleteAttachment(success, (Error) failObject);
-                        break;
-                    case "updateAttachment":
-                        listener.onUpdateAttachment(success, (Error) failObject);
                         break;
                     case "assignUser":
                         listener.onAssignUser(success, (Error) failObject);
@@ -7466,15 +7607,6 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "getStatus":
                         listener.onGetStatus((com.fieldnation.v2.data.model.Status) successObject, success, (Error) failObject);
-                        break;
-                    case "approveWorkOrder":
-                        listener.onApproveWorkOrder(success, (Error) failObject);
-                        break;
-                    case "unapproveWorkOrder":
-                        listener.onUnapproveWorkOrder(success, (Error) failObject);
-                        break;
-                    case "acceptIncrease":
-                        listener.onAcceptIncrease(success, (Error) failObject);
                         break;
                     case "deleteShipment":
                         listener.onDeleteShipment(success, (Error) failObject);
@@ -7506,21 +7638,6 @@ public class WorkordersWebApi extends TopicClient {
                     case "updateMessage":
                         listener.onUpdateMessage((IdResponse) successObject, success, (Error) failObject);
                         break;
-                    case "getTask":
-                        listener.onGetTask((Task) successObject, success, (Error) failObject);
-                        break;
-                    case "removeTask":
-                        listener.onRemoveTask(success, (Error) failObject);
-                        break;
-                    case "updateTask":
-                        listener.onUpdateTask(success, (Error) failObject);
-                        break;
-                    case "denyIncrease":
-                        listener.onDenyIncrease(success, (Error) failObject);
-                        break;
-                    case "addAlertToWorkOrderAndTask":
-                        listener.onAddAlertToWorkOrderAndTask(success, (Error) failObject);
-                        break;
                     case "removeAlerts":
                         listener.onRemoveAlerts(success, (Error) failObject);
                         break;
@@ -7532,9 +7649,6 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "acceptSwapRequest":
                         listener.onAcceptSwapRequest((SwapResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "getCustomFields":
-                        listener.onGetCustomFields((CustomFields) successObject, success, (Error) failObject);
                         break;
                     case "removeAlert":
                         listener.onRemoveAlert(success, (Error) failObject);
@@ -7557,18 +7671,6 @@ public class WorkordersWebApi extends TopicClient {
                     case "getDiscounts":
                         listener.onGetDiscounts((PayModifiers) successObject, success, (Error) failObject);
                         break;
-                    case "reorderTask":
-                        listener.onReorderTask(success, (Error) failObject);
-                        break;
-                    case "groupTask":
-                        listener.onGroupTask(success, (Error) failObject);
-                        break;
-                    case "addContact":
-                        listener.onAddContact((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "getContacts":
-                        listener.onGetContacts((Contacts) successObject, success, (Error) failObject);
-                        break;
                     case "addShipment":
                         listener.onAddShipment((IdResponse) successObject, success, (Error) failObject);
                         break;
@@ -7583,9 +7685,6 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "unRouteUser":
                         listener.onUnRouteUser(success, (Error) failObject);
-                        break;
-                    case "getWorkOrderLists":
-                        listener.onGetWorkOrderLists((SavedList[]) successObject, success, (Error) failObject);
                         break;
                     case "getProblemReasons":
                         listener.onGetProblemReasons((Problems[]) successObject, success, (Error) failObject);

@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.StatusEnum;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -402,8 +404,27 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
+        public void onEvent(String topicId, Parcelable payload) {
+            //_workOrderClient.clearTopic(topicId);
+            _workOrderClient.clearTopicAll(topicId);
+            super.onEvent(topicId, payload);
+        }
+
+        @Override
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi " + methodName);
+        }
+
+        @Override
+        public void onTimeLog(String methodName, TimeLog timeLog, boolean success, Error error) {
+            Log.v(TAG, "onTimeLog " + methodName);
+
+            if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
+                setLoading(false);
+                if (success) {
+                    dismiss(true);
+                }
+            }
         }
     };
 
@@ -524,6 +545,4 @@ public class CheckInOutDialog extends FullScreenDialog {
     public static void removeAllOnCheckOutListener(String uid) {
         _onCheckOutDispatcher.removeAll(uid);
     }
-
-
 }

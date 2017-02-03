@@ -209,8 +209,13 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
 
         @Override
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-//            _adapter.refreshAll();
-//            _refreshView.startRefreshing();
+            Log.v(TAG, "onWorkordersWebApi: " + methodName);
+
+            if (methodName.equals("getWorkOrderLists") || methodName.equals("getWorkOrders"))
+                return;
+
+            _adapter.refreshAll();
+            _refreshView.startRefreshing();
         }
     };
 

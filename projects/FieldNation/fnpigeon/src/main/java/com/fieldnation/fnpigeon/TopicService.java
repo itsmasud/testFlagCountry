@@ -211,6 +211,24 @@ public class TopicService extends MultiThreadedService implements TopicConstants
         }
     }
 
+    private void clearTopicAll(Bundle bundle) {
+        String topicId = bundle.getString(PARAM_TOPIC_ID);
+        String[] topicIdTree = topicId.split("/");
+
+        synchronized (TAG) {
+            // exact match
+            if (_stickies.containsKey(topicId))
+                _stickies.remove(topicId);
+
+            topicId = topicIdTree[0];
+            for (int i = 1; i < topicIdTree.length; i++) {
+                topicId += "/" + topicIdTree[i];
+                if (_stickies.containsKey(topicId))
+                    _stickies.remove(topicId);
+            }
+        }
+    }
+
     private void deleteUser(Bundle bundle) {
         //Log.v(TAG, "deleteUser");
         String userTag = bundle.getString(PARAM_USER_TAG);
@@ -323,6 +341,9 @@ public class TopicService extends MultiThreadedService implements TopicConstants
                     break;
                 case WHAT_CLEAR_TOPIC:
                     svc.clearTopic(msg.getData());
+                    break;
+                case WHAT_CLEAR_TOPIC_ALL:
+                    svc.clearTopicAll(msg.getData());
                     break;
             }
         }

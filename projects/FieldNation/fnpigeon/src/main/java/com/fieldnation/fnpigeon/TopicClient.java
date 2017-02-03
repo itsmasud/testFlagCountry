@@ -146,6 +146,22 @@ public abstract class TopicClient implements TopicConstants {
         return false;
     }
 
+    public boolean clearTopicAll(String topicId) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_TOPIC_ID, topicId);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_CLEAR_TOPIC_ALL;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            _subscribed.clear();
+        } catch (Exception ex) {
+        }
+        return false;
+    }
+
     /**
      * Fires off an event. only works when connected to the service.
      *
