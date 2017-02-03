@@ -20,7 +20,6 @@ import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
@@ -30,6 +29,7 @@ import com.fieldnation.v2.data.model.ActionsEnum;
 import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -555,10 +555,10 @@ TODO         if (pay.getStatus() != null) {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getWorkOrderId());
             if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             }
         }
@@ -579,10 +579,10 @@ TODO         if (pay.getStatus() != null) {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getWorkOrderId());
             if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getWorkOrderId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         }

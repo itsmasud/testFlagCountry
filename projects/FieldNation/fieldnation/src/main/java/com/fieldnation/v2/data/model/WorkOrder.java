@@ -113,7 +113,23 @@ public class WorkOrder implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "time_logs")
+    private TimeLogs _timeLogs;
+
     public WorkOrder() {
+    }
+
+    public void setTimeLogs(TimeLogs timeLogs) {
+        _timeLogs = timeLogs;
+    }
+
+    public TimeLogs getTimeLogs() {
+        return _timeLogs;
+    }
+
+    public WorkOrder timeLogs(TimeLogs timeLogs) {
+        _timeLogs = timeLogs;
+        return this;
     }
 
     public void setActions(ActionsEnum[] actions) {
@@ -593,7 +609,7 @@ public class WorkOrder implements Parcelable {
             public int compare(ActionsEnum lhs, ActionsEnum rhs) {
                 if (lhs == null || rhs == null)
                     return 0;
-                
+
                 if (lhs.ordinal() < rhs.ordinal())
                     return -1;
                 else if (lhs.ordinal() > rhs.ordinal())

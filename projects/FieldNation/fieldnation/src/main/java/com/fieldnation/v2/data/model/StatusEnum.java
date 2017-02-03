@@ -13,6 +13,10 @@ public enum StatusEnum {
     ARRIVED("arrived"),
     @Json(name = "approved")
     APPROVED("approved"),
+    @Json(name = "checked_in")
+    CHECKED_IN("checked_in"),
+    @Json(name = "checked_out")
+    CHECKED_OUT("checked_out"),
     @Json(name = "declined")
     DECLINED("declined"),
     @Json(name = "lost")

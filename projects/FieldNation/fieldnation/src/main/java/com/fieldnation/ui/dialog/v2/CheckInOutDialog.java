@@ -23,18 +23,16 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.data.workorder.WorkorderConstants;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
-import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.CheckInOut;
-import com.fieldnation.v2.data.model.Coords;
-import com.fieldnation.v2.data.model.Date;
-import com.fieldnation.v2.data.model.TimeLog;
 
 import java.util.Calendar;
 
@@ -82,7 +80,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     // Passed data
     private String _dialogType;
     private Location _location;
-    private int _workorderId;
+    private long _workorderId;
     private int _maxDevice;
 
     // User data
@@ -92,7 +90,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private int _itemSelectedPosition;
 
     // Services
-    private WorkordersWebApi _workOrderClient;
+    private WorkorderClient _workorderClient;
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -159,12 +157,13 @@ public class CheckInOutDialog extends FullScreenDialog {
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
         _spinner.setOnItemSelectedListener(_spinner_selected);
+
     }
 
     @Override
     public void onPause() {
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
 
         super.onPause();
     }
@@ -173,7 +172,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
-        _workorderId = params.getInt(PARAM_WORK_ORDER_ID);
+        _workorderId = params.getLong(PARAM_WORK_ORDER_ID);
 
         if (params.containsKey(PARAM_LOCATION))
             _location = params.getParcelable(PARAM_LOCATION);
@@ -187,8 +186,8 @@ public class CheckInOutDialog extends FullScreenDialog {
             _deviceNumberLayout.setVisibility(View.GONE);
         }
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(App.get());
 
         super.show(params, animate);
 
@@ -341,17 +340,14 @@ public class CheckInOutDialog extends FullScreenDialog {
             }
 
             if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
-                CheckInOut cio = new CheckInOut();
-                cio.created(new Date(_startCalendar));
-                if (_location != null) {
-                    cio.coords(new Coords(_location));
-                }
-                WorkordersWebApi.addTimeLog(App.get(), _workorderId, new TimeLog().in(cio));
+                if (_location != null)
+                    WorkorderClient.actionCheckin(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar), _location);
+                else
+                    WorkorderClient.actionCheckin(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
 
                 _onCheckInDispatcher.dispatch(getUid(), _workorderId);
 
             } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
-/*
                 if (_location != null) {
                     if (_itemSelectedPosition >= INVALID_NUMBER)
                         WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition, _location);
@@ -365,7 +361,6 @@ public class CheckInOutDialog extends FullScreenDialog {
                         WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition);
                 } else
                     WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
-*/
 
                 _onCheckOutDispatcher.dispatch(getUid(), _workorderId);
             }
@@ -387,19 +382,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onWorkordersWebApi " + methodName);
-        }
-    };
-
-/*
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -423,21 +405,20 @@ public class CheckInOutDialog extends FullScreenDialog {
             }
         }
     };
-*/
 
     // with location
-    public static void show(Context context, String uid, int workorderId, Location location, String dialogType) {
+    public static void show(Context context, String uid, long workorderId, Location location, String dialogType) {
         Bundle params = new Bundle();
-        params.putInt(PARAM_WORK_ORDER_ID, workorderId);
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
         params.putParcelable(PARAM_LOCATION, location);
         params.putString(PARAM_DIALOG_TYPE, dialogType);
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
 
     // with location + max device
-    public static void show(Context context, String uid, int workorderId, Location location, int maxDevice, String dialogType) {
+    public static void show(Context context, String uid, long workorderId, Location location, int maxDevice, String dialogType) {
         Bundle params = new Bundle();
-        params.putInt(PARAM_WORK_ORDER_ID, workorderId);
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
         params.putParcelable(PARAM_LOCATION, location);
         params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
         params.putString(PARAM_DIALOG_TYPE, dialogType);
@@ -445,17 +426,17 @@ public class CheckInOutDialog extends FullScreenDialog {
     }
 
     // with max device but no location
-    public static void show(Context context, String uid, int workorderId, int maxDevice, String dialogType) {
+    public static void show(Context context, String uid, long workorderId, int maxDevice, String dialogType) {
         Bundle params = new Bundle();
-        params.putInt(PARAM_WORK_ORDER_ID, workorderId);
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
         params.putString(PARAM_DIALOG_TYPE, dialogType);
         params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
 
-    public static void show(Context context, String uid, int workorderId, String dialogType) {
+    public static void show(Context context, String uid, long workorderId, String dialogType) {
         Bundle params = new Bundle();
-        params.putInt(PARAM_WORK_ORDER_ID, workorderId);
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
         params.putString(PARAM_DIALOG_TYPE, dialogType);
         Controller.show(context, uid, CheckInOutDialog.class, params);
     }
@@ -495,7 +476,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     /*-*****************************-*/
     public interface OnCheckOutListener {
         void onCheckOut(long workOrderId);
-
     }
 
     private static KeyedDispatcher<OnCheckOutListener> _onCheckOutDispatcher = new KeyedDispatcher<OnCheckOutListener>() {

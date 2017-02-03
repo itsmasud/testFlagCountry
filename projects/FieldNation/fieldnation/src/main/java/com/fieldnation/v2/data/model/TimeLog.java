@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -16,40 +17,92 @@ import com.fieldnation.fnlog.Log;
 public class TimeLog implements Parcelable {
     private static final String TAG = "TimeLog";
 
-    @Json(name = "logged_by")
-    private User _loggedBy;
+    @Json(name = "id")
+    private Integer _id;
 
-    @Json(name = "hours")
-    private Double _hours;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
+    // TODO 'role' here
 
     @Json(name = "in")
     private CheckInOut _in;
 
-    @Json(name = "devices")
-    private Double _devices;
-
-    @Json(name = "verified")
-    private Boolean _verified;
+    @Json(name = "out")
+    private CheckInOut _out;
 
     @Json(name = "time_zone")
     private TimeZone _timeZone;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "verified")
+    private Boolean _verified;
 
     @Json(name = "was_late")
     private Boolean _wasLate;
 
-    @Json(name = "out")
-    private CheckInOut _out;
+    @Json(name = "status")
+    private StatusEnum _status;
+
+    @Json(name = "hours")
+    private Double _hours;
+
+    @Json(name = "should_verify")
+    private Boolean _shouldVerify;
+
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
+
+    // TODO stuff below is not confirmed
+    @Json(name = "logged_by")
+    private User _loggedBy;
+
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
+    @Json(name = "devices")
+    private Double _devices;
 
     @Json(name = "on_my_way")
     private OnMyWay _onMyWay;
 
     public TimeLog() {
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public TimeLog id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setShouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
+    }
+
+    public Boolean getShouldVerify() {
+        return _shouldVerify;
+    }
+
+    public TimeLog shouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
+        return this;
+    }
+
+    public void setStatus(StatusEnum status) {
+        _status = status;
+    }
+
+    public StatusEnum getStatus() {
+        return _status;
+    }
+
+    public TimeLog status(StatusEnum status) {
+        _status = status;
+        return this;
     }
 
     public void setLoggedBy(User loggedBy) {
