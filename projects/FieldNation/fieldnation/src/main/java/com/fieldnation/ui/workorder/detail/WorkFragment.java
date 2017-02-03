@@ -951,6 +951,7 @@ public class WorkFragment extends WorkorderFragment {
     };
 
     private final WorkordersWebApi.Listener _workordersWebApi_listener = new WorkordersWebApi.Listener() {
+
         @Override
         public void onConnected() {
             _workorderApi.subGetWorkOrders();

@@ -2,10 +2,10 @@ package com.fieldnation;
 
 import android.test.ApplicationTestCase;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.fnlog.Log;
 
 import java.util.concurrent.CountDownLatch;
 

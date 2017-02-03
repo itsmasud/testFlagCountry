@@ -6400,6 +6400,7 @@ public class WorkordersWebApi extends TopicClient {
     /*-             Listener             -*/
     /*-**********************************-*/
     public static abstract class Listener extends TopicClient.Listener {
+
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             new AsyncParser(this, (Bundle) payload);

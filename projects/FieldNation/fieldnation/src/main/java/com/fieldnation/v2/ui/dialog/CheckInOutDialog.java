@@ -372,7 +372,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                     }
                 }
 
-                if (callMade){
+                if (callMade) {
                     Log.v(TAG, "break!");
                 }
 
