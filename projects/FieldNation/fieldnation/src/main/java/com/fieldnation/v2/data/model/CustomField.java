@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -47,7 +48,7 @@ public class CustomField implements Parcelable {
     private String _value;
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     public CustomField() {
     }
@@ -182,15 +183,15 @@ public class CustomField implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum actions) {
+    public void setActions(ActionsEnum[] actions) {
         _actions = actions;
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public CustomField actions(ActionsEnum actions) {
+    public CustomField actions(ActionsEnum[] actions) {
         _actions = actions;
         return this;
     }

@@ -21,7 +21,7 @@ import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.TypesOfWork;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class TypesOfWorkWebApi extends TopicClient {

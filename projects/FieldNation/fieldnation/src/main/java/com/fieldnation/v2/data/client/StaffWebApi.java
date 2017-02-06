@@ -20,7 +20,7 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class StaffWebApi extends TopicClient {

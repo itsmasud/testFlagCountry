@@ -26,7 +26,7 @@ import com.fieldnation.v2.data.model.StoredLocation;
 import com.fieldnation.v2.data.model.StoredLocations;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class LocationsWebApi extends TopicClient {

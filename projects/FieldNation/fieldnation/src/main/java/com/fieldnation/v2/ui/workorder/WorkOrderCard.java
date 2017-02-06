@@ -820,6 +820,7 @@ TODO         if (pay.getStatus() != null) {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            WorkordersWebApi.getAssignee(App.get(), _workOrder.getWorkOrderId(), false);
         }
     };
 

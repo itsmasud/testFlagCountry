@@ -10,7 +10,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class GetProvidersOptions implements Parcelable {

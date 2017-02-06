@@ -11,7 +11,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.model.Expense;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class UpdateExpenseOptions implements Parcelable {

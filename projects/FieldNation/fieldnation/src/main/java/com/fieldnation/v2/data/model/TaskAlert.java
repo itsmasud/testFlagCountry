@@ -21,7 +21,7 @@ public class TaskAlert implements Parcelable {
     private Integer _id;
 
     @Json(name = "sent")
-    private Long _sent;
+    private String _sent;
 
     @Json(name = "email")
     private String _email;
@@ -42,15 +42,15 @@ public class TaskAlert implements Parcelable {
         return this;
     }
 
-    public void setSent(Long sent) {
+    public void setSent(String sent) {
         _sent = sent;
     }
 
-    public Long getSent() {
+    public String getSent() {
         return _sent;
     }
 
-    public TaskAlert sent(Long sent) {
+    public TaskAlert sent(String sent) {
         _sent = sent;
         return this;
     }

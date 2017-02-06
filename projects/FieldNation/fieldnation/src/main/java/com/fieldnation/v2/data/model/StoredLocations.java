@@ -1,4 +1,5 @@
 package com.fieldnation.v2.data.model;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -26,7 +27,7 @@ public class StoredLocations implements Parcelable {
     private Integer _workOrderId;
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "results")
     private Location[] _results;
@@ -73,15 +74,15 @@ public class StoredLocations implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum actions) {
+    public void setActions(ActionsEnum[] actions) {
         _actions = actions;
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public StoredLocations actions(ActionsEnum actions) {
+    public StoredLocations actions(ActionsEnum[] actions) {
         _actions = actions;
         return this;
     }

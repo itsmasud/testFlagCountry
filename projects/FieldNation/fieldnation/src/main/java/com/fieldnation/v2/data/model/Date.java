@@ -140,4 +140,9 @@ public class Date implements Parcelable {
         super();
         utc(DateUtils.v2CalToUtc(calendar));
     }
+
+    public Date(long utcMilliseconds) {
+        super();
+        utc(DateUtils.v2LongToUtc(utcMilliseconds));
+    }
 }

@@ -29,23 +29,7 @@ public class AttachmentFolder implements Parcelable {
     @Json(name = "type")
     private TypeEnum _type;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     public AttachmentFolder() {
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public AttachmentFolder actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
     }
 
     public void setTask(Task task) {

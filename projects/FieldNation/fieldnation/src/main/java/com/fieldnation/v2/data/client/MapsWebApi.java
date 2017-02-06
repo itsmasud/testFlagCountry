@@ -22,7 +22,7 @@ import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.LocationCoordinates;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class MapsWebApi extends TopicClient {

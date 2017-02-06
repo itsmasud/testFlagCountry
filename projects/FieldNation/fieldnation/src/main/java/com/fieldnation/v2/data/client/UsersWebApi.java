@@ -26,7 +26,7 @@ import com.fieldnation.v2.data.model.UserTaxInfo;
 import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class UsersWebApi extends TopicClient {

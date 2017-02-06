@@ -11,7 +11,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger on 2/06/17.
  */
 
 public class Expenses implements Parcelable {
@@ -23,23 +23,7 @@ public class Expenses implements Parcelable {
     @Json(name = "results")
     private Expense[] _results;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     public Expenses() {
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Expenses actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) {
