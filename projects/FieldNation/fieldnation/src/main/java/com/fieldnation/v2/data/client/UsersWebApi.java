@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -19,8 +18,12 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.AaaaPlaceholder;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.TypesOfWork;
+import com.fieldnation.v2.data.model.User;
+import com.fieldnation.v2.data.model.UserTaxInfo;
+import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
  * Created by dmgen from swagger.
@@ -528,7 +531,7 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: swipNotification
      * Swip Notification
      *
-     * @param userId User ID
+     * @param userId         User ID
      * @param notificationId Notification ID
      */
     public static void swipNotification(Context context, Integer userId, Integer notificationId) {
@@ -603,7 +606,7 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getTourByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getTour(Context context, Integer userId, boolean isBackground) {
@@ -644,7 +647,7 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getUser
      * Returns summary details about a user profile.
      *
-     * @param user User ID
+     * @param user         User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getUser(Context context, String user, boolean isBackground) {
@@ -686,7 +689,7 @@ public class UsersWebApi extends TopicClient {
      * Send account verification code via phone call
      *
      * @param userId User ID
-     * @param json JSON Payload
+     * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
         try {
@@ -727,7 +730,7 @@ public class UsersWebApi extends TopicClient {
      * Add types of work to profile
      *
      * @param userId User ID
-     * @param json JSON model
+     * @param json   JSON model
      */
     public static void addTypesOfWork(Context context, Integer userId, String json) {
         try {
@@ -767,7 +770,7 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getUserTypesOfWork
      * Get all types of work of a specific user
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserTypesOfWork(Context context, Integer userId, boolean isBackground) {
@@ -809,7 +812,7 @@ public class UsersWebApi extends TopicClient {
      * Verify account
      *
      * @param userId User ID
-     * @param json Json Payload
+     * @param json   Json Payload
      */
     public static void verifyAccount(Context context, Integer userId, String json) {
         try {
@@ -849,7 +852,7 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getWorkHistory
      * Get work history of a user
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkHistory(Context context, Integer userId, boolean isBackground) {
@@ -959,7 +962,7 @@ public class UsersWebApi extends TopicClient {
         public void onVerifyAccount(boolean success, Error error) {
         }
 
-        public void onGetWorkHistory(WorkHistory workHistory, boolean success, Error error) {
+        public void onGetWorkHistory(byte[] workHistory, boolean success, Error error) {
         }
 
     }
@@ -1092,7 +1095,7 @@ public class UsersWebApi extends TopicClient {
                         break;
                     case "getWorkHistory":
                         if (success)
-                            successObject = WorkHistory.fromJson(new JsonObject(data));
+                            successObject = data;
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -1172,7 +1175,7 @@ public class UsersWebApi extends TopicClient {
                         listener.onVerifyAccount(success, (Error) failObject);
                         break;
                     case "getWorkHistory":
-                        listener.onGetWorkHistory((WorkHistory) successObject, success, (Error) failObject);
+                        listener.onGetWorkHistory((byte[]) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

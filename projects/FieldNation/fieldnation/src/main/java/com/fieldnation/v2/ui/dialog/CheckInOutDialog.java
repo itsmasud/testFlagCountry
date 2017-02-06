@@ -35,7 +35,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.StatusEnum;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -410,8 +409,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onTimeLog(String methodName, TimeLog timeLog, boolean success, Error error) {
-            Log.v(TAG, "onTimeLog " + methodName);
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
 
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
