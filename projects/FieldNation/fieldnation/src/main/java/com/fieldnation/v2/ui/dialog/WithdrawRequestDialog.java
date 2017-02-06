@@ -26,7 +26,6 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
 
         if (extraData != null && extraData instanceof Bundle) {
             Long workOrderId = ((Bundle) extraData).getLong("workOrderId");
-            WorkordersWebApi.removeRequest();
             WorkorderClient.actionWithdrawRequest(App.get(), workOrderId, );
             _onWithdrawDispatcher.dispatch(getUid(), workOrderId);
         }
