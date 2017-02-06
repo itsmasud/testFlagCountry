@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog.v3"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/fn_menu_bg">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/DialogTitle.v3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/dialog_duration_v2_title" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/DialogButton.v3"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/numberPicker_layout"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/btn_ok" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="@style/DialogButton.v3"
+            android:layout_below="@+id/numberPicker_layout"
+            android:layout_marginTop="8dp"
+            android:layout_toLeftOf="@+id/ok_button"
+            android:text="@string/btn_cancel" />
+
+        <LinearLayout
+            android:id="@+id/numberPicker_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/title_textview"
+            android:layout_below="@+id/title_textview">
+
+            <com.fieldnation.ui.FnNumberPicker
+                android:id="@+id/hourNumberPicker"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp" />
+
+            <TextView
+                android:id="@+id/hour_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="hour(s)" />
+
+
+            <com.fieldnation.ui.FnNumberPicker
+                android:id="@+id/minuteNumberumberPicker"
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp" />
+
+            <TextView
+                android:id="@+id/minute_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="10dp"
+                android:text="mins" />
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>
