@@ -62,7 +62,6 @@ public class DurationPickerDialog extends SimpleDialog {
 
     @Override
     public void onResume() {
-        Log.e(TAG, "onResume");
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
         _hourFnNumberPicker.setOnValueChangedListener(_hourPicker_listener);
@@ -79,7 +78,6 @@ public class DurationPickerDialog extends SimpleDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        Log.e(TAG, "onRestoreDialogState");
         if (savedState.containsKey(STATE_HOUR))
             _selectedHour = savedState.getInt(STATE_HOUR);
 
@@ -156,7 +154,6 @@ public class DurationPickerDialog extends SimpleDialog {
     };
 
     public static void show(Context context, String uid) {
-        Log.e(TAG, "show");
         Controller.show(context, uid, DurationPickerDialog.class, null);
     }
 
