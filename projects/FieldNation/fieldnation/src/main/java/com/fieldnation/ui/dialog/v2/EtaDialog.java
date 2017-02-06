@@ -54,7 +54,7 @@ public class EtaDialog extends FullScreenDialog {
     private static final String TAG = "EtaDialog";
 
     // Dialog Uids
-    private static final String UID_DURATION_DIALOG = TAG + ".DurationDialog";
+    private static final String UID_DURATION_DIALOG = TAG + ".DurationPickerDialog";
 
     // State
     private static final String STATE_DURATION = "STATE_DURATION";
@@ -162,7 +162,7 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume");
+        Log.v(TAG, "onResume");
 
         // Dialog setup, start them off with today
         _etaStartTimePicker = new TimePickerDialog(_expirationLayout.getContext(), _etaStartTime_onSet,
@@ -189,7 +189,7 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
         _durationButton.setOnClickListener(_duration_onClick);
 
-        DurationDialog.addOnOkListener(UID_DURATION_DIALOG, _durationDialog_onOk);
+        DurationPickerDialog.addOnOkListener(UID_DURATION_DIALOG, _durationPickerDialog_onOk);
 
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -203,7 +203,7 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         super.onPause();
-        DurationDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationDialog_onOk);
+        DurationPickerDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationPickerDialog_onOk);
     }
 
     @Override
@@ -249,7 +249,7 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        Log.e(TAG, "onRestoreDialogState");
+        Log.v(TAG, "onRestoreDialogState");
         if (savedState.containsKey(STATE_SPINNER_POSITION))
             _currentPosition = savedState.getInt(STATE_SPINNER_POSITION);
 
@@ -648,14 +648,16 @@ public class EtaDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             misc.hideKeyboard(_noteEditText);
-            DurationDialog.show(App.get(), UID_DURATION_DIALOG);
+            DurationPickerDialog.show(App.get(), UID_DURATION_DIALOG);
+
         }
     };
 
-    private final DurationDialog.OnOkListener _durationDialog_onOk = new DurationDialog.OnOkListener() {
+    private final DurationPickerDialog.OnOkListener _durationPickerDialog_onOk = new DurationPickerDialog.OnOkListener() {
         @Override
         public void onOk(long milliseconds) {
-            Log.v(TAG, "_durationDialog_listener.onOk");
+            Log.v(TAG, "milliseconds: " + milliseconds);
+
             if (milliseconds < MIN_JOB_DURATION) {
                 ToastClient.toast(App.get(), R.string.toast_minimum_job_duration, Toast.LENGTH_LONG);
                 return;
@@ -681,7 +683,7 @@ public class EtaDialog extends FullScreenDialog {
 //    private final View.OnClickListener _expiringButton_onClick = new View.OnClickListener() {
 //        @Override
 //        public void onClick(View v) {
-//            DurationDialog.show(App.get(), UID_EXIPRY_DIALOG);
+//            DurationPickerDialog.show(App.get(), UID_EXIPRY_DIALOG);
 //        }
 //    };
 

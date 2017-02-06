@@ -6,13 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.NumberPicker;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.FnNumberPicker;
 import com.fieldnation.ui.KeyedDispatcher;
 
@@ -23,20 +25,23 @@ import com.fieldnation.ui.KeyedDispatcher;
 public class DurationPickerDialog extends SimpleDialog {
     private static final String TAG = "DurationPickerDialog";
 
-    // Dialog uids
-    private static final String DIALOG_RATE_YESNO = TAG + ".rateBuyerYesNoDialog";
-
     // State
-//    private static final String PARAM_WORKORDER = "workOrder";
+    private static final String STATE_HOUR = "STATE_HOUR";
+    private static final String STATE_MINUTE = "STATE_MINUTE";
+
+    private static final int DEFAULT_MINUTE_SELECTION = 1;
 
     // Ui
     private FnNumberPicker _hourFnNumberPicker;
     private FnNumberPicker _minuteFnNumberPicker;
-    private Button _continueButton;
+    private Button _okButton;
     private Button _cancelButton;
 
     // Data
-    private Workorder _workorder;
+    String[] _minuteDisplayedValues;
+    private int _selectedHour = 0;
+    private int _selectedMinute = DEFAULT_MINUTE_SELECTION;
+
 
     public DurationPickerDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -50,47 +55,59 @@ public class DurationPickerDialog extends SimpleDialog {
         _minuteFnNumberPicker = (FnNumberPicker) v.findViewById(R.id.minuteNumberumberPicker);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _continueButton = (Button) v.findViewById(R.id.continue_button);
-
-
-        _hourFnNumberPicker.setMinValue(10);
-        _hourFnNumberPicker.setMaxValue(100);
-        _hourFnNumberPicker.setWrapSelectorWheel(false);
-        _hourFnNumberPicker.setDividerColor(-1);
-
+        _okButton = (Button) v.findViewById(R.id.ok_button);
 
         return v;
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
+    public void onResume() {
+        Log.e(TAG, "onResume");
         _cancelButton.setOnClickListener(_cancel_onClick);
-        _continueButton.setOnClickListener(_continue_onClick);
-    }
-
-    @Override
-    public void show(Bundle payload, boolean animate) {
-//        _workorder = payload.getParcelable(PARAM_WORKORDER);
-
-        super.show(payload, animate);
-
+        _okButton.setOnClickListener(_ok_onClick);
+        _hourFnNumberPicker.setOnValueChangedListener(_hourPicker_listener);
+        _minuteFnNumberPicker.setOnValueChangedListener(_minutePicker_listener);
         populateUi();
     }
 
-    private void populateUi() {
-        if (_workorder == null)
-            return;
-
-        if (_continueButton == null)
-            return;
-
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        outState.putInt(STATE_HOUR, _hourFnNumberPicker.getValue());
+        outState.putSerializable(STATE_MINUTE, _minuteFnNumberPicker.getValue());
+        super.onSaveDialogState(outState);
     }
-    public static void show(Context context, String uid) {
-        Bundle payload = new Bundle();
-//        payload.putParcelable(PARAM_WORKORDER, workorder);
-        Controller.show(context, uid, DurationPickerDialog.class, payload);
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.e(TAG, "onRestoreDialogState");
+        if (savedState.containsKey(STATE_HOUR))
+            _selectedHour = savedState.getInt(STATE_HOUR);
+
+        if (savedState.containsKey(STATE_MINUTE))
+            _selectedMinute = savedState.getInt(STATE_MINUTE);
+        super.onRestoreDialogState(savedState);
+    }
+
+
+    @Override
+    public void cancel() {
+        super.cancel();
+        _onCanceledDispatcher.dispatch(getUid());
+    }
+
+
+    private void populateUi() {
+        if (_okButton == null)
+            return;
+
+        _hourFnNumberPicker.setDisplayedValuesAs(0, 23, 1);
+        _hourFnNumberPicker.setTextSize(16);
+        _hourFnNumberPicker.setValue(_selectedHour);
+        _minuteFnNumberPicker.setDisplayedValuesAs(0, 59, 15);
+        _minuteFnNumberPicker.setValue(_selectedMinute);
+        _minuteFnNumberPicker.setTextSize(16);
+        _minuteDisplayedValues = _minuteFnNumberPicker.getDisplayedValues();
+
     }
 
     /*-*****************************-*/
@@ -103,67 +120,95 @@ public class DurationPickerDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _continue_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onContinueClickDispatcher.dispatch(getUid(), null);
-            dismiss(true);
-            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
-                RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workorder, _workorder.getCompanyName());
+            try {
+                long seconds = Long.parseLong(String.valueOf(_hourFnNumberPicker.getValue())) * 3600;
+                seconds += Long.parseLong(_minuteDisplayedValues[_minuteFnNumberPicker.getValue()]) * 60;
+                _onOkDispatcher.dispatch(getUid(), seconds * 1000);
+
+                dismiss(true);
+            } catch (Exception ex) {
+                ToastClient.toast(App.get(), "Invalid number, please try again.", Toast.LENGTH_LONG);
+            }
+
+        }
+    };
+
+    private final NumberPicker.OnValueChangeListener _hourPicker_listener = new NumberPicker.OnValueChangeListener() {
+        @Override
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+            if (newVal == 0) {
+                _minuteFnNumberPicker.setValue(DEFAULT_MINUTE_SELECTION);
             }
         }
     };
 
-    /*-***********************************-*/
-    /*-         Signature Click           -*/
-    /*-***********************************-*/
-//    public interface OnSignatureClickListener {
-//        void onSignatureClick();
-//    }
-//
-//    private static KeyedDispatcher<OnSignatureClickListener> _onSignatureClickDispatcher = new KeyedDispatcher<OnSignatureClickListener>() {
-//        @Override
-//        public void onDispatch(OnSignatureClickListener listener, Object... parameters) {
-//            listener.onSignatureClick();
-//        }
-//    };
-//
-//    public static void addOnSignatureClickListener(String uid, OnSignatureClickListener onSignatureClickListener) {
-//        _onSignatureClickDispatcher.add(uid, onSignatureClickListener);
-//    }
-//
-//    public static void removeOnSignatureClickListener(String uid, OnSignatureClickListener onSignatureClickListener) {
-//        _onSignatureClickDispatcher.remove(uid, onSignatureClickListener);
-//    }
-//
-//    public static void removeAllOnSignatureClickListener(String uid) {
-//        _onSignatureClickDispatcher.removeAll(uid);
-//    }
-
-
-    /*-**********************************-*/
-    /*-         Continue Click           -*/
-    /*-**********************************-*/
-    public interface OnContinueClickListener {
-        void onContinueClick();
-    }
-
-    private static KeyedDispatcher<OnContinueClickListener> _onContinueClickDispatcher = new KeyedDispatcher<OnContinueClickListener>() {
+    private final NumberPicker.OnValueChangeListener _minutePicker_listener = new NumberPicker.OnValueChangeListener() {
         @Override
-        public void onDispatch(OnContinueClickListener listener, Object... parameters) {
-            listener.onContinueClick();
+        public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+            if (_hourFnNumberPicker.getValue() == 0 && newVal == 0) {
+                _minuteFnNumberPicker.setValue(DEFAULT_MINUTE_SELECTION);
+            }
         }
     };
 
-    public static void addOnContinueClickListener(String uid, OnContinueClickListener onContinueClickListener) {
-        _onContinueClickDispatcher.add(uid, onContinueClickListener);
+    public static void show(Context context, String uid) {
+        Log.e(TAG, "show");
+        Controller.show(context, uid, DurationPickerDialog.class, null);
     }
 
-    public static void removeOnContinueClickListener(String uid, OnContinueClickListener onContinueClickListener) {
-        _onContinueClickDispatcher.remove(uid, onContinueClickListener);
+    /*-*******************************-*/
+    /*-         Ok Listener           -*/
+    /*-*******************************-*/
+    public interface OnOkListener {
+        void onOk(long milliseconds);
     }
 
-    public static void removeAllOnContinueClickListener(String uid) {
-        _onContinueClickDispatcher.removeAll(uid);
+    private static KeyedDispatcher<DurationPickerDialog.OnOkListener> _onOkDispatcher = new KeyedDispatcher<DurationPickerDialog.OnOkListener>() {
+        @Override
+        public void onDispatch(DurationPickerDialog.OnOkListener listener, Object... parameters) {
+            listener.onOk((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnOkListener(String uid, DurationPickerDialog.OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, DurationPickerDialog.OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Canceled Listener           -*/
+    /*-*************************************-*/
+    public interface OnCanceledListener {
+        void onCanceled();
+    }
+
+    private static KeyedDispatcher<DurationPickerDialog.OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<DurationPickerDialog.OnCanceledListener>() {
+        @Override
+        public void onDispatch(DurationPickerDialog.OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled();
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, DurationPickerDialog.OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, DurationPickerDialog.OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
     }
 }
