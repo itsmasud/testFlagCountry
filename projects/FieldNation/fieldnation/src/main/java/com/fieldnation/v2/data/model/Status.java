@@ -11,7 +11,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class Status implements Parcelable {
@@ -33,19 +33,6 @@ public class Status implements Parcelable {
     private ActionsEnum[] _actions;
 
     public Status() {
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Status actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
     }
 
     public void setDisplay(String display) {
@@ -97,6 +84,19 @@ public class Status implements Parcelable {
 
     public Status publishStats(StatusPublishStats publishStats) {
         _publishStats = publishStats;
+        return this;
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Status actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 

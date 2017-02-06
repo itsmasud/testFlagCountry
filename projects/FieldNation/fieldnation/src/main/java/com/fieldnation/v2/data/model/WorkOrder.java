@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class WorkOrder implements Parcelable {
@@ -32,11 +32,17 @@ public class WorkOrder implements Parcelable {
     @Json(name = "description")
     private RichText _description;
 
+    @Json(name = "time_logs")
+    private TimeLogs _timeLogs;
+
     @Json(name = "networks")
     private String[] _networks;
 
     @Json(name = "title")
     private String _title;
+
+    @Json(name = "qualifications")
+    private Qualifications _qualifications;
 
     @Json(name = "client")
     private Company _client;
@@ -104,45 +110,16 @@ public class WorkOrder implements Parcelable {
     @Json(name = "milestones")
     private Milestones _milestones;
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "contacts")
     private Contacts _contacts;
 
     @Json(name = "status")
     private Status _status;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
-    @Json(name = "time_logs")
-    private TimeLogs _timeLogs;
-
     public WorkOrder() {
-    }
-
-    public void setTimeLogs(TimeLogs timeLogs) {
-        _timeLogs = timeLogs;
-    }
-
-    public TimeLogs getTimeLogs() {
-        return _timeLogs;
-    }
-
-    public WorkOrder timeLogs(TimeLogs timeLogs) {
-        _timeLogs = timeLogs;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public WorkOrder actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
     }
 
     public void setRole(String role) {
@@ -197,6 +174,19 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
+    public void setTimeLogs(TimeLogs timeLogs) {
+        _timeLogs = timeLogs;
+    }
+
+    public TimeLogs getTimeLogs() {
+        return _timeLogs;
+    }
+
+    public WorkOrder timeLogs(TimeLogs timeLogs) {
+        _timeLogs = timeLogs;
+        return this;
+    }
+
     public void setNetworks(String[] networks) {
         _networks = networks;
     }
@@ -220,6 +210,19 @@ public class WorkOrder implements Parcelable {
 
     public WorkOrder title(String title) {
         _title = title;
+        return this;
+    }
+
+    public void setQualifications(Qualifications qualifications) {
+        _qualifications = qualifications;
+    }
+
+    public Qualifications getQualifications() {
+        return _qualifications;
+    }
+
+    public WorkOrder qualifications(Qualifications qualifications) {
+        _qualifications = qualifications;
         return this;
     }
 
@@ -506,6 +509,19 @@ public class WorkOrder implements Parcelable {
 
     public WorkOrder milestones(Milestones milestones) {
         _milestones = milestones;
+        return this;
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public WorkOrder actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 

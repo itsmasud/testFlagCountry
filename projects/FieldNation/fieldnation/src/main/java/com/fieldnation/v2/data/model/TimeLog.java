@@ -11,34 +11,11 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class TimeLog implements Parcelable {
     private static final String TAG = "TimeLog";
-
-    @Json(name = "id")
-    private Integer _id;
-
-    // TODO 'role' here
-
-    @Json(name = "in")
-    private CheckInOut _in;
-
-    @Json(name = "out")
-    private CheckInOut _out;
-
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
-
-    @Json(name = "verified")
-    private Boolean _verified;
-
-    @Json(name = "was_late")
-    private Boolean _wasLate;
-
-    @Json(name = "status")
-    private StatusEnum _status;
 
     @Json(name = "hours")
     private Double _hours;
@@ -46,76 +23,43 @@ public class TimeLog implements Parcelable {
     @Json(name = "should_verify")
     private Boolean _shouldVerify;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "in")
+    private CheckInOut _in;
 
+    @Json(name = "devices")
+    private Double _devices;
 
-    // TODO stuff below is not confirmed
+    @Json(name = "verified")
+    private Boolean _verified;
+
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
+
+    @Json(name = "was_late")
+    private Boolean _wasLate;
+
+    @Json(name = "out")
+    private CheckInOut _out;
+
+    @Json(name = "on_my_way")
+    private OnMyWay _onMyWay;
+
     @Json(name = "logged_by")
     private User _loggedBy;
 
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
-    @Json(name = "devices")
-    private Double _devices;
+    @Json(name = "id")
+    private Integer _id;
 
-    @Json(name = "on_my_way")
-    private OnMyWay _onMyWay;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
+    @Json(name = "status")
+    private StatusEnum _status;
 
     public TimeLog() {
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public TimeLog id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setShouldVerify(Boolean shouldVerify) {
-        _shouldVerify = shouldVerify;
-    }
-
-    public Boolean getShouldVerify() {
-        return _shouldVerify;
-    }
-
-    public TimeLog shouldVerify(Boolean shouldVerify) {
-        _shouldVerify = shouldVerify;
-        return this;
-    }
-
-    public void setStatus(StatusEnum status) {
-        _status = status;
-    }
-
-    public StatusEnum getStatus() {
-        return _status;
-    }
-
-    public TimeLog status(StatusEnum status) {
-        _status = status;
-        return this;
-    }
-
-    public void setLoggedBy(User loggedBy) {
-        _loggedBy = loggedBy;
-    }
-
-    public User getLoggedBy() {
-        return _loggedBy;
-    }
-
-    public TimeLog loggedBy(User loggedBy) {
-        _loggedBy = loggedBy;
-        return this;
     }
 
     public void setHours(Double hours) {
@@ -131,16 +75,16 @@ public class TimeLog implements Parcelable {
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
+    public void setShouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
     }
 
-    public Integer getWorkOrderId() {
-        return _workOrderId;
+    public Boolean getShouldVerify() {
+        return _shouldVerify;
     }
 
-    public TimeLog workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
+    public TimeLog shouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
         return this;
     }
 
@@ -196,19 +140,6 @@ public class TimeLog implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public TimeLog actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
-    }
-
     public void setWasLate(Boolean wasLate) {
         _wasLate = wasLate;
     }
@@ -245,6 +176,71 @@ public class TimeLog implements Parcelable {
 
     public TimeLog onMyWay(OnMyWay onMyWay) {
         _onMyWay = onMyWay;
+        return this;
+    }
+
+    public void setLoggedBy(User loggedBy) {
+        _loggedBy = loggedBy;
+    }
+
+    public User getLoggedBy() {
+        return _loggedBy;
+    }
+
+    public TimeLog loggedBy(User loggedBy) {
+        _loggedBy = loggedBy;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public TimeLog workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public TimeLog id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public TimeLog actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setStatus(StatusEnum status) {
+        _status = status;
+    }
+
+    public StatusEnum getStatus() {
+        return _status;
+    }
+
+    public TimeLog status(StatusEnum status) {
+        _status = status;
         return this;
     }
 

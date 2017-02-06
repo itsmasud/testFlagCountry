@@ -1,10 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -14,14 +16,14 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.KeyValue;
-import com.fieldnation.v2.data.model.UpdateModel;
 
 /**
- * Created by dmgen from swagger on 2/06/17.
+ * Created by dmgen from swagger.
  */
 
 public class SystemWebApi extends TopicClient {
@@ -43,14 +45,14 @@ public class SystemWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: updateModel
+     * Swagger operationId: systemUpdateModel
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
-     * @param path  The route for obtaining the new model
+     * @param path The route for obtaining the new model
      * @param event operationId from the swagger API route
-     * @param json  JSON parameters of the change
+     * @param json JSON parameters of the change
      */
-    public static void updateModel(Context context, String path, String event, KeyValue json) {
+    public static void systemUpdateModel(Context context, String path, String event, KeyValue json) {
         try {
             String key = misc.md5("POST//api/rest/v2/system/update-model?path=" + path + "&event=" + event);
 
@@ -70,7 +72,7 @@ public class SystemWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/system/update-model",
-                                    SystemWebApi.class, "updateModel"))
+                                    SystemWebApi.class, "systemUpdateModel"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -81,20 +83,20 @@ public class SystemWebApi extends TopicClient {
         }
     }
 
-    public boolean subUpdateModel() {
+    public boolean subSystemUpdateModel() {
         return register("TOPIC_ID_WEB_API_V2/system/update-model");
     }
 
     /**
-     * Swagger operationId: updateModel
+     * Swagger operationId: systemUpdateModel
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
-     * @param path  The route for obtaining the new model
+     * @param path The route for obtaining the new model
      * @param event operationId from the swagger API route
-     * @param json  JSON parameters of the change
+     * @param json JSON parameters of the change
      * @param async Return the model in the response (slower) (Optional)
      */
-    public static void updateModel(Context context, String path, String event, KeyValue json, Boolean async) {
+    public static void systemUpdateModel(Context context, String path, String event, KeyValue json, Boolean async) {
         try {
             String key = misc.md5("POST//api/rest/v2/system/update-model?path=" + path + "&event=" + event + "&async=" + async);
 
@@ -114,7 +116,7 @@ public class SystemWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/system/update-model",
-                                    SystemWebApi.class, "updateModel"))
+                                    SystemWebApi.class, "systemUpdateModel"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -138,7 +140,7 @@ public class SystemWebApi extends TopicClient {
         public void onSystemWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onUpdateModel(UpdateModel updateModel, boolean success, Error error) {
+        public void onSystemUpdateModel(UpdateModel updateModel, boolean success, Error error) {
         }
 
     }
@@ -167,7 +169,7 @@ public class SystemWebApi extends TopicClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (transactionParams.apiFunction) {
-                    case "updateModel":
+                    case "systemUpdateModel":
                         if (success)
                             successObject = UpdateModel.fromJson(new JsonObject(data));
                         else
@@ -188,8 +190,8 @@ public class SystemWebApi extends TopicClient {
             try {
                 listener.onSystemWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
-                    case "updateModel":
-                        listener.onUpdateModel((UpdateModel) successObject, success, (Error) failObject);
+                    case "systemUpdateModel":
+                        listener.onSystemUpdateModel((UpdateModel) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

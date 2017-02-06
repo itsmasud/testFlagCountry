@@ -3,7 +3,7 @@ package com.fieldnation.v2.data.model;
 import com.fieldnation.fnjson.annotations.Json;
 
 /**
- * Created by dmgen from swagger on 2/06/17.
+ * Created by dmgen from swagger.
  */
 
 public enum ActionsEnum {

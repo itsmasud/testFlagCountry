@@ -11,44 +11,44 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class UserRating implements Parcelable {
     private static final String TAG = "UserRating";
 
     @Json(name = "marketplace")
-    private Integer _marketplace;
+    private UserRatingMarketplace _marketplace;
 
-    @Json(name = "company")
-    private Integer _company;
+    @Json(name = "my_company")
+    private UserRatingMyCompany _myCompany;
 
     public UserRating() {
     }
 
-    public void setMarketplace(Integer marketplace) {
+    public void setMarketplace(UserRatingMarketplace marketplace) {
         _marketplace = marketplace;
     }
 
-    public Integer getMarketplace() {
+    public UserRatingMarketplace getMarketplace() {
         return _marketplace;
     }
 
-    public UserRating marketplace(Integer marketplace) {
+    public UserRating marketplace(UserRatingMarketplace marketplace) {
         _marketplace = marketplace;
         return this;
     }
 
-    public void setCompany(Integer company) {
-        _company = company;
+    public void setMyCompany(UserRatingMyCompany myCompany) {
+        _myCompany = myCompany;
     }
 
-    public Integer getCompany() {
-        return _company;
+    public UserRatingMyCompany getMyCompany() {
+        return _myCompany;
     }
 
-    public UserRating company(Integer company) {
-        _company = company;
+    public UserRating myCompany(UserRatingMyCompany myCompany) {
+        _myCompany = myCompany;
         return this;
     }
 

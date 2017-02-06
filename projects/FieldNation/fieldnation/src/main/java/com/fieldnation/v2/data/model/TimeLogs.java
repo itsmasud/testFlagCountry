@@ -11,7 +11,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class TimeLogs implements Parcelable {
@@ -40,6 +40,9 @@ public class TimeLogs implements Parcelable {
 
     @Json(name = "results")
     private TimeLog[] _results;
+
+    @Json(name = "open_time_log")
+    private TimeLog _openTimeLog;
 
     @Json(name = "status")
     private String _status;
@@ -148,6 +151,19 @@ public class TimeLogs implements Parcelable {
 
     public TimeLogs results(TimeLog[] results) {
         _results = results;
+        return this;
+    }
+
+    public void setOpenTimeLog(TimeLog openTimeLog) {
+        _openTimeLog = openTimeLog;
+    }
+
+    public TimeLog getOpenTimeLog() {
+        return _openTimeLog;
+    }
+
+    public TimeLogs openTimeLog(TimeLog openTimeLog) {
+        _openTimeLog = openTimeLog;
         return this;
     }
 

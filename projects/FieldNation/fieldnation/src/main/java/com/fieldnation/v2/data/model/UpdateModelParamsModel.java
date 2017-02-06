@@ -10,7 +10,7 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class UpdateModelParamsModel implements Parcelable {

@@ -3,12 +3,13 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.v2.data.model.*;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.v2.data.model.Expense;
 
 /**
  * Created by dmgen from swagger on 2/06/17.

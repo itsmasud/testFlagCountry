@@ -17,16 +17,11 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Countries;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
-import com.fieldnation.v2.data.model.LocationAttribute;
-import com.fieldnation.v2.data.model.LocationNote;
-import com.fieldnation.v2.data.model.StoredLocation;
-import com.fieldnation.v2.data.model.StoredLocations;
 
 /**
- * Created by dmgen from swagger on 2/06/17.
+ * Created by dmgen from swagger.
  */
 
 public class LocationsWebApi extends TopicClient {

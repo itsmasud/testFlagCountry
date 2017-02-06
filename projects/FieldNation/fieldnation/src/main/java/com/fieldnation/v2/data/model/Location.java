@@ -12,7 +12,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class Location implements Parcelable {

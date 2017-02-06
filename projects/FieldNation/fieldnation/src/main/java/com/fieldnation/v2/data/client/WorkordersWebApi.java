@@ -19,49 +19,11 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Assignee;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.Cancellation;
-import com.fieldnation.v2.data.model.Contact;
-import com.fieldnation.v2.data.model.Contacts;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.IdResponse;
-import com.fieldnation.v2.data.model.Location;
-import com.fieldnation.v2.data.model.Message;
-import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.data.model.Milestones;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
-import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.data.model.Problems;
-import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
-import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Status;
-import com.fieldnation.v2.data.model.SwapResponse;
-import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskAlert;
-import com.fieldnation.v2.data.model.Tasks;
-import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
-import com.fieldnation.v2.data.model.Users;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
- * Created by dmgen from swagger on 2/01/17.
+ * Created by dmgen from swagger.
  */
 
 public class WorkordersWebApi extends TopicClient {
@@ -430,18 +392,21 @@ public class WorkordersWebApi extends TopicClient {
      * Marks a work order incomplete and moves it to work done status
      *
      * @param workOrderId ID of work order
-     * @param reason      Reason
-     * @param async       Async (Optional)
+     * @param incompleteWorkOrderOptions Additional optional parameters
      */
-    public static void incompleteWorkOrder(Context context, Integer workOrderId, String reason, Boolean async) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, IncompleteWorkOrderOptions incompleteWorkOrderOptions) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete?reason=" + reason + "&async=" + async);
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete" + (incompleteWorkOrderOptions.getReason() != null ? "?reason=" + incompleteWorkOrderOptions.getReason() : "")
+                                    + (incompleteWorkOrderOptions.getAsync() != null ? "&async=" + incompleteWorkOrderOptions.getAsync() : "")
+                                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/complete")
-                    .urlParams("?reason=" + reason + "&async=" + async);
+                    .urlParams("" + (incompleteWorkOrderOptions.getReason() != null ? "?reason=" + incompleteWorkOrderOptions.getReason() : "")
+                                    + (incompleteWorkOrderOptions.getAsync() != null ? "&async=" + incompleteWorkOrderOptions.getAsync() : "")
+                                   );
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/complete")
@@ -466,7 +431,7 @@ public class WorkordersWebApi extends TopicClient {
      * Adds an expense on a work order
      *
      * @param workOrderId ID of work order
-     * @param expense     Expense
+     * @param expense Expense
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense) {
         try {
@@ -827,9 +792,9 @@ public class WorkordersWebApi extends TopicClient {
      * Updates an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folderId    Folder id
-     * @param folder      Folder
-     * @param async       Async (Optional)
+     * @param folderId Folder id
+     * @param folder Folder
+     * @param async Async (Optional)
      */
     public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async) {
         try {
@@ -907,119 +872,119 @@ public class WorkordersWebApi extends TopicClient {
      * Returns a list of work orders.
      *
      * @param getWorkOrdersOptions Additional optional parameters
-     * @param isBackground         indicates that this call is low priority
+     * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
-                    + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
-                    + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
-                    + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
-                    + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
-                    + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
-                    + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
-                    + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
-                    + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
-                    + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
-                    + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
-                    + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
-                    + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
-                    + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
-                    + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
-                    + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
-                    + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
-                    + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
-                    + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
-                    + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
-                    + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
-                    + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
-                    + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
-                    + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
-                    + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
-                    + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
-                    + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
-                    + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
-                    + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
-                    + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
-                    + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
-                    + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
-                    + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
-                    + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
-                    + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
-                    + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
-                    + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
-                    + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
-                    + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
-                    + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
-                    + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
-                    + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
-                    + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
-                    + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
-                    + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
-                    + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
-                    + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
-                    + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
-                    + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
-                    + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
-            );
+                                    + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
+                                    + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
+                                    + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
+                                    + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
+                                    + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
+                                    + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
+                                    + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
+                                    + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                                    + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
+                                    + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                                    + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
+                                    + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                                    + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
+                                    + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
+                                    + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
+                                    + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
+                                    + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
+                                    + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
+                                    + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
+                                    + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
+                                    + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
+                                    + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
+                                    + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
+                                    + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
+                                    + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
+                                    + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
+                                    + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
+                                    + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
+                                    + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
+                                    + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
+                                    + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
+                                    + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
+                                    + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
+                                    + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
+                                    + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
+                                    + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
+                                    + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
+                                    + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
+                                    + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
+                                    + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
+                                    + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
+                                    + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
+                                    + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
+                                    + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
+                                    + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
+                                    + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
+                                    + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
+                                    + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
+                                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                                    + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+                                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders")
                     .urlParams("" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
-                            + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
-                            + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
-                            + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
-                            + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
-                            + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
-                            + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
-                            + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
-                            + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
-                            + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
-                            + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
-                            + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
-                            + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
-                            + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
-                            + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
-                            + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
-                            + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
-                            + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
-                            + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
-                            + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
-                            + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
-                            + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
-                            + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
-                            + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
-                            + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
-                            + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
-                            + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
-                            + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
-                            + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
-                            + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
-                            + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
-                            + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
-                            + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
-                            + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
-                            + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
-                            + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
-                            + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
-                            + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
-                            + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
-                            + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
-                            + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
-                            + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
-                            + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
-                            + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
-                            + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
-                            + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
-                            + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
-                            + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
-                            + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                            + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
-                            + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
-                    );
+                                    + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
+                                    + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
+                                    + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
+                                    + (getWorkOrdersOptions.getView() != null ? "&view=" + getWorkOrdersOptions.getView() : "")
+                                    + (getWorkOrdersOptions.getSticky() != null ? "&sticky=" + getWorkOrdersOptions.getSticky() : "")
+                                    + (getWorkOrdersOptions.getSort() != null ? "&sort=" + getWorkOrdersOptions.getSort() : "")
+                                    + (getWorkOrdersOptions.getOrder() != null ? "&order=" + getWorkOrdersOptions.getOrder() : "")
+                                    + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
+                                    + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
+                                    + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                                    + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
+                                    + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                                    + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
+                                    + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
+                                    + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
+                                    + (getWorkOrdersOptions.getFPay() != null ? "&f_pay=" + getWorkOrdersOptions.getFPay() : "")
+                                    + (getWorkOrdersOptions.getFTemplates() != null ? "&f_templates=" + getWorkOrdersOptions.getFTemplates() : "")
+                                    + (getWorkOrdersOptions.getFTypeOfWork() != null ? "&f_type_of_work=" + getWorkOrdersOptions.getFTypeOfWork() : "")
+                                    + (getWorkOrdersOptions.getFTimeZone() != null ? "&f_time_zone=" + getWorkOrdersOptions.getFTimeZone() : "")
+                                    + (getWorkOrdersOptions.getFMode() != null ? "&f_mode=" + getWorkOrdersOptions.getFMode() : "")
+                                    + (getWorkOrdersOptions.getFCompany() != null ? "&f_company=" + getWorkOrdersOptions.getFCompany() : "")
+                                    + (getWorkOrdersOptions.getFWorkedWith() != null ? "&f_worked_with=" + getWorkOrdersOptions.getFWorkedWith() : "")
+                                    + (getWorkOrdersOptions.getFManager() != null ? "&f_manager=" + getWorkOrdersOptions.getFManager() : "")
+                                    + (getWorkOrdersOptions.getFClient() != null ? "&f_client=" + getWorkOrdersOptions.getFClient() : "")
+                                    + (getWorkOrdersOptions.getFProject() != null ? "&f_project=" + getWorkOrdersOptions.getFProject() : "")
+                                    + (getWorkOrdersOptions.getFApprovalWindow() != null ? "&f_approval_window=" + getWorkOrdersOptions.getFApprovalWindow() : "")
+                                    + (getWorkOrdersOptions.getFReviewWindow() != null ? "&f_review_window=" + getWorkOrdersOptions.getFReviewWindow() : "")
+                                    + (getWorkOrdersOptions.getFNetwork() != null ? "&f_network=" + getWorkOrdersOptions.getFNetwork() : "")
+                                    + (getWorkOrdersOptions.getFAutoAssign() != null ? "&f_auto_assign=" + getWorkOrdersOptions.getFAutoAssign() : "")
+                                    + (getWorkOrdersOptions.getFSchedule() != null ? "&f_schedule=" + getWorkOrdersOptions.getFSchedule() : "")
+                                    + (getWorkOrdersOptions.getFCreated() != null ? "&f_created=" + getWorkOrdersOptions.getFCreated() : "")
+                                    + (getWorkOrdersOptions.getFPublished() != null ? "&f_published=" + getWorkOrdersOptions.getFPublished() : "")
+                                    + (getWorkOrdersOptions.getFRouted() != null ? "&f_routed=" + getWorkOrdersOptions.getFRouted() : "")
+                                    + (getWorkOrdersOptions.getFPublishedRouted() != null ? "&f_published_routed=" + getWorkOrdersOptions.getFPublishedRouted() : "")
+                                    + (getWorkOrdersOptions.getFCompleted() != null ? "&f_completed=" + getWorkOrdersOptions.getFCompleted() : "")
+                                    + (getWorkOrdersOptions.getFApprovedCancelled() != null ? "&f_approved_cancelled=" + getWorkOrdersOptions.getFApprovedCancelled() : "")
+                                    + (getWorkOrdersOptions.getFConfirmed() != null ? "&f_confirmed=" + getWorkOrdersOptions.getFConfirmed() : "")
+                                    + (getWorkOrdersOptions.getFAssigned() != null ? "&f_assigned=" + getWorkOrdersOptions.getFAssigned() : "")
+                                    + (getWorkOrdersOptions.getFSavedLocation() != null ? "&f_saved_location=" + getWorkOrdersOptions.getFSavedLocation() : "")
+                                    + (getWorkOrdersOptions.getFSavedLocationGroup() != null ? "&f_saved_location_group=" + getWorkOrdersOptions.getFSavedLocationGroup() : "")
+                                    + (getWorkOrdersOptions.getFCity() != null ? "&f_city=" + getWorkOrdersOptions.getFCity() : "")
+                                    + (getWorkOrdersOptions.getFState() != null ? "&f_state=" + getWorkOrdersOptions.getFState() : "")
+                                    + (getWorkOrdersOptions.getFPostalCode() != null ? "&f_postal_code=" + getWorkOrdersOptions.getFPostalCode() : "")
+                                    + (getWorkOrdersOptions.getFCountry() != null ? "&f_country=" + getWorkOrdersOptions.getFCountry() : "")
+                                    + (getWorkOrdersOptions.getFFlags() != null ? "&f_flags=" + getWorkOrdersOptions.getFFlags() : "")
+                                    + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
+                                    + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
+                                    + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
+                                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                                    + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+                                   );
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders")
@@ -1046,7 +1011,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: verifyTimeLogByWorkOrder
      * Verify time log for assigned work order
      *
-     * @param workOrderId      ID of work order
+     * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
      */
     public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
@@ -1084,9 +1049,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: verifyTimeLogByWorkOrder
      * Verify time log for assigned work order
      *
-     * @param workOrderId      ID of work order
+     * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param async            Return the model in the response (slower) (Optional)
+     * @param async Return the model in the response (slower) (Optional)
      */
     public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
@@ -1121,7 +1086,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes a work order contact
      *
      * @param workOrderId Work order id
-     * @param contactId   Contact id
+     * @param contactId Contact id
      */
     public static void removeContact(Context context, Integer workOrderId, Integer contactId) {
         try {
@@ -1159,8 +1124,8 @@ public class WorkordersWebApi extends TopicClient {
      * Updates a work order contact
      *
      * @param workOrderId Work order id
-     * @param contactId   Contact id
-     * @param json        JSON Model
+     * @param contactId Contact id
+     * @param json JSON Model
      */
     public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json) {
         try {
@@ -1200,8 +1165,8 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getIncreaseByWorkOrderAndIncrease
      * Get pay increase for assigned work order.
      *
-     * @param workOrderId  ID of work order
-     * @param increaseId   ID of work order increase
+     * @param workOrderId ID of work order
+     * @param increaseId ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
@@ -1242,9 +1207,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getIncreaseByWorkOrderAndIncrease
      * Get pay increase for assigned work order.
      *
-     * @param workOrderId  ID of work order
-     * @param increaseId   ID of work order increase
-     * @param async        Async (Optional)
+     * @param workOrderId ID of work order
+     * @param increaseId ID of work order increase
+     * @param async Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
@@ -1283,7 +1248,7 @@ public class WorkordersWebApi extends TopicClient {
      * Delete pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId  ID of work order increase
+     * @param increaseId ID of work order increase
      */
     public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId) {
         try {
@@ -1321,8 +1286,8 @@ public class WorkordersWebApi extends TopicClient {
      * Delete pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId  ID of work order increase
-     * @param async       Async (Optional)
+     * @param increaseId ID of work order increase
+     * @param async Async (Optional)
      */
     public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async) {
         try {
@@ -1357,8 +1322,8 @@ public class WorkordersWebApi extends TopicClient {
      * Update pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId  ID of work order increase
-     * @param increase    Increase structure for update
+     * @param increaseId ID of work order increase
+     * @param increase Increase structure for update
      */
     public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase) {
         try {
@@ -1399,9 +1364,9 @@ public class WorkordersWebApi extends TopicClient {
      * Update pay increase for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param increaseId  ID of work order increase
-     * @param increase    Increase structure for update
-     * @param async       Async (Optional)
+     * @param increaseId ID of work order increase
+     * @param increase Increase structure for update
+     * @param async Async (Optional)
      */
     public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async) {
         try {
@@ -1439,7 +1404,7 @@ public class WorkordersWebApi extends TopicClient {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId   ID of expense
+     * @param expenseId ID of expense
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
@@ -1477,8 +1442,8 @@ public class WorkordersWebApi extends TopicClient {
      * Delete an expense from a work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId   ID of expense
-     * @param async       Asynchroneous (Optional)
+     * @param expenseId ID of expense
+     * @param async Asynchroneous (Optional)
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async) {
         try {
@@ -1513,7 +1478,7 @@ public class WorkordersWebApi extends TopicClient {
      * Update an Expense of a Work order
      *
      * @param workOrderId ID of work order
-     * @param expenseId   ID of expense
+     * @param expenseId ID of expense
      */
     public static void updateExpense(Context context, Integer workOrderId, Integer expenseId) {
         try {
@@ -1550,21 +1515,21 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: updateExpenseByWorkOrderAndExpense
      * Update an Expense of a Work order
      *
-     * @param workOrderId          ID of work order
-     * @param expenseId            ID of expense
+     * @param workOrderId ID of work order
+     * @param expenseId ID of expense
      * @param updateExpenseOptions Additional optional parameters
      */
     public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions) {
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "" + (updateExpenseOptions.getAsync() != null ? "?async=" + updateExpenseOptions.getAsync() : "")
-            );
+                                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId)
                     .urlParams("" + (updateExpenseOptions.getAsync() != null ? "?async=" + updateExpenseOptions.getAsync() : "")
-                    );
+                                   );
 
             if (updateExpenseOptions.getExpense() != null)
                 builder.body(updateExpenseOptions.getExpense().toJson().toString());
@@ -1588,10 +1553,90 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: addIncreaseByWorkOrder
+     * Create pay increase for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param increase Increase structure for update
+     */
+    public static void addIncrease(Context context, Integer workOrderId, PayIncrease increase) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/increases");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/increases");
+
+            if (increase != null)
+                builder.body(increase.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/increases")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases",
+                                    WorkordersWebApi.class, "addIncrease"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subAddIncrease(Integer workOrderId) {
+        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases");
+    }
+
+    /**
+     * Swagger operationId: addIncreaseByWorkOrder
+     * Create pay increase for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param increase Increase structure for update
+     * @param async Async (Optional)
+     */
+    public static void addIncrease(Context context, Integer workOrderId, PayIncrease increase, Boolean async) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/increases?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/increases")
+                    .urlParams("?async=" + async);
+
+            if (increase != null)
+                builder.body(increase.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/increases")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases",
+                                    WorkordersWebApi.class, "addIncrease"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getIncreasesByWorkOrder
      * Returns a list of pay increases requested by the assigned provider.
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getIncreases(Context context, Integer workOrderId, boolean isBackground) {
@@ -1632,7 +1677,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getPayByWorkOrder
      * Gets the pay for a work order
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getPay(Context context, Integer workOrderId, boolean isBackground) {
@@ -1674,7 +1719,7 @@ public class WorkordersWebApi extends TopicClient {
      * Updates the pay of a work order, or requests an adjustment
      *
      * @param workOrderId ID of work order
-     * @param pay         Pay
+     * @param pay Pay
      */
     public static void updatePay(Context context, Integer workOrderId, Pay pay) {
         try {
@@ -1715,8 +1760,8 @@ public class WorkordersWebApi extends TopicClient {
      * Updates the pay of a work order, or requests an adjustment
      *
      * @param workOrderId ID of work order
-     * @param pay         Pay
-     * @param async       Async (Optional)
+     * @param pay Pay
+     * @param async Async (Optional)
      */
     public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async) {
         try {
@@ -1754,7 +1799,7 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a task to a work order
      *
      * @param workOrderId Work order id
-     * @param json        JSON Model
+     * @param json JSON Model
      */
     public static void addTask(Context context, Integer workOrderId, Task json) {
         try {
@@ -1794,7 +1839,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getTasksByWorkOrder
      * Get a list of a work order's tasks
      *
-     * @param workOrderId  Work order id
+     * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getTasks(Context context, Integer workOrderId, boolean isBackground) {
@@ -1835,7 +1880,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getMilestonesByWorkOrder
      * Get the milestones of a work order
      *
-     * @param workOrderId  ID of Work Order
+     * @param workOrderId ID of Work Order
      * @param isBackground indicates that this call is low priority
      */
     public static void getMilestones(Context context, Integer workOrderId, boolean isBackground) {
@@ -1877,7 +1922,7 @@ public class WorkordersWebApi extends TopicClient {
      * Add signature by work order
      *
      * @param workOrderId ID of work order
-     * @param signature   Signature JSON
+     * @param signature Signature JSON
      */
     public static void addSignature(Context context, Integer workOrderId, Signature signature) {
         try {
@@ -1918,8 +1963,8 @@ public class WorkordersWebApi extends TopicClient {
      * Add signature by work order
      *
      * @param workOrderId ID of work order
-     * @param signature   Signature JSON
-     * @param async       async (Optional)
+     * @param signature Signature JSON
+     * @param async async (Optional)
      */
     public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async) {
         try {
@@ -1956,7 +2001,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getSignaturesByWorkOrder
      * Returns a list of signatures uploaded by the assigned provider
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getSignatures(Context context, Integer workOrderId, boolean isBackground) {
@@ -1997,7 +2042,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getProvidersByWorkOrder
      * Gets list of providers available for a work order
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getProviders(Context context, String workOrderId, boolean isBackground) {
@@ -2038,25 +2083,25 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getProvidersByWorkOrder
      * Gets list of providers available for a work order
      *
-     * @param workOrderId         ID of work order
+     * @param workOrderId ID of work order
      * @param getProvidersOptions Additional optional parameters
-     * @param isBackground        indicates that this call is low priority
+     * @param isBackground indicates that this call is low priority
      */
     public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
-                    + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
-                    + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-            );
+                                    + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
+                                    + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
+                                   );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/providers")
                     .urlParams("" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
-                            + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
-                            + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-                    );
+                                    + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
+                                    + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
+                                   );
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/workorders/{work_order_id}/providers")
@@ -2084,7 +2129,7 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a message to a work order
      *
      * @param workOrderId ID of work order
-     * @param json        JSON payload
+     * @param json JSON payload
      */
     public static void addMessage(Context context, String workOrderId, Message json) {
         try {
@@ -2125,8 +2170,8 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a message to a work order
      *
      * @param workOrderId ID of work order
-     * @param json        JSON payload
-     * @param async       Async (Optional)
+     * @param json JSON payload
+     * @param async Async (Optional)
      */
     public static void addMessage(Context context, String workOrderId, Message json, Boolean async) {
         try {
@@ -2163,7 +2208,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getMessagesByWorkOrder
      * Gets a list of work order messages
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getMessages(Context context, String workOrderId, boolean isBackground) {
@@ -2203,6 +2248,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: cancelSwapRequest
      * Cancel work order swap request.
+     *
      */
     public static void cancelSwapRequest(Context context) {
         try {
@@ -2240,7 +2286,7 @@ public class WorkordersWebApi extends TopicClient {
      * Add time log for work order.
      *
      * @param workOrderId ID of work order
-     * @param timeLog     Check in information
+     * @param timeLog Check in information
      */
     public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
@@ -2280,7 +2326,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getTimeLogsByWorkOrder
      * Returns a list of time logs applied by the assigned provider
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getTimeLogs(Context context, Integer workOrderId, boolean isBackground) {
@@ -2322,7 +2368,7 @@ public class WorkordersWebApi extends TopicClient {
      * Update all time logs for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param timeLog     Check in information
+     * @param timeLog Check in information
      */
     public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog) {
         try {
@@ -2363,8 +2409,8 @@ public class WorkordersWebApi extends TopicClient {
      * Update all time logs for assigned work order.
      *
      * @param workOrderId ID of work order
-     * @param timeLog     Check in information
-     * @param async       Return the model in the response (slower) (Optional)
+     * @param timeLog Check in information
+     * @param async Return the model in the response (slower) (Optional)
      */
     public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async) {
         try {
@@ -2401,7 +2447,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getWorkOrderByWorkOrder
      * Gets a work order by its id
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
@@ -2442,7 +2488,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: deleteWorkOrderByWorkOrder
      * Deletes a work order by its id
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param cancellation Cancellation reasons
      */
     public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation) {
@@ -2483,9 +2529,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: deleteWorkOrderByWorkOrder
      * Deletes a work order by its id
      *
-     * @param workOrderId  ID of work order
+     * @param workOrderId ID of work order
      * @param cancellation Cancellation reasons
-     * @param async        Async (Optional)
+     * @param async Async (Optional)
      */
     public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async) {
         try {
@@ -2523,7 +2569,7 @@ public class WorkordersWebApi extends TopicClient {
      * Updates a work order by its id
      *
      * @param workOrderId ID of work order
-     * @param workOrder   Work order model
+     * @param workOrder Work order model
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder) {
         try {
@@ -2564,8 +2610,8 @@ public class WorkordersWebApi extends TopicClient {
      * Updates a work order by its id
      *
      * @param workOrderId ID of work order
-     * @param workOrder   Work order model
-     * @param async       Asynchroneous (Optional)
+     * @param workOrder Work order model
+     * @param async Asynchroneous (Optional)
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async) {
         try {
@@ -2602,8 +2648,8 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getSignatureByWorkOrderAndSignature
      * Gets a single signature uploaded by the assigned provider
      *
-     * @param workOrderId  ID of work order
-     * @param signatureId  ID of signature
+     * @param workOrderId ID of work order
+     * @param signatureId ID of signature
      * @param isBackground indicates that this call is low priority
      */
     public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
@@ -2684,7 +2730,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param signatureId ID of signature
-     * @param async       async (Optional)
+     * @param async async (Optional)
      */
     public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async) {
         try {
@@ -2719,7 +2765,7 @@ public class WorkordersWebApi extends TopicClient {
      * Adds an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folder      Folder
+     * @param folder Folder
      */
     public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder) {
         try {
@@ -2760,8 +2806,8 @@ public class WorkordersWebApi extends TopicClient {
      * Adds an attachment folder
      *
      * @param workOrderId Work order id
-     * @param folder      Folder
-     * @param async       Async (Optional)
+     * @param folder Folder
+     * @param async Async (Optional)
      */
     public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async) {
         try {
@@ -2798,7 +2844,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getAttachmentsByWorkOrder
      * Gets a list of attachment folders which contain files and deliverables for the work order
      *
-     * @param workOrderId  Work order id
+     * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getAttachments(Context context, Integer workOrderId, boolean isBackground) {
@@ -2840,7 +2886,7 @@ public class WorkordersWebApi extends TopicClient {
      * Completes a task associated with a work order
      *
      * @param workOrderId Work order id
-     * @param taskId      Task id
+     * @param taskId Task id
      */
     public static void completeTask(Context context, Integer workOrderId, Integer taskId) {
         try {
@@ -2878,7 +2924,7 @@ public class WorkordersWebApi extends TopicClient {
      * Allows an assigned provider to removes a discount they previously applied from a work order, increasing the amount they will be paid.
      *
      * @param workOrderId ID of work order
-     * @param discountId  ID of the discount
+     * @param discountId ID of the discount
      */
     public static void removeDiscount(Context context, Integer workOrderId, Integer discountId) {
         try {
@@ -2916,8 +2962,8 @@ public class WorkordersWebApi extends TopicClient {
      * Updates the amount or description of a discount applied to the work order.
      *
      * @param workOrderId ID of work order
-     * @param discountId  ID of the discount
-     * @param json        Payload of the discount
+     * @param discountId ID of the discount
+     * @param json Payload of the discount
      */
     public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json) {
         try {
@@ -2957,7 +3003,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: removeTimeLogByWorkOrder
      * Remove time log for assigned work order
      *
-     * @param workOrderId      ID of work order
+     * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
      */
     public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
@@ -2995,9 +3041,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: removeTimeLogByWorkOrder
      * Remove time log for assigned work order
      *
-     * @param workOrderId      ID of work order
+     * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param async            Return the model in the response (slower) (Optional)
+     * @param async Return the model in the response (slower) (Optional)
      */
     public static void removeTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
         try {
@@ -3031,9 +3077,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: updateTimeLogByWorkOrder
      * Update time log for assigned work order.
      *
-     * @param workOrderId      ID of work order
+     * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param timeLog          Check in information
+     * @param timeLog Check in information
      */
     public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog) {
         try {
@@ -3073,10 +3119,10 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: updateTimeLogByWorkOrder
      * Update time log for assigned work order.
      *
-     * @param workOrderId      ID of work order
+     * @param workOrderId ID of work order
      * @param workorderHoursId ID of work order hour
-     * @param timeLog          Check in information
-     * @param async            Return the model in the response (slower) (Optional)
+     * @param timeLog Check in information
+     * @param async Return the model in the response (slower) (Optional)
      */
     public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async) {
         try {
@@ -3113,8 +3159,8 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getFileByWorkOrderAndFolderAndFile
      * Gets an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
+     * @param workOrderId Work order id
+     * @param folderId Folder id
      * @param attachmentId File id
      * @param isBackground indicates that this call is low priority
      */
@@ -3156,8 +3202,8 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: deleteAttachmentByWorkOrderAndFolderAndAttachment
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
+     * @param workOrderId Work order id
+     * @param folderId Folder id
      * @param attachmentId File id
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId) {
@@ -3195,10 +3241,10 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: deleteAttachmentByWorkOrderAndFolderAndAttachment
      * Deletes an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
+     * @param workOrderId Work order id
+     * @param folderId Folder id
      * @param attachmentId File id
-     * @param async        Async (Optional)
+     * @param async Async (Optional)
      */
     public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async) {
         try {
@@ -3232,10 +3278,10 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: updateAttachmentByWorkOrderAndFolderAndAttachment
      * Updates an attachment folder and its contents
      *
-     * @param workOrderId  Work order id
-     * @param folderId     Folder id
+     * @param workOrderId Work order id
+     * @param folderId Folder id
      * @param attachmentId File id
-     * @param attachment   Attachment
+     * @param attachment Attachment
      */
     public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment) {
         try {
@@ -4868,6 +4914,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
+     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -5508,11 +5555,131 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: MassAcceptWorkOrderByWorkOrder
+     * Mass Accept with ETA
+     *
+     * @param eta JSON Payload
+     */
+    public static void MassAcceptWorkOrder(Context context, Eta eta) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/mass-accept");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/mass-accept");
+
+            if (eta != null)
+                builder.body(eta.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/mass-accept")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/mass-accept",
+                                    WorkordersWebApi.class, "MassAcceptWorkOrder"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subMassAcceptWorkOrder() {
+        return register("TOPIC_ID_WEB_API_V2/workorders/mass-accept");
+    }
+
+    /**
+     * Swagger operationId: MassAcceptWorkOrderByWorkOrder
+     * Mass Accept with ETA
+     *
+     * @param eta JSON Payload
+     * @param async Async (Optional)
+     */
+    public static void MassAcceptWorkOrder(Context context, Eta eta, Boolean async) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/mass-accept?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/mass-accept")
+                    .urlParams("?async=" + async);
+
+            if (eta != null)
+                builder.body(eta.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/mass-accept")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/mass-accept",
+                                    WorkordersWebApi.class, "MassAcceptWorkOrder"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: GetScheduleAndLocation
+     * Get schedule and location for a list of work orders by work orders
+     *
+     * @param workOrderId array of work order ids
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/mass-accept")
+                    .urlParams("?work_order_id=" + workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/mass-accept")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/mass-accept",
+                                    WorkordersWebApi.class, "GetScheduleAndLocation"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetScheduleAndLocation() {
+        return register("TOPIC_ID_WEB_API_V2/workorders/mass-accept");
+    }
+
+    /**
      * Swagger operationId: addShipmentByWorkOrder
      * Adds a shipment to a work order
      *
      * @param workOrderId Work order id
-     * @param shipment    Shipment
+     * @param shipment Shipment
      */
     public static void addShipment(Context context, Integer workOrderId, Shipment shipment) {
         try {
@@ -5553,8 +5720,8 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a shipment to a work order
      *
      * @param workOrderId Work order id
-     * @param shipment    Shipment
-     * @param async       Async (Optional)
+     * @param shipment Shipment
+     * @param async Async (Optional)
      */
     public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async) {
         try {
@@ -5591,7 +5758,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getShipmentsByWorkOrder
      * Get a list of shipments on a work order
      *
-     * @param workOrderId  Work order id
+     * @param workOrderId Work order id
      * @param isBackground indicates that this call is low priority
      */
     public static void getShipments(Context context, Integer workOrderId, boolean isBackground) {
@@ -6397,7 +6564,6 @@ public class WorkordersWebApi extends TopicClient {
     /*-             Listener             -*/
     /*-**********************************-*/
     public static abstract class Listener extends TopicClient.Listener {
-
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             new AsyncParser(this, (Bundle) payload);
@@ -6406,10 +6572,16 @@ public class WorkordersWebApi extends TopicClient {
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onWorkOrder(String methodName, WorkOrder workOrder, boolean success, Error error) {
+        public void onRevertWorkOrderToDraft(boolean success, Error error) {
         }
 
-        public void onRevertWorkOrderToDraft(boolean success, Error error) {
+        public void onIncompleteTask(boolean success, Error error) {
+        }
+
+        public void onGetCustomField(CustomField customField, boolean success, Error error) {
+        }
+
+        public void onUpdateCustomField(CustomField customField, boolean success, Error error) {
         }
 
         public void onCompleteWorkOrder(boolean success, Error error) {
@@ -6418,76 +6590,10 @@ public class WorkordersWebApi extends TopicClient {
         public void onIncompleteWorkOrder(boolean success, Error error) {
         }
 
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-        }
-
-        public void onDeleteWorkOrder(boolean success, Error error) {
-        }
-
-        public void onUpdateWorkOrder(boolean success, Error error) {
-        }
-
-        public void onApproveWorkOrder(boolean success, Error error) {
-        }
-
-        public void onUnapproveWorkOrder(boolean success, Error error) {
-        }
-
-
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-        }
-
-
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
-        }
-
-
-        // Custom Fields
-        public void onCustomField(String methodName, CustomField customField, boolean success, Error error) {
-        }
-
-        public void onCustomFields(String methodName, CustomFields customField, boolean success, Error error) {
-        }
-
-
-        public void onGetCustomField(CustomField customField, boolean success, Error error) {
-        }
-
-        public void onUpdateCustomField(CustomField customField, boolean success, Error error) {
-        }
-
-        public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
-        }
-
-
-        // Expense
-        public void onExpense(String methodName, Expense expense, boolean success, Error error) {
-        }
-
-        public void onExpenses(String methodName, Expenses expenses, boolean success, Error error) {
-        }
-
         public void onAddExpense(Expense expense, boolean success, Error error) {
         }
 
         public void onGetExpenses(Expenses expenses, boolean success, Error error) {
-        }
-
-        public void onDeleteExpense(boolean success, Error error) {
-        }
-
-        public void onUpdateExpense(Expense expense, boolean success, Error error) {
-        }
-
-
-        // Attachment
-        public void onAttachment(String methodName, Attachment attachment, boolean success, Error error) {
-        }
-
-        public void onAttachmentFolder(String methodName, AttachmentFolder attachmentFolder, boolean success, Error error) {
-        }
-
-        public void onAttachmentFolders(String methodName, AttachmentFolders attachmentFolders, boolean success, Error error) {
         }
 
         public void onAddAttachment(Attachment attachment, boolean success, Error error) {
@@ -6502,93 +6608,18 @@ public class WorkordersWebApi extends TopicClient {
         public void onUpdateFolder(boolean success, Error error) {
         }
 
-        public void onGetAttachments(AttachmentFolders attachmentFolders, boolean success, Error error) {
-        }
-
-        public void onGetFile(Attachment attachment, boolean success, Error error) {
-        }
-
-        public void onDeleteAttachment(boolean success, Error error) {
-        }
-
-        public void onUpdateAttachment(boolean success, Error error) {
-        }
-
-        public void onAddFolder(boolean success, Error error) {
-        }
-
-
-        // Time Log
-        public void onTimeLog(String methodName, TimeLog timeLog, boolean success, Error error) {
-        }
-
-        public void onTimeLogs(String methodName, TimeLogs timeLogs, boolean success, Error error) {
+        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
         }
 
         public void onVerifyTimeLog(boolean success, Error error) {
         }
 
-        public void onAddTimeLog(TimeLog timeLog, boolean success, Error error) {
-        }
-
-        public void onGetTimeLogs(TimeLogs timeLogs, boolean success, Error error) {
-        }
-
-        public void onUpdateAllTimeLogs(boolean success, Error error) {
-        }
-
-        public void onRemoveTimeLog(boolean success, Error error) {
-        }
-
-        public void onUpdateTimeLog(boolean success, Error error) {
-        }
-
-
-        // Task
-        public void onIncompleteTask(boolean success, Error error) {
-        }
-
-        public void onAddTask(IdResponse idResponse, boolean success, Error error) {
-        }
-
-        public void onGetTasks(Tasks tasks, boolean success, Error error) {
-        }
-
-        public void onCompleteTask(boolean success, Error error) {
-        }
-
-        public void onGetTask(Task task, boolean success, Error error) {
-        }
-
-        public void onRemoveTask(boolean success, Error error) {
-        }
-
-        public void onUpdateTask(boolean success, Error error) {
-        }
-
-        public void onAddAlertToWorkOrderAndTask(boolean success, Error error) {
-        }
-
-        public void onReorderTask(boolean success, Error error) {
-        }
-
-        public void onGroupTask(boolean success, Error error) {
-        }
-
-        // Contact
         public void onRemoveContact(boolean success, Error error) {
         }
 
         public void onUpdateContact(boolean success, Error error) {
         }
 
-        public void onAddContact(IdResponse idResponse, boolean success, Error error) {
-        }
-
-        public void onGetContacts(Contacts contacts, boolean success, Error error) {
-        }
-
-        // Increase
         public void onGetIncrease(PayIncrease payIncrease, boolean success, Error error) {
         }
 
@@ -6598,21 +6629,28 @@ public class WorkordersWebApi extends TopicClient {
         public void onUpdateIncrease(PayIncrease payIncrease, boolean success, Error error) {
         }
 
+        public void onDeleteExpense(boolean success, Error error) {
+        }
+
+        public void onUpdateExpense(Expense expense, boolean success, Error error) {
+        }
+
+        public void onAddIncrease(PayIncrease payIncrease, boolean success, Error error) {
+        }
+
         public void onGetIncreases(PayIncreases payIncreases, boolean success, Error error) {
         }
 
-        public void onAcceptIncrease(boolean success, Error error) {
-        }
-
-        public void onDenyIncrease(boolean success, Error error) {
-        }
-
-
-        // Pay
         public void onGetPay(Pay pay, boolean success, Error error) {
         }
 
         public void onUpdatePay(boolean success, Error error) {
+        }
+
+        public void onAddTask(IdResponse idResponse, boolean success, Error error) {
+        }
+
+        public void onGetTasks(Tasks tasks, boolean success, Error error) {
         }
 
         public void onGetMilestones(Milestones milestones, boolean success, Error error) {
@@ -6621,7 +6659,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onAddSignature(Signature signature, boolean success, Error error) {
         }
 
-        public void onGetSignatures(Signature[] signatures, boolean success, Error error) {
+        public void onGetSignatures(Signatures signatures, boolean success, Error error) {
         }
 
         public void onGetProviders(Users[] users, boolean success, Error error) {
@@ -6636,16 +6674,58 @@ public class WorkordersWebApi extends TopicClient {
         public void onCancelSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
         }
 
+        public void onAddTimeLog(TimeLog timeLog, boolean success, Error error) {
+        }
+
+        public void onGetTimeLogs(TimeLogs timeLogs, boolean success, Error error) {
+        }
+
+        public void onUpdateAllTimeLogs(boolean success, Error error) {
+        }
+
+        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
+        }
+
+        public void onDeleteWorkOrder(boolean success, Error error) {
+        }
+
+        public void onUpdateWorkOrder(boolean success, Error error) {
+        }
+
         public void onGetSignature(Signature signature, boolean success, Error error) {
         }
 
         public void onDeleteSignature(boolean success, Error error) {
         }
 
+        public void onAddFolder(boolean success, Error error) {
+        }
+
+        public void onGetAttachments(AttachmentFolders attachmentFolders, boolean success, Error error) {
+        }
+
+        public void onCompleteTask(boolean success, Error error) {
+        }
+
         public void onRemoveDiscount(boolean success, Error error) {
         }
 
         public void onUpdateDiscount(IdResponse idResponse, boolean success, Error error) {
+        }
+
+        public void onRemoveTimeLog(boolean success, Error error) {
+        }
+
+        public void onUpdateTimeLog(boolean success, Error error) {
+        }
+
+        public void onGetFile(Attachment attachment, boolean success, Error error) {
+        }
+
+        public void onDeleteAttachment(boolean success, Error error) {
+        }
+
+        public void onUpdateAttachment(boolean success, Error error) {
         }
 
         public void onAssignUser(boolean success, Error error) {
@@ -6664,6 +6744,15 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onGetStatus(Status status, boolean success, Error error) {
+        }
+
+        public void onApproveWorkOrder(boolean success, Error error) {
+        }
+
+        public void onUnapproveWorkOrder(boolean success, Error error) {
+        }
+
+        public void onAcceptIncrease(boolean success, Error error) {
         }
 
         public void onDeleteShipment(boolean success, Error error) {
@@ -6696,6 +6785,21 @@ public class WorkordersWebApi extends TopicClient {
         public void onUpdateMessage(IdResponse idResponse, boolean success, Error error) {
         }
 
+        public void onGetTask(Task task, boolean success, Error error) {
+        }
+
+        public void onRemoveTask(boolean success, Error error) {
+        }
+
+        public void onUpdateTask(boolean success, Error error) {
+        }
+
+        public void onDenyIncrease(boolean success, Error error) {
+        }
+
+        public void onAddAlertToWorkOrderAndTask(boolean success, Error error) {
+        }
+
         public void onRemoveAlerts(boolean success, Error error) {
         }
 
@@ -6706,6 +6810,9 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onAcceptSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
+        }
+
+        public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
         }
 
         public void onRemoveAlert(boolean success, Error error) {
@@ -6729,6 +6836,24 @@ public class WorkordersWebApi extends TopicClient {
         public void onGetDiscounts(PayModifiers payModifiers, boolean success, Error error) {
         }
 
+        public void onReorderTask(boolean success, Error error) {
+        }
+
+        public void onGroupTask(boolean success, Error error) {
+        }
+
+        public void onAddContact(IdResponse idResponse, boolean success, Error error) {
+        }
+
+        public void onGetContacts(Contacts contacts, boolean success, Error error) {
+        }
+
+        public void onMassAcceptWorkOrder(boolean success, Error error) {
+        }
+
+        public void onGetScheduleAndLocation(EtaWithLocation etaWithLocation, boolean success, Error error) {
+        }
+
         public void onAddShipment(IdResponse idResponse, boolean success, Error error) {
         }
 
@@ -6742,6 +6867,9 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onUnRouteUser(boolean success, Error error) {
+        }
+
+        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
         }
 
         public void onGetProblemReasons(Problems[] problems, boolean success, Error error) {
@@ -6901,6 +7029,12 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "addIncrease":
+                        if (success)
+                            successObject = PayIncrease.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "getIncreases":
                         if (success)
                             successObject = PayIncreases.fromJson(new JsonObject(data));
@@ -6943,7 +7077,7 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "getSignatures":
                         if (success)
-                            successObject = Signature.fromJsonArray(new JsonArray(data));
+                            successObject = Signatures.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7081,7 +7215,7 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "getStatus":
                         if (success)
-                            successObject = com.fieldnation.v2.data.model.Status.fromJson(new JsonObject(data));
+                            successObject = Status.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7247,6 +7381,16 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "MassAcceptWorkOrder":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "GetScheduleAndLocation":
+                        if (success)
+                            successObject = EtaWithLocation.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "addShipment":
                         if (success)
                             successObject = IdResponse.fromJson(new JsonObject(data));
@@ -7332,9 +7476,6 @@ public class WorkordersWebApi extends TopicClient {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            if (successObject == null)
-                return null;
-
             return null;
         }
 
@@ -7343,192 +7484,54 @@ public class WorkordersWebApi extends TopicClient {
             try {
                 listener.onWorkordersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
-                    // Work Order
                     case "revertWorkOrderToDraft":
                         listener.onRevertWorkOrderToDraft(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
                         break;
-                    case "completeWorkOrder":
-                        listener.onCompleteWorkOrder(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "incompleteWorkOrder":
-                        listener.onIncompleteWorkOrder(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "getWorkOrder":
-                        listener.onGetWorkOrder((WorkOrder) successObject, success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, (WorkOrder) successObject, success, (Error) failObject);
-                        break;
-                    case "deleteWorkOrder":
-                        listener.onDeleteWorkOrder(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "updateWorkOrder":
-                        listener.onUpdateWorkOrder(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "approveWorkOrder":
-                        listener.onApproveWorkOrder(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "unapproveWorkOrder":
-                        listener.onUnapproveWorkOrder(success, (Error) failObject);
-                        listener.onWorkOrder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-
-                    case "getWorkOrders":
-                        listener.onGetWorkOrders((WorkOrders) successObject, success, (Error) failObject);
-                        break;
-
-                    case "getWorkOrderLists":
-                        listener.onGetWorkOrderLists((SavedList[]) successObject, success, (Error) failObject);
-                        break;
-
-                    // Custom Field
-                    case "getCustomField":
-                        listener.onGetCustomField((CustomField) successObject, success, (Error) failObject);
-                        listener.onCustomField(transactionParams.apiFunction, (CustomField) successObject, success, (Error) failObject);
-                        break;
-                    case "updateCustomField":
-                        listener.onUpdateCustomField((CustomField) successObject, success, (Error) failObject);
-                        listener.onCustomField(transactionParams.apiFunction, (CustomField) successObject, success, (Error) failObject);
-                        break;
-                    case "getCustomFields":
-                        listener.onGetCustomFields((CustomFields) successObject, success, (Error) failObject);
-                        listener.onCustomFields(transactionParams.apiFunction, (CustomFields) successObject, success, (Error) failObject);
-                        break;
-
-                    // Expense
-                    case "addExpense":
-                        listener.onAddExpense((Expense) successObject, success, (Error) failObject);
-                        listener.onExpense(transactionParams.apiFunction, (Expense) successObject, success, (Error) failObject);
-                        break;
-                    case "getExpenses":
-                        listener.onGetExpenses((Expenses) successObject, success, (Error) failObject);
-                        listener.onExpenses(transactionParams.apiFunction, (Expenses) successObject, success, (Error) failObject);
-                        break;
-                    case "updateExpense":
-                        listener.onUpdateExpense((Expense) successObject, success, (Error) failObject);
-                        listener.onExpense(transactionParams.apiFunction, (Expense) successObject, success, (Error) failObject);
-                        break;
-                    case "deleteExpense":
-                        listener.onDeleteExpense(success, (Error) failObject);
-                        listener.onExpense(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-
-                    // Attachment
-                    case "addAttachment":
-                        listener.onAddAttachment((Attachment) successObject, success, (Error) failObject);
-                        listener.onAttachment(transactionParams.apiFunction, (Attachment) successObject, success, (Error) failObject);
-                        break;
-                    case "getFile":
-                        listener.onGetFile((Attachment) successObject, success, (Error) failObject);
-                        listener.onAttachment(transactionParams.apiFunction, (Attachment) successObject, success, (Error) failObject);
-                        break;
-                    case "deleteAttachment":
-                        listener.onDeleteAttachment(success, (Error) failObject);
-                        listener.onAttachment(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "updateAttachment":
-                        listener.onUpdateAttachment(success, (Error) failObject);
-                        listener.onAttachment(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-
-                    case "getFolder":
-                        listener.onGetFolder((AttachmentFolder) successObject, success, (Error) failObject);
-                        listener.onAttachmentFolder(transactionParams.apiFunction, (AttachmentFolder) successObject, success, (Error) failObject);
-                        break;
-                    case "getAttachments":
-                        listener.onGetAttachments((AttachmentFolders) successObject, success, (Error) failObject);
-                        listener.onAttachmentFolders(transactionParams.apiFunction, (AttachmentFolders) successObject, success, (Error) failObject);
-                        break;
-                    case "deleteFolder":
-                        listener.onDeleteFolder(success, (Error) failObject);
-                        listener.onAttachmentFolder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "updateFolder":
-                        listener.onUpdateFolder(success, (Error) failObject);
-                        listener.onAttachmentFolder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "addFolder":
-                        listener.onAddFolder(success, (Error) failObject);
-                        listener.onAttachmentFolder(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-
-                    // Time Log
-                    case "addTimeLog":
-                        listener.onAddTimeLog((TimeLog) successObject, success, (Error) failObject);
-                        listener.onTimeLog(transactionParams.apiFunction, (TimeLog) successObject, success, (Error) failObject);
-                        break;
-                    case "verifyTimeLog":
-                        listener.onVerifyTimeLog(success, (Error) failObject);
-                        listener.onTimeLog(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "removeTimeLog":
-                        listener.onRemoveTimeLog(success, (Error) failObject);
-                        listener.onTimeLog(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "updateTimeLog":
-                        listener.onUpdateTimeLog(success, (Error) failObject);
-                        listener.onTimeLog(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-                    case "getTimeLogs":
-                        listener.onGetTimeLogs((TimeLogs) successObject, success, (Error) failObject);
-                        listener.onTimeLogs(transactionParams.apiFunction, (TimeLogs) successObject, success, (Error) failObject);
-                        break;
-                    case "updateAllTimeLogs":
-                        listener.onUpdateAllTimeLogs(success, (Error) failObject);
-                        listener.onTimeLogs(transactionParams.apiFunction, null, success, (Error) failObject);
-                        break;
-
-                    // Task
                     case "incompleteTask":
                         listener.onIncompleteTask(success, (Error) failObject);
                         break;
-                    case "addTask":
-                        listener.onAddTask((IdResponse) successObject, success, (Error) failObject);
+                    case "getCustomField":
+                        listener.onGetCustomField((CustomField) successObject, success, (Error) failObject);
                         break;
-                    case "getTasks":
-                        listener.onGetTasks((Tasks) successObject, success, (Error) failObject);
+                    case "updateCustomField":
+                        listener.onUpdateCustomField((CustomField) successObject, success, (Error) failObject);
                         break;
-                    case "completeTask":
-                        listener.onCompleteTask(success, (Error) failObject);
+                    case "completeWorkOrder":
+                        listener.onCompleteWorkOrder(success, (Error) failObject);
                         break;
-                    case "getTask":
-                        listener.onGetTask((Task) successObject, success, (Error) failObject);
+                    case "incompleteWorkOrder":
+                        listener.onIncompleteWorkOrder(success, (Error) failObject);
                         break;
-                    case "removeTask":
-                        listener.onRemoveTask(success, (Error) failObject);
+                    case "addExpense":
+                        listener.onAddExpense((Expense) successObject, success, (Error) failObject);
                         break;
-                    case "updateTask":
-                        listener.onUpdateTask(success, (Error) failObject);
+                    case "getExpenses":
+                        listener.onGetExpenses((Expenses) successObject, success, (Error) failObject);
                         break;
-                    case "addAlertToWorkOrderAndTask":
-                        listener.onAddAlertToWorkOrderAndTask(success, (Error) failObject);
+                    case "addAttachment":
+                        listener.onAddAttachment((Attachment) successObject, success, (Error) failObject);
                         break;
-                    case "reorderTask":
-                        listener.onReorderTask(success, (Error) failObject);
+                    case "getFolder":
+                        listener.onGetFolder((AttachmentFolder) successObject, success, (Error) failObject);
                         break;
-                    case "groupTask":
-                        listener.onGroupTask(success, (Error) failObject);
+                    case "deleteFolder":
+                        listener.onDeleteFolder(success, (Error) failObject);
                         break;
-
-                    // Contact
+                    case "updateFolder":
+                        listener.onUpdateFolder(success, (Error) failObject);
+                        break;
+                    case "getWorkOrders":
+                        listener.onGetWorkOrders((WorkOrders) successObject, success, (Error) failObject);
+                        break;
+                    case "verifyTimeLog":
+                        listener.onVerifyTimeLog(success, (Error) failObject);
+                        break;
                     case "removeContact":
                         listener.onRemoveContact(success, (Error) failObject);
                         break;
                     case "updateContact":
                         listener.onUpdateContact(success, (Error) failObject);
                         break;
-                    case "addContact":
-                        listener.onAddContact((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "getContacts":
-                        listener.onGetContacts((Contacts) successObject, success, (Error) failObject);
-                        break;
-
-                    // Increase
                     case "getIncrease":
                         listener.onGetIncrease((PayIncrease) successObject, success, (Error) failObject);
                         break;
@@ -7538,22 +7541,29 @@ public class WorkordersWebApi extends TopicClient {
                     case "updateIncrease":
                         listener.onUpdateIncrease((PayIncrease) successObject, success, (Error) failObject);
                         break;
+                    case "deleteExpense":
+                        listener.onDeleteExpense(success, (Error) failObject);
+                        break;
+                    case "updateExpense":
+                        listener.onUpdateExpense((Expense) successObject, success, (Error) failObject);
+                        break;
+                    case "addIncrease":
+                        listener.onAddIncrease((PayIncrease) successObject, success, (Error) failObject);
+                        break;
                     case "getIncreases":
                         listener.onGetIncreases((PayIncreases) successObject, success, (Error) failObject);
                         break;
-                    case "acceptIncrease":
-                        listener.onAcceptIncrease(success, (Error) failObject);
-                        break;
-                    case "denyIncrease":
-                        listener.onDenyIncrease(success, (Error) failObject);
-                        break;
-
-                    // Pay
                     case "getPay":
                         listener.onGetPay((Pay) successObject, success, (Error) failObject);
                         break;
                     case "updatePay":
                         listener.onUpdatePay(success, (Error) failObject);
+                        break;
+                    case "addTask":
+                        listener.onAddTask((IdResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "getTasks":
+                        listener.onGetTasks((Tasks) successObject, success, (Error) failObject);
                         break;
                     case "getMilestones":
                         listener.onGetMilestones((Milestones) successObject, success, (Error) failObject);
@@ -7562,7 +7572,7 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onAddSignature((Signature) successObject, success, (Error) failObject);
                         break;
                     case "getSignatures":
-                        listener.onGetSignatures((Signature[]) successObject, success, (Error) failObject);
+                        listener.onGetSignatures((Signatures) successObject, success, (Error) failObject);
                         break;
                     case "getProviders":
                         listener.onGetProviders((Users[]) successObject, success, (Error) failObject);
@@ -7576,17 +7586,59 @@ public class WorkordersWebApi extends TopicClient {
                     case "cancelSwapRequest":
                         listener.onCancelSwapRequest((SwapResponse) successObject, success, (Error) failObject);
                         break;
+                    case "addTimeLog":
+                        listener.onAddTimeLog((TimeLog) successObject, success, (Error) failObject);
+                        break;
+                    case "getTimeLogs":
+                        listener.onGetTimeLogs((TimeLogs) successObject, success, (Error) failObject);
+                        break;
+                    case "updateAllTimeLogs":
+                        listener.onUpdateAllTimeLogs(success, (Error) failObject);
+                        break;
+                    case "getWorkOrder":
+                        listener.onGetWorkOrder((WorkOrder) successObject, success, (Error) failObject);
+                        break;
+                    case "deleteWorkOrder":
+                        listener.onDeleteWorkOrder(success, (Error) failObject);
+                        break;
+                    case "updateWorkOrder":
+                        listener.onUpdateWorkOrder(success, (Error) failObject);
+                        break;
                     case "getSignature":
                         listener.onGetSignature((Signature) successObject, success, (Error) failObject);
                         break;
                     case "deleteSignature":
                         listener.onDeleteSignature(success, (Error) failObject);
                         break;
+                    case "addFolder":
+                        listener.onAddFolder(success, (Error) failObject);
+                        break;
+                    case "getAttachments":
+                        listener.onGetAttachments((AttachmentFolders) successObject, success, (Error) failObject);
+                        break;
+                    case "completeTask":
+                        listener.onCompleteTask(success, (Error) failObject);
+                        break;
                     case "removeDiscount":
                         listener.onRemoveDiscount(success, (Error) failObject);
                         break;
                     case "updateDiscount":
                         listener.onUpdateDiscount((IdResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "removeTimeLog":
+                        listener.onRemoveTimeLog(success, (Error) failObject);
+                        break;
+                    case "updateTimeLog":
+                        listener.onUpdateTimeLog(success, (Error) failObject);
+                        break;
+                    case "getFile":
+                        listener.onGetFile((Attachment) successObject, success, (Error) failObject);
+                        break;
+                    case "deleteAttachment":
+                        listener.onDeleteAttachment(success, (Error) failObject);
+                        break;
+                    case "updateAttachment":
+                        listener.onUpdateAttachment(success, (Error) failObject);
                         break;
                     case "assignUser":
                         listener.onAssignUser(success, (Error) failObject);
@@ -7604,7 +7656,16 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onUnpublish(success, (Error) failObject);
                         break;
                     case "getStatus":
-                        listener.onGetStatus((com.fieldnation.v2.data.model.Status) successObject, success, (Error) failObject);
+                        listener.onGetStatus((Status) successObject, success, (Error) failObject);
+                        break;
+                    case "approveWorkOrder":
+                        listener.onApproveWorkOrder(success, (Error) failObject);
+                        break;
+                    case "unapproveWorkOrder":
+                        listener.onUnapproveWorkOrder(success, (Error) failObject);
+                        break;
+                    case "acceptIncrease":
+                        listener.onAcceptIncrease(success, (Error) failObject);
                         break;
                     case "deleteShipment":
                         listener.onDeleteShipment(success, (Error) failObject);
@@ -7636,6 +7697,21 @@ public class WorkordersWebApi extends TopicClient {
                     case "updateMessage":
                         listener.onUpdateMessage((IdResponse) successObject, success, (Error) failObject);
                         break;
+                    case "getTask":
+                        listener.onGetTask((Task) successObject, success, (Error) failObject);
+                        break;
+                    case "removeTask":
+                        listener.onRemoveTask(success, (Error) failObject);
+                        break;
+                    case "updateTask":
+                        listener.onUpdateTask(success, (Error) failObject);
+                        break;
+                    case "denyIncrease":
+                        listener.onDenyIncrease(success, (Error) failObject);
+                        break;
+                    case "addAlertToWorkOrderAndTask":
+                        listener.onAddAlertToWorkOrderAndTask(success, (Error) failObject);
+                        break;
                     case "removeAlerts":
                         listener.onRemoveAlerts(success, (Error) failObject);
                         break;
@@ -7647,6 +7723,9 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "acceptSwapRequest":
                         listener.onAcceptSwapRequest((SwapResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "getCustomFields":
+                        listener.onGetCustomFields((CustomFields) successObject, success, (Error) failObject);
                         break;
                     case "removeAlert":
                         listener.onRemoveAlert(success, (Error) failObject);
@@ -7669,6 +7748,24 @@ public class WorkordersWebApi extends TopicClient {
                     case "getDiscounts":
                         listener.onGetDiscounts((PayModifiers) successObject, success, (Error) failObject);
                         break;
+                    case "reorderTask":
+                        listener.onReorderTask(success, (Error) failObject);
+                        break;
+                    case "groupTask":
+                        listener.onGroupTask(success, (Error) failObject);
+                        break;
+                    case "addContact":
+                        listener.onAddContact((IdResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "getContacts":
+                        listener.onGetContacts((Contacts) successObject, success, (Error) failObject);
+                        break;
+                    case "MassAcceptWorkOrder":
+                        listener.onMassAcceptWorkOrder(success, (Error) failObject);
+                        break;
+                    case "GetScheduleAndLocation":
+                        listener.onGetScheduleAndLocation((EtaWithLocation) successObject, success, (Error) failObject);
+                        break;
                     case "addShipment":
                         listener.onAddShipment((IdResponse) successObject, success, (Error) failObject);
                         break;
@@ -7683,6 +7780,9 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "unRouteUser":
                         listener.onUnRouteUser(success, (Error) failObject);
+                        break;
+                    case "getWorkOrderLists":
+                        listener.onGetWorkOrderLists((SavedList[]) successObject, success, (Error) failObject);
                         break;
                     case "getProblemReasons":
                         listener.onGetProblemReasons((Problems[]) successObject, success, (Error) failObject);

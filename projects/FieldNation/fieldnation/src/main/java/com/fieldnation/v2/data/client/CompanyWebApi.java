@@ -17,11 +17,11 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CompanyIntegrations;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
 
 /**
- * Created by dmgen from swagger on 2/06/17.
+ * Created by dmgen from swagger.
  */
 
 public class CompanyWebApi extends TopicClient {
@@ -40,6 +40,82 @@ public class CompanyWebApi extends TopicClient {
 
     public boolean subCompanyWebApi() {
         return register("TOPIC_ID_WEB_API_V2/CompanyWebApi");
+    }
+
+    /**
+     * Swagger operationId: updateFundByFund
+     * Perform credit card deposit
+     *
+     * @param companyId ID of company
+     * @param financeId ID of finance account
+     */
+    public static void updateFund(Context context, Integer companyId, Integer financeId) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/company/" + companyId + "/funds/" + financeId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/funds/" + financeId,
+                                    CompanyWebApi.class, "updateFund"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subUpdateFund(Integer companyId, Integer financeId) {
+        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/funds/" + financeId);
+    }
+
+    /**
+     * Swagger operationId: updateFundByFund
+     * Perform credit card deposit
+     *
+     * @param companyId ID of company
+     * @param financeId ID of finance account
+     * @param fundTransaction Transaction attempting to be created (Optional)
+     */
+    public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/company/" + companyId + "/funds/" + financeId);
+
+            if (fundTransaction != null)
+                builder.body(fundTransaction.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/funds/" + financeId,
+                                    CompanyWebApi.class, "updateFund"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
     }
 
     /**
@@ -98,6 +174,9 @@ public class CompanyWebApi extends TopicClient {
         public void onCompanyWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
+        public void onUpdateFund(boolean success, Error error) {
+        }
+
         public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
         }
 
@@ -127,6 +206,10 @@ public class CompanyWebApi extends TopicClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (transactionParams.apiFunction) {
+                    case "updateFund":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "getIntegrations":
                         if (success)
                             successObject = CompanyIntegrations.fromJson(new JsonObject(data));
@@ -148,6 +231,9 @@ public class CompanyWebApi extends TopicClient {
             try {
                 listener.onCompanyWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
+                    case "updateFund":
+                        listener.onUpdateFund(success, (Error) failObject);
+                        break;
                     case "getIntegrations":
                         listener.onGetIntegrations((CompanyIntegrations) successObject, success, (Error) failObject);
                         break;

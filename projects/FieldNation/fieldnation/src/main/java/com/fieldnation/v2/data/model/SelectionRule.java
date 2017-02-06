@@ -11,11 +11,14 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class SelectionRule implements Parcelable {
     private static final String TAG = "SelectionRule";
+
+    @Json(name = "criteria")
+    private SelectionRuleCriteria[] _criteria;
 
     @Json(name = "name")
     private String _name;
@@ -24,6 +27,19 @@ public class SelectionRule implements Parcelable {
     private Integer _id;
 
     public SelectionRule() {
+    }
+
+    public void setCriteria(SelectionRuleCriteria[] criteria) {
+        _criteria = criteria;
+    }
+
+    public SelectionRuleCriteria[] getCriteria() {
+        return _criteria;
+    }
+
+    public SelectionRule criteria(SelectionRuleCriteria[] criteria) {
+        _criteria = criteria;
+        return this;
     }
 
     public void setName(String name) {

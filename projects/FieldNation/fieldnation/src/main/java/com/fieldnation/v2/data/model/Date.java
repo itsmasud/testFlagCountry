@@ -15,7 +15,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 
 /**
- * Created by dmgen from swagger on 1/31/17.
+ * Created by dmgen from swagger.
  */
 
 public class Date implements Parcelable {
@@ -43,14 +43,6 @@ public class Date implements Parcelable {
     public Date utc(String utc) {
         _utc = utc;
         return this;
-    }
-
-    public Calendar getCalendar() throws ParseException {
-        return DateUtils.v2UtcToCalendar(_utc);
-    }
-
-    public long getUtc() throws ParseException {
-        return DateUtils.v2UtcToLong(_utc);
     }
 
 /*
@@ -144,5 +136,13 @@ public class Date implements Parcelable {
     public Date(long utcMilliseconds) {
         super();
         utc(DateUtils.v2LongToUtc(utcMilliseconds));
+    }
+
+    public Calendar getCalendar() throws ParseException {
+        return DateUtils.v2UtcToCalendar(_utc);
+    }
+
+    public long getUtc() throws ParseException {
+        return DateUtils.v2UtcToLong(_utc);
     }
 }
