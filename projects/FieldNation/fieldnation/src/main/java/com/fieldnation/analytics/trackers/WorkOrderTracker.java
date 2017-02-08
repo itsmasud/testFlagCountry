@@ -42,6 +42,7 @@ public class WorkOrderTracker {
         public static final Action COUNTER_OFFER = new Action("Counter Offer", true);
         public static final Action CLOSING_NOTES = new Action("Closing Notes", true);
         public static final Action CONFIRM = new Action("Confirm", true);
+        public static final Action ETA = new Action("Eta", true);
         public static final Action ACCEPT_WORK = new Action("Accept Work", true);
         public static final Action REQUEST = new Action("Request", true);
         public static final Action NOT_INTERESTED = new Action("Not Interested", true);
@@ -103,6 +104,7 @@ public class WorkOrderTracker {
         public static final Identity COUNTER_OFFER_ACTION_BUTTON = new Identity("Counter Offer Action", ElementType.BUTTON, true);
         public static final Identity CLOSING_NOTE_ACTION_BUTTON = new Identity("Closing Note Action", ElementType.BUTTON, true);
         public static final Identity CONFIRM_ACTION_BUTTON = new Identity("Confirm Action", ElementType.BUTTON, true);
+        public static final Identity ETA_ACTION_BUTTON = new Identity("Eta Action", ElementType.BUTTON, true);
         public static final Identity ACKNOWLEDGE_HOLD_ACTION_BUTTON = new Identity("Acknowledge Hold Action", ElementType.BUTTON, true);
         public static final Identity MARK_COMPLETE_ACTION_BUTTON = new Identity("Mark Complete Action", ElementType.BUTTON, true);
         public static final Identity MARK_INCOMPLETE_ACTION_BUTTON = new Identity("Mark Incomplete Action", ElementType.BUTTON, true);
@@ -337,7 +339,7 @@ public class WorkOrderTracker {
 
     public enum ActionButton {
         CHECK_IN, CHECK_IN_AGAIN, CHECK_OUT, VIEW_COUNTER_OFFER, COUNTER_OFFER, CLOSING_NOTES,
-        CONFIRM, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
+        CONFIRM, ETA, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
         MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW, RUNNING_LATE, ON_MY_WAY, VIEW_BUNDLE,
         CALL_BUYER, VIEW_MESSAGES, DIRECTIONS;
 
@@ -357,6 +359,8 @@ public class WorkOrderTracker {
                     return Identity.CLOSING_NOTE_ACTION_BUTTON;
                 case CONFIRM:
                     return Identity.CONFIRM_ACTION_BUTTON;
+                case ETA:
+                    return Identity.ETA_ACTION_BUTTON;
                 case ACCEPT_WORK:
                     return Identity.ACCEPT_ACTION_BUTTON;
                 case REQUEST:
@@ -409,6 +413,8 @@ public class WorkOrderTracker {
                     return Action.CLOSING_NOTES;
                 case CONFIRM:
                     return Action.CONFIRM;
+                case ETA:
+                    return Action.ETA;
                 case ACCEPT_WORK:
                     return Action.ACCEPT_WORK;
                 case REQUEST:

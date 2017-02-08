@@ -68,6 +68,7 @@ public class EtaDialog extends FullScreenDialog {
     public static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
     public static final String PARAM_DIALOG_TYPE_REQUEST = "request";
     public static final String PARAM_DIALOG_TYPE_CONFIRM = "confirm";
+    public static final String PARAM_DIALOG_TYPE_ETA = "eta";
     public static final String PARAM_DIALOG_TYPE_EDIT = "edit";
     public static final String PARAM_WORK_ORDER_ID = "workOrderId";
     public static final String PARAM_SCHEDULE = "schedule";
@@ -104,7 +105,7 @@ public class EtaDialog extends FullScreenDialog {
     // Passed data
     private String _dialogType;
     private Schedule _schedule;
-    private long _workOrderId;
+    private int _workOrderId;
 
     // User data
     private Calendar _etaStart;
@@ -211,7 +212,7 @@ public class EtaDialog extends FullScreenDialog {
         Log.v(TAG, "Show");
         _schedule = params.getParcelable(PARAM_SCHEDULE);
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
-        _workOrderId = params.getLong(PARAM_WORK_ORDER_ID);
+        _workOrderId = params.getInt(PARAM_WORK_ORDER_ID);
 
         try {
             if (_schedule.getEta() != null && _schedule.getEta().getStart() != null) {
@@ -295,6 +296,17 @@ public class EtaDialog extends FullScreenDialog {
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
             _toolbar.setTitle("Confirm " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
+            _expirationLayout.setVisibility(View.GONE);
+
+            _etaSwitch.setChecked(true);
+            _etaSwitchLabel.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
+            _termsWarningTextView.setVisibility(View.GONE);
+
+        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ETA)) {
+            _toolbar.setTitle("Set ETA " + _workOrderId);
+            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -768,7 +780,7 @@ public class EtaDialog extends FullScreenDialog {
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
 /*
-                            WorkorderClient.actionConfirm(
+TODO                            WorkorderClient.actionConfirm(
                                     App.get(),
                                     _workOrderId,
                                     startDate,
@@ -784,6 +796,11 @@ public class EtaDialog extends FullScreenDialog {
                                     _noteEditText.getText().toString().trim());
 */
                         }
+                        dismiss(true);
+                        break;
+                    case PARAM_DIALOG_TYPE_ETA:
+                        _onEtaDispatcher.dispatch(getUid(), _workOrderId);
+                        // TODO ETA API call
                         dismiss(true);
                         break;
                     case PARAM_DIALOG_TYPE_ACCEPT:
@@ -822,10 +839,10 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, long workOrderId, Schedule schedule, String dialogType) {
+    public static void show(Context context, String uid, int workOrderId, Schedule schedule, String dialogType) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_SCHEDULE, schedule);
-        params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
         params.putString(PARAM_DIALOG_TYPE, dialogType);
         Controller.show(context, uid, EtaDialog.class, params);
     }
@@ -835,13 +852,13 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Requested           -*/
     /*-*****************************-*/
     public interface OnRequestedListener {
-        void onRequested(long workOrderId);
+        void onRequested(int workOrderid);
     }
 
     private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
         @Override
         public void onDispatch(OnRequestedListener listener, Object... parameters) {
-            listener.onRequested((Long) parameters[0]);
+            listener.onRequested((int) parameters[0]);
         }
     };
 
@@ -861,13 +878,13 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Accepted           -*/
     /*-****************************-*/
     public interface OnAcceptedListener {
-        void onAccepted(long workOrderId);
+        void onAccepted(int workOrderid);
     }
 
     private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
         @Override
         public void onDispatch(OnAcceptedListener listener, Object... parameters) {
-            listener.onAccepted((Long) parameters[0]);
+            listener.onAccepted((int) parameters[0]);
         }
     };
 
@@ -887,13 +904,13 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Confirmed           -*/
     /*-*****************************-*/
     public interface OnConfirmedListener {
-        void onConfirmed(long workOrderId);
+        void onConfirmed(int workOrderid);
     }
 
     private static KeyedDispatcher<OnConfirmedListener> _onConfirmedDispatcher = new KeyedDispatcher<OnConfirmedListener>() {
         @Override
         public void onDispatch(OnConfirmedListener listener, Object... parameters) {
-            listener.onConfirmed((Long) parameters[0]);
+            listener.onConfirmed((int) parameters[0]);
         }
     };
 
@@ -907,5 +924,31 @@ public class EtaDialog extends FullScreenDialog {
 
     public static void removeAllOnConfirmedListener(String uid) {
         _onConfirmedDispatcher.removeAll(uid);
+    }
+
+    /*-*****************************-*/
+    /*-         Eta           -*/
+    /*-*****************************-*/
+    public interface OnEtaListener {
+        void onEta(int workOrderid);
+    }
+
+    private static KeyedDispatcher<OnEtaListener> _onEtaDispatcher = new KeyedDispatcher<OnEtaListener>() {
+        @Override
+        public void onDispatch(OnEtaListener listener, Object... parameters) {
+            listener.onEta((int) parameters[0]);
+        }
+    };
+
+    public static void addOnEtaListener(String uid, OnEtaListener onEtaListener) {
+        _onEtaDispatcher.add(uid, onEtaListener);
+    }
+
+    public static void removeOnEtaListener(String uid, OnEtaListener onEtaListener) {
+        _onEtaDispatcher.remove(uid, onEtaListener);
+    }
+
+    public static void removeAllOnEtaListener(String uid) {
+        _onEtaDispatcher.removeAll(uid);
     }
 }
