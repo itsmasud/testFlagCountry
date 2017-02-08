@@ -148,6 +148,47 @@ public class PayIncrease implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StatusEnum {
+        @Json(name = "declined")
+        DECLINED("declined"),
+        @Json(name = "pending")
+        PENDING("pending"),
+        @Json(name = "accepted")
+        ACCEPTED("accepted");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "accept")
+        ACCEPT("accept");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

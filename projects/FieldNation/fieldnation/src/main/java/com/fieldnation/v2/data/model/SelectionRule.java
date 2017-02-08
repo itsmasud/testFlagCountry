@@ -132,6 +132,45 @@ public class SelectionRule implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum StatusEnum {
+        @Json(name = "match")
+        MATCH("match"),
+        @Json(name = "no_match_optional")
+        NO_MATCH_OPTIONAL("no_match_optional"),
+        @Json(name = "no_match_required")
+        NO_MATCH_REQUIRED("no_match_required");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

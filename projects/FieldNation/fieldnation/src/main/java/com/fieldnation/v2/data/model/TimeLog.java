@@ -244,6 +244,43 @@ public class TimeLog implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StatusEnum {
+        @Json(name = "checked_in")
+        CHECKED_IN("checked_in"),
+        @Json(name = "checked_out")
+        CHECKED_OUT("checked_out");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "edit")
+        EDIT("edit");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

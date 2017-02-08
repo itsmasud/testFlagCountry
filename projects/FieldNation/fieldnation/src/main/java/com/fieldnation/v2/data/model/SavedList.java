@@ -132,6 +132,27 @@ public class SavedList implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum OrderEnum {
+        @Json(name = "asc")
+        ASC("asc"),
+        @Json(name = "desc")
+        DESC("desc");
+
+        private String value;
+
+        OrderEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

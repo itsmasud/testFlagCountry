@@ -212,6 +212,29 @@ public class Attachment implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StatusEnum {
+        @Json(name = "approved")
+        APPROVED("approved"),
+        @Json(name = "pending")
+        PENDING("pending"),
+        @Json(name = "denied")
+        DENIED("denied");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

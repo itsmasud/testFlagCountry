@@ -212,6 +212,107 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum NameEnum {
+        @Json(name = "insurance")
+        INSURANCE("insurance"),
+        @Json(name = "ratings_positive")
+        RATINGS_POSITIVE("ratings_positive"),
+        @Json(name = "assignment_less_then")
+        ASSIGNMENT_LESS_THEN("assignment_less_then"),
+        @Json(name = "skillset")
+        SKILLSET("skillset"),
+        @Json(name = "assignment_history")
+        ASSIGNMENT_HISTORY("assignment_history"),
+        @Json(name = "ratings_all")
+        RATINGS_ALL("ratings_all"),
+        @Json(name = "distance")
+        DISTANCE("distance"),
+        @Json(name = "custom_field_match")
+        CUSTOM_FIELD_MATCH("custom_field_match"),
+        @Json(name = "requests")
+        REQUESTS("requests"),
+        @Json(name = "completed_wo_company")
+        COMPLETED_WO_COMPANY("completed_wo_company"),
+        @Json(name = "background_check")
+        BACKGROUND_CHECK("background_check"),
+        @Json(name = "cancel_rate")
+        CANCEL_RATE("cancel_rate"),
+        @Json(name = "assignment_nearby")
+        ASSIGNMENT_NEARBY("assignment_nearby"),
+        @Json(name = "preferred_provider")
+        PREFERRED_PROVIDER("preferred_provider"),
+        @Json(name = "completed_wo_marketplace")
+        COMPLETED_WO_MARKETPLACE("completed_wo_marketplace"),
+        @Json(name = "block")
+        BLOCK("block"),
+        @Json(name = "has_verified")
+        HAS_VERIFIED("has_verified"),
+        @Json(name = "protec")
+        PROTEC("protec"),
+        @Json(name = "custom_provider_field")
+        CUSTOM_PROVIDER_FIELD("custom_provider_field"),
+        @Json(name = "custom_buyer_field")
+        CUSTOM_BUYER_FIELD("custom_buyer_field"),
+        @Json(name = "drug_test")
+        DRUG_TEST("drug_test");
+
+        private String value;
+
+        NameEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum StatusEnum {
+        @Json(name = "match")
+        MATCH("match"),
+        @Json(name = "no_match_optional")
+        NO_MATCH_OPTIONAL("no_match_optional"),
+        @Json(name = "no_match_required")
+        NO_MATCH_REQUIRED("no_match_required");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum OperationEnum {
+        @Json(name = "not_equal_to")
+        NOT_EQUAL_TO("not_equal_to"),
+        @Json(name = "equal_to")
+        EQUAL_TO("equal_to"),
+        @Json(name = "greater_than")
+        GREATER_THAN("greater_than"),
+        @Json(name = "less_than")
+        LESS_THAN("less_than");
+
+        private String value;
+
+        OperationEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

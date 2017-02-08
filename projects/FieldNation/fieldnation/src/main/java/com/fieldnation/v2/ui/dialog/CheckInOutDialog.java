@@ -35,7 +35,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
-import com.fieldnation.v2.data.model.StatusEnum;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -362,7 +361,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                 }
 
                 for (TimeLog timeLog : _workOrder.getTimeLogs().getResults()) {
-                    if (timeLog.getStatus() == StatusEnum.CHECKED_IN) {
+                    if (timeLog.getStatus() == TimeLog.StatusEnum.CHECKED_IN) {
                         if (_itemSelectedPosition > INVALID_NUMBER) {
                             timeLog.devices((double) _itemSelectedPosition);
                         }

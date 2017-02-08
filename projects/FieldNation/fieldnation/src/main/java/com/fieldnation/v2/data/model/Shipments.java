@@ -68,6 +68,25 @@ public class Shipments implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "unknown")
+        UNKNOWN("unknown");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

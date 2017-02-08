@@ -164,46 +164,6 @@ public class LocationsWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: getCountries
-     * Get a list of supported countries for selection
-     *
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void getCountries(Context context, boolean isBackground) {
-        try {
-            String key = misc.md5("GET//api/rest/v2/locations/countries");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("GET")
-                    .path("/api/rest/v2/locations/countries");
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//api/rest/v2/locations/countries")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/locations/countries",
-                                    LocationsWebApi.class, "getCountries"))
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-
-            new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subGetCountries() {
-        return register("TOPIC_ID_WEB_API_V2/locations/countries");
-    }
-
-    /**
      * Swagger operationId: addLocations
      * Add a location to company
      *
@@ -281,6 +241,46 @@ public class LocationsWebApi extends TopicClient {
 
     public boolean subGetLocations() {
         return register("TOPIC_ID_WEB_API_V2/locations");
+    }
+
+    /**
+     * Swagger operationId: getCountries
+     * Get a list of supported countries for selection
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getCountries(Context context, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/locations/countries");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/locations/countries");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/locations/countries")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/locations/countries",
+                                    LocationsWebApi.class, "getCountries"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetCountries() {
+        return register("TOPIC_ID_WEB_API_V2/locations/countries");
     }
 
     /**
@@ -459,13 +459,13 @@ public class LocationsWebApi extends TopicClient {
         public void onRemoveAttribute(boolean success, Error error) {
         }
 
-        public void onGetCountries(Countries countries, boolean success, Error error) {
-        }
-
         public void onAddLocations(IdResponse idResponse, boolean success, Error error) {
         }
 
         public void onGetLocations(StoredLocations storedLocations, boolean success, Error error) {
+        }
+
+        public void onGetCountries(Countries countries, boolean success, Error error) {
         }
 
         public void onRemoveNote(boolean success, Error error) {
@@ -520,12 +520,6 @@ public class LocationsWebApi extends TopicClient {
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "getCountries":
-                        if (success)
-                            successObject = Countries.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "addLocations":
                         if (success)
                             successObject = IdResponse.fromJson(new JsonObject(data));
@@ -535,6 +529,12 @@ public class LocationsWebApi extends TopicClient {
                     case "getLocations":
                         if (success)
                             successObject = StoredLocations.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getCountries":
+                        if (success)
+                            successObject = Countries.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -578,14 +578,14 @@ public class LocationsWebApi extends TopicClient {
                     case "removeAttribute":
                         listener.onRemoveAttribute(success, (Error) failObject);
                         break;
-                    case "getCountries":
-                        listener.onGetCountries((Countries) successObject, success, (Error) failObject);
-                        break;
                     case "addLocations":
                         listener.onAddLocations((IdResponse) successObject, success, (Error) failObject);
                         break;
                     case "getLocations":
                         listener.onGetLocations((StoredLocations) successObject, success, (Error) failObject);
+                        break;
+                    case "getCountries":
+                        listener.onGetCountries((Countries) successObject, success, (Error) failObject);
                         break;
                     case "removeNote":
                         listener.onRemoveNote(success, (Error) failObject);

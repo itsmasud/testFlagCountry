@@ -100,6 +100,27 @@ public class Fee implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum CalculationEnum {
+        @Json(name = "fixed")
+        FIXED("fixed"),
+        @Json(name = "percent")
+        PERCENT("percent");
+
+        private String value;
+
+        CalculationEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

@@ -38,8 +38,8 @@ import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.ui.dialog.v2.DurationPickerDialog;
-import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -351,7 +351,7 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
         _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
 
-        if (_schedule.getServiceWindow().getMode() == ModeEnum.EXACT) {
+        if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             _etaStartDateButton.setEnabled(false);
             _etaStartTimeButton.setEnabled(false);
         } else {
@@ -386,11 +386,11 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private boolean isValidEta(final Calendar arrival) {
-        if (_schedule.getServiceWindow().getMode() == ModeEnum.EXACT) {
+        if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             return true;
-        } else if (_schedule.getServiceWindow().getMode() == ModeEnum.HOURS) {
+        } else if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
             return isWithinBusinessHours(arrival, _schedule);
-        } else if (_schedule.getServiceWindow().getMode() == ModeEnum.BETWEEN) {
+        } else if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
             return isWithinRange(arrival, _schedule);
         }
         return true;
@@ -446,13 +446,13 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private static boolean passesMidnight(final Schedule schedule) {
-        if (schedule.getServiceWindow().getMode() == ModeEnum.EXACT) {
+        if (schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             return false;
         }
 
         try {
             // is business or range
-            if (schedule.getServiceWindow().getMode() == ModeEnum.HOURS) {
+            if (schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
                 Calendar scal = schedule.getServiceWindow().getStart().getCalendar();
                 Calendar ecal = schedule.getServiceWindow().getEnd().getCalendar();
 
@@ -467,12 +467,12 @@ public class EtaDialog extends FullScreenDialog {
 
 
     private boolean isLastDaySelected(final Calendar eta) {
-        if (_schedule.getServiceWindow().getMode() == ModeEnum.EXACT)
+        if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT)
             return false;
 
         try {
             // is business or range
-            if (_schedule.getServiceWindow().getMode() == ModeEnum.BETWEEN) {
+            if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
                 //Calendar scal = _schedule.getServiceWindow().getStart().getCalendar();
                 Calendar ecal = _schedule.getServiceWindow().getEnd().getCalendar();
 
@@ -509,7 +509,7 @@ public class EtaDialog extends FullScreenDialog {
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(App.get().getResources().getStringArray(R.array.schedule_capital_case_am_pm_array));
 
-            if (_schedule.getServiceWindow().getMode() == ModeEnum.HOURS) {
+            if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
                 Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
                 Calendar eCal = _schedule.getServiceWindow().getEnd().getCalendar();
 
@@ -532,7 +532,7 @@ public class EtaDialog extends FullScreenDialog {
 
                 return dateTimeString;
 
-            } else if (_schedule.getServiceWindow().getMode() == ModeEnum.BETWEEN) {
+            } else if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
                 Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
                 Calendar eCal = _schedule.getServiceWindow().getEnd().getCalendar();
 
@@ -673,7 +673,7 @@ public class EtaDialog extends FullScreenDialog {
                 return;
             }
 
-            if (_schedule.getServiceWindow().getMode() != ModeEnum.EXACT) {
+            if (_schedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
                 _durationMilliseconds = milliseconds;
                 populateUi();
             } else {

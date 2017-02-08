@@ -180,6 +180,29 @@ public class Expense implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StatusEnum {
+        @Json(name = "new")
+        NEW("new"),
+        @Json(name = "approved")
+        APPROVED("approved"),
+        @Json(name = "disapproved")
+        DISAPPROVED("disapproved");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

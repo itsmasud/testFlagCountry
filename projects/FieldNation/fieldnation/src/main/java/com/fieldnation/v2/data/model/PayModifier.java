@@ -148,6 +148,45 @@ public class PayModifier implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum CalculationEnum {
+        @Json(name = "fixed")
+        FIXED("fixed"),
+        @Json(name = "percent")
+        PERCENT("percent");
+
+        private String value;
+
+        CalculationEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "charge")
+        CHARGE("charge"),
+        @Json(name = "remove")
+        REMOVE("remove");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

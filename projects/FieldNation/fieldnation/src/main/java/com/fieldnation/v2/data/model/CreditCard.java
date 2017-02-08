@@ -100,6 +100,35 @@ public class CreditCard implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum TypeEnum {
+        @Json(name = "discover")
+        DISCOVER("discover"),
+        @Json(name = "diners club")
+        DINERS_CLUB("diners club"),
+        @Json(name = "american express")
+        AMERICAN_EXPRESS("american express"),
+        @Json(name = "visa")
+        VISA("visa"),
+        @Json(name = "jcb")
+        JCB("jcb"),
+        @Json(name = "mastercard")
+        MASTERCARD("mastercard");
+
+        private String value;
+
+        TypeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

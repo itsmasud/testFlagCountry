@@ -89,47 +89,6 @@ public class UsersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: sendAccountActivationLink
-     * Send account activation link
-     *
-     * @param userId User ID
-     * @param json   JSON Payload
-     */
-    public static void sendAccountActivationLink(Context context, Integer userId, String json) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/users/" + userId + "/verify/email");
-
-            if (json != null)
-                builder.body(json);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/email",
-                                    UsersWebApi.class, "sendAccountActivationLink"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subSendAccountActivationLink(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/email");
-    }
-
-    /**
      * Swagger operationId: updateSettingsByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -405,129 +364,6 @@ public class UsersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: setUserPreference
-     * Set user preference
-     *
-     * @param userId     User ID
-     * @param preference Preference Key
-     * @param json       JSON Model
-     */
-    public static void setUserPreference(Context context, Integer userId, String preference, String json) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
-
-            if (json != null)
-                builder.body(json);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference,
-                                    UsersWebApi.class, "setUserPreference"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subSetUserPreference(Integer userId, String preference) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference);
-    }
-
-    /**
-     * Swagger operationId: getUserPreferenceValueByKey
-     * Get user preference value
-     *
-     * @param userId       User ID
-     * @param preference   Preference Key
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean isBackground) {
-        try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("GET")
-                    .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference,
-                                    UsersWebApi.class, "getUserPreferenceValue"))
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-
-            new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subGetUserPreferenceValue(Integer userId, String preference) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference);
-    }
-
-    /**
-     * Swagger operationId: uploadProfilePhoto
-     * Upload profile photo
-     *
-     * @param userId User ID
-     * @param file   Photo to upload
-     */
-    public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/users/" + userId + "/profile/avatar")
-                    .multipartFile("file", file.getName(), Uri.fromFile(file));
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/profile/avatar",
-                                    UsersWebApi.class, "uploadProfilePhoto"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subUploadProfilePhoto(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/profile/avatar");
-    }
-
-    /**
      * Swagger operationId: swipNotification
      * Swip Notification
      *
@@ -563,84 +399,6 @@ public class UsersWebApi extends TopicClient {
 
     public boolean subSwipNotification(Integer userId, Integer notificationId) {
         return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/notifications/" + notificationId);
-    }
-
-    /**
-     * Swagger operationId: updateTourByUser
-     * Submit individual updates to the tour state as a user onboards the site.
-     *
-     * @param userId User ID
-     */
-    public static void updateTour(Context context, Integer userId) {
-        try {
-            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("PATCH")
-                    .path("/api/rest/v2/users/" + userId + "/tour");
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour",
-                                    UsersWebApi.class, "updateTour"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subUpdateTour(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour");
-    }
-
-    /**
-     * Swagger operationId: getTourByUser
-     * Submit individual updates to the tour state as a user onboards the site.
-     *
-     * @param userId       User ID
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void getTour(Context context, Integer userId, boolean isBackground) {
-        try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("GET")
-                    .path("/api/rest/v2/users/" + userId + "/tour");
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//api/rest/v2/users/{user_id}/tour")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour",
-                                    UsersWebApi.class, "getTour"))
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-
-            new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subGetTour(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour");
     }
 
     /**
@@ -682,47 +440,6 @@ public class UsersWebApi extends TopicClient {
 
     public boolean subGetUser(String user) {
         return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + user);
-    }
-
-    /**
-     * Swagger operationId: sendVerificationCodeViaVoiceCall
-     * Send account verification code via phone call
-     *
-     * @param userId User ID
-     * @param json   JSON Payload
-     */
-    public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/users/" + userId + "/verify/phone");
-
-            if (json != null)
-                builder.body(json);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/phone",
-                                    UsersWebApi.class, "sendVerificationCodeViaVoiceCall"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subSendVerificationCodeViaVoiceCall(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/phone");
     }
 
     /**
@@ -849,6 +566,289 @@ public class UsersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: sendAccountActivationLink
+     * Send account activation link
+     *
+     * @param userId User ID
+     * @param json   JSON Payload
+     */
+    public static void sendAccountActivationLink(Context context, Integer userId, String json) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/verify/email");
+
+            if (json != null)
+                builder.body(json);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/email",
+                                    UsersWebApi.class, "sendAccountActivationLink"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subSendAccountActivationLink(Integer userId) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/email");
+    }
+
+    /**
+     * Swagger operationId: setUserPreference
+     * Set user preference
+     *
+     * @param userId     User ID
+     * @param preference Preference Key
+     * @param json       JSON Model
+     */
+    public static void setUserPreference(Context context, Integer userId, String preference, String json) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
+
+            if (json != null)
+                builder.body(json);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference,
+                                    UsersWebApi.class, "setUserPreference"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subSetUserPreference(Integer userId, String preference) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference);
+    }
+
+    /**
+     * Swagger operationId: getUserPreferenceValueByKey
+     * Get user preference value
+     *
+     * @param userId       User ID
+     * @param preference   Preference Key
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference,
+                                    UsersWebApi.class, "getUserPreferenceValue"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetUserPreferenceValue(Integer userId, String preference) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference);
+    }
+
+    /**
+     * Swagger operationId: uploadProfilePhoto
+     * Upload profile photo
+     *
+     * @param userId User ID
+     * @param file   Photo to upload
+     */
+    public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/profile/avatar")
+                    .multipartFile("file", file.getName(), Uri.fromFile(file));
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/profile/avatar",
+                                    UsersWebApi.class, "uploadProfilePhoto"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subUploadProfilePhoto(Integer userId) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/profile/avatar");
+    }
+
+    /**
+     * Swagger operationId: updateTourByUser
+     * Submit individual updates to the tour state as a user onboards the site.
+     *
+     * @param userId User ID
+     */
+    public static void updateTour(Context context, Integer userId) {
+        try {
+            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PATCH")
+                    .path("/api/rest/v2/users/" + userId + "/tour");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour",
+                                    UsersWebApi.class, "updateTour"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subUpdateTour(Integer userId) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour");
+    }
+
+    /**
+     * Swagger operationId: getTourByUser
+     * Submit individual updates to the tour state as a user onboards the site.
+     *
+     * @param userId       User ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getTour(Context context, Integer userId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/tour");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/users/{user_id}/tour")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour",
+                                    UsersWebApi.class, "getTour"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetTour(Integer userId) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour");
+    }
+
+    /**
+     * Swagger operationId: sendVerificationCodeViaVoiceCall
+     * Send account verification code via phone call
+     *
+     * @param userId User ID
+     * @param json   JSON Payload
+     */
+    public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/verify/phone");
+
+            if (json != null)
+                builder.body(json);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/phone",
+                                    UsersWebApi.class, "sendVerificationCodeViaVoiceCall"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subSendVerificationCodeViaVoiceCall(Integer userId) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/phone");
+    }
+
+    /**
      * Swagger operationId: getWorkHistory
      * Get work history of a user
      *
@@ -905,9 +905,6 @@ public class UsersWebApi extends TopicClient {
         public void onSendVerificationCodeViaSms(boolean success, Error error) {
         }
 
-        public void onSendAccountActivationLink(boolean success, Error error) {
-        }
-
         public void onUpdateSettings(User user, boolean success, Error error) {
         }
 
@@ -929,28 +926,10 @@ public class UsersWebApi extends TopicClient {
         public void onGetPay(User user, boolean success, Error error) {
         }
 
-        public void onSetUserPreference(boolean success, Error error) {
-        }
-
-        public void onGetUserPreferenceValue(AaaaPlaceholder aaaaPlaceholder, boolean success, Error error) {
-        }
-
-        public void onUploadProfilePhoto(boolean success, Error error) {
-        }
-
         public void onSwipNotification(boolean success, Error error) {
         }
 
-        public void onUpdateTour(User user, boolean success, Error error) {
-        }
-
-        public void onGetTour(User user, boolean success, Error error) {
-        }
-
         public void onGetUser(User user, boolean success, Error error) {
-        }
-
-        public void onSendVerificationCodeViaVoiceCall(boolean success, Error error) {
         }
 
         public void onAddTypesOfWork(boolean success, Error error) {
@@ -960,6 +939,27 @@ public class UsersWebApi extends TopicClient {
         }
 
         public void onVerifyAccount(boolean success, Error error) {
+        }
+
+        public void onSendAccountActivationLink(boolean success, Error error) {
+        }
+
+        public void onSetUserPreference(boolean success, Error error) {
+        }
+
+        public void onGetUserPreferenceValue(AaaaPlaceholder aaaaPlaceholder, boolean success, Error error) {
+        }
+
+        public void onUploadProfilePhoto(boolean success, Error error) {
+        }
+
+        public void onUpdateTour(User user, boolean success, Error error) {
+        }
+
+        public void onGetTour(User user, boolean success, Error error) {
+        }
+
+        public void onSendVerificationCodeViaVoiceCall(boolean success, Error error) {
         }
 
         public void onGetWorkHistory(byte[] workHistory, boolean success, Error error) {
@@ -992,10 +992,6 @@ public class UsersWebApi extends TopicClient {
             try {
                 switch (transactionParams.apiFunction) {
                     case "sendVerificationCodeViaSms":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "sendAccountActivationLink":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -1039,6 +1035,34 @@ public class UsersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "swipNotification":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getUser":
+                        if (success)
+                            successObject = User.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "addTypesOfWork":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getUserTypesOfWork":
+                        if (success)
+                            successObject = TypesOfWork.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "verifyAccount":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "sendAccountActivationLink":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "setUserPreference":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
@@ -1050,10 +1074,6 @@ public class UsersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "uploadProfilePhoto":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "swipNotification":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -1069,27 +1089,7 @@ public class UsersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "getUser":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "sendVerificationCodeViaVoiceCall":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "addTypesOfWork":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getUserTypesOfWork":
-                        if (success)
-                            successObject = TypesOfWork.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "verifyAccount":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -1117,9 +1117,6 @@ public class UsersWebApi extends TopicClient {
                     case "sendVerificationCodeViaSms":
                         listener.onSendVerificationCodeViaSms(success, (Error) failObject);
                         break;
-                    case "sendAccountActivationLink":
-                        listener.onSendAccountActivationLink(success, (Error) failObject);
-                        break;
                     case "updateSettings":
                         listener.onUpdateSettings((User) successObject, success, (Error) failObject);
                         break;
@@ -1141,29 +1138,11 @@ public class UsersWebApi extends TopicClient {
                     case "getPay":
                         listener.onGetPay((User) successObject, success, (Error) failObject);
                         break;
-                    case "setUserPreference":
-                        listener.onSetUserPreference(success, (Error) failObject);
-                        break;
-                    case "getUserPreferenceValue":
-                        listener.onGetUserPreferenceValue((AaaaPlaceholder) successObject, success, (Error) failObject);
-                        break;
-                    case "uploadProfilePhoto":
-                        listener.onUploadProfilePhoto(success, (Error) failObject);
-                        break;
                     case "swipNotification":
                         listener.onSwipNotification(success, (Error) failObject);
                         break;
-                    case "updateTour":
-                        listener.onUpdateTour((User) successObject, success, (Error) failObject);
-                        break;
-                    case "getTour":
-                        listener.onGetTour((User) successObject, success, (Error) failObject);
-                        break;
                     case "getUser":
                         listener.onGetUser((User) successObject, success, (Error) failObject);
-                        break;
-                    case "sendVerificationCodeViaVoiceCall":
-                        listener.onSendVerificationCodeViaVoiceCall(success, (Error) failObject);
                         break;
                     case "addTypesOfWork":
                         listener.onAddTypesOfWork(success, (Error) failObject);
@@ -1173,6 +1152,27 @@ public class UsersWebApi extends TopicClient {
                         break;
                     case "verifyAccount":
                         listener.onVerifyAccount(success, (Error) failObject);
+                        break;
+                    case "sendAccountActivationLink":
+                        listener.onSendAccountActivationLink(success, (Error) failObject);
+                        break;
+                    case "setUserPreference":
+                        listener.onSetUserPreference(success, (Error) failObject);
+                        break;
+                    case "getUserPreferenceValue":
+                        listener.onGetUserPreferenceValue((AaaaPlaceholder) successObject, success, (Error) failObject);
+                        break;
+                    case "uploadProfilePhoto":
+                        listener.onUploadProfilePhoto(success, (Error) failObject);
+                        break;
+                    case "updateTour":
+                        listener.onUpdateTour((User) successObject, success, (Error) failObject);
+                        break;
+                    case "getTour":
+                        listener.onGetTour((User) successObject, success, (Error) failObject);
+                        break;
+                    case "sendVerificationCodeViaVoiceCall":
+                        listener.onSendVerificationCodeViaVoiceCall(success, (Error) failObject);
                         break;
                     case "getWorkHistory":
                         listener.onGetWorkHistory((byte[]) successObject, success, (Error) failObject);

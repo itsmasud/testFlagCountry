@@ -180,6 +180,43 @@ public class File implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StorageEnum {
+        @Json(name = "s3")
+        S3("s3");
+
+        private String value;
+
+        StorageEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum TypeEnum {
+        @Json(name = "file")
+        FILE("file"),
+        @Json(name = "link")
+        LINK("link");
+
+        private String value;
+
+        TypeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

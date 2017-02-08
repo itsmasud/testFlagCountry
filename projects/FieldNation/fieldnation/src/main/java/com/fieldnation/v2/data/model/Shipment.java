@@ -148,6 +148,51 @@ public class Shipment implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StatusEnum {
+        @Json(name = "arrived")
+        ARRIVED("arrived"),
+        @Json(name = "new")
+        NEW("new"),
+        @Json(name = "lost")
+        LOST("lost"),
+        @Json(name = "en_route")
+        EN_ROUTE("en_route"),
+        @Json(name = "error")
+        ERROR("error");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum DirectionEnum {
+        @Json(name = "from_site")
+        FROM_SITE("from_site"),
+        @Json(name = "to_site")
+        TO_SITE("to_site");
+
+        private String value;
+
+        DirectionEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

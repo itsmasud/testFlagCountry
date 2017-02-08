@@ -29,9 +29,8 @@ import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.ActionsEnum;
-import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -131,7 +130,6 @@ public class WorkOrderCard extends RelativeLayout {
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
         EtaDialog.addOnEtaListener(DIALOG_ETA, _etaDialog_onEta);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING, _markIncompleteWarningDialog_onMarkIncomplete);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
@@ -148,7 +146,6 @@ public class WorkOrderCard extends RelativeLayout {
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
         EtaDialog.removeOnEtaListener(DIALOG_ETA, _etaDialog_onEta);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING, _markIncompleteWarningDialog_onMarkIncomplete);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
@@ -211,7 +208,7 @@ public class WorkOrderCard extends RelativeLayout {
                 }
 
                 // exact
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ModeEnum.EXACT) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
                 try {
                     Calendar cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
@@ -223,7 +220,7 @@ public class WorkOrderCard extends RelativeLayout {
                 }
 
                 // range
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ModeEnum.HOURS) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
                 // business
                 try {
                     Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
@@ -238,7 +235,7 @@ public class WorkOrderCard extends RelativeLayout {
                     _dateTextView.setVisibility(GONE);
                 }
 
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ModeEnum.BETWEEN) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
                 // normal range
                 try {
                     Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
@@ -264,7 +261,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     private void populateLocation() {
         com.fieldnation.v2.data.model.Location location = _workOrder.getLocation();
-        if (location == null || location.getMode() == ModeEnum.REMOTE) {
+        if (location == null || location.getMode() == com.fieldnation.v2.data.model.Location.ModeEnum.REMOTE) {
             _locationTextView.setText(R.string.remote_work);
             _distanceTextView.setVisibility(GONE);
         } else {
@@ -349,7 +346,7 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateButtons() {
-        ActionsEnum[] actions = _workOrder.getSortedActions();
+        WorkOrder.ActionsEnum[] actions = _workOrder.getSortedActions();
 
         _primaryButton.setVisibility(GONE);
 
@@ -362,7 +359,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // Primary actions
-        for (ActionsEnum action : actions) {
+        for (WorkOrder.ActionsEnum action : actions) {
             if (action != null && populatePrimaryButton(_primaryButton, action))
                 break;
         }
@@ -371,7 +368,7 @@ public class WorkOrderCard extends RelativeLayout {
         int j = 0; // button index
         // assign supported actions to buttons until no more actions or no more buttons
         while (i < actions.length && j < _secondaryButtons.length) {
-            ActionsEnum action = actions[i];
+            WorkOrder.ActionsEnum action = actions[i];
 
             // only if the action has been assigned do we move to the next button
             if (action != null && populateSecondaryButton(_secondaryButtons[j], action)) {
@@ -381,7 +378,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
-    private boolean populatePrimaryButton(Button button, ActionsEnum action) {
+    private boolean populatePrimaryButton(Button button, WorkOrder.ActionsEnum action) {
         switch (action) {
 //            case ON_MY_WAY:
 //                button.setVisibility(VISIBLE);
@@ -404,21 +401,38 @@ public class WorkOrderCard extends RelativeLayout {
 //                button.setOnClickListener(_viewPayment_onClick);
 //                button.setText("VIEW PAYMENT");
 //                break;
-            case READY_TO_GO:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_readyToGo_onClick);
-                button.setText(R.string.btn_ready);
-                break;
-            case ACCEPT:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_accept_onClick);
-                button.setText(R.string.btn_accept);
-                break;
-            case CONFIRM:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_confirm_onClick);
-                button.setText(R.string.btn_confirm);
-                break;
+
+//            case READY_TO_GO:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_readyToGo_onClick);
+//                button.setText(R.string.btn_ready);
+//                break;
+//            case ACCEPT:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_accept_onClick);
+//                button.setText(R.string.btn_accept);
+//                break;
+//            case CONFIRM:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_confirm_onClick);
+//                button.setText(R.string.btn_confirm);
+//                break;
+//            case ACKNOWLEDGE:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_ackHold_onClick);
+//                button.setText("ACKNOWLEDGE HOLD");
+//                break;
+//            case WITHDRAW_REQUEST:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_withdraw_onClick);
+//                button.setText("WITHDRAW");
+//                break;
+//            case MARK_INCOMPLETE:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_incomplete_onClick);
+//                button.setText("INCOMPLETE");
+//                break;
+
             case REPORT_A_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_reportProblem_onClick);
@@ -429,16 +443,6 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setOnClickListener(_request_onClick);
                 button.setText(R.string.btn_request);
                 break;
-            case ACKNOWLEDGE:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_ackHold_onClick);
-                button.setText("ACKNOWLEDGE HOLD");
-                break;
-            case WITHDRAW_REQUEST:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_withdraw_onClick);
-                button.setText("WITHDRAW");
-                break;
             case CHECK_IN:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_checkIn_onClick);
@@ -448,11 +452,6 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_checkOut_onClick);
                 button.setText("CHECK OUT");
-                break;
-            case MARK_INCOMPLETE:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_incomplete_onClick);
-                button.setText("INCOMPLETE");
                 break;
             case ETA:
                 button.setVisibility(VISIBLE);
@@ -472,7 +471,7 @@ public class WorkOrderCard extends RelativeLayout {
     // circle-x-solid
     // problem-solid
     // time-issue-solid
-    private boolean populateSecondaryButton(IconFontButton button, ActionsEnum action) {
+    private boolean populateSecondaryButton(IconFontButton button, WorkOrder.ActionsEnum action) {
         switch (action) {
 //            case DECLINE:
 //                button.setVisibility(VISIBLE);
@@ -619,15 +618,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
-        }
-    };
-
-    private final EtaDialog.OnConfirmedListener _etaDialog_onConfirm = new EtaDialog.OnConfirmedListener() {
-        @Override
-        public void onConfirmed(int workOrderId) {
-            if (_workOrder.getWorkOrderId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
+            WorkordersWebApi.confirm(App.get(), _workOrder.getWorkOrderId());
         }
     };
 

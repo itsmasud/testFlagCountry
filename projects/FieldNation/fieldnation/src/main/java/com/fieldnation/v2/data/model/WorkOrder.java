@@ -567,6 +567,41 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "view_problem")
+        VIEW_PROBLEM("view_problem"),
+        @Json(name = "request")
+        REQUEST("request"),
+        @Json(name = "check_out")
+        CHECK_OUT("check_out"),
+        @Json(name = "report_a_problem")
+        REPORT_A_PROBLEM("report_a_problem"),
+        @Json(name = "eta")
+        ETA("eta"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "mark_complete")
+        MARK_COMPLETE("mark_complete"),
+        @Json(name = "check_in")
+        CHECK_IN("check_in"),
+        @Json(name = "messaging")
+        MESSAGING("messaging");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

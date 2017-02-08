@@ -68,6 +68,29 @@ public class ScheduleServiceWindow implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ModeEnum {
+        @Json(name = "hours")
+        HOURS("hours"),
+        @Json(name = "exact")
+        EXACT("exact"),
+        @Json(name = "between")
+        BETWEEN("between");
+
+        private String value;
+
+        ModeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

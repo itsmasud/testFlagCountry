@@ -84,6 +84,27 @@ public class AttachmentFolder implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum TypeEnum {
+        @Json(name = "document")
+        DOCUMENT("document"),
+        @Json(name = "slot")
+        SLOT("slot");
+
+        private String value;
+
+        TypeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

@@ -100,6 +100,45 @@ public class StoredLocations implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ModeEnum {
+        @Json(name = "custom")
+        CUSTOM("custom"),
+        @Json(name = "location")
+        LOCATION("location"),
+        @Json(name = "remote")
+        REMOTE("remote");
+
+        private String value;
+
+        ModeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "edit")
+        EDIT("edit");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/

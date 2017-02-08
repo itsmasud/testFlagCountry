@@ -228,6 +228,59 @@ public class FundTransaction implements Parcelable {
         return this;
     }
 
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum StatusEnum {
+        @Json(name = "holding")
+        HOLDING("holding"),
+        @Json(name = "pending")
+        PENDING("pending"),
+        @Json(name = "completed")
+        COMPLETED("completed"),
+        @Json(name = "failed")
+        FAILED("failed");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum TypeEnum {
+        @Json(name = "loan")
+        LOAN("loan"),
+        @Json(name = "insurance_fee")
+        INSURANCE_FEE("insurance_fee"),
+        @Json(name = "service_fee")
+        SERVICE_FEE("service_fee"),
+        @Json(name = "ccauth")
+        CCAUTH("ccauth"),
+        @Json(name = "deposit")
+        DEPOSIT("deposit"),
+        @Json(name = "payment")
+        PAYMENT("payment"),
+        @Json(name = "withdrawal")
+        WITHDRAWAL("withdrawal");
+
+        private String value;
+
+        TypeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
