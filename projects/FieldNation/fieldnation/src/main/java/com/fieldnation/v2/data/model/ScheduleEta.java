@@ -32,6 +32,10 @@ public class ScheduleEta implements Parcelable {
     @Json(name = "user")
     private User _user;
 
+    // Need to add
+    @Json(name = "notes")
+    private String _notes;
+
     @Json(name = "status")
     private ScheduleEtaStatus _status;
 

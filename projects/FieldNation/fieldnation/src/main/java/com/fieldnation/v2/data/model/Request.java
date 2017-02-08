@@ -17,29 +17,33 @@ import com.fieldnation.fnlog.Log;
 public class Request implements Parcelable {
     private static final String TAG = "Request";
 
+    // Counter offer stuff
     @Json(name = "schedule")
     private Schedule _schedule;
 
-    @Json(name = "expires")
-    private Date _expires;
+    @Json(name = "pay")
+    private Pay _pay;
 
-    @Json(name = "hour_estimate")
-    private Double _hourEstimate;
+    // Expenses (array) - ADD THIS
+    @Json(name = "expenses")
+    private Expense[] _expenses;
 
+    @Json(name = "counter_notes")
+    private String _counterNotes;
+
+
+    // REMOVE THIS!
     @Json(name = "notes")
     private String _notes;
+
+    @Json(name = "expires")
+    private Date _expires;
 
     @Json(name = "created")
     private Date _created;
 
     @Json(name = "active")
     private Boolean _active;
-
-    @Json(name = "pay")
-    private Pay _pay;
-
-    @Json(name = "counter_notes")
-    private String _counterNotes;
 
     @Json(name = "id")
     private Integer _id;
@@ -79,19 +83,6 @@ public class Request implements Parcelable {
 
     public Request expires(Date expires) {
         _expires = expires;
-        return this;
-    }
-
-    public void setHourEstimate(Double hourEstimate) {
-        _hourEstimate = hourEstimate;
-    }
-
-    public Double getHourEstimate() {
-        return _hourEstimate;
-    }
-
-    public Request hourEstimate(Double hourEstimate) {
-        _hourEstimate = hourEstimate;
         return this;
     }
 
