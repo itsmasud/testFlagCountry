@@ -14,8 +14,8 @@ import com.fieldnation.fnlog.Log;
  * Created by dmgen from swagger.
  */
 
-public class StatusPublishStats implements Parcelable {
-    private static final String TAG = "StatusPublishStats";
+public class WorkOrderPublishStats implements Parcelable {
+    private static final String TAG = "WorkOrderPublishStats";
 
     @Json(name = "routes")
     private Integer _routes;
@@ -26,7 +26,7 @@ public class StatusPublishStats implements Parcelable {
     @Json(name = "requests")
     private Integer _requests;
 
-    public StatusPublishStats() {
+    public WorkOrderPublishStats() {
     }
 
     public void setRoutes(Integer routes) {
@@ -37,7 +37,7 @@ public class StatusPublishStats implements Parcelable {
         return _routes;
     }
 
-    public StatusPublishStats routes(Integer routes) {
+    public WorkOrderPublishStats routes(Integer routes) {
         _routes = routes;
         return this;
     }
@@ -50,7 +50,7 @@ public class StatusPublishStats implements Parcelable {
         return _counterOffers;
     }
 
-    public StatusPublishStats counterOffers(Integer counterOffers) {
+    public WorkOrderPublishStats counterOffers(Integer counterOffers) {
         _counterOffers = counterOffers;
         return this;
     }
@@ -63,7 +63,7 @@ public class StatusPublishStats implements Parcelable {
         return _requests;
     }
 
-    public StatusPublishStats requests(Integer requests) {
+    public WorkOrderPublishStats requests(Integer requests) {
         _requests = requests;
         return this;
     }
@@ -71,17 +71,17 @@ public class StatusPublishStats implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static StatusPublishStats[] fromJsonArray(JsonArray array) {
-        StatusPublishStats[] list = new StatusPublishStats[array.size()];
+    public static WorkOrderPublishStats[] fromJsonArray(JsonArray array) {
+        WorkOrderPublishStats[] list = new WorkOrderPublishStats[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static StatusPublishStats fromJson(JsonObject obj) {
+    public static WorkOrderPublishStats fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(StatusPublishStats.class, obj);
+            return Unserializer.unserializeObject(WorkOrderPublishStats.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -92,9 +92,9 @@ public class StatusPublishStats implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(StatusPublishStats statusPublishStats) {
+    public static JsonObject toJson(WorkOrderPublishStats workOrderPublishStats) {
         try {
-            return Serializer.serializeObject(statusPublishStats);
+            return Serializer.serializeObject(workOrderPublishStats);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -104,12 +104,12 @@ public class StatusPublishStats implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<StatusPublishStats> CREATOR = new Parcelable.Creator<StatusPublishStats>() {
+    public static final Parcelable.Creator<WorkOrderPublishStats> CREATOR = new Parcelable.Creator<WorkOrderPublishStats>() {
 
         @Override
-        public StatusPublishStats createFromParcel(Parcel source) {
+        public WorkOrderPublishStats createFromParcel(Parcel source) {
             try {
-                return StatusPublishStats.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return WorkOrderPublishStats.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -117,8 +117,8 @@ public class StatusPublishStats implements Parcelable {
         }
 
         @Override
-        public StatusPublishStats[] newArray(int size) {
-            return new StatusPublishStats[size];
+        public WorkOrderPublishStats[] newArray(int size) {
+            return new WorkOrderPublishStats[size];
         }
     };
 

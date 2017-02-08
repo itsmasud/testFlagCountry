@@ -17,22 +17,89 @@ import com.fieldnation.fnlog.Log;
 public class Status implements Parcelable {
     private static final String TAG = "Status";
 
+    @Json(name = "code")
+    private String _code;
+
+    @Json(name = "delay")
+    private Integer _delay;
+
+    @Json(name = "is_routed")
+    private Boolean _isRouted;
+
+    @Json(name = "sub_status")
+    private String _subStatus;
+
     @Json(name = "display")
     private String _display;
 
     @Json(name = "name")
     private String _name;
 
+    @Json(name = "problem_reported")
+    private Boolean _problemReported;
+
+    @Json(name = "ncns")
+    private Boolean _ncns;
+
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "publish_stats")
-    private StatusPublishStats _publishStats;
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     public Status() {
+    }
+
+    public void setCode(String code) {
+        _code = code;
+    }
+
+    public String getCode() {
+        return _code;
+    }
+
+    public Status code(String code) {
+        _code = code;
+        return this;
+    }
+
+    public void setDelay(Integer delay) {
+        _delay = delay;
+    }
+
+    public Integer getDelay() {
+        return _delay;
+    }
+
+    public Status delay(Integer delay) {
+        _delay = delay;
+        return this;
+    }
+
+    public void setIsRouted(Boolean isRouted) {
+        _isRouted = isRouted;
+    }
+
+    public Boolean getIsRouted() {
+        return _isRouted;
+    }
+
+    public Status isRouted(Boolean isRouted) {
+        _isRouted = isRouted;
+        return this;
+    }
+
+    public void setSubStatus(String subStatus) {
+        _subStatus = subStatus;
+    }
+
+    public String getSubStatus() {
+        return _subStatus;
+    }
+
+    public Status subStatus(String subStatus) {
+        _subStatus = subStatus;
+        return this;
     }
 
     public void setDisplay(String display) {
@@ -61,6 +128,45 @@ public class Status implements Parcelable {
         return this;
     }
 
+    public void setProblemReported(Boolean problemReported) {
+        _problemReported = problemReported;
+    }
+
+    public Boolean getProblemReported() {
+        return _problemReported;
+    }
+
+    public Status problemReported(Boolean problemReported) {
+        _problemReported = problemReported;
+        return this;
+    }
+
+    public void setNcns(Boolean ncns) {
+        _ncns = ncns;
+    }
+
+    public Boolean getNcns() {
+        return _ncns;
+    }
+
+    public Status ncns(Boolean ncns) {
+        _ncns = ncns;
+        return this;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return _correlationId;
+    }
+
+    public Status correlationId(String correlationId) {
+        _correlationId = correlationId;
+        return this;
+    }
+
     public void setId(Integer id) {
         _id = id;
     }
@@ -71,32 +177,6 @@ public class Status implements Parcelable {
 
     public Status id(Integer id) {
         _id = id;
-        return this;
-    }
-
-    public void setPublishStats(StatusPublishStats publishStats) {
-        _publishStats = publishStats;
-    }
-
-    public StatusPublishStats getPublishStats() {
-        return _publishStats;
-    }
-
-    public Status publishStats(StatusPublishStats publishStats) {
-        _publishStats = publishStats;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Status actions(ActionsEnum[] actions) {
-        _actions = actions;
         return this;
     }
 

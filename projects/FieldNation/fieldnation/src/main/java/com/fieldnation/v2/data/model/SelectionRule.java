@@ -17,28 +17,40 @@ import com.fieldnation.fnlog.Log;
 public class SelectionRule implements Parcelable {
     private static final String TAG = "SelectionRule";
 
-    @Json(name = "criteria")
-    private SelectionRuleCriteria[] _criteria;
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
 
     @Json(name = "name")
     private String _name;
 
+    @Json(name = "sum")
+    private SelectionRuleSum _sum;
+
     @Json(name = "id")
     private Integer _id;
+
+    @Json(name = "actions")
+    private ActionsEnum _actions;
+
+    @Json(name = "results")
+    private SelectionRuleCriteria[] _results;
+
+    @Json(name = "status")
+    private StatusEnum _status;
 
     public SelectionRule() {
     }
 
-    public void setCriteria(SelectionRuleCriteria[] criteria) {
-        _criteria = criteria;
+    public void setMetadata(ListEnvelope metadata) {
+        _metadata = metadata;
     }
 
-    public SelectionRuleCriteria[] getCriteria() {
-        return _criteria;
+    public ListEnvelope getMetadata() {
+        return _metadata;
     }
 
-    public SelectionRule criteria(SelectionRuleCriteria[] criteria) {
-        _criteria = criteria;
+    public SelectionRule metadata(ListEnvelope metadata) {
+        _metadata = metadata;
         return this;
     }
 
@@ -55,6 +67,19 @@ public class SelectionRule implements Parcelable {
         return this;
     }
 
+    public void setSum(SelectionRuleSum sum) {
+        _sum = sum;
+    }
+
+    public SelectionRuleSum getSum() {
+        return _sum;
+    }
+
+    public SelectionRule sum(SelectionRuleSum sum) {
+        _sum = sum;
+        return this;
+    }
+
     public void setId(Integer id) {
         _id = id;
     }
@@ -65,6 +90,45 @@ public class SelectionRule implements Parcelable {
 
     public SelectionRule id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setActions(ActionsEnum actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum getActions() {
+        return _actions;
+    }
+
+    public SelectionRule actions(ActionsEnum actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setResults(SelectionRuleCriteria[] results) {
+        _results = results;
+    }
+
+    public SelectionRuleCriteria[] getResults() {
+        return _results;
+    }
+
+    public SelectionRule results(SelectionRuleCriteria[] results) {
+        _results = results;
+        return this;
+    }
+
+    public void setStatus(StatusEnum status) {
+        _status = status;
+    }
+
+    public StatusEnum getStatus() {
+        return _status;
+    }
+
+    public SelectionRule status(StatusEnum status) {
+        _status = status;
         return this;
     }
 

@@ -26,6 +26,12 @@ public enum ActionsEnum {
     ACKNOWLEDGE("acknowledge"),
     @Json(name = "check_in")
     CHECK_IN("check_in"),
+    @Json(name = "ready_to_go")
+    READY_TO_GO("ready_to_go"),
+    @Json(name = "delete")
+    DELETE("delete"),
+    @Json(name = "unknown")
+    UNKNOWN("unknown"),
     @Json(name = "check_out")
     CHECK_OUT("check_out"),
     @Json(name = "report_a_problem")

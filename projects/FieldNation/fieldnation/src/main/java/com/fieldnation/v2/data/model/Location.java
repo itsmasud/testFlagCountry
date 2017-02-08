@@ -438,4 +438,57 @@ public class Location implements Parcelable {
             return _city + ", " + _state;
     }
 
+    public String getTopAddressLine() {
+        if (getAddress1() != null || getAddress2() != null) {
+            String address1 = null;
+            String address2 = null;
+
+            if (getAddress1() != null)
+                address1 = getAddress1();
+            if (getAddress2() != null)
+                address2 = getAddress2();
+
+            if (misc.isEmptyOrNull(address1))
+                address1 = null;
+            if (misc.isEmptyOrNull(address2))
+                address2 = null;
+
+            if (address1 == null)
+                address1 = address2;
+            else if (address2 != null) {
+                address1 = (address1 + "\n" + address2).trim();
+            }
+
+            if (address1 != null) {
+                return address1;
+            } else {
+                return "";
+            }
+        } else {
+            return "";
+        }
+    }
+
+    public String getFullAddressOneLine() {
+        String address = "";
+
+        String topAddr = getTopAddressLine();
+        if (!misc.isEmptyOrNull(topAddr)) {
+            address += topAddr + ", ";
+        }
+
+        if (!misc.isEmptyOrNull(_city)
+                && !misc.isEmptyOrNull(_state)
+                && !misc.isEmptyOrNull(_zip)
+                && !misc.isEmptyOrNull(_country)) {
+            address += _city + ", " + _state;
+        }
+
+        if (!misc.isEmptyOrNull(_zip)) {
+            address += " " + _zip;
+        }
+
+        return address.trim();
+    }
+
 }

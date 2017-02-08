@@ -1,19 +1,23 @@
 package com.fieldnation.v2.ui.workorder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
@@ -24,12 +28,14 @@ import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.ActionsEnum;
 import com.fieldnation.v2.data.model.ModeEnum;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 
@@ -121,7 +127,7 @@ public class WorkOrderCard extends RelativeLayout {
         if (!BuildConfig.DEBUG)
             _testButton.setVisibility(GONE);
 
-        // DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
+        DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -137,7 +143,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        // DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
+        DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -196,7 +202,6 @@ public class WorkOrderCard extends RelativeLayout {
                 try {
                     Calendar cal = _workOrder.getSchedule().getEta().getStart().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
-
                     _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -224,7 +229,6 @@ public class WorkOrderCard extends RelativeLayout {
                     Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
                             + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
-
                     _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
                             + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
                 } catch (Exception ex) {
@@ -315,32 +319,33 @@ public class WorkOrderCard extends RelativeLayout {
                 _amountTextView.setVisibility(INVISIBLE);
                 break;
         }
-/*
-TODO         if (pay.getStatus() != null) {
-            switch (pay.getStatus()) {
-                case PENDING:
+
+        if (!misc.isEmptyOrNull(_workOrder.getStatus().getName())) {
+            switch (_workOrder.getStatus().getName().toLowerCase()) {
+                case "approved":
                     _amountTextView.setVisibility(VISIBLE);
                     _payTypeTextView.setVisibility(VISIBLE);
                     _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
                     _payTypeTextView.setText("APPROVED");
                     break;
-                case PAID:
+                case "paid":
                     _amountTextView.setVisibility(VISIBLE);
                     _payTypeTextView.setVisibility(VISIBLE);
                     _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
                     _payTypeTextView.setText("PAID");
                     break;
-                case UNPAID:
+                case "work done":
                     _amountTextView.setVisibility(VISIBLE);
                     _payTypeTextView.setVisibility(VISIBLE);
                     // we use the payment value set above, because total isn't set at this stage
                     _payTypeTextView.setText("IN REVIEW");
                     break;
                 default:
+                    Log.v(TAG, "break!");
                     break;
             }
         }
-*/
+
     }
 
     private void populateButtons() {
@@ -376,37 +381,49 @@ TODO         if (pay.getStatus() != null) {
         }
     }
 
-
     private boolean populatePrimaryButton(Button button, ActionsEnum action) {
         switch (action) {
+//            case ON_MY_WAY:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_onMyWay_onClick);
+//                button.setText(R.string.btn_on_my_way);
+//                break;
+//            case READY:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_readyToGo_onClick);
+//                button.setText(R.string.btn_confirm);
+//                break;
+//            case READY_TO_GO:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_readyToGo_onClick);
+//                button.setText(R.string.btn_ready);
+//                break;
+//            case VIEW_BUNDLE:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_viewBundle_onClick);
+//                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+//                break;
+//            case MARK_COMPLETE:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_complete_onClick);
+//                button.setText("COMPLETE");
+//                break;
+//            // don't have a payment id in the current data structure
+//            case VIEW_PAYMENT:
+//                button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_viewPayment_onClick);
+//                button.setText("VIEW PAYMENT");
+//                break;
             case ACCEPT:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_accept_onClick);
                 button.setText(R.string.btn_accept);
                 break;
-
             case CONFIRM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_confirm_onClick);
                 button.setText(R.string.btn_confirm);
                 break;
-/*
-            case ON_MY_WAY:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_onMyWay_onClick);
-                button.setText(R.string.btn_on_my_way);
-                break;
-            case READY:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_readyToGo_onClick);
-                button.setText(R.string.btn_confirm);
-                break;
-            case READY_TO_GO:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_readyToGo_onClick);
-                button.setText(R.string.btn_ready);
-                break;
-*/
             case REPORT_A_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_reportProblem_onClick);
@@ -417,13 +434,6 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_request_onClick);
                 button.setText(R.string.btn_request);
                 break;
-/*
-            case VIEW_BUNDLE:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_viewBundle_onClick);
-                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
-                break;
-*/
             case ACKNOWLEDGE:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_ackHold_onClick);
@@ -449,23 +459,6 @@ TODO         if (pay.getStatus() != null) {
                 button.setOnClickListener(_incomplete_onClick);
                 button.setText("INCOMPLETE");
                 break;
-/*
-                case MARK_COMPLETE:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_complete_onClick);
-                    button.setText("COMPLETE");
-                    break;
-*//*
-
-*/
-/*              // don't have a payment id in the current data structure
-                case VIEW_PAYMENT:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_viewPayment_onClick);
-                    button.setText("VIEW PAYMENT");
-                    break;
-*/
-
             default:
                 return false;
         }
@@ -481,49 +474,43 @@ TODO         if (pay.getStatus() != null) {
     // time-issue-solid
     private boolean populateSecondaryButton(IconFontButton button, ActionsEnum action) {
         switch (action) {
-/*
-            case DECLINE:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_circle_x_solid);
-                button.setOnClickListener(_decline_onClick);
-                break;
-            case RUNNING_LATE:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_time_issue_solid);
-                button.setOnClickListener(_runningLate_onClick);
-                break;
-*/
+//            case DECLINE:
+//                button.setVisibility(VISIBLE);
+//                button.setText(R.string.icon_circle_x_solid);
+//                button.setOnClickListener(_decline_onClick);
+//                break;
+//            case RUNNING_LATE:
+//                button.setVisibility(VISIBLE);
+//                button.setText(R.string.icon_time_issue_solid);
+//                button.setOnClickListener(_runningLate_onClick);
+//                break;
+//            case PHONE:
+//                button.setVisibility(VISIBLE);
+//                button.setText(R.string.icon_phone_solid);
+//                button.setOnClickListener(_phone_onClick);
+//                break;
+//            case MAP:
+//                button.setVisibility(VISIBLE);
+//                button.setText(R.string.icon_map_location_solid);
+//                button.setOnClickListener(_map_onClick);
+//                break;
+
             case REPORT_A_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
                 break;
-/*
-            case PHONE:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_phone_solid);
-                button.setOnClickListener(_phone_onClick);
-                break;
-*/
             case MESSAGING:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_chat_solid);
                 button.setOnClickListener(_message_onClick);
                 break;
-/*
-            case MAP:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_map_location_solid);
-                button.setOnClickListener(_map_onClick);
-                break;
-*/
             default:
                 button.setVisibility(GONE);
                 return false;
         }
         return true;
     }
-
 
     private final OnClickListener _incomplete_onClick = new OnClickListener() {
         @Override
@@ -566,7 +553,6 @@ TODO         if (pay.getStatus() != null) {
         }
     };
 
-
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
         @Override
         public void onCheckIn(long workOrderId) {
@@ -574,7 +560,6 @@ TODO         if (pay.getStatus() != null) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, (int) workOrderId);
         }
     };
-
 
     private final OnClickListener _checkOut_onClick = new OnClickListener() {
         @Override
@@ -590,7 +575,6 @@ TODO         if (pay.getStatus() != null) {
         }
     };
 
-
     private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
         @Override
         public void onCheckOut(long workOrderId) {
@@ -598,7 +582,6 @@ TODO         if (pay.getStatus() != null) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, (int) workOrderId);
         }
     };
-
 
     private final OnClickListener _request_onClick = new OnClickListener() {
         @Override
@@ -608,7 +591,6 @@ TODO         if (pay.getStatus() != null) {
         }
     };
 
-
     private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
         @Override
         public void onRequested(long workOrderId) {
@@ -616,7 +598,6 @@ TODO         if (pay.getStatus() != null) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, (int) workOrderId);
         }
     };
-
 
     private final OnClickListener _accept_onClick = new OnClickListener() {
         @Override
@@ -650,18 +631,14 @@ TODO         if (pay.getStatus() != null) {
         }
     };
 
-/*
     private final OnClickListener _decline_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getWorkOrderId());
-            DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getWorkOrderId(), _workOrder.getOrg().getWorkOrderId());
+            DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
         }
     };
-*/
 
-
-/*
     private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
         @Override
         public void onDeclined(long workOrderId) {
@@ -669,8 +646,6 @@ TODO         if (pay.getStatus() != null) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, workOrderId);
         }
     };
-*/
-
 
 /*
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
@@ -691,15 +666,13 @@ TODO         if (pay.getStatus() != null) {
     };
 */
 
-/*
     private final OnClickListener _viewBundle_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_BUNDLE, null, _workOrder.getWorkOrderId());
-            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getWorkOrderId());
+            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
         }
     };
-*/
 
 /*
     private final OnClickListener _readyToGo_onClick = new OnClickListener() {
@@ -726,6 +699,7 @@ TODO         if (pay.getStatus() != null) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, (int) workorderId);
         }
     };
+
 
 /*
     private final OnClickListener _phone_onClick = new OnClickListener() {
@@ -787,13 +761,13 @@ TODO         if (pay.getStatus() != null) {
         }
     };
 
-/*
     private final OnClickListener _map_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.DIRECTIONS, null, _workOrder.getWorkOrderId());
             if (_workOrder != null) {
-                com.fieldnation.data.v2.Location location = _workOrder.getLocation();
+                com.fieldnation.v2.data.model.Location location = _workOrder.getLocation();
+
                 if (location != null) {
                     try {
                         String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
@@ -810,7 +784,6 @@ TODO         if (pay.getStatus() != null) {
             }
         }
     };
-*/
 
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override

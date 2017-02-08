@@ -18,7 +18,7 @@ public class SelectionRuleCriteria implements Parcelable {
     private static final String TAG = "SelectionRuleCriteria";
 
     @Json(name = "custom_field")
-    private Integer _customField;
+    private CustomField _customField;
 
     @Json(name = "extra")
     private String _extra;
@@ -56,15 +56,15 @@ public class SelectionRuleCriteria implements Parcelable {
     public SelectionRuleCriteria() {
     }
 
-    public void setCustomField(Integer customField) {
+    public void setCustomField(CustomField customField) {
         _customField = customField;
     }
 
-    public Integer getCustomField() {
+    public CustomField getCustomField() {
         return _customField;
     }
 
-    public SelectionRuleCriteria customField(Integer customField) {
+    public SelectionRuleCriteria customField(CustomField customField) {
         _customField = customField;
         return this;
     }

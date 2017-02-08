@@ -56,6 +56,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "policy_and_procedures")
     private RichText _policyAndProcedures;
 
+    @Json(name = "publish_stats")
+    private WorkOrderPublishStats _publishStats;
+
     @Json(name = "bundle")
     private Bundle _bundle;
 
@@ -275,6 +278,19 @@ public class WorkOrder implements Parcelable {
 
     public WorkOrder policyAndProcedures(RichText policyAndProcedures) {
         _policyAndProcedures = policyAndProcedures;
+        return this;
+    }
+
+    public void setPublishStats(WorkOrderPublishStats publishStats) {
+        _publishStats = publishStats;
+    }
+
+    public WorkOrderPublishStats getPublishStats() {
+        return _publishStats;
+    }
+
+    public WorkOrder publishStats(WorkOrderPublishStats publishStats) {
+        _publishStats = publishStats;
         return this;
     }
 
