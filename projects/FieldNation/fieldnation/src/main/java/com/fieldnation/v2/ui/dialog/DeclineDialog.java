@@ -21,6 +21,7 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
@@ -230,25 +231,23 @@ public class DeclineDialog extends SimpleDialog {
                 }
 
                 if (_declinePosition == -1) {
-/*
-TODO                    WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
+
+                    WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
                     ProfileClient.actionBlockCompany(
                             App.get(),
                             App.get().getProfile().getUserId(),
                             _companyId,
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
-*/
+
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-/*
-TODO                    WorkOrderClient.actionDecline(
+                    WorkOrderClient.actionDecline(
                             App.get(),
                             _workOrderId,
                             _declineReasonIds[_declinePosition],
                             _declineEditText.getText().toString());
-*/
 
                     ProfileClient.actionBlockCompany(
                             App.get(),
@@ -261,11 +260,11 @@ TODO                    WorkOrderClient.actionDecline(
                 }
             } else {
                 if (_declinePosition == -1) {
-//TODO                    WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
+                    WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-//TODO                    WorkOrderClient.actionDecline(App.get(), _workOrderId, _declineReasonIds[_declinePosition], _declineEditText.getText().toString());
+                    WorkOrderClient.actionDecline(App.get(), _workOrderId, _declineReasonIds[_declinePosition], _declineEditText.getText().toString());
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 }

@@ -32,6 +32,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
@@ -750,10 +751,9 @@ public class EtaDialog extends FullScreenDialog {
                     case PARAM_DIALOG_TYPE_REQUEST:
                         _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
 
-                        // TODO build the request and send it
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
-/*
+
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
@@ -761,16 +761,15 @@ public class EtaDialog extends FullScreenDialog {
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
-*/
+
                         } else {
-/*
+
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
                                     _expiringDurationSeconds,
                                     null, null,
                                     _noteEditText.getText().toString().trim());
-*/
                         }
                         dismiss(true);
                         break;
@@ -779,28 +778,40 @@ public class EtaDialog extends FullScreenDialog {
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
-/*
-TODO                            WorkorderClient.actionConfirm(
+                            WorkorderClient.actionConfirm(
                                     App.get(),
                                     _workOrderId,
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
-*/
                         } else {
-/*
                             WorkorderClient.actionConfirm(
                                     App.get(),
                                     _workOrderId,
                                     null, null,
                                     _noteEditText.getText().toString().trim());
-*/
                         }
                         dismiss(true);
                         break;
                     case PARAM_DIALOG_TYPE_ETA:
                         _onEtaDispatcher.dispatch(getUid(), _workOrderId);
-                        // TODO ETA API call
+
+                        if (_etaSwitch.isChecked()) {
+                            String startDate = ISO8601.fromCalendar(_etaStart);
+                            WorkorderClient.actionConfirm(
+                                    App.get(),
+                                    _workOrderId,
+                                    startDate,
+                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                    _noteEditText.getText().toString().trim());
+                        } else {
+                            WorkorderClient.actionConfirm(
+                                    App.get(),
+                                    _workOrderId,
+                                    null, null,
+                                    _noteEditText.getText().toString().trim());
+                        }
+
                         dismiss(true);
                         break;
                     case PARAM_DIALOG_TYPE_ACCEPT:
@@ -810,7 +821,6 @@ TODO                            WorkorderClient.actionConfirm(
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
-/*
                             WorkorderClient.actionAcceptAssignment(
                                     App.get(),
                                     _workOrderId,
@@ -818,16 +828,13 @@ TODO                            WorkorderClient.actionConfirm(
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim(),
                                     _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
-*/
                         } else {
-/*
                             WorkorderClient.actionAcceptAssignment(
                                     App.get(),
                                     _workOrderId,
                                     null, null,
                                     _noteEditText.getText().toString().trim(),
                                     _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
-*/
                         }
                         dismiss(true);
                         break;

@@ -22,6 +22,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.ReportProblemType;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
@@ -540,7 +541,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
-            // TODO WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
+            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
         }
     };
 
@@ -624,7 +625,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
-            //WorkordersWebApi.confirm(App.get(), _workOrder.getWorkOrderId());
+            WorkordersWebApi.confirm(App.get(), _workOrder.getWorkOrderId());
         }
     };
 
