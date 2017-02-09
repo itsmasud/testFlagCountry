@@ -72,7 +72,7 @@ public class SavedSearchRow extends RelativeLayout {
         if (_savedList == null)
             return;
 
-        _titleTextView.setText(_savedList.getLabel() + " (" + _savedList.getCount() + ")");
+        _titleTextView.setText(_savedList.getTitle());
     }
 
     private final OnClickListener _title_onClick = new OnClickListener() {

@@ -96,7 +96,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         if (_savedList != null) {
             _recyclerView.startSearch(_savedList);
-            NavActivity.this.setTitle(misc.capitalize(_savedList.getLabel() + " (" + _savedList.getCount() + ")"));
+            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
         } else {
             NavActivity.this.setTitle(misc.capitalize("LOADING..."));
@@ -146,7 +146,7 @@ public class NavActivity extends AuthSimpleActivity {
             if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
                 _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
                 _recyclerView.startSearch(_savedList);
-                NavActivity.this.setTitle(misc.capitalize(_savedList.getLabel() + " (" + _savedList.getCount() + ")"));
+                NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
             }
         }
         super.onRestoreInstanceState(savedInstanceState);
@@ -227,7 +227,7 @@ public class NavActivity extends AuthSimpleActivity {
         public void onChange(SavedList savedList) {
             _savedList = savedList;
             _recyclerView.startSearch(_savedList);
-            NavActivity.this.setTitle(misc.capitalize(_savedList.getLabel() + " (" + _savedList.getCount() + ")"));
+            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
             SavedSearchTracker.onListChanged(App.get(), _savedList.getLabel());
         }
     };
@@ -244,7 +244,7 @@ public class NavActivity extends AuthSimpleActivity {
             if (_savedList == null) {
                 _savedList = savedList[0];
                 _recyclerView.startSearch(_savedList);
-                NavActivity.this.setTitle(misc.capitalize(_savedList.getLabel() + " (" + _savedList.getCount() + ")"));
+                NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
             }
         }
     };
