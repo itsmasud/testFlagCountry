@@ -17,16 +17,29 @@ import com.fieldnation.fnlog.Log;
 public class AttachmentFolders implements Parcelable {
     private static final String TAG = "AttachmentFolders";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "results")
     private AttachmentFolder[] _results;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     public AttachmentFolders() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public AttachmentFolders actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) {
@@ -52,19 +65,6 @@ public class AttachmentFolders implements Parcelable {
 
     public AttachmentFolders results(AttachmentFolder[] results) {
         _results = results;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public AttachmentFolders actions(ActionsEnum[] actions) {
-        _actions = actions;
         return this;
     }
 

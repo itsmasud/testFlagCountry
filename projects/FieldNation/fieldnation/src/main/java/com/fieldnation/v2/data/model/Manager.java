@@ -17,8 +17,26 @@ import com.fieldnation.fnlog.Log;
 public class Manager implements Parcelable {
     private static final String TAG = "Manager";
 
+    @Json(name = "approval_days")
+    private Integer _approvalDays;
+
+    @Json(name = "email")
+    private String _email;
+
+    @Json(name = "first_name")
+    private String _firstName;
+
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "last_name")
+    private String _lastName;
+
     @Json(name = "phone")
     private String _phone;
+
+    @Json(name = "rating")
+    private Double _rating;
 
     @Json(name = "ratings")
     private Double _ratings;
@@ -26,25 +44,72 @@ public class Manager implements Parcelable {
     @Json(name = "review_period_days")
     private Integer _reviewPeriodDays;
 
-    @Json(name = "rating")
-    private Double _rating;
-
-    @Json(name = "last_name")
-    private String _lastName;
-
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "approval_days")
-    private Integer _approvalDays;
-
-    @Json(name = "first_name")
-    private String _firstName;
-
-    @Json(name = "email")
-    private String _email;
-
     public Manager() {
+    }
+
+    public void setApprovalDays(Integer approvalDays) {
+        _approvalDays = approvalDays;
+    }
+
+    public Integer getApprovalDays() {
+        return _approvalDays;
+    }
+
+    public Manager approvalDays(Integer approvalDays) {
+        _approvalDays = approvalDays;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        _email = email;
+    }
+
+    public String getEmail() {
+        return _email;
+    }
+
+    public Manager email(String email) {
+        _email = email;
+        return this;
+    }
+
+    public void setFirstName(String firstName) {
+        _firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return _firstName;
+    }
+
+    public Manager firstName(String firstName) {
+        _firstName = firstName;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Manager id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setLastName(String lastName) {
+        _lastName = lastName;
+    }
+
+    public String getLastName() {
+        return _lastName;
+    }
+
+    public Manager lastName(String lastName) {
+        _lastName = lastName;
+        return this;
     }
 
     public void setPhone(String phone) {
@@ -57,6 +122,19 @@ public class Manager implements Parcelable {
 
     public Manager phone(String phone) {
         _phone = phone;
+        return this;
+    }
+
+    public void setRating(Double rating) {
+        _rating = rating;
+    }
+
+    public Double getRating() {
+        return _rating;
+    }
+
+    public Manager rating(Double rating) {
+        _rating = rating;
         return this;
     }
 
@@ -83,84 +161,6 @@ public class Manager implements Parcelable {
 
     public Manager reviewPeriodDays(Integer reviewPeriodDays) {
         _reviewPeriodDays = reviewPeriodDays;
-        return this;
-    }
-
-    public void setRating(Double rating) {
-        _rating = rating;
-    }
-
-    public Double getRating() {
-        return _rating;
-    }
-
-    public Manager rating(Double rating) {
-        _rating = rating;
-        return this;
-    }
-
-    public void setLastName(String lastName) {
-        _lastName = lastName;
-    }
-
-    public String getLastName() {
-        return _lastName;
-    }
-
-    public Manager lastName(String lastName) {
-        _lastName = lastName;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public Manager id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setApprovalDays(Integer approvalDays) {
-        _approvalDays = approvalDays;
-    }
-
-    public Integer getApprovalDays() {
-        return _approvalDays;
-    }
-
-    public Manager approvalDays(Integer approvalDays) {
-        _approvalDays = approvalDays;
-        return this;
-    }
-
-    public void setFirstName(String firstName) {
-        _firstName = firstName;
-    }
-
-    public String getFirstName() {
-        return _firstName;
-    }
-
-    public Manager firstName(String firstName) {
-        _firstName = firstName;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        _email = email;
-    }
-
-    public String getEmail() {
-        return _email;
-    }
-
-    public Manager email(String email) {
-        _email = email;
         return this;
     }
 

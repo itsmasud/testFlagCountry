@@ -1,10 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -40,6 +42,49 @@ public class CompanyWebApi extends TopicClient {
 
     public boolean subCompanyWebApi() {
         return register("TOPIC_ID_WEB_API_V2/CompanyWebApi");
+    }
+
+    /**
+     * Swagger operationId: getIntegrations
+     * Get a list of all company_integrations for a company.
+     *
+     * @param companyId null
+     * @param accessToken null
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getIntegrations(Context context, String companyId, String accessToken, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/" + companyId + "/integrations")
+                    .urlParams("?access_token=" + accessToken);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/integrations",
+                                    CompanyWebApi.class, "getIntegrations"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetIntegrations(String companyId) {
+        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/integrations");
     }
 
     /**
@@ -118,49 +163,6 @@ public class CompanyWebApi extends TopicClient {
         }
     }
 
-    /**
-     * Swagger operationId: getIntegrations
-     * Get a list of all company_integrations for a company.
-     *
-     * @param companyId    null
-     * @param accessToken  null
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void getIntegrations(Context context, String companyId, String accessToken, boolean isBackground) {
-        try {
-            String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("GET")
-                    .path("/api/rest/v2/company/" + companyId + "/integrations")
-                    .urlParams("?access_token=" + accessToken);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/integrations",
-                                    CompanyWebApi.class, "getIntegrations"))
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-
-            new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subGetIntegrations(String companyId) {
-        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/integrations");
-    }
-
 
     /*-**********************************-*/
     /*-             Listener             -*/
@@ -174,10 +176,10 @@ public class CompanyWebApi extends TopicClient {
         public void onCompanyWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onUpdateFund(boolean success, Error error) {
+        public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
         }
 
-        public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
+        public void onUpdateFund(boolean success, Error error) {
         }
 
     }
@@ -206,14 +208,14 @@ public class CompanyWebApi extends TopicClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (transactionParams.apiFunction) {
-                    case "updateFund":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "getIntegrations":
                         if (success)
                             successObject = CompanyIntegrations.fromJson(new JsonObject(data));
                         else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "updateFund":
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -231,11 +233,11 @@ public class CompanyWebApi extends TopicClient {
             try {
                 listener.onCompanyWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
-                    case "updateFund":
-                        listener.onUpdateFund(success, (Error) failObject);
-                        break;
                     case "getIntegrations":
                         listener.onGetIntegrations((CompanyIntegrations) successObject, success, (Error) failObject);
+                        break;
+                    case "updateFund":
+                        listener.onUpdateFund(success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

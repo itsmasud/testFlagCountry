@@ -17,44 +17,31 @@ import com.fieldnation.fnlog.Log;
 public class MessageTo implements Parcelable {
     private static final String TAG = "MessageTo";
 
-    @Json(name = "thumbnail")
-    private String _thumbnail;
-
-    @Json(name = "role")
-    private String _role;
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "name")
     private String _name;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "thumbnail")
+    private String _thumbnail;
 
     public MessageTo() {
     }
 
-    public void setThumbnail(String thumbnail) {
-        _thumbnail = thumbnail;
+    public void setId(Integer id) {
+        _id = id;
     }
 
-    public String getThumbnail() {
-        return _thumbnail;
+    public Integer getId() {
+        return _id;
     }
 
-    public MessageTo thumbnail(String thumbnail) {
-        _thumbnail = thumbnail;
-        return this;
-    }
-
-    public void setRole(String role) {
-        _role = role;
-    }
-
-    public String getRole() {
-        return _role;
-    }
-
-    public MessageTo role(String role) {
-        _role = role;
+    public MessageTo id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -71,16 +58,29 @@ public class MessageTo implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
+    public void setRole(String role) {
+        _role = role;
     }
 
-    public Integer getId() {
-        return _id;
+    public String getRole() {
+        return _role;
     }
 
-    public MessageTo id(Integer id) {
-        _id = id;
+    public MessageTo role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        _thumbnail = thumbnail;
+    }
+
+    public String getThumbnail() {
+        return _thumbnail;
+    }
+
+    public MessageTo thumbnail(String thumbnail) {
+        _thumbnail = thumbnail;
         return this;
     }
 

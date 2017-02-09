@@ -359,9 +359,16 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // Primary actions
+        boolean havePrimary = false;
         for (WorkOrder.ActionsEnum action : actions) {
-            if (action != null && populatePrimaryButton(_primaryButton, action))
+            if (action != null && populatePrimaryButtonWorkOrderActions(_primaryButton, action)) {
+                havePrimary = true;
                 break;
+            }
+        }
+
+        if (!havePrimary) {
+
         }
 
         int i = 0; // action index
@@ -378,7 +385,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
-    private boolean populatePrimaryButton(Button button, WorkOrder.ActionsEnum action) {
+    private boolean populatePrimaryButtonWorkOrderActions(Button button, WorkOrder.ActionsEnum action) {
         switch (action) {
 //            case ON_MY_WAY:
 //                button.setVisibility(VISIBLE);
@@ -432,7 +439,6 @@ public class WorkOrderCard extends RelativeLayout {
 //                button.setOnClickListener(_incomplete_onClick);
 //                button.setText("INCOMPLETE");
 //                break;
-
             case REPORT_A_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_reportProblem_onClick);
@@ -618,7 +624,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
-            WorkordersWebApi.confirm(App.get(), _workOrder.getWorkOrderId());
+            //WorkordersWebApi.confirm(App.get(), _workOrder.getWorkOrderId());
         }
     };
 

@@ -45,6 +45,47 @@ public class StaffWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getEmailTemplates
+     * Get email templates by category.
+     *
+     * @param category email category
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getEmailTemplates(Context context, String category, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/staff/email-templates/category/" + category);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/staff/email-templates/category/" + category);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/staff/email-templates/category/{category}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi/" + category,
+                                    StaffWebApi.class, "getEmailTemplates"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetEmailTemplates(String category) {
+        return register("TOPIC_ID_WEB_API_V2/StaffWebApi/" + category);
+    }
+
+    /**
      * Swagger operationId: getRobocalls
      * Get robocalls
      *
@@ -84,47 +125,6 @@ public class StaffWebApi extends TopicClient {
         return register("TOPIC_ID_WEB_API_V2/staff/robocalls");
     }
 
-    /**
-     * Swagger operationId: getEmailTemplates
-     * Get email templates by category.
-     *
-     * @param category     email category
-     * @param isBackground indicates that this call is low priority
-     */
-    public static void getEmailTemplates(Context context, String category, boolean isBackground) {
-        try {
-            String key = misc.md5("GET//api/rest/v2/staff/email-templates/category/" + category);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("GET")
-                    .path("/api/rest/v2/staff/email-templates/category/" + category);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("GET//api/rest/v2/staff/email-templates/category/{category}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi/" + category,
-                                    StaffWebApi.class, "getEmailTemplates"))
-                    .useAuth(true)
-                    .isSyncCall(isBackground)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-
-            new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subGetEmailTemplates(String category) {
-        return register("TOPIC_ID_WEB_API_V2/StaffWebApi/" + category);
-    }
-
 
     /*-**********************************-*/
     /*-             Listener             -*/
@@ -138,10 +138,10 @@ public class StaffWebApi extends TopicClient {
         public void onStaffWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
-        public void onGetRobocalls(Robocalls robocalls, boolean success, Error error) {
+        public void onGetEmailTemplates(EmailTemplates emailTemplates, boolean success, Error error) {
         }
 
-        public void onGetEmailTemplates(EmailTemplates emailTemplates, boolean success, Error error) {
+        public void onGetRobocalls(Robocalls robocalls, boolean success, Error error) {
         }
 
     }
@@ -170,15 +170,15 @@ public class StaffWebApi extends TopicClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (transactionParams.apiFunction) {
-                    case "getRobocalls":
-                        if (success)
-                            successObject = Robocalls.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "getEmailTemplates":
                         if (success)
                             successObject = EmailTemplates.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getRobocalls":
+                        if (success)
+                            successObject = Robocalls.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -197,11 +197,11 @@ public class StaffWebApi extends TopicClient {
             try {
                 listener.onStaffWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
-                    case "getRobocalls":
-                        listener.onGetRobocalls((Robocalls) successObject, success, (Error) failObject);
-                        break;
                     case "getEmailTemplates":
                         listener.onGetEmailTemplates((EmailTemplates) successObject, success, (Error) failObject);
+                        break;
+                    case "getRobocalls":
+                        listener.onGetRobocalls((Robocalls) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

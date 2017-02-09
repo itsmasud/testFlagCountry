@@ -17,115 +17,76 @@ import com.fieldnation.fnlog.Log;
 public class Pay implements Parcelable {
     private static final String TAG = "Pay";
 
-    @Json(name = "number_of_devices")
-    private Double _numberOfDevices;
-
-    @Json(name = "fees")
-    private PayFees _fees;
-
-    @Json(name = "role")
-    private String _role;
-
-    @Json(name = "estimated_payment_date")
-    private Date _estimatedPaymentDate;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "additional")
     private PayAdditional _additional;
 
-    @Json(name = "range")
-    private PayRange _range;
-
-    @Json(name = "type")
-    private String _type;
-
-    @Json(name = "labor_sum")
-    private Double _laborSum;
-
-    @Json(name = "pricing_insights")
-    private PricingInsights _pricingInsights;
-
-    @Json(name = "hold")
-    private Fee _hold;
-
-    @Json(name = "total")
-    private Double _total;
-
-    @Json(name = "status_id")
-    private Integer _statusId;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
+    @Json(name = "base")
+    private PayBase _base;
 
     @Json(name = "correlation_id")
     private String _correlationId;
 
-    @Json(name = "payment")
-    private Fee _payment;
+    @Json(name = "estimated_payment_date")
+    private Date _estimatedPaymentDate;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "fees")
+    private PayFees _fees;
 
     @Json(name = "finance")
     private PayFinance _finance;
 
+    @Json(name = "hold")
+    private Fee _hold;
+
+    @Json(name = "labor_sum")
+    private Double _laborSum;
+
+    @Json(name = "number_of_devices")
+    private Double _numberOfDevices;
+
+    @Json(name = "payment")
+    private Fee _payment;
+
+    @Json(name = "pricing_insights")
+    private PricingInsights _pricingInsights;
+
+    @Json(name = "range")
+    private PayRange _range;
+
     @Json(name = "reported_hours")
     private Double _reportedHours;
 
-    @Json(name = "base")
-    private PayBase _base;
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "status_id")
+    private Integer _statusId;
+
+    @Json(name = "total")
+    private Double _total;
+
+    @Json(name = "type")
+    private String _type;
+
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
 
     public Pay() {
     }
 
-    public void setNumberOfDevices(Double numberOfDevices) {
-        _numberOfDevices = numberOfDevices;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public Double getNumberOfDevices() {
-        return _numberOfDevices;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public Pay numberOfDevices(Double numberOfDevices) {
-        _numberOfDevices = numberOfDevices;
-        return this;
-    }
-
-    public void setFees(PayFees fees) {
-        _fees = fees;
-    }
-
-    public PayFees getFees() {
-        return _fees;
-    }
-
-    public Pay fees(PayFees fees) {
-        _fees = fees;
-        return this;
-    }
-
-    public void setRole(String role) {
-        _role = role;
-    }
-
-    public String getRole() {
-        return _role;
-    }
-
-    public Pay role(String role) {
-        _role = role;
-        return this;
-    }
-
-    public void setEstimatedPaymentDate(Date estimatedPaymentDate) {
-        _estimatedPaymentDate = estimatedPaymentDate;
-    }
-
-    public Date getEstimatedPaymentDate() {
-        return _estimatedPaymentDate;
-    }
-
-    public Pay estimatedPaymentDate(Date estimatedPaymentDate) {
-        _estimatedPaymentDate = estimatedPaymentDate;
+    public Pay actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -142,107 +103,16 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setRange(PayRange range) {
-        _range = range;
+    public void setBase(PayBase base) {
+        _base = base;
     }
 
-    public PayRange getRange() {
-        return _range;
+    public PayBase getBase() {
+        return _base;
     }
 
-    public Pay range(PayRange range) {
-        _range = range;
-        return this;
-    }
-
-    public void setType(String type) {
-        _type = type;
-    }
-
-    public String getType() {
-        return _type;
-    }
-
-    public Pay type(String type) {
-        _type = type;
-        return this;
-    }
-
-    public void setLaborSum(Double laborSum) {
-        _laborSum = laborSum;
-    }
-
-    public Double getLaborSum() {
-        return _laborSum;
-    }
-
-    public Pay laborSum(Double laborSum) {
-        _laborSum = laborSum;
-        return this;
-    }
-
-    public void setPricingInsights(PricingInsights pricingInsights) {
-        _pricingInsights = pricingInsights;
-    }
-
-    public PricingInsights getPricingInsights() {
-        return _pricingInsights;
-    }
-
-    public Pay pricingInsights(PricingInsights pricingInsights) {
-        _pricingInsights = pricingInsights;
-        return this;
-    }
-
-    public void setHold(Fee hold) {
-        _hold = hold;
-    }
-
-    public Fee getHold() {
-        return _hold;
-    }
-
-    public Pay hold(Fee hold) {
-        _hold = hold;
-        return this;
-    }
-
-    public void setTotal(Double total) {
-        _total = total;
-    }
-
-    public Double getTotal() {
-        return _total;
-    }
-
-    public Pay total(Double total) {
-        _total = total;
-        return this;
-    }
-
-    public void setStatusId(Integer statusId) {
-        _statusId = statusId;
-    }
-
-    public Integer getStatusId() {
-        return _statusId;
-    }
-
-    public Pay statusId(Integer statusId) {
-        _statusId = statusId;
-        return this;
-    }
-
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public Pay workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
+    public Pay base(PayBase base) {
+        _base = base;
         return this;
     }
 
@@ -259,29 +129,29 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setPayment(Fee payment) {
-        _payment = payment;
+    public void setEstimatedPaymentDate(Date estimatedPaymentDate) {
+        _estimatedPaymentDate = estimatedPaymentDate;
     }
 
-    public Fee getPayment() {
-        return _payment;
+    public Date getEstimatedPaymentDate() {
+        return _estimatedPaymentDate;
     }
 
-    public Pay payment(Fee payment) {
-        _payment = payment;
+    public Pay estimatedPaymentDate(Date estimatedPaymentDate) {
+        _estimatedPaymentDate = estimatedPaymentDate;
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setFees(PayFees fees) {
+        _fees = fees;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public PayFees getFees() {
+        return _fees;
     }
 
-    public Pay actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public Pay fees(PayFees fees) {
+        _fees = fees;
         return this;
     }
 
@@ -298,6 +168,84 @@ public class Pay implements Parcelable {
         return this;
     }
 
+    public void setHold(Fee hold) {
+        _hold = hold;
+    }
+
+    public Fee getHold() {
+        return _hold;
+    }
+
+    public Pay hold(Fee hold) {
+        _hold = hold;
+        return this;
+    }
+
+    public void setLaborSum(Double laborSum) {
+        _laborSum = laborSum;
+    }
+
+    public Double getLaborSum() {
+        return _laborSum;
+    }
+
+    public Pay laborSum(Double laborSum) {
+        _laborSum = laborSum;
+        return this;
+    }
+
+    public void setNumberOfDevices(Double numberOfDevices) {
+        _numberOfDevices = numberOfDevices;
+    }
+
+    public Double getNumberOfDevices() {
+        return _numberOfDevices;
+    }
+
+    public Pay numberOfDevices(Double numberOfDevices) {
+        _numberOfDevices = numberOfDevices;
+        return this;
+    }
+
+    public void setPayment(Fee payment) {
+        _payment = payment;
+    }
+
+    public Fee getPayment() {
+        return _payment;
+    }
+
+    public Pay payment(Fee payment) {
+        _payment = payment;
+        return this;
+    }
+
+    public void setPricingInsights(PricingInsights pricingInsights) {
+        _pricingInsights = pricingInsights;
+    }
+
+    public PricingInsights getPricingInsights() {
+        return _pricingInsights;
+    }
+
+    public Pay pricingInsights(PricingInsights pricingInsights) {
+        _pricingInsights = pricingInsights;
+        return this;
+    }
+
+    public void setRange(PayRange range) {
+        _range = range;
+    }
+
+    public PayRange getRange() {
+        return _range;
+    }
+
+    public Pay range(PayRange range) {
+        _range = range;
+        return this;
+    }
+
     public void setReportedHours(Double reportedHours) {
         _reportedHours = reportedHours;
     }
@@ -311,16 +259,68 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setBase(PayBase base) {
-        _base = base;
+    public void setRole(String role) {
+        _role = role;
     }
 
-    public PayBase getBase() {
-        return _base;
+    public String getRole() {
+        return _role;
     }
 
-    public Pay base(PayBase base) {
-        _base = base;
+    public Pay role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setStatusId(Integer statusId) {
+        _statusId = statusId;
+    }
+
+    public Integer getStatusId() {
+        return _statusId;
+    }
+
+    public Pay statusId(Integer statusId) {
+        _statusId = statusId;
+        return this;
+    }
+
+    public void setTotal(Double total) {
+        _total = total;
+    }
+
+    public Double getTotal() {
+        return _total;
+    }
+
+    public Pay total(Double total) {
+        _total = total;
+        return this;
+    }
+
+    public void setType(String type) {
+        _type = type;
+    }
+
+    public String getType() {
+        return _type;
+    }
+
+    public Pay type(String type) {
+        _type = type;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public Pay workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
         return this;
     }
 

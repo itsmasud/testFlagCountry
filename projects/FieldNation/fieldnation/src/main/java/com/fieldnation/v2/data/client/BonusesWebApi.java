@@ -1,10 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -14,12 +16,11 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
-import com.fieldnation.v2.data.model.PayModifier;
 
 /**
  * Created by dmgen from swagger.
@@ -41,6 +42,46 @@ public class BonusesWebApi extends TopicClient {
 
     public boolean subBonusesWebApi() {
         return register("TOPIC_ID_WEB_API_V2/BonusesWebApi");
+    }
+
+    /**
+     * Swagger operationId: addBonus
+     * Adds a bonus that can be applied to a work order to increase the amount paid upon a condition being met
+     *
+     * @param json JSON Model
+     */
+    public static void addBonus(Context context, PayModifier json) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/bonuses");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/bonuses");
+
+            if (json != null)
+                builder.body(json.toJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/bonuses")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/bonuses",
+                                    BonusesWebApi.class, "addBonus"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subAddBonus() {
+        return register("TOPIC_ID_WEB_API_V2/bonuses");
     }
 
     /**
@@ -85,7 +126,7 @@ public class BonusesWebApi extends TopicClient {
      * Updates a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
      * @param bonusId Bonus ID
-     * @param json    JSON Model
+     * @param json JSON Model
      */
     public static void updateBonus(Context context, Integer bonusId, PayModifier json) {
         try {
@@ -121,46 +162,6 @@ public class BonusesWebApi extends TopicClient {
         return register("TOPIC_ID_WEB_API_V2/BonusesWebApi/" + bonusId);
     }
 
-    /**
-     * Swagger operationId: addBonus
-     * Adds a bonus that can be applied to a work order to increase the amount paid upon a condition being met
-     *
-     * @param json JSON Model
-     */
-    public static void addBonus(Context context, PayModifier json) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/bonuses");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/bonuses");
-
-            if (json != null)
-                builder.body(json.toJson().toString());
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/bonuses")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/bonuses",
-                                    BonusesWebApi.class, "addBonus"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    public boolean subAddBonus() {
-        return register("TOPIC_ID_WEB_API_V2/bonuses");
-    }
-
 
     /*-**********************************-*/
     /*-             Listener             -*/
@@ -174,13 +175,13 @@ public class BonusesWebApi extends TopicClient {
         public void onBonusesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
+        public void onAddBonus(IdResponse idResponse, boolean success, Error error) {
+        }
+
         public void onRemoveBonus(boolean success, Error error) {
         }
 
         public void onUpdateBonus(boolean success, Error error) {
-        }
-
-        public void onAddBonus(IdResponse idResponse, boolean success, Error error) {
         }
 
     }
@@ -209,18 +210,18 @@ public class BonusesWebApi extends TopicClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (transactionParams.apiFunction) {
+                    case "addBonus":
+                        if (success)
+                            successObject = IdResponse.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "removeBonus":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateBonus":
                         if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "addBonus":
-                        if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
-                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -238,14 +239,14 @@ public class BonusesWebApi extends TopicClient {
             try {
                 listener.onBonusesWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
+                    case "addBonus":
+                        listener.onAddBonus((IdResponse) successObject, success, (Error) failObject);
+                        break;
                     case "removeBonus":
                         listener.onRemoveBonus(success, (Error) failObject);
                         break;
                     case "updateBonus":
                         listener.onUpdateBonus(success, (Error) failObject);
-                        break;
-                    case "addBonus":
-                        listener.onAddBonus((IdResponse) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

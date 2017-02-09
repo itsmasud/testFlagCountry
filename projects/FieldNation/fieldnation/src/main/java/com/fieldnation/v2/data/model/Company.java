@@ -20,11 +20,11 @@ public class Company implements Parcelable {
     @Json(name = "features")
     private String[] _features;
 
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "id")
     private Integer _id;
+
+    @Json(name = "name")
+    private String _name;
 
     public Company() {
     }
@@ -42,19 +42,6 @@ public class Company implements Parcelable {
         return this;
     }
 
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public Company name(String name) {
-        _name = name;
-        return this;
-    }
-
     public void setId(Integer id) {
         _id = id;
     }
@@ -65,6 +52,19 @@ public class Company implements Parcelable {
 
     public Company id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public Company name(String name) {
+        _name = name;
         return this;
     }
 

@@ -17,22 +17,35 @@ import com.fieldnation.fnlog.Log;
 public class CustomFieldCategory implements Parcelable {
     private static final String TAG = "CustomFieldCategory";
 
+    @Json(name = "id")
+    private Integer _id;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
-
-    @Json(name = "role")
-    private String _role;
 
     @Json(name = "name")
     private String _name;
 
-    @Json(name = "id")
-    private Integer _id;
-
     @Json(name = "results")
     private CustomField[] _results;
 
+    @Json(name = "role")
+    private String _role;
+
     public CustomFieldCategory() {
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public CustomFieldCategory id(Integer id) {
+        _id = id;
+        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) {
@@ -45,19 +58,6 @@ public class CustomFieldCategory implements Parcelable {
 
     public CustomFieldCategory metadata(ListEnvelope metadata) {
         _metadata = metadata;
-        return this;
-    }
-
-    public void setRole(String role) {
-        _role = role;
-    }
-
-    public String getRole() {
-        return _role;
-    }
-
-    public CustomFieldCategory role(String role) {
-        _role = role;
         return this;
     }
 
@@ -74,19 +74,6 @@ public class CustomFieldCategory implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public CustomFieldCategory id(Integer id) {
-        _id = id;
-        return this;
-    }
-
     public void setResults(CustomField[] results) {
         _results = results;
     }
@@ -97,6 +84,19 @@ public class CustomFieldCategory implements Parcelable {
 
     public CustomFieldCategory results(CustomField[] results) {
         _results = results;
+        return this;
+    }
+
+    public void setRole(String role) {
+        _role = role;
+    }
+
+    public String getRole() {
+        return _role;
+    }
+
+    public CustomFieldCategory role(String role) {
+        _role = role;
         return this;
     }
 

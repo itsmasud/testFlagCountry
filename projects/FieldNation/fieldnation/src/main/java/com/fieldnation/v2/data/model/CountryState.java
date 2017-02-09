@@ -17,29 +17,16 @@ import com.fieldnation.fnlog.Log;
 public class CountryState implements Parcelable {
     private static final String TAG = "CountryState";
 
-    @Json(name = "values")
-    private CountryStateValues[] _values;
-
     @Json(name = "label")
     private String _label;
 
     @Json(name = "required")
     private Boolean _required;
 
+    @Json(name = "values")
+    private CountryStateValues[] _values;
+
     public CountryState() {
-    }
-
-    public void setValues(CountryStateValues[] values) {
-        _values = values;
-    }
-
-    public CountryStateValues[] getValues() {
-        return _values;
-    }
-
-    public CountryState values(CountryStateValues[] values) {
-        _values = values;
-        return this;
     }
 
     public void setLabel(String label) {
@@ -65,6 +52,19 @@ public class CountryState implements Parcelable {
 
     public CountryState required(Boolean required) {
         _required = required;
+        return this;
+    }
+
+    public void setValues(CountryStateValues[] values) {
+        _values = values;
+    }
+
+    public CountryStateValues[] getValues() {
+        return _values;
+    }
+
+    public CountryState values(CountryStateValues[] values) {
+        _values = values;
         return this;
     }
 

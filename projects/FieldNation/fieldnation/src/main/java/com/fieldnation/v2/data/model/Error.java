@@ -17,32 +17,19 @@ import com.fieldnation.fnlog.Log;
 public class Error implements Parcelable {
     private static final String TAG = "Error";
 
-    @Json(name = "trace")
-    private ErrorTrace[] _trace;
-
     @Json(name = "code")
     private Integer _code;
-
-    @Json(name = "message")
-    private String _message;
 
     @Json(name = "fields")
     private String _fields;
 
+    @Json(name = "message")
+    private String _message;
+
+    @Json(name = "trace")
+    private ErrorTrace[] _trace;
+
     public Error() {
-    }
-
-    public void setTrace(ErrorTrace[] trace) {
-        _trace = trace;
-    }
-
-    public ErrorTrace[] getTrace() {
-        return _trace;
-    }
-
-    public Error trace(ErrorTrace[] trace) {
-        _trace = trace;
-        return this;
     }
 
     public void setCode(Integer code) {
@@ -55,6 +42,19 @@ public class Error implements Parcelable {
 
     public Error code(Integer code) {
         _code = code;
+        return this;
+    }
+
+    public void setFields(String fields) {
+        _fields = fields;
+    }
+
+    public String getFields() {
+        return _fields;
+    }
+
+    public Error fields(String fields) {
+        _fields = fields;
         return this;
     }
 
@@ -71,16 +71,16 @@ public class Error implements Parcelable {
         return this;
     }
 
-    public void setFields(String fields) {
-        _fields = fields;
+    public void setTrace(ErrorTrace[] trace) {
+        _trace = trace;
     }
 
-    public String getFields() {
-        return _fields;
+    public ErrorTrace[] getTrace() {
+        return _trace;
     }
 
-    public Error fields(String fields) {
-        _fields = fields;
+    public Error trace(ErrorTrace[] trace) {
+        _trace = trace;
         return this;
     }
 

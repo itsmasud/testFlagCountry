@@ -17,20 +17,8 @@ import com.fieldnation.fnlog.Log;
 public class File implements Parcelable {
     private static final String TAG = "File";
 
-    @Json(name = "thumbnail")
-    private String _thumbnail;
-
-    @Json(name = "size_bytes")
-    private Integer _sizeBytes;
-
-    @Json(name = "mime")
-    private String _mime;
-
-    @Json(name = "preview_full")
-    private String _previewFull;
-
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "description")
+    private String _description;
 
     @Json(name = "icon")
     private String _icon;
@@ -38,11 +26,23 @@ public class File implements Parcelable {
     @Json(name = "link")
     private String _link;
 
-    @Json(name = "description")
-    private String _description;
+    @Json(name = "mime")
+    private String _mime;
+
+    @Json(name = "name")
+    private String _name;
+
+    @Json(name = "preview_full")
+    private String _previewFull;
+
+    @Json(name = "size_bytes")
+    private Integer _sizeBytes;
 
     @Json(name = "storage")
     private StorageEnum _storage;
+
+    @Json(name = "thumbnail")
+    private String _thumbnail;
 
     @Json(name = "type")
     private TypeEnum _type;
@@ -50,68 +50,16 @@ public class File implements Parcelable {
     public File() {
     }
 
-    public void setThumbnail(String thumbnail) {
-        _thumbnail = thumbnail;
+    public void setDescription(String description) {
+        _description = description;
     }
 
-    public String getThumbnail() {
-        return _thumbnail;
+    public String getDescription() {
+        return _description;
     }
 
-    public File thumbnail(String thumbnail) {
-        _thumbnail = thumbnail;
-        return this;
-    }
-
-    public void setSizeBytes(Integer sizeBytes) {
-        _sizeBytes = sizeBytes;
-    }
-
-    public Integer getSizeBytes() {
-        return _sizeBytes;
-    }
-
-    public File sizeBytes(Integer sizeBytes) {
-        _sizeBytes = sizeBytes;
-        return this;
-    }
-
-    public void setMime(String mime) {
-        _mime = mime;
-    }
-
-    public String getMime() {
-        return _mime;
-    }
-
-    public File mime(String mime) {
-        _mime = mime;
-        return this;
-    }
-
-    public void setPreviewFull(String previewFull) {
-        _previewFull = previewFull;
-    }
-
-    public String getPreviewFull() {
-        return _previewFull;
-    }
-
-    public File previewFull(String previewFull) {
-        _previewFull = previewFull;
-        return this;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public File name(String name) {
-        _name = name;
+    public File description(String description) {
+        _description = description;
         return this;
     }
 
@@ -141,16 +89,55 @@ public class File implements Parcelable {
         return this;
     }
 
-    public void setDescription(String description) {
-        _description = description;
+    public void setMime(String mime) {
+        _mime = mime;
     }
 
-    public String getDescription() {
-        return _description;
+    public String getMime() {
+        return _mime;
     }
 
-    public File description(String description) {
-        _description = description;
+    public File mime(String mime) {
+        _mime = mime;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public File name(String name) {
+        _name = name;
+        return this;
+    }
+
+    public void setPreviewFull(String previewFull) {
+        _previewFull = previewFull;
+    }
+
+    public String getPreviewFull() {
+        return _previewFull;
+    }
+
+    public File previewFull(String previewFull) {
+        _previewFull = previewFull;
+        return this;
+    }
+
+    public void setSizeBytes(Integer sizeBytes) {
+        _sizeBytes = sizeBytes;
+    }
+
+    public Integer getSizeBytes() {
+        return _sizeBytes;
+    }
+
+    public File sizeBytes(Integer sizeBytes) {
+        _sizeBytes = sizeBytes;
         return this;
     }
 
@@ -164,6 +151,19 @@ public class File implements Parcelable {
 
     public File storage(StorageEnum storage) {
         _storage = storage;
+        return this;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        _thumbnail = thumbnail;
+    }
+
+    public String getThumbnail() {
+        return _thumbnail;
+    }
+
+    public File thumbnail(String thumbnail) {
+        _thumbnail = thumbnail;
         return this;
     }
 

@@ -17,35 +17,22 @@ import com.fieldnation.fnlog.Log;
 public class Fee implements Parcelable {
     private static final String TAG = "Fee";
 
-    @Json(name = "calculation")
-    private CalculationEnum _calculation;
-
     @Json(name = "amount")
     private Double _amount;
 
-    @Json(name = "modifier")
-    private Double _modifier;
-
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "calculation")
+    private CalculationEnum _calculation;
 
     @Json(name = "charged")
     private Boolean _charged;
 
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "modifier")
+    private Double _modifier;
+
     public Fee() {
-    }
-
-    public void setCalculation(CalculationEnum calculation) {
-        _calculation = calculation;
-    }
-
-    public CalculationEnum getCalculation() {
-        return _calculation;
-    }
-
-    public Fee calculation(CalculationEnum calculation) {
-        _calculation = calculation;
-        return this;
     }
 
     public void setAmount(Double amount) {
@@ -61,16 +48,29 @@ public class Fee implements Parcelable {
         return this;
     }
 
-    public void setModifier(Double modifier) {
-        _modifier = modifier;
+    public void setCalculation(CalculationEnum calculation) {
+        _calculation = calculation;
     }
 
-    public Double getModifier() {
-        return _modifier;
+    public CalculationEnum getCalculation() {
+        return _calculation;
     }
 
-    public Fee modifier(Double modifier) {
-        _modifier = modifier;
+    public Fee calculation(CalculationEnum calculation) {
+        _calculation = calculation;
+        return this;
+    }
+
+    public void setCharged(Boolean charged) {
+        _charged = charged;
+    }
+
+    public Boolean getCharged() {
+        return _charged;
+    }
+
+    public Fee charged(Boolean charged) {
+        _charged = charged;
         return this;
     }
 
@@ -87,16 +87,16 @@ public class Fee implements Parcelable {
         return this;
     }
 
-    public void setCharged(Boolean charged) {
-        _charged = charged;
+    public void setModifier(Double modifier) {
+        _modifier = modifier;
     }
 
-    public Boolean getCharged() {
-        return _charged;
+    public Double getModifier() {
+        return _modifier;
     }
 
-    public Fee charged(Boolean charged) {
-        _charged = charged;
+    public Fee modifier(Double modifier) {
+        _modifier = modifier;
         return this;
     }
 

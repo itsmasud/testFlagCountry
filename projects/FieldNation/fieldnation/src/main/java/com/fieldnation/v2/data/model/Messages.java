@@ -17,22 +17,35 @@ import com.fieldnation.fnlog.Log;
 public class Messages implements Parcelable {
     private static final String TAG = "Messages";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "problem_reported")
     private Boolean _problemReported;
 
-    @Json(name = "sum")
-    private Integer _sum;
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     @Json(name = "results")
     private Message _results;
 
+    @Json(name = "sum")
+    private Integer _sum;
+
     public Messages() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Messages actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) {
@@ -61,32 +74,6 @@ public class Messages implements Parcelable {
         return this;
     }
 
-    public void setSum(Integer sum) {
-        _sum = sum;
-    }
-
-    public Integer getSum() {
-        return _sum;
-    }
-
-    public Messages sum(Integer sum) {
-        _sum = sum;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Messages actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
-    }
-
     public void setResults(Message results) {
         _results = results;
     }
@@ -97,6 +84,19 @@ public class Messages implements Parcelable {
 
     public Messages results(Message results) {
         _results = results;
+        return this;
+    }
+
+    public void setSum(Integer sum) {
+        _sum = sum;
+    }
+
+    public Integer getSum() {
+        return _sum;
+    }
+
+    public Messages sum(Integer sum) {
+        _sum = sum;
         return this;
     }
 

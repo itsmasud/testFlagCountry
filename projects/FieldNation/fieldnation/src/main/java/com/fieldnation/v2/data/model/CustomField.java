@@ -17,11 +17,20 @@ import com.fieldnation.fnlog.Log;
 public class CustomField implements Parcelable {
     private static final String TAG = "CustomField";
 
-    @Json(name = "role")
-    private RoleEnum _role;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
+    @Json(name = "category")
+    private String _category;
 
     @Json(name = "dependency")
     private CustomFieldDependency _dependency;
+
+    @Json(name = "flags")
+    private FlagsEnum[] _flags;
+
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "name")
     private String _name;
@@ -29,40 +38,44 @@ public class CustomField implements Parcelable {
     @Json(name = "options")
     private String[] _options;
 
-    @Json(name = "flags")
-    private FlagsEnum[] _flags;
+    @Json(name = "role")
+    private RoleEnum _role;
 
     @Json(name = "tip")
     private String _tip;
 
-    @Json(name = "id")
-    private Integer _id;
-
     @Json(name = "type")
     private TypeEnum _type;
-
-    @Json(name = "category")
-    private String _category;
 
     @Json(name = "value")
     private String _value;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     public CustomField() {
     }
 
-    public void setRole(RoleEnum role) {
-        _role = role;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public RoleEnum getRole() {
-        return _role;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public CustomField role(RoleEnum role) {
-        _role = role;
+    public CustomField actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setCategory(String category) {
+        _category = category;
+    }
+
+    public String getCategory() {
+        return _category;
+    }
+
+    public CustomField category(String category) {
+        _category = category;
         return this;
     }
 
@@ -76,6 +89,32 @@ public class CustomField implements Parcelable {
 
     public CustomField dependency(CustomFieldDependency dependency) {
         _dependency = dependency;
+        return this;
+    }
+
+    public void setFlags(FlagsEnum[] flags) {
+        _flags = flags;
+    }
+
+    public FlagsEnum[] getFlags() {
+        return _flags;
+    }
+
+    public CustomField flags(FlagsEnum[] flags) {
+        _flags = flags;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public CustomField id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -105,16 +144,16 @@ public class CustomField implements Parcelable {
         return this;
     }
 
-    public void setFlags(FlagsEnum[] flags) {
-        _flags = flags;
+    public void setRole(RoleEnum role) {
+        _role = role;
     }
 
-    public FlagsEnum[] getFlags() {
-        return _flags;
+    public RoleEnum getRole() {
+        return _role;
     }
 
-    public CustomField flags(FlagsEnum[] flags) {
-        _flags = flags;
+    public CustomField role(RoleEnum role) {
+        _role = role;
         return this;
     }
 
@@ -131,19 +170,6 @@ public class CustomField implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public CustomField id(Integer id) {
-        _id = id;
-        return this;
-    }
-
     public void setType(TypeEnum type) {
         _type = type;
     }
@@ -157,19 +183,6 @@ public class CustomField implements Parcelable {
         return this;
     }
 
-    public void setCategory(String category) {
-        _category = category;
-    }
-
-    public String getCategory() {
-        return _category;
-    }
-
-    public CustomField category(String category) {
-        _category = category;
-        return this;
-    }
-
     public void setValue(String value) {
         _value = value;
     }
@@ -180,19 +193,6 @@ public class CustomField implements Parcelable {
 
     public CustomField value(String value) {
         _value = value;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public CustomField actions(ActionsEnum[] actions) {
-        _actions = actions;
         return this;
     }
 
@@ -245,6 +245,22 @@ public class CustomField implements Parcelable {
         }
     }
 
+    public enum ActionsEnum {
+        @Json(name = "edit")
+        EDIT("edit");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     public enum FlagsEnum {
         @Json(name = "included_in_alerts")
         INCLUDED_IN_ALERTS("included_in_alerts"),
@@ -272,22 +288,6 @@ public class CustomField implements Parcelable {
         private String value;
 
         FlagsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
-    public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
             this.value = value;
         }
 

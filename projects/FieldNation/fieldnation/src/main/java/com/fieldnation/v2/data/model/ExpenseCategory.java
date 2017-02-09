@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class ExpenseCategory implements Parcelable {
     private static final String TAG = "ExpenseCategory";
 
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "name")
+    private String _name;
+
     public ExpenseCategory() {
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public ExpenseCategory name(String name) {
-        _name = name;
-        return this;
     }
 
     public void setId(Integer id) {
@@ -49,6 +36,19 @@ public class ExpenseCategory implements Parcelable {
 
     public ExpenseCategory id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public ExpenseCategory name(String name) {
+        _name = name;
         return this;
     }
 

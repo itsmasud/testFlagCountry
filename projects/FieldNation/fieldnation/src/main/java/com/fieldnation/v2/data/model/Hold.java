@@ -17,28 +17,28 @@ import com.fieldnation.fnlog.Log;
 public class Hold implements Parcelable {
     private static final String TAG = "Hold";
 
-    @Json(name = "reason")
-    private String _reason;
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "name")
     private String _name;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "reason")
+    private String _reason;
 
     public Hold() {
     }
 
-    public void setReason(String reason) {
-        _reason = reason;
+    public void setId(Integer id) {
+        _id = id;
     }
 
-    public String getReason() {
-        return _reason;
+    public Integer getId() {
+        return _id;
     }
 
-    public Hold reason(String reason) {
-        _reason = reason;
+    public Hold id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -55,16 +55,16 @@ public class Hold implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
+    public void setReason(String reason) {
+        _reason = reason;
     }
 
-    public Integer getId() {
-        return _id;
+    public String getReason() {
+        return _reason;
     }
 
-    public Hold id(Integer id) {
-        _id = id;
+    public Hold reason(String reason) {
+        _reason = reason;
         return this;
     }
 

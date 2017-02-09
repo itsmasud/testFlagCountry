@@ -17,16 +17,29 @@ import com.fieldnation.fnlog.Log;
 public class LocationAttribute implements Parcelable {
     private static final String TAG = "LocationAttribute";
 
+    @Json(name = "key")
+    private String _key;
+
     @Json(name = "private")
     private Boolean _private;
 
     @Json(name = "value")
     private String _value;
 
-    @Json(name = "key")
-    private String _key;
-
     public LocationAttribute() {
+    }
+
+    public void setKey(String key) {
+        _key = key;
+    }
+
+    public String getKey() {
+        return _key;
+    }
+
+    public LocationAttribute key(String key) {
+        _key = key;
+        return this;
     }
 
     public void setPrivate(Boolean privatee) {
@@ -52,19 +65,6 @@ public class LocationAttribute implements Parcelable {
 
     public LocationAttribute value(String value) {
         _value = value;
-        return this;
-    }
-
-    public void setKey(String key) {
-        _key = key;
-    }
-
-    public String getKey() {
-        return _key;
-    }
-
-    public LocationAttribute key(String key) {
-        _key = key;
         return this;
     }
 

@@ -17,83 +17,31 @@ import com.fieldnation.fnlog.Log;
 public class OnMyWay implements Parcelable {
     private static final String TAG = "OnMyWay";
 
-    @Json(name = "distance")
-    private Double _distance;
-
-    @Json(name = "substatus")
-    private String _substatus;
-
-    @Json(name = "created")
-    private Date _created;
-
-    @Json(name = "estimated_delay")
-    private Integer _estimatedDelay;
-
     @Json(name = "active")
     private Boolean _active;
-
-    @Json(name = "drive_time")
-    private Integer _driveTime;
 
     @Json(name = "coords")
     private Coords _coords;
 
+    @Json(name = "created")
+    private Date _created;
+
+    @Json(name = "distance")
+    private Double _distance;
+
+    @Json(name = "drive_time")
+    private Integer _driveTime;
+
+    @Json(name = "estimated_delay")
+    private Integer _estimatedDelay;
+
     @Json(name = "status")
     private String _status;
 
+    @Json(name = "substatus")
+    private String _substatus;
+
     public OnMyWay() {
-    }
-
-    public void setDistance(Double distance) {
-        _distance = distance;
-    }
-
-    public Double getDistance() {
-        return _distance;
-    }
-
-    public OnMyWay distance(Double distance) {
-        _distance = distance;
-        return this;
-    }
-
-    public void setSubstatus(String substatus) {
-        _substatus = substatus;
-    }
-
-    public String getSubstatus() {
-        return _substatus;
-    }
-
-    public OnMyWay substatus(String substatus) {
-        _substatus = substatus;
-        return this;
-    }
-
-    public void setCreated(Date created) {
-        _created = created;
-    }
-
-    public Date getCreated() {
-        return _created;
-    }
-
-    public OnMyWay created(Date created) {
-        _created = created;
-        return this;
-    }
-
-    public void setEstimatedDelay(Integer estimatedDelay) {
-        _estimatedDelay = estimatedDelay;
-    }
-
-    public Integer getEstimatedDelay() {
-        return _estimatedDelay;
-    }
-
-    public OnMyWay estimatedDelay(Integer estimatedDelay) {
-        _estimatedDelay = estimatedDelay;
-        return this;
     }
 
     public void setActive(Boolean active) {
@@ -106,19 +54,6 @@ public class OnMyWay implements Parcelable {
 
     public OnMyWay active(Boolean active) {
         _active = active;
-        return this;
-    }
-
-    public void setDriveTime(Integer driveTime) {
-        _driveTime = driveTime;
-    }
-
-    public Integer getDriveTime() {
-        return _driveTime;
-    }
-
-    public OnMyWay driveTime(Integer driveTime) {
-        _driveTime = driveTime;
         return this;
     }
 
@@ -135,6 +70,58 @@ public class OnMyWay implements Parcelable {
         return this;
     }
 
+    public void setCreated(Date created) {
+        _created = created;
+    }
+
+    public Date getCreated() {
+        return _created;
+    }
+
+    public OnMyWay created(Date created) {
+        _created = created;
+        return this;
+    }
+
+    public void setDistance(Double distance) {
+        _distance = distance;
+    }
+
+    public Double getDistance() {
+        return _distance;
+    }
+
+    public OnMyWay distance(Double distance) {
+        _distance = distance;
+        return this;
+    }
+
+    public void setDriveTime(Integer driveTime) {
+        _driveTime = driveTime;
+    }
+
+    public Integer getDriveTime() {
+        return _driveTime;
+    }
+
+    public OnMyWay driveTime(Integer driveTime) {
+        _driveTime = driveTime;
+        return this;
+    }
+
+    public void setEstimatedDelay(Integer estimatedDelay) {
+        _estimatedDelay = estimatedDelay;
+    }
+
+    public Integer getEstimatedDelay() {
+        return _estimatedDelay;
+    }
+
+    public OnMyWay estimatedDelay(Integer estimatedDelay) {
+        _estimatedDelay = estimatedDelay;
+        return this;
+    }
+
     public void setStatus(String status) {
         _status = status;
     }
@@ -145,6 +132,19 @@ public class OnMyWay implements Parcelable {
 
     public OnMyWay status(String status) {
         _status = status;
+        return this;
+    }
+
+    public void setSubstatus(String substatus) {
+        _substatus = substatus;
+    }
+
+    public String getSubstatus() {
+        return _substatus;
+    }
+
+    public OnMyWay substatus(String substatus) {
+        _substatus = substatus;
         return this;
     }
 

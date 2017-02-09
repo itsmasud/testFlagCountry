@@ -17,38 +17,25 @@ import com.fieldnation.fnlog.Log;
 public class Coords implements Parcelable {
     private static final String TAG = "Coords";
 
-    @Json(name = "search")
-    private String _search;
-
     @Json(name = "distance")
     private Double _distance;
-
-    @Json(name = "success")
-    private Boolean _success;
-
-    @Json(name = "latitude")
-    private Double _latitude;
 
     @Json(name = "exact")
     private Boolean _exact;
 
+    @Json(name = "latitude")
+    private Double _latitude;
+
     @Json(name = "longitude")
     private Double _longitude;
 
+    @Json(name = "search")
+    private String _search;
+
+    @Json(name = "success")
+    private Boolean _success;
+
     public Coords() {
-    }
-
-    public void setSearch(String search) {
-        _search = search;
-    }
-
-    public String getSearch() {
-        return _search;
-    }
-
-    public Coords search(String search) {
-        _search = search;
-        return this;
     }
 
     public void setDistance(Double distance) {
@@ -61,32 +48,6 @@ public class Coords implements Parcelable {
 
     public Coords distance(Double distance) {
         _distance = distance;
-        return this;
-    }
-
-    public void setSuccess(Boolean success) {
-        _success = success;
-    }
-
-    public Boolean getSuccess() {
-        return _success;
-    }
-
-    public Coords success(Boolean success) {
-        _success = success;
-        return this;
-    }
-
-    public void setLatitude(Double latitude) {
-        _latitude = latitude;
-    }
-
-    public Double getLatitude() {
-        return _latitude;
-    }
-
-    public Coords latitude(Double latitude) {
-        _latitude = latitude;
         return this;
     }
 
@@ -103,6 +64,19 @@ public class Coords implements Parcelable {
         return this;
     }
 
+    public void setLatitude(Double latitude) {
+        _latitude = latitude;
+    }
+
+    public Double getLatitude() {
+        return _latitude;
+    }
+
+    public Coords latitude(Double latitude) {
+        _latitude = latitude;
+        return this;
+    }
+
     public void setLongitude(Double longitude) {
         _longitude = longitude;
     }
@@ -113,6 +87,32 @@ public class Coords implements Parcelable {
 
     public Coords longitude(Double longitude) {
         _longitude = longitude;
+        return this;
+    }
+
+    public void setSearch(String search) {
+        _search = search;
+    }
+
+    public String getSearch() {
+        return _search;
+    }
+
+    public Coords search(String search) {
+        _search = search;
+        return this;
+    }
+
+    public void setSuccess(Boolean success) {
+        _success = success;
+    }
+
+    public Boolean getSuccess() {
+        return _success;
+    }
+
+    public Coords success(Boolean success) {
+        _success = success;
         return this;
     }
 

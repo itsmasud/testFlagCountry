@@ -17,19 +17,32 @@ import com.fieldnation.fnlog.Log;
 public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     private static final String TAG = "EventUpdateScheduleByWorkOrderNew";
 
+    @Json(name = "end")
+    private String _end;
+
     @Json(name = "mode")
     private String _mode;
 
     @Json(name = "start")
     private String _start;
 
-    @Json(name = "end")
-    private String _end;
-
     @Json(name = "time_zone")
     private String _timeZone;
 
     public EventUpdateScheduleByWorkOrderNew() {
+    }
+
+    public void setEnd(String end) {
+        _end = end;
+    }
+
+    public String getEnd() {
+        return _end;
+    }
+
+    public EventUpdateScheduleByWorkOrderNew end(String end) {
+        _end = end;
+        return this;
     }
 
     public void setMode(String mode) {
@@ -55,19 +68,6 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
 
     public EventUpdateScheduleByWorkOrderNew start(String start) {
         _start = start;
-        return this;
-    }
-
-    public void setEnd(String end) {
-        _end = end;
-    }
-
-    public String getEnd() {
-        return _end;
-    }
-
-    public EventUpdateScheduleByWorkOrderNew end(String end) {
-        _end = end;
         return this;
     }
 

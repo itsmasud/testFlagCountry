@@ -17,20 +17,8 @@ import com.fieldnation.fnlog.Log;
 public class Message implements Parcelable {
     private static final String TAG = "Message";
 
-    @Json(name = "role")
-    private String _role;
-
-    @Json(name = "read")
-    private Boolean _read;
-
-    @Json(name = "problem")
-    private MessageProblem _problem;
-
-    @Json(name = "replies")
-    private Message _replies;
-
-    @Json(name = "parent_id")
-    private Boolean _parentId;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "created")
     private Date _created;
@@ -38,83 +26,43 @@ public class Message implements Parcelable {
     @Json(name = "from")
     private MessageFrom _from;
 
-    @Json(name = "to")
-    private MessageTo _to;
+    @Json(name = "message")
+    private String _message;
 
     @Json(name = "msg_id")
     private Integer _msgId;
 
-    @Json(name = "message")
-    private String _message;
+    @Json(name = "parent_id")
+    private Boolean _parentId;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "problem")
+    private MessageProblem _problem;
+
+    @Json(name = "read")
+    private Boolean _read;
+
+    @Json(name = "replies")
+    private Message _replies;
+
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "to")
+    private MessageTo _to;
 
     public Message() {
     }
 
-    public void setRole(String role) {
-        _role = role;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public String getRole() {
-        return _role;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public Message role(String role) {
-        _role = role;
-        return this;
-    }
-
-    public void setRead(Boolean read) {
-        _read = read;
-    }
-
-    public Boolean getRead() {
-        return _read;
-    }
-
-    public Message read(Boolean read) {
-        _read = read;
-        return this;
-    }
-
-    public void setProblem(MessageProblem problem) {
-        _problem = problem;
-    }
-
-    public MessageProblem getProblem() {
-        return _problem;
-    }
-
-    public Message problem(MessageProblem problem) {
-        _problem = problem;
-        return this;
-    }
-
-    public void setReplies(Message replies) {
-        _replies = replies;
-    }
-
-    public Message getReplies() {
-        return _replies;
-    }
-
-    public Message replies(Message replies) {
-        _replies = replies;
-        return this;
-    }
-
-    public void setParentId(Boolean parentId) {
-        _parentId = parentId;
-    }
-
-    public Boolean getParentId() {
-        return _parentId;
-    }
-
-    public Message parentId(Boolean parentId) {
-        _parentId = parentId;
+    public Message actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -144,16 +92,16 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setTo(MessageTo to) {
-        _to = to;
+    public void setMessage(String message) {
+        _message = message;
     }
 
-    public MessageTo getTo() {
-        return _to;
+    public String getMessage() {
+        return _message;
     }
 
-    public Message to(MessageTo to) {
-        _to = to;
+    public Message message(String message) {
+        _message = message;
         return this;
     }
 
@@ -170,29 +118,81 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setMessage(String message) {
-        _message = message;
+    public void setParentId(Boolean parentId) {
+        _parentId = parentId;
     }
 
-    public String getMessage() {
-        return _message;
+    public Boolean getParentId() {
+        return _parentId;
     }
 
-    public Message message(String message) {
-        _message = message;
+    public Message parentId(Boolean parentId) {
+        _parentId = parentId;
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setProblem(MessageProblem problem) {
+        _problem = problem;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public MessageProblem getProblem() {
+        return _problem;
     }
 
-    public Message actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public Message problem(MessageProblem problem) {
+        _problem = problem;
+        return this;
+    }
+
+    public void setRead(Boolean read) {
+        _read = read;
+    }
+
+    public Boolean getRead() {
+        return _read;
+    }
+
+    public Message read(Boolean read) {
+        _read = read;
+        return this;
+    }
+
+    public void setReplies(Message replies) {
+        _replies = replies;
+    }
+
+    public Message getReplies() {
+        return _replies;
+    }
+
+    public Message replies(Message replies) {
+        _replies = replies;
+        return this;
+    }
+
+    public void setRole(String role) {
+        _role = role;
+    }
+
+    public String getRole() {
+        return _role;
+    }
+
+    public Message role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setTo(MessageTo to) {
+        _to = to;
+    }
+
+    public MessageTo getTo() {
+        return _to;
+    }
+
+    public Message to(MessageTo to) {
+        _to = to;
         return this;
     }
 

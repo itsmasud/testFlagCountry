@@ -20,29 +20,17 @@ import java.util.Comparator;
 public class WorkOrder implements Parcelable {
     private static final String TAG = "WorkOrder";
 
-    @Json(name = "role")
-    private String _role;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
+    @Json(name = "assignee")
+    private Assignee _assignee;
 
     @Json(name = "attachments")
     private AttachmentFolders _attachments;
 
-    @Json(name = "project")
-    private Project _project;
-
-    @Json(name = "description")
-    private RichText _description;
-
-    @Json(name = "time_logs")
-    private TimeLogs _timeLogs;
-
-    @Json(name = "networks")
-    private String[] _networks;
-
-    @Json(name = "title")
-    private String _title;
-
-    @Json(name = "qualifications")
-    private Qualifications _qualifications;
+    @Json(name = "bundle")
+    private Bundle _bundle;
 
     @Json(name = "client")
     private Company _client;
@@ -50,56 +38,20 @@ public class WorkOrder implements Parcelable {
     @Json(name = "company")
     private Company _company;
 
-    @Json(name = "w2")
-    private Boolean _w2;
-
-    @Json(name = "policy_and_procedures")
-    private RichText _policyAndProcedures;
-
-    @Json(name = "publish_stats")
-    private WorkOrderPublishStats _publishStats;
-
-    @Json(name = "bundle")
-    private Bundle _bundle;
-
-    @Json(name = "tasks")
-    private Tasks _tasks;
-
     @Json(name = "confidential")
     private RichText _confidential;
 
-    @Json(name = "standard_instructions")
-    private RichText _standardInstructions;
-
-    @Json(name = "manager")
-    private Manager _manager;
-
-    @Json(name = "custom_fields")
-    private CustomFields _customFields;
-
-    @Json(name = "type_of_work")
-    private TypeOfWork _typeOfWork;
-
-    @Json(name = "pay")
-    private Pay _pay;
-
-    @Json(name = "shipments")
-    private Shipments _shipments;
-
-    @Json(name = "schedule")
-    private Schedule _schedule;
-
-    @Json(name = "selection_rule")
-    private SelectionRule _selectionRule;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
+    @Json(name = "contacts")
+    private Contacts _contacts;
 
     @Json(name = "correlation_id")
     private String _correlationId;
 
-    @Json(name = "messages")
-    private Messages _messages;
+    @Json(name = "custom_fields")
+    private CustomFields _customFields;
+
+    @Json(name = "description")
+    private RichText _description;
 
     @Json(name = "holds")
     private Holds _holds;
@@ -107,34 +59,95 @@ public class WorkOrder implements Parcelable {
     @Json(name = "location")
     private Location _location;
 
-    @Json(name = "assignee")
-    private Assignee _assignee;
+    @Json(name = "manager")
+    private Manager _manager;
+
+    @Json(name = "messages")
+    private Messages _messages;
 
     @Json(name = "milestones")
     private Milestones _milestones;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "networks")
+    private String[] _networks;
 
-    @Json(name = "contacts")
-    private Contacts _contacts;
+    @Json(name = "pay")
+    private Pay _pay;
+
+    @Json(name = "policy_and_procedures")
+    private RichText _policyAndProcedures;
+
+    @Json(name = "project")
+    private Project _project;
+
+    @Json(name = "publish_stats")
+    private WorkOrderPublishStats _publishStats;
+
+    @Json(name = "qualifications")
+    private Qualifications _qualifications;
+
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "schedule")
+    private Schedule _schedule;
+
+    @Json(name = "selection_rule")
+    private SelectionRule _selectionRule;
+
+    @Json(name = "shipments")
+    private Shipments _shipments;
+
+    @Json(name = "standard_instructions")
+    private RichText _standardInstructions;
 
     @Json(name = "status")
     private Status _status;
 
+    @Json(name = "tasks")
+    private Tasks _tasks;
+
+    @Json(name = "time_logs")
+    private TimeLogs _timeLogs;
+
+    @Json(name = "title")
+    private String _title;
+
+    @Json(name = "type_of_work")
+    private TypeOfWork _typeOfWork;
+
+    @Json(name = "w2")
+    private Boolean _w2;
+
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
     public WorkOrder() {
     }
 
-    public void setRole(String role) {
-        _role = role;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public String getRole() {
-        return _role;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public WorkOrder role(String role) {
-        _role = role;
+    public WorkOrder actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setAssignee(Assignee assignee) {
+        _assignee = assignee;
+    }
+
+    public Assignee getAssignee() {
+        return _assignee;
+    }
+
+    public WorkOrder assignee(Assignee assignee) {
+        _assignee = assignee;
         return this;
     }
 
@@ -151,81 +164,16 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setProject(Project project) {
-        _project = project;
+    public void setBundle(Bundle bundle) {
+        _bundle = bundle;
     }
 
-    public Project getProject() {
-        return _project;
+    public Bundle getBundle() {
+        return _bundle;
     }
 
-    public WorkOrder project(Project project) {
-        _project = project;
-        return this;
-    }
-
-    public void setDescription(RichText description) {
-        _description = description;
-    }
-
-    public RichText getDescription() {
-        return _description;
-    }
-
-    public WorkOrder description(RichText description) {
-        _description = description;
-        return this;
-    }
-
-    public void setTimeLogs(TimeLogs timeLogs) {
-        _timeLogs = timeLogs;
-    }
-
-    public TimeLogs getTimeLogs() {
-        return _timeLogs;
-    }
-
-    public WorkOrder timeLogs(TimeLogs timeLogs) {
-        _timeLogs = timeLogs;
-        return this;
-    }
-
-    public void setNetworks(String[] networks) {
-        _networks = networks;
-    }
-
-    public String[] getNetworks() {
-        return _networks;
-    }
-
-    public WorkOrder networks(String[] networks) {
-        _networks = networks;
-        return this;
-    }
-
-    public void setTitle(String title) {
-        _title = title;
-    }
-
-    public String getTitle() {
-        return _title;
-    }
-
-    public WorkOrder title(String title) {
-        _title = title;
-        return this;
-    }
-
-    public void setQualifications(Qualifications qualifications) {
-        _qualifications = qualifications;
-    }
-
-    public Qualifications getQualifications() {
-        return _qualifications;
-    }
-
-    public WorkOrder qualifications(Qualifications qualifications) {
-        _qualifications = qualifications;
+    public WorkOrder bundle(Bundle bundle) {
+        _bundle = bundle;
         return this;
     }
 
@@ -255,71 +203,6 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setW2(Boolean w2) {
-        _w2 = w2;
-    }
-
-    public Boolean getW2() {
-        return _w2;
-    }
-
-    public WorkOrder w2(Boolean w2) {
-        _w2 = w2;
-        return this;
-    }
-
-    public void setPolicyAndProcedures(RichText policyAndProcedures) {
-        _policyAndProcedures = policyAndProcedures;
-    }
-
-    public RichText getPolicyAndProcedures() {
-        return _policyAndProcedures;
-    }
-
-    public WorkOrder policyAndProcedures(RichText policyAndProcedures) {
-        _policyAndProcedures = policyAndProcedures;
-        return this;
-    }
-
-    public void setPublishStats(WorkOrderPublishStats publishStats) {
-        _publishStats = publishStats;
-    }
-
-    public WorkOrderPublishStats getPublishStats() {
-        return _publishStats;
-    }
-
-    public WorkOrder publishStats(WorkOrderPublishStats publishStats) {
-        _publishStats = publishStats;
-        return this;
-    }
-
-    public void setBundle(Bundle bundle) {
-        _bundle = bundle;
-    }
-
-    public Bundle getBundle() {
-        return _bundle;
-    }
-
-    public WorkOrder bundle(Bundle bundle) {
-        _bundle = bundle;
-        return this;
-    }
-
-    public void setTasks(Tasks tasks) {
-        _tasks = tasks;
-    }
-
-    public Tasks getTasks() {
-        return _tasks;
-    }
-
-    public WorkOrder tasks(Tasks tasks) {
-        _tasks = tasks;
-        return this;
-    }
-
     public void setConfidential(RichText confidential) {
         _confidential = confidential;
     }
@@ -333,120 +216,16 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setStandardInstructions(RichText standardInstructions) {
-        _standardInstructions = standardInstructions;
+    public void setContacts(Contacts contacts) {
+        _contacts = contacts;
     }
 
-    public RichText getStandardInstructions() {
-        return _standardInstructions;
+    public Contacts getContacts() {
+        return _contacts;
     }
 
-    public WorkOrder standardInstructions(RichText standardInstructions) {
-        _standardInstructions = standardInstructions;
-        return this;
-    }
-
-    public void setManager(Manager manager) {
-        _manager = manager;
-    }
-
-    public Manager getManager() {
-        return _manager;
-    }
-
-    public WorkOrder manager(Manager manager) {
-        _manager = manager;
-        return this;
-    }
-
-    public void setCustomFields(CustomFields customFields) {
-        _customFields = customFields;
-    }
-
-    public CustomFields getCustomFields() {
-        return _customFields;
-    }
-
-    public WorkOrder customFields(CustomFields customFields) {
-        _customFields = customFields;
-        return this;
-    }
-
-    public void setTypeOfWork(TypeOfWork typeOfWork) {
-        _typeOfWork = typeOfWork;
-    }
-
-    public TypeOfWork getTypeOfWork() {
-        return _typeOfWork;
-    }
-
-    public WorkOrder typeOfWork(TypeOfWork typeOfWork) {
-        _typeOfWork = typeOfWork;
-        return this;
-    }
-
-    public void setPay(Pay pay) {
-        _pay = pay;
-    }
-
-    public Pay getPay() {
-        return _pay;
-    }
-
-    public WorkOrder pay(Pay pay) {
-        _pay = pay;
-        return this;
-    }
-
-    public void setShipments(Shipments shipments) {
-        _shipments = shipments;
-    }
-
-    public Shipments getShipments() {
-        return _shipments;
-    }
-
-    public WorkOrder shipments(Shipments shipments) {
-        _shipments = shipments;
-        return this;
-    }
-
-    public void setSchedule(Schedule schedule) {
-        _schedule = schedule;
-    }
-
-    public Schedule getSchedule() {
-        return _schedule;
-    }
-
-    public WorkOrder schedule(Schedule schedule) {
-        _schedule = schedule;
-        return this;
-    }
-
-    public void setSelectionRule(SelectionRule selectionRule) {
-        _selectionRule = selectionRule;
-    }
-
-    public SelectionRule getSelectionRule() {
-        return _selectionRule;
-    }
-
-    public WorkOrder selectionRule(SelectionRule selectionRule) {
-        _selectionRule = selectionRule;
-        return this;
-    }
-
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public WorkOrder workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
+    public WorkOrder contacts(Contacts contacts) {
+        _contacts = contacts;
         return this;
     }
 
@@ -463,16 +242,29 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setMessages(Messages messages) {
-        _messages = messages;
+    public void setCustomFields(CustomFields customFields) {
+        _customFields = customFields;
     }
 
-    public Messages getMessages() {
-        return _messages;
+    public CustomFields getCustomFields() {
+        return _customFields;
     }
 
-    public WorkOrder messages(Messages messages) {
-        _messages = messages;
+    public WorkOrder customFields(CustomFields customFields) {
+        _customFields = customFields;
+        return this;
+    }
+
+    public void setDescription(RichText description) {
+        _description = description;
+    }
+
+    public RichText getDescription() {
+        return _description;
+    }
+
+    public WorkOrder description(RichText description) {
+        _description = description;
         return this;
     }
 
@@ -502,16 +294,29 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setAssignee(Assignee assignee) {
-        _assignee = assignee;
+    public void setManager(Manager manager) {
+        _manager = manager;
     }
 
-    public Assignee getAssignee() {
-        return _assignee;
+    public Manager getManager() {
+        return _manager;
     }
 
-    public WorkOrder assignee(Assignee assignee) {
-        _assignee = assignee;
+    public WorkOrder manager(Manager manager) {
+        _manager = manager;
+        return this;
+    }
+
+    public void setMessages(Messages messages) {
+        _messages = messages;
+    }
+
+    public Messages getMessages() {
+        return _messages;
+    }
+
+    public WorkOrder messages(Messages messages) {
+        _messages = messages;
         return this;
     }
 
@@ -528,29 +333,146 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setNetworks(String[] networks) {
+        _networks = networks;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public String[] getNetworks() {
+        return _networks;
     }
 
-    public WorkOrder actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public WorkOrder networks(String[] networks) {
+        _networks = networks;
         return this;
     }
 
-    public void setContacts(Contacts contacts) {
-        _contacts = contacts;
+    public void setPay(Pay pay) {
+        _pay = pay;
     }
 
-    public Contacts getContacts() {
-        return _contacts;
+    public Pay getPay() {
+        return _pay;
     }
 
-    public WorkOrder contacts(Contacts contacts) {
-        _contacts = contacts;
+    public WorkOrder pay(Pay pay) {
+        _pay = pay;
+        return this;
+    }
+
+    public void setPolicyAndProcedures(RichText policyAndProcedures) {
+        _policyAndProcedures = policyAndProcedures;
+    }
+
+    public RichText getPolicyAndProcedures() {
+        return _policyAndProcedures;
+    }
+
+    public WorkOrder policyAndProcedures(RichText policyAndProcedures) {
+        _policyAndProcedures = policyAndProcedures;
+        return this;
+    }
+
+    public void setProject(Project project) {
+        _project = project;
+    }
+
+    public Project getProject() {
+        return _project;
+    }
+
+    public WorkOrder project(Project project) {
+        _project = project;
+        return this;
+    }
+
+    public void setPublishStats(WorkOrderPublishStats publishStats) {
+        _publishStats = publishStats;
+    }
+
+    public WorkOrderPublishStats getPublishStats() {
+        return _publishStats;
+    }
+
+    public WorkOrder publishStats(WorkOrderPublishStats publishStats) {
+        _publishStats = publishStats;
+        return this;
+    }
+
+    public void setQualifications(Qualifications qualifications) {
+        _qualifications = qualifications;
+    }
+
+    public Qualifications getQualifications() {
+        return _qualifications;
+    }
+
+    public WorkOrder qualifications(Qualifications qualifications) {
+        _qualifications = qualifications;
+        return this;
+    }
+
+    public void setRole(String role) {
+        _role = role;
+    }
+
+    public String getRole() {
+        return _role;
+    }
+
+    public WorkOrder role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        _schedule = schedule;
+    }
+
+    public Schedule getSchedule() {
+        return _schedule;
+    }
+
+    public WorkOrder schedule(Schedule schedule) {
+        _schedule = schedule;
+        return this;
+    }
+
+    public void setSelectionRule(SelectionRule selectionRule) {
+        _selectionRule = selectionRule;
+    }
+
+    public SelectionRule getSelectionRule() {
+        return _selectionRule;
+    }
+
+    public WorkOrder selectionRule(SelectionRule selectionRule) {
+        _selectionRule = selectionRule;
+        return this;
+    }
+
+    public void setShipments(Shipments shipments) {
+        _shipments = shipments;
+    }
+
+    public Shipments getShipments() {
+        return _shipments;
+    }
+
+    public WorkOrder shipments(Shipments shipments) {
+        _shipments = shipments;
+        return this;
+    }
+
+    public void setStandardInstructions(RichText standardInstructions) {
+        _standardInstructions = standardInstructions;
+    }
+
+    public RichText getStandardInstructions() {
+        return _standardInstructions;
+    }
+
+    public WorkOrder standardInstructions(RichText standardInstructions) {
+        _standardInstructions = standardInstructions;
         return this;
     }
 
@@ -564,6 +486,84 @@ public class WorkOrder implements Parcelable {
 
     public WorkOrder status(Status status) {
         _status = status;
+        return this;
+    }
+
+    public void setTasks(Tasks tasks) {
+        _tasks = tasks;
+    }
+
+    public Tasks getTasks() {
+        return _tasks;
+    }
+
+    public WorkOrder tasks(Tasks tasks) {
+        _tasks = tasks;
+        return this;
+    }
+
+    public void setTimeLogs(TimeLogs timeLogs) {
+        _timeLogs = timeLogs;
+    }
+
+    public TimeLogs getTimeLogs() {
+        return _timeLogs;
+    }
+
+    public WorkOrder timeLogs(TimeLogs timeLogs) {
+        _timeLogs = timeLogs;
+        return this;
+    }
+
+    public void setTitle(String title) {
+        _title = title;
+    }
+
+    public String getTitle() {
+        return _title;
+    }
+
+    public WorkOrder title(String title) {
+        _title = title;
+        return this;
+    }
+
+    public void setTypeOfWork(TypeOfWork typeOfWork) {
+        _typeOfWork = typeOfWork;
+    }
+
+    public TypeOfWork getTypeOfWork() {
+        return _typeOfWork;
+    }
+
+    public WorkOrder typeOfWork(TypeOfWork typeOfWork) {
+        _typeOfWork = typeOfWork;
+        return this;
+    }
+
+    public void setW2(Boolean w2) {
+        _w2 = w2;
+    }
+
+    public Boolean getW2() {
+        return _w2;
+    }
+
+    public WorkOrder w2(Boolean w2) {
+        _w2 = w2;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public WorkOrder workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
         return this;
     }
 

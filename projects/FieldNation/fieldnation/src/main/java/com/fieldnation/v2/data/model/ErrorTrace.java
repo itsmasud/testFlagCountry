@@ -20,23 +20,23 @@ public class ErrorTrace implements Parcelable {
     @Json(name = "args")
     private ErrorTraceArgs[] _args;
 
+    @Json(name = "class")
+    private String _class;
+
     @Json(name = "file")
     private String _file;
-
-    @Json(name = "line")
-    private Integer _line;
 
     @Json(name = "function")
     private String _function;
 
-    @Json(name = "type")
-    private String _type;
-
-    @Json(name = "class")
-    private String _class;
+    @Json(name = "line")
+    private Integer _line;
 
     @Json(name = "object")
     private ErrorTraceObject _object;
+
+    @Json(name = "type")
+    private String _type;
 
     public ErrorTrace() {
     }
@@ -54,6 +54,19 @@ public class ErrorTrace implements Parcelable {
         return this;
     }
 
+    public void setClass(String clazz) {
+        _class = clazz;
+    }
+
+    public String getClazz() {
+        return _class;
+    }
+
+    public ErrorTrace clazz(String clazz) {
+        _class = clazz;
+        return this;
+    }
+
     public void setFile(String file) {
         _file = file;
     }
@@ -64,19 +77,6 @@ public class ErrorTrace implements Parcelable {
 
     public ErrorTrace file(String file) {
         _file = file;
-        return this;
-    }
-
-    public void setLine(Integer line) {
-        _line = line;
-    }
-
-    public Integer getLine() {
-        return _line;
-    }
-
-    public ErrorTrace line(Integer line) {
-        _line = line;
         return this;
     }
 
@@ -93,29 +93,16 @@ public class ErrorTrace implements Parcelable {
         return this;
     }
 
-    public void setType(String type) {
-        _type = type;
+    public void setLine(Integer line) {
+        _line = line;
     }
 
-    public String getType() {
-        return _type;
+    public Integer getLine() {
+        return _line;
     }
 
-    public ErrorTrace type(String type) {
-        _type = type;
-        return this;
-    }
-
-    public void setClass(String clazz) {
-        _class = clazz;
-    }
-
-    public String getClazz() {
-        return _class;
-    }
-
-    public ErrorTrace clazz(String clazz) {
-        _class = clazz;
+    public ErrorTrace line(Integer line) {
+        _line = line;
         return this;
     }
 
@@ -129,6 +116,19 @@ public class ErrorTrace implements Parcelable {
 
     public ErrorTrace object(ErrorTraceObject object) {
         _object = object;
+        return this;
+    }
+
+    public void setType(String type) {
+        _type = type;
+    }
+
+    public String getType() {
+        return _type;
+    }
+
+    public ErrorTrace type(String type) {
+        _type = type;
         return this;
     }
 

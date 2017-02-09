@@ -17,41 +17,28 @@ import com.fieldnation.fnlog.Log;
 public class CheckInOut implements Parcelable {
     private static final String TAG = "CheckInOut";
 
-    @Json(name = "time_log")
-    private CheckInOutTimeLog _timeLog;
-
     @Json(name = "actor")
     private User _actor;
-
-    @Json(name = "distance")
-    private Double _distance;
-
-    @Json(name = "created")
-    private Date _created;
-
-    @Json(name = "verified")
-    private Boolean _verified;
-
-    @Json(name = "distance_from_check_in")
-    private Double _distanceFromCheckIn;
 
     @Json(name = "coords")
     private Coords _coords;
 
+    @Json(name = "created")
+    private Date _created;
+
+    @Json(name = "distance")
+    private Double _distance;
+
+    @Json(name = "distance_from_check_in")
+    private Double _distanceFromCheckIn;
+
+    @Json(name = "time_log")
+    private CheckInOutTimeLog _timeLog;
+
+    @Json(name = "verified")
+    private Boolean _verified;
+
     public CheckInOut() {
-    }
-
-    public void setTimeLog(CheckInOutTimeLog timeLog) {
-        _timeLog = timeLog;
-    }
-
-    public CheckInOutTimeLog getTimeLog() {
-        return _timeLog;
-    }
-
-    public CheckInOut timeLog(CheckInOutTimeLog timeLog) {
-        _timeLog = timeLog;
-        return this;
     }
 
     public void setActor(User actor) {
@@ -67,16 +54,16 @@ public class CheckInOut implements Parcelable {
         return this;
     }
 
-    public void setDistance(Double distance) {
-        _distance = distance;
+    public void setCoords(Coords coords) {
+        _coords = coords;
     }
 
-    public Double getDistance() {
-        return _distance;
+    public Coords getCoords() {
+        return _coords;
     }
 
-    public CheckInOut distance(Double distance) {
-        _distance = distance;
+    public CheckInOut coords(Coords coords) {
+        _coords = coords;
         return this;
     }
 
@@ -93,16 +80,16 @@ public class CheckInOut implements Parcelable {
         return this;
     }
 
-    public void setVerified(Boolean verified) {
-        _verified = verified;
+    public void setDistance(Double distance) {
+        _distance = distance;
     }
 
-    public Boolean getVerified() {
-        return _verified;
+    public Double getDistance() {
+        return _distance;
     }
 
-    public CheckInOut verified(Boolean verified) {
-        _verified = verified;
+    public CheckInOut distance(Double distance) {
+        _distance = distance;
         return this;
     }
 
@@ -119,16 +106,29 @@ public class CheckInOut implements Parcelable {
         return this;
     }
 
-    public void setCoords(Coords coords) {
-        _coords = coords;
+    public void setTimeLog(CheckInOutTimeLog timeLog) {
+        _timeLog = timeLog;
     }
 
-    public Coords getCoords() {
-        return _coords;
+    public CheckInOutTimeLog getTimeLog() {
+        return _timeLog;
     }
 
-    public CheckInOut coords(Coords coords) {
-        _coords = coords;
+    public CheckInOut timeLog(CheckInOutTimeLog timeLog) {
+        _timeLog = timeLog;
+        return this;
+    }
+
+    public void setVerified(Boolean verified) {
+        _verified = verified;
+    }
+
+    public Boolean getVerified() {
+        return _verified;
+    }
+
+    public CheckInOut verified(Boolean verified) {
+        _verified = verified;
         return this;
     }
 

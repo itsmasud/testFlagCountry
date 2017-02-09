@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class AvailableColumn implements Parcelable {
     private static final String TAG = "AvailableColumn";
 
-    @Json(name = "items")
-    private AvailableColumnItems[] _items;
-
     @Json(name = "group")
     private String _group;
 
+    @Json(name = "items")
+    private AvailableColumnItems[] _items;
+
     public AvailableColumn() {
-    }
-
-    public void setItems(AvailableColumnItems[] items) {
-        _items = items;
-    }
-
-    public AvailableColumnItems[] getItems() {
-        return _items;
-    }
-
-    public AvailableColumn items(AvailableColumnItems[] items) {
-        _items = items;
-        return this;
     }
 
     public void setGroup(String group) {
@@ -49,6 +36,19 @@ public class AvailableColumn implements Parcelable {
 
     public AvailableColumn group(String group) {
         _group = group;
+        return this;
+    }
+
+    public void setItems(AvailableColumnItems[] items) {
+        _items = items;
+    }
+
+    public AvailableColumnItems[] getItems() {
+        return _items;
+    }
+
+    public AvailableColumn items(AvailableColumnItems[] items) {
+        _items = items;
         return this;
     }
 

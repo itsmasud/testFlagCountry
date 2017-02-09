@@ -17,31 +17,31 @@ import com.fieldnation.fnlog.Log;
 public class Contacts implements Parcelable {
     private static final String TAG = "Contacts";
 
-    @Json(name = "metadata")
-    private ListEnvelope _metadata;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "correlation_id")
     private String _correlationId;
 
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
+
     @Json(name = "results")
     private Contact[] _results;
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
 
     public Contacts() {
     }
 
-    public void setMetadata(ListEnvelope metadata) {
-        _metadata = metadata;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public ListEnvelope getMetadata() {
-        return _metadata;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public Contacts metadata(ListEnvelope metadata) {
-        _metadata = metadata;
+    public Contacts actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -58,6 +58,19 @@ public class Contacts implements Parcelable {
         return this;
     }
 
+    public void setMetadata(ListEnvelope metadata) {
+        _metadata = metadata;
+    }
+
+    public ListEnvelope getMetadata() {
+        return _metadata;
+    }
+
+    public Contacts metadata(ListEnvelope metadata) {
+        _metadata = metadata;
+        return this;
+    }
+
     public void setResults(Contact[] results) {
         _results = results;
     }
@@ -68,19 +81,6 @@ public class Contacts implements Parcelable {
 
     public Contacts results(Contact[] results) {
         _results = results;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Contacts actions(ActionsEnum[] actions) {
-        _actions = actions;
         return this;
     }
 

@@ -17,11 +17,14 @@ import com.fieldnation.fnlog.Log;
 public class Contact implements Parcelable {
     private static final String TAG = "Contact";
 
+    @Json(name = "email")
+    private String _email;
+
     @Json(name = "ext")
     private String _ext;
 
-    @Json(name = "role")
-    private String _role;
+    @Json(name = "name")
+    private String _name;
 
     @Json(name = "notes")
     private String _notes;
@@ -29,13 +32,23 @@ public class Contact implements Parcelable {
     @Json(name = "phone")
     private String _phone;
 
-    @Json(name = "name")
-    private String _name;
-
-    @Json(name = "email")
-    private String _email;
+    @Json(name = "role")
+    private String _role;
 
     public Contact() {
+    }
+
+    public void setEmail(String email) {
+        _email = email;
+    }
+
+    public String getEmail() {
+        return _email;
+    }
+
+    public Contact email(String email) {
+        _email = email;
+        return this;
     }
 
     public void setExt(String ext) {
@@ -51,16 +64,16 @@ public class Contact implements Parcelable {
         return this;
     }
 
-    public void setRole(String role) {
-        _role = role;
+    public void setName(String name) {
+        _name = name;
     }
 
-    public String getRole() {
-        return _role;
+    public String getName() {
+        return _name;
     }
 
-    public Contact role(String role) {
-        _role = role;
+    public Contact name(String name) {
+        _name = name;
         return this;
     }
 
@@ -90,29 +103,16 @@ public class Contact implements Parcelable {
         return this;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public void setRole(String role) {
+        _role = role;
     }
 
-    public String getName() {
-        return _name;
+    public String getRole() {
+        return _role;
     }
 
-    public Contact name(String name) {
-        _name = name;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        _email = email;
-    }
-
-    public String getEmail() {
-        return _email;
-    }
-
-    public Contact email(String email) {
-        _email = email;
+    public Contact role(String role) {
+        _role = role;
         return this;
     }
 

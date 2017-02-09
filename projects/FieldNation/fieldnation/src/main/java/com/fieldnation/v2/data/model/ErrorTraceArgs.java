@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class ErrorTraceArgs implements Parcelable {
     private static final String TAG = "ErrorTraceArgs";
 
-    @Json(name = "status_code")
-    private Integer _statusCode;
-
     @Json(name = "message")
     private String _message;
 
+    @Json(name = "status_code")
+    private Integer _statusCode;
+
     public ErrorTraceArgs() {
-    }
-
-    public void setStatusCode(Integer statusCode) {
-        _statusCode = statusCode;
-    }
-
-    public Integer getStatusCode() {
-        return _statusCode;
-    }
-
-    public ErrorTraceArgs statusCode(Integer statusCode) {
-        _statusCode = statusCode;
-        return this;
     }
 
     public void setMessage(String message) {
@@ -49,6 +36,19 @@ public class ErrorTraceArgs implements Parcelable {
 
     public ErrorTraceArgs message(String message) {
         _message = message;
+        return this;
+    }
+
+    public void setStatusCode(Integer statusCode) {
+        _statusCode = statusCode;
+    }
+
+    public Integer getStatusCode() {
+        return _statusCode;
+    }
+
+    public ErrorTraceArgs statusCode(Integer statusCode) {
+        _statusCode = statusCode;
         return this;
     }
 

@@ -17,63 +17,37 @@ import com.fieldnation.fnlog.Log;
 public class MessageFrom implements Parcelable {
     private static final String TAG = "MessageFrom";
 
-    @Json(name = "thumbnail")
-    private String _thumbnail;
-
-    @Json(name = "role")
-    private String _role;
-
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "hideWoManager")
+    private Boolean _hideWoManager;
 
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "hideWoManager")
-    private Boolean _hideWoManager;
-
     @Json(name = "msgLink")
     private String _msgLink;
+
+    @Json(name = "name")
+    private String _name;
+
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "thumbnail")
+    private String _thumbnail;
 
     public MessageFrom() {
     }
 
-    public void setThumbnail(String thumbnail) {
-        _thumbnail = thumbnail;
+    public void setHideWoManager(Boolean hideWoManager) {
+        _hideWoManager = hideWoManager;
     }
 
-    public String getThumbnail() {
-        return _thumbnail;
+    public Boolean getHideWoManager() {
+        return _hideWoManager;
     }
 
-    public MessageFrom thumbnail(String thumbnail) {
-        _thumbnail = thumbnail;
-        return this;
-    }
-
-    public void setRole(String role) {
-        _role = role;
-    }
-
-    public String getRole() {
-        return _role;
-    }
-
-    public MessageFrom role(String role) {
-        _role = role;
-        return this;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public MessageFrom name(String name) {
-        _name = name;
+    public MessageFrom hideWoManager(Boolean hideWoManager) {
+        _hideWoManager = hideWoManager;
         return this;
     }
 
@@ -90,19 +64,6 @@ public class MessageFrom implements Parcelable {
         return this;
     }
 
-    public void setHideWoManager(Boolean hideWoManager) {
-        _hideWoManager = hideWoManager;
-    }
-
-    public Boolean getHideWoManager() {
-        return _hideWoManager;
-    }
-
-    public MessageFrom hideWoManager(Boolean hideWoManager) {
-        _hideWoManager = hideWoManager;
-        return this;
-    }
-
     public void setMsgLink(String msgLink) {
         _msgLink = msgLink;
     }
@@ -113,6 +74,45 @@ public class MessageFrom implements Parcelable {
 
     public MessageFrom msgLink(String msgLink) {
         _msgLink = msgLink;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public MessageFrom name(String name) {
+        _name = name;
+        return this;
+    }
+
+    public void setRole(String role) {
+        _role = role;
+    }
+
+    public String getRole() {
+        return _role;
+    }
+
+    public MessageFrom role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setThumbnail(String thumbnail) {
+        _thumbnail = thumbnail;
+    }
+
+    public String getThumbnail() {
+        return _thumbnail;
+    }
+
+    public MessageFrom thumbnail(String thumbnail) {
+        _thumbnail = thumbnail;
         return this;
     }
 

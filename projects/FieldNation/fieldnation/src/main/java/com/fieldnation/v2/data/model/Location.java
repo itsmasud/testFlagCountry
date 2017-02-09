@@ -18,17 +18,11 @@ import com.fieldnation.fntools.misc;
 public class Location implements Parcelable {
     private static final String TAG = "Location";
 
-    @Json(name = "zip")
-    private String _zip;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
-    @Json(name = "save_location_group")
-    private Integer _saveLocationGroup;
-
-    @Json(name = "country")
-    private String _country;
-
-    @Json(name = "role")
-    private String _role;
+    @Json(name = "address1")
+    private String _address1;
 
     @Json(name = "address2")
     private String _address2;
@@ -36,103 +30,83 @@ public class Location implements Parcelable {
     @Json(name = "city")
     private String _city;
 
-    @Json(name = "saved_location")
-    private StoredLocation _savedLocation;
-
-    @Json(name = "address1")
-    private String _address1;
+    @Json(name = "contacts")
+    private Contact[] _contacts;
 
     @Json(name = "coordinates")
     private Coords _coordinates;
 
-    @Json(name = "type")
-    private LocationType _type;
-
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
-
-    @Json(name = "mode")
-    private ModeEnum _mode;
-
-    @Json(name = "status_id")
-    private Integer _statusId;
-
-    @Json(name = "save_location")
-    private String _saveLocation;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
-
     @Json(name = "correlation_id")
     private String _correlationId;
 
-    @Json(name = "state")
-    private String _state;
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "country")
+    private String _country;
 
     @Json(name = "map")
     private Map _map;
 
-    @Json(name = "contacts")
-    private Contact[] _contacts;
+    @Json(name = "mode")
+    private ModeEnum _mode;
+
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "save_location")
+    private String _saveLocation;
+
+    @Json(name = "save_location_group")
+    private Integer _saveLocationGroup;
+
+    @Json(name = "saved_location")
+    private StoredLocation _savedLocation;
+
+    @Json(name = "state")
+    private String _state;
+
+    @Json(name = "status_id")
+    private Integer _statusId;
+
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
+
+    @Json(name = "type")
+    private LocationType _type;
 
     @Json(name = "validation")
     private LocationValidation _validation;
 
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
+    @Json(name = "zip")
+    private String _zip;
+
     public Location() {
     }
 
-    public void setZip(String zip) {
-        _zip = zip;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public String getZip() {
-        return _zip;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public Location zip(String zip) {
-        _zip = zip;
+    public Location actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
-    public void setSaveLocationGroup(Integer saveLocationGroup) {
-        _saveLocationGroup = saveLocationGroup;
+    public void setAddress1(String address1) {
+        _address1 = address1;
     }
 
-    public Integer getSaveLocationGroup() {
-        return _saveLocationGroup;
+    public String getAddress1() {
+        return _address1;
     }
 
-    public Location saveLocationGroup(Integer saveLocationGroup) {
-        _saveLocationGroup = saveLocationGroup;
-        return this;
-    }
-
-    public void setCountry(String country) {
-        _country = country;
-    }
-
-    public String getCountry() {
-        return _country;
-    }
-
-    public Location country(String country) {
-        _country = country;
-        return this;
-    }
-
-    public void setRole(String role) {
-        _role = role;
-    }
-
-    public String getRole() {
-        return _role;
-    }
-
-    public Location role(String role) {
-        _role = role;
+    public Location address1(String address1) {
+        _address1 = address1;
         return this;
     }
 
@@ -162,29 +136,16 @@ public class Location implements Parcelable {
         return this;
     }
 
-    public void setSavedLocation(StoredLocation savedLocation) {
-        _savedLocation = savedLocation;
+    public void setContacts(Contact[] contacts) {
+        _contacts = contacts;
     }
 
-    public StoredLocation getSavedLocation() {
-        return _savedLocation;
+    public Contact[] getContacts() {
+        return _contacts;
     }
 
-    public Location savedLocation(StoredLocation savedLocation) {
-        _savedLocation = savedLocation;
-        return this;
-    }
-
-    public void setAddress1(String address1) {
-        _address1 = address1;
-    }
-
-    public String getAddress1() {
-        return _address1;
-    }
-
-    public Location address1(String address1) {
-        _address1 = address1;
+    public Location contacts(Contact[] contacts) {
+        _contacts = contacts;
         return this;
     }
 
@@ -201,84 +162,6 @@ public class Location implements Parcelable {
         return this;
     }
 
-    public void setType(LocationType type) {
-        _type = type;
-    }
-
-    public LocationType getType() {
-        return _type;
-    }
-
-    public Location type(LocationType type) {
-        _type = type;
-        return this;
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
-    }
-
-    public TimeZone getTimeZone() {
-        return _timeZone;
-    }
-
-    public Location timeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
-        return this;
-    }
-
-    public void setMode(ModeEnum mode) {
-        _mode = mode;
-    }
-
-    public ModeEnum getMode() {
-        return _mode;
-    }
-
-    public Location mode(ModeEnum mode) {
-        _mode = mode;
-        return this;
-    }
-
-    public void setStatusId(Integer statusId) {
-        _statusId = statusId;
-    }
-
-    public Integer getStatusId() {
-        return _statusId;
-    }
-
-    public Location statusId(Integer statusId) {
-        _statusId = statusId;
-        return this;
-    }
-
-    public void setSaveLocation(String saveLocation) {
-        _saveLocation = saveLocation;
-    }
-
-    public String getSaveLocation() {
-        return _saveLocation;
-    }
-
-    public Location saveLocation(String saveLocation) {
-        _saveLocation = saveLocation;
-        return this;
-    }
-
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public Location workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-        return this;
-    }
-
     public void setCorrelationId(String correlationId) {
         _correlationId = correlationId;
     }
@@ -292,29 +175,16 @@ public class Location implements Parcelable {
         return this;
     }
 
-    public void setState(String state) {
-        _state = state;
+    public void setCountry(String country) {
+        _country = country;
     }
 
-    public String getState() {
-        return _state;
+    public String getCountry() {
+        return _country;
     }
 
-    public Location state(String state) {
-        _state = state;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Location actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public Location country(String country) {
+        _country = country;
         return this;
     }
 
@@ -331,16 +201,120 @@ public class Location implements Parcelable {
         return this;
     }
 
-    public void setContacts(Contact[] contacts) {
-        _contacts = contacts;
+    public void setMode(ModeEnum mode) {
+        _mode = mode;
     }
 
-    public Contact[] getContacts() {
-        return _contacts;
+    public ModeEnum getMode() {
+        return _mode;
     }
 
-    public Location contacts(Contact[] contacts) {
-        _contacts = contacts;
+    public Location mode(ModeEnum mode) {
+        _mode = mode;
+        return this;
+    }
+
+    public void setRole(String role) {
+        _role = role;
+    }
+
+    public String getRole() {
+        return _role;
+    }
+
+    public Location role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setSaveLocation(String saveLocation) {
+        _saveLocation = saveLocation;
+    }
+
+    public String getSaveLocation() {
+        return _saveLocation;
+    }
+
+    public Location saveLocation(String saveLocation) {
+        _saveLocation = saveLocation;
+        return this;
+    }
+
+    public void setSaveLocationGroup(Integer saveLocationGroup) {
+        _saveLocationGroup = saveLocationGroup;
+    }
+
+    public Integer getSaveLocationGroup() {
+        return _saveLocationGroup;
+    }
+
+    public Location saveLocationGroup(Integer saveLocationGroup) {
+        _saveLocationGroup = saveLocationGroup;
+        return this;
+    }
+
+    public void setSavedLocation(StoredLocation savedLocation) {
+        _savedLocation = savedLocation;
+    }
+
+    public StoredLocation getSavedLocation() {
+        return _savedLocation;
+    }
+
+    public Location savedLocation(StoredLocation savedLocation) {
+        _savedLocation = savedLocation;
+        return this;
+    }
+
+    public void setState(String state) {
+        _state = state;
+    }
+
+    public String getState() {
+        return _state;
+    }
+
+    public Location state(String state) {
+        _state = state;
+        return this;
+    }
+
+    public void setStatusId(Integer statusId) {
+        _statusId = statusId;
+    }
+
+    public Integer getStatusId() {
+        return _statusId;
+    }
+
+    public Location statusId(Integer statusId) {
+        _statusId = statusId;
+        return this;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+    }
+
+    public TimeZone getTimeZone() {
+        return _timeZone;
+    }
+
+    public Location timeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+        return this;
+    }
+
+    public void setType(LocationType type) {
+        _type = type;
+    }
+
+    public LocationType getType() {
+        return _type;
+    }
+
+    public Location type(LocationType type) {
+        _type = type;
         return this;
     }
 
@@ -354,6 +328,32 @@ public class Location implements Parcelable {
 
     public Location validation(LocationValidation validation) {
         _validation = validation;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public Location workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+        return this;
+    }
+
+    public void setZip(String zip) {
+        _zip = zip;
+    }
+
+    public String getZip() {
+        return _zip;
+    }
+
+    public Location zip(String zip) {
+        _zip = zip;
         return this;
     }
 
@@ -529,5 +529,4 @@ public class Location implements Parcelable {
 
         return address.trim();
     }
-
 }

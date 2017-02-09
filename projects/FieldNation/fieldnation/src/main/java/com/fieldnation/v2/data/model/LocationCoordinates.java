@@ -17,17 +17,11 @@ import com.fieldnation.fnlog.Log;
 public class LocationCoordinates implements Parcelable {
     private static final String TAG = "LocationCoordinates";
 
-    @Json(name = "zip")
-    private String _zip;
-
-    @Json(name = "country")
-    private String _country;
-
     @Json(name = "city")
     private String _city;
 
-    @Json(name = "latitude")
-    private Double _latitude;
+    @Json(name = "country")
+    private String _country;
 
     @Json(name = "exact")
     private Boolean _exact;
@@ -35,42 +29,22 @@ public class LocationCoordinates implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "latitude")
+    private Double _latitude;
+
+    @Json(name = "longitude")
+    private Double _longitude;
+
     @Json(name = "state")
     private String _state;
 
     @Json(name = "type")
     private String _type;
 
-    @Json(name = "longitude")
-    private Double _longitude;
+    @Json(name = "zip")
+    private String _zip;
 
     public LocationCoordinates() {
-    }
-
-    public void setZip(String zip) {
-        _zip = zip;
-    }
-
-    public String getZip() {
-        return _zip;
-    }
-
-    public LocationCoordinates zip(String zip) {
-        _zip = zip;
-        return this;
-    }
-
-    public void setCountry(String country) {
-        _country = country;
-    }
-
-    public String getCountry() {
-        return _country;
-    }
-
-    public LocationCoordinates country(String country) {
-        _country = country;
-        return this;
     }
 
     public void setCity(String city) {
@@ -86,16 +60,16 @@ public class LocationCoordinates implements Parcelable {
         return this;
     }
 
-    public void setLatitude(Double latitude) {
-        _latitude = latitude;
+    public void setCountry(String country) {
+        _country = country;
     }
 
-    public Double getLatitude() {
-        return _latitude;
+    public String getCountry() {
+        return _country;
     }
 
-    public LocationCoordinates latitude(Double latitude) {
-        _latitude = latitude;
+    public LocationCoordinates country(String country) {
+        _country = country;
         return this;
     }
 
@@ -125,6 +99,32 @@ public class LocationCoordinates implements Parcelable {
         return this;
     }
 
+    public void setLatitude(Double latitude) {
+        _latitude = latitude;
+    }
+
+    public Double getLatitude() {
+        return _latitude;
+    }
+
+    public LocationCoordinates latitude(Double latitude) {
+        _latitude = latitude;
+        return this;
+    }
+
+    public void setLongitude(Double longitude) {
+        _longitude = longitude;
+    }
+
+    public Double getLongitude() {
+        return _longitude;
+    }
+
+    public LocationCoordinates longitude(Double longitude) {
+        _longitude = longitude;
+        return this;
+    }
+
     public void setState(String state) {
         _state = state;
     }
@@ -151,16 +151,16 @@ public class LocationCoordinates implements Parcelable {
         return this;
     }
 
-    public void setLongitude(Double longitude) {
-        _longitude = longitude;
+    public void setZip(String zip) {
+        _zip = zip;
     }
 
-    public Double getLongitude() {
-        return _longitude;
+    public String getZip() {
+        return _zip;
     }
 
-    public LocationCoordinates longitude(Double longitude) {
-        _longitude = longitude;
+    public LocationCoordinates zip(String zip) {
+        _zip = zip;
         return this;
     }
 

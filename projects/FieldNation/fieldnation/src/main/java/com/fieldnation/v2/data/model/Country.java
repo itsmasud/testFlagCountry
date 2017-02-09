@@ -17,11 +17,8 @@ import com.fieldnation.fnlog.Log;
 public class Country implements Parcelable {
     private static final String TAG = "Country";
 
-    @Json(name = "zip")
-    private CountryZip _zip;
-
-    @Json(name = "iso")
-    private String _iso;
+    @Json(name = "address1")
+    private CountryAddress1 _address1;
 
     @Json(name = "address2")
     private CountryAddress2 _address2;
@@ -29,8 +26,8 @@ public class Country implements Parcelable {
     @Json(name = "city")
     private CountryCity _city;
 
-    @Json(name = "address1")
-    private CountryAddress1 _address1;
+    @Json(name = "iso")
+    private String _iso;
 
     @Json(name = "name")
     private String _name;
@@ -38,32 +35,22 @@ public class Country implements Parcelable {
     @Json(name = "state")
     private CountryState _state;
 
+    @Json(name = "zip")
+    private CountryZip _zip;
+
     public Country() {
     }
 
-    public void setZip(CountryZip zip) {
-        _zip = zip;
+    public void setAddress1(CountryAddress1 address1) {
+        _address1 = address1;
     }
 
-    public CountryZip getZip() {
-        return _zip;
+    public CountryAddress1 getAddress1() {
+        return _address1;
     }
 
-    public Country zip(CountryZip zip) {
-        _zip = zip;
-        return this;
-    }
-
-    public void setIso(String iso) {
-        _iso = iso;
-    }
-
-    public String getIso() {
-        return _iso;
-    }
-
-    public Country iso(String iso) {
-        _iso = iso;
+    public Country address1(CountryAddress1 address1) {
+        _address1 = address1;
         return this;
     }
 
@@ -93,16 +80,16 @@ public class Country implements Parcelable {
         return this;
     }
 
-    public void setAddress1(CountryAddress1 address1) {
-        _address1 = address1;
+    public void setIso(String iso) {
+        _iso = iso;
     }
 
-    public CountryAddress1 getAddress1() {
-        return _address1;
+    public String getIso() {
+        return _iso;
     }
 
-    public Country address1(CountryAddress1 address1) {
-        _address1 = address1;
+    public Country iso(String iso) {
+        _iso = iso;
         return this;
     }
 
@@ -129,6 +116,19 @@ public class Country implements Parcelable {
 
     public Country state(CountryState state) {
         _state = state;
+        return this;
+    }
+
+    public void setZip(CountryZip zip) {
+        _zip = zip;
+    }
+
+    public CountryZip getZip() {
+        return _zip;
+    }
+
+    public Country zip(CountryZip zip) {
+        _zip = zip;
         return this;
     }
 

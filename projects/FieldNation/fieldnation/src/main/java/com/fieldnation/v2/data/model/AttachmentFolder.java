@@ -17,14 +17,14 @@ import com.fieldnation.fnlog.Log;
 public class AttachmentFolder implements Parcelable {
     private static final String TAG = "AttachmentFolder";
 
-    @Json(name = "task")
-    private Task _task;
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "name")
     private String _name;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "task")
+    private Task _task;
 
     @Json(name = "type")
     private TypeEnum _type;
@@ -32,16 +32,16 @@ public class AttachmentFolder implements Parcelable {
     public AttachmentFolder() {
     }
 
-    public void setTask(Task task) {
-        _task = task;
+    public void setId(Integer id) {
+        _id = id;
     }
 
-    public Task getTask() {
-        return _task;
+    public Integer getId() {
+        return _id;
     }
 
-    public AttachmentFolder task(Task task) {
-        _task = task;
+    public AttachmentFolder id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -58,16 +58,16 @@ public class AttachmentFolder implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
+    public void setTask(Task task) {
+        _task = task;
     }
 
-    public Integer getId() {
-        return _id;
+    public Task getTask() {
+        return _task;
     }
 
-    public AttachmentFolder id(Integer id) {
-        _id = id;
+    public AttachmentFolder task(Task task) {
+        _task = task;
         return this;
     }
 

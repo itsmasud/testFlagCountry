@@ -20,11 +20,11 @@ public class MessageProblem implements Parcelable {
     @Json(name = "flag_id")
     private Integer _flagId;
 
-    @Json(name = "type")
-    private MessageProblemType _type;
-
     @Json(name = "resolved")
     private Boolean _resolved;
+
+    @Json(name = "type")
+    private MessageProblemType _type;
 
     public MessageProblem() {
     }
@@ -42,19 +42,6 @@ public class MessageProblem implements Parcelable {
         return this;
     }
 
-    public void setType(MessageProblemType type) {
-        _type = type;
-    }
-
-    public MessageProblemType getType() {
-        return _type;
-    }
-
-    public MessageProblem type(MessageProblemType type) {
-        _type = type;
-        return this;
-    }
-
     public void setResolved(Boolean resolved) {
         _resolved = resolved;
     }
@@ -65,6 +52,19 @@ public class MessageProblem implements Parcelable {
 
     public MessageProblem resolved(Boolean resolved) {
         _resolved = resolved;
+        return this;
+    }
+
+    public void setType(MessageProblemType type) {
+        _type = type;
+    }
+
+    public MessageProblemType getType() {
+        return _type;
+    }
+
+    public MessageProblem type(MessageProblemType type) {
+        _type = type;
         return this;
     }
 

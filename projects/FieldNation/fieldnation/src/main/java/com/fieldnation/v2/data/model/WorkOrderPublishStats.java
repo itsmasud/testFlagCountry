@@ -17,29 +17,16 @@ import com.fieldnation.fnlog.Log;
 public class WorkOrderPublishStats implements Parcelable {
     private static final String TAG = "WorkOrderPublishStats";
 
-    @Json(name = "routes")
-    private Integer _routes;
-
     @Json(name = "counter_offers")
     private Integer _counterOffers;
 
     @Json(name = "requests")
     private Integer _requests;
 
+    @Json(name = "routes")
+    private Integer _routes;
+
     public WorkOrderPublishStats() {
-    }
-
-    public void setRoutes(Integer routes) {
-        _routes = routes;
-    }
-
-    public Integer getRoutes() {
-        return _routes;
-    }
-
-    public WorkOrderPublishStats routes(Integer routes) {
-        _routes = routes;
-        return this;
     }
 
     public void setCounterOffers(Integer counterOffers) {
@@ -65,6 +52,19 @@ public class WorkOrderPublishStats implements Parcelable {
 
     public WorkOrderPublishStats requests(Integer requests) {
         _requests = requests;
+        return this;
+    }
+
+    public void setRoutes(Integer routes) {
+        _routes = routes;
+    }
+
+    public Integer getRoutes() {
+        return _routes;
+    }
+
+    public WorkOrderPublishStats routes(Integer routes) {
+        _routes = routes;
         return this;
     }
 

@@ -17,14 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class FundTransaction implements Parcelable {
     private static final String TAG = "FundTransaction";
 
-    @Json(name = "note")
-    private String _note;
-
     @Json(name = "amount")
     private Double _amount;
 
+    @Json(name = "billing_address")
+    private BillingAddress _billingAddress;
+
     @Json(name = "created")
     private Date _created;
+
+    @Json(name = "credit_card")
+    private CreditCard _creditCard;
 
     @Json(name = "description")
     private String _description;
@@ -32,20 +35,20 @@ public class FundTransaction implements Parcelable {
     @Json(name = "external_id")
     private String _externalId;
 
-    @Json(name = "billing_address")
-    private BillingAddress _billingAddress;
-
-    @Json(name = "type")
-    private TypeEnum _type;
-
-    @Json(name = "credit_card")
-    private CreditCard _creditCard;
-
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "note")
+    private String _note;
+
+    @Json(name = "status")
+    private StatusEnum _status;
+
     @Json(name = "status_reason")
     private String _statusReason;
+
+    @Json(name = "type")
+    private TypeEnum _type;
 
     @Json(name = "updated")
     private Date _updated;
@@ -53,23 +56,7 @@ public class FundTransaction implements Parcelable {
     @Json(name = "work_order")
     private WorkOrder _workOrder;
 
-    @Json(name = "status")
-    private StatusEnum _status;
-
     public FundTransaction() {
-    }
-
-    public void setNote(String note) {
-        _note = note;
-    }
-
-    public String getNote() {
-        return _note;
-    }
-
-    public FundTransaction note(String note) {
-        _note = note;
-        return this;
     }
 
     public void setAmount(Double amount) {
@@ -85,6 +72,19 @@ public class FundTransaction implements Parcelable {
         return this;
     }
 
+    public void setBillingAddress(BillingAddress billingAddress) {
+        _billingAddress = billingAddress;
+    }
+
+    public BillingAddress getBillingAddress() {
+        return _billingAddress;
+    }
+
+    public FundTransaction billingAddress(BillingAddress billingAddress) {
+        _billingAddress = billingAddress;
+        return this;
+    }
+
     public void setCreated(Date created) {
         _created = created;
     }
@@ -95,6 +95,19 @@ public class FundTransaction implements Parcelable {
 
     public FundTransaction created(Date created) {
         _created = created;
+        return this;
+    }
+
+    public void setCreditCard(CreditCard creditCard) {
+        _creditCard = creditCard;
+    }
+
+    public CreditCard getCreditCard() {
+        return _creditCard;
+    }
+
+    public FundTransaction creditCard(CreditCard creditCard) {
+        _creditCard = creditCard;
         return this;
     }
 
@@ -124,45 +137,6 @@ public class FundTransaction implements Parcelable {
         return this;
     }
 
-    public void setBillingAddress(BillingAddress billingAddress) {
-        _billingAddress = billingAddress;
-    }
-
-    public BillingAddress getBillingAddress() {
-        return _billingAddress;
-    }
-
-    public FundTransaction billingAddress(BillingAddress billingAddress) {
-        _billingAddress = billingAddress;
-        return this;
-    }
-
-    public void setType(TypeEnum type) {
-        _type = type;
-    }
-
-    public TypeEnum getType() {
-        return _type;
-    }
-
-    public FundTransaction type(TypeEnum type) {
-        _type = type;
-        return this;
-    }
-
-    public void setCreditCard(CreditCard creditCard) {
-        _creditCard = creditCard;
-    }
-
-    public CreditCard getCreditCard() {
-        return _creditCard;
-    }
-
-    public FundTransaction creditCard(CreditCard creditCard) {
-        _creditCard = creditCard;
-        return this;
-    }
-
     public void setId(Integer id) {
         _id = id;
     }
@@ -176,6 +150,32 @@ public class FundTransaction implements Parcelable {
         return this;
     }
 
+    public void setNote(String note) {
+        _note = note;
+    }
+
+    public String getNote() {
+        return _note;
+    }
+
+    public FundTransaction note(String note) {
+        _note = note;
+        return this;
+    }
+
+    public void setStatus(StatusEnum status) {
+        _status = status;
+    }
+
+    public StatusEnum getStatus() {
+        return _status;
+    }
+
+    public FundTransaction status(StatusEnum status) {
+        _status = status;
+        return this;
+    }
+
     public void setStatusReason(String statusReason) {
         _statusReason = statusReason;
     }
@@ -186,6 +186,19 @@ public class FundTransaction implements Parcelable {
 
     public FundTransaction statusReason(String statusReason) {
         _statusReason = statusReason;
+        return this;
+    }
+
+    public void setType(TypeEnum type) {
+        _type = type;
+    }
+
+    public TypeEnum getType() {
+        return _type;
+    }
+
+    public FundTransaction type(TypeEnum type) {
+        _type = type;
         return this;
     }
 
@@ -212,19 +225,6 @@ public class FundTransaction implements Parcelable {
 
     public FundTransaction workOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        return this;
-    }
-
-    public void setStatus(StatusEnum status) {
-        _status = status;
-    }
-
-    public StatusEnum getStatus() {
-        return _status;
-    }
-
-    public FundTransaction status(StatusEnum status) {
-        _status = status;
         return this;
     }
 

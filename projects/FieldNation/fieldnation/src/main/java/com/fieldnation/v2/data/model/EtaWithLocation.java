@@ -17,47 +17,34 @@ import com.fieldnation.fnlog.Log;
 public class EtaWithLocation implements Parcelable {
     private static final String TAG = "EtaWithLocation";
 
-    @Json(name = "schedule")
-    private Schedule _schedule;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
+    @Json(name = "bundle")
+    private Bundle _bundle;
 
     @Json(name = "location")
     private Location _location;
 
+    @Json(name = "schedule")
+    private Schedule _schedule;
+
     @Json(name = "title")
     private String _title;
 
-    @Json(name = "bundle")
-    private Bundle _bundle;
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
 
     public EtaWithLocation() {
     }
 
-    public void setSchedule(Schedule schedule) {
-        _schedule = schedule;
+    public void setBundle(Bundle bundle) {
+        _bundle = bundle;
     }
 
-    public Schedule getSchedule() {
-        return _schedule;
+    public Bundle getBundle() {
+        return _bundle;
     }
 
-    public EtaWithLocation schedule(Schedule schedule) {
-        _schedule = schedule;
-        return this;
-    }
-
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public EtaWithLocation workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
+    public EtaWithLocation bundle(Bundle bundle) {
+        _bundle = bundle;
         return this;
     }
 
@@ -74,6 +61,19 @@ public class EtaWithLocation implements Parcelable {
         return this;
     }
 
+    public void setSchedule(Schedule schedule) {
+        _schedule = schedule;
+    }
+
+    public Schedule getSchedule() {
+        return _schedule;
+    }
+
+    public EtaWithLocation schedule(Schedule schedule) {
+        _schedule = schedule;
+        return this;
+    }
+
     public void setTitle(String title) {
         _title = title;
     }
@@ -87,16 +87,16 @@ public class EtaWithLocation implements Parcelable {
         return this;
     }
 
-    public void setBundle(Bundle bundle) {
-        _bundle = bundle;
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
     }
 
-    public Bundle getBundle() {
-        return _bundle;
+    public Integer getWorkOrderId() {
+        return _workOrderId;
     }
 
-    public EtaWithLocation bundle(Bundle bundle) {
-        _bundle = bundle;
+    public EtaWithLocation workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
         return this;
     }
 

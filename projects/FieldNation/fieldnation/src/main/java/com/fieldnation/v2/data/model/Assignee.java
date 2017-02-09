@@ -17,25 +17,51 @@ import com.fieldnation.fnlog.Log;
 public class Assignee implements Parcelable {
     private static final String TAG = "Assignee";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "role")
     private String _role;
 
     @Json(name = "status_id")
     private Integer _statusId;
 
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
-
-    @Json(name = "correlation_id")
-    private String _correlationId;
-
     @Json(name = "user")
     private User _user;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
 
     public Assignee() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Assignee actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return _correlationId;
+    }
+
+    public Assignee correlationId(String correlationId) {
+        _correlationId = correlationId;
+        return this;
     }
 
     public void setRole(String role) {
@@ -64,32 +90,6 @@ public class Assignee implements Parcelable {
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public Assignee workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-        return this;
-    }
-
-    public void setCorrelationId(String correlationId) {
-        _correlationId = correlationId;
-    }
-
-    public String getCorrelationId() {
-        return _correlationId;
-    }
-
-    public Assignee correlationId(String correlationId) {
-        _correlationId = correlationId;
-        return this;
-    }
-
     public void setUser(User user) {
         _user = user;
     }
@@ -103,16 +103,16 @@ public class Assignee implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public Integer getWorkOrderId() {
+        return _workOrderId;
     }
 
-    public Assignee actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public Assignee workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
         return this;
     }
 

@@ -17,6 +17,12 @@ import com.fieldnation.fnlog.Log;
 public class AvailableColumnItems implements Parcelable {
     private static final String TAG = "AvailableColumnItems";
 
+    @Json(name = "can_sort")
+    private Boolean _canSort;
+
+    @Json(name = "group")
+    private String _group;
+
     @Json(name = "icon")
     private String _icon;
 
@@ -26,8 +32,8 @@ public class AvailableColumnItems implements Parcelable {
     @Json(name = "label")
     private String _label;
 
-    @Json(name = "can_sort")
-    private Boolean _canSort;
+    @Json(name = "order")
+    private Integer _order;
 
     @Json(name = "selected")
     private Boolean _selected;
@@ -35,13 +41,33 @@ public class AvailableColumnItems implements Parcelable {
     @Json(name = "sort_dir")
     private String _sortDir;
 
-    @Json(name = "group")
-    private String _group;
-
-    @Json(name = "order")
-    private Integer _order;
-
     public AvailableColumnItems() {
+    }
+
+    public void setCanSort(Boolean canSort) {
+        _canSort = canSort;
+    }
+
+    public Boolean getCanSort() {
+        return _canSort;
+    }
+
+    public AvailableColumnItems canSort(Boolean canSort) {
+        _canSort = canSort;
+        return this;
+    }
+
+    public void setGroup(String group) {
+        _group = group;
+    }
+
+    public String getGroup() {
+        return _group;
+    }
+
+    public AvailableColumnItems group(String group) {
+        _group = group;
+        return this;
     }
 
     public void setIcon(String icon) {
@@ -83,16 +109,16 @@ public class AvailableColumnItems implements Parcelable {
         return this;
     }
 
-    public void setCanSort(Boolean canSort) {
-        _canSort = canSort;
+    public void setOrder(Integer order) {
+        _order = order;
     }
 
-    public Boolean getCanSort() {
-        return _canSort;
+    public Integer getOrder() {
+        return _order;
     }
 
-    public AvailableColumnItems canSort(Boolean canSort) {
-        _canSort = canSort;
+    public AvailableColumnItems order(Integer order) {
+        _order = order;
         return this;
     }
 
@@ -119,32 +145,6 @@ public class AvailableColumnItems implements Parcelable {
 
     public AvailableColumnItems sortDir(String sortDir) {
         _sortDir = sortDir;
-        return this;
-    }
-
-    public void setGroup(String group) {
-        _group = group;
-    }
-
-    public String getGroup() {
-        return _group;
-    }
-
-    public AvailableColumnItems group(String group) {
-        _group = group;
-        return this;
-    }
-
-    public void setOrder(Integer order) {
-        _order = order;
-    }
-
-    public Integer getOrder() {
-        return _order;
-    }
-
-    public AvailableColumnItems order(Integer order) {
-        _order = order;
         return this;
     }
 

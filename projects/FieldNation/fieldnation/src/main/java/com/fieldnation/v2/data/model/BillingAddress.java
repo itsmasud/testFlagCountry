@@ -17,17 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class BillingAddress implements Parcelable {
     private static final String TAG = "BillingAddress";
 
-    @Json(name = "zip")
-    private String _zip;
-
-    @Json(name = "country")
-    private String _country;
-
     @Json(name = "address")
     private String _address;
 
     @Json(name = "city")
     private String _city;
+
+    @Json(name = "country")
+    private String _country;
+
+    @Json(name = "email")
+    private String _email;
 
     @Json(name = "phone")
     private String _phone;
@@ -35,36 +35,10 @@ public class BillingAddress implements Parcelable {
     @Json(name = "state")
     private String _state;
 
-    @Json(name = "email")
-    private String _email;
+    @Json(name = "zip")
+    private String _zip;
 
     public BillingAddress() {
-    }
-
-    public void setZip(String zip) {
-        _zip = zip;
-    }
-
-    public String getZip() {
-        return _zip;
-    }
-
-    public BillingAddress zip(String zip) {
-        _zip = zip;
-        return this;
-    }
-
-    public void setCountry(String country) {
-        _country = country;
-    }
-
-    public String getCountry() {
-        return _country;
-    }
-
-    public BillingAddress country(String country) {
-        _country = country;
-        return this;
     }
 
     public void setAddress(String address) {
@@ -90,6 +64,32 @@ public class BillingAddress implements Parcelable {
 
     public BillingAddress city(String city) {
         _city = city;
+        return this;
+    }
+
+    public void setCountry(String country) {
+        _country = country;
+    }
+
+    public String getCountry() {
+        return _country;
+    }
+
+    public BillingAddress country(String country) {
+        _country = country;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        _email = email;
+    }
+
+    public String getEmail() {
+        return _email;
+    }
+
+    public BillingAddress email(String email) {
+        _email = email;
         return this;
     }
 
@@ -119,16 +119,16 @@ public class BillingAddress implements Parcelable {
         return this;
     }
 
-    public void setEmail(String email) {
-        _email = email;
+    public void setZip(String zip) {
+        _zip = zip;
     }
 
-    public String getEmail() {
-        return _email;
+    public String getZip() {
+        return _zip;
     }
 
-    public BillingAddress email(String email) {
-        _email = email;
+    public BillingAddress zip(String zip) {
+        _zip = zip;
         return this;
     }
 

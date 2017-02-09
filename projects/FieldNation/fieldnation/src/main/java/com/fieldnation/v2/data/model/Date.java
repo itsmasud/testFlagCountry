@@ -21,28 +21,15 @@ import java.util.Calendar;
 public class Date implements Parcelable {
     private static final String TAG = "Date";
 
-    @Json(name = "utc") // 2017-01-30 00:00:00
-    private String _utc;
-
 /*
     @Json(name = "local") // Don't use if you can, this should be in local time zone
     private Local _local;
 */
 
+    @Json(name = "utc") // 2017-01-30 00:00:00
+    private String _utc;
+
     public Date() {
-    }
-
-    public void setUtc(String utc) {
-        _utc = utc;
-    }
-
-    public String getUtcString() {
-        return _utc;
-    }
-
-    public Date utc(String utc) {
-        _utc = utc;
-        return this;
     }
 
 /*
@@ -59,6 +46,19 @@ public class Date implements Parcelable {
         return this;
     }
 */
+
+    public void setUtc(String utc) {
+        _utc = utc;
+    }
+
+    public String getUtcString() {
+        return _utc;
+    }
+
+    public Date utc(String utc) {
+        _utc = utc;
+        return this;
+    }
 
     /*-*****************************-*/
     /*-             Json            -*/

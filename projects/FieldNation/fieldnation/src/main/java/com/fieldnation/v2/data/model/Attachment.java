@@ -17,94 +17,55 @@ import com.fieldnation.fnlog.Log;
 public class Attachment implements Parcelable {
     private static final String TAG = "Attachment";
 
-    @Json(name = "status_description")
-    private String _statusDescription;
-
-    @Json(name = "file")
-    private File _file;
-
-    @Json(name = "notes")
-    private String _notes;
-
-    @Json(name = "task")
-    private Task _task;
+    @Json(name = "author")
+    private User _author;
 
     @Json(name = "created")
     private Date _created;
 
-    @Json(name = "author")
-    private User _author;
-
-    @Json(name = "show_before_assignment")
-    private Boolean _showBeforeAssignment;
-
-    @Json(name = "reviewed")
-    private Date _reviewed;
-
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "reviewer")
-    private User _reviewer;
+    @Json(name = "file")
+    private File _file;
 
     @Json(name = "folder_id")
     private Integer _folderId;
 
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "notes")
+    private String _notes;
+
+    @Json(name = "reviewed")
+    private Date _reviewed;
+
+    @Json(name = "reviewer")
+    private User _reviewer;
+
+    @Json(name = "show_before_assignment")
+    private Boolean _showBeforeAssignment;
+
     @Json(name = "status")
     private StatusEnum _status;
+
+    @Json(name = "status_description")
+    private String _statusDescription;
+
+    @Json(name = "task")
+    private Task _task;
 
     public Attachment() {
     }
 
-    public void setStatusDescription(String statusDescription) {
-        _statusDescription = statusDescription;
+    public void setAuthor(User author) {
+        _author = author;
     }
 
-    public String getStatusDescription() {
-        return _statusDescription;
+    public User getAuthor() {
+        return _author;
     }
 
-    public Attachment statusDescription(String statusDescription) {
-        _statusDescription = statusDescription;
-        return this;
-    }
-
-    public void setFile(File file) {
-        _file = file;
-    }
-
-    public File getFile() {
-        return _file;
-    }
-
-    public Attachment file(File file) {
-        _file = file;
-        return this;
-    }
-
-    public void setNotes(String notes) {
-        _notes = notes;
-    }
-
-    public String getNotes() {
-        return _notes;
-    }
-
-    public Attachment notes(String notes) {
-        _notes = notes;
-        return this;
-    }
-
-    public void setTask(Task task) {
-        _task = task;
-    }
-
-    public Task getTask() {
-        return _task;
-    }
-
-    public Attachment task(Task task) {
-        _task = task;
+    public Attachment author(User author) {
+        _author = author;
         return this;
     }
 
@@ -121,68 +82,16 @@ public class Attachment implements Parcelable {
         return this;
     }
 
-    public void setAuthor(User author) {
-        _author = author;
+    public void setFile(File file) {
+        _file = file;
     }
 
-    public User getAuthor() {
-        return _author;
+    public File getFile() {
+        return _file;
     }
 
-    public Attachment author(User author) {
-        _author = author;
-        return this;
-    }
-
-    public void setShowBeforeAssignment(Boolean showBeforeAssignment) {
-        _showBeforeAssignment = showBeforeAssignment;
-    }
-
-    public Boolean getShowBeforeAssignment() {
-        return _showBeforeAssignment;
-    }
-
-    public Attachment showBeforeAssignment(Boolean showBeforeAssignment) {
-        _showBeforeAssignment = showBeforeAssignment;
-        return this;
-    }
-
-    public void setReviewed(Date reviewed) {
-        _reviewed = reviewed;
-    }
-
-    public Date getReviewed() {
-        return _reviewed;
-    }
-
-    public Attachment reviewed(Date reviewed) {
-        _reviewed = reviewed;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public Attachment id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setReviewer(User reviewer) {
-        _reviewer = reviewer;
-    }
-
-    public User getReviewer() {
-        return _reviewer;
-    }
-
-    public Attachment reviewer(User reviewer) {
-        _reviewer = reviewer;
+    public Attachment file(File file) {
+        _file = file;
         return this;
     }
 
@@ -199,6 +108,71 @@ public class Attachment implements Parcelable {
         return this;
     }
 
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Attachment id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setNotes(String notes) {
+        _notes = notes;
+    }
+
+    public String getNotes() {
+        return _notes;
+    }
+
+    public Attachment notes(String notes) {
+        _notes = notes;
+        return this;
+    }
+
+    public void setReviewed(Date reviewed) {
+        _reviewed = reviewed;
+    }
+
+    public Date getReviewed() {
+        return _reviewed;
+    }
+
+    public Attachment reviewed(Date reviewed) {
+        _reviewed = reviewed;
+        return this;
+    }
+
+    public void setReviewer(User reviewer) {
+        _reviewer = reviewer;
+    }
+
+    public User getReviewer() {
+        return _reviewer;
+    }
+
+    public Attachment reviewer(User reviewer) {
+        _reviewer = reviewer;
+        return this;
+    }
+
+    public void setShowBeforeAssignment(Boolean showBeforeAssignment) {
+        _showBeforeAssignment = showBeforeAssignment;
+    }
+
+    public Boolean getShowBeforeAssignment() {
+        return _showBeforeAssignment;
+    }
+
+    public Attachment showBeforeAssignment(Boolean showBeforeAssignment) {
+        _showBeforeAssignment = showBeforeAssignment;
+        return this;
+    }
+
     public void setStatus(StatusEnum status) {
         _status = status;
     }
@@ -209,6 +183,32 @@ public class Attachment implements Parcelable {
 
     public Attachment status(StatusEnum status) {
         _status = status;
+        return this;
+    }
+
+    public void setStatusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
+    }
+
+    public String getStatusDescription() {
+        return _statusDescription;
+    }
+
+    public Attachment statusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
+        return this;
+    }
+
+    public void setTask(Task task) {
+        _task = task;
+    }
+
+    public Task getTask() {
+        return _task;
+    }
+
+    public Attachment task(Task task) {
+        _task = task;
         return this;
     }
 

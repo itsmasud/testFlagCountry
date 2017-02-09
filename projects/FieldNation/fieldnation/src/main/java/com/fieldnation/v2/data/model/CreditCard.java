@@ -17,11 +17,14 @@ import com.fieldnation.fnlog.Log;
 public class CreditCard implements Parcelable {
     private static final String TAG = "CreditCard";
 
-    @Json(name = "cvv")
-    private String _cvv;
-
     @Json(name = "card_number")
     private String _cardNumber;
+
+    @Json(name = "cardholder_name")
+    private String _cardholderName;
+
+    @Json(name = "cvv")
+    private String _cvv;
 
     @Json(name = "exp_date")
     private String _expDate;
@@ -29,23 +32,7 @@ public class CreditCard implements Parcelable {
     @Json(name = "type")
     private TypeEnum _type;
 
-    @Json(name = "cardholder_name")
-    private String _cardholderName;
-
     public CreditCard() {
-    }
-
-    public void setCvv(String cvv) {
-        _cvv = cvv;
-    }
-
-    public String getCvv() {
-        return _cvv;
-    }
-
-    public CreditCard cvv(String cvv) {
-        _cvv = cvv;
-        return this;
     }
 
     public void setCardNumber(String cardNumber) {
@@ -58,6 +45,32 @@ public class CreditCard implements Parcelable {
 
     public CreditCard cardNumber(String cardNumber) {
         _cardNumber = cardNumber;
+        return this;
+    }
+
+    public void setCardholderName(String cardholderName) {
+        _cardholderName = cardholderName;
+    }
+
+    public String getCardholderName() {
+        return _cardholderName;
+    }
+
+    public CreditCard cardholderName(String cardholderName) {
+        _cardholderName = cardholderName;
+        return this;
+    }
+
+    public void setCvv(String cvv) {
+        _cvv = cvv;
+    }
+
+    public String getCvv() {
+        return _cvv;
+    }
+
+    public CreditCard cvv(String cvv) {
+        _cvv = cvv;
         return this;
     }
 
@@ -84,19 +97,6 @@ public class CreditCard implements Parcelable {
 
     public CreditCard type(TypeEnum type) {
         _type = type;
-        return this;
-    }
-
-    public void setCardholderName(String cardholderName) {
-        _cardholderName = cardholderName;
-    }
-
-    public String getCardholderName() {
-        return _cardholderName;
-    }
-
-    public CreditCard cardholderName(String cardholderName) {
-        _cardholderName = cardholderName;
         return this;
     }
 

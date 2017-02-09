@@ -20,11 +20,11 @@ public class CustomFieldDependency implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "value")
-    private String _value;
-
     @Json(name = "operator")
     private OperatorEnum _operator;
+
+    @Json(name = "value")
+    private String _value;
 
     public CustomFieldDependency() {
     }
@@ -42,19 +42,6 @@ public class CustomFieldDependency implements Parcelable {
         return this;
     }
 
-    public void setValue(String value) {
-        _value = value;
-    }
-
-    public String getValue() {
-        return _value;
-    }
-
-    public CustomFieldDependency value(String value) {
-        _value = value;
-        return this;
-    }
-
     public void setOperator(OperatorEnum operator) {
         _operator = operator;
     }
@@ -65,6 +52,19 @@ public class CustomFieldDependency implements Parcelable {
 
     public CustomFieldDependency operator(OperatorEnum operator) {
         _operator = operator;
+        return this;
+    }
+
+    public void setValue(String value) {
+        _value = value;
+    }
+
+    public String getValue() {
+        return _value;
+    }
+
+    public CustomFieldDependency value(String value) {
+        _value = value;
         return this;
     }
 

@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class LocationGroup implements Parcelable {
     private static final String TAG = "LocationGroup";
 
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "name")
+    private String _name;
+
     public LocationGroup() {
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public LocationGroup name(String name) {
-        _name = name;
-        return this;
     }
 
     public void setId(Integer id) {
@@ -49,6 +36,19 @@ public class LocationGroup implements Parcelable {
 
     public LocationGroup id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public LocationGroup name(String name) {
+        _name = name;
         return this;
     }
 

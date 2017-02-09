@@ -17,22 +17,35 @@ import com.fieldnation.fnlog.Log;
 public class Eta implements Parcelable {
     private static final String TAG = "Eta";
 
+    @Json(name = "bundle_id")
+    private Integer _bundleId;
+
     @Json(name = "hour_estimate")
     private Double _hourEstimate;
 
     @Json(name = "notes")
     private String _notes;
 
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
-
-    @Json(name = "bundle_id")
-    private Integer _bundleId;
-
     @Json(name = "start")
     private Date _start;
 
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
     public Eta() {
+    }
+
+    public void setBundleId(Integer bundleId) {
+        _bundleId = bundleId;
+    }
+
+    public Integer getBundleId() {
+        return _bundleId;
+    }
+
+    public Eta bundleId(Integer bundleId) {
+        _bundleId = bundleId;
+        return this;
     }
 
     public void setHourEstimate(Double hourEstimate) {
@@ -61,32 +74,6 @@ public class Eta implements Parcelable {
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public Eta workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-        return this;
-    }
-
-    public void setBundleId(Integer bundleId) {
-        _bundleId = bundleId;
-    }
-
-    public Integer getBundleId() {
-        return _bundleId;
-    }
-
-    public Eta bundleId(Integer bundleId) {
-        _bundleId = bundleId;
-        return this;
-    }
-
     public void setStart(Date start) {
         _start = start;
     }
@@ -97,6 +84,19 @@ public class Eta implements Parcelable {
 
     public Eta start(Date start) {
         _start = start;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public Eta workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
         return this;
     }
 

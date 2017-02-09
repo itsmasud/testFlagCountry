@@ -17,48 +17,22 @@ import com.fieldnation.fnlog.Log;
 public class LocationNote implements Parcelable {
     private static final String TAG = "LocationNote";
 
-    @Json(name = "private")
-    private Boolean _private;
-
-    @Json(name = "user_id")
-    private Integer _userId;
-
     @Json(name = "created")
     private String _created;
 
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "private")
+    private Boolean _private;
+
     @Json(name = "text")
     private String _text;
 
+    @Json(name = "user_id")
+    private Integer _userId;
+
     public LocationNote() {
-    }
-
-    public void setPrivate(Boolean privatee) {
-        _private = privatee;
-    }
-
-    public Boolean getPrivate() {
-        return _private;
-    }
-
-    public LocationNote privatee(Boolean privatee) {
-        _private = privatee;
-        return this;
-    }
-
-    public void setUserId(Integer userId) {
-        _userId = userId;
-    }
-
-    public Integer getUserId() {
-        return _userId;
-    }
-
-    public LocationNote userId(Integer userId) {
-        _userId = userId;
-        return this;
     }
 
     public void setCreated(String created) {
@@ -87,6 +61,19 @@ public class LocationNote implements Parcelable {
         return this;
     }
 
+    public void setPrivate(Boolean privatee) {
+        _private = privatee;
+    }
+
+    public Boolean getPrivate() {
+        return _private;
+    }
+
+    public LocationNote privatee(Boolean privatee) {
+        _private = privatee;
+        return this;
+    }
+
     public void setText(String text) {
         _text = text;
     }
@@ -97,6 +84,19 @@ public class LocationNote implements Parcelable {
 
     public LocationNote text(String text) {
         _text = text;
+        return this;
+    }
+
+    public void setUserId(Integer userId) {
+        _userId = userId;
+    }
+
+    public Integer getUserId() {
+        return _userId;
+    }
+
+    public LocationNote userId(Integer userId) {
+        _userId = userId;
         return this;
     }
 

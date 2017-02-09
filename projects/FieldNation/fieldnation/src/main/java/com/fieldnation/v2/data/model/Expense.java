@@ -17,62 +17,49 @@ import com.fieldnation.fnlog.Log;
 public class Expense implements Parcelable {
     private static final String TAG = "Expense";
 
-    @Json(name = "reason")
-    private String _reason;
-
-    @Json(name = "status_description")
-    private String _statusDescription;
+    @Json(name = "added")
+    private Date _added;
 
     @Json(name = "amount")
     private Double _amount;
 
-    @Json(name = "quantity")
-    private Integer _quantity;
-
-    @Json(name = "added")
-    private Date _added;
-
     @Json(name = "author")
     private User _author;
-
-    @Json(name = "description")
-    private String _description;
 
     @Json(name = "category")
     private ExpenseCategory _category;
 
+    @Json(name = "company_expense")
+    private ExpenseCompanyExpense _companyExpense;
+
+    @Json(name = "description")
+    private String _description;
+
+    @Json(name = "quantity")
+    private Integer _quantity;
+
+    @Json(name = "reason")
+    private String _reason;
+
     @Json(name = "status")
     private StatusEnum _status;
 
-    @Json(name = "company_expense")
-    private ExpenseCompanyExpense _companyExpense;
+    @Json(name = "status_description")
+    private String _statusDescription;
 
     public Expense() {
     }
 
-    public void setReason(String reason) {
-        _reason = reason;
+    public void setAdded(Date added) {
+        _added = added;
     }
 
-    public String getReason() {
-        return _reason;
+    public Date getAdded() {
+        return _added;
     }
 
-    public Expense reason(String reason) {
-        _reason = reason;
-        return this;
-    }
-
-    public void setStatusDescription(String statusDescription) {
-        _statusDescription = statusDescription;
-    }
-
-    public String getStatusDescription() {
-        return _statusDescription;
-    }
-
-    public Expense statusDescription(String statusDescription) {
-        _statusDescription = statusDescription;
+    public Expense added(Date added) {
+        _added = added;
         return this;
     }
 
@@ -89,32 +76,6 @@ public class Expense implements Parcelable {
         return this;
     }
 
-    public void setQuantity(Integer quantity) {
-        _quantity = quantity;
-    }
-
-    public Integer getQuantity() {
-        return _quantity;
-    }
-
-    public Expense quantity(Integer quantity) {
-        _quantity = quantity;
-        return this;
-    }
-
-    public void setAdded(Date added) {
-        _added = added;
-    }
-
-    public Date getAdded() {
-        return _added;
-    }
-
-    public Expense added(Date added) {
-        _added = added;
-        return this;
-    }
-
     public void setAuthor(User author) {
         _author = author;
     }
@@ -125,19 +86,6 @@ public class Expense implements Parcelable {
 
     public Expense author(User author) {
         _author = author;
-        return this;
-    }
-
-    public void setDescription(String description) {
-        _description = description;
-    }
-
-    public String getDescription() {
-        return _description;
-    }
-
-    public Expense description(String description) {
-        _description = description;
         return this;
     }
 
@@ -154,6 +102,58 @@ public class Expense implements Parcelable {
         return this;
     }
 
+    public void setCompanyExpense(ExpenseCompanyExpense companyExpense) {
+        _companyExpense = companyExpense;
+    }
+
+    public ExpenseCompanyExpense getCompanyExpense() {
+        return _companyExpense;
+    }
+
+    public Expense companyExpense(ExpenseCompanyExpense companyExpense) {
+        _companyExpense = companyExpense;
+        return this;
+    }
+
+    public void setDescription(String description) {
+        _description = description;
+    }
+
+    public String getDescription() {
+        return _description;
+    }
+
+    public Expense description(String description) {
+        _description = description;
+        return this;
+    }
+
+    public void setQuantity(Integer quantity) {
+        _quantity = quantity;
+    }
+
+    public Integer getQuantity() {
+        return _quantity;
+    }
+
+    public Expense quantity(Integer quantity) {
+        _quantity = quantity;
+        return this;
+    }
+
+    public void setReason(String reason) {
+        _reason = reason;
+    }
+
+    public String getReason() {
+        return _reason;
+    }
+
+    public Expense reason(String reason) {
+        _reason = reason;
+        return this;
+    }
+
     public void setStatus(StatusEnum status) {
         _status = status;
     }
@@ -167,16 +167,16 @@ public class Expense implements Parcelable {
         return this;
     }
 
-    public void setCompanyExpense(ExpenseCompanyExpense companyExpense) {
-        _companyExpense = companyExpense;
+    public void setStatusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
     }
 
-    public ExpenseCompanyExpense getCompanyExpense() {
-        return _companyExpense;
+    public String getStatusDescription() {
+        return _statusDescription;
     }
 
-    public Expense companyExpense(ExpenseCompanyExpense companyExpense) {
-        _companyExpense = companyExpense;
+    public Expense statusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
         return this;
     }
 
