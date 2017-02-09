@@ -20,8 +20,14 @@ public class WorkOrders implements Parcelable {
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
+    @Json(name = "provider_first_tow_filter")
+    private Boolean _providerFirstTowFilter;
+
     @Json(name = "results")
     private WorkOrder[] _results;
+
+    @Json(name = "user_id")
+    private Double _userId;
 
     public WorkOrders() {
     }
@@ -39,6 +45,19 @@ public class WorkOrders implements Parcelable {
         return this;
     }
 
+    public void setProviderFirstTowFilter(Boolean providerFirstTowFilter) {
+        _providerFirstTowFilter = providerFirstTowFilter;
+    }
+
+    public Boolean getProviderFirstTowFilter() {
+        return _providerFirstTowFilter;
+    }
+
+    public WorkOrders providerFirstTowFilter(Boolean providerFirstTowFilter) {
+        _providerFirstTowFilter = providerFirstTowFilter;
+        return this;
+    }
+
     public void setResults(WorkOrder[] results) {
         _results = results;
     }
@@ -49,6 +68,19 @@ public class WorkOrders implements Parcelable {
 
     public WorkOrders results(WorkOrder[] results) {
         _results = results;
+        return this;
+    }
+
+    public void setUserId(Double userId) {
+        _userId = userId;
+    }
+
+    public Double getUserId() {
+        return _userId;
+    }
+
+    public WorkOrders userId(Double userId) {
+        _userId = userId;
         return this;
     }
 

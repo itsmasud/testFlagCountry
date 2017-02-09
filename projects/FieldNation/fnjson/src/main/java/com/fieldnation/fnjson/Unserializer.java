@@ -8,6 +8,9 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Michael on 3/29/2016.
@@ -35,6 +38,25 @@ public class Unserializer {
 
         // Read all of its fields
         Field[] targetFields = targetClazz.getDeclaredFields();
+
+        Set<String> fieldNames = new HashSet<>();
+        for (Field field : targetFields) {
+            Json targetFieldAnnotation = ReflectionUtils.getAnnotation(field, Json.class);
+            if (targetFieldAnnotation == null)
+                continue;
+
+            // generate the name of the field as it would appear in the JSON
+            String targetFieldJsonName = ReflectionUtils.getFieldName(field, targetFieldAnnotation.name());
+
+            fieldNames.add(targetFieldJsonName);
+        }
+        Iterator<String> keys = source.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            if (!fieldNames.contains(key)) {
+                System.out.println("FieldCheck! Field not found: " + targetClazz.getName() + ":" + key);
+            }
+        }
 
         for (Field targetField : targetFields) {
             targetField.setAccessible(true);

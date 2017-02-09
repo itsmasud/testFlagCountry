@@ -21,11 +21,8 @@ import java.util.Calendar;
 public class Date implements Parcelable {
     private static final String TAG = "Date";
 
-/*
     @Json(name = "local") // Don't use if you can, this should be in local time zone
     private Local _local;
-*/
-
     @Json(name = "utc") // 2017-01-30 00:00:00
     private String _utc;
 

@@ -429,10 +429,10 @@ public class WorkOrderCard extends RelativeLayout {
             button.setOnClickListener(_withdraw_onClick);
             button.setText("WITHDRAW");
 
-//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)){
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_complete_onClick);
-//                button.setText("COMPLETE");
+//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+//            button.setVisibility(VISIBLE);
+//            button.setOnClickListener(_complete_onClick);
+//            button.setText("COMPLETE");
 
 /*
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MESSAGING)) {

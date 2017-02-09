@@ -23,6 +23,9 @@ public class TimeLogs implements Parcelable {
     @Json(name = "confirmed")
     private Date _confirmed;
 
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "hours")
     private Double _hours;
 
@@ -73,6 +76,19 @@ public class TimeLogs implements Parcelable {
 
     public TimeLogs confirmed(Date confirmed) {
         _confirmed = confirmed;
+        return this;
+    }
+
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return _correlationId;
+    }
+
+    public TimeLogs correlationId(String correlationId) {
+        _correlationId = correlationId;
         return this;
     }
 
