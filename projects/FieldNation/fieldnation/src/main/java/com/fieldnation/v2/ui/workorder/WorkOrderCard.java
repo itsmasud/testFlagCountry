@@ -19,8 +19,10 @@ import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
@@ -625,7 +627,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
-            WorkordersWebApi.confirm(App.get(), _workOrder.getWorkOrderId());
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getWorkOrderId());
         }
     };
 
@@ -661,7 +663,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-/*
+
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -678,7 +680,6 @@ public class WorkOrderCard extends RelativeLayout {
             }
         }
     };
-*/
 
     private final OnClickListener _viewBundle_onClick = new OnClickListener() {
         @Override
@@ -693,7 +694,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getWorkOrderId());
-            // TODO WorkorderClient.actionReadyToGo(App.get(), _workOrder.getWorkOrderId());
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getWorkOrderId());
         }
     };
 
