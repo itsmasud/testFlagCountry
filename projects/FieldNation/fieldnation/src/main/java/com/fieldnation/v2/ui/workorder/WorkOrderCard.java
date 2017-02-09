@@ -27,8 +27,6 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.ui.dialog.v2.RunningLateDialog;
-import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -41,6 +39,8 @@ import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.RunningLateDialog;
+import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -763,7 +763,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-/*
+
     private final OnClickListener _runningLate_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -771,7 +771,6 @@ public class WorkOrderCard extends RelativeLayout {
             RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
         }
     };
-*/
 
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override

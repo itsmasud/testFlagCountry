@@ -39,7 +39,7 @@ import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
-import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
+import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 

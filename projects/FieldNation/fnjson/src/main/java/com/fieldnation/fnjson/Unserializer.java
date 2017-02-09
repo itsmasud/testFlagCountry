@@ -39,25 +39,27 @@ public class Unserializer {
         // Read all of its fields
         Field[] targetFields = targetClazz.getDeclaredFields();
 
-        Set<String> fieldNames = new HashSet<>();
-        for (Field field : targetFields) {
-            Json targetFieldAnnotation = ReflectionUtils.getAnnotation(field, Json.class);
-            if (targetFieldAnnotation == null)
-                continue;
+        if (BuildConfig.DEBUG) {
+            Set<String> fieldNames = new HashSet<>();
+            for (Field field : targetFields) {
+                Json targetFieldAnnotation = ReflectionUtils.getAnnotation(field, Json.class);
+                if (targetFieldAnnotation == null)
+                    continue;
 
-            // generate the name of the field as it would appear in the JSON
-            String targetFieldJsonName = ReflectionUtils.getFieldName(field, targetFieldAnnotation.name());
+                // generate the name of the field as it would appear in the JSON
+                String targetFieldJsonName = ReflectionUtils.getFieldName(field, targetFieldAnnotation.name());
 
-            fieldNames.add(targetFieldJsonName);
-        }
-        Iterator<String> keys = source.keys();
-        while (keys.hasNext()) {
-            String key = keys.next();
-            if (!fieldNames.contains(key)) {
-                System.out.println("FieldCheck! Field not found: " + targetClazz.getName() + ":" + key);
+                fieldNames.add(targetFieldJsonName);
+            }
+            Iterator<String> keys = source.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (!fieldNames.contains(key)) {
+                    System.out.println("FieldCheck! Field not found: " + targetClazz.getName() + ":" + key);
+                }
             }
         }
-
+        
         for (Field targetField : targetFields) {
             targetField.setAccessible(true);
 
