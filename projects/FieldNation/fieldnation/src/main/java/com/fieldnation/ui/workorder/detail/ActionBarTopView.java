@@ -154,7 +154,7 @@ public class ActionBarTopView extends LinearLayout {
                 inflate();
                 // withdraw/withdraw request
                 _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_withdraw_request);
+                _leftWhiteButton.setText(R.string.btn_withdraw);
                 _leftWhiteButton.setOnClickListener(_withdraw_onClick);
 
                 // if provider has countered then View Counter
@@ -213,7 +213,7 @@ public class ActionBarTopView extends LinearLayout {
                     _leftWhiteButton.setOnClickListener(_checkin_onClick);
 
                     _rightOrangeButton.setVisibility(VISIBLE);
-                    _rightOrangeButton.setText(R.string.btn_mark_completed);
+                    _rightOrangeButton.setText(R.string.btn_mark_complete);
                     _rightOrangeButton.setOnClickListener(_markComplete_onClick);
 
                     // else if everything is done, Mark Complete

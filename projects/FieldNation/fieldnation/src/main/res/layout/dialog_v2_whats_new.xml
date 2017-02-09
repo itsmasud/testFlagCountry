@@ -76,7 +76,7 @@
                 android:layout_below="@+id/fixed_webview"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:text="@string/feature_wroking_on"
+                android:text="@string/feature_working_on"
                 android:textColor="@color/fn_dark_text_50"
                 android:visibility="gone" />
 

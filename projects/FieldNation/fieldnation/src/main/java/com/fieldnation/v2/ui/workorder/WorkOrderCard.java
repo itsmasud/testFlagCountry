@@ -407,19 +407,19 @@ public class WorkOrderCard extends RelativeLayout {
                 && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_checkOut_onClick);
-            button.setText("CHECK OUT");
+            button.setText(R.string.btn_check_out);
 
             // check_in
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_checkIn_onClick);
-            button.setText("CHECK IN");
+            button.setText(R.string.btn_check_in);
 
             // set eta
         } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_eta_onClick);
-            button.setText("SET ETA");
+            button.setText(R.string.btn_set_eta);
 
             // ready (NCNS confirm)
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.CONFIRM)) {
@@ -435,13 +435,13 @@ public class WorkOrderCard extends RelativeLayout {
             // ack hold
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
-//            button.setText("ACKNOWLEDGE HOLD");
+//            button.setText(R.string.btn_acknowledge_hold);
 
             // mark incomplete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_incomplete_onClick);
-            button.setText("INCOMPLETE");
+            button.setText(R.string.btn_incomplete);
 
             // view_bundle
         } else if (_workOrder.getBundle() != null
@@ -449,7 +449,8 @@ public class WorkOrderCard extends RelativeLayout {
                 && _workOrder.getBundle().getId() > 0) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
-            button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+            button.setText(getResources().getString(R.string.btn_view_bundle_num,
+                    _workOrder.getBundle().getCount()));
 
             // accept
 //            button.setVisibility(VISIBLE);
@@ -466,12 +467,12 @@ public class WorkOrderCard extends RelativeLayout {
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.WITHDRAW_REQUEST)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_withdraw_onClick);
-            button.setText("WITHDRAW");
+            button.setText(R.string.btn_withdraw);
 
 //        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_complete_onClick);
-//            button.setText("COMPLETE");
+//            button.setText(R.string.btn_complete);
         }
     }
 

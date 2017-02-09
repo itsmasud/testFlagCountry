@@ -377,7 +377,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(App.get(), getString(R.string.toast_missing_traking_number), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_tracking_number), Toast.LENGTH_SHORT);
                 return;
             }
 
