@@ -17,23 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class Task implements Parcelable {
     private static final String TAG = "Task";
 
-    @Json(name = "closing_notes")
-    private String _closingNotes;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
-    @Json(name = "custom_field")
-    private CustomField _customField;
+    @Json(name = "alerts")
+    private TaskAlert[] _alerts;
+
+    @Json(name = "attachment")
+    private Attachment _attachment;
 
     @Json(name = "attachments")
     private Attachment[] _attachments;
-
-    @Json(name = "shipment")
-    private Shipment _shipment;
-
-    @Json(name = "signature")
-    private Signature _signature;
-
-    @Json(name = "created")
-    private Date _created;
 
     @Json(name = "author")
     private User _author;
@@ -41,47 +35,23 @@ public class Task implements Parcelable {
     @Json(name = "check_in")
     private CheckInOut _checkIn;
 
-    @Json(name = "ready_to_go")
-    private Boolean _readyToGo;
+    @Json(name = "check_out")
+    private CheckInOut _checkOut;
 
-    @Json(name = "label")
-    private String _label;
+    @Json(name = "closing_notes")
+    private String _closingNotes;
 
     @Json(name = "completed")
     private Boolean _completed;
 
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
-
-    @Json(name = "type")
-    private TaskType _type;
-
     @Json(name = "confirmed")
     private Boolean _confirmed;
 
-    @Json(name = "on_my_way")
-    private OnMyWay _onMyWay;
+    @Json(name = "created")
+    private Date _created;
 
-    @Json(name = "alerts")
-    private TaskAlert[] _alerts;
-
-    @Json(name = "check_out")
-    private CheckInOut _checkOut;
-
-    @Json(name = "attachment")
-    private Attachment _attachment;
-
-    @Json(name = "phone")
-    private String _phone;
-
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
-    @Json(name = "value")
-    private String _value;
+    @Json(name = "custom_field")
+    private CustomField _customField;
 
     @Json(name = "email")
     private String _email;
@@ -89,32 +59,75 @@ public class Task implements Parcelable {
     @Json(name = "group")
     private TaskGroup _group;
 
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "label")
+    private String _label;
+
+    @Json(name = "on_my_way")
+    private OnMyWay _onMyWay;
+
+    @Json(name = "phone")
+    private String _phone;
+
+    @Json(name = "ready_to_go")
+    private Boolean _readyToGo;
+
+    @Json(name = "shipment")
+    private Shipment _shipment;
+
+    @Json(name = "signature")
+    private Signature _signature;
+
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
+
+    @Json(name = "type")
+    private TaskType _type;
+
+    @Json(name = "value")
+    private String _value;
+
     public Task() {
     }
 
-    public void setClosingNotes(String closingNotes) {
-        _closingNotes = closingNotes;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public String getClosingNotes() {
-        return _closingNotes;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public Task closingNotes(String closingNotes) {
-        _closingNotes = closingNotes;
+    public Task actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
-    public void setCustomField(CustomField customField) {
-        _customField = customField;
+    public void setAlerts(TaskAlert[] alerts) {
+        _alerts = alerts;
     }
 
-    public CustomField getCustomField() {
-        return _customField;
+    public TaskAlert[] getAlerts() {
+        return _alerts;
     }
 
-    public Task customField(CustomField customField) {
-        _customField = customField;
+    public Task alerts(TaskAlert[] alerts) {
+        _alerts = alerts;
+        return this;
+    }
+
+    public void setAttachment(Attachment attachment) {
+        _attachment = attachment;
+    }
+
+    public Attachment getAttachment() {
+        return _attachment;
+    }
+
+    public Task attachment(Attachment attachment) {
+        _attachment = attachment;
         return this;
     }
 
@@ -128,45 +141,6 @@ public class Task implements Parcelable {
 
     public Task attachments(Attachment[] attachments) {
         _attachments = attachments;
-        return this;
-    }
-
-    public void setShipment(Shipment shipment) {
-        _shipment = shipment;
-    }
-
-    public Shipment getShipment() {
-        return _shipment;
-    }
-
-    public Task shipment(Shipment shipment) {
-        _shipment = shipment;
-        return this;
-    }
-
-    public void setSignature(Signature signature) {
-        _signature = signature;
-    }
-
-    public Signature getSignature() {
-        return _signature;
-    }
-
-    public Task signature(Signature signature) {
-        _signature = signature;
-        return this;
-    }
-
-    public void setCreated(Date created) {
-        _created = created;
-    }
-
-    public Date getCreated() {
-        return _created;
-    }
-
-    public Task created(Date created) {
-        _created = created;
         return this;
     }
 
@@ -196,16 +170,120 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setReadyToGo(Boolean readyToGo) {
-        _readyToGo = readyToGo;
+    public void setCheckOut(CheckInOut checkOut) {
+        _checkOut = checkOut;
     }
 
-    public Boolean getReadyToGo() {
-        return _readyToGo;
+    public CheckInOut getCheckOut() {
+        return _checkOut;
     }
 
-    public Task readyToGo(Boolean readyToGo) {
-        _readyToGo = readyToGo;
+    public Task checkOut(CheckInOut checkOut) {
+        _checkOut = checkOut;
+        return this;
+    }
+
+    public void setClosingNotes(String closingNotes) {
+        _closingNotes = closingNotes;
+    }
+
+    public String getClosingNotes() {
+        return _closingNotes;
+    }
+
+    public Task closingNotes(String closingNotes) {
+        _closingNotes = closingNotes;
+        return this;
+    }
+
+    public void setCompleted(Boolean completed) {
+        _completed = completed;
+    }
+
+    public Boolean getCompleted() {
+        return _completed;
+    }
+
+    public Task completed(Boolean completed) {
+        _completed = completed;
+        return this;
+    }
+
+    public void setConfirmed(Boolean confirmed) {
+        _confirmed = confirmed;
+    }
+
+    public Boolean getConfirmed() {
+        return _confirmed;
+    }
+
+    public Task confirmed(Boolean confirmed) {
+        _confirmed = confirmed;
+        return this;
+    }
+
+    public void setCreated(Date created) {
+        _created = created;
+    }
+
+    public Date getCreated() {
+        return _created;
+    }
+
+    public Task created(Date created) {
+        _created = created;
+        return this;
+    }
+
+    public void setCustomField(CustomField customField) {
+        _customField = customField;
+    }
+
+    public CustomField getCustomField() {
+        return _customField;
+    }
+
+    public Task customField(CustomField customField) {
+        _customField = customField;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        _email = email;
+    }
+
+    public String getEmail() {
+        return _email;
+    }
+
+    public Task email(String email) {
+        _email = email;
+        return this;
+    }
+
+    public void setGroup(TaskGroup group) {
+        _group = group;
+    }
+
+    public TaskGroup getGroup() {
+        return _group;
+    }
+
+    public Task group(TaskGroup group) {
+        _group = group;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Task id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -222,16 +300,68 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setCompleted(Boolean completed) {
-        _completed = completed;
+    public void setOnMyWay(OnMyWay onMyWay) {
+        _onMyWay = onMyWay;
     }
 
-    public Boolean getCompleted() {
-        return _completed;
+    public OnMyWay getOnMyWay() {
+        return _onMyWay;
     }
 
-    public Task completed(Boolean completed) {
-        _completed = completed;
+    public Task onMyWay(OnMyWay onMyWay) {
+        _onMyWay = onMyWay;
+        return this;
+    }
+
+    public void setPhone(String phone) {
+        _phone = phone;
+    }
+
+    public String getPhone() {
+        return _phone;
+    }
+
+    public Task phone(String phone) {
+        _phone = phone;
+        return this;
+    }
+
+    public void setReadyToGo(Boolean readyToGo) {
+        _readyToGo = readyToGo;
+    }
+
+    public Boolean getReadyToGo() {
+        return _readyToGo;
+    }
+
+    public Task readyToGo(Boolean readyToGo) {
+        _readyToGo = readyToGo;
+        return this;
+    }
+
+    public void setShipment(Shipment shipment) {
+        _shipment = shipment;
+    }
+
+    public Shipment getShipment() {
+        return _shipment;
+    }
+
+    public Task shipment(Shipment shipment) {
+        _shipment = shipment;
+        return this;
+    }
+
+    public void setSignature(Signature signature) {
+        _signature = signature;
+    }
+
+    public Signature getSignature() {
+        return _signature;
+    }
+
+    public Task signature(Signature signature) {
+        _signature = signature;
         return this;
     }
 
@@ -261,110 +391,6 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setConfirmed(Boolean confirmed) {
-        _confirmed = confirmed;
-    }
-
-    public Boolean getConfirmed() {
-        return _confirmed;
-    }
-
-    public Task confirmed(Boolean confirmed) {
-        _confirmed = confirmed;
-        return this;
-    }
-
-    public void setOnMyWay(OnMyWay onMyWay) {
-        _onMyWay = onMyWay;
-    }
-
-    public OnMyWay getOnMyWay() {
-        return _onMyWay;
-    }
-
-    public Task onMyWay(OnMyWay onMyWay) {
-        _onMyWay = onMyWay;
-        return this;
-    }
-
-    public void setAlerts(TaskAlert[] alerts) {
-        _alerts = alerts;
-    }
-
-    public TaskAlert[] getAlerts() {
-        return _alerts;
-    }
-
-    public Task alerts(TaskAlert[] alerts) {
-        _alerts = alerts;
-        return this;
-    }
-
-    public void setCheckOut(CheckInOut checkOut) {
-        _checkOut = checkOut;
-    }
-
-    public CheckInOut getCheckOut() {
-        return _checkOut;
-    }
-
-    public Task checkOut(CheckInOut checkOut) {
-        _checkOut = checkOut;
-        return this;
-    }
-
-    public void setAttachment(Attachment attachment) {
-        _attachment = attachment;
-    }
-
-    public Attachment getAttachment() {
-        return _attachment;
-    }
-
-    public Task attachment(Attachment attachment) {
-        _attachment = attachment;
-        return this;
-    }
-
-    public void setPhone(String phone) {
-        _phone = phone;
-    }
-
-    public String getPhone() {
-        return _phone;
-    }
-
-    public Task phone(String phone) {
-        _phone = phone;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public Task id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Task actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
-    }
-
     public void setValue(String value) {
         _value = value;
     }
@@ -375,32 +401,6 @@ public class Task implements Parcelable {
 
     public Task value(String value) {
         _value = value;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        _email = email;
-    }
-
-    public String getEmail() {
-        return _email;
-    }
-
-    public Task email(String email) {
-        _email = email;
-        return this;
-    }
-
-    public void setGroup(TaskGroup group) {
-        _group = group;
-    }
-
-    public TaskGroup getGroup() {
-        return _group;
-    }
-
-    public Task group(TaskGroup group) {
-        _group = group;
         return this;
     }
 

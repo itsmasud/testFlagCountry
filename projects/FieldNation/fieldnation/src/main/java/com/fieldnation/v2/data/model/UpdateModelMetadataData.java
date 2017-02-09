@@ -17,20 +17,20 @@ import com.fieldnation.fnlog.Log;
 public class UpdateModelMetadataData implements Parcelable {
     private static final String TAG = "UpdateModelMetadataData";
 
-    @Json(name = "route")
-    private String _route;
+    @Json(name = "company_id")
+    private Integer _companyId;
+
+    @Json(name = "group_id")
+    private Integer _groupId;
 
     @Json(name = "role")
     private String _role;
 
-    @Json(name = "company_id")
-    private Integer _companyId;
+    @Json(name = "route")
+    private String _route;
 
     @Json(name = "user_id")
     private Integer _userId;
-
-    @Json(name = "group_id")
-    private Integer _groupId;
 
     @Json(name = "work_order_id")
     private Integer _workOrderId;
@@ -38,16 +38,29 @@ public class UpdateModelMetadataData implements Parcelable {
     public UpdateModelMetadataData() {
     }
 
-    public void setRoute(String route) {
-        _route = route;
+    public void setCompanyId(Integer companyId) {
+        _companyId = companyId;
     }
 
-    public String getRoute() {
-        return _route;
+    public Integer getCompanyId() {
+        return _companyId;
     }
 
-    public UpdateModelMetadataData route(String route) {
-        _route = route;
+    public UpdateModelMetadataData companyId(Integer companyId) {
+        _companyId = companyId;
+        return this;
+    }
+
+    public void setGroupId(Integer groupId) {
+        _groupId = groupId;
+    }
+
+    public Integer getGroupId() {
+        return _groupId;
+    }
+
+    public UpdateModelMetadataData groupId(Integer groupId) {
+        _groupId = groupId;
         return this;
     }
 
@@ -64,16 +77,16 @@ public class UpdateModelMetadataData implements Parcelable {
         return this;
     }
 
-    public void setCompanyId(Integer companyId) {
-        _companyId = companyId;
+    public void setRoute(String route) {
+        _route = route;
     }
 
-    public Integer getCompanyId() {
-        return _companyId;
+    public String getRoute() {
+        return _route;
     }
 
-    public UpdateModelMetadataData companyId(Integer companyId) {
-        _companyId = companyId;
+    public UpdateModelMetadataData route(String route) {
+        _route = route;
         return this;
     }
 
@@ -87,19 +100,6 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public UpdateModelMetadataData userId(Integer userId) {
         _userId = userId;
-        return this;
-    }
-
-    public void setGroupId(Integer groupId) {
-        _groupId = groupId;
-    }
-
-    public Integer getGroupId() {
-        return _groupId;
-    }
-
-    public UpdateModelMetadataData groupId(Integer groupId) {
-        _groupId = groupId;
         return this;
     }
 

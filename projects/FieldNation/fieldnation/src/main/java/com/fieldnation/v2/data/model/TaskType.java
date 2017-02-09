@@ -20,11 +20,11 @@ public class TaskType implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "title")
-    private String _title;
-
     @Json(name = "key")
     private String _key;
+
+    @Json(name = "title")
+    private String _title;
 
     public TaskType() {
     }
@@ -42,19 +42,6 @@ public class TaskType implements Parcelable {
         return this;
     }
 
-    public void setTitle(String title) {
-        _title = title;
-    }
-
-    public String getTitle() {
-        return _title;
-    }
-
-    public TaskType title(String title) {
-        _title = title;
-        return this;
-    }
-
     public void setKey(String key) {
         _key = key;
     }
@@ -65,6 +52,19 @@ public class TaskType implements Parcelable {
 
     public TaskType key(String key) {
         _key = key;
+        return this;
+    }
+
+    public void setTitle(String title) {
+        _title = title;
+    }
+
+    public String getTitle() {
+        return _title;
+    }
+
+    public TaskType title(String title) {
+        _title = title;
         return this;
     }
 

@@ -17,31 +17,31 @@ import com.fieldnation.fnlog.Log;
 public class TimeZone implements Parcelable {
     private static final String TAG = "TimeZone";
 
-    @Json(name = "offset")
-    private Double _offset;
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "name")
     private String _name;
 
+    @Json(name = "offset")
+    private Double _offset;
+
     @Json(name = "short")
     private String _short;
-
-    @Json(name = "id")
-    private Integer _id;
 
     public TimeZone() {
     }
 
-    public void setOffset(Double offset) {
-        _offset = offset;
+    public void setId(Integer id) {
+        _id = id;
     }
 
-    public Double getOffset() {
-        return _offset;
+    public Integer getId() {
+        return _id;
     }
 
-    public TimeZone offset(Double offset) {
-        _offset = offset;
+    public TimeZone id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -58,6 +58,19 @@ public class TimeZone implements Parcelable {
         return this;
     }
 
+    public void setOffset(Double offset) {
+        _offset = offset;
+    }
+
+    public Double getOffset() {
+        return _offset;
+    }
+
+    public TimeZone offset(Double offset) {
+        _offset = offset;
+        return this;
+    }
+
     public void setShort(String shortt) {
         _short = shortt;
     }
@@ -68,19 +81,6 @@ public class TimeZone implements Parcelable {
 
     public TimeZone shortt(String shortt) {
         _short = shortt;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public TimeZone id(Integer id) {
-        _id = id;
         return this;
     }
 

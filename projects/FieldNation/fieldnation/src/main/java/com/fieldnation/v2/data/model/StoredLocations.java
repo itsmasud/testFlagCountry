@@ -17,8 +17,14 @@ import com.fieldnation.fnlog.Log;
 public class StoredLocations implements Parcelable {
     private static final String TAG = "StoredLocations";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "mode")
     private ModeEnum _mode;
+
+    @Json(name = "results")
+    private Location[] _results;
 
     @Json(name = "role")
     private String _role;
@@ -26,13 +32,20 @@ public class StoredLocations implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
-    @Json(name = "results")
-    private Location[] _results;
-
     public StoredLocations() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public StoredLocations actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setMode(ModeEnum mode) {
@@ -45,6 +58,19 @@ public class StoredLocations implements Parcelable {
 
     public StoredLocations mode(ModeEnum mode) {
         _mode = mode;
+        return this;
+    }
+
+    public void setResults(Location[] results) {
+        _results = results;
+    }
+
+    public Location[] getResults() {
+        return _results;
+    }
+
+    public StoredLocations results(Location[] results) {
+        _results = results;
         return this;
     }
 
@@ -71,32 +97,6 @@ public class StoredLocations implements Parcelable {
 
     public StoredLocations workOrderId(Integer workOrderId) {
         _workOrderId = workOrderId;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public StoredLocations actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
-    }
-
-    public void setResults(Location[] results) {
-        _results = results;
-    }
-
-    public Location[] getResults() {
-        return _results;
-    }
-
-    public StoredLocations results(Location[] results) {
-        _results = results;
         return this;
     }
 

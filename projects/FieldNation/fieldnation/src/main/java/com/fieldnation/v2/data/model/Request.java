@@ -17,8 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class Request implements Parcelable {
     private static final String TAG = "Request";
 
-    @Json(name = "schedule")
-    private Schedule _schedule;
+    @Json(name = "active")
+    private Boolean _active;
+
+    @Json(name = "counter")
+    private Boolean _counter;
+
+    @Json(name = "counter_notes")
+    private String _counterNotes;
+
+    @Json(name = "created")
+    private Date _created;
 
     @Json(name = "expires")
     private Date _expires;
@@ -26,26 +35,17 @@ public class Request implements Parcelable {
     @Json(name = "hour_estimate")
     private Double _hourEstimate;
 
+    @Json(name = "id")
+    private Integer _id;
+
     @Json(name = "notes")
     private String _notes;
-
-    @Json(name = "created")
-    private Date _created;
-
-    @Json(name = "active")
-    private Boolean _active;
 
     @Json(name = "pay")
     private Pay _pay;
 
-    @Json(name = "counter_notes")
-    private String _counterNotes;
-
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "counter")
-    private Boolean _counter;
+    @Json(name = "schedule")
+    private Schedule _schedule;
 
     @Json(name = "user")
     private User _user;
@@ -56,16 +56,55 @@ public class Request implements Parcelable {
     public Request() {
     }
 
-    public void setSchedule(Schedule schedule) {
-        _schedule = schedule;
+    public void setActive(Boolean active) {
+        _active = active;
     }
 
-    public Schedule getSchedule() {
-        return _schedule;
+    public Boolean getActive() {
+        return _active;
     }
 
-    public Request schedule(Schedule schedule) {
-        _schedule = schedule;
+    public Request active(Boolean active) {
+        _active = active;
+        return this;
+    }
+
+    public void setCounter(Boolean counter) {
+        _counter = counter;
+    }
+
+    public Boolean getCounter() {
+        return _counter;
+    }
+
+    public Request counter(Boolean counter) {
+        _counter = counter;
+        return this;
+    }
+
+    public void setCounterNotes(String counterNotes) {
+        _counterNotes = counterNotes;
+    }
+
+    public String getCounterNotes() {
+        return _counterNotes;
+    }
+
+    public Request counterNotes(String counterNotes) {
+        _counterNotes = counterNotes;
+        return this;
+    }
+
+    public void setCreated(Date created) {
+        _created = created;
+    }
+
+    public Date getCreated() {
+        return _created;
+    }
+
+    public Request created(Date created) {
+        _created = created;
         return this;
     }
 
@@ -95,6 +134,19 @@ public class Request implements Parcelable {
         return this;
     }
 
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Request id(Integer id) {
+        _id = id;
+        return this;
+    }
+
     public void setNotes(String notes) {
         _notes = notes;
     }
@@ -105,32 +157,6 @@ public class Request implements Parcelable {
 
     public Request notes(String notes) {
         _notes = notes;
-        return this;
-    }
-
-    public void setCreated(Date created) {
-        _created = created;
-    }
-
-    public Date getCreated() {
-        return _created;
-    }
-
-    public Request created(Date created) {
-        _created = created;
-        return this;
-    }
-
-    public void setActive(Boolean active) {
-        _active = active;
-    }
-
-    public Boolean getActive() {
-        return _active;
-    }
-
-    public Request active(Boolean active) {
-        _active = active;
         return this;
     }
 
@@ -147,42 +173,16 @@ public class Request implements Parcelable {
         return this;
     }
 
-    public void setCounterNotes(String counterNotes) {
-        _counterNotes = counterNotes;
+    public void setSchedule(Schedule schedule) {
+        _schedule = schedule;
     }
 
-    public String getCounterNotes() {
-        return _counterNotes;
+    public Schedule getSchedule() {
+        return _schedule;
     }
 
-    public Request counterNotes(String counterNotes) {
-        _counterNotes = counterNotes;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public Request id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setCounter(Boolean counter) {
-        _counter = counter;
-    }
-
-    public Boolean getCounter() {
-        return _counter;
-    }
-
-    public Request counter(Boolean counter) {
-        _counter = counter;
+    public Request schedule(Schedule schedule) {
+        _schedule = schedule;
         return this;
     }
 

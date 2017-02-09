@@ -17,16 +17,29 @@ import com.fieldnation.fnlog.Log;
 public class Shipments implements Parcelable {
     private static final String TAG = "Shipments";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "results")
     private Shipment[] _results;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
     public Shipments() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Shipments actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) {
@@ -52,19 +65,6 @@ public class Shipments implements Parcelable {
 
     public Shipments results(Shipment[] results) {
         _results = results;
-        return this;
-    }
-
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Shipments actions(ActionsEnum[] actions) {
-        _actions = actions;
         return this;
     }
 

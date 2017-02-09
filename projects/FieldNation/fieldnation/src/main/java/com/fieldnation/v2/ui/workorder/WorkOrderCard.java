@@ -33,7 +33,9 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -41,8 +43,11 @@ import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -361,49 +366,90 @@ public class WorkOrderCard extends RelativeLayout {
             return;
         }
 
-        // Primary actions
-        boolean havePrimary = false;
-        for (WorkOrder.ActionsEnum action : actions) {
-            if (action != null && populatePrimaryButtonWorkOrderActions(_primaryButton, action)) {
-                havePrimary = true;
-                break;
-            }
+        populatePrimaryButton(_primaryButton);
+
+        for (Button button : _secondaryButtons) {
+            button.setVisibility(GONE);
         }
 
-        if (!havePrimary) {
-
-        }
-
-        int i = 0; // action index
-        int j = 0; // button index
-        // assign supported actions to buttons until no more actions or no more buttons
-        while (i < actions.length && j < _secondaryButtons.length) {
-            WorkOrder.ActionsEnum action = actions[i];
-
-            // only if the action has been assigned do we move to the next button
-            if (action != null && populateSecondaryButton(_secondaryButtons[j], action)) {
-                j++;
-            }
-            i++;
-        }
+        populateSecondaryButtons();
     }
 
-    private boolean populatePrimaryButtonWorkOrderActions(Button button, WorkOrder.ActionsEnum action) {
-        switch (action) {
-//            case ON_MY_WAY:
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_onMyWay_onClick);
-//                button.setText(R.string.btn_on_my_way);
-//                break;
-//            case VIEW_BUNDLE:
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_viewBundle_onClick);
-//                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
-//                break;
-//            case MARK_COMPLETE:
+    private void populatePrimaryButton(Button button) {
+        Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
+        workOrderActions.addAll(Arrays.asList(_workOrder.getActions()));
+
+        Set<Schedule.ActionsEnum> scheduleActions = new HashSet<>();
+        scheduleActions.addAll(Arrays.asList(_workOrder.getSchedule().getActions()));
+
+        Set<TimeLogs.ActionsEnum> timeLogsActions = new HashSet<>();
+        if (_workOrder.getTimeLogs() != null && _workOrder.getTimeLogs().getActions() != null) {
+            timeLogsActions.addAll(Arrays.asList(_workOrder.getTimeLogs().getActions()));
+        }
+
+        if (false) {
+
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT) && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkOut_onClick);
+            button.setText("CHECK OUT");
+
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkIn_onClick);
+            button.setText("CHECK IN");
+
+        } else if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_viewBundle_onClick);
+            button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.REQUEST)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_request_onClick);
+            button.setText(R.string.btn_request);
+
+        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_eta_onClick);
+            button.setText("SET ETA");
+
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.CONFIRM)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_readyToGo_onClick);
+            button.setText(R.string.btn_confirm);
+
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_incomplete_onClick);
+            button.setText("INCOMPLETE");
+
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.WITHDRAW_REQUEST)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_withdraw_onClick);
+            button.setText("WITHDRAW");
+
+//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)){
 //                button.setVisibility(VISIBLE);
 //                button.setOnClickListener(_complete_onClick);
 //                button.setText("COMPLETE");
+
+/*
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MESSAGING)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.EDIT)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.VIEW_PROBLEM)) {
+*/
+        }
+
+        // TODOS
+
+    }
+//        switch (action) {
+//            case ON_MY_WAY:
+//                  button.setVisibility(VISIBLE);
+//                button.setOnClickListener(_onMyWay_onClick);
+//                button.setText(R.string.btn_on_my_way);
 //                break;
 //            // don't have a payment id in the current data structure
 //            case VIEW_PAYMENT:
@@ -412,66 +458,17 @@ public class WorkOrderCard extends RelativeLayout {
 //                button.setText("VIEW PAYMENT");
 //                break;
 
-//            case READY_TO_GO:
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_readyToGo_onClick);
-//                button.setText(R.string.btn_ready);
-//                break;
 //            case ACCEPT:
 //                button.setVisibility(VISIBLE);
 //                button.setOnClickListener(_accept_onClick);
 //                button.setText(R.string.btn_accept);
-//                break;
-//            case CONFIRM:
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_confirm_onClick);
-//                button.setText(R.string.btn_confirm);
 //                break;
 //            case ACKNOWLEDGE:
 //                button.setVisibility(VISIBLE);
 //                button.setOnClickListener(_ackHold_onClick);
 //                button.setText("ACKNOWLEDGE HOLD");
 //                break;
-//            case WITHDRAW_REQUEST:
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_withdraw_onClick);
-//                button.setText("WITHDRAW");
-//                break;
-//            case MARK_INCOMPLETE:
-//                button.setVisibility(VISIBLE);
-//                button.setOnClickListener(_incomplete_onClick);
-//                button.setText("INCOMPLETE");
-//                break;
-            case REPORT_A_PROBLEM:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_reportProblem_onClick);
-                button.setText(R.string.btn_report_problem);
-                break;
-            case REQUEST:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_request_onClick);
-                button.setText(R.string.btn_request);
-                break;
-            case CHECK_IN:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_checkIn_onClick);
-                button.setText("CHECK IN");
-                break;
-            case CHECK_OUT:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_checkOut_onClick);
-                button.setText("CHECK OUT");
-                break;
-            case ETA:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_eta_onClick);
-                button.setText("SET ETA");
-                break;
-            default:
-                return false;
-        }
-        return true;
-    }
+
 
     // other icons
     // phone-solid
@@ -480,8 +477,33 @@ public class WorkOrderCard extends RelativeLayout {
     // circle-x-solid
     // problem-solid
     // time-issue-solid
-    private boolean populateSecondaryButton(IconFontButton button, WorkOrder.ActionsEnum action) {
-        switch (action) {
+    private void populateSecondaryButtons() {
+        Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
+        workOrderActions.addAll(Arrays.asList(_workOrder.getActions()));
+
+        int buttonId = 0;
+        Button button = _secondaryButtons[buttonId];
+
+
+        if (workOrderActions.contains(WorkOrder.ActionsEnum.REPORT_A_PROBLEM)) {
+            button.setVisibility(VISIBLE);
+            button.setText(R.string.icon_problem_solid);
+            button.setOnClickListener(_reportProblem_onClick);
+            buttonId++;
+            if (buttonId >= _secondaryButtons.length) return;
+            button = _secondaryButtons[buttonId];
+        }
+
+        if (workOrderActions.contains(WorkOrder.ActionsEnum.MESSAGING)) {
+            button.setVisibility(VISIBLE);
+            button.setText(R.string.icon_chat_solid);
+            button.setOnClickListener(_message_onClick);
+            buttonId++;
+            buttonId++;
+            if (buttonId >= _secondaryButtons.length) return;
+            button = _secondaryButtons[buttonId];
+        }
+    }
 //            case DECLINE:
 //                button.setVisibility(VISIBLE);
 //                button.setText(R.string.icon_circle_x_solid);
@@ -502,23 +524,6 @@ public class WorkOrderCard extends RelativeLayout {
 //                button.setText(R.string.icon_map_location_solid);
 //                button.setOnClickListener(_map_onClick);
 //                break;
-
-            case REPORT_A_PROBLEM:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_problem_solid);
-                button.setOnClickListener(_reportProblem_onClick);
-                break;
-            case MESSAGING:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_chat_solid);
-                button.setOnClickListener(_message_onClick);
-                break;
-            default:
-                button.setVisibility(GONE);
-                return false;
-        }
-        return true;
-    }
 
     private final OnClickListener _incomplete_onClick = new OnClickListener() {
         @Override

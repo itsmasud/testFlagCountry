@@ -17,37 +17,37 @@ import com.fieldnation.fnlog.Log;
 public class ScheduleEta implements Parcelable {
     private static final String TAG = "ScheduleEta";
 
-    @Json(name = "mode")
-    private Boolean _mode;
+    @Json(name = "end")
+    private Date _end;
 
     @Json(name = "hour_estimate")
     private Double _hourEstimate;
 
+    @Json(name = "mode")
+    private Boolean _mode;
+
     @Json(name = "start")
     private Date _start;
-
-    @Json(name = "end")
-    private Date _end;
-
-    @Json(name = "user")
-    private User _user;
 
     @Json(name = "status")
     private ScheduleEtaStatus _status;
 
+    @Json(name = "user")
+    private User _user;
+
     public ScheduleEta() {
     }
 
-    public void setMode(Boolean mode) {
-        _mode = mode;
+    public void setEnd(Date end) {
+        _end = end;
     }
 
-    public Boolean getMode() {
-        return _mode;
+    public Date getEnd() {
+        return _end;
     }
 
-    public ScheduleEta mode(Boolean mode) {
-        _mode = mode;
+    public ScheduleEta end(Date end) {
+        _end = end;
         return this;
     }
 
@@ -64,6 +64,19 @@ public class ScheduleEta implements Parcelable {
         return this;
     }
 
+    public void setMode(Boolean mode) {
+        _mode = mode;
+    }
+
+    public Boolean getMode() {
+        return _mode;
+    }
+
+    public ScheduleEta mode(Boolean mode) {
+        _mode = mode;
+        return this;
+    }
+
     public void setStart(Date start) {
         _start = start;
     }
@@ -77,16 +90,16 @@ public class ScheduleEta implements Parcelable {
         return this;
     }
 
-    public void setEnd(Date end) {
-        _end = end;
+    public void setStatus(ScheduleEtaStatus status) {
+        _status = status;
     }
 
-    public Date getEnd() {
-        return _end;
+    public ScheduleEtaStatus getStatus() {
+        return _status;
     }
 
-    public ScheduleEta end(Date end) {
-        _end = end;
+    public ScheduleEta status(ScheduleEtaStatus status) {
+        _status = status;
         return this;
     }
 
@@ -100,19 +113,6 @@ public class ScheduleEta implements Parcelable {
 
     public ScheduleEta user(User user) {
         _user = user;
-        return this;
-    }
-
-    public void setStatus(ScheduleEtaStatus status) {
-        _status = status;
-    }
-
-    public ScheduleEtaStatus getStatus() {
-        return _status;
-    }
-
-    public ScheduleEta status(ScheduleEtaStatus status) {
-        _status = status;
         return this;
     }
 

@@ -17,48 +17,22 @@ import com.fieldnation.fnlog.Log;
 public class ShipmentCarrier implements Parcelable {
     private static final String TAG = "ShipmentCarrier";
 
-    @Json(name = "arrived")
-    private Date _arrived;
-
-    @Json(name = "other")
-    private String _other;
-
     @Json(name = "arrival")
     private Date _arrival;
 
+    @Json(name = "arrived")
+    private Date _arrived;
+
     @Json(name = "name")
     private String _name;
+
+    @Json(name = "other")
+    private String _other;
 
     @Json(name = "tracking")
     private String _tracking;
 
     public ShipmentCarrier() {
-    }
-
-    public void setArrived(Date arrived) {
-        _arrived = arrived;
-    }
-
-    public Date getArrived() {
-        return _arrived;
-    }
-
-    public ShipmentCarrier arrived(Date arrived) {
-        _arrived = arrived;
-        return this;
-    }
-
-    public void setOther(String other) {
-        _other = other;
-    }
-
-    public String getOther() {
-        return _other;
-    }
-
-    public ShipmentCarrier other(String other) {
-        _other = other;
-        return this;
     }
 
     public void setArrival(Date arrival) {
@@ -74,6 +48,19 @@ public class ShipmentCarrier implements Parcelable {
         return this;
     }
 
+    public void setArrived(Date arrived) {
+        _arrived = arrived;
+    }
+
+    public Date getArrived() {
+        return _arrived;
+    }
+
+    public ShipmentCarrier arrived(Date arrived) {
+        _arrived = arrived;
+        return this;
+    }
+
     public void setName(String name) {
         _name = name;
     }
@@ -84,6 +71,19 @@ public class ShipmentCarrier implements Parcelable {
 
     public ShipmentCarrier name(String name) {
         _name = name;
+        return this;
+    }
+
+    public void setOther(String other) {
+        _other = other;
+    }
+
+    public String getOther() {
+        return _other;
+    }
+
+    public ShipmentCarrier other(String other) {
+        _other = other;
         return this;
     }
 

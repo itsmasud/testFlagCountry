@@ -222,16 +222,16 @@ public class CustomField implements Parcelable {
         DATE("date"),
         @Json(name = "datetime")
         DATETIME("datetime"),
-        @Json(name = "phone")
-        PHONE("phone"),
         @Json(name = "numeric")
         NUMERIC("numeric"),
+        @Json(name = "phone")
+        PHONE("phone"),
+        @Json(name = "predefined")
+        PREDEFINED("predefined"),
         @Json(name = "text")
         TEXT("text"),
         @Json(name = "time")
-        TIME("time"),
-        @Json(name = "predefined")
-        PREDEFINED("predefined");
+        TIME("time");
 
         private String value;
 

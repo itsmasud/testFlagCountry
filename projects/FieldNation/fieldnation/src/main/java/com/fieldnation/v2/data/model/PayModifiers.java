@@ -17,45 +17,19 @@ import com.fieldnation.fnlog.Log;
 public class PayModifiers implements Parcelable {
     private static final String TAG = "PayModifiers";
 
-    @Json(name = "metadata")
-    private ListEnvelope _metadata;
-
-    @Json(name = "sum")
-    private PayModifiersSum _sum;
-
     @Json(name = "actions")
     private ActionsEnum[] _actions;
+
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
 
     @Json(name = "results")
     private PayModifier[] _results;
 
+    @Json(name = "sum")
+    private PayModifiersSum _sum;
+
     public PayModifiers() {
-    }
-
-    public void setMetadata(ListEnvelope metadata) {
-        _metadata = metadata;
-    }
-
-    public ListEnvelope getMetadata() {
-        return _metadata;
-    }
-
-    public PayModifiers metadata(ListEnvelope metadata) {
-        _metadata = metadata;
-        return this;
-    }
-
-    public void setSum(PayModifiersSum sum) {
-        _sum = sum;
-    }
-
-    public PayModifiersSum getSum() {
-        return _sum;
-    }
-
-    public PayModifiers sum(PayModifiersSum sum) {
-        _sum = sum;
-        return this;
     }
 
     public void setActions(ActionsEnum[] actions) {
@@ -71,6 +45,19 @@ public class PayModifiers implements Parcelable {
         return this;
     }
 
+    public void setMetadata(ListEnvelope metadata) {
+        _metadata = metadata;
+    }
+
+    public ListEnvelope getMetadata() {
+        return _metadata;
+    }
+
+    public PayModifiers metadata(ListEnvelope metadata) {
+        _metadata = metadata;
+        return this;
+    }
+
     public void setResults(PayModifier[] results) {
         _results = results;
     }
@@ -81,6 +68,19 @@ public class PayModifiers implements Parcelable {
 
     public PayModifiers results(PayModifier[] results) {
         _results = results;
+        return this;
+    }
+
+    public void setSum(PayModifiersSum sum) {
+        _sum = sum;
+    }
+
+    public PayModifiersSum getSum() {
+        return _sum;
+    }
+
+    public PayModifiers sum(PayModifiersSum sum) {
+        _sum = sum;
         return this;
     }
 

@@ -17,9 +17,6 @@ import com.fieldnation.fnlog.Log;
 public class SelectionRuleSum implements Parcelable {
     private static final String TAG = "SelectionRuleSum";
 
-    @Json(name = "total")
-    private Integer _total;
-
     @Json(name = "match")
     private Integer _match;
 
@@ -29,20 +26,10 @@ public class SelectionRuleSum implements Parcelable {
     @Json(name = "no_match_required")
     private Integer _noMatchRequired;
 
+    @Json(name = "total")
+    private Integer _total;
+
     public SelectionRuleSum() {
-    }
-
-    public void setTotal(Integer total) {
-        _total = total;
-    }
-
-    public Integer getTotal() {
-        return _total;
-    }
-
-    public SelectionRuleSum total(Integer total) {
-        _total = total;
-        return this;
     }
 
     public void setMatch(Integer match) {
@@ -81,6 +68,19 @@ public class SelectionRuleSum implements Parcelable {
 
     public SelectionRuleSum noMatchRequired(Integer noMatchRequired) {
         _noMatchRequired = noMatchRequired;
+        return this;
+    }
+
+    public void setTotal(Integer total) {
+        _total = total;
+    }
+
+    public Integer getTotal() {
+        return _total;
+    }
+
+    public SelectionRuleSum total(Integer total) {
+        _total = total;
         return this;
     }
 

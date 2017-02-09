@@ -72,16 +72,16 @@ public class CustomFieldDependency implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum OperatorEnum {
-        @Json(name = "less_than_equals")
-        LESS_THAN_EQUALS("less_than_equals"),
+        @Json(name = "equals")
+        EQUALS("equals"),
         @Json(name = "greater_than")
         GREATER_THAN("greater_than"),
         @Json(name = "greater_than_equals")
         GREATER_THAN_EQUALS("greater_than_equals"),
         @Json(name = "less_than")
         LESS_THAN("less_than"),
-        @Json(name = "equals")
-        EQUALS("equals");
+        @Json(name = "less_than_equals")
+        LESS_THAN_EQUALS("less_than_equals");
 
         private String value;
 

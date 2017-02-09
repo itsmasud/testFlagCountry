@@ -18,36 +18,36 @@ public class UserRating implements Parcelable {
     private static final String TAG = "UserRating";
 
     @Json(name = "marketplace")
-    private UserRatingMarketplace _marketplace;
+    private Rating _marketplace;
 
     @Json(name = "my_company")
-    private UserRatingMyCompany _myCompany;
+    private Rating _myCompany;
 
     public UserRating() {
     }
 
-    public void setMarketplace(UserRatingMarketplace marketplace) {
+    public void setMarketplace(Rating marketplace) {
         _marketplace = marketplace;
     }
 
-    public UserRatingMarketplace getMarketplace() {
+    public Rating getMarketplace() {
         return _marketplace;
     }
 
-    public UserRating marketplace(UserRatingMarketplace marketplace) {
+    public UserRating marketplace(Rating marketplace) {
         _marketplace = marketplace;
         return this;
     }
 
-    public void setMyCompany(UserRatingMyCompany myCompany) {
+    public void setMyCompany(Rating myCompany) {
         _myCompany = myCompany;
     }
 
-    public UserRatingMyCompany getMyCompany() {
+    public Rating getMyCompany() {
         return _myCompany;
     }
 
-    public UserRating myCompany(UserRatingMyCompany myCompany) {
+    public UserRating myCompany(Rating myCompany) {
         _myCompany = myCompany;
         return this;
     }

@@ -17,34 +17,34 @@ import com.fieldnation.fnlog.Log;
 public class PayFees implements Parcelable {
     private static final String TAG = "PayFees";
 
-    @Json(name = "insurance")
-    private Fee _insurance;
+    @Json(name = "buyer")
+    private Fee _buyer;
 
     @Json(name = "cancellation")
     private Fee _cancellation;
 
-    @Json(name = "provider")
-    private Fee _provider;
-
     @Json(name = "flat")
     private Fee _flat;
 
-    @Json(name = "buyer")
-    private Fee _buyer;
+    @Json(name = "insurance")
+    private Fee _insurance;
+
+    @Json(name = "provider")
+    private Fee _provider;
 
     public PayFees() {
     }
 
-    public void setInsurance(Fee insurance) {
-        _insurance = insurance;
+    public void setBuyer(Fee buyer) {
+        _buyer = buyer;
     }
 
-    public Fee getInsurance() {
-        return _insurance;
+    public Fee getBuyer() {
+        return _buyer;
     }
 
-    public PayFees insurance(Fee insurance) {
-        _insurance = insurance;
+    public PayFees buyer(Fee buyer) {
+        _buyer = buyer;
         return this;
     }
 
@@ -61,19 +61,6 @@ public class PayFees implements Parcelable {
         return this;
     }
 
-    public void setProvider(Fee provider) {
-        _provider = provider;
-    }
-
-    public Fee getProvider() {
-        return _provider;
-    }
-
-    public PayFees provider(Fee provider) {
-        _provider = provider;
-        return this;
-    }
-
     public void setFlat(Fee flat) {
         _flat = flat;
     }
@@ -87,16 +74,29 @@ public class PayFees implements Parcelable {
         return this;
     }
 
-    public void setBuyer(Fee buyer) {
-        _buyer = buyer;
+    public void setInsurance(Fee insurance) {
+        _insurance = insurance;
     }
 
-    public Fee getBuyer() {
-        return _buyer;
+    public Fee getInsurance() {
+        return _insurance;
     }
 
-    public PayFees buyer(Fee buyer) {
-        _buyer = buyer;
+    public PayFees insurance(Fee insurance) {
+        _insurance = insurance;
+        return this;
+    }
+
+    public void setProvider(Fee provider) {
+        _provider = provider;
+    }
+
+    public Fee getProvider() {
+        return _provider;
+    }
+
+    public PayFees provider(Fee provider) {
+        _provider = provider;
         return this;
     }
 

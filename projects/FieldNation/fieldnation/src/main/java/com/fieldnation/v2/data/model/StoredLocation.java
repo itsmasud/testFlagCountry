@@ -17,41 +17,23 @@ import com.fieldnation.fnlog.Log;
 public class StoredLocation implements Parcelable {
     private static final String TAG = "StoredLocation";
 
-    @Json(name = "zip")
-    private String _zip;
-
-    @Json(name = "country")
-    private String _country;
-
-    @Json(name = "notes")
-    private LocationNote[] _notes;
-
-    @Json(name = "address2")
-    private String _address2;
-
-    @Json(name = "city")
-    private String _city;
-
-    @Json(name = "address1")
-    private String _address1;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "active")
     private Boolean _active;
 
-    @Json(name = "type")
-    private LocationType _type;
+    @Json(name = "address1")
+    private String _address1;
 
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
+    @Json(name = "address2")
+    private String _address2;
 
-    @Json(name = "geo")
-    private Coords _geo;
+    @Json(name = "attributes")
+    private LocationAttribute[] _attributes;
 
-    @Json(name = "contact")
-    private Contact _contact;
-
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "city")
+    private String _city;
 
     @Json(name = "client")
     private Company _client;
@@ -59,99 +41,52 @@ public class StoredLocation implements Parcelable {
     @Json(name = "company")
     private Company _company;
 
-    @Json(name = "attributes")
-    private LocationAttribute[] _attributes;
+    @Json(name = "contact")
+    private Contact _contact;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "country")
+    private String _country;
 
-    @Json(name = "state")
-    private String _state;
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "geo")
+    private Coords _geo;
 
     @Json(name = "group")
     private LocationGroup _group;
 
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "name")
+    private String _name;
+
+    @Json(name = "notes")
+    private LocationNote[] _notes;
+
+    @Json(name = "state")
+    private String _state;
+
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
+
+    @Json(name = "type")
+    private LocationType _type;
+
+    @Json(name = "zip")
+    private String _zip;
+
     public StoredLocation() {
     }
 
-    public void setZip(String zip) {
-        _zip = zip;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public String getZip() {
-        return _zip;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public StoredLocation zip(String zip) {
-        _zip = zip;
-        return this;
-    }
-
-    public void setCountry(String country) {
-        _country = country;
-    }
-
-    public String getCountry() {
-        return _country;
-    }
-
-    public StoredLocation country(String country) {
-        _country = country;
-        return this;
-    }
-
-    public void setNotes(LocationNote[] notes) {
-        _notes = notes;
-    }
-
-    public LocationNote[] getNotes() {
-        return _notes;
-    }
-
-    public StoredLocation notes(LocationNote[] notes) {
-        _notes = notes;
-        return this;
-    }
-
-    public void setAddress2(String address2) {
-        _address2 = address2;
-    }
-
-    public String getAddress2() {
-        return _address2;
-    }
-
-    public StoredLocation address2(String address2) {
-        _address2 = address2;
-        return this;
-    }
-
-    public void setCity(String city) {
-        _city = city;
-    }
-
-    public String getCity() {
-        return _city;
-    }
-
-    public StoredLocation city(String city) {
-        _city = city;
-        return this;
-    }
-
-    public void setAddress1(String address1) {
-        _address1 = address1;
-    }
-
-    public String getAddress1() {
-        return _address1;
-    }
-
-    public StoredLocation address1(String address1) {
-        _address1 = address1;
+    public StoredLocation actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -168,68 +103,55 @@ public class StoredLocation implements Parcelable {
         return this;
     }
 
-    public void setType(LocationType type) {
-        _type = type;
+    public void setAddress1(String address1) {
+        _address1 = address1;
     }
 
-    public LocationType getType() {
-        return _type;
+    public String getAddress1() {
+        return _address1;
     }
 
-    public StoredLocation type(LocationType type) {
-        _type = type;
+    public StoredLocation address1(String address1) {
+        _address1 = address1;
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
+    public void setAddress2(String address2) {
+        _address2 = address2;
     }
 
-    public TimeZone getTimeZone() {
-        return _timeZone;
+    public String getAddress2() {
+        return _address2;
     }
 
-    public StoredLocation timeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
+    public StoredLocation address2(String address2) {
+        _address2 = address2;
         return this;
     }
 
-    public void setGeo(Coords geo) {
-        _geo = geo;
+    public void setAttributes(LocationAttribute[] attributes) {
+        _attributes = attributes;
     }
 
-    public Coords getGeo() {
-        return _geo;
+    public LocationAttribute[] getAttributes() {
+        return _attributes;
     }
 
-    public StoredLocation geo(Coords geo) {
-        _geo = geo;
+    public StoredLocation attributes(LocationAttribute[] attributes) {
+        _attributes = attributes;
         return this;
     }
 
-    public void setContact(Contact contact) {
-        _contact = contact;
+    public void setCity(String city) {
+        _city = city;
     }
 
-    public Contact getContact() {
-        return _contact;
+    public String getCity() {
+        return _city;
     }
 
-    public StoredLocation contact(Contact contact) {
-        _contact = contact;
-        return this;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public StoredLocation name(String name) {
-        _name = name;
+    public StoredLocation city(String city) {
+        _city = city;
         return this;
     }
 
@@ -259,16 +181,55 @@ public class StoredLocation implements Parcelable {
         return this;
     }
 
-    public void setAttributes(LocationAttribute[] attributes) {
-        _attributes = attributes;
+    public void setContact(Contact contact) {
+        _contact = contact;
     }
 
-    public LocationAttribute[] getAttributes() {
-        return _attributes;
+    public Contact getContact() {
+        return _contact;
     }
 
-    public StoredLocation attributes(LocationAttribute[] attributes) {
-        _attributes = attributes;
+    public StoredLocation contact(Contact contact) {
+        _contact = contact;
+        return this;
+    }
+
+    public void setCountry(String country) {
+        _country = country;
+    }
+
+    public String getCountry() {
+        return _country;
+    }
+
+    public StoredLocation country(String country) {
+        _country = country;
+        return this;
+    }
+
+    public void setGeo(Coords geo) {
+        _geo = geo;
+    }
+
+    public Coords getGeo() {
+        return _geo;
+    }
+
+    public StoredLocation geo(Coords geo) {
+        _geo = geo;
+        return this;
+    }
+
+    public void setGroup(LocationGroup group) {
+        _group = group;
+    }
+
+    public LocationGroup getGroup() {
+        return _group;
+    }
+
+    public StoredLocation group(LocationGroup group) {
+        _group = group;
         return this;
     }
 
@@ -285,6 +246,32 @@ public class StoredLocation implements Parcelable {
         return this;
     }
 
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public StoredLocation name(String name) {
+        _name = name;
+        return this;
+    }
+
+    public void setNotes(LocationNote[] notes) {
+        _notes = notes;
+    }
+
+    public LocationNote[] getNotes() {
+        return _notes;
+    }
+
+    public StoredLocation notes(LocationNote[] notes) {
+        _notes = notes;
+        return this;
+    }
+
     public void setState(String state) {
         _state = state;
     }
@@ -298,29 +285,42 @@ public class StoredLocation implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setTimeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public TimeZone getTimeZone() {
+        return _timeZone;
     }
 
-    public StoredLocation actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public StoredLocation timeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
         return this;
     }
 
-    public void setGroup(LocationGroup group) {
-        _group = group;
+    public void setType(LocationType type) {
+        _type = type;
     }
 
-    public LocationGroup getGroup() {
-        return _group;
+    public LocationType getType() {
+        return _type;
     }
 
-    public StoredLocation group(LocationGroup group) {
-        _group = group;
+    public StoredLocation type(LocationType type) {
+        _type = type;
+        return this;
+    }
+
+    public void setZip(String zip) {
+        _zip = zip;
+    }
+
+    public String getZip() {
+        return _zip;
+    }
+
+    public StoredLocation zip(String zip) {
+        _zip = zip;
         return this;
     }
 

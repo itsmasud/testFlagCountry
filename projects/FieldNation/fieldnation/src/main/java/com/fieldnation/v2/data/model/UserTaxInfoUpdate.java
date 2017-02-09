@@ -17,56 +17,53 @@ import com.fieldnation.fnlog.Log;
 public class UserTaxInfoUpdate implements Parcelable {
     private static final String TAG = "UserTaxInfoUpdate";
 
-    @Json(name = "zip")
-    private Integer _zip;
-
-    @Json(name = "business_name")
-    private String _businessName;
-
-    @Json(name = "other")
-    private String _other;
-
-    @Json(name = "company_id")
-    private Integer _companyId;
+    @Json(name = "address1")
+    private String _address1;
 
     @Json(name = "address2")
     private String _address2;
 
+    @Json(name = "business_name")
+    private String _businessName;
+
+    @Json(name = "buyer_company_id")
+    private Integer _buyerCompanyId;
+
     @Json(name = "city")
     private String _city;
 
-    @Json(name = "address1")
-    private String _address1;
-
-    @Json(name = "last_name")
-    private String _lastName;
+    @Json(name = "company_id")
+    private Integer _companyId;
 
     @Json(name = "electronic_consent")
     private Integer _electronicConsent;
 
-    @Json(name = "has_ein")
-    private Integer _hasEin;
+    @Json(name = "entity_type")
+    private String _entityType;
+
+    @Json(name = "first_name")
+    private String _firstName;
 
     @Json(name = "from_vendor_buyer_invite")
     private Integer _fromVendorBuyerInvite;
 
-    @Json(name = "vendor_company_id")
-    private Integer _vendorCompanyId;
+    @Json(name = "has_ein")
+    private Integer _hasEin;
 
-    @Json(name = "entity_type")
-    private String _entityType;
+    @Json(name = "has_separate_tax")
+    private Integer _hasSeparateTax;
 
-    @Json(name = "phone")
-    private String _phone;
+    @Json(name = "last_name")
+    private String _lastName;
 
     @Json(name = "name")
     private String _name;
 
-    @Json(name = "tin")
-    private String _tin;
+    @Json(name = "other")
+    private String _other;
 
-    @Json(name = "has_separate_tax")
-    private Integer _hasSeparateTax;
+    @Json(name = "phone")
+    private String _phone;
 
     @Json(name = "state")
     private String _state;
@@ -74,64 +71,28 @@ public class UserTaxInfoUpdate implements Parcelable {
     @Json(name = "technician_w9_status_id")
     private Integer _technicianW9StatusId;
 
-    @Json(name = "first_name")
-    private String _firstName;
+    @Json(name = "tin")
+    private String _tin;
 
-    @Json(name = "buyer_company_id")
-    private Integer _buyerCompanyId;
+    @Json(name = "vendor_company_id")
+    private Integer _vendorCompanyId;
+
+    @Json(name = "zip")
+    private Integer _zip;
 
     public UserTaxInfoUpdate() {
     }
 
-    public void setZip(Integer zip) {
-        _zip = zip;
+    public void setAddress1(String address1) {
+        _address1 = address1;
     }
 
-    public Integer getZip() {
-        return _zip;
+    public String getAddress1() {
+        return _address1;
     }
 
-    public UserTaxInfoUpdate zip(Integer zip) {
-        _zip = zip;
-        return this;
-    }
-
-    public void setBusinessName(String businessName) {
-        _businessName = businessName;
-    }
-
-    public String getBusinessName() {
-        return _businessName;
-    }
-
-    public UserTaxInfoUpdate businessName(String businessName) {
-        _businessName = businessName;
-        return this;
-    }
-
-    public void setOther(String other) {
-        _other = other;
-    }
-
-    public String getOther() {
-        return _other;
-    }
-
-    public UserTaxInfoUpdate other(String other) {
-        _other = other;
-        return this;
-    }
-
-    public void setCompanyId(Integer companyId) {
-        _companyId = companyId;
-    }
-
-    public Integer getCompanyId() {
-        return _companyId;
-    }
-
-    public UserTaxInfoUpdate companyId(Integer companyId) {
-        _companyId = companyId;
+    public UserTaxInfoUpdate address1(String address1) {
+        _address1 = address1;
         return this;
     }
 
@@ -148,6 +109,32 @@ public class UserTaxInfoUpdate implements Parcelable {
         return this;
     }
 
+    public void setBusinessName(String businessName) {
+        _businessName = businessName;
+    }
+
+    public String getBusinessName() {
+        return _businessName;
+    }
+
+    public UserTaxInfoUpdate businessName(String businessName) {
+        _businessName = businessName;
+        return this;
+    }
+
+    public void setBuyerCompanyId(Integer buyerCompanyId) {
+        _buyerCompanyId = buyerCompanyId;
+    }
+
+    public Integer getBuyerCompanyId() {
+        return _buyerCompanyId;
+    }
+
+    public UserTaxInfoUpdate buyerCompanyId(Integer buyerCompanyId) {
+        _buyerCompanyId = buyerCompanyId;
+        return this;
+    }
+
     public void setCity(String city) {
         _city = city;
     }
@@ -161,29 +148,16 @@ public class UserTaxInfoUpdate implements Parcelable {
         return this;
     }
 
-    public void setAddress1(String address1) {
-        _address1 = address1;
+    public void setCompanyId(Integer companyId) {
+        _companyId = companyId;
     }
 
-    public String getAddress1() {
-        return _address1;
+    public Integer getCompanyId() {
+        return _companyId;
     }
 
-    public UserTaxInfoUpdate address1(String address1) {
-        _address1 = address1;
-        return this;
-    }
-
-    public void setLastName(String lastName) {
-        _lastName = lastName;
-    }
-
-    public String getLastName() {
-        return _lastName;
-    }
-
-    public UserTaxInfoUpdate lastName(String lastName) {
-        _lastName = lastName;
+    public UserTaxInfoUpdate companyId(Integer companyId) {
+        _companyId = companyId;
         return this;
     }
 
@@ -200,16 +174,29 @@ public class UserTaxInfoUpdate implements Parcelable {
         return this;
     }
 
-    public void setHasEin(Integer hasEin) {
-        _hasEin = hasEin;
+    public void setEntityType(String entityType) {
+        _entityType = entityType;
     }
 
-    public Integer getHasEin() {
-        return _hasEin;
+    public String getEntityType() {
+        return _entityType;
     }
 
-    public UserTaxInfoUpdate hasEin(Integer hasEin) {
-        _hasEin = hasEin;
+    public UserTaxInfoUpdate entityType(String entityType) {
+        _entityType = entityType;
+        return this;
+    }
+
+    public void setFirstName(String firstName) {
+        _firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return _firstName;
+    }
+
+    public UserTaxInfoUpdate firstName(String firstName) {
+        _firstName = firstName;
         return this;
     }
 
@@ -226,42 +213,42 @@ public class UserTaxInfoUpdate implements Parcelable {
         return this;
     }
 
-    public void setVendorCompanyId(Integer vendorCompanyId) {
-        _vendorCompanyId = vendorCompanyId;
+    public void setHasEin(Integer hasEin) {
+        _hasEin = hasEin;
     }
 
-    public Integer getVendorCompanyId() {
-        return _vendorCompanyId;
+    public Integer getHasEin() {
+        return _hasEin;
     }
 
-    public UserTaxInfoUpdate vendorCompanyId(Integer vendorCompanyId) {
-        _vendorCompanyId = vendorCompanyId;
+    public UserTaxInfoUpdate hasEin(Integer hasEin) {
+        _hasEin = hasEin;
         return this;
     }
 
-    public void setEntityType(String entityType) {
-        _entityType = entityType;
+    public void setHasSeparateTax(Integer hasSeparateTax) {
+        _hasSeparateTax = hasSeparateTax;
     }
 
-    public String getEntityType() {
-        return _entityType;
+    public Integer getHasSeparateTax() {
+        return _hasSeparateTax;
     }
 
-    public UserTaxInfoUpdate entityType(String entityType) {
-        _entityType = entityType;
+    public UserTaxInfoUpdate hasSeparateTax(Integer hasSeparateTax) {
+        _hasSeparateTax = hasSeparateTax;
         return this;
     }
 
-    public void setPhone(String phone) {
-        _phone = phone;
+    public void setLastName(String lastName) {
+        _lastName = lastName;
     }
 
-    public String getPhone() {
-        return _phone;
+    public String getLastName() {
+        return _lastName;
     }
 
-    public UserTaxInfoUpdate phone(String phone) {
-        _phone = phone;
+    public UserTaxInfoUpdate lastName(String lastName) {
+        _lastName = lastName;
         return this;
     }
 
@@ -278,29 +265,29 @@ public class UserTaxInfoUpdate implements Parcelable {
         return this;
     }
 
-    public void setTin(String tin) {
-        _tin = tin;
+    public void setOther(String other) {
+        _other = other;
     }
 
-    public String getTin() {
-        return _tin;
+    public String getOther() {
+        return _other;
     }
 
-    public UserTaxInfoUpdate tin(String tin) {
-        _tin = tin;
+    public UserTaxInfoUpdate other(String other) {
+        _other = other;
         return this;
     }
 
-    public void setHasSeparateTax(Integer hasSeparateTax) {
-        _hasSeparateTax = hasSeparateTax;
+    public void setPhone(String phone) {
+        _phone = phone;
     }
 
-    public Integer getHasSeparateTax() {
-        return _hasSeparateTax;
+    public String getPhone() {
+        return _phone;
     }
 
-    public UserTaxInfoUpdate hasSeparateTax(Integer hasSeparateTax) {
-        _hasSeparateTax = hasSeparateTax;
+    public UserTaxInfoUpdate phone(String phone) {
+        _phone = phone;
         return this;
     }
 
@@ -330,29 +317,42 @@ public class UserTaxInfoUpdate implements Parcelable {
         return this;
     }
 
-    public void setFirstName(String firstName) {
-        _firstName = firstName;
+    public void setTin(String tin) {
+        _tin = tin;
     }
 
-    public String getFirstName() {
-        return _firstName;
+    public String getTin() {
+        return _tin;
     }
 
-    public UserTaxInfoUpdate firstName(String firstName) {
-        _firstName = firstName;
+    public UserTaxInfoUpdate tin(String tin) {
+        _tin = tin;
         return this;
     }
 
-    public void setBuyerCompanyId(Integer buyerCompanyId) {
-        _buyerCompanyId = buyerCompanyId;
+    public void setVendorCompanyId(Integer vendorCompanyId) {
+        _vendorCompanyId = vendorCompanyId;
     }
 
-    public Integer getBuyerCompanyId() {
-        return _buyerCompanyId;
+    public Integer getVendorCompanyId() {
+        return _vendorCompanyId;
     }
 
-    public UserTaxInfoUpdate buyerCompanyId(Integer buyerCompanyId) {
-        _buyerCompanyId = buyerCompanyId;
+    public UserTaxInfoUpdate vendorCompanyId(Integer vendorCompanyId) {
+        _vendorCompanyId = vendorCompanyId;
+        return this;
+    }
+
+    public void setZip(Integer zip) {
+        _zip = zip;
+    }
+
+    public Integer getZip() {
+        return _zip;
+    }
+
+    public UserTaxInfoUpdate zip(Integer zip) {
+        _zip = zip;
         return this;
     }
 

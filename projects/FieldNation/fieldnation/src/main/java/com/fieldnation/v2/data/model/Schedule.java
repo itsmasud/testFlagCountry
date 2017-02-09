@@ -17,114 +17,49 @@ import com.fieldnation.fnlog.Log;
 public class Schedule implements Parcelable {
     private static final String TAG = "Schedule";
 
-    @Json(name = "no_refresh")
-    private Boolean _noRefresh;
-
-    @Json(name = "eta")
-    private ScheduleEta _eta;
-
-    @Json(name = "role")
-    private String _role;
-
-    @Json(name = "status_id")
-    private Integer _statusId;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
-
-    @Json(name = "service_window")
-    private ScheduleServiceWindow _serviceWindow;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "correlation_id")
     private String _correlationId;
 
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
+    @Json(name = "eta")
+    private ScheduleEta _eta;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "no_refresh")
+    private Boolean _noRefresh;
 
     @Json(name = "on_my_way")
     private OnMyWay _onMyWay;
 
+    @Json(name = "role")
+    private String _role;
+
+    @Json(name = "service_window")
+    private ScheduleServiceWindow _serviceWindow;
+
+    @Json(name = "status_id")
+    private Integer _statusId;
+
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
+
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
     public Schedule() {
     }
 
-    public void setNoRefresh(Boolean noRefresh) {
-        _noRefresh = noRefresh;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public Boolean getNoRefresh() {
-        return _noRefresh;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public Schedule noRefresh(Boolean noRefresh) {
-        _noRefresh = noRefresh;
-        return this;
-    }
-
-    public void setEta(ScheduleEta eta) {
-        _eta = eta;
-    }
-
-    public ScheduleEta getEta() {
-        return _eta;
-    }
-
-    public Schedule eta(ScheduleEta eta) {
-        _eta = eta;
-        return this;
-    }
-
-    public void setRole(String role) {
-        _role = role;
-    }
-
-    public String getRole() {
-        return _role;
-    }
-
-    public Schedule role(String role) {
-        _role = role;
-        return this;
-    }
-
-    public void setStatusId(Integer statusId) {
-        _statusId = statusId;
-    }
-
-    public Integer getStatusId() {
-        return _statusId;
-    }
-
-    public Schedule statusId(Integer statusId) {
-        _statusId = statusId;
-        return this;
-    }
-
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public Schedule workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-        return this;
-    }
-
-    public void setServiceWindow(ScheduleServiceWindow serviceWindow) {
-        _serviceWindow = serviceWindow;
-    }
-
-    public ScheduleServiceWindow getServiceWindow() {
-        return _serviceWindow;
-    }
-
-    public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) {
-        _serviceWindow = serviceWindow;
+    public Schedule actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -141,29 +76,29 @@ public class Schedule implements Parcelable {
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
+    public void setEta(ScheduleEta eta) {
+        _eta = eta;
     }
 
-    public TimeZone getTimeZone() {
-        return _timeZone;
+    public ScheduleEta getEta() {
+        return _eta;
     }
 
-    public Schedule timeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
+    public Schedule eta(ScheduleEta eta) {
+        _eta = eta;
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setNoRefresh(Boolean noRefresh) {
+        _noRefresh = noRefresh;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public Boolean getNoRefresh() {
+        return _noRefresh;
     }
 
-    public Schedule actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public Schedule noRefresh(Boolean noRefresh) {
+        _noRefresh = noRefresh;
         return this;
     }
 
@@ -180,12 +115,77 @@ public class Schedule implements Parcelable {
         return this;
     }
 
+    public void setRole(String role) {
+        _role = role;
+    }
+
+    public String getRole() {
+        return _role;
+    }
+
+    public Schedule role(String role) {
+        _role = role;
+        return this;
+    }
+
+    public void setServiceWindow(ScheduleServiceWindow serviceWindow) {
+        _serviceWindow = serviceWindow;
+    }
+
+    public ScheduleServiceWindow getServiceWindow() {
+        return _serviceWindow;
+    }
+
+    public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) {
+        _serviceWindow = serviceWindow;
+        return this;
+    }
+
+    public void setStatusId(Integer statusId) {
+        _statusId = statusId;
+    }
+
+    public Integer getStatusId() {
+        return _statusId;
+    }
+
+    public Schedule statusId(Integer statusId) {
+        _statusId = statusId;
+        return this;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+    }
+
+    public TimeZone getTimeZone() {
+        return _timeZone;
+    }
+
+    public Schedule timeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public Schedule workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+        return this;
+    }
+
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
+        @Json(name = "eta")
+        ETA("eta");
 
         private String value;
 

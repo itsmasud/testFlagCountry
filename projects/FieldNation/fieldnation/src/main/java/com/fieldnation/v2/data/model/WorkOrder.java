@@ -571,24 +571,26 @@ public class WorkOrder implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "view_problem")
-        VIEW_PROBLEM("view_problem"),
-        @Json(name = "request")
-        REQUEST("request"),
-        @Json(name = "check_out")
-        CHECK_OUT("check_out"),
-        @Json(name = "report_a_problem")
-        REPORT_A_PROBLEM("report_a_problem"),
-        @Json(name = "eta")
-        ETA("eta"),
-        @Json(name = "edit")
-        EDIT("edit"),
-        @Json(name = "mark_complete")
-        MARK_COMPLETE("mark_complete"),
         @Json(name = "check_in")
         CHECK_IN("check_in"),
+        @Json(name = "check_out")
+        CHECK_OUT("check_out"),
+        @Json(name = "confirm")
+        CONFIRM("confirm"),
+        @Json(name = "mark_complete")
+        MARK_COMPLETE("mark_complete"),
+        @Json(name ="mark_incomplete")
+        MARK_INCOMPLETE("mark_incomplete"),
         @Json(name = "messaging")
-        MESSAGING("messaging");
+        MESSAGING("messaging"),
+        @Json(name = "report_a_problem")
+        REPORT_A_PROBLEM("report_a_problem"),
+        @Json(name = "request")
+        REQUEST("request"),
+        @Json(name = "view_problem")
+        VIEW_PROBLEM("view_problem"),
+        @Json(name = "withdraw_request")
+        WITHDRAW_REQUEST("withdraw_request");
 
         private String value;
 

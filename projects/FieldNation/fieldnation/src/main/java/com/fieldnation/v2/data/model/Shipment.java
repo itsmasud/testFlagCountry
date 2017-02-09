@@ -20,26 +20,26 @@ public class Shipment implements Parcelable {
     @Json(name = "carrier")
     private ShipmentCarrier _carrier;
 
-    @Json(name = "task")
-    private ShipmentTask _task;
-
     @Json(name = "created")
     private Date _created;
-
-    @Json(name = "name")
-    private String _name;
-
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "user")
-    private User _user;
 
     @Json(name = "direction")
     private DirectionEnum _direction;
 
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "name")
+    private String _name;
+
     @Json(name = "status")
     private StatusEnum _status;
+
+    @Json(name = "task")
+    private ShipmentTask _task;
+
+    @Json(name = "user")
+    private User _user;
 
     public Shipment() {
     }
@@ -57,19 +57,6 @@ public class Shipment implements Parcelable {
         return this;
     }
 
-    public void setTask(ShipmentTask task) {
-        _task = task;
-    }
-
-    public ShipmentTask getTask() {
-        return _task;
-    }
-
-    public Shipment task(ShipmentTask task) {
-        _task = task;
-        return this;
-    }
-
     public void setCreated(Date created) {
         _created = created;
     }
@@ -80,45 +67,6 @@ public class Shipment implements Parcelable {
 
     public Shipment created(Date created) {
         _created = created;
-        return this;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public Shipment name(String name) {
-        _name = name;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public Shipment id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setUser(User user) {
-        _user = user;
-    }
-
-    public User getUser() {
-        return _user;
-    }
-
-    public Shipment user(User user) {
-        _user = user;
         return this;
     }
 
@@ -135,6 +83,32 @@ public class Shipment implements Parcelable {
         return this;
     }
 
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Shipment id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public Shipment name(String name) {
+        _name = name;
+        return this;
+    }
+
     public void setStatus(StatusEnum status) {
         _status = status;
     }
@@ -148,20 +122,46 @@ public class Shipment implements Parcelable {
         return this;
     }
 
+    public void setTask(ShipmentTask task) {
+        _task = task;
+    }
+
+    public ShipmentTask getTask() {
+        return _task;
+    }
+
+    public Shipment task(ShipmentTask task) {
+        _task = task;
+        return this;
+    }
+
+    public void setUser(User user) {
+        _user = user;
+    }
+
+    public User getUser() {
+        return _user;
+    }
+
+    public Shipment user(User user) {
+        _user = user;
+        return this;
+    }
+
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum StatusEnum {
         @Json(name = "arrived")
         ARRIVED("arrived"),
-        @Json(name = "new")
-        NEW("new"),
-        @Json(name = "lost")
-        LOST("lost"),
         @Json(name = "en_route")
         EN_ROUTE("en_route"),
         @Json(name = "error")
-        ERROR("error");
+        ERROR("error"),
+        @Json(name = "lost")
+        LOST("lost"),
+        @Json(name = "new")
+        NEW("new");
 
         private String value;
 

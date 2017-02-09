@@ -17,8 +17,8 @@ import com.fieldnation.fnlog.Log;
 public class PayIncrease implements Parcelable {
     private static final String TAG = "PayIncrease";
 
-    @Json(name = "status_description")
-    private String _statusDescription;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "author")
     private User _author;
@@ -29,31 +29,31 @@ public class PayIncrease implements Parcelable {
     @Json(name = "description")
     private String _description;
 
-    @Json(name = "pay")
-    private Pay _pay;
-
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "pay")
+    private Pay _pay;
 
     @Json(name = "status")
     private StatusEnum _status;
 
+    @Json(name = "status_description")
+    private String _statusDescription;
+
     public PayIncrease() {
     }
 
-    public void setStatusDescription(String statusDescription) {
-        _statusDescription = statusDescription;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public String getStatusDescription() {
-        return _statusDescription;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public PayIncrease statusDescription(String statusDescription) {
-        _statusDescription = statusDescription;
+    public PayIncrease actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -96,19 +96,6 @@ public class PayIncrease implements Parcelable {
         return this;
     }
 
-    public void setPay(Pay pay) {
-        _pay = pay;
-    }
-
-    public Pay getPay() {
-        return _pay;
-    }
-
-    public PayIncrease pay(Pay pay) {
-        _pay = pay;
-        return this;
-    }
-
     public void setId(Integer id) {
         _id = id;
     }
@@ -122,16 +109,16 @@ public class PayIncrease implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setPay(Pay pay) {
+        _pay = pay;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public Pay getPay() {
+        return _pay;
     }
 
-    public PayIncrease actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public PayIncrease pay(Pay pay) {
+        _pay = pay;
         return this;
     }
 
@@ -148,16 +135,29 @@ public class PayIncrease implements Parcelable {
         return this;
     }
 
+    public void setStatusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
+    }
+
+    public String getStatusDescription() {
+        return _statusDescription;
+    }
+
+    public PayIncrease statusDescription(String statusDescription) {
+        _statusDescription = statusDescription;
+        return this;
+    }
+
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum StatusEnum {
+        @Json(name = "accepted")
+        ACCEPTED("accepted"),
         @Json(name = "declined")
         DECLINED("declined"),
         @Json(name = "pending")
-        PENDING("pending"),
-        @Json(name = "accepted")
-        ACCEPTED("accepted");
+        PENDING("pending");
 
         private String value;
 
@@ -172,10 +172,10 @@ public class PayIncrease implements Parcelable {
     }
 
     public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit"),
         @Json(name = "accept")
-        ACCEPT("accept");
+        ACCEPT("accept"),
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 

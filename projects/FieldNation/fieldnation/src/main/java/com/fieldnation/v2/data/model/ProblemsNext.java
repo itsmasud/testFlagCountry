@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class ProblemsNext implements Parcelable {
     private static final String TAG = "ProblemsNext";
 
-    @Json(name = "reason")
-    private String _reason;
-
     @Json(name = "problem_id")
     private Integer _problemId;
 
+    @Json(name = "reason")
+    private String _reason;
+
     public ProblemsNext() {
-    }
-
-    public void setReason(String reason) {
-        _reason = reason;
-    }
-
-    public String getReason() {
-        return _reason;
-    }
-
-    public ProblemsNext reason(String reason) {
-        _reason = reason;
-        return this;
     }
 
     public void setProblemId(Integer problemId) {
@@ -49,6 +36,19 @@ public class ProblemsNext implements Parcelable {
 
     public ProblemsNext problemId(Integer problemId) {
         _problemId = problemId;
+        return this;
+    }
+
+    public void setReason(String reason) {
+        _reason = reason;
+    }
+
+    public String getReason() {
+        return _reason;
+    }
+
+    public ProblemsNext reason(String reason) {
+        _reason = reason;
         return this;
     }
 

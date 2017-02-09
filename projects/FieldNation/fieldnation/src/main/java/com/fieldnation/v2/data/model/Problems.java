@@ -20,11 +20,11 @@ public class Problems implements Parcelable {
     @Json(name = "next")
     private ProblemsNext[] _next;
 
-    @Json(name = "reason")
-    private String _reason;
-
     @Json(name = "problem_id")
     private Integer _problemId;
+
+    @Json(name = "reason")
+    private String _reason;
 
     public Problems() {
     }
@@ -42,19 +42,6 @@ public class Problems implements Parcelable {
         return this;
     }
 
-    public void setReason(String reason) {
-        _reason = reason;
-    }
-
-    public String getReason() {
-        return _reason;
-    }
-
-    public Problems reason(String reason) {
-        _reason = reason;
-        return this;
-    }
-
     public void setProblemId(Integer problemId) {
         _problemId = problemId;
     }
@@ -65,6 +52,19 @@ public class Problems implements Parcelable {
 
     public Problems problemId(Integer problemId) {
         _problemId = problemId;
+        return this;
+    }
+
+    public void setReason(String reason) {
+        _reason = reason;
+    }
+
+    public String getReason() {
+        return _reason;
+    }
+
+    public Problems reason(String reason) {
+        _reason = reason;
         return this;
     }
 

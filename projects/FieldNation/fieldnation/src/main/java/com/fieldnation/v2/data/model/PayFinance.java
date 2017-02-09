@@ -17,45 +17,19 @@ import com.fieldnation.fnlog.Log;
 public class PayFinance implements Parcelable {
     private static final String TAG = "PayFinance";
 
-    @Json(name = "terms")
-    private String _terms;
-
-    @Json(name = "limit")
-    private Double _limit;
-
     @Json(name = "description")
     private String _description;
 
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "limit")
+    private Double _limit;
+
+    @Json(name = "terms")
+    private String _terms;
+
     public PayFinance() {
-    }
-
-    public void setTerms(String terms) {
-        _terms = terms;
-    }
-
-    public String getTerms() {
-        return _terms;
-    }
-
-    public PayFinance terms(String terms) {
-        _terms = terms;
-        return this;
-    }
-
-    public void setLimit(Double limit) {
-        _limit = limit;
-    }
-
-    public Double getLimit() {
-        return _limit;
-    }
-
-    public PayFinance limit(Double limit) {
-        _limit = limit;
-        return this;
     }
 
     public void setDescription(String description) {
@@ -81,6 +55,32 @@ public class PayFinance implements Parcelable {
 
     public PayFinance id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setLimit(Double limit) {
+        _limit = limit;
+    }
+
+    public Double getLimit() {
+        return _limit;
+    }
+
+    public PayFinance limit(Double limit) {
+        _limit = limit;
+        return this;
+    }
+
+    public void setTerms(String terms) {
+        _terms = terms;
+    }
+
+    public String getTerms() {
+        return _terms;
+    }
+
+    public PayFinance terms(String terms) {
+        _terms = terms;
         return this;
     }
 

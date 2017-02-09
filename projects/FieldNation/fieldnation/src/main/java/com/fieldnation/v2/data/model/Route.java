@@ -17,11 +17,8 @@ import com.fieldnation.fnlog.Log;
 public class Route implements Parcelable {
     private static final String TAG = "Route";
 
-    @Json(name = "schedule")
-    private Schedule _schedule;
-
-    @Json(name = "notes")
-    private String _notes;
+    @Json(name = "counter")
+    private Boolean _counter;
 
     @Json(name = "created")
     private Date _created;
@@ -29,8 +26,11 @@ public class Route implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "counter")
-    private Boolean _counter;
+    @Json(name = "notes")
+    private String _notes;
+
+    @Json(name = "schedule")
+    private Schedule _schedule;
 
     @Json(name = "user")
     private User _user;
@@ -38,29 +38,16 @@ public class Route implements Parcelable {
     public Route() {
     }
 
-    public void setSchedule(Schedule schedule) {
-        _schedule = schedule;
+    public void setCounter(Boolean counter) {
+        _counter = counter;
     }
 
-    public Schedule getSchedule() {
-        return _schedule;
+    public Boolean getCounter() {
+        return _counter;
     }
 
-    public Route schedule(Schedule schedule) {
-        _schedule = schedule;
-        return this;
-    }
-
-    public void setNotes(String notes) {
-        _notes = notes;
-    }
-
-    public String getNotes() {
-        return _notes;
-    }
-
-    public Route notes(String notes) {
-        _notes = notes;
+    public Route counter(Boolean counter) {
+        _counter = counter;
         return this;
     }
 
@@ -90,16 +77,29 @@ public class Route implements Parcelable {
         return this;
     }
 
-    public void setCounter(Boolean counter) {
-        _counter = counter;
+    public void setNotes(String notes) {
+        _notes = notes;
     }
 
-    public Boolean getCounter() {
-        return _counter;
+    public String getNotes() {
+        return _notes;
     }
 
-    public Route counter(Boolean counter) {
-        _counter = counter;
+    public Route notes(String notes) {
+        _notes = notes;
+        return this;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        _schedule = schedule;
+    }
+
+    public Schedule getSchedule() {
+        return _schedule;
+    }
+
+    public Route schedule(Schedule schedule) {
+        _schedule = schedule;
         return this;
     }
 

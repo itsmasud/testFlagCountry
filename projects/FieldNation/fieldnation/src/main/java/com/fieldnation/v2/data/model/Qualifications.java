@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class Qualifications implements Parcelable {
     private static final String TAG = "Qualifications";
 
-    @Json(name = "selection_rule")
-    private SelectionRule _selectionRule;
-
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "selection_rule")
+    private SelectionRule _selectionRule;
+
     public Qualifications() {
-    }
-
-    public void setSelectionRule(SelectionRule selectionRule) {
-        _selectionRule = selectionRule;
-    }
-
-    public SelectionRule getSelectionRule() {
-        return _selectionRule;
-    }
-
-    public Qualifications selectionRule(SelectionRule selectionRule) {
-        _selectionRule = selectionRule;
-        return this;
     }
 
     public void setActions(ActionsEnum[] actions) {
@@ -49,6 +36,19 @@ public class Qualifications implements Parcelable {
 
     public Qualifications actions(ActionsEnum[] actions) {
         _actions = actions;
+        return this;
+    }
+
+    public void setSelectionRule(SelectionRule selectionRule) {
+        _selectionRule = selectionRule;
+    }
+
+    public SelectionRule getSelectionRule() {
+        return _selectionRule;
+    }
+
+    public Qualifications selectionRule(SelectionRule selectionRule) {
+        _selectionRule = selectionRule;
         return this;
     }
 

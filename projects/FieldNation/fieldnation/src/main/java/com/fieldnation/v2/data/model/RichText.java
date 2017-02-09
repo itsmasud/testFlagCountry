@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class RichText implements Parcelable {
     private static final String TAG = "RichText";
 
-    @Json(name = "markdown")
-    private String _markdown;
-
     @Json(name = "html")
     private String _html;
 
+    @Json(name = "markdown")
+    private String _markdown;
+
     public RichText() {
-    }
-
-    public void setMarkdown(String markdown) {
-        _markdown = markdown;
-    }
-
-    public String getMarkdown() {
-        return _markdown;
-    }
-
-    public RichText markdown(String markdown) {
-        _markdown = markdown;
-        return this;
     }
 
     public void setHtml(String html) {
@@ -49,6 +36,19 @@ public class RichText implements Parcelable {
 
     public RichText html(String html) {
         _html = html;
+        return this;
+    }
+
+    public void setMarkdown(String markdown) {
+        _markdown = markdown;
+    }
+
+    public String getMarkdown() {
+        return _markdown;
+    }
+
+    public RichText markdown(String markdown) {
+        _markdown = markdown;
         return this;
     }
 

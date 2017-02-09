@@ -20,11 +20,11 @@ public class PayModifiersSum implements Parcelable {
     @Json(name = "all")
     private Double _all;
 
-    @Json(name = "uncharged")
-    private Double _uncharged;
-
     @Json(name = "charged")
     private Double _charged;
+
+    @Json(name = "uncharged")
+    private Double _uncharged;
 
     public PayModifiersSum() {
     }
@@ -42,19 +42,6 @@ public class PayModifiersSum implements Parcelable {
         return this;
     }
 
-    public void setUncharged(Double uncharged) {
-        _uncharged = uncharged;
-    }
-
-    public Double getUncharged() {
-        return _uncharged;
-    }
-
-    public PayModifiersSum uncharged(Double uncharged) {
-        _uncharged = uncharged;
-        return this;
-    }
-
     public void setCharged(Double charged) {
         _charged = charged;
     }
@@ -65,6 +52,19 @@ public class PayModifiersSum implements Parcelable {
 
     public PayModifiersSum charged(Double charged) {
         _charged = charged;
+        return this;
+    }
+
+    public void setUncharged(Double uncharged) {
+        _uncharged = uncharged;
+    }
+
+    public Double getUncharged() {
+        return _uncharged;
+    }
+
+    public PayModifiersSum uncharged(Double uncharged) {
+        _uncharged = uncharged;
         return this;
     }
 

@@ -17,28 +17,28 @@ import com.fieldnation.fnlog.Log;
 public class TypeOfWork implements Parcelable {
     private static final String TAG = "TypeOfWork";
 
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "industry")
     private String _industry;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "name")
+    private String _name;
 
     public TypeOfWork() {
     }
 
-    public void setName(String name) {
-        _name = name;
+    public void setId(Integer id) {
+        _id = id;
     }
 
-    public String getName() {
-        return _name;
+    public Integer getId() {
+        return _id;
     }
 
-    public TypeOfWork name(String name) {
-        _name = name;
+    public TypeOfWork id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -55,16 +55,16 @@ public class TypeOfWork implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
+    public void setName(String name) {
+        _name = name;
     }
 
-    public Integer getId() {
-        return _id;
+    public String getName() {
+        return _name;
     }
 
-    public TypeOfWork id(Integer id) {
-        _id = id;
+    public TypeOfWork name(String name) {
+        _name = name;
         return this;
     }
 

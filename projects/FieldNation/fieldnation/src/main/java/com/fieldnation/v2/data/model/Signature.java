@@ -17,40 +17,53 @@ import com.fieldnation.fnlog.Log;
 public class Signature implements Parcelable {
     private static final String TAG = "Signature";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "closing_notes")
     private String _closingNotes;
-
-    @Json(name = "task")
-    private Task _task;
-
-    @Json(name = "data")
-    private String _data;
 
     @Json(name = "created")
     private Date _created;
 
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "data")
+    private String _data;
 
     @Json(name = "format")
     private String _format;
 
+    @Json(name = "hash")
+    private String _hash;
+
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "worklog")
-    private String _worklog;
+    @Json(name = "name")
+    private String _name;
+
+    @Json(name = "task")
+    private Task _task;
 
     @Json(name = "time_zone")
     private TimeZone _timeZone;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
-    @Json(name = "hash")
-    private String _hash;
+    @Json(name = "worklog")
+    private String _worklog;
 
     public Signature() {
+    }
+
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Signature actions(ActionsEnum[] actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setClosingNotes(String closingNotes) {
@@ -63,32 +76,6 @@ public class Signature implements Parcelable {
 
     public Signature closingNotes(String closingNotes) {
         _closingNotes = closingNotes;
-        return this;
-    }
-
-    public void setTask(Task task) {
-        _task = task;
-    }
-
-    public Task getTask() {
-        return _task;
-    }
-
-    public Signature task(Task task) {
-        _task = task;
-        return this;
-    }
-
-    public void setData(String data) {
-        _data = data;
-    }
-
-    public String getData() {
-        return _data;
-    }
-
-    public Signature data(String data) {
-        _data = data;
         return this;
     }
 
@@ -105,16 +92,16 @@ public class Signature implements Parcelable {
         return this;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public void setData(String data) {
+        _data = data;
     }
 
-    public String getName() {
-        return _name;
+    public String getData() {
+        return _data;
     }
 
-    public Signature name(String name) {
-        _name = name;
+    public Signature data(String data) {
+        _data = data;
         return this;
     }
 
@@ -131,6 +118,19 @@ public class Signature implements Parcelable {
         return this;
     }
 
+    public void setHash(String hash) {
+        _hash = hash;
+    }
+
+    public String getHash() {
+        return _hash;
+    }
+
+    public Signature hash(String hash) {
+        _hash = hash;
+        return this;
+    }
+
     public void setId(Integer id) {
         _id = id;
     }
@@ -144,16 +144,29 @@ public class Signature implements Parcelable {
         return this;
     }
 
-    public void setWorklog(String worklog) {
-        _worklog = worklog;
+    public void setName(String name) {
+        _name = name;
     }
 
-    public String getWorklog() {
-        return _worklog;
+    public String getName() {
+        return _name;
     }
 
-    public Signature worklog(String worklog) {
-        _worklog = worklog;
+    public Signature name(String name) {
+        _name = name;
+        return this;
+    }
+
+    public void setTask(Task task) {
+        _task = task;
+    }
+
+    public Task getTask() {
+        return _task;
+    }
+
+    public Signature task(Task task) {
+        _task = task;
         return this;
     }
 
@@ -170,29 +183,16 @@ public class Signature implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setWorklog(String worklog) {
+        _worklog = worklog;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public String getWorklog() {
+        return _worklog;
     }
 
-    public Signature actions(ActionsEnum[] actions) {
-        _actions = actions;
-        return this;
-    }
-
-    public void setHash(String hash) {
-        _hash = hash;
-    }
-
-    public String getHash() {
-        return _hash;
-    }
-
-    public Signature hash(String hash) {
-        _hash = hash;
+    public Signature worklog(String worklog) {
+        _worklog = worklog;
         return this;
     }
 

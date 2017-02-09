@@ -20,32 +20,32 @@ public class Status implements Parcelable {
     @Json(name = "code")
     private String _code;
 
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "delay")
     private Integer _delay;
-
-    @Json(name = "is_routed")
-    private Boolean _isRouted;
-
-    @Json(name = "sub_status")
-    private String _subStatus;
 
     @Json(name = "display")
     private String _display;
 
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "is_routed")
+    private Boolean _isRouted;
+
     @Json(name = "name")
     private String _name;
-
-    @Json(name = "problem_reported")
-    private Boolean _problemReported;
 
     @Json(name = "ncns")
     private Boolean _ncns;
 
-    @Json(name = "correlation_id")
-    private String _correlationId;
+    @Json(name = "problem_reported")
+    private Boolean _problemReported;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "sub_status")
+    private String _subStatus;
 
     public Status() {
     }
@@ -63,6 +63,19 @@ public class Status implements Parcelable {
         return this;
     }
 
+    public void setCorrelationId(String correlationId) {
+        _correlationId = correlationId;
+    }
+
+    public String getCorrelationId() {
+        return _correlationId;
+    }
+
+    public Status correlationId(String correlationId) {
+        _correlationId = correlationId;
+        return this;
+    }
+
     public void setDelay(Integer delay) {
         _delay = delay;
     }
@@ -73,32 +86,6 @@ public class Status implements Parcelable {
 
     public Status delay(Integer delay) {
         _delay = delay;
-        return this;
-    }
-
-    public void setIsRouted(Boolean isRouted) {
-        _isRouted = isRouted;
-    }
-
-    public Boolean getIsRouted() {
-        return _isRouted;
-    }
-
-    public Status isRouted(Boolean isRouted) {
-        _isRouted = isRouted;
-        return this;
-    }
-
-    public void setSubStatus(String subStatus) {
-        _subStatus = subStatus;
-    }
-
-    public String getSubStatus() {
-        return _subStatus;
-    }
-
-    public Status subStatus(String subStatus) {
-        _subStatus = subStatus;
         return this;
     }
 
@@ -115,6 +102,32 @@ public class Status implements Parcelable {
         return this;
     }
 
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Status id(Integer id) {
+        _id = id;
+        return this;
+    }
+
+    public void setIsRouted(Boolean isRouted) {
+        _isRouted = isRouted;
+    }
+
+    public Boolean getIsRouted() {
+        return _isRouted;
+    }
+
+    public Status isRouted(Boolean isRouted) {
+        _isRouted = isRouted;
+        return this;
+    }
+
     public void setName(String name) {
         _name = name;
     }
@@ -125,19 +138,6 @@ public class Status implements Parcelable {
 
     public Status name(String name) {
         _name = name;
-        return this;
-    }
-
-    public void setProblemReported(Boolean problemReported) {
-        _problemReported = problemReported;
-    }
-
-    public Boolean getProblemReported() {
-        return _problemReported;
-    }
-
-    public Status problemReported(Boolean problemReported) {
-        _problemReported = problemReported;
         return this;
     }
 
@@ -154,29 +154,29 @@ public class Status implements Parcelable {
         return this;
     }
 
-    public void setCorrelationId(String correlationId) {
-        _correlationId = correlationId;
+    public void setProblemReported(Boolean problemReported) {
+        _problemReported = problemReported;
     }
 
-    public String getCorrelationId() {
-        return _correlationId;
+    public Boolean getProblemReported() {
+        return _problemReported;
     }
 
-    public Status correlationId(String correlationId) {
-        _correlationId = correlationId;
+    public Status problemReported(Boolean problemReported) {
+        _problemReported = problemReported;
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
+    public void setSubStatus(String subStatus) {
+        _subStatus = subStatus;
     }
 
-    public Integer getId() {
-        return _id;
+    public String getSubStatus() {
+        return _subStatus;
     }
 
-    public Status id(Integer id) {
-        _id = id;
+    public Status subStatus(String subStatus) {
+        _subStatus = subStatus;
         return this;
     }
 

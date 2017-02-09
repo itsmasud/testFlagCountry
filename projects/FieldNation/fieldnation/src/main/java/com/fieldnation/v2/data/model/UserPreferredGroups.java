@@ -17,32 +17,19 @@ import com.fieldnation.fnlog.Log;
 public class UserPreferredGroups implements Parcelable {
     private static final String TAG = "UserPreferredGroups";
 
-    @Json(name = "notes")
-    private String _notes;
-
     @Json(name = "created")
     private Date _created;
-
-    @Json(name = "name")
-    private String _name;
 
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "name")
+    private String _name;
+
+    @Json(name = "notes")
+    private String _notes;
+
     public UserPreferredGroups() {
-    }
-
-    public void setNotes(String notes) {
-        _notes = notes;
-    }
-
-    public String getNotes() {
-        return _notes;
-    }
-
-    public UserPreferredGroups notes(String notes) {
-        _notes = notes;
-        return this;
     }
 
     public void setCreated(Date created) {
@@ -55,6 +42,19 @@ public class UserPreferredGroups implements Parcelable {
 
     public UserPreferredGroups created(Date created) {
         _created = created;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public UserPreferredGroups id(Integer id) {
+        _id = id;
         return this;
     }
 
@@ -71,16 +71,16 @@ public class UserPreferredGroups implements Parcelable {
         return this;
     }
 
-    public void setId(Integer id) {
-        _id = id;
+    public void setNotes(String notes) {
+        _notes = notes;
     }
 
-    public Integer getId() {
-        return _id;
+    public String getNotes() {
+        return _notes;
     }
 
-    public UserPreferredGroups id(Integer id) {
-        _id = id;
+    public UserPreferredGroups notes(String notes) {
+        _notes = notes;
         return this;
     }
 

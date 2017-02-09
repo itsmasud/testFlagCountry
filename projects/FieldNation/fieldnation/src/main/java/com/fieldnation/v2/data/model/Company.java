@@ -17,6 +17,9 @@ import com.fieldnation.fnlog.Log;
 public class Company implements Parcelable {
     private static final String TAG = "Company";
 
+    @Json(name = "blocked")
+    private Boolean _blocked;
+
     @Json(name = "features")
     private String[] _features;
 
@@ -26,7 +29,23 @@ public class Company implements Parcelable {
     @Json(name = "name")
     private String _name;
 
+    @Json(name = "rating")
+    private Rating _rating;
+
     public Company() {
+    }
+
+    public void setBlocked(Boolean blocked) {
+        _blocked = blocked;
+    }
+
+    public Boolean getBlocked() {
+        return _blocked;
+    }
+
+    public Company blocked(Boolean blocked) {
+        _blocked = blocked;
+        return this;
     }
 
     public void setFeatures(String[] features) {
@@ -65,6 +84,19 @@ public class Company implements Parcelable {
 
     public Company name(String name) {
         _name = name;
+        return this;
+    }
+
+    public void setRating(Rating rating) {
+        _rating = rating;
+    }
+
+    public Rating getRating() {
+        return _rating;
+    }
+
+    public Company rating(Rating rating) {
+        _rating = rating;
         return this;
     }
 

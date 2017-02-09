@@ -56,14 +56,14 @@ public class ScheduleEtaStatus implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum NameEnum {
-        @Json(name = "unconfirmed")
-        UNCONFIRMED("unconfirmed"),
+        @Json(name = "confirmed")
+        CONFIRMED("confirmed"),
         @Json(name = "onmyway")
         ONMYWAY("onmyway"),
         @Json(name = "readytogo")
         READYTOGO("readytogo"),
-        @Json(name = "confirmed")
-        CONFIRMED("confirmed");
+        @Json(name = "unconfirmed")
+        UNCONFIRMED("unconfirmed");
 
         private String value;
 

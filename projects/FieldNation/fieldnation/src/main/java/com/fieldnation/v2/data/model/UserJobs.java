@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class UserJobs implements Parcelable {
     private static final String TAG = "UserJobs";
 
-    @Json(name = "marketplace")
-    private Integer _marketplace;
-
     @Json(name = "company")
     private Integer _company;
 
+    @Json(name = "marketplace")
+    private Integer _marketplace;
+
     public UserJobs() {
-    }
-
-    public void setMarketplace(Integer marketplace) {
-        _marketplace = marketplace;
-    }
-
-    public Integer getMarketplace() {
-        return _marketplace;
-    }
-
-    public UserJobs marketplace(Integer marketplace) {
-        _marketplace = marketplace;
-        return this;
     }
 
     public void setCompany(Integer company) {
@@ -49,6 +36,19 @@ public class UserJobs implements Parcelable {
 
     public UserJobs company(Integer company) {
         _company = company;
+        return this;
+    }
+
+    public void setMarketplace(Integer marketplace) {
+        _marketplace = marketplace;
+    }
+
+    public Integer getMarketplace() {
+        return _marketplace;
+    }
+
+    public UserJobs marketplace(Integer marketplace) {
+        _marketplace = marketplace;
         return this;
     }
 

@@ -17,48 +17,22 @@ import com.fieldnation.fnlog.Log;
 public class PricingInsightsRegion implements Parcelable {
     private static final String TAG = "PricingInsightsRegion";
 
-    @Json(name = "distance")
-    private Double _distance;
-
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "average_rate")
     private PricingInsightsRegionAverageRate _averageRate;
 
+    @Json(name = "distance")
+    private Double _distance;
+
     @Json(name = "id")
     private Integer _id;
+
+    @Json(name = "name")
+    private String _name;
 
     @Json(name = "providers")
     private PricingInsightsRegionProviders _providers;
 
     public PricingInsightsRegion() {
-    }
-
-    public void setDistance(Double distance) {
-        _distance = distance;
-    }
-
-    public Double getDistance() {
-        return _distance;
-    }
-
-    public PricingInsightsRegion distance(Double distance) {
-        _distance = distance;
-        return this;
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public PricingInsightsRegion name(String name) {
-        _name = name;
-        return this;
     }
 
     public void setAverageRate(PricingInsightsRegionAverageRate averageRate) {
@@ -74,6 +48,19 @@ public class PricingInsightsRegion implements Parcelable {
         return this;
     }
 
+    public void setDistance(Double distance) {
+        _distance = distance;
+    }
+
+    public Double getDistance() {
+        return _distance;
+    }
+
+    public PricingInsightsRegion distance(Double distance) {
+        _distance = distance;
+        return this;
+    }
+
     public void setId(Integer id) {
         _id = id;
     }
@@ -84,6 +71,19 @@ public class PricingInsightsRegion implements Parcelable {
 
     public PricingInsightsRegion id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public PricingInsightsRegion name(String name) {
+        _name = name;
         return this;
     }
 

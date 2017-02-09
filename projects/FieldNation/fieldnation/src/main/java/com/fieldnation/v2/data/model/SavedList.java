@@ -17,20 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class SavedList implements Parcelable {
     private static final String TAG = "SavedList";
 
-    @Json(name = "default")
-    private Boolean _default;
-
     @Json(name = "columns")
     private String _columns;
 
     @Json(name = "count")
     private Integer _count;
 
+    @Json(name = "default")
+    private Boolean _default;
+
     @Json(name = "id")
     private String _id;
-
-    @Json(name = "sort")
-    private String _sort;
 
     @Json(name = "label")
     private String _label;
@@ -38,20 +35,10 @@ public class SavedList implements Parcelable {
     @Json(name = "order")
     private OrderEnum _order;
 
+    @Json(name = "sort")
+    private String _sort;
+
     public SavedList() {
-    }
-
-    public void setDefault(Boolean defaultt) {
-        _default = defaultt;
-    }
-
-    public Boolean getDefault() {
-        return _default;
-    }
-
-    public SavedList defaultt(Boolean defaultt) {
-        _default = defaultt;
-        return this;
     }
 
     public void setColumns(String columns) {
@@ -80,6 +67,19 @@ public class SavedList implements Parcelable {
         return this;
     }
 
+    public void setDefault(Boolean defaultt) {
+        _default = defaultt;
+    }
+
+    public Boolean getDefault() {
+        return _default;
+    }
+
+    public SavedList defaultt(Boolean defaultt) {
+        _default = defaultt;
+        return this;
+    }
+
     public void setId(String id) {
         _id = id;
     }
@@ -90,19 +90,6 @@ public class SavedList implements Parcelable {
 
     public SavedList id(String id) {
         _id = id;
-        return this;
-    }
-
-    public void setSort(String sort) {
-        _sort = sort;
-    }
-
-    public String getSort() {
-        return _sort;
-    }
-
-    public SavedList sort(String sort) {
-        _sort = sort;
         return this;
     }
 
@@ -129,6 +116,19 @@ public class SavedList implements Parcelable {
 
     public SavedList order(OrderEnum order) {
         _order = order;
+        return this;
+    }
+
+    public void setSort(String sort) {
+        _sort = sort;
+    }
+
+    public String getSort() {
+        return _sort;
+    }
+
+    public SavedList sort(String sort) {
+        _sort = sort;
         return this;
     }
 

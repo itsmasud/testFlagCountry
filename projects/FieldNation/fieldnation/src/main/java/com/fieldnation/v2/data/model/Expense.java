@@ -184,12 +184,12 @@ public class Expense implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum StatusEnum {
-        @Json(name = "new")
-        NEW("new"),
         @Json(name = "approved")
         APPROVED("approved"),
         @Json(name = "disapproved")
-        DISAPPROVED("disapproved");
+        DISAPPROVED("disapproved"),
+        @Json(name = "new")
+        NEW("new");
 
         private String value;
 

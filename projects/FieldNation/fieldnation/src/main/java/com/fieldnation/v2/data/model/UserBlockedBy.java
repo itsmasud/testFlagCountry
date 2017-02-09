@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class UserBlockedBy implements Parcelable {
     private static final String TAG = "UserBlockedBy";
 
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "name")
+    private String _name;
+
     public UserBlockedBy() {
-    }
-
-    public void setName(String name) {
-        _name = name;
-    }
-
-    public String getName() {
-        return _name;
-    }
-
-    public UserBlockedBy name(String name) {
-        _name = name;
-        return this;
     }
 
     public void setId(Integer id) {
@@ -49,6 +36,19 @@ public class UserBlockedBy implements Parcelable {
 
     public UserBlockedBy id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setName(String name) {
+        _name = name;
+    }
+
+    public String getName() {
+        return _name;
+    }
+
+    public UserBlockedBy name(String name) {
+        _name = name;
         return this;
     }
 

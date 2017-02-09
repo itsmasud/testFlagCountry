@@ -20,17 +20,17 @@ public class UpdateModel implements Parcelable {
     @Json(name = "metadata")
     private UpdateModelMetadata _metadata;
 
-    @Json(name = "service_name")
-    private String _serviceName;
-
     @Json(name = "params")
     private UpdateModelParams _params;
 
-    @Json(name = "version")
-    private String _version;
+    @Json(name = "service_name")
+    private String _serviceName;
 
     @Json(name = "timestamp")
     private String _timestamp;
+
+    @Json(name = "version")
+    private String _version;
 
     public UpdateModel() {
     }
@@ -48,19 +48,6 @@ public class UpdateModel implements Parcelable {
         return this;
     }
 
-    public void setServiceName(String serviceName) {
-        _serviceName = serviceName;
-    }
-
-    public String getServiceName() {
-        return _serviceName;
-    }
-
-    public UpdateModel serviceName(String serviceName) {
-        _serviceName = serviceName;
-        return this;
-    }
-
     public void setParams(UpdateModelParams params) {
         _params = params;
     }
@@ -74,16 +61,16 @@ public class UpdateModel implements Parcelable {
         return this;
     }
 
-    public void setVersion(String version) {
-        _version = version;
+    public void setServiceName(String serviceName) {
+        _serviceName = serviceName;
     }
 
-    public String getVersion() {
-        return _version;
+    public String getServiceName() {
+        return _serviceName;
     }
 
-    public UpdateModel version(String version) {
-        _version = version;
+    public UpdateModel serviceName(String serviceName) {
+        _serviceName = serviceName;
         return this;
     }
 
@@ -97,6 +84,19 @@ public class UpdateModel implements Parcelable {
 
     public UpdateModel timestamp(String timestamp) {
         _timestamp = timestamp;
+        return this;
+    }
+
+    public void setVersion(String version) {
+        _version = version;
+    }
+
+    public String getVersion() {
+        return _version;
+    }
+
+    public UpdateModel version(String version) {
+        _version = version;
         return this;
     }
 

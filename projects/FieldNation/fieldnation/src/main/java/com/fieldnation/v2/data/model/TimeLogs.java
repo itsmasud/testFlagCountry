@@ -17,101 +17,49 @@ import com.fieldnation.fnlog.Log;
 public class TimeLogs implements Parcelable {
     private static final String TAG = "TimeLogs";
 
-    @Json(name = "metadata")
-    private ListEnvelope _metadata;
-
-    @Json(name = "hours")
-    private Double _hours;
-
-    @Json(name = "should_verify")
-    private Boolean _shouldVerify;
-
-    @Json(name = "onmyway")
-    private OnMyWay _onmyway;
-
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "confirmed")
     private Date _confirmed;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "hours")
+    private Double _hours;
 
-    @Json(name = "results")
-    private TimeLog[] _results;
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
+
+    @Json(name = "onmyway")
+    private OnMyWay _onmyway;
 
     @Json(name = "open_time_log")
     private TimeLog _openTimeLog;
 
+    @Json(name = "results")
+    private TimeLog[] _results;
+
+    @Json(name = "should_verify")
+    private Boolean _shouldVerify;
+
     @Json(name = "status")
     private String _status;
+
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
 
     public TimeLogs() {
     }
 
-    public void setMetadata(ListEnvelope metadata) {
-        _metadata = metadata;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public ListEnvelope getMetadata() {
-        return _metadata;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public TimeLogs metadata(ListEnvelope metadata) {
-        _metadata = metadata;
-        return this;
-    }
-
-    public void setHours(Double hours) {
-        _hours = hours;
-    }
-
-    public Double getHours() {
-        return _hours;
-    }
-
-    public TimeLogs hours(Double hours) {
-        _hours = hours;
-        return this;
-    }
-
-    public void setShouldVerify(Boolean shouldVerify) {
-        _shouldVerify = shouldVerify;
-    }
-
-    public Boolean getShouldVerify() {
-        return _shouldVerify;
-    }
-
-    public TimeLogs shouldVerify(Boolean shouldVerify) {
-        _shouldVerify = shouldVerify;
-        return this;
-    }
-
-    public void setOnmyway(OnMyWay onmyway) {
-        _onmyway = onmyway;
-    }
-
-    public OnMyWay getOnmyway() {
-        return _onmyway;
-    }
-
-    public TimeLogs onmyway(OnMyWay onmyway) {
-        _onmyway = onmyway;
-        return this;
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
-    }
-
-    public TimeZone getTimeZone() {
-        return _timeZone;
-    }
-
-    public TimeLogs timeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
+    public TimeLogs actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -128,29 +76,42 @@ public class TimeLogs implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setHours(Double hours) {
+        _hours = hours;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public Double getHours() {
+        return _hours;
     }
 
-    public TimeLogs actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public TimeLogs hours(Double hours) {
+        _hours = hours;
         return this;
     }
 
-    public void setResults(TimeLog[] results) {
-        _results = results;
+    public void setMetadata(ListEnvelope metadata) {
+        _metadata = metadata;
     }
 
-    public TimeLog[] getResults() {
-        return _results;
+    public ListEnvelope getMetadata() {
+        return _metadata;
     }
 
-    public TimeLogs results(TimeLog[] results) {
-        _results = results;
+    public TimeLogs metadata(ListEnvelope metadata) {
+        _metadata = metadata;
+        return this;
+    }
+
+    public void setOnmyway(OnMyWay onmyway) {
+        _onmyway = onmyway;
+    }
+
+    public OnMyWay getOnmyway() {
+        return _onmyway;
+    }
+
+    public TimeLogs onmyway(OnMyWay onmyway) {
+        _onmyway = onmyway;
         return this;
     }
 
@@ -167,6 +128,32 @@ public class TimeLogs implements Parcelable {
         return this;
     }
 
+    public void setResults(TimeLog[] results) {
+        _results = results;
+    }
+
+    public TimeLog[] getResults() {
+        return _results;
+    }
+
+    public TimeLogs results(TimeLog[] results) {
+        _results = results;
+        return this;
+    }
+
+    public void setShouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
+    }
+
+    public Boolean getShouldVerify() {
+        return _shouldVerify;
+    }
+
+    public TimeLogs shouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
+        return this;
+    }
+
     public void setStatus(String status) {
         _status = status;
     }
@@ -180,12 +167,27 @@ public class TimeLogs implements Parcelable {
         return this;
     }
 
+    public void setTimeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+    }
+
+    public TimeZone getTimeZone() {
+        return _timeZone;
+    }
+
+    public TimeLogs timeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+        return this;
+    }
+
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "create")
-        CREATE("create");
+        @Json(name = "add")
+        ADD("add"),
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 

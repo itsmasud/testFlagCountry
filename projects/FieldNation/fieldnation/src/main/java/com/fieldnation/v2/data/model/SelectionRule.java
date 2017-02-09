@@ -17,20 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class SelectionRule implements Parcelable {
     private static final String TAG = "SelectionRule";
 
+    @Json(name = "actions")
+    private ActionsEnum _actions;
+
+    @Json(name = "id")
+    private Integer _id;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "name")
     private String _name;
-
-    @Json(name = "sum")
-    private SelectionRuleSum _sum;
-
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "actions")
-    private ActionsEnum _actions;
 
     @Json(name = "results")
     private SelectionRuleCriteria[] _results;
@@ -38,7 +35,36 @@ public class SelectionRule implements Parcelable {
     @Json(name = "status")
     private StatusEnum _status;
 
+    @Json(name = "sum")
+    private SelectionRuleSum _sum;
+
     public SelectionRule() {
+    }
+
+    public void setActions(ActionsEnum actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum getActions() {
+        return _actions;
+    }
+
+    public SelectionRule actions(ActionsEnum actions) {
+        _actions = actions;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public SelectionRule id(Integer id) {
+        _id = id;
+        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) {
@@ -67,45 +93,6 @@ public class SelectionRule implements Parcelable {
         return this;
     }
 
-    public void setSum(SelectionRuleSum sum) {
-        _sum = sum;
-    }
-
-    public SelectionRuleSum getSum() {
-        return _sum;
-    }
-
-    public SelectionRule sum(SelectionRuleSum sum) {
-        _sum = sum;
-        return this;
-    }
-
-    public void setId(Integer id) {
-        _id = id;
-    }
-
-    public Integer getId() {
-        return _id;
-    }
-
-    public SelectionRule id(Integer id) {
-        _id = id;
-        return this;
-    }
-
-    public void setActions(ActionsEnum actions) {
-        _actions = actions;
-    }
-
-    public ActionsEnum getActions() {
-        return _actions;
-    }
-
-    public SelectionRule actions(ActionsEnum actions) {
-        _actions = actions;
-        return this;
-    }
-
     public void setResults(SelectionRuleCriteria[] results) {
         _results = results;
     }
@@ -129,6 +116,19 @@ public class SelectionRule implements Parcelable {
 
     public SelectionRule status(StatusEnum status) {
         _status = status;
+        return this;
+    }
+
+    public void setSum(SelectionRuleSum sum) {
+        _sum = sum;
+    }
+
+    public SelectionRuleSum getSum() {
+        return _sum;
+    }
+
+    public SelectionRule sum(SelectionRuleSum sum) {
+        _sum = sum;
         return this;
     }
 

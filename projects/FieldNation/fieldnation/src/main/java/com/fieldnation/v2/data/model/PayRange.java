@@ -17,26 +17,13 @@ import com.fieldnation.fnlog.Log;
 public class PayRange implements Parcelable {
     private static final String TAG = "PayRange";
 
-    @Json(name = "min")
-    private Double _min;
-
     @Json(name = "max")
     private Double _max;
 
+    @Json(name = "min")
+    private Double _min;
+
     public PayRange() {
-    }
-
-    public void setMin(Double min) {
-        _min = min;
-    }
-
-    public Double getMin() {
-        return _min;
-    }
-
-    public PayRange min(Double min) {
-        _min = min;
-        return this;
     }
 
     public void setMax(Double max) {
@@ -49,6 +36,19 @@ public class PayRange implements Parcelable {
 
     public PayRange max(Double max) {
         _max = max;
+        return this;
+    }
+
+    public void setMin(Double min) {
+        _min = min;
+    }
+
+    public Double getMin() {
+        return _min;
+    }
+
+    public PayRange min(Double min) {
+        _min = min;
         return this;
     }
 

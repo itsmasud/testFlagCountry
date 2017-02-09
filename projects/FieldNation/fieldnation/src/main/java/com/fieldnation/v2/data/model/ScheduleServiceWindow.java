@@ -17,16 +17,29 @@ import com.fieldnation.fnlog.Log;
 public class ScheduleServiceWindow implements Parcelable {
     private static final String TAG = "ScheduleServiceWindow";
 
+    @Json(name = "end")
+    private Date _end;
+
     @Json(name = "mode")
     private ModeEnum _mode;
 
     @Json(name = "start")
     private Date _start;
 
-    @Json(name = "end")
-    private Date _end;
-
     public ScheduleServiceWindow() {
+    }
+
+    public void setEnd(Date end) {
+        _end = end;
+    }
+
+    public Date getEnd() {
+        return _end;
+    }
+
+    public ScheduleServiceWindow end(Date end) {
+        _end = end;
+        return this;
     }
 
     public void setMode(ModeEnum mode) {
@@ -55,29 +68,16 @@ public class ScheduleServiceWindow implements Parcelable {
         return this;
     }
 
-    public void setEnd(Date end) {
-        _end = end;
-    }
-
-    public Date getEnd() {
-        return _end;
-    }
-
-    public ScheduleServiceWindow end(Date end) {
-        _end = end;
-        return this;
-    }
-
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ModeEnum {
-        @Json(name = "hours")
-        HOURS("hours"),
+        @Json(name = "between")
+        BETWEEN("between"),
         @Json(name = "exact")
         EXACT("exact"),
-        @Json(name = "between")
-        BETWEEN("between");
+        @Json(name = "hours")
+        HOURS("hours");
 
         private String value;
 

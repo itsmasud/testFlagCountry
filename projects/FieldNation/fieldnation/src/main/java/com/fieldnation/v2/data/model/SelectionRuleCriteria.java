@@ -20,26 +20,26 @@ public class SelectionRuleCriteria implements Parcelable {
     @Json(name = "custom_field")
     private CustomField _customField;
 
-    @Json(name = "extra")
-    private String _extra;
-
-    @Json(name = "name")
-    private NameEnum _name;
-
     @Json(name = "description")
     private String _description;
 
-    @Json(name = "weight")
-    private Integer _weight;
+    @Json(name = "extra")
+    private String _extra;
 
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "name")
+    private NameEnum _name;
+
     @Json(name = "operation")
     private OperationEnum _operation;
 
-    @Json(name = "value")
-    private String _value;
+    @Json(name = "order")
+    private Integer _order;
+
+    @Json(name = "points")
+    private Integer _points;
 
     @Json(name = "required")
     private Boolean _required;
@@ -47,11 +47,11 @@ public class SelectionRuleCriteria implements Parcelable {
     @Json(name = "status")
     private StatusEnum _status;
 
-    @Json(name = "points")
-    private Integer _points;
+    @Json(name = "value")
+    private String _value;
 
-    @Json(name = "order")
-    private Integer _order;
+    @Json(name = "weight")
+    private Integer _weight;
 
     public SelectionRuleCriteria() {
     }
@@ -69,32 +69,6 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
-    public void setExtra(String extra) {
-        _extra = extra;
-    }
-
-    public String getExtra() {
-        return _extra;
-    }
-
-    public SelectionRuleCriteria extra(String extra) {
-        _extra = extra;
-        return this;
-    }
-
-    public void setName(NameEnum name) {
-        _name = name;
-    }
-
-    public NameEnum getName() {
-        return _name;
-    }
-
-    public SelectionRuleCriteria name(NameEnum name) {
-        _name = name;
-        return this;
-    }
-
     public void setDescription(String description) {
         _description = description;
     }
@@ -108,16 +82,16 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
-    public void setWeight(Integer weight) {
-        _weight = weight;
+    public void setExtra(String extra) {
+        _extra = extra;
     }
 
-    public Integer getWeight() {
-        return _weight;
+    public String getExtra() {
+        return _extra;
     }
 
-    public SelectionRuleCriteria weight(Integer weight) {
-        _weight = weight;
+    public SelectionRuleCriteria extra(String extra) {
+        _extra = extra;
         return this;
     }
 
@@ -134,6 +108,19 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
+    public void setName(NameEnum name) {
+        _name = name;
+    }
+
+    public NameEnum getName() {
+        return _name;
+    }
+
+    public SelectionRuleCriteria name(NameEnum name) {
+        _name = name;
+        return this;
+    }
+
     public void setOperation(OperationEnum operation) {
         _operation = operation;
     }
@@ -147,16 +134,29 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
-    public void setValue(String value) {
-        _value = value;
+    public void setOrder(Integer order) {
+        _order = order;
     }
 
-    public String getValue() {
-        return _value;
+    public Integer getOrder() {
+        return _order;
     }
 
-    public SelectionRuleCriteria value(String value) {
-        _value = value;
+    public SelectionRuleCriteria order(Integer order) {
+        _order = order;
+        return this;
+    }
+
+    public void setPoints(Integer points) {
+        _points = points;
+    }
+
+    public Integer getPoints() {
+        return _points;
+    }
+
+    public SelectionRuleCriteria points(Integer points) {
+        _points = points;
         return this;
     }
 
@@ -186,29 +186,29 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
-    public void setPoints(Integer points) {
-        _points = points;
+    public void setValue(String value) {
+        _value = value;
     }
 
-    public Integer getPoints() {
-        return _points;
+    public String getValue() {
+        return _value;
     }
 
-    public SelectionRuleCriteria points(Integer points) {
-        _points = points;
+    public SelectionRuleCriteria value(String value) {
+        _value = value;
         return this;
     }
 
-    public void setOrder(Integer order) {
-        _order = order;
+    public void setWeight(Integer weight) {
+        _weight = weight;
     }
 
-    public Integer getOrder() {
-        return _order;
+    public Integer getWeight() {
+        return _weight;
     }
 
-    public SelectionRuleCriteria order(Integer order) {
-        _order = order;
+    public SelectionRuleCriteria weight(Integer weight) {
+        _weight = weight;
         return this;
     }
 
@@ -216,48 +216,48 @@ public class SelectionRuleCriteria implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum NameEnum {
-        @Json(name = "insurance")
-        INSURANCE("insurance"),
-        @Json(name = "ratings_positive")
-        RATINGS_POSITIVE("ratings_positive"),
-        @Json(name = "assignment_less_then")
-        ASSIGNMENT_LESS_THEN("assignment_less_then"),
-        @Json(name = "skillset")
-        SKILLSET("skillset"),
         @Json(name = "assignment_history")
         ASSIGNMENT_HISTORY("assignment_history"),
-        @Json(name = "ratings_all")
-        RATINGS_ALL("ratings_all"),
-        @Json(name = "distance")
-        DISTANCE("distance"),
-        @Json(name = "custom_field_match")
-        CUSTOM_FIELD_MATCH("custom_field_match"),
-        @Json(name = "requests")
-        REQUESTS("requests"),
-        @Json(name = "completed_wo_company")
-        COMPLETED_WO_COMPANY("completed_wo_company"),
-        @Json(name = "background_check")
-        BACKGROUND_CHECK("background_check"),
-        @Json(name = "cancel_rate")
-        CANCEL_RATE("cancel_rate"),
+        @Json(name = "assignment_less_then")
+        ASSIGNMENT_LESS_THEN("assignment_less_then"),
         @Json(name = "assignment_nearby")
         ASSIGNMENT_NEARBY("assignment_nearby"),
-        @Json(name = "preferred_provider")
-        PREFERRED_PROVIDER("preferred_provider"),
-        @Json(name = "completed_wo_marketplace")
-        COMPLETED_WO_MARKETPLACE("completed_wo_marketplace"),
+        @Json(name = "background_check")
+        BACKGROUND_CHECK("background_check"),
         @Json(name = "block")
         BLOCK("block"),
-        @Json(name = "has_verified")
-        HAS_VERIFIED("has_verified"),
-        @Json(name = "protec")
-        PROTEC("protec"),
-        @Json(name = "custom_provider_field")
-        CUSTOM_PROVIDER_FIELD("custom_provider_field"),
+        @Json(name = "cancel_rate")
+        CANCEL_RATE("cancel_rate"),
+        @Json(name = "completed_wo_company")
+        COMPLETED_WO_COMPANY("completed_wo_company"),
+        @Json(name = "completed_wo_marketplace")
+        COMPLETED_WO_MARKETPLACE("completed_wo_marketplace"),
         @Json(name = "custom_buyer_field")
         CUSTOM_BUYER_FIELD("custom_buyer_field"),
+        @Json(name = "custom_field_match")
+        CUSTOM_FIELD_MATCH("custom_field_match"),
+        @Json(name = "custom_provider_field")
+        CUSTOM_PROVIDER_FIELD("custom_provider_field"),
+        @Json(name = "distance")
+        DISTANCE("distance"),
         @Json(name = "drug_test")
-        DRUG_TEST("drug_test");
+        DRUG_TEST("drug_test"),
+        @Json(name = "has_verified")
+        HAS_VERIFIED("has_verified"),
+        @Json(name = "insurance")
+        INSURANCE("insurance"),
+        @Json(name = "preferred_provider")
+        PREFERRED_PROVIDER("preferred_provider"),
+        @Json(name = "protec")
+        PROTEC("protec"),
+        @Json(name = "ratings_all")
+        RATINGS_ALL("ratings_all"),
+        @Json(name = "ratings_positive")
+        RATINGS_POSITIVE("ratings_positive"),
+        @Json(name = "requests")
+        REQUESTS("requests"),
+        @Json(name = "skillset")
+        SKILLSET("skillset");
 
         private String value;
 
@@ -292,14 +292,14 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public enum OperationEnum {
-        @Json(name = "not_equal_to")
-        NOT_EQUAL_TO("not_equal_to"),
         @Json(name = "equal_to")
         EQUAL_TO("equal_to"),
         @Json(name = "greater_than")
         GREATER_THAN("greater_than"),
         @Json(name = "less_than")
-        LESS_THAN("less_than");
+        LESS_THAN("less_than"),
+        @Json(name = "not_equal_to")
+        NOT_EQUAL_TO("not_equal_to");
 
         private String value;
 

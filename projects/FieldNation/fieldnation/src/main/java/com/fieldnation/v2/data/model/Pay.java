@@ -328,8 +328,8 @@ public class Pay implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 

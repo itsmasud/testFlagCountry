@@ -232,14 +232,14 @@ public class FundTransaction implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum StatusEnum {
-        @Json(name = "holding")
-        HOLDING("holding"),
-        @Json(name = "pending")
-        PENDING("pending"),
         @Json(name = "completed")
         COMPLETED("completed"),
         @Json(name = "failed")
-        FAILED("failed");
+        FAILED("failed"),
+        @Json(name = "holding")
+        HOLDING("holding"),
+        @Json(name = "pending")
+        PENDING("pending");
 
         private String value;
 
@@ -254,18 +254,18 @@ public class FundTransaction implements Parcelable {
     }
 
     public enum TypeEnum {
-        @Json(name = "loan")
-        LOAN("loan"),
-        @Json(name = "insurance_fee")
-        INSURANCE_FEE("insurance_fee"),
-        @Json(name = "service_fee")
-        SERVICE_FEE("service_fee"),
         @Json(name = "ccauth")
         CCAUTH("ccauth"),
         @Json(name = "deposit")
         DEPOSIT("deposit"),
+        @Json(name = "insurance_fee")
+        INSURANCE_FEE("insurance_fee"),
+        @Json(name = "loan")
+        LOAN("loan"),
         @Json(name = "payment")
         PAYMENT("payment"),
+        @Json(name = "service_fee")
+        SERVICE_FEE("service_fee"),
         @Json(name = "withdrawal")
         WITHDRAWAL("withdrawal");
 

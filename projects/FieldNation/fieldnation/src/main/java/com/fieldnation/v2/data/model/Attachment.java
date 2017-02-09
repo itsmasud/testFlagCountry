@@ -218,10 +218,10 @@ public class Attachment implements Parcelable {
     public enum StatusEnum {
         @Json(name = "approved")
         APPROVED("approved"),
-        @Json(name = "pending")
-        PENDING("pending"),
         @Json(name = "denied")
-        DENIED("denied");
+        DENIED("denied"),
+        @Json(name = "pending")
+        PENDING("pending");
 
         private String value;
 

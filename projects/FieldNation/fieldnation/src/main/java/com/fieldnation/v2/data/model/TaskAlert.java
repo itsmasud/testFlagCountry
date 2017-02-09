@@ -17,16 +17,29 @@ import com.fieldnation.fnlog.Log;
 public class TaskAlert implements Parcelable {
     private static final String TAG = "TaskAlert";
 
+    @Json(name = "email")
+    private String _email;
+
     @Json(name = "id")
     private Integer _id;
 
     @Json(name = "sent")
     private String _sent;
 
-    @Json(name = "email")
-    private String _email;
-
     public TaskAlert() {
+    }
+
+    public void setEmail(String email) {
+        _email = email;
+    }
+
+    public String getEmail() {
+        return _email;
+    }
+
+    public TaskAlert email(String email) {
+        _email = email;
+        return this;
     }
 
     public void setId(Integer id) {
@@ -52,19 +65,6 @@ public class TaskAlert implements Parcelable {
 
     public TaskAlert sent(String sent) {
         _sent = sent;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        _email = email;
-    }
-
-    public String getEmail() {
-        return _email;
-    }
-
-    public TaskAlert email(String email) {
-        _email = email;
         return this;
     }
 

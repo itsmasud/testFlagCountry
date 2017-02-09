@@ -184,14 +184,16 @@ public class ListEnvelope implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ViewEnum {
-        @Json(name = "schedule")
-        SCHEDULE("schedule"),
+        @Json(name = "card")
+        CARD("card"),
         @Json(name = "list")
         LIST("list"),
         @Json(name = "map")
         MAP("map"),
-        @Json(name = "card")
-        CARD("card");
+        @Json(name = "model")
+        MODEL("model"),
+        @Json(name = "schedule")
+        SCHEDULE("schedule");
 
         private String value;
 
@@ -209,7 +211,9 @@ public class ListEnvelope implements Parcelable {
         @Json(name = "asc")
         ASC("asc"),
         @Json(name = "desc")
-        DESC("desc");
+        DESC("desc"),
+        @Json(name = "false")
+        FALSE("false");
 
         private String value;
 

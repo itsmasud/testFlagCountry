@@ -17,17 +17,17 @@ import com.fieldnation.fnlog.Log;
 public class PayModifier implements Parcelable {
     private static final String TAG = "PayModifier";
 
-    @Json(name = "calculation")
-    private CalculationEnum _calculation;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "amount")
     private Double _amount;
 
-    @Json(name = "modifier")
-    private Double _modifier;
+    @Json(name = "calculation")
+    private CalculationEnum _calculation;
 
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "charged")
+    private Boolean _charged;
 
     @Json(name = "description")
     private String _description;
@@ -35,25 +35,25 @@ public class PayModifier implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "charged")
-    private Boolean _charged;
+    @Json(name = "modifier")
+    private Double _modifier;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "name")
+    private String _name;
 
     public PayModifier() {
     }
 
-    public void setCalculation(CalculationEnum calculation) {
-        _calculation = calculation;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public CalculationEnum getCalculation() {
-        return _calculation;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public PayModifier calculation(CalculationEnum calculation) {
-        _calculation = calculation;
+    public PayModifier actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -70,29 +70,29 @@ public class PayModifier implements Parcelable {
         return this;
     }
 
-    public void setModifier(Double modifier) {
-        _modifier = modifier;
+    public void setCalculation(CalculationEnum calculation) {
+        _calculation = calculation;
     }
 
-    public Double getModifier() {
-        return _modifier;
+    public CalculationEnum getCalculation() {
+        return _calculation;
     }
 
-    public PayModifier modifier(Double modifier) {
-        _modifier = modifier;
+    public PayModifier calculation(CalculationEnum calculation) {
+        _calculation = calculation;
         return this;
     }
 
-    public void setName(String name) {
-        _name = name;
+    public void setCharged(Boolean charged) {
+        _charged = charged;
     }
 
-    public String getName() {
-        return _name;
+    public Boolean getCharged() {
+        return _charged;
     }
 
-    public PayModifier name(String name) {
-        _name = name;
+    public PayModifier charged(Boolean charged) {
+        _charged = charged;
         return this;
     }
 
@@ -122,29 +122,29 @@ public class PayModifier implements Parcelable {
         return this;
     }
 
-    public void setCharged(Boolean charged) {
-        _charged = charged;
+    public void setModifier(Double modifier) {
+        _modifier = modifier;
     }
 
-    public Boolean getCharged() {
-        return _charged;
+    public Double getModifier() {
+        return _modifier;
     }
 
-    public PayModifier charged(Boolean charged) {
-        _charged = charged;
+    public PayModifier modifier(Double modifier) {
+        _modifier = modifier;
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setName(String name) {
+        _name = name;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public String getName() {
+        return _name;
     }
 
-    public PayModifier actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public PayModifier name(String name) {
+        _name = name;
         return this;
     }
 

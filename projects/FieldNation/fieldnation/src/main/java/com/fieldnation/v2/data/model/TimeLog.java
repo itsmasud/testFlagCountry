@@ -17,87 +17,61 @@ import com.fieldnation.fnlog.Log;
 public class TimeLog implements Parcelable {
     private static final String TAG = "TimeLog";
 
-    @Json(name = "hours")
-    private Double _hours;
-
-    @Json(name = "should_verify")
-    private Boolean _shouldVerify;
-
-    @Json(name = "in")
-    private CheckInOut _in;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "devices")
     private Double _devices;
 
-    @Json(name = "verified")
-    private Boolean _verified;
-
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
-
-    @Json(name = "was_late")
-    private Boolean _wasLate;
-
-    @Json(name = "out")
-    private CheckInOut _out;
-
-    @Json(name = "on_my_way")
-    private OnMyWay _onMyWay;
-
-    @Json(name = "logged_by")
-    private User _loggedBy;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
+    @Json(name = "hours")
+    private Double _hours;
 
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    @Json(name = "in")
+    private CheckInOut _in;
+
+    @Json(name = "logged_by")
+    private User _loggedBy;
+
+    @Json(name = "on_my_way")
+    private OnMyWay _onMyWay;
+
+    @Json(name = "out")
+    private CheckInOut _out;
+
+    @Json(name = "should_verify")
+    private Boolean _shouldVerify;
 
     @Json(name = "status")
     private StatusEnum _status;
 
+    @Json(name = "time_zone")
+    private TimeZone _timeZone;
+
+    @Json(name = "verified")
+    private Boolean _verified;
+
+    @Json(name = "was_late")
+    private Boolean _wasLate;
+
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
     public TimeLog() {
     }
 
-    public void setHours(Double hours) {
-        _hours = hours;
+    public void setActions(ActionsEnum[] actions) {
+        _actions = actions;
     }
 
-    public Double getHours() {
-        return _hours;
+    public ActionsEnum[] getActions() {
+        return _actions;
     }
 
-    public TimeLog hours(Double hours) {
-        _hours = hours;
-        return this;
-    }
-
-    public void setShouldVerify(Boolean shouldVerify) {
-        _shouldVerify = shouldVerify;
-    }
-
-    public Boolean getShouldVerify() {
-        return _shouldVerify;
-    }
-
-    public TimeLog shouldVerify(Boolean shouldVerify) {
-        _shouldVerify = shouldVerify;
-        return this;
-    }
-
-    public void setIn(CheckInOut in) {
-        _in = in;
-    }
-
-    public CheckInOut getIn() {
-        return _in;
-    }
-
-    public TimeLog in(CheckInOut in) {
-        _in = in;
+    public TimeLog actions(ActionsEnum[] actions) {
+        _actions = actions;
         return this;
     }
 
@@ -114,94 +88,16 @@ public class TimeLog implements Parcelable {
         return this;
     }
 
-    public void setVerified(Boolean verified) {
-        _verified = verified;
+    public void setHours(Double hours) {
+        _hours = hours;
     }
 
-    public Boolean getVerified() {
-        return _verified;
+    public Double getHours() {
+        return _hours;
     }
 
-    public TimeLog verified(Boolean verified) {
-        _verified = verified;
-        return this;
-    }
-
-    public void setTimeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
-    }
-
-    public TimeZone getTimeZone() {
-        return _timeZone;
-    }
-
-    public TimeLog timeZone(TimeZone timeZone) {
-        _timeZone = timeZone;
-        return this;
-    }
-
-    public void setWasLate(Boolean wasLate) {
-        _wasLate = wasLate;
-    }
-
-    public Boolean getWasLate() {
-        return _wasLate;
-    }
-
-    public TimeLog wasLate(Boolean wasLate) {
-        _wasLate = wasLate;
-        return this;
-    }
-
-    public void setOut(CheckInOut out) {
-        _out = out;
-    }
-
-    public CheckInOut getOut() {
-        return _out;
-    }
-
-    public TimeLog out(CheckInOut out) {
-        _out = out;
-        return this;
-    }
-
-    public void setOnMyWay(OnMyWay onMyWay) {
-        _onMyWay = onMyWay;
-    }
-
-    public OnMyWay getOnMyWay() {
-        return _onMyWay;
-    }
-
-    public TimeLog onMyWay(OnMyWay onMyWay) {
-        _onMyWay = onMyWay;
-        return this;
-    }
-
-    public void setLoggedBy(User loggedBy) {
-        _loggedBy = loggedBy;
-    }
-
-    public User getLoggedBy() {
-        return _loggedBy;
-    }
-
-    public TimeLog loggedBy(User loggedBy) {
-        _loggedBy = loggedBy;
-        return this;
-    }
-
-    public void setWorkOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
-    }
-
-    public Integer getWorkOrderId() {
-        return _workOrderId;
-    }
-
-    public TimeLog workOrderId(Integer workOrderId) {
-        _workOrderId = workOrderId;
+    public TimeLog hours(Double hours) {
+        _hours = hours;
         return this;
     }
 
@@ -218,16 +114,68 @@ public class TimeLog implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) {
-        _actions = actions;
+    public void setIn(CheckInOut in) {
+        _in = in;
     }
 
-    public ActionsEnum[] getActions() {
-        return _actions;
+    public CheckInOut getIn() {
+        return _in;
     }
 
-    public TimeLog actions(ActionsEnum[] actions) {
-        _actions = actions;
+    public TimeLog in(CheckInOut in) {
+        _in = in;
+        return this;
+    }
+
+    public void setLoggedBy(User loggedBy) {
+        _loggedBy = loggedBy;
+    }
+
+    public User getLoggedBy() {
+        return _loggedBy;
+    }
+
+    public TimeLog loggedBy(User loggedBy) {
+        _loggedBy = loggedBy;
+        return this;
+    }
+
+    public void setOnMyWay(OnMyWay onMyWay) {
+        _onMyWay = onMyWay;
+    }
+
+    public OnMyWay getOnMyWay() {
+        return _onMyWay;
+    }
+
+    public TimeLog onMyWay(OnMyWay onMyWay) {
+        _onMyWay = onMyWay;
+        return this;
+    }
+
+    public void setOut(CheckInOut out) {
+        _out = out;
+    }
+
+    public CheckInOut getOut() {
+        return _out;
+    }
+
+    public TimeLog out(CheckInOut out) {
+        _out = out;
+        return this;
+    }
+
+    public void setShouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
+    }
+
+    public Boolean getShouldVerify() {
+        return _shouldVerify;
+    }
+
+    public TimeLog shouldVerify(Boolean shouldVerify) {
+        _shouldVerify = shouldVerify;
         return this;
     }
 
@@ -241,6 +189,58 @@ public class TimeLog implements Parcelable {
 
     public TimeLog status(StatusEnum status) {
         _status = status;
+        return this;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+    }
+
+    public TimeZone getTimeZone() {
+        return _timeZone;
+    }
+
+    public TimeLog timeZone(TimeZone timeZone) {
+        _timeZone = timeZone;
+        return this;
+    }
+
+    public void setVerified(Boolean verified) {
+        _verified = verified;
+    }
+
+    public Boolean getVerified() {
+        return _verified;
+    }
+
+    public TimeLog verified(Boolean verified) {
+        _verified = verified;
+        return this;
+    }
+
+    public void setWasLate(Boolean wasLate) {
+        _wasLate = wasLate;
+    }
+
+    public Boolean getWasLate() {
+        return _wasLate;
+    }
+
+    public TimeLog wasLate(Boolean wasLate) {
+        _wasLate = wasLate;
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
+    }
+
+    public Integer getWorkOrderId() {
+        return _workOrderId;
+    }
+
+    public TimeLog workOrderId(Integer workOrderId) {
+        _workOrderId = workOrderId;
         return this;
     }
 
@@ -267,7 +267,9 @@ public class TimeLog implements Parcelable {
 
     public enum ActionsEnum {
         @Json(name = "edit")
-        EDIT("edit");
+        EDIT("edit"),
+        @Json(name = "verify")
+        VERIFY("verify");
 
         private String value;
 
