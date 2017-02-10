@@ -24,6 +24,7 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
     private int _uploadSuccess = 0;
     private int _uploadFailed = 0;
     private long _resetTimer = 0;
+    private static String uploadType;
 
     @Override
     public int getMaxWorkerCount() {
@@ -42,6 +43,13 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
         }
 
         String action = intent.getAction();
+
+        if (intent.getExtras() != null && intent.getExtras().containsKey(PARAM_ACTION_PHOTO_UPLOAD)) {
+            uploadType = intent.getExtras().getString(PARAM_ACTION_PHOTO_UPLOAD);
+        } else if (intent.getExtras() != null && intent.getExtras().containsKey(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
+            uploadType = intent.getExtras().getString(PARAM_ACTION_UPLOAD_DELIVERABLE);
+        }
+
         switch (action) {
             case ACTION_QUEUED:
                 _uploadQueued++;
@@ -87,11 +95,21 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
             NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_anim_upload_start)
-                    .setContentTitle(getResources().getQuantityString(
-                            R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
+//                    .setContentTitle(getResources().getQuantityString(
+//                            R.plurals.num_files_uploading, _uploadRunning, _uploadRunning))
                     .setContentText(getResources().getQuantityString(
                             R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
+
+            if (uploadType != null && uploadType.equals(PARAM_ACTION_PHOTO_UPLOAD)) {
+                builder.setContentTitle(getResources().getQuantityString(
+                        R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning));
+            } else if (uploadType != null && uploadType.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
+                builder.setContentTitle(getResources().getQuantityString(
+                        R.plurals.num_photos_uploading, _uploadRunning, _uploadRunning));
+            }
+
+
 
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
             manager.notify(_notifcationId, builder.build());
@@ -102,7 +120,7 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_notif_queued)
                     .setContentTitle(getResources().getQuantityString(
-                            R.plurals.num_deliverables_to_upload, _uploadQueued, _uploadQueued))
+                            R.plurals.num_files_to_upload, _uploadQueued, _uploadQueued))
                     .setContentText(getResources().getQuantityString(
                             R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
@@ -125,6 +143,15 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
                             R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
                     .setColor(getResources().getColor(R.color.fn_accent_color));
 
+
+            if (uploadType != null && uploadType.equals(PARAM_ACTION_PHOTO_UPLOAD)) {
+                builder.setContentTitle(getResources().getQuantityString(
+                        R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess));
+            } else if (uploadType != null && uploadType.equals(PARAM_ACTION_UPLOAD_DELIVERABLE)) {
+                builder.setContentTitle(getResources().getQuantityString(
+                        R.plurals.num_photos_uploaded, _uploadSuccess, _uploadSuccess));
+            }
+
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
             manager.notify(_notifcationId, builder.build());
 
@@ -141,9 +168,14 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
                 .setLargeIcon(null)
                 .setSmallIcon(R.drawable.ic_notif_fail)
                 .setContentTitle(getString(R.string.failed))
-                .setContentText(getString(R.string.wo_num_file_upload_has_failed, workorderId))
-                .setColor(getResources().getColor(R.color.fn_red))
-                .setContentIntent(pendingIntent);
+                .setColor(getResources().getColor(R.color.fn_red));
+
+        if (workorderId != 0) {
+            builder.setContentText(getString(R.string.wo_num_file_upload_has_failed, workorderId))
+                    .setContentIntent(pendingIntent);
+        } else {
+            builder.setContentText("Profile photo upload has failed");
+        }
 
         NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
         manager.notify(App.secureRandom.nextInt(), builder.build());
