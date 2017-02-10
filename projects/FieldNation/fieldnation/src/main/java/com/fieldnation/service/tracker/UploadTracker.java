@@ -24,7 +24,7 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
     private int _uploadSuccess = 0;
     private int _uploadFailed = 0;
     private long _resetTimer = 0;
-    private static String uploadType;
+    private String uploadType;
 
     @Override
     public int getMaxWorkerCount() {
