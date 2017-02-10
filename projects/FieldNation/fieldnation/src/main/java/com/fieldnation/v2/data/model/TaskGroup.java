@@ -18,7 +18,7 @@ public class TaskGroup implements Parcelable {
     private static final String TAG = "TaskGroup";
 
     @Json(name = "id")
-    private Integer _id;
+    private String _id;
 
     @Json(name = "label")
     private String _label;
@@ -26,15 +26,15 @@ public class TaskGroup implements Parcelable {
     public TaskGroup() {
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         _id = id;
     }
 
-    public Integer getId() {
+    public String getId() {
         return _id;
     }
 
-    public TaskGroup id(Integer id) {
+    public TaskGroup id(String id) {
         _id = id;
         return this;
     }

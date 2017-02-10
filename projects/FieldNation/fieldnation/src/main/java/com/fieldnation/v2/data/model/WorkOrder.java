@@ -23,6 +23,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "allow_counter_offers")
+    private Boolean _allowCounterOffers;
+
     @Json(name = "assignee")
     private Assignee _assignee;
 
@@ -54,7 +57,7 @@ public class WorkOrder implements Parcelable {
     private RichText _description;
 
     @Json(name = "holds")
-    private Holds _holds;
+    private Hold[] _holds;
 
     @Json(name = "location")
     private Location _location;
@@ -135,6 +138,19 @@ public class WorkOrder implements Parcelable {
 
     public WorkOrder actions(ActionsEnum[] actions) {
         _actions = actions;
+        return this;
+    }
+
+    public void setAllowCounterOffers(Boolean allowCounterOffers) {
+        _allowCounterOffers = allowCounterOffers;
+    }
+
+    public Boolean getAllowCounterOffers() {
+        return _allowCounterOffers;
+    }
+
+    public WorkOrder allowCounterOffers(Boolean allowCounterOffers) {
+        _allowCounterOffers = allowCounterOffers;
         return this;
     }
 
@@ -268,15 +284,15 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setHolds(Holds holds) {
+    public void setHolds(Hold[] holds) {
         _holds = holds;
     }
 
-    public Holds getHolds() {
+    public Hold[] getHolds() {
         return _holds;
     }
 
-    public WorkOrder holds(Holds holds) {
+    public WorkOrder holds(Hold[] holds) {
         _holds = holds;
         return this;
     }

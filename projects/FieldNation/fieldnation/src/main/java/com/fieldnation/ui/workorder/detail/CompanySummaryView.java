@@ -8,11 +8,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.BuyerRating;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael Carver on 5/22/2015.
@@ -33,7 +32,7 @@ public class CompanySummaryView extends RelativeLayout {
     private TextView _daysTextView;
 
 
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public CompanySummaryView(Context context) {
         super(context);
@@ -73,8 +72,8 @@ public class CompanySummaryView extends RelativeLayout {
         setVisibility(GONE);
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
@@ -82,21 +81,19 @@ public class CompanySummaryView extends RelativeLayout {
         if (_nameTextView == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null || _workOrder.getCompany() == null)
             setVisibility(GONE);
         else {
             setVisibility(VISIBLE);
         }
 
-        if (misc.isEmptyOrNull(_workorder.getCompanyName())) {
-            _nameTextView.setText("Company Name Hidden");
+        if (!misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
+            _nameTextView.setText(_workOrder.getCompany().getName());
         } else {
-            _nameTextView.setText(_workorder.getCompanyName());
+            _nameTextView.setText("Company Name Hidden");
         }
 
-        BuyerRating rating = _workorder.getBuyerRatingInfo();
-
-        if (rating == null || rating.getTotalRating() == null) {
+        if (_workOrder.getManager() == null) {
             _newBuyerTextView.setVisibility(VISIBLE);
             _starRating.setStars(0);
             _detailsLayout.setVisibility(GONE);
@@ -106,15 +103,21 @@ public class CompanySummaryView extends RelativeLayout {
             _newBuyerTextView.setVisibility(GONE);
             _detailsLayout.setVisibility(VISIBLE);
 
-            _daysTextView.setText(rating.getTimeToApproval() + " Days");
+            if (_workOrder.getManager().getApprovalDays() != null) {
+                _daysTextView.setVisibility(VISIBLE);
+                _daysTextView.setText(_workOrder.getManager().getApprovalDays() + " Days");
+            } else {
+                _daysTextView.setText("");
+                _daysTextView.setVisibility(GONE);
+            }
 
-            if (rating.getAvgRating() != null) {
-                _starRating.setStars((int) (double) rating.getAvgRating());
+            if (_workOrder.getManager().getRating() != null) {
+                _starRating.setStars(_workOrder.getManager().getRating().intValue());
             } else {
                 _starRating.setStars(0);
             }
-
-            if (rating.getClearExpectationRatingPercent() != null) {
+/*
+TODO            if (rating.getClearExpectationRatingPercent() != null) {
                 _expectationsProgressBar.setProgress((int) (double) rating.getClearExpectationRatingPercent());
                 _expectationsTextView.setText(((int) (double) rating.getClearExpectationRatingPercent()) + "%");
             }
@@ -142,6 +145,7 @@ public class CompanySummaryView extends RelativeLayout {
                 }
                 _reviewsTextView.setVisibility(GONE);
             }
+            */
         }
     }
 }

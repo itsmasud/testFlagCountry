@@ -27,7 +27,7 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Pay;
@@ -777,7 +777,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getWorkOrderId());
-            WorkorderActivity.startNew(App.get(), _workOrder.getWorkOrderId(), WorkorderActivity.TAB_MESSAGE);
+            WorkOrderActivity.startNew(App.get(), _workOrder.getWorkOrderId(), WorkOrderActivity.TAB_MESSAGE);
         }
     };
 
@@ -833,7 +833,7 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             ActivityResultClient.startActivity(
                     App.get(),
-                    WorkorderActivity.makeIntentShow(App.get(), _workOrder.getWorkOrderId()),
+                    WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getWorkOrderId()),
                     R.anim.activity_slide_in_right,
                     R.anim.activity_slide_out_left);
         }

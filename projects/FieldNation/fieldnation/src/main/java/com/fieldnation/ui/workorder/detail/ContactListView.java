@@ -8,12 +8,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Location;
-import com.fieldnation.data.workorder.User;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderContacts;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -26,7 +24,7 @@ public class ContactListView extends RelativeLayout {
 
     private LinearLayout _listLayout;
 
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private ForLoopRunnable _contactsRunnable = null;
 
 
@@ -56,13 +54,13 @@ public class ContactListView extends RelativeLayout {
         setVisibility(GONE);
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
     private void populateUi() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_listLayout == null)
@@ -71,33 +69,23 @@ public class ContactListView extends RelativeLayout {
         _listLayout.removeAllViews();
 
         boolean addedContact = false;
-        final List<WorkorderContacts> contactList = new LinkedList<>();
+        final List<Contact> contactList = new LinkedList<>();
 
+        if (_workOrder.getLocation() != null
+                && _workOrder.getLocation().getSavedLocation() != null
+                && _workOrder.getLocation().getSavedLocation().getContact() != null) {
 
-        if (_workorder.getWorkorderManagerInfo() != null) {
-            User user = _workorder.getWorkorderManagerInfo();
-
-            if (!misc.isEmptyOrNull(user.getFullName()) || !misc.isEmptyOrNull(user.getPhone())) {
+            Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
+            if (misc.isEmptyOrNull(contact.getName()) && misc.isEmptyOrNull(contact.getPhone())) {
                 ContactTileView tileView = new ContactTileView(getContext());
-                tileView.setData(user.getFullName(), user.getPhone(), null, "Work Order Manager");
+                tileView.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                 addedContact = true;
                 _listLayout.addView(tileView);
             }
         }
 
-        if (_workorder.getLocation() != null) {
-            Location location = _workorder.getLocation();
-            String phone = location.getContactPhone();
-            if (!misc.isEmptyOrNull(location.getContactName()) || !misc.isEmptyOrNull(phone)) {
-                ContactTileView tileView = new ContactTileView(getContext());
-                addedContact = true;
-                tileView.setData(location.getContactName(), location.getContactPhone(), location.getContactPhoneExt(), "Location Contact");
-                _listLayout.addView(tileView);
-            }
-        }
-
-        if (_workorder.getWorkorderContacts() != null)
-            Collections.addAll(contactList, _workorder.getWorkorderContacts());
+        if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null)
+            Collections.addAll(contactList, _workOrder.getContacts().getResults());
 
         if (contactList.size() > 0) {
             if (_contactsRunnable != null)
@@ -107,14 +95,14 @@ public class ContactListView extends RelativeLayout {
                 addedContact = true;
                 _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
                     private final List<ContactTileView> _views = new LinkedList<>();
-                    WorkorderContacts contact = null;
+                    Contact contact = null;
 
                     @Override
                     public void next(int i) throws Exception {
                         ContactTileView v = new ContactTileView(getContext());
-                        if (contactList.get(i) instanceof WorkorderContacts) {
+                        if (contactList.get(i) instanceof Contact) {
                             contact = contactList.get(i);
-                            v.setData(contact.getName(), contact.getPhoneNumber(), contact.getPhoneExt(), contact.getRole());
+                            v.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                         }
                         _views.add(v);
                     }

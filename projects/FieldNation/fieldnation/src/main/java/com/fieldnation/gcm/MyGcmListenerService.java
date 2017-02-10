@@ -39,7 +39,7 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.ui.ncns.ConfirmActivity;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -97,11 +97,11 @@ public class MyGcmListenerService extends GcmListenerService {
             case VIEW: {
                 switch (action.getObject()) {
                     case "wo": {
-                        Intent workorderIntent = new Intent(this, WorkorderActivity.class);
+                        Intent workorderIntent = new Intent(this, WorkOrderActivity.class);
                         workorderIntent.setAction("DUMMY");
                         workorderIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
-                        workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+                        workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
+                        workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
@@ -128,7 +128,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 switch (action.getObject()) {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                                WorkorderActivity.makeIntentConfirm(this, Long.parseLong(action.getId())), 0);
+                                WorkOrderActivity.makeIntentConfirm(this, Integer.parseInt(action.getId())), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     case "tomorrow": {

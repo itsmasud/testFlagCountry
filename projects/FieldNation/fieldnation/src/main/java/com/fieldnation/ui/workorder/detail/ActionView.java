@@ -12,7 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 
-public class ActionView extends RelativeLayout implements WorkorderRenderer {
+public class ActionView extends RelativeLayout {
     private static final String TAG = "ActionView";
 
     // UI
@@ -75,7 +75,6 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         _listener = listener;
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         Log.v(TAG, "Method Stub: setWorkorder()");
 

@@ -9,18 +9,13 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Notification;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-
-import java.util.LinkedList;
-import java.util.List;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 public class NotificationFragment extends WorkorderFragment {
     private static final String TAG = "NotificationFragment";
@@ -31,9 +26,9 @@ public class NotificationFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Data
-    private Workorder _workorder;
-    private WorkorderClient _workorderClient;
-    private List<Notification> _notes = new LinkedList<>();
+    private WorkOrder _workOrder;
+    private WorkordersWebApi _workOrderApi;
+    // TODO    private List<Notification> _notes = new LinkedList<>();
     private NotificationListAdapter _adapter;
     private boolean _isSubbed = false;
     private boolean _isMarkedRead = false;
@@ -65,15 +60,15 @@ public class NotificationFragment extends WorkorderFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         _isSubbed = false;
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
     }
 
     @Override
     public void onDetach() {
-        if (_workorderClient != null && _workorderClient.isConnected()) {
-            _workorderClient.disconnect(App.get());
-            _workorderClient = null;
+        if (_workOrderApi != null && _workOrderApi.isConnected()) {
+            _workOrderApi.disconnect(App.get());
+            _workOrderApi = null;
         }
         _isSubbed = false;
         super.onDetach();
@@ -83,23 +78,23 @@ public class NotificationFragment extends WorkorderFragment {
     public void update() {
         Log.v(TAG, "update");
 //        Tracker.screen(App.get(), ScreenName.workOrderDetailsAlerts());
-        if (getActivity() != null && _workorder != null)
-            WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
+//        if (getActivity() != null && _workOrder != null)
+// TODO            WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(WorkOrder workorder) {
         Log.v(TAG, "setWorkorder");
-        _workorder = workorder;
+        _workOrder = workorder;
         subscribeData();
         getNotifications();
         populateUi();
     }
 
     private void getNotifications() {
-        Log.v(TAG, "getNotifications, _workorder:" + (_workorder == null));
+        Log.v(TAG, "getNotifications, _workorder:" + (_workOrder == null));
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_emptyTextView == null)
@@ -113,7 +108,7 @@ public class NotificationFragment extends WorkorderFragment {
         _refreshView.startRefreshing();
         _emptyTextView.setVisibility(View.GONE);
 
-        WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
+// TODO        WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
     }
 
     @Override
@@ -131,18 +126,21 @@ public class NotificationFragment extends WorkorderFragment {
 
         misc.hideKeyboard(getView());
 
+/* TODO
         if (_notes == null)
             return;
 
         if (_workorder == null)
             return;
+*/
 
         if (_refreshView == null)
             return;
 
         Log.v(TAG, "populateUi");
 
-        if (getAdapter() != null)
+/*
+TODO        if (getAdapter() != null)
             getAdapter().setNotifications(_notes);
 
         if (_notes.size() == 0) {
@@ -150,12 +148,15 @@ public class NotificationFragment extends WorkorderFragment {
         } else {
             _emptyTextView.setVisibility(View.GONE);
         }
+*/
 
-        if (!_isMarkedRead) {
+/*
+TODO        if (!_isMarkedRead) {
             _isMarkedRead = true;
             WorkorderClient.actionMarkNotificationRead(App.get(), _workorder.getWorkorderId());
             ProfileClient.get(App.get());
         }
+*/
 
         _refreshView.refreshComplete();
     }
@@ -195,7 +196,8 @@ public class NotificationFragment extends WorkorderFragment {
     /*-*****************************-*/
 
     private void subscribeData() {
-        if (_workorder == null)
+/*
+TODO         if (_workorder == null)
             return;
 
         if (_workorderClient == null)
@@ -210,20 +212,23 @@ public class NotificationFragment extends WorkorderFragment {
         Log.v(TAG, "subscribeData " + _workorderClient.subListAlerts(_workorder.getWorkorderId(), false));
 
         _isSubbed = true;
+*/
     }
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
             subscribeData();
         }
 
+/*
         @Override
-        public void onAlertList(long workorderId, List<Notification> alerts, boolean failed) {
+TODO        public void onAlertList(long workorderId, List<Notification> alerts, boolean failed) {
             Log.v(TAG, "onAlertList");
             _notes = alerts;
             populateUi();
         }
+*/
     };
 }

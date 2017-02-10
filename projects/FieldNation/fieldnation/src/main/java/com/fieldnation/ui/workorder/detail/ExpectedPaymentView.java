@@ -18,7 +18,7 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
-public class ExpectedPaymentView extends LinearLayout implements WorkorderRenderer {
+public class ExpectedPaymentView extends LinearLayout {
     private static final String TAG = "ExpectedPaymentView";
 
     // UI
@@ -80,7 +80,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
     /*-				Mutators				-*/
     /*-*************************************-*/
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         populateUi();

@@ -21,7 +21,7 @@ import java.util.Random;
 /**
  * Created by Michael Carver on 6/5/2015.
  */
-public class DiscountListLayout extends RelativeLayout implements WorkorderRenderer {
+public class DiscountListLayout extends RelativeLayout {
     private static final String TAG = "DiscountListLayout";
 
     // UI
@@ -61,7 +61,6 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         _addButton.setOnClickListener(_add_onClick);
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 

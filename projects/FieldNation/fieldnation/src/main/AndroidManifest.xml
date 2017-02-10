@@ -82,7 +82,7 @@
             android:label="@string/inbox"
             android:process=":frontside" />
         <activity
-            android:name=".ui.workorder.WorkorderActivity"
+            android:name=".ui.workorder.WorkOrderActivity"
             android:exported="true"
             android:label="@string/work_order_detail_title"
             android:process=":frontside">

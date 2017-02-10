@@ -258,7 +258,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private final WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.DefaultListener() {
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
-            WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
+            WorkOrderActivity.startNew(App.get(), workorder.getWorkorderId().intValue());
         }
     };
 

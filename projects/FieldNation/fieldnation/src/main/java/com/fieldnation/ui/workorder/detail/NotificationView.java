@@ -20,7 +20,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 public class NotificationView extends RelativeLayout {
     private static final String TAG = "NotificationView";
@@ -120,9 +120,9 @@ public class NotificationView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_notification.getWorkorder() != null) {
-                WorkorderActivity.startNew(getContext(), _notification.getWorkorder().getWorkorderId(), WorkorderActivity.TAB_NOTIFICATIONS);
+                WorkOrderActivity.startNew(getContext(), _notification.getWorkorder().getWorkorderId().intValue(), WorkOrderActivity.TAB_NOTIFICATIONS);
             } else if (_notification.getWorkorderId() != null) {
-                WorkorderActivity.startNew(getContext(), _notification.getWorkorderId(), WorkorderActivity.TAB_NOTIFICATIONS);
+                WorkOrderActivity.startNew(getContext(), _notification.getWorkorderId().intValue(), WorkOrderActivity.TAB_NOTIFICATIONS);
             } else if (_span != null) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_span.getURL()));
                 getContext().startActivity(intent);

@@ -16,7 +16,6 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.Range;
@@ -39,9 +38,10 @@ import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
-import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -742,7 +742,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getId());
-            WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
+            WorkOrderActivity.startNew(App.get(), _workOrder.getId().intValue(), WorkOrderActivity.TAB_MESSAGE);
         }
     };
 
@@ -797,7 +797,7 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             ActivityResultClient.startActivity(
                     App.get(),
-                    WorkorderActivity.makeIntentShow(App.get(), _workOrder.getId()),
+                    WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getId().intValue()),
                     R.anim.activity_slide_in_right,
                     R.anim.activity_slide_out_left);
         }

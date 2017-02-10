@@ -21,7 +21,7 @@ import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.text.ParseException;
@@ -641,9 +641,9 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return onDetails(context, result, transaction, params, httpResult, throwable);
 
         } else if (result == Result.DELETE) {
-            Intent intent = new Intent(context, WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+            Intent intent = new Intent(context, WorkOrderActivity.class);
+            intent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
+            intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             if (intent != null) {
                 PendingIntent pi = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), intent, 0);
@@ -674,7 +674,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 Log.v(TAG, ex);
                 WorkorderClient.get(context, workorderId, false);
                 try {
-                    Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                    Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                     ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
@@ -710,7 +710,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 Log.v(TAG, ex);
                 WorkorderClient.get(context, workorderId, false);
                 try {
-                    Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                    Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                     ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);

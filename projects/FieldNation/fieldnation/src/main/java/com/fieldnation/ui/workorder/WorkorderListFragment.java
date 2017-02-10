@@ -648,7 +648,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             setLoading(true);
-            WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
+            WorkOrderActivity.startNew(App.get(), workorder.getWorkorderId().intValue());
             view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
         }
 

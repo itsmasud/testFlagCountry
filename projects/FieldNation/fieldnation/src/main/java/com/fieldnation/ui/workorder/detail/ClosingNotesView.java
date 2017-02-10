@@ -12,7 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
 
-public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
+public class ClosingNotesView extends LinearLayout {
     private static final String TAG = "ClosingNotesView";
 
     // UI
@@ -52,7 +52,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
         _listener = listener;
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();

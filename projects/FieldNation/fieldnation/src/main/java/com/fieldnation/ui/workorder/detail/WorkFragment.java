@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,7 +16,6 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,23 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.ShipmentTracking;
-import com.fieldnation.data.workorder.Signature;
-import com.fieldnation.data.workorder.Task;
-import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -63,12 +48,9 @@ import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
-import com.fieldnation.ui.SignatureCardView;
-import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
-import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
@@ -76,7 +58,6 @@ import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
-import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
@@ -87,27 +68,23 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
-import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
-import com.fieldnation.ui.dialog.v2.RateBuyerYesNoDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
-import com.fieldnation.ui.payment.PaymentDetailActivity;
-import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -122,6 +99,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
+    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
 
     // saved state keys
@@ -174,21 +152,20 @@ public class WorkFragment extends WorkorderFragment {
     private OneButtonDialog _locationLoadingDialog;
     private PayDialog _payDialog;
     private TwoButtonDialog _yesNoDialog;
-    private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
 
     // Data
-    private WorkorderClient _workorderClient;
+    private WorkordersWebApi _workOrderApi;
     private FileCacheClient _fileCacheClient;
     private WorkordersWebApi _workorderApi;
     private File _tempFile;
     private Uri _tempUri;
     private GpsLocationService _gpsLocationService;
-    private List<Signature> _signatures = null;
-    private List<Task> _tasks = null;
-    private Task _currentTask;
-    private Workorder _workorder;
+    //TODO    private List<Signature> _signatures = null;
+    //TODO    private List<Task> _tasks = null;
+    //TODO    private Task _currentTask;
+    private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
 
@@ -235,16 +212,16 @@ public class WorkFragment extends WorkorderFragment {
         _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
-        _payView.setListener(_paymentView_listener);
+// TODO        _payView.setListener(_paymentView_listener);
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
-        _expenseListView.setListener(_expenseListView_listener);
+// TODO        _expenseListView.setListener(_expenseListView_listener);
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
-        _discountListView.setListener(_discountListView_listener);
+// TODO        _discountListView.setListener(_discountListView_listener);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
@@ -258,47 +235,51 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView.setOnOverScrollListener(_refreshView);
 
         _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
-        _shipments.setListener(_shipments_listener);
+// TODO        _shipments.setListener(_shipments_listener);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
-        _taskList.setTaskListViewListener(_taskListView_listener);
+// TODO        _taskList.setTaskListViewListener(_taskListView_listener);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
-        _timeLogged.setListener(_timeLoggedView_listener);
+// TODO        _timeLogged.setListener(_timeLoggedView_listener);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_clockingNotesView_listener);
 
         _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
-        _customFields.setListener(_customFields_listener);
+// TODO        _customFields.setListener(_customFields_listener);
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
-        _signatureView.setListener(_signaturelist_listener);
+// TODO        _signatureView.setListener(_signaturelist_listener);
 
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
-        _payDialog.setListener(_payDialog_listener);
+// TODO        _payDialog.setListener(_payDialog_listener);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (savedInstanceState.containsKey(STATE_TASKS)) {
                 Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
-                _tasks = new LinkedList<>();
+/*
+TODO                _tasks = new LinkedList<>();
                 for (Parcelable task : tasks) {
                     _tasks.add((Task) task);
                 }
                 _taskList.setData(_workorder, _tasks);
+*/
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
-                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
+// TODO                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
             if (savedInstanceState.containsKey(STATE_SIGNATURES)) {
                 Parcelable[] sigs = savedInstanceState.getParcelableArray(STATE_SIGNATURES);
-                _signatures = new LinkedList<>();
+/*
+TODO                _signatures = new LinkedList<>();
                 for (Parcelable sig : sigs) {
                     _signatures.add((Signature) sig);
                 }
+*/
             }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
@@ -313,10 +294,11 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_workorder != null) {
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_workOrder != null) {
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
         }
-        if (_tasks != null && _tasks.size() > 0) {
+/*
+TODO         if (_tasks != null && _tasks.size() > 0) {
             Task[] tasks = new Task[_tasks.size()];
             for (int i = 0; i < _tasks.size(); i++) {
                 tasks[i] = _tasks.get(i);
@@ -330,11 +312,14 @@ public class WorkFragment extends WorkorderFragment {
             }
             outState.putParcelableArray(STATE_SIGNATURES, sigs);
         }
+*/
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
-        if (_currentTask != null)
+/*
+TODO        if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
+*/
 
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
@@ -382,7 +367,6 @@ public class WorkFragment extends WorkorderFragment {
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -398,18 +382,17 @@ public class WorkFragment extends WorkorderFragment {
                 _locationLoadingDialog_listener);
 
         _closingDialog.setListener(_closingNotes_onOk);
-        _counterOfferDialog.setListener(_counterOffer_listener);
+// TODO        _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
         _expenseDialog.setListener(_expenseDialog_listener);
-        _customFieldDialog.setListener(_customFieldDialog_listener);
+// TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
         _appDialog.setListener(_appdialog_listener);
-        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
+// TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
-        _worklogDialog.setListener(_worklogDialog_listener);
-        _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+// TODO        _worklogDialog.setListener(_worklogDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
-        _payDialog.setListener(_payDialog_listener);
+// TODO        _payDialog.setListener(_payDialog_listener);
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
@@ -420,15 +403,13 @@ public class WorkFragment extends WorkorderFragment {
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
+        MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
+        _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workorderApi.connect(App.get());
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
-
-        _workorderApi = new WorkordersWebApi(_workordersWebApi_listener);
-        _workorderApi.connect(App.get());
 
         _gpsLocationService = new GpsLocationService(getActivity());
 
@@ -450,9 +431,10 @@ public class WorkFragment extends WorkorderFragment {
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
+        MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
 
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        if (_workorderApi != null && _workorderApi.isConnected())
+            _workorderApi.disconnect(App.get());
 
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
@@ -478,24 +460,26 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
+    public void setWorkorder(WorkOrder workOrder) {
         Log.v(TAG, "setWorkorder");
-        _workorder = workorder;
+        _workOrder = workOrder;
         subscribeData();
         requestTasks();
         populateUi();
     }
 
-    private void setTasks(List<Task> tasks) {
+/*
+TODO     private void setTasks(List<Task> tasks) {
         _tasks = tasks;
         _taskList.setData(_workorder, tasks);
         setLoading(false);
     }
+*/
 
     private void populateUi() {
         misc.hideKeyboard(getView());
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (getActivity() == null)
@@ -505,73 +489,74 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_sumView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _sumView.setWorkorder(_workorder);
+            _sumView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_sumView time: " + watch.finish());
         }
 
         if (_companySummaryView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _companySummaryView.setWorkorder(_workorder);
+            _companySummaryView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_companySummaryView time: " + watch.finish());
         }
 
         if (_locView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _locView.setWorkorder(_workorder);
+            _locView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_locView time: " + watch.finish());
         }
 
         if (_scheduleView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _scheduleView.setWorkorder(_workorder);
+            _scheduleView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_scheduleView time: " + watch.finish());
         }
 
         if (_contactListView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _contactListView.setWorkorder(_workorder);
+            _contactListView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_contactListView time: " + watch.finish());
         }
 
         if (_payView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _payView.setWorkorder(_workorder);
+            _payView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_payView time: " + watch.finish());
         }
 
         if (_coSummaryView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _coSummaryView.setData(_workorder);
+//TODO            _coSummaryView.setData(_workOrder);
             //Log.v(TAG, "_coSummaryView time: " + watch.finish());
         }
 
         if (_expenseListView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _expenseListView.setWorkorder(_workorder);
+//TODO            _expenseListView.setWorkorder(_workOrder);
             //Log.v(TAG, "_expenseListView time: " + watch.finish());
         }
 
         if (_discountListView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _discountListView.setWorkorder(_workorder);
+//TODO            _discountListView.setWorkorder(_workOrder);
             //Log.v(TAG, "_discountListView time: " + watch.finish());
         }
 
         if (_topBar != null) {
             Stopwatch watch = new Stopwatch(true);
-            _topBar.setWorkorder(_workorder);
+//TODO            _topBar.setWorkorder(_workOrder);
             //Log.v(TAG, "_topBar time: " + watch.finish());
         }
 
         if (_exView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _exView.setWorkorder(_workorder);
+//TODO            _exView.setWorkorder(_workOrder);
             //Log.v(TAG, "_exView time: " + watch.finish());
         }
 
         if (_shipments != null && _timeLogged != null) {
             Stopwatch watch = new Stopwatch(true);
-            WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
+/*
+TODO            WorkorderStatus status = _workOrder.getStatus().getWorkorderStatus();
             if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
                 _timeLogged.setVisibility(View.GONE);
                 _shipments.setVisibility(View.GONE);
@@ -581,42 +566,43 @@ public class WorkFragment extends WorkorderFragment {
                 _timeLogged.setVisibility(View.VISIBLE);
                 _closingNotes.setVisibility(View.VISIBLE);
             }
+*/
             //Log.v(TAG, "_shipments time: " + watch.finish());
         }
 
         if (_shipments != null) {
             Stopwatch watch = new Stopwatch(true);
-            _shipments.setWorkorder(_workorder);
+//TODO            _shipments.setWorkorder(_workOrder);
             //Log.v(TAG, "_shipments time: " + watch.finish());
         }
 
         if (_timeLogged != null) {
             Stopwatch watch = new Stopwatch(true);
-            _timeLogged.setWorkorder(_workorder);
+//TODO            _timeLogged.setWorkorder(_workOrder);
             //Log.v(TAG, "_timeLogged time: " + watch.finish());
         }
 
         if (_closingNotes != null) {
             Stopwatch watch = new Stopwatch(true);
-            _closingNotes.setWorkorder(_workorder);
+//TODO            _closingNotes.setWorkorder(_workOrder);
             //Log.v(TAG, "_closingNotes time: " + watch.finish());
         }
 
         if (_topBar != null) {
             Stopwatch watch = new Stopwatch(true);
-            _topBar.setWorkorder(_workorder);
+//TODO            _topBar.setWorkorder(_workOrder);
             //Log.v(TAG, "_topBar time: " + watch.finish());
         }
 
         if (_customFields != null) {
             Stopwatch watch = new Stopwatch(true);
-            _customFields.setData(_workorder, _workorder.getCustomFields());
+//TODO            _customFields.setData(_workOrder);
             //Log.v(TAG, "_customFields time: " + watch.finish());
         }
 
         if (_signatureView != null) {
             Stopwatch watch = new Stopwatch(true);
-            _signatureView.setWorkorder(_workorder);
+//TODO            _signatureView.setWorkorder(_workOrder);
             //Log.v(TAG, "_signatureView time: " + watch.finish());
         }
 
@@ -624,7 +610,7 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_bundleWarningTextView != null) {
             Stopwatch watch = new Stopwatch(true);
-            if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
+            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 _bundleWarningTextView.setVisibility(View.VISIBLE);
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
@@ -633,34 +619,33 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (getArguments() != null) {
-            if (getArguments().containsKey(WorkorderActivity.INTENT_FIELD_ACTION)
-                    && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
-                    .equals(WorkorderActivity.ACTION_CONFIRM)) {
+            if (getArguments().containsKey(WorkOrderActivity.INTENT_FIELD_ACTION)
+                    && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
+                    .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
-                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
-                getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+                getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
     }
 
     private void requestWorkorder() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         Log.v(TAG, "getData.startRefreshing");
         setLoading(true);
-        _workorder.dispatchOnChange();
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
     }
 
     private void requestTasks() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (getActivity() == null)
             return;
 
-        WorkorderClient.listTasks(App.get(), _workorder.getWorkorderId(), false);
+// TODO        WorkorderClient.listTasks(App.get(), _workOrder.getWorkOrderId(), false);
     }
 
     @Override
@@ -680,7 +665,8 @@ public class WorkFragment extends WorkorderFragment {
 
     private void startCheckin() {
         // everything is awsome. checkin
-        _gpsLocationService.setListener(_gps_checkInListener);
+/*
+TODO        _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
@@ -694,6 +680,7 @@ public class WorkFragment extends WorkorderFragment {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
         }
+*/
 //        setLoading(true);
     }
 
@@ -701,9 +688,9 @@ public class WorkFragment extends WorkorderFragment {
 //        setLoading(true);
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
 
         }
     }
@@ -750,7 +737,8 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
 
     private void startCheckOut() {
-        _gpsLocationService.setListener(_gps_checkOutListener);
+/*
+TODO        _gpsLocationService.setListener(_gps_checkOutListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
         } else if (_gpsLocationService.hasLocation()) {
@@ -764,29 +752,30 @@ public class WorkFragment extends WorkorderFragment {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
         }
+*/
 //        setLoading(true);
     }
 
     private void doCheckOut() {
 //        setLoading(true);
 
-        Pay pay = _workorder.getPay();
-        if (pay != null && pay.isPerDeviceRate()) {
-            _deviceCount = pay.getMaxDevice();
+        Pay pay = _workOrder.getPay();
+        if (pay != null && pay.getType().equals("device")) {
+            _deviceCount = pay.getRange().getMax().intValue();
         }
 
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         } else {
             if (_deviceCount > -1) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         }
     }
@@ -875,7 +864,7 @@ public class WorkFragment extends WorkorderFragment {
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
                     _tempUri = null;
-                    _photoUploadDialog.show(_workorder.getWorkorderId(), _tempFile.getName());
+                    _photoUploadDialog.show(_workOrder.getWorkOrderId(), _tempFile.getName());
                     _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -889,14 +878,13 @@ public class WorkFragment extends WorkorderFragment {
                             if (count == 1) {
                                 _tempUri = data.getData();
                                 _tempFile = null;
-                                _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                                _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
                                     if (uri != null) {
-                                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                                                _currentTask.getSlotId(), intent.setData(uri));
+// TODO                                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(), _currentTask.getSlotId(), intent.setData(uri));
                                     }
                                 }
                             }
@@ -904,23 +892,25 @@ public class WorkFragment extends WorkorderFragment {
                             Log.v(TAG, "Single local/ non-local file upload");
                             _tempUri = data.getData();
                             _tempFile = null;
-                            _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                            _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
                             FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
-                        _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                        _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
                         FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
 
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
-                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
+/*
+TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
                     RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workorder, _workorder.getCompanyName());
                 }
+*/
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
@@ -944,35 +934,6 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //WorkordersWebApi.getWorkOrders(App.get(), false);
-            //WorkordersWebApi.getWorkOrder(App.get(), _workorder.getWorkorderId().intValue(), false);
-            WorkordersWebApi.getWorkOrderLists(App.get(), false);
-        }
-    };
-
-    private final WorkordersWebApi.Listener _workordersWebApi_listener = new WorkordersWebApi.Listener() {
-
-        @Override
-        public void onConnected() {
-            _workorderApi.subGetWorkOrders();
-            _workorderApi.subWorkordersWebApi();
-            _workorderApi.subGetWorkOrderLists();
-        }
-
-        @Override
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            Log.v(TAG, "onGetWorkOrders");
-
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onWorkordersWebApi");
-        }
-
-        @Override
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
-            Log.v(TAG, "onGetWorkOrderLists");
         }
     };
 
@@ -980,7 +941,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onCheckOut() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
             startCheckOut();
         }
@@ -988,7 +949,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onCheckIn() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
             startCheckin();
         }
@@ -996,7 +957,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onCheckInAgain() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
             startCheckin();
         }
@@ -1004,46 +965,48 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAcknowledgeHold() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
-                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workorder.getWorkorderId());
+                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
 
-            WorkorderClient.actionAcknowledgeHold(App.get(), _workorder.getWorkorderId());
+            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
             setLoading(true);
         }
 
         @Override
         public void onMarkIncomplete() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
-            _markIncompleteDialog.show(_workorder);
+            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrder.getWorkOrderId());
         }
 
         @Override
         public void onViewPayment() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workorder.getWorkorderId());
-            if (_workorder.getPaymentId() != null) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getWorkOrderId());
+/*
+TODO            if (_workorder.getPaymentId() != null) {
                 PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
             } else {
                 PaymentListActivity.startNew(App.get());
             }
+*/
         }
 
         @Override
         public void onReportProblem() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getWorkOrderId());
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workorder);
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getWorkOrderId());
         }
 
         @Override
         public void onMyWay() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
 
             if (_gpsLocationService != null && _gpsLocationService.hasLocation() && _gpsLocationService.getLocation() != null) {
                 Location location = _gpsLocationService.getLocation();
-                WorkOrderClient.actionOnMyWay(App.get(), _workorder.getWorkorderId(), location.getLatitude(), location.getLongitude());
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), location.getLatitude(), location.getLongitude());
             } else {
-                WorkOrderClient.actionOnMyWay(App.get(), _workorder.getWorkorderId(), null, null);
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), null, null);
             }
 
             try {
@@ -1055,73 +1018,72 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onNotInterested() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getWorkOrderId());
 
             _declineDialog.show();
         }
 
         @Override
         public void onRequest() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getWorkOrderId());
 
-            if (_workorder.isBundle()) {
+            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getBundleId(),
-                        _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
+                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+                        _workOrder.getBundle().getCount(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
-                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
         @Override
         public void onConfirmAssignment() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
-            if (_workorder.isBundle()) {
+            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getBundleId(),
-                        _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
+                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+                        _workOrder.getBundle().getCount(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
-                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
+                        _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
         @Override
         public void onWithdraw() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getWorkOrderId());
 
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workorder.getWorkorderId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getWorkOrderId());
         }
 
         @Override
         public void onViewCounter() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workorder.getWorkorderId());
-            _counterOfferDialog.show(_workorder);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workOrder.getWorkOrderId());
+// TODO            _counterOfferDialog.show(_workorder);
         }
 
         @Override
         public void onReadyToGo() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getWorkOrderId());
 
-            WorkorderClient.actionReadyToGo(App.get(), _workorder.getWorkorderId());
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getWorkOrderId());
         }
 
         @Override
         public void onConfirm() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
-            EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
-                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
+                    _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
         public void onEnterClosingNotes() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
             showClosingNotesDialog();
         }
@@ -1129,9 +1091,9 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onMarkComplete() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
-                    null, _workorder.getWorkorderId());
+                    null, _workOrder.getWorkOrderId());
 
-            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
+// TODO            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
         }
     };
 
@@ -1155,7 +1117,8 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+/*
+ TODO private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
@@ -1196,8 +1159,10 @@ public class WorkFragment extends WorkorderFragment {
             _yesNoDialog.show();
         }
     };
+*/
 
-    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+/*
+TODO    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onCheckin(Task task) {
             startCheckin();
@@ -1215,7 +1180,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
@@ -1242,7 +1207,7 @@ public class WorkFragment extends WorkorderFragment {
                         // task completed here
                         if (!task.getCompleted()) {
                             WorkorderClient.actionCompleteTask(App.get(),
-                                    _workorder.getWorkorderId(), task.getTaskId());
+                                    _workOrder.getWorkOrderId(), task.getTaskId());
                         }
 
                         FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
@@ -1262,7 +1227,7 @@ public class WorkFragment extends WorkorderFragment {
 
             if (!task.getCompleted()) {
                 WorkorderClient.actionCompleteTask(App.get(),
-                        _workorder.getWorkorderId(), task.getTaskId());
+                        _workOrder.getWorkOrderId(), task.getTaskId());
             }
             setLoading(true);
         }
@@ -1271,7 +1236,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onPhone(Task task) {
             if (!task.getCompleted()) {
                 WorkorderClient.actionCompleteTask(App.get(),
-                        _workorder.getWorkorderId(), task.getTaskId());
+                        _workOrder.getWorkOrderId(), task.getTaskId());
                 setLoading(true);
             }
             try {
@@ -1354,19 +1319,23 @@ public class WorkFragment extends WorkorderFragment {
             if (task.getCompleted())
                 return;
             WorkorderClient.actionCompleteTask(App.get(),
-                    _workorder.getWorkorderId(), task.getTaskId());
+                    _workOrder.getWorkOrderId(), task.getTaskId());
             setLoading(true);
         }
     };
+*/
 
-    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
+/*
+TODO    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
         public void onClick(CustomFieldRowView view, CustomField field) {
             _customFieldDialog.show(field);
         }
     };
+*/
 
-    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+/*
+TODO    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
         @Override
         public void addShipment() {
@@ -1386,7 +1355,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
+                                    _workOrder.getWorkOrderId(), shipment.getWorkorderShipmentId());
                         }
 
                         @Override
@@ -1407,6 +1376,7 @@ public class WorkFragment extends WorkorderFragment {
             // TODO present a picker of the tasks that this can be assigned too
         }
     };
+*/
 
     private final ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
@@ -1416,10 +1386,11 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+/*
+TODO    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workorder);
+            SignOffActivity.startSignOff(getActivity(), _workOrder);
             setLoading(true);
         }
 
@@ -1438,7 +1409,7 @@ public class WorkFragment extends WorkorderFragment {
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
                             WorkorderClient.deleteSignature(App.get(),
-                                    _workorder.getWorkorderId(), signature.getSignatureId());
+                                    _workOrder.getWorkOrderId(), signature.getSignatureId());
                         }
 
                         @Override
@@ -1453,8 +1424,10 @@ public class WorkFragment extends WorkorderFragment {
             return true;
         }
     };
+*/
 
-    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
+/*
+TODO    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onCounterOffer(Workorder workorder) {
             _counterOfferDialog.show(_workorder);
@@ -1478,15 +1451,17 @@ public class WorkFragment extends WorkorderFragment {
                     getString(R.string.dialog_terms_body));
         }
     };
+*/
 
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
-            _counterOfferDialog.show(_workorder);
+// TODO            _counterOfferDialog.show(_workorder);
         }
     };
 
-    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
+/*
+TODO    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
         @Override
         public void addExpense() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
@@ -1507,7 +1482,7 @@ public class WorkFragment extends WorkorderFragment {
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
                             WorkorderClient.deleteExpense(App.get(),
-                                    _workorder.getWorkorderId(), expense.getExpenseId());
+                                    _workOrder.getWorkOrderId(), expense.getExpenseId());
                         }
 
                         @Override
@@ -1521,8 +1496,10 @@ public class WorkFragment extends WorkorderFragment {
             _yesNoDialog.show();
         }
     };
+*/
 
-    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
+/*
+TODO    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
@@ -1543,7 +1520,7 @@ public class WorkFragment extends WorkorderFragment {
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
                             WorkorderClient.deleteDiscount(App.get(),
-                                    _workorder.getWorkorderId(), discount.getDiscountId());
+                                    _workOrder.getWorkOrderId(), discount.getDiscountId());
                         }
 
                         @Override
@@ -1557,11 +1534,12 @@ public class WorkFragment extends WorkorderFragment {
             _yesNoDialog.show();
         }
     };
+*/
 
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
+            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
             setLoading(true);
         }
     };
@@ -1570,8 +1548,10 @@ public class WorkFragment extends WorkorderFragment {
     /*-				Dialogs				-*/
     /*-*********************************-*/
     private void showClosingNotesDialog() {
-        if (_workorder.canChangeClosingNotes())
+/*
+TODO        if (_workorder.canChangeClosingNotes())
             _closingDialog.show(_workorder.getClosingNotes());
+*/
     }
 
     private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
@@ -1616,10 +1596,10 @@ public class WorkFragment extends WorkorderFragment {
     private final ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
         @Override
         public void onOk(String message) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getWorkOrderId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            WorkorderClient.actionSetClosingNotes(App.get(), _workorder.getWorkorderId(), message);
-            _workorder.dispatchOnChange();
+            WorkorderClient.actionSetClosingNotes(App.get(), _workOrder.getWorkOrderId(), message);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
             setLoading(true);
         }
 
@@ -1628,13 +1608,14 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+/*
+TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 WorkorderClient.actionAcceptAssignment(App.get(),
-                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end), null, false);
+                        _workOrder.getWorkOrderId(), startDate, ISO8601.fromUTC(end), null, false);
                 setLoading(true);
 
             } catch (Exception ex) {
@@ -1651,8 +1632,10 @@ public class WorkFragment extends WorkorderFragment {
             _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
     };
+*/
 
-    private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
+/*
+TODO    private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires,
                          int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
@@ -1662,43 +1645,47 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
         }
     };
+*/
 
-    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
+/*
+TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
         @Override
         public void onOk(CustomField field, String value) {
-            WorkorderClient.actionCustomField(App.get(), _workorder.getWorkorderId(),
+            WorkorderClient.actionCustomField(App.get(), _workOrder.getWorkOrderId(),
                     field.getCustomLabelId(), value);
             setLoading(true);
         }
     };
+*/
 
     private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
         public void onOk() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
+            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), -1, null);
         }
 
         @Override
         public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), -1, null);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
 
             if (blockBuyer) {
                 ProfileClient.actionBlockCompany(App.get(),
                         App.get().getProfile().getUserId(),
-                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
+                        _workOrder.getCompany().getId(),
+                        blockingReasonId, blockingExplanation);
             }
         }
 
         @Override
         public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), declineReasonId, declineExplanation);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
             if (blockBuyer) {
                 ProfileClient.actionBlockCompany(App.get(),
                         App.get().getProfile().getUserId(),
-                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
+                        _workOrder.getCompany().getId(), blockingReasonId, blockingExplanation);
             }
 
             getActivity().finish();
@@ -1706,8 +1693,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(int declineReasonId, String declineExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), declineReasonId, declineExplanation);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
         }
 
         @Override
@@ -1719,7 +1706,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String description, double amount) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkorderClient.createDiscount(App.get(), _workorder.getWorkorderId(),
+            WorkorderClient.createDiscount(App.get(), _workOrder.getWorkOrderId(),
                     description, amount);
             setLoading(true);
         }
@@ -1731,21 +1718,21 @@ public class WorkFragment extends WorkorderFragment {
 
     private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
         @Override
-        public void onRequested(long workOrderId) {
+        public void onRequested(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
         }
     };
 
     private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
         @Override
-        public void onAccepted(long workOrderId) {
+        public void onAccepted(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
         }
     };
 
     private final EtaDialog.OnConfirmedListener _etaDialog_onConfirmed = new EtaDialog.OnConfirmedListener() {
         @Override
-        public void onConfirmed(long workOrderId) {
+        public void onConfirmed(int workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
         }
     };
@@ -1754,7 +1741,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            WorkorderClient.createExpense(App.get(), _workorder.getWorkorderId(), description,
+            WorkorderClient.createExpense(App.get(), _workOrder.getWorkOrderId(), description,
                     amount, category);
             setLoading(true);
         }
@@ -1776,7 +1763,7 @@ public class WorkFragment extends WorkorderFragment {
                 }
             }
 
-            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
+            WorkorderClient.actionRequest(App.get(), _workOrder.getWorkOrderId(), seconds);
             setLoading(true);
         }
     };
@@ -1790,10 +1777,10 @@ public class WorkFragment extends WorkorderFragment {
                 protected Object doInBackground(Object... params) {
                     try {
                         Context context = (Context) params[0];
-                        Workorder workorder = (Workorder) params[1];
+                        WorkOrder workOrder = (WorkOrder) params[1];
 
                         Intent intent = new Intent(context, SignOffActivity.class);
-                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
+// TODO                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
                         intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
                         startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
                         return null;
@@ -1803,33 +1790,34 @@ public class WorkFragment extends WorkorderFragment {
                     }
                     return null;
                 }
-            }.executeEx(getActivity(), _workorder);
+            }.executeEx(getActivity(), _workOrder);
         }
     };
 
     private final MarkCompleteDialog.OnContinueClickListener _markCompleteDialog_onContinue = new MarkCompleteDialog.OnContinueClickListener() {
         @Override
         public void onContinueClick() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workorder.getWorkorderId());
-            WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getWorkOrderId());
+            WorkorderClient.actionComplete(App.get(), _workOrder.getWorkOrderId());
             setLoading(true);
         }
     };
 
-    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
+    private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteDialog_markIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
         @Override
-        public void onContinueClick() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workorder.getWorkorderId());
-            WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
+        public void onMarkIncomplete(long workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getWorkOrderId());
+            WorkorderClient.actionIncomplete(App.get(), _workOrder.getWorkOrderId());
             setLoading(true);
         }
     };
 
-    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+/*
+TODO    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
             // TODO analytics
-            WorkorderClient.actionChangePay(App.get(), _workorder.getWorkorderId(),
+            WorkorderClient.actionChangePay(App.get(), _workOrder.getWorkOrderId(),
                     pay, explanation);
 
             populateUi();
@@ -1839,18 +1827,21 @@ public class WorkFragment extends WorkorderFragment {
         public void onNothing() {
         }
     };
+*/
 
     private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
         @Override
         public void onOk(long workOrderId, String filename, String photoDescription) {
             Log.e(TAG, "uploading an image using camera");
-            if (_tempFile != null) {
+/*
+TODO            if (_tempFile != null) {
                 WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
                         filename, _tempFile.getAbsolutePath(), photoDescription);
             } else if (_tempUri != null) {
                 WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
                         filename, _tempUri, photoDescription);
             }
+*/
         }
 
         @Override
@@ -1885,7 +1876,7 @@ public class WorkFragment extends WorkorderFragment {
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
         public void onSend(long workorderId, String explanation, ReportProblemType type) {
-            if (_workorder.getWorkorderId() == workorderId)
+            if (_workOrder.getWorkOrderId() == workorderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
         }
     };
@@ -1893,20 +1884,22 @@ public class WorkFragment extends WorkorderFragment {
     private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            if (_scannedImagePath != null) {
+/*
+TODO            if (_scannedImagePath != null) {
                 final UploadSlot[] slots = _workorder.getUploadSlots();
                 if (slots == null) return;
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
                         _scannedImagePath = null;
                     }
                 }
             }
+*/
 
-            WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
+            WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite,
                     carrier, carrierName, trackingId);
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
             setLoading(true);
@@ -1917,21 +1910,23 @@ public class WorkFragment extends WorkorderFragment {
                          boolean shipToSite, long taskId) {
             Log.v(TAG, "ShipmentAddDialog#onOk");
 
-            if (_scannedImagePath != null) {
+/*
+TODO            if (_scannedImagePath != null) {
                 final UploadSlot[] slots = _workorder.getUploadSlots();
                 if (slots == null) return;
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
                         _scannedImagePath = null;
                     }
                 }
             }
+*/
 
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
+            WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite,
                     carrier, carrierName, trackingId, taskId);
             setLoading(true);
         }
@@ -1951,7 +1946,8 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+/*
+TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
         public void onDelete(Workorder workorder, ShipmentTracking shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
@@ -2006,34 +2002,36 @@ public class WorkFragment extends WorkorderFragment {
         }
 
     };
+*/
 
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
         public void onWithdraw(long workOrderId) {
-            if (_workorder.getWorkorderId() == workOrderId)
+            if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
         }
     };
 
-    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
+/*
+TODO    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
         @Override
         public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
             if (loggedWork == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
                 if (deviceCount <= 0) {
-                    WorkorderClient.addTimeLog(App.get(), _workorder.getWorkorderId(),
+                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
                             start.getTimeInMillis(), end.getTimeInMillis());
                 } else {
-                    WorkorderClient.addTimeLog(App.get(), _workorder.getWorkorderId(),
+                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
                             start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
                 }
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
                 if (deviceCount <= 0) {
-                    WorkorderClient.updateTimeLog(App.get(), _workorder.getWorkorderId(),
+                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
                             loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
                 } else {
-                    WorkorderClient.updateTimeLog(App.get(), _workorder.getWorkorderId(),
+                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
                             loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
                 }
             }
@@ -2044,13 +2042,15 @@ public class WorkFragment extends WorkorderFragment {
         public void onCancel() {
         }
     };
+*/
 
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
 
     private void subscribeData() {
-        if (_workorder == null)
+/*
+TODO        if (_workorder == null)
             return;
 
         if (_workorderClient == null)
@@ -2059,7 +2059,8 @@ public class WorkFragment extends WorkorderFragment {
         if (!_workorderClient.isConnected())
             return;
 
-        _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
+        _workorderClient.subListTasks(_workOrder.getWorkOrderId(), false);
+*/
     }
 
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
@@ -2075,16 +2076,18 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
             subscribeData();
         }
 
+/*
         @Override
-        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
+TODO        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
             setTasks(tasks);
         }
+*/
     };
 }
 

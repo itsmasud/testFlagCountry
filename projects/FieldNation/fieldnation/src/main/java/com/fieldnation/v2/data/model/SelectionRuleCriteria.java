@@ -38,11 +38,11 @@ public class SelectionRuleCriteria implements Parcelable {
     @Json(name = "order")
     private Integer _order;
 
-    @Json(name = "points")
-    private Integer _points;
-
     @Json(name = "required")
     private Boolean _required;
+
+    @Json(name = "service")
+    private String _service;
 
     @Json(name = "status")
     private StatusEnum _status;
@@ -147,19 +147,6 @@ public class SelectionRuleCriteria implements Parcelable {
         return this;
     }
 
-    public void setPoints(Integer points) {
-        _points = points;
-    }
-
-    public Integer getPoints() {
-        return _points;
-    }
-
-    public SelectionRuleCriteria points(Integer points) {
-        _points = points;
-        return this;
-    }
-
     public void setRequired(Boolean required) {
         _required = required;
     }
@@ -170,6 +157,19 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public SelectionRuleCriteria required(Boolean required) {
         _required = required;
+        return this;
+    }
+
+    public void setService(String service) {
+        _service = service;
+    }
+
+    public String getService() {
+        return _service;
+    }
+
+    public SelectionRuleCriteria service(String service) {
+        _service = service;
         return this;
     }
 

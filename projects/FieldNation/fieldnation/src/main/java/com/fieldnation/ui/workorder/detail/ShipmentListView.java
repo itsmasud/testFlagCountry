@@ -16,7 +16,7 @@ import com.fieldnation.fntools.ForLoopRunnable;
 
 import java.util.Random;
 
-public class ShipmentListView extends LinearLayout implements WorkorderRenderer {
+public class ShipmentListView extends LinearLayout {
     private static final String TAG = "ShipmentListView";
 
     // UI
@@ -54,7 +54,6 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
         _listener = listener;
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();

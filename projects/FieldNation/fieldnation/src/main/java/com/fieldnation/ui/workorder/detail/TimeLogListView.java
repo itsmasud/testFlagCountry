@@ -17,7 +17,7 @@ import com.fieldnation.fntools.ForLoopRunnable;
 
 import java.util.Random;
 
-public class TimeLogListView extends RelativeLayout implements WorkorderRenderer {
+public class TimeLogListView extends RelativeLayout {
     private static final String TAG = "TimeLoggedView";
 
     // Ui
@@ -64,7 +64,6 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         _listener = listener;
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
