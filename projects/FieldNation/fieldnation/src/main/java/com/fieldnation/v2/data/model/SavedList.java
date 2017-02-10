@@ -216,4 +216,14 @@ public class SavedList implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public String getTitle() {
+        if (getCount() == null) {
+            return getLabel();
+        }
+        return getLabel() + " (" + getCount() + ")";
+    }
 }
