@@ -210,7 +210,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                     break;
                 case TYPE_REQUEST:
                     if (_expires && _expiringDurationSeconds > -1) {
-                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds / 1000);
+                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds );
                     } else {
                         WorkorderClient.actionRequest(App.get(), _workOrderId, -1);
                     }
