@@ -231,7 +231,6 @@ public class DeclineDialog extends SimpleDialog {
                 }
 
                 if (_declinePosition == -1) {
-
                     WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
                     ProfileClient.actionBlockCompany(
                             App.get(),
@@ -239,7 +238,6 @@ public class DeclineDialog extends SimpleDialog {
                             _companyId,
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
-
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {

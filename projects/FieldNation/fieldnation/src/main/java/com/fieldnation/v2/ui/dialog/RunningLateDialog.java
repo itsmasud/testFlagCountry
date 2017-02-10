@@ -161,7 +161,6 @@ public class RunningLateDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             try {
-
                 Contact contact = _workOrder.getContacts().getResults()[0];
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:" + contact.getPhone()));

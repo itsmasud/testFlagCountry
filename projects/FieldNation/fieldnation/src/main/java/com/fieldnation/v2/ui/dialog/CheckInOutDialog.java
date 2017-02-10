@@ -489,7 +489,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     /*-*****************************-*/
     public interface OnCheckOutListener {
         void onCheckOut(long workOrderId);
-
     }
 
     private static KeyedDispatcher<OnCheckOutListener> _onCheckOutDispatcher = new KeyedDispatcher<OnCheckOutListener>() {

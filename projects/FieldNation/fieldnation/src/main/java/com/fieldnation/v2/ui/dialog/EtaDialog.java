@@ -753,7 +753,6 @@ public class EtaDialog extends FullScreenDialog {
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
-
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
@@ -761,9 +760,7 @@ public class EtaDialog extends FullScreenDialog {
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
-
                         } else {
-
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
