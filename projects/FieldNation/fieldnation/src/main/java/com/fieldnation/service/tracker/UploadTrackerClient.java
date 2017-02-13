@@ -19,10 +19,11 @@ public class UploadTrackerClient implements UploadTrackerConstants {
         context.startService(intent);
     }
 
-    public static void uploadStarted(Context context) {
+    public static void uploadStarted(Context context, String uploadType) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadStarted Debug Log")));
         Intent intent = new Intent(context, UploadTracker.class);
         intent.setAction(ACTION_STARTED);
+        intent.putExtra(uploadType, uploadType);
         context.startService(intent);
     }
 
@@ -33,10 +34,11 @@ public class UploadTrackerClient implements UploadTrackerConstants {
         context.startService(intent);
     }
 
-    public static void uploadSuccess(Context context) {
+    public static void uploadSuccess(Context context, String uploadType) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadSuccess Debug Log")));
         Intent intent = new Intent(context, UploadTracker.class);
         intent.setAction(ACTION_SUCCESS);
+        intent.putExtra(uploadType, uploadType);
         context.startService(intent);
     }
 
@@ -47,4 +49,12 @@ public class UploadTrackerClient implements UploadTrackerConstants {
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         context.startService(intent);
     }
+
+    public static void uploadFailed(Context context) {
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadFailed Debug Log")));
+        Intent intent = new Intent(context, UploadTracker.class);
+        intent.setAction(ACTION_FAILED);
+        context.startService(intent);
+    }
+
 }
