@@ -35,7 +35,6 @@ import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
-import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -45,6 +44,7 @@ import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
+import com.fieldnation.v2.ui.dialog.LocationDialog;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -62,6 +62,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     // Dialog tags
     private static final String DIALOG_ACCEPT_BUNDLE = TAG_BASE + ".acceptBundleDialog";
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG_BASE + ".checkInOutDialog";
+    private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG_BASE + ".locationDialogCheckIn";
+    private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG_BASE + ".locationDialogCheckOut";
 
     // UI
     private OverScrollListView _listView;
@@ -73,7 +75,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
-    private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
@@ -157,7 +158,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
@@ -370,8 +370,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
         getLocationService().setListener(_gps_checkInListener);
         if (!getLocationService().isLocationServicesEnabled()) {
-            _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
-                    _locationDialog_checkInListener);
+            LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_IN, _currentWorkorder.getIsGpsRequired());
         } else if (getLocationService().hasLocation()) {
             doCheckin();
         } else if (getLocationService().isRunning()) {
@@ -399,11 +398,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
         getLocationService().setListener(_gps_checkOutListener);
         if (!getLocationService().isLocationServicesEnabled()) {
-            _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
-                    _locationDialog_checkOutListener);
+            LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_OUT, _currentWorkorder.getIsGpsRequired());
         } else if (getLocationService().hasLocation()) {
             doCheckOut();
-        } else if (getLocationService().isRunning() && _locationDialog.isAdded()) {
+        } else if (getLocationService().isRunning() /* TODO && _locationDialog.isAdded()*/) {
             _locationLoadingDialog.show();
         } else if (getLocationService().isLocationServicesEnabled()) {
             _locationLoadingDialog.show();
@@ -519,7 +517,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-    private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
+
+    private final LocationDialog.OnOkListener _locationDialog_onOkCheckIn = new LocationDialog.OnOkListener() {
         @Override
         public void onOk() {
             try {
@@ -534,7 +533,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 }, 500);
             }
         }
+    };
 
+    private final LocationDialog.OnNotNowListener _locationDialog_onNotNowCheckIn = new LocationDialog.OnNotNowListener() {
         @Override
         public void onNotNow() {
             try {
@@ -549,26 +550,32 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 }, 500);
             }
         }
+    };
 
+    private final LocationDialog.OnCancelListener _locationDialog_onCancelCheckIn = new LocationDialog.OnCancelListener() {
         @Override
         public void onCancel() {
             setLoading(false);
         }
     };
 
-    private final LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
+    private final LocationDialog.OnOkListener _locationDialog_onOkCheckOut = new LocationDialog.OnOkListener() {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
         }
+    };
 
+    private final LocationDialog.OnNotNowListener _locationDialog_onNotNowCheckOut = new LocationDialog.OnNotNowListener() {
         @Override
         public void onNotNow() {
             doCheckOut();
             setLoading(false);
         }
+    };
 
+    private final LocationDialog.OnCancelListener _locationDialog_onCancelCheckOut = new LocationDialog.OnCancelListener() {
         @Override
         public void onCancel() {
             setLoading(false);

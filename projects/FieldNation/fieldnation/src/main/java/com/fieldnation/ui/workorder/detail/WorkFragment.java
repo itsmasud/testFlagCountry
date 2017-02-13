@@ -54,7 +54,6 @@ import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
@@ -65,10 +64,8 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
-import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -76,8 +73,11 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.AppPickerIntent;
+import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -102,6 +102,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
+    private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG + ".locationDialogCheckIn";
+    private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG + ".locationDialogCheckOut";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -148,7 +150,6 @@ public class WorkFragment extends WorkorderFragment {
     private TermsDialog _termsDialog;
     private TermsScrollingDialog _termsScrollingDialog;
     private WorkLogDialog _worklogDialog;
-    private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private PayDialog _payDialog;
     private TwoButtonDialog _yesNoDialog;
@@ -369,7 +370,6 @@ TODO        if (_currentTask != null)
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
@@ -409,6 +409,14 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
 
+        LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
+        LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
+        LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onNotNowCheckIn);
+
+        LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onOkCheckOut);
+        LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onCancelCheckOut);
+        LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
+
         _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workorderApi.connect(App.get());
 
@@ -437,6 +445,14 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+
+        LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
+        LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
+        LocationDialog.removeOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onNotNowCheckIn);
+
+        LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onOkCheckOut);
+        LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onCancelCheckOut);
+        LocationDialog.removeOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
 
         if (_workorderApi != null && _workorderApi.isConnected())
             _workorderApi.disconnect(App.get());
@@ -661,7 +677,6 @@ TODO            WorkorderStatus status = _workOrder.getStatus().getWorkorderStat
     /*-*********************************************-*/
     /*-				Check In Process				-*/
     /*-*********************************************-*/
-
     private void startCheckin() {
         // everything is awsome. checkin
 /*
@@ -701,19 +716,23 @@ TODO        _gpsLocationService.setListener(_gps_checkInListener);
         }
     };
 
-    private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
+    private final LocationDialog.OnOkListener _locationDialog_onOkCheckIn = new LocationDialog.OnOkListener() {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
         }
+    };
 
+    private final LocationDialog.OnNotNowListener _locationDialog_onNotNowCheckIn = new LocationDialog.OnNotNowListener() {
         @Override
         public void onNotNow() {
             doCheckin();
             setLoading(false);
         }
+    };
 
+    private final LocationDialog.OnCancelListener _locationDialog_onCancelCheckIn = new LocationDialog.OnCancelListener() {
         @Override
         public void onCancel() {
             setLoading(false);
@@ -786,19 +805,23 @@ TODO        _gpsLocationService.setListener(_gps_checkOutListener);
         }
     };
 
-    private final LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
+    private final LocationDialog.OnOkListener _locationDialog_onOkCheckOut = new LocationDialog.OnOkListener() {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
         }
+    };
 
+    private final LocationDialog.OnNotNowListener _locationDialog_onNotNowCheckOut = new LocationDialog.OnNotNowListener() {
         @Override
         public void onNotNow() {
             doCheckOut();
             setLoading(false);
         }
+    };
 
+    private final LocationDialog.OnCancelListener _locationDialog_onCancelCheckOut = new LocationDialog.OnCancelListener() {
         @Override
         public void onCancel() {
             setLoading(false);
