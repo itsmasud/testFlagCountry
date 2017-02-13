@@ -335,7 +335,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
-        UploadTrackerClient.uploadStarted(context);
+        UploadTrackerClient.uploadStarted(context, PARAM_ACTION_UPLOAD_DELIVERABLE);
     }
     /*-**************************************-*/
     /*-             onProgress               -*/
@@ -866,7 +866,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
             WorkorderClient.get(context, workorderId, false);
-            UploadTrackerClient.uploadSuccess(context);
+            UploadTrackerClient.uploadSuccess(context, PARAM_ACTION_UPLOAD_DELIVERABLE);
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {

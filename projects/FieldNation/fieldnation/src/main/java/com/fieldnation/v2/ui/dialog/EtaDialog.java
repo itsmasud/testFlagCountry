@@ -756,7 +756,7 @@ public class EtaDialog extends FullScreenDialog {
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
-                                    _expiringDurationSeconds,
+                                    _expiresCheckBox.isChecked() ? _expiringDurationSeconds : INVALID_NUMBER,
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
@@ -764,7 +764,7 @@ public class EtaDialog extends FullScreenDialog {
                             WorkorderClient.actionRequest(
                                     App.get(),
                                     _workOrderId,
-                                    _expiringDurationSeconds,
+                                    _expiresCheckBox.isChecked() ? _expiringDurationSeconds : INVALID_NUMBER,
                                     null, null,
                                     _noteEditText.getText().toString().trim());
                         }

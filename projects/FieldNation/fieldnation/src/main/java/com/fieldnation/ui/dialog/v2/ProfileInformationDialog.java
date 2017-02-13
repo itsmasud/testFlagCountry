@@ -1,13 +1,11 @@
 package com.fieldnation.ui.dialog.v2;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
@@ -33,7 +31,6 @@ import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.RefreshView;
 
@@ -308,6 +305,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "_activityResultClient_listener.onConnected");
+
             _activityResultClient.subOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             _activityResultClient.subOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
         }
@@ -319,7 +318,10 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
+
             try {
+
                 if ((requestCode != RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
                         && requestCode != RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
                         || resultCode != RESULT_OK) {

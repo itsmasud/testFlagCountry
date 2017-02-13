@@ -491,14 +491,24 @@
         <item quantity="other">%1$d deliverables uploading</item>
     </plurals>
 
+    <plurals name="num_photos_uploading">
+        <item quantity="one">%1$d photo uploading</item>
+        <item quantity="other">%1$d photos uploading</item>
+    </plurals>
+
     <plurals name="num_uploads_queued">
         <item quantity="one">%1$d upload queued</item>
         <item quantity="other">%1$d uploads queued</item>
     </plurals>
 
-    <plurals name="num_deliverables_to_upload">
-        <item quantity="one">%1$d deliverable to upload</item>
-        <item quantity="other">%1$d deliverables to upload</item>
+    <plurals name="num_files_to_upload">
+        <item quantity="one">%1$d files to upload</item>
+        <item quantity="other">%1$d files to upload</item>
+    </plurals>
+
+    <plurals name="num_photos_to_upload">
+        <item quantity="one">%1$d photo to upload</item>
+        <item quantity="other">%1$d photos to upload</item>
     </plurals>
 
     <plurals name="num_uploads_completed">
@@ -509,6 +519,11 @@
     <plurals name="num_deliverables_uploaded">
         <item quantity="one">%1$d deliverable uploaded</item>
         <item quantity="other">%1$d deliverables uploaded</item>
+    </plurals>
+
+    <plurals name="num_photos_uploaded">
+        <item quantity="one">%1$d photo uploaded</item>
+        <item quantity="other">%1$d photos uploaded</item>
     </plurals>
 
     <plurals name="num_uploads_failed">
@@ -654,6 +669,7 @@
     <string name="your_account_is_pending_verification">Your account is pending verification. Try again later</string>
     <string name="you_are_currently_suspended">You are currently suspended</string>
     <string name="wo_num_file_upload_has_failed">WO %1$d file upload has failed</string>
+    <string name="profile_photo_num_upload_has_failed">Profile %1$d file upload has failed</string>
     <!-- /general strings -->
 
     <!-- symbols -->
