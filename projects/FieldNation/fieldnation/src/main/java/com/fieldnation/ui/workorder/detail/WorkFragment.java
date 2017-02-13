@@ -2,11 +2,9 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.content.ClipData;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -45,12 +43,10 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
@@ -69,8 +65,10 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
+import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -103,6 +101,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
+    private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -138,7 +137,6 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Dialogs
-    private AppPickerDialog _appDialog;
     private ClosingNotesDialog _closingDialog;
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
@@ -339,19 +337,24 @@ TODO        if (_currentTask != null)
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
+    }
 
+    private void startAppPickerDialog() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
+        AppPickerIntent intent1 = new AppPickerIntent(intent, "Get Content");
 
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
+            AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2});
+        } else {
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1});
         }
     }
 
@@ -359,7 +362,6 @@ TODO        if (_currentTask != null)
     public void onAttach(Activity activity) {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
-        _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
@@ -389,13 +391,13 @@ TODO        if (_currentTask != null)
         _discountDialog.setListener(_discountDialog_listener);
         _expenseDialog.setListener(_expenseDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
-        _appDialog.setListener(_appdialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
 // TODO        _worklogDialog.setListener(_worklogDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 // TODO        _payDialog.setListener(_payDialog_listener);
 
+        AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -424,6 +426,7 @@ TODO        if (_currentTask != null)
     public void onDetach() {
         Log.v(TAG, "onDetach");
 
+        AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -1301,13 +1304,13 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
         @Override
         public void onUploadFile(Task task) {
             _currentTask = task;
-            _appDialog.show();
+            startAppPickerDialog();
         }
 
         @Override
         public void onUploadPicture(Task task) {
             _currentTask = task;
-            _appDialog.show();
+            startAppPickerDialog();
         }
 
         @Override
@@ -1549,27 +1552,18 @@ TODO        if (_workorder.canChangeClosingNotes())
 */
     }
 
-    private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
-
+    private final AppPickerDialog.OnOkListener _appPicker_onOk = new AppPickerDialog.OnOkListener() {
         @Override
-        public void onClick(AppPickerPackage pack) {
-            Intent src = pack.intent;
-
-            ResolveInfo info = pack.resolveInfo;
-
-            src.setComponent(new ComponentName(
-                    info.activityInfo.applicationInfo.packageName,
-                    info.activityInfo.name));
-
-            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
+        public void onOk(Intent pack) {
+            if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + pack.toString());
+                startActivityForResult(pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
-                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
+                pack.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+                startActivityForResult(pack, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
             }
             setLoading(true);
         }
