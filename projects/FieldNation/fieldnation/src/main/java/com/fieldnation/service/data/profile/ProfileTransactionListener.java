@@ -11,7 +11,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.data.workorder.WorkorderDispatch;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
@@ -239,11 +238,11 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         if (result == Result.CONTINUE) {
             ProfileDispatch.uploadProfilePhoto(context, filename, true, false);
             ProfileClient.get(context, false);
-            UploadTrackerClient.uploadSuccess(context);
+            UploadTrackerClient.uploadSuccess(context, PARAM_ACTION_PHOTO_UPLOAD);
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            UploadTrackerClient.uploadFailed(context, providerId);
+            UploadTrackerClient.uploadFailed(context);
 
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
