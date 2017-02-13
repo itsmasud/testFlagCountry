@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.GpsLocationService;
@@ -222,7 +223,7 @@ public class WorkFragment extends WorkorderFragment {
         _expenseListView.setListener(_expenseListView_listener);
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
-// TODO        _discountListView.setListener(_discountListView_listener);
+        _discountListView.setListener(_discountListView_listener);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
@@ -538,7 +539,7 @@ TODO     private void setTasks(List<Task> tasks) {
 
         if (_discountListView != null) {
             Stopwatch watch = new Stopwatch(true);
-//TODO            _discountListView.setWorkorder(_workOrder);
+            _discountListView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_discountListView time: " + watch.finish());
         }
 
@@ -1493,8 +1494,7 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
     };
 
 
-/*
-TODO    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
+    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
@@ -1529,7 +1529,7 @@ TODO    private final DiscountListLayout.Listener _discountListView_listener = n
             _yesNoDialog.show();
         }
     };
-*/
+
 
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override

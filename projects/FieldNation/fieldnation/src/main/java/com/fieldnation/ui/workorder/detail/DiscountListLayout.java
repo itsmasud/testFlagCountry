@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +11,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.fntools.ForLoopRunnable;
-
-import java.util.Random;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael Carver on 6/5/2015.
@@ -31,7 +26,7 @@ public class DiscountListLayout extends RelativeLayout {
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public DiscountListLayout(Context context) {
         super(context);
@@ -61,8 +56,8 @@ public class DiscountListLayout extends RelativeLayout {
         _addButton.setOnClickListener(_add_onClick);
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
 
         populateUi();
     }
@@ -75,21 +70,23 @@ public class DiscountListLayout extends RelativeLayout {
         if (_addButton == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        if (_workorder.getPay() == null)
+        if (_workOrder.getPay() == null)
             return;
 
-        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
-                || _workorder.getPay().hidePay()) {
+/*
+TODO        if (_workOrder.getStatus().getId() == 2                || _workorder.getPay().hidePay()) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
+*/
 
-        if (_workorder.canChangeDiscounts()) {
+/*
+TODO        if (_workorder.canChangeDiscounts()) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
@@ -101,14 +98,18 @@ public class DiscountListLayout extends RelativeLayout {
             _listView.setVisibility(GONE);
             return;
         }
+*/
 
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
 
+/*
         if (_listView.getChildCount() > list.length) {
             _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
         }
+*/
 
+/*
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
             private final Discount[] _list = list;
 
@@ -128,6 +129,7 @@ public class DiscountListLayout extends RelativeLayout {
             }
         };
         postDelayed(r, new Random().nextInt(1000));
+*/
     }
 
     /*-*********************************-*/
@@ -136,19 +138,23 @@ public class DiscountListLayout extends RelativeLayout {
     private final OnClickListener _discount_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             if (_listener != null && _workorder.canChangeDiscounts()) {
                 _listener.discountOnClick(((DiscountView) v).getDiscount());
             }
+*/
         }
     };
 
     private final OnLongClickListener _discount_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
+/*
             if (_listener != null && _workorder.canChangeDiscounts()) {
                 _listener.discountLongClick(((DiscountView) v).getDiscount());
                 return true;
             }
+*/
             return false;
         }
     };
@@ -156,9 +162,11 @@ public class DiscountListLayout extends RelativeLayout {
     private final OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             if (_listener != null && _workorder.canChangeDiscounts()) {
                 _listener.addDiscount();
             }
+*/
         }
     };
 
