@@ -37,7 +37,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.ui.dialog.v2.UpdateDialog;
+import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
