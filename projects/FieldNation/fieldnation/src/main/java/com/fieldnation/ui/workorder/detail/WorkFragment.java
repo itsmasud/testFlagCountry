@@ -588,12 +588,6 @@ TODO            WorkorderStatus status = _workOrder.getStatus().getWorkorderStat
             //Log.v(TAG, "_closingNotes time: " + watch.finish());
         }
 
-        if (_topBar != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _topBar.setWorkorder(_workOrder);
-            //Log.v(TAG, "_topBar time: " + watch.finish());
-        }
-
         if (_customFields != null) {
             Stopwatch watch = new Stopwatch(true);
 //TODO            _customFields.setData(_workOrder);
