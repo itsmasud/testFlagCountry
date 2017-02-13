@@ -17,6 +17,9 @@ import com.fieldnation.fnlog.Log;
 public class Request implements Parcelable {
     private static final String TAG = "Request";
 
+    @Json(name = "actions")
+    private ActionsEnum _actions;
+
     @Json(name = "active")
     private Boolean _active;
 
@@ -54,6 +57,19 @@ public class Request implements Parcelable {
     private WorkOrder _workOrder;
 
     public Request() {
+    }
+
+    public void setActions(ActionsEnum actions) {
+        _actions = actions;
+    }
+
+    public ActionsEnum getActions() {
+        return _actions;
+    }
+
+    public Request actions(ActionsEnum actions) {
+        _actions = actions;
+        return this;
     }
 
     public void setActive(Boolean active) {
@@ -210,6 +226,25 @@ public class Request implements Parcelable {
     public Request workOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/

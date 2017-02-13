@@ -29,6 +29,18 @@ public class Status implements Parcelable {
     @Json(name = "display")
     private String _display;
 
+        /*
+1    Created
+2    Published
+3    Assigned
+4    Work Done
+5    Approved
+6    Paid
+7    Cancelled
+8    Postponed
+9    Routed
+10    Deleted
+         */
     @Json(name = "id")
     private Integer _id;
 

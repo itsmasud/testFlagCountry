@@ -32,6 +32,9 @@ public class Pay implements Parcelable {
     @Json(name = "estimated_payment_date")
     private Date _estimatedPaymentDate;
 
+    @Json(name = "expenses")
+    private Expenses _expenses;
+
     @Json(name = "fees")
     private PayFees _fees;
 
@@ -40,6 +43,9 @@ public class Pay implements Parcelable {
 
     @Json(name = "hold")
     private Fee _hold;
+
+    @Json(name = "increases")
+    private PayIncreases _increases;
 
     @Json(name = "labor_sum")
     private Double _laborSum;
@@ -142,6 +148,19 @@ public class Pay implements Parcelable {
         return this;
     }
 
+    public void setExpenses(Expenses expenses) {
+        _expenses = expenses;
+    }
+
+    public Expenses getExpenses() {
+        return _expenses;
+    }
+
+    public Pay expenses(Expenses expenses) {
+        _expenses = expenses;
+        return this;
+    }
+
     public void setFees(PayFees fees) {
         _fees = fees;
     }
@@ -178,6 +197,19 @@ public class Pay implements Parcelable {
 
     public Pay hold(Fee hold) {
         _hold = hold;
+        return this;
+    }
+
+    public void setIncreases(PayIncreases increases) {
+        _increases = increases;
+    }
+
+    public PayIncreases getIncreases() {
+        return _increases;
+    }
+
+    public Pay increases(PayIncreases increases) {
+        _increases = increases;
         return this;
     }
 

@@ -10,38 +10,37 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * Created by dmgen from swagger.
  */
 
-public class Expenses implements Parcelable {
-    private static final String TAG = "Expenses";
+public class Requests implements Parcelable {
+    private static final String TAG = "Requests";
 
     @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    private ActionsEnum _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
-    @Json(name = "results")
-    private Expense[] _results;
+    @Json(name = "open_request")
+    private Request _openRequest;
 
-    public Expenses() {
+    @Json(name = "results")
+    private TimeLog[] _results;
+
+    public Requests() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum actions) {
         _actions = actions;
     }
 
-    public ActionsEnum[] getActions() {
+    public ActionsEnum getActions() {
         return _actions;
     }
 
-    public Expenses actions(ActionsEnum[] actions) {
+    public Requests actions(ActionsEnum actions) {
         _actions = actions;
         return this;
     }
@@ -54,20 +53,33 @@ public class Expenses implements Parcelable {
         return _metadata;
     }
 
-    public Expenses metadata(ListEnvelope metadata) {
+    public Requests metadata(ListEnvelope metadata) {
         _metadata = metadata;
         return this;
     }
 
-    public void setResults(Expense[] results) {
+    public void setOpenRequest(Request openRequest) {
+        _openRequest = openRequest;
+    }
+
+    public Request getOpenRequest() {
+        return _openRequest;
+    }
+
+    public Requests openRequest(Request openRequest) {
+        _openRequest = openRequest;
+        return this;
+    }
+
+    public void setResults(TimeLog[] results) {
         _results = results;
     }
 
-    public Expense[] getResults() {
+    public TimeLog[] getResults() {
         return _results;
     }
 
-    public Expenses results(Expense[] results) {
+    public Requests results(TimeLog[] results) {
         _results = results;
         return this;
     }
@@ -94,17 +106,17 @@ public class Expenses implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static Expenses[] fromJsonArray(JsonArray array) {
-        Expenses[] list = new Expenses[array.size()];
+    public static Requests[] fromJsonArray(JsonArray array) {
+        Requests[] list = new Requests[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Expenses fromJson(JsonObject obj) {
+    public static Requests fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Expenses.class, obj);
+            return Unserializer.unserializeObject(Requests.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -115,9 +127,9 @@ public class Expenses implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Expenses expenses) {
+    public static JsonObject toJson(Requests requests) {
         try {
-            return Serializer.serializeObject(expenses);
+            return Serializer.serializeObject(requests);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -127,12 +139,12 @@ public class Expenses implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Expenses> CREATOR = new Parcelable.Creator<Expenses>() {
+    public static final Parcelable.Creator<Requests> CREATOR = new Parcelable.Creator<Requests>() {
 
         @Override
-        public Expenses createFromParcel(Parcel source) {
+        public Requests createFromParcel(Parcel source) {
             try {
-                return Expenses.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Requests.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -140,8 +152,8 @@ public class Expenses implements Parcelable {
         }
 
         @Override
-        public Expenses[] newArray(int size) {
-            return new Expenses[size];
+        public Requests[] newArray(int size) {
+            return new Requests[size];
         }
     };
 
@@ -153,19 +165,5 @@ public class Expenses implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
-    }
-
-    /*-*****************************-*/
-    /*-         Human Code          -*/
-    /*-*****************************-*/
-
-    private Set<ActionsEnum> _actionsSet = null;
-
-    public Set<ActionsEnum> getActionsSet() {
-        if (_actionsSet == null) {
-            _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(_actions));
-        }
-        return _actionsSet;
     }
 }

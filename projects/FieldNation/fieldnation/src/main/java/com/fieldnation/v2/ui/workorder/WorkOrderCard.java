@@ -450,7 +450,7 @@ public class WorkOrderCard extends RelativeLayout {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
             button.setText(getResources().getString(R.string.btn_view_bundle_num,
-                    _workOrder.getBundle().getCount()));
+                    _workOrder.getBundle().getMetadata().getTotal()));
 
             // accept
 //            button.setVisibility(VISIBLE);

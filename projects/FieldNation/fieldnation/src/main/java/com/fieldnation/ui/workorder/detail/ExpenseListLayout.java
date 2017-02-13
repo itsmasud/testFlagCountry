@@ -10,13 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.fntools.ForLoopRunnable;
-
-import java.util.Random;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.Expenses;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael Carver on 6/5/2015.
@@ -31,7 +30,7 @@ public class ExpenseListLayout extends RelativeLayout {
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public ExpenseListLayout(Context context) {
         super(context);
@@ -61,8 +60,8 @@ public class ExpenseListLayout extends RelativeLayout {
         _addButton.setOnClickListener(_add_onClick);
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
 
         populateUi();
     }
@@ -75,26 +74,29 @@ public class ExpenseListLayout extends RelativeLayout {
         if (_addButton == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        if (_workorder.getPay() == null)
+        if (_workOrder.getPay() == null)
             return;
 
-        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
+        if (_workOrder.getStatus().getId() == 2) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
 
-        if (_workorder.canChangeExpenses()) {
+
+        if (_workOrder.getPay().getExpenses() != null
+                && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
         }
 
-        final Expense[] list = _workorder.getAdditionalExpenses();
+
+        final Expense[] list = _workOrder.getPay().getExpenses().getResults();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
@@ -121,12 +123,12 @@ public class ExpenseListLayout extends RelativeLayout {
                     _listView.addView(v);
                 }
                 Expense expense = _list[i];
-                v.setData(_workorder, expense);
+                v.setData(_workOrder, expense);
                 v.setOnClickListener(_expense_onClick);
                 v.setOnLongClickListener(_expense_onLongClick);
             }
         };
-        postDelayed(r, new Random().nextInt(1000));
+        postDelayed(r, App.secureRandom.nextInt(1000));
     }
 
     /*-*********************************-*/
@@ -135,7 +137,10 @@ public class ExpenseListLayout extends RelativeLayout {
     private final View.OnClickListener _expense_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeExpenses()) {
+            if (_listener != null
+                    && _workOrder.getPay() != null
+                    && _workOrder.getPay().getExpenses() != null
+                    && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
                 _listener.expenseOnClick(((ExpenseView) v).getExpense());
             }
         }
@@ -144,7 +149,10 @@ public class ExpenseListLayout extends RelativeLayout {
     private final View.OnLongClickListener _expense_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (_listener != null && _workorder.canChangeExpenses()) {
+            if (_listener != null
+                    && _workOrder.getPay() != null
+                    && _workOrder.getPay().getExpenses() != null
+                    && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
                 _listener.expenseLongClick(((ExpenseView) v).getExpense());
                 return true;
             }
@@ -155,7 +163,10 @@ public class ExpenseListLayout extends RelativeLayout {
     private final View.OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeExpenses()) {
+            if (_listener != null
+                    && _workOrder.getPay() != null
+                    && _workOrder.getPay().getExpenses() != null
+                    && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
                 _listener.addExpense();
             }
         }

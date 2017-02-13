@@ -35,6 +35,9 @@ public class Expense implements Parcelable {
     @Json(name = "description")
     private String _description;
 
+    @Json(name = "id")
+    private Integer _id;
+
     @Json(name = "quantity")
     private Integer _quantity;
 
@@ -125,6 +128,19 @@ public class Expense implements Parcelable {
 
     public Expense description(String description) {
         _description = description;
+        return this;
+    }
+
+    public void setId(Integer id) {
+        _id = id;
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Expense id(Integer id) {
+        _id = id;
         return this;
     }
 

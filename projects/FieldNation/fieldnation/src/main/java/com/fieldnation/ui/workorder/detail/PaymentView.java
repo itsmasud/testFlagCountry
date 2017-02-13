@@ -89,7 +89,7 @@ TODO        if (_workorder.getIncreaseRequestInfo() != null) {
             getRequestNewPayTile().setData(_workorder);
         } else if (_requestNewPayTile != null) {
 */
-        _requestNewPayTile.setVisibility(GONE);
+        getRequestNewPayTile().setVisibility(GONE);
 //        }
 
 /*

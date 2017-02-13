@@ -17,26 +17,16 @@ import com.fieldnation.fnlog.Log;
 public class Bundle implements Parcelable {
     private static final String TAG = "Bundle";
 
-    @Json(name = "count")
-    private Integer _count;
-
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
+
+    @Json(name = "results")
+    private WorkOrder[] _results;
+
     public Bundle() {
-    }
-
-    public void setCount(Integer count) {
-        _count = count;
-    }
-
-    public Integer getCount() {
-        return _count;
-    }
-
-    public Bundle count(Integer count) {
-        _count = count;
-        return this;
     }
 
     public void setId(Integer id) {
@@ -49,6 +39,32 @@ public class Bundle implements Parcelable {
 
     public Bundle id(Integer id) {
         _id = id;
+        return this;
+    }
+
+    public void setMetadata(ListEnvelope metadata) {
+        _metadata = metadata;
+    }
+
+    public ListEnvelope getMetadata() {
+        return _metadata;
+    }
+
+    public Bundle metadata(ListEnvelope metadata) {
+        _metadata = metadata;
+        return this;
+    }
+
+    public void setResults(WorkOrder[] results) {
+        _results = results;
+    }
+
+    public WorkOrder[] getResults() {
+        return _results;
+    }
+
+    public Bundle results(WorkOrder[] results) {
+        _results = results;
         return this;
     }
 

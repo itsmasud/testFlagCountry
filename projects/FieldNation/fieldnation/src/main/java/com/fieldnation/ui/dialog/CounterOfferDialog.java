@@ -69,7 +69,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires = false;
-//    private String _expirationDate;
+    //    private String _expirationDate;
     private int _expiresAfterInSecond = -1;
     private int _expireDuration = -1;
 
@@ -203,7 +203,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _scheduleView.setListener(_scheduleView_listener);
 
         _expenseView = (ExpenseCoView) v.findViewById(R.id.expenses_view);
-        _expenseView.setListener(_expenseView_listener);
+//TODO        _expenseView.setListener(_expenseView_listener);
 
         _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
         _reasonView.setListener(getFragmentManager(), _reason_listener);
@@ -282,7 +282,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _scheduleView.setSchedule(_workorder.getSchedule(), false);
         }
 
-        _expenseView.setData(_workorder, _expenses);
+//TODO        _expenseView.setData(_workorder, _expenses);
 
         _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
     }
@@ -324,7 +324,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             if (_expires) {
 //                try {
 //                    _expirationDate = info.getExpiresAfter();
-                    _expiresAfterInSecond = info.getExpiresAfterInSecond();
+                _expiresAfterInSecond = info.getExpiresAfterInSecond();
 //                } catch (Exception ex) {
 //                    Log.v(TAG, ex);
 //                }
@@ -381,7 +381,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
     };
 
-    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
+/*
+TODO    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
             _expenseDialog.show(false);
@@ -409,6 +410,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
             // TODO editExpense
         }
     };
+*/
 
     private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
         @Override
@@ -524,7 +526,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 //                        }
 //                    }
 
-                    Log.e(TAG, "_expireDuration: "+ _expireDuration );
+                    Log.e(TAG, "_expireDuration: " + _expireDuration);
 
                     _listener.onOk(_workorder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
                     _tacAccpet = false;

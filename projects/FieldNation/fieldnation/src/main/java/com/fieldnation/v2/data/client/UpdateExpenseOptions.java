@@ -12,7 +12,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by dmgen from swagger on 2/06/17.
+ * Created by dmgen from swagger.
  */
 
 public class UpdateExpenseOptions implements Parcelable {

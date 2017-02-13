@@ -74,6 +74,7 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
@@ -218,7 +219,7 @@ public class WorkFragment extends WorkorderFragment {
         _coSummaryView.setListener(_coSummary_listener);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
-// TODO        _expenseListView.setListener(_expenseListView_listener);
+        _expenseListView.setListener(_expenseListView_listener);
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
 // TODO        _discountListView.setListener(_discountListView_listener);
@@ -531,7 +532,7 @@ TODO     private void setTasks(List<Task> tasks) {
 
         if (_expenseListView != null) {
             Stopwatch watch = new Stopwatch(true);
-//TODO            _expenseListView.setWorkorder(_workOrder);
+            _expenseListView.setWorkOrder(_workOrder);
             //Log.v(TAG, "_expenseListView time: " + watch.finish());
         }
 
@@ -1024,7 +1025,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getCount(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_REQUEST);
+                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
@@ -1038,7 +1039,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getCount(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_ACCEPT);
+                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
                         _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
@@ -1454,8 +1455,8 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         }
     };
 
-/*
-TODO    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
+
+    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
         @Override
         public void addExpense() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
@@ -1476,7 +1477,7 @@ TODO    private final ExpenseListLayout.Listener _expenseListView_listener = new
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
                             WorkorderClient.deleteExpense(App.get(),
-                                    _workOrder.getWorkOrderId(), expense.getExpenseId());
+                                    _workOrder.getWorkOrderId(), expense.getId());
                         }
 
                         @Override
@@ -1490,7 +1491,7 @@ TODO    private final ExpenseListLayout.Listener _expenseListView_listener = new
             _yesNoDialog.show();
         }
     };
-*/
+
 
 /*
 TODO    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {

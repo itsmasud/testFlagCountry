@@ -149,7 +149,6 @@ public class ExpenseDialog extends DialogFragmentBase {
     }
 
     public void populateUi() {
-
         if (_showCategories) {
             _categoryLayout.setVisibility(View.VISIBLE);
         } else {
@@ -167,9 +166,7 @@ public class ExpenseDialog extends DialogFragmentBase {
 
         if (_categorySpinner != null)
             _categorySpinner.clearSelection();
-
     }
-
 
     public void setListener(Listener listener) {
         _listener = listener;
