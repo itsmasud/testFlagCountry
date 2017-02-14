@@ -101,6 +101,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "shipments")
     private Shipments _shipments;
 
+    @Json(name = "signatures")
+    private Signatures _signatures;
+
     @Json(name = "standard_instructions")
     private RichText _standardInstructions;
 
@@ -479,6 +482,19 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
+    public void setSignatures(Signatures signatures) {
+        _signatures = signatures;
+    }
+
+    public Signatures getSignatures() {
+        return _signatures;
+    }
+
+    public WorkOrder signatures(Signatures signatures) {
+        _signatures = signatures;
+        return this;
+    }
+
     public void setStandardInstructions(RichText standardInstructions) {
         _standardInstructions = standardInstructions;
     }
@@ -595,7 +611,7 @@ public class WorkOrder implements Parcelable {
         CONFIRM("confirm"),
         @Json(name = "mark_complete")
         MARK_COMPLETE("mark_complete"),
-        @Json(name ="mark_incomplete")
+        @Json(name = "mark_incomplete")
         MARK_INCOMPLETE("mark_incomplete"),
         @Json(name = "messaging")
         MESSAGING("messaging"),
