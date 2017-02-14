@@ -9,14 +9,14 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.workorder.WorkorderDispatch;
-import com.fieldnation.service.data.workorder.WorkorderTransactionListener;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 /**
@@ -242,6 +242,24 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                 return;
             }
         }
+
+/* This will dump the file into Downloads/FieldNation for debugging purposes.
+        if (upFile.isFile() && upFile.getFile() != null) {
+            try {
+                FileUtils.copyFile(upFile.getFile(), new File(App.get().getDownloadsFolder() + "/" + filename));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            try {
+                FileOutputStream fo = new FileOutputStream(new File(App.get().getDownloadsFolder() + "/" + filename));
+                fo.write(upFile.getData());
+                fo.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+*/
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
