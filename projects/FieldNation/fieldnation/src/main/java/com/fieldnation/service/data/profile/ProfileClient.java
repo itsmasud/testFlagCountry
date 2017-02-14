@@ -15,8 +15,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.data.workorder.WorkorderDispatch;
-import com.fieldnation.service.data.workorder.WorkorderService;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -133,7 +131,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         return register(topicId);
     }
 
-    public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename){
+    public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename) {
         Log.v(STAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(context, filePath, false, false);
@@ -144,10 +142,9 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         intent.putExtra(PARAM_FILE_NAME, filename);
         intent.putExtra(PARAM_PHOTO_PATH, filePath);
         context.startService(intent);
-
     }
 
-    public static void uploadProfilePhoto(Context context, long profileId, String filename, Uri uri){
+    public static void uploadProfilePhoto(Context context, long profileId, String filename, Uri uri) {
         Log.v(STAG, "uploadProfilePhoto");
 
         ProfileDispatch.uploadProfilePhoto(context, filename, false, false);
@@ -158,12 +155,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         intent.putExtra(PARAM_FILE_NAME, filename);
         intent.putExtra(PARAM_URI, uri);
         context.startService(intent);
-
-
-
-
     }
-
 
     /*-*********************************-*/
     /*-             Actions             -*/
@@ -214,7 +206,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                 preOnAction(bundle);
             } else if (topicId.startsWith(TOPIC_ID_SWITCH_USER)) {
                 onSwitchUser(bundle.getLong(PARAM_USER_ID), bundle.getBoolean(PARAM_ERROR));
-            }else if (topicId.startsWith(TOPIC_ID_UPLOAD_PHOTO)) {
+            } else if (topicId.startsWith(TOPIC_ID_UPLOAD_PHOTO)) {
                 preUploadPhoto((Bundle) payload);
             }
         }
@@ -232,7 +224,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             }
         }
 
-        public void preUploadPhoto( String filename, boolean isComplete, boolean failed) {
+        public void preUploadPhoto(String filename, boolean isComplete, boolean failed) {
         }
 
         public void onSwitchUser(long userId, boolean failed) {
