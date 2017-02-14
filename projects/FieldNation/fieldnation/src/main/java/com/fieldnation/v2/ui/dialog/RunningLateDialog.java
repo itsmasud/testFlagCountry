@@ -120,13 +120,11 @@ public class RunningLateDialog extends SimpleDialog {
             ex.printStackTrace();
         }
 
-/*
-        if (_workOrder.getContacts() == null || _workOrder.getContacts().length == 0) {
+        if (_workOrder.getContacts() == null || _workOrder.getContacts().getResults() == null || _workOrder.getContacts().getResults().length == 0) {
             _callButton.setVisibility(View.GONE);
         } else {
             _callButton.setVisibility(View.VISIBLE);
         }
-*/
 
         if (_timeframeSpinner != null && _timeframeSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromArray(getView().getContext(),

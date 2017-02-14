@@ -387,7 +387,7 @@ public class WorkOrderCard extends RelativeLayout {
             timeLogsActions.addAll(Arrays.asList(_workOrder.getTimeLogs().getActions()));
         }
 
-        // TODO Order
+        // Order of operations
         // check_out
         // check_in
         // set eta

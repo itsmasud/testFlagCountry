@@ -111,7 +111,7 @@ public class MarkCompleteDialog extends SimpleDialog {
             _onContinueClickDispatcher.dispatch(getUid(), null);
             dismiss(true);
 /*
-            if (App.get().getProfile().canRequestWorkOnMarketplace()
+TODO            if (App.get().getProfile().canRequestWorkOnMarketplace()
                     && !_workOrder.getW2()
                     && _workOrder.getBuyerRatingInfo().getRatingId() == null) {
 
