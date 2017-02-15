@@ -167,6 +167,48 @@ public class UsersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getProfileAndWorkHistory
+     * Get Profile and Work History By The User and Work Order
+     *
+     * @param userId User ID
+     * @param workOrderId Work Order ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/users/{user_id}/workorder/{work_order_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/workorder/" + workOrderId,
+                                    UsersWebApi.class, "getProfileAndWorkHistory"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetProfileAndWorkHistory(Integer userId, Integer workOrderId) {
+        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/workorder/" + workOrderId);
+    }
+
+    /**
      * Swagger operationId: getSettingsByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
@@ -911,6 +953,9 @@ public class UsersWebApi extends TopicClient {
         public void onGetPay(User user, boolean success, Error error) {
         }
 
+        public void onGetProfileAndWorkHistory(ProfileAndWorkHistory profileAndWorkHistory, boolean success, Error error) {
+        }
+
         public void onGetSettings(User user, boolean success, Error error) {
         }
 
@@ -1004,6 +1049,12 @@ public class UsersWebApi extends TopicClient {
                     case "getPay":
                         if (success)
                             successObject = User.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getProfileAndWorkHistory":
+                        if (success)
+                            successObject = ProfileAndWorkHistory.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -1122,6 +1173,9 @@ public class UsersWebApi extends TopicClient {
                         break;
                     case "getPay":
                         listener.onGetPay((User) successObject, success, (Error) failObject);
+                        break;
+                    case "getProfileAndWorkHistory":
+                        listener.onGetProfileAndWorkHistory((ProfileAndWorkHistory) successObject, success, (Error) failObject);
                         break;
                     case "getSettings":
                         listener.onGetSettings((User) successObject, success, (Error) failObject);

@@ -20,6 +20,9 @@ public class Rating implements Parcelable {
     @Json(name = "assignment_fulfilled_percent")
     private Double _assignmentFulfilledPercent;
 
+    @Json(name = "company")
+    private RatingCompany _company;
+
     @Json(name = "follow_instructions_percent")
     private Double _followInstructionsPercent;
 
@@ -48,6 +51,19 @@ public class Rating implements Parcelable {
 
     public Rating assignmentFulfilledPercent(Double assignmentFulfilledPercent) {
         _assignmentFulfilledPercent = assignmentFulfilledPercent;
+        return this;
+    }
+
+    public void setCompany(RatingCompany company) {
+        _company = company;
+    }
+
+    public RatingCompany getCompany() {
+        return _company;
+    }
+
+    public Rating company(RatingCompany company) {
+        _company = company;
         return this;
     }
 

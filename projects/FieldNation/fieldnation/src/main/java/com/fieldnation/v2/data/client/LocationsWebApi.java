@@ -248,6 +248,47 @@ public class LocationsWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getProvidersByLocationId
+     * Get Providers Info By Location ID
+     *
+     * @param locationId Location ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getProviders(Context context, Integer locationId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/locations/" + locationId + "/providers");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/locations/" + locationId + "/providers");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/locations/{location_id}/providers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/providers",
+                                    LocationsWebApi.class, "getProviders"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetProviders(Integer locationId) {
+        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/providers");
+    }
+
+    /**
      * Swagger operationId: removeAttributeByLocationAndAttribute
      * Removes an attribute from a stored location
      *

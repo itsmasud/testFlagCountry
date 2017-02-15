@@ -3008,6 +3008,129 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getRequestByWorkOrderAndRequest
+     * Get request/ counter offer for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param requestId ID of work order request/counter offer
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests/" + requestId,
+                                    WorkordersWebApi.class, "getRequest"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetRequest(Integer workOrderId, Integer requestId) {
+        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests/" + requestId);
+    }
+
+    /**
+     * Swagger operationId: getRequestByWorkOrderAndRequest
+     * Get request/ counter offer for assigned work order.
+     *
+     * @param workOrderId ID of work order
+     * @param requestId ID of work order request/counter offer
+     * @param async Async (Optional)
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId)
+                    .urlParams("?async=" + async);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests/" + requestId,
+                                    WorkordersWebApi.class, "getRequest"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getRequestsByWorkOrder
+     * Returns a list of work order requests or counter offers requested by the assigned provider.
+     *
+     * @param workOrderId ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getRequests(Context context, Integer workOrderId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/requests")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests",
+                                    WorkordersWebApi.class, "getRequests"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetRequests(Integer workOrderId) {
+        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests");
+    }
+
+    /**
      * Swagger operationId: GetScheduleAndLocation
      * Get schedule and location for a list of work orders by work orders
      *
@@ -3638,6 +3761,48 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
+    }
+
+    /**
+     * Swagger operationId: getWorkOrdersByBundleId
+     * Get Work Orders By Bundle ID Or Work Order ID
+     *
+     * @param workOrderId work order ID
+     * @param bundleId Bundle ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getWorkOrders(Context context, Integer workOrderId, Integer bundleId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bundle/" + bundleId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/bundle/" + bundleId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/bundle/{bundle_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bundle/" + bundleId,
+                                    WorkordersWebApi.class, "getWorkOrders"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetWorkOrders(Integer workOrderId, Integer bundleId) {
+        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bundle/" + bundleId);
     }
 
     /**
@@ -6842,6 +7007,12 @@ public class WorkordersWebApi extends TopicClient {
         public void onGetProviders(Users[] users, boolean success, Error error) {
         }
 
+        public void onGetRequest(Request request, boolean success, Error error) {
+        }
+
+        public void onGetRequests(Requests requests, boolean success, Error error) {
+        }
+
         public void onGetScheduleAndLocation(EtaWithLocation etaWithLocation, boolean success, Error error) {
         }
 
@@ -6876,6 +7047,9 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+        }
+
+        public void onGetWorkOrders(BundleWorkOrders bundleWorkOrders, boolean success, Error error) {
         }
 
         public void onGroupTask(boolean success, Error error) {
@@ -7321,6 +7495,18 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "getRequest":
+                        if (success)
+                            successObject = Request.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getRequests":
+                        if (success)
+                            successObject = Requests.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "GetScheduleAndLocation":
                         if (success)
                             successObject = EtaWithLocation.fromJson(new JsonObject(data));
@@ -7390,6 +7576,12 @@ public class WorkordersWebApi extends TopicClient {
                     case "getWorkOrders":
                         if (success)
                             successObject = WorkOrders.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getWorkOrders":
+                        if (success)
+                            successObject = BundleWorkOrders.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7768,6 +7960,12 @@ public class WorkordersWebApi extends TopicClient {
                     case "getProviders":
                         listener.onGetProviders((Users[]) successObject, success, (Error) failObject);
                         break;
+                    case "getRequest":
+                        listener.onGetRequest((Request) successObject, success, (Error) failObject);
+                        break;
+                    case "getRequests":
+                        listener.onGetRequests((Requests) successObject, success, (Error) failObject);
+                        break;
                     case "GetScheduleAndLocation":
                         listener.onGetScheduleAndLocation((EtaWithLocation) successObject, success, (Error) failObject);
                         break;
@@ -7803,6 +8001,9 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "getWorkOrders":
                         listener.onGetWorkOrders((WorkOrders) successObject, success, (Error) failObject);
+                        break;
+                    case "getWorkOrders":
+                        listener.onGetWorkOrders((BundleWorkOrders) successObject, success, (Error) failObject);
                         break;
                     case "groupTask":
                         listener.onGroupTask(success, (Error) failObject);
