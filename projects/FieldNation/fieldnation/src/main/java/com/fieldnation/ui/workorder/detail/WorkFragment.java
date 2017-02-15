@@ -47,7 +47,6 @@ import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
@@ -76,6 +75,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
@@ -104,6 +104,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG + ".locationDialogCheckIn";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG + ".locationDialogCheckOut";
+    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -139,7 +140,6 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Dialogs
-    private ClosingNotesDialog _closingDialog;
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
@@ -363,7 +363,6 @@ TODO        if (_currentTask != null)
     public void onAttach(Activity activity) {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
-        _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
@@ -385,7 +384,6 @@ TODO        if (_currentTask != null)
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _closingDialog.setListener(_closingNotes_onOk);
 // TODO        _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
@@ -400,6 +398,7 @@ TODO        if (_currentTask != null)
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
@@ -437,6 +436,7 @@ TODO        if (_currentTask != null)
         AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
@@ -1605,20 +1605,16 @@ TODO        if (_workorder.canChangeClosingNotes())
         }
     };
 
-    private final ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+    private final ClosingNotesDialog.OnOkListener _closingNotes_onOk = new ClosingNotesDialog.OnOkListener() {
         @Override
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getWorkOrderId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            WorkorderClient.actionSetClosingNotes(App.get(), _workOrder.getWorkOrderId(), message);
             WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
             setLoading(true);
         }
-
-        @Override
-        public void onCancel() {
-        }
     };
+
 
 /*
 TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {

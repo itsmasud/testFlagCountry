@@ -24,7 +24,7 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
     private User _profile;
 
     @Json(name = "work_history")
-    private WorkHistory _workHistory;
+    private byte[] _workHistory;
 
     public ProfileAndWorkHistoryRating() {
     }
@@ -55,15 +55,15 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
         return this;
     }
 
-    public void setWorkHistory(WorkHistory workHistory) {
+    public void setWorkHistory(byte[] workHistory) {
         _workHistory = workHistory;
     }
 
-    public WorkHistory getWorkHistory() {
+    public byte[] getWorkHistory() {
         return _workHistory;
     }
 
-    public ProfileAndWorkHistoryRating workHistory(WorkHistory workHistory) {
+    public ProfileAndWorkHistoryRating workHistory(byte[] workHistory) {
         _workHistory = workHistory;
         return this;
     }
