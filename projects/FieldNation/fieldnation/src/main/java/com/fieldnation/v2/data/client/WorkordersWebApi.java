@@ -23,6 +23,7 @@ import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.BundleWorkOrders;
 import com.fieldnation.v2.data.model.Cancellation;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Contacts;
@@ -45,6 +46,7 @@ import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.Schedule;
@@ -3011,8 +3013,8 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getRequestByWorkOrderAndRequest
      * Get request/ counter offer for assigned work order.
      *
-     * @param workOrderId ID of work order
-     * @param requestId ID of work order request/counter offer
+     * @param workOrderId  ID of work order
+     * @param requestId    ID of work order request/counter offer
      * @param isBackground indicates that this call is low priority
      */
     public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean isBackground) {
@@ -3053,9 +3055,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getRequestByWorkOrderAndRequest
      * Get request/ counter offer for assigned work order.
      *
-     * @param workOrderId ID of work order
-     * @param requestId ID of work order request/counter offer
-     * @param async Async (Optional)
+     * @param workOrderId  ID of work order
+     * @param requestId    ID of work order request/counter offer
+     * @param async        Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
     public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean isBackground) {
@@ -3093,7 +3095,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getRequestsByWorkOrder
      * Returns a list of work order requests or counter offers requested by the assigned provider.
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getRequests(Context context, Integer workOrderId, boolean isBackground) {
@@ -3767,11 +3769,11 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getWorkOrdersByBundleId
      * Get Work Orders By Bundle ID Or Work Order ID
      *
-     * @param workOrderId work order ID
-     * @param bundleId Bundle ID
+     * @param workOrderId  work order ID
+     * @param bundleId     Bundle ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getWorkOrders(Context context, Integer workOrderId, Integer bundleId, boolean isBackground) {
+    public static void getWorkOrderBundle(Context context, Integer workOrderId, Integer bundleId, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bundle/" + bundleId);
 
@@ -3787,7 +3789,7 @@ public class WorkordersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bundle/" + bundleId,
-                                    WorkordersWebApi.class, "getWorkOrders"))
+                                    WorkordersWebApi.class, "getWorkOrderBundle"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -3801,7 +3803,7 @@ public class WorkordersWebApi extends TopicClient {
         }
     }
 
-    public boolean subGetWorkOrders(Integer workOrderId, Integer bundleId) {
+    public boolean subGetWorkOrderBundle(Integer workOrderId, Integer bundleId) {
         return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bundle/" + bundleId);
     }
 
@@ -7579,7 +7581,7 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "getWorkOrders":
+                    case "getWorkOrderBundle":
                         if (success)
                             successObject = BundleWorkOrders.fromJson(new JsonObject(data));
                         else
@@ -8002,7 +8004,7 @@ public class WorkordersWebApi extends TopicClient {
                     case "getWorkOrders":
                         listener.onGetWorkOrders((WorkOrders) successObject, success, (Error) failObject);
                         break;
-                    case "getWorkOrders":
+                    case "getWorkOrderBundle":
                         listener.onGetWorkOrders((BundleWorkOrders) successObject, success, (Error) failObject);
                         break;
                     case "groupTask":

@@ -20,6 +20,7 @@ import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.AaaaPlaceholder;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.ProfileAndWorkHistory;
 import com.fieldnation.v2.data.model.TypesOfWork;
 import com.fieldnation.v2.data.model.User;
 import com.fieldnation.v2.data.model.UserTaxInfo;
@@ -170,8 +171,8 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getProfileAndWorkHistory
      * Get Profile and Work History By The User and Work Order
      *
-     * @param userId User ID
-     * @param workOrderId Work Order ID
+     * @param userId       User ID
+     * @param workOrderId  Work Order ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean isBackground) {
