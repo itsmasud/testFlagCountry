@@ -220,7 +220,7 @@ public class CustomField implements Parcelable {
     public enum TypeEnum {
         @Json(name = "date")
         DATE("date"),
-        @Json(name = "datetime")
+        @Json(name = "date_time")
         DATETIME("datetime"),
         @Json(name = "numeric")
         NUMERIC("numeric"),

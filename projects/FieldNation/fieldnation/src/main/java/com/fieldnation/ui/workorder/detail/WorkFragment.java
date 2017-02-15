@@ -245,7 +245,7 @@ public class WorkFragment extends WorkorderFragment {
 // TODO        _timeLogged.setListener(_timeLoggedView_listener);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
-        _closingNotes.setListener(_clockingNotesView_listener);
+        _closingNotes.setListener(_closingNotesView_listener);
 
         _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
 // TODO        _customFields.setListener(_customFields_listener);
@@ -576,9 +576,8 @@ TODO     private void setTasks(List<Task> tasks) {
 
         if (_shipments != null && _timeLogged != null) {
             Stopwatch watch = new Stopwatch(true);
-/*
-TODO            WorkorderStatus status = _workOrder.getStatus().getWorkorderStatus();
-            if (status.ordinal() < WorkorderStatus.ASSIGNED.ordinal()) {
+
+            if (_workOrder.getStatus().getId() == 3) {
                 _timeLogged.setVisibility(View.GONE);
                 _shipments.setVisibility(View.GONE);
                 _closingNotes.setVisibility(View.GONE);
@@ -587,7 +586,7 @@ TODO            WorkorderStatus status = _workOrder.getStatus().getWorkorderStat
                 _timeLogged.setVisibility(View.VISIBLE);
                 _closingNotes.setVisibility(View.VISIBLE);
             }
-*/
+
             //Log.v(TAG, "_shipments time: " + watch.finish());
         }
 
@@ -605,7 +604,7 @@ TODO            WorkorderStatus status = _workOrder.getStatus().getWorkorderStat
 
         if (_closingNotes != null) {
             Stopwatch watch = new Stopwatch(true);
-//TODO            _closingNotes.setWorkorder(_workOrder);
+            _closingNotes.setWorkOrder(_workOrder);
             //Log.v(TAG, "_closingNotes time: " + watch.finish());
         }
 
@@ -1400,7 +1399,7 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
     };
 */
 
-    private final ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
+    private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
         public void onChangeClosingNotes(String closingNotes) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
@@ -1569,10 +1568,8 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
     /*-				Dialogs				-*/
     /*-*********************************-*/
     private void showClosingNotesDialog() {
-/*
-TODO        if (_workorder.canChangeClosingNotes())
-            _closingDialog.show(_workorder.getClosingNotes());
-*/
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
+            ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrder.getWorkOrderId(), _workOrder.getClosingNotes());
     }
 
     private final AppPickerDialog.OnOkListener _appPicker_onOk = new AppPickerDialog.OnOkListener() {

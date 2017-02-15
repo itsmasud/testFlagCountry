@@ -432,7 +432,7 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setOnClickListener(_onMyWay_onClick);
 //            button.setText(R.string.btn_on_my_way);
 
-            // ack hold
+            // ack hold/
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
 //            button.setText(R.string.btn_acknowledge_hold);

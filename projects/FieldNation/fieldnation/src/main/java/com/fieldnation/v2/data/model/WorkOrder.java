@@ -12,6 +12,8 @@ import com.fieldnation.fnlog.Log;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -37,6 +39,9 @@ public class WorkOrder implements Parcelable {
 
     @Json(name = "client")
     private Company _client;
+
+    @Json(name = "closing_notes")
+    private String _closingNotes;
 
     @Json(name = "company")
     private Company _company;
@@ -206,6 +211,19 @@ public class WorkOrder implements Parcelable {
 
     public WorkOrder client(Company client) {
         _client = client;
+        return this;
+    }
+
+    public void setClosingNotes(String closingNotes) {
+        _closingNotes = closingNotes;
+    }
+
+    public String getClosingNotes() {
+        return _closingNotes;
+    }
+
+    public WorkOrder closingNotes(String closingNotes) {
+        _closingNotes = closingNotes;
         return this;
     }
 
@@ -607,8 +625,12 @@ public class WorkOrder implements Parcelable {
         CHECK_IN("check_in"),
         @Json(name = "check_out")
         CHECK_OUT("check_out"),
+        @Json(name = "closing_notes")
+        CLOSING_NOTES("closing_notes"),
         @Json(name = "confirm")
         CONFIRM("confirm"),
+        @Json(name = "map")
+        MAP("map"),
         @Json(name = "mark_complete")
         MARK_COMPLETE("mark_complete"),
         @Json(name = "mark_incomplete")
@@ -720,5 +742,17 @@ public class WorkOrder implements Parcelable {
             }
         });
         return _actions;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(_actions));
+            _actionsSet.add(ActionsEnum.CLOSING_NOTES);
+        }
+
+        return _actionsSet;
     }
 }

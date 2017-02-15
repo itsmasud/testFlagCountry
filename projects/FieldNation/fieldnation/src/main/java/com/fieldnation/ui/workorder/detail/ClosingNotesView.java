@@ -9,8 +9,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ClosingNotesView extends LinearLayout {
     private static final String TAG = "ClosingNotesView";
@@ -21,7 +21,7 @@ public class ClosingNotesView extends LinearLayout {
     private Button _addButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
 
 	/*-*************************************-*/
@@ -52,27 +52,27 @@ public class ClosingNotesView extends LinearLayout {
         _listener = listener;
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         refresh();
     }
 
     private void refresh() {
-        if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
-            _notesTextView.setText(_workorder.getClosingNotes());
+        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
+            _notesTextView.setText(_workOrder.getClosingNotes());
             _notesTextView.setVisibility(VISIBLE);
             _noNotesTextView.setVisibility(GONE);
         } else {
             _notesTextView.setVisibility(GONE);
             _noNotesTextView.setVisibility(VISIBLE);
-            if (!_workorder.canChangeClosingNotes()) {
+            if (!_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
                 setVisibility(View.GONE);
                 return;
             }
         }
         setVisibility(View.VISIBLE);
 
-        if (_workorder.canChangeClosingNotes()) {
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
             _addButton.setVisibility(View.VISIBLE);
             _notesTextView.setClickable(true);
         } else {
@@ -88,8 +88,8 @@ public class ClosingNotesView extends LinearLayout {
     private final View.OnClickListener _notes_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeClosingNotes()) {
-                _listener.onChangeClosingNotes(_workorder.getClosingNotes());
+            if (_listener != null && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
+                _listener.onChangeClosingNotes(_workOrder.getClosingNotes());
             }
         }
     };

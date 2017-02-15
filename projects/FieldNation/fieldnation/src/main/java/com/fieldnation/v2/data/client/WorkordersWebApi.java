@@ -6693,7 +6693,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param workOrder   Work order model
      */
-    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, JsonObject workOrder) {
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId);
 
@@ -6703,7 +6703,7 @@ public class WorkordersWebApi extends TopicClient {
                     .path("/api/rest/v2/workorders/" + workOrderId);
 
             if (workOrder != null)
-                builder.body(workOrder.toJson().toString());
+                builder.body(workOrder.toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}")
