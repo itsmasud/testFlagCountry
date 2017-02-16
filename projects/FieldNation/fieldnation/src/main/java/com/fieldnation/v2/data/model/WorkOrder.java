@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -844,7 +843,6 @@ public class WorkOrder implements Parcelable {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(_actions));
-            _actionsSet.add(ActionsEnum.CLOSING_NOTES);
         }
 
         return _actionsSet;
