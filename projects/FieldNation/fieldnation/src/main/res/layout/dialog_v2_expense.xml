@@ -6,8 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/title_textview"
@@ -21,7 +20,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title_textview"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp">
 
             <EditText
                 android:id="@+id/description_edittext"
@@ -36,7 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/description_layout"
-            android:layout_marginBottom="16dp">
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp">
 
             <EditText
                 android:id="@+id/amount_edittext"
@@ -51,6 +54,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/amount_layout"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
             android:orientation="vertical">
 
             <TextView
@@ -75,6 +81,7 @@
             android:id="@+id/cancel_button"
             style="@style/DialogButton.v3"
             android:layout_below="@+id/category_layout"
+            android:layout_marginBottom="8dp"
             android:layout_toLeftOf="@+id/ok_button"
             android:text="@string/btn_cancel" />
 
@@ -83,6 +90,7 @@
             style="@style/DialogButton.v3"
             android:layout_alignParentRight="true"
             android:layout_below="@id/category_layout"
+            android:layout_marginBottom="8dp"
             android:text="@string/btn_save" />
 
     </RelativeLayout>

@@ -24,6 +24,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,6 +35,9 @@ import java.util.List;
  */
 public class CounterOfferDialog extends DialogFragmentBase {
     private static final String TAG = "CounterOfferDialog";
+
+    // Dialogs
+    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -58,7 +62,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     private PayDialog _payDialog;
     private ScheduleDialog _scheduleDialog;
-    private ExpenseDialog _expenseDialog;
     private TermsDialog _termsDialog;
 
     // Data State
@@ -214,9 +217,6 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _scheduleDialog = ScheduleDialog.getInstance(getFragmentManager(), TAG);
         _scheduleDialog.setListener(_scheduleDialog_listener);
 
-        _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _expenseDialog.setListener(_expenseDialog_listener);
-
         _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
 
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -224,6 +224,20 @@ public class CounterOfferDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
     }
 
     @Override
@@ -385,7 +399,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 TODO    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
-            _expenseDialog.show(false);
+            ExpenseDialog.show(App.get(), DIALOG_EXPENSE, false);
         }
 
         @Override
@@ -412,15 +426,11 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
     };
 */
 
-    private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             _expenses.add(new Expense(description, amount, category));
             populateUi();
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 

@@ -930,9 +930,9 @@ public class EtaDialog extends FullScreenDialog {
         _onConfirmedDispatcher.removeAll(uid);
     }
 
-    /*-*****************************-*/
+    /*-***********************-*/
     /*-         Eta           -*/
-    /*-*****************************-*/
+    /*-***********************-*/
     public interface OnEtaListener {
         void onEta(int workOrderid);
     }
