@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class ExpenseCompanyExpense implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ExpenseCompanyExpense() {
     }
 
-    public void setApiCode(String apiCode) {
+    public void setApiCode(String apiCode) throws ParseException {
         _apiCode = apiCode;
+        SOURCE.put("api_code", apiCode);
     }
 
     public String getApiCode() {
         return _apiCode;
     }
 
-    public ExpenseCompanyExpense apiCode(String apiCode) {
+    public ExpenseCompanyExpense apiCode(String apiCode) throws ParseException {
         _apiCode = apiCode;
+        SOURCE.put("api_code", apiCode);
         return this;
     }
 
-    public void setExpenseAmount(Double expenseAmount) {
+    public void setExpenseAmount(Double expenseAmount) throws ParseException {
         _expenseAmount = expenseAmount;
+        SOURCE.put("expense_amount", expenseAmount);
     }
 
     public Double getExpenseAmount() {
         return _expenseAmount;
     }
 
-    public ExpenseCompanyExpense expenseAmount(Double expenseAmount) {
+    public ExpenseCompanyExpense expenseAmount(Double expenseAmount) throws ParseException {
         _expenseAmount = expenseAmount;
+        SOURCE.put("expense_amount", expenseAmount);
         return this;
     }
 
-    public void setHiddenTags(String hiddenTags) {
+    public void setHiddenTags(String hiddenTags) throws ParseException {
         _hiddenTags = hiddenTags;
+        SOURCE.put("hidden_tags", hiddenTags);
     }
 
     public String getHiddenTags() {
         return _hiddenTags;
     }
 
-    public ExpenseCompanyExpense hiddenTags(String hiddenTags) {
+    public ExpenseCompanyExpense hiddenTags(String hiddenTags) throws ParseException {
         _hiddenTags = hiddenTags;
+        SOURCE.put("hidden_tags", hiddenTags);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public ExpenseCompanyExpense id(Integer id) {
+    public ExpenseCompanyExpense id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ExpenseCompanyExpense[] array) {
+        JsonArray list = new JsonArray();
+        for (ExpenseCompanyExpense item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ExpenseCompanyExpense[] fromJsonArray(JsonArray array) {
         ExpenseCompanyExpense[] list = new ExpenseCompanyExpense[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class ExpenseCompanyExpense implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ExpenseCompanyExpense expenseCompanyExpense) {
-        try {
-            return Serializer.serializeObject(expenseCompanyExpense);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class ExpenseCompanyExpense implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

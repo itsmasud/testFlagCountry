@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class RichText implements Parcelable {
     @Json(name = "markdown")
     private String _markdown;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public RichText() {
     }
 
-    public void setHtml(String html) {
+    public void setHtml(String html) throws ParseException {
         _html = html;
+        SOURCE.put("html", html);
     }
 
     public String getHtml() {
         return _html;
     }
 
-    public RichText html(String html) {
+    public RichText html(String html) throws ParseException {
         _html = html;
+        SOURCE.put("html", html);
         return this;
     }
 
-    public void setMarkdown(String markdown) {
+    public void setMarkdown(String markdown) throws ParseException {
         _markdown = markdown;
+        SOURCE.put("markdown", markdown);
     }
 
     public String getMarkdown() {
         return _markdown;
     }
 
-    public RichText markdown(String markdown) {
+    public RichText markdown(String markdown) throws ParseException {
         _markdown = markdown;
+        SOURCE.put("markdown", markdown);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(RichText[] array) {
+        JsonArray list = new JsonArray();
+        for (RichText item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static RichText[] fromJsonArray(JsonArray array) {
         RichText[] list = new RichText[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class RichText implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(RichText richText) {
-        try {
-            return Serializer.serializeObject(richText);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class RichText implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

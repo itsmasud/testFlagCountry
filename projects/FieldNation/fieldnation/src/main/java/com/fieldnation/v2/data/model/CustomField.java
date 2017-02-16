@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -50,149 +53,198 @@ public class CustomField implements Parcelable {
     @Json(name = "value")
     private String _value;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CustomField() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public CustomField actions(ActionsEnum[] actions) {
+    public CustomField actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setCategory(String category) {
+    public void setCategory(String category) throws ParseException {
         _category = category;
+        SOURCE.put("category", category);
     }
 
     public String getCategory() {
         return _category;
     }
 
-    public CustomField category(String category) {
+    public CustomField category(String category) throws ParseException {
         _category = category;
+        SOURCE.put("category", category);
         return this;
     }
 
-    public void setDependency(CustomFieldDependency dependency) {
+    public void setDependency(CustomFieldDependency dependency) throws ParseException {
         _dependency = dependency;
+        SOURCE.put("dependency", dependency.getJson());
     }
 
     public CustomFieldDependency getDependency() {
         return _dependency;
     }
 
-    public CustomField dependency(CustomFieldDependency dependency) {
+    public CustomField dependency(CustomFieldDependency dependency) throws ParseException {
         _dependency = dependency;
+        SOURCE.put("dependency", dependency.getJson());
         return this;
     }
 
-    public void setFlags(FlagsEnum[] flags) {
+    public void setFlags(FlagsEnum[] flags) throws ParseException {
         _flags = flags;
+        JsonArray ja = new JsonArray();
+        for (FlagsEnum item : flags) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("flags", ja);
     }
 
     public FlagsEnum[] getFlags() {
         return _flags;
     }
 
-    public CustomField flags(FlagsEnum[] flags) {
+    public CustomField flags(FlagsEnum[] flags) throws ParseException {
         _flags = flags;
+        JsonArray ja = new JsonArray();
+        for (FlagsEnum item : flags) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("flags", ja, true);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public CustomField id(Integer id) {
+    public CustomField id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public CustomField name(String name) {
+    public CustomField name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setOptions(String[] options) {
+    public void setOptions(String[] options) throws ParseException {
         _options = options;
+        JsonArray ja = new JsonArray();
+        for (String item : options) {
+            ja.add(item);
+        }
+        SOURCE.put("options", ja);
     }
 
     public String[] getOptions() {
         return _options;
     }
 
-    public CustomField options(String[] options) {
+    public CustomField options(String[] options) throws ParseException {
         _options = options;
+        JsonArray ja = new JsonArray();
+        for (String item : options) {
+            ja.add(item);
+        }
+        SOURCE.put("options", ja, true);
         return this;
     }
 
-    public void setRole(RoleEnum role) {
+    public void setRole(RoleEnum role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role.toString());
     }
 
     public RoleEnum getRole() {
         return _role;
     }
 
-    public CustomField role(RoleEnum role) {
+    public CustomField role(RoleEnum role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role.toString());
         return this;
     }
 
-    public void setTip(String tip) {
+    public void setTip(String tip) throws ParseException {
         _tip = tip;
+        SOURCE.put("tip", tip);
     }
 
     public String getTip() {
         return _tip;
     }
 
-    public CustomField tip(String tip) {
+    public CustomField tip(String tip) throws ParseException {
         _tip = tip;
+        SOURCE.put("tip", tip);
         return this;
     }
 
-    public void setType(TypeEnum type) {
+    public void setType(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
     }
 
     public TypeEnum getType() {
         return _type;
     }
 
-    public CustomField type(TypeEnum type) {
+    public CustomField type(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
         return this;
     }
 
-    public void setValue(String value) {
+    public void setValue(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
     }
 
     public String getValue() {
         return _value;
     }
 
-    public CustomField value(String value) {
+    public CustomField value(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
         return this;
     }
 
@@ -221,7 +273,7 @@ public class CustomField implements Parcelable {
         @Json(name = "date")
         DATE("date"),
         @Json(name = "date_time")
-        DATETIME("datetime"),
+        DATE_TIME("date_time"),
         @Json(name = "numeric")
         NUMERIC("numeric"),
         @Json(name = "phone")
@@ -300,6 +352,14 @@ public class CustomField implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CustomField[] array) {
+        JsonArray list = new JsonArray();
+        for (CustomField item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CustomField[] fromJsonArray(JsonArray array) {
         CustomField[] list = new CustomField[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -317,17 +377,8 @@ public class CustomField implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CustomField customField) {
-        try {
-            return Serializer.serializeObject(customField);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -358,6 +409,6 @@ public class CustomField implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

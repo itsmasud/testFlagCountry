@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,71 +35,84 @@ public class CreditCard implements Parcelable {
     @Json(name = "type")
     private TypeEnum _type;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CreditCard() {
     }
 
-    public void setCardNumber(String cardNumber) {
+    public void setCardNumber(String cardNumber) throws ParseException {
         _cardNumber = cardNumber;
+        SOURCE.put("card_number", cardNumber);
     }
 
     public String getCardNumber() {
         return _cardNumber;
     }
 
-    public CreditCard cardNumber(String cardNumber) {
+    public CreditCard cardNumber(String cardNumber) throws ParseException {
         _cardNumber = cardNumber;
+        SOURCE.put("card_number", cardNumber);
         return this;
     }
 
-    public void setCardholderName(String cardholderName) {
+    public void setCardholderName(String cardholderName) throws ParseException {
         _cardholderName = cardholderName;
+        SOURCE.put("cardholder_name", cardholderName);
     }
 
     public String getCardholderName() {
         return _cardholderName;
     }
 
-    public CreditCard cardholderName(String cardholderName) {
+    public CreditCard cardholderName(String cardholderName) throws ParseException {
         _cardholderName = cardholderName;
+        SOURCE.put("cardholder_name", cardholderName);
         return this;
     }
 
-    public void setCvv(String cvv) {
+    public void setCvv(String cvv) throws ParseException {
         _cvv = cvv;
+        SOURCE.put("cvv", cvv);
     }
 
     public String getCvv() {
         return _cvv;
     }
 
-    public CreditCard cvv(String cvv) {
+    public CreditCard cvv(String cvv) throws ParseException {
         _cvv = cvv;
+        SOURCE.put("cvv", cvv);
         return this;
     }
 
-    public void setExpDate(String expDate) {
+    public void setExpDate(String expDate) throws ParseException {
         _expDate = expDate;
+        SOURCE.put("exp_date", expDate);
     }
 
     public String getExpDate() {
         return _expDate;
     }
 
-    public CreditCard expDate(String expDate) {
+    public CreditCard expDate(String expDate) throws ParseException {
         _expDate = expDate;
+        SOURCE.put("exp_date", expDate);
         return this;
     }
 
-    public void setType(TypeEnum type) {
+    public void setType(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
     }
 
     public TypeEnum getType() {
         return _type;
     }
 
-    public CreditCard type(TypeEnum type) {
+    public CreditCard type(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
         return this;
     }
 
@@ -132,6 +148,14 @@ public class CreditCard implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CreditCard[] array) {
+        JsonArray list = new JsonArray();
+        for (CreditCard item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CreditCard[] fromJsonArray(JsonArray array) {
         CreditCard[] list = new CreditCard[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -149,17 +173,8 @@ public class CreditCard implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CreditCard creditCard) {
-        try {
-            return Serializer.serializeObject(creditCard);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -190,6 +205,6 @@ public class CreditCard implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

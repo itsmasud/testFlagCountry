@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class RatingCompany implements Parcelable {
     @Json(name = "work_completed")
     private Integer _workCompleted;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public RatingCompany() {
     }
 
-    public void setBlocked(Boolean blocked) {
+    public void setBlocked(Boolean blocked) throws ParseException {
         _blocked = blocked;
+        SOURCE.put("blocked", blocked);
     }
 
     public Boolean getBlocked() {
         return _blocked;
     }
 
-    public RatingCompany blocked(Boolean blocked) {
+    public RatingCompany blocked(Boolean blocked) throws ParseException {
         _blocked = blocked;
+        SOURCE.put("blocked", blocked);
         return this;
     }
 
-    public void setMarketplace(RatingCompanyMarketplace marketplace) {
+    public void setMarketplace(RatingCompanyMarketplace marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
     }
 
     public RatingCompanyMarketplace getMarketplace() {
         return _marketplace;
     }
 
-    public RatingCompany marketplace(RatingCompanyMarketplace marketplace) {
+    public RatingCompany marketplace(RatingCompanyMarketplace marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
         return this;
     }
 
-    public void setMine(RatingCompanyMine mine) {
+    public void setMine(RatingCompanyMine mine) throws ParseException {
         _mine = mine;
+        SOURCE.put("mine", mine.getJson());
     }
 
     public RatingCompanyMine getMine() {
         return _mine;
     }
 
-    public RatingCompany mine(RatingCompanyMine mine) {
+    public RatingCompany mine(RatingCompanyMine mine) throws ParseException {
         _mine = mine;
+        SOURCE.put("mine", mine.getJson());
         return this;
     }
 
-    public void setWorkCompleted(Integer workCompleted) {
+    public void setWorkCompleted(Integer workCompleted) throws ParseException {
         _workCompleted = workCompleted;
+        SOURCE.put("work_completed", workCompleted);
     }
 
     public Integer getWorkCompleted() {
         return _workCompleted;
     }
 
-    public RatingCompany workCompleted(Integer workCompleted) {
+    public RatingCompany workCompleted(Integer workCompleted) throws ParseException {
         _workCompleted = workCompleted;
+        SOURCE.put("work_completed", workCompleted);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(RatingCompany[] array) {
+        JsonArray list = new JsonArray();
+        for (RatingCompany item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static RatingCompany[] fromJsonArray(JsonArray array) {
         RatingCompany[] list = new RatingCompany[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class RatingCompany implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(RatingCompany ratingCompany) {
-        try {
-            return Serializer.serializeObject(ratingCompany);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class RatingCompany implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

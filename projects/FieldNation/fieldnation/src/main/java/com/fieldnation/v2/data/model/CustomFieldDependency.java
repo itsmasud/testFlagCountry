@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,45 +29,54 @@ public class CustomFieldDependency implements Parcelable {
     @Json(name = "value")
     private String _value;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CustomFieldDependency() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public CustomFieldDependency id(Integer id) {
+    public CustomFieldDependency id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setOperator(OperatorEnum operator) {
+    public void setOperator(OperatorEnum operator) throws ParseException {
         _operator = operator;
+        SOURCE.put("operator", operator.toString());
     }
 
     public OperatorEnum getOperator() {
         return _operator;
     }
 
-    public CustomFieldDependency operator(OperatorEnum operator) {
+    public CustomFieldDependency operator(OperatorEnum operator) throws ParseException {
         _operator = operator;
+        SOURCE.put("operator", operator.toString());
         return this;
     }
 
-    public void setValue(String value) {
+    public void setValue(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
     }
 
     public String getValue() {
         return _value;
     }
 
-    public CustomFieldDependency value(String value) {
+    public CustomFieldDependency value(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
         return this;
     }
 
@@ -98,6 +110,14 @@ public class CustomFieldDependency implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CustomFieldDependency[] array) {
+        JsonArray list = new JsonArray();
+        for (CustomFieldDependency item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CustomFieldDependency[] fromJsonArray(JsonArray array) {
         CustomFieldDependency[] list = new CustomFieldDependency[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -115,17 +135,8 @@ public class CustomFieldDependency implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CustomFieldDependency customFieldDependency) {
-        try {
-            return Serializer.serializeObject(customFieldDependency);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -156,6 +167,6 @@ public class CustomFieldDependency implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

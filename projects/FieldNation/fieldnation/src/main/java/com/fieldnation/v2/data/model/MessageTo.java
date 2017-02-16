@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class MessageTo implements Parcelable {
     @Json(name = "thumbnail")
     private String _thumbnail;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public MessageTo() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public MessageTo id(Integer id) {
+    public MessageTo id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public MessageTo name(String name) {
+    public MessageTo name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public MessageTo role(String role) {
+    public MessageTo role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
-    public void setThumbnail(String thumbnail) {
+    public void setThumbnail(String thumbnail) throws ParseException {
         _thumbnail = thumbnail;
+        SOURCE.put("thumbnail", thumbnail);
     }
 
     public String getThumbnail() {
         return _thumbnail;
     }
 
-    public MessageTo thumbnail(String thumbnail) {
+    public MessageTo thumbnail(String thumbnail) throws ParseException {
         _thumbnail = thumbnail;
+        SOURCE.put("thumbnail", thumbnail);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(MessageTo[] array) {
+        JsonArray list = new JsonArray();
+        for (MessageTo item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static MessageTo[] fromJsonArray(JsonArray array) {
         MessageTo[] list = new MessageTo[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class MessageTo implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(MessageTo messageTo) {
-        try {
-            return Serializer.serializeObject(messageTo);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class MessageTo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

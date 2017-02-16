@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class Local implements Parcelable {
     @Json(name = "time")
     private String _time;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Local() {
     }
 
-    public void setDate(String date) {
+    public void setDate(String date) throws ParseException {
         _date = date;
+        SOURCE.put("date", date);
     }
 
     public String getDate() {
         return _date;
     }
 
-    public Local date(String date) {
+    public Local date(String date) throws ParseException {
         _date = date;
+        SOURCE.put("date", date);
         return this;
     }
 
-    public void setTime(String time) {
+    public void setTime(String time) throws ParseException {
         _time = time;
+        SOURCE.put("time", time);
     }
 
     public String getTime() {
         return _time;
     }
 
-    public Local time(String time) {
+    public Local time(String time) throws ParseException {
         _time = time;
+        SOURCE.put("time", time);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Local[] array) {
+        JsonArray list = new JsonArray();
+        for (Local item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Local[] fromJsonArray(JsonArray array) {
         Local[] list = new Local[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class Local implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Local local) {
-        try {
-            return Serializer.serializeObject(local);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class Local implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

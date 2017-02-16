@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -44,129 +47,158 @@ public class Manager implements Parcelable {
     @Json(name = "review_period_days")
     private Integer _reviewPeriodDays;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Manager() {
     }
 
-    public void setApprovalDays(Integer approvalDays) {
+    public void setApprovalDays(Integer approvalDays) throws ParseException {
         _approvalDays = approvalDays;
+        SOURCE.put("approval_days", approvalDays);
     }
 
     public Integer getApprovalDays() {
         return _approvalDays;
     }
 
-    public Manager approvalDays(Integer approvalDays) {
+    public Manager approvalDays(Integer approvalDays) throws ParseException {
         _approvalDays = approvalDays;
+        SOURCE.put("approval_days", approvalDays);
         return this;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email) throws ParseException {
         _email = email;
+        SOURCE.put("email", email);
     }
 
     public String getEmail() {
         return _email;
     }
 
-    public Manager email(String email) {
+    public Manager email(String email) throws ParseException {
         _email = email;
+        SOURCE.put("email", email);
         return this;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName) throws ParseException {
         _firstName = firstName;
+        SOURCE.put("first_name", firstName);
     }
 
     public String getFirstName() {
         return _firstName;
     }
 
-    public Manager firstName(String firstName) {
+    public Manager firstName(String firstName) throws ParseException {
         _firstName = firstName;
+        SOURCE.put("first_name", firstName);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Manager id(Integer id) {
+    public Manager id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName) throws ParseException {
         _lastName = lastName;
+        SOURCE.put("last_name", lastName);
     }
 
     public String getLastName() {
         return _lastName;
     }
 
-    public Manager lastName(String lastName) {
+    public Manager lastName(String lastName) throws ParseException {
         _lastName = lastName;
+        SOURCE.put("last_name", lastName);
         return this;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(String phone) throws ParseException {
         _phone = phone;
+        SOURCE.put("phone", phone);
     }
 
     public String getPhone() {
         return _phone;
     }
 
-    public Manager phone(String phone) {
+    public Manager phone(String phone) throws ParseException {
         _phone = phone;
+        SOURCE.put("phone", phone);
         return this;
     }
 
-    public void setRating(Double rating) {
+    public void setRating(Double rating) throws ParseException {
         _rating = rating;
+        SOURCE.put("rating", rating);
     }
 
     public Double getRating() {
         return _rating;
     }
 
-    public Manager rating(Double rating) {
+    public Manager rating(Double rating) throws ParseException {
         _rating = rating;
+        SOURCE.put("rating", rating);
         return this;
     }
 
-    public void setRatings(Double ratings) {
+    public void setRatings(Double ratings) throws ParseException {
         _ratings = ratings;
+        SOURCE.put("ratings", ratings);
     }
 
     public Double getRatings() {
         return _ratings;
     }
 
-    public Manager ratings(Double ratings) {
+    public Manager ratings(Double ratings) throws ParseException {
         _ratings = ratings;
+        SOURCE.put("ratings", ratings);
         return this;
     }
 
-    public void setReviewPeriodDays(Integer reviewPeriodDays) {
+    public void setReviewPeriodDays(Integer reviewPeriodDays) throws ParseException {
         _reviewPeriodDays = reviewPeriodDays;
+        SOURCE.put("review_period_days", reviewPeriodDays);
     }
 
     public Integer getReviewPeriodDays() {
         return _reviewPeriodDays;
     }
 
-    public Manager reviewPeriodDays(Integer reviewPeriodDays) {
+    public Manager reviewPeriodDays(Integer reviewPeriodDays) throws ParseException {
         _reviewPeriodDays = reviewPeriodDays;
+        SOURCE.put("review_period_days", reviewPeriodDays);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Manager[] array) {
+        JsonArray list = new JsonArray();
+        for (Manager item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Manager[] fromJsonArray(JsonArray array) {
         Manager[] list = new Manager[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -184,17 +216,8 @@ public class Manager implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Manager manager) {
-        try {
-            return Serializer.serializeObject(manager);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -225,6 +248,6 @@ public class Manager implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

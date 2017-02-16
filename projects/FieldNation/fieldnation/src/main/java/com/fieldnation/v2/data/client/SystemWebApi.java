@@ -63,7 +63,7 @@ public class SystemWebApi extends TopicClient {
                     .urlParams("?path=" + path + "&event=" + event);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
@@ -107,7 +107,7 @@ public class SystemWebApi extends TopicClient {
                     .urlParams("?path=" + path + "&event=" + event + "&async=" + async);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")

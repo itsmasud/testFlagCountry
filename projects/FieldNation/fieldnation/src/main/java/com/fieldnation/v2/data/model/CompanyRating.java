@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class CompanyRating implements Parcelable {
     @Json(name = "rating")
     private CompanyRatingRating _rating;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CompanyRating() {
     }
 
-    public void setRating(CompanyRatingRating rating) {
+    public void setRating(CompanyRatingRating rating) throws ParseException {
         _rating = rating;
+        SOURCE.put("rating", rating.getJson());
     }
 
     public CompanyRatingRating getRating() {
         return _rating;
     }
 
-    public CompanyRating rating(CompanyRatingRating rating) {
+    public CompanyRating rating(CompanyRatingRating rating) throws ParseException {
         _rating = rating;
+        SOURCE.put("rating", rating.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CompanyRating[] array) {
+        JsonArray list = new JsonArray();
+        for (CompanyRating item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CompanyRating[] fromJsonArray(JsonArray array) {
         CompanyRating[] list = new CompanyRating[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class CompanyRating implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CompanyRating companyRating) {
-        try {
-            return Serializer.serializeObject(companyRating);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class CompanyRating implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

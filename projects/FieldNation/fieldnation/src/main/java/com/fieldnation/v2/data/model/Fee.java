@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,71 +35,84 @@ public class Fee implements Parcelable {
     @Json(name = "modifier")
     private Double _modifier;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Fee() {
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
     }
 
     public Double getAmount() {
         return _amount;
     }
 
-    public Fee amount(Double amount) {
+    public Fee amount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
         return this;
     }
 
-    public void setCalculation(CalculationEnum calculation) {
+    public void setCalculation(CalculationEnum calculation) throws ParseException {
         _calculation = calculation;
+        SOURCE.put("calculation", calculation.toString());
     }
 
     public CalculationEnum getCalculation() {
         return _calculation;
     }
 
-    public Fee calculation(CalculationEnum calculation) {
+    public Fee calculation(CalculationEnum calculation) throws ParseException {
         _calculation = calculation;
+        SOURCE.put("calculation", calculation.toString());
         return this;
     }
 
-    public void setCharged(Boolean charged) {
+    public void setCharged(Boolean charged) throws ParseException {
         _charged = charged;
+        SOURCE.put("charged", charged);
     }
 
     public Boolean getCharged() {
         return _charged;
     }
 
-    public Fee charged(Boolean charged) {
+    public Fee charged(Boolean charged) throws ParseException {
         _charged = charged;
+        SOURCE.put("charged", charged);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Fee id(Integer id) {
+    public Fee id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setModifier(Double modifier) {
+    public void setModifier(Double modifier) throws ParseException {
         _modifier = modifier;
+        SOURCE.put("modifier", modifier);
     }
 
     public Double getModifier() {
         return _modifier;
     }
 
-    public Fee modifier(Double modifier) {
+    public Fee modifier(Double modifier) throws ParseException {
         _modifier = modifier;
+        SOURCE.put("modifier", modifier);
         return this;
     }
 
@@ -124,6 +140,14 @@ public class Fee implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Fee[] array) {
+        JsonArray list = new JsonArray();
+        for (Fee item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Fee[] fromJsonArray(JsonArray array) {
         Fee[] list = new Fee[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -141,17 +165,8 @@ public class Fee implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Fee fee) {
-        try {
-            return Serializer.serializeObject(fee);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -182,6 +197,6 @@ public class Fee implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

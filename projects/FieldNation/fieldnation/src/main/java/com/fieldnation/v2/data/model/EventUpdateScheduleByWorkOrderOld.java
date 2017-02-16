@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class EventUpdateScheduleByWorkOrderOld implements Parcelable {
     @Json(name = "time_zone")
     private String _timeZone;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public EventUpdateScheduleByWorkOrderOld() {
     }
 
-    public void setEnd(String end) {
+    public void setEnd(String end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end);
     }
 
     public String getEnd() {
         return _end;
     }
 
-    public EventUpdateScheduleByWorkOrderOld end(String end) {
+    public EventUpdateScheduleByWorkOrderOld end(String end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end);
         return this;
     }
 
-    public void setMode(String mode) {
+    public void setMode(String mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode);
     }
 
     public String getMode() {
         return _mode;
     }
 
-    public EventUpdateScheduleByWorkOrderOld mode(String mode) {
+    public EventUpdateScheduleByWorkOrderOld mode(String mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode);
         return this;
     }
 
-    public void setStart(String start) {
+    public void setStart(String start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start);
     }
 
     public String getStart() {
         return _start;
     }
 
-    public EventUpdateScheduleByWorkOrderOld start(String start) {
+    public EventUpdateScheduleByWorkOrderOld start(String start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start);
         return this;
     }
 
-    public void setTimeZone(String timeZone) {
+    public void setTimeZone(String timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone);
     }
 
     public String getTimeZone() {
         return _timeZone;
     }
 
-    public EventUpdateScheduleByWorkOrderOld timeZone(String timeZone) {
+    public EventUpdateScheduleByWorkOrderOld timeZone(String timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(EventUpdateScheduleByWorkOrderOld[] array) {
+        JsonArray list = new JsonArray();
+        for (EventUpdateScheduleByWorkOrderOld item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static EventUpdateScheduleByWorkOrderOld[] fromJsonArray(JsonArray array) {
         EventUpdateScheduleByWorkOrderOld[] list = new EventUpdateScheduleByWorkOrderOld[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class EventUpdateScheduleByWorkOrderOld implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(EventUpdateScheduleByWorkOrderOld eventUpdateScheduleByWorkOrderOld) {
-        try {
-            return Serializer.serializeObject(eventUpdateScheduleByWorkOrderOld);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class EventUpdateScheduleByWorkOrderOld implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

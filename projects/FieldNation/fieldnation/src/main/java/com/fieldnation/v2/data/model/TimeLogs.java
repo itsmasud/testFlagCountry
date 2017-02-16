@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -50,149 +53,182 @@ public class TimeLogs implements Parcelable {
     @Json(name = "time_zone")
     private TimeZone _timeZone;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public TimeLogs() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public TimeLogs actions(ActionsEnum[] actions) {
+    public TimeLogs actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setConfirmed(Date confirmed) {
+    public void setConfirmed(Date confirmed) throws ParseException {
         _confirmed = confirmed;
+        SOURCE.put("confirmed", confirmed.getJson());
     }
 
     public Date getConfirmed() {
         return _confirmed;
     }
 
-    public TimeLogs confirmed(Date confirmed) {
+    public TimeLogs confirmed(Date confirmed) throws ParseException {
         _confirmed = confirmed;
+        SOURCE.put("confirmed", confirmed.getJson());
         return this;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
     }
 
     public String getCorrelationId() {
         return _correlationId;
     }
 
-    public TimeLogs correlationId(String correlationId) {
+    public TimeLogs correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
-    public void setHours(Double hours) {
+    public void setHours(Double hours) throws ParseException {
         _hours = hours;
+        SOURCE.put("hours", hours);
     }
 
     public Double getHours() {
         return _hours;
     }
 
-    public TimeLogs hours(Double hours) {
+    public TimeLogs hours(Double hours) throws ParseException {
         _hours = hours;
+        SOURCE.put("hours", hours);
         return this;
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public TimeLogs metadata(ListEnvelope metadata) {
+    public TimeLogs metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setOnmyway(OnMyWay onmyway) {
+    public void setOnmyway(OnMyWay onmyway) throws ParseException {
         _onmyway = onmyway;
+        SOURCE.put("onmyway", onmyway.getJson());
     }
 
     public OnMyWay getOnmyway() {
         return _onmyway;
     }
 
-    public TimeLogs onmyway(OnMyWay onmyway) {
+    public TimeLogs onmyway(OnMyWay onmyway) throws ParseException {
         _onmyway = onmyway;
+        SOURCE.put("onmyway", onmyway.getJson());
         return this;
     }
 
-    public void setOpenTimeLog(TimeLog openTimeLog) {
+    public void setOpenTimeLog(TimeLog openTimeLog) throws ParseException {
         _openTimeLog = openTimeLog;
+        SOURCE.put("open_time_log", openTimeLog.getJson());
     }
 
     public TimeLog getOpenTimeLog() {
         return _openTimeLog;
     }
 
-    public TimeLogs openTimeLog(TimeLog openTimeLog) {
+    public TimeLogs openTimeLog(TimeLog openTimeLog) throws ParseException {
         _openTimeLog = openTimeLog;
+        SOURCE.put("open_time_log", openTimeLog.getJson());
         return this;
     }
 
-    public void setResults(TimeLog[] results) {
+    public void setResults(TimeLog[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", TimeLog.toJsonArray(results));
     }
 
     public TimeLog[] getResults() {
         return _results;
     }
 
-    public TimeLogs results(TimeLog[] results) {
+    public TimeLogs results(TimeLog[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", TimeLog.toJsonArray(results), true);
         return this;
     }
 
-    public void setShouldVerify(Boolean shouldVerify) {
+    public void setShouldVerify(Boolean shouldVerify) throws ParseException {
         _shouldVerify = shouldVerify;
+        SOURCE.put("should_verify", shouldVerify);
     }
 
     public Boolean getShouldVerify() {
         return _shouldVerify;
     }
 
-    public TimeLogs shouldVerify(Boolean shouldVerify) {
+    public TimeLogs shouldVerify(Boolean shouldVerify) throws ParseException {
         _shouldVerify = shouldVerify;
+        SOURCE.put("should_verify", shouldVerify);
         return this;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status);
     }
 
     public String getStatus() {
         return _status;
     }
 
-    public TimeLogs status(String status) {
+    public TimeLogs status(String status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status);
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
     }
 
     public TimeZone getTimeZone() {
         return _timeZone;
     }
 
-    public TimeLogs timeZone(TimeZone timeZone) {
+    public TimeLogs timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
         return this;
     }
 
@@ -220,6 +256,14 @@ public class TimeLogs implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(TimeLogs[] array) {
+        JsonArray list = new JsonArray();
+        for (TimeLogs item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static TimeLogs[] fromJsonArray(JsonArray array) {
         TimeLogs[] list = new TimeLogs[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -237,17 +281,8 @@ public class TimeLogs implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(TimeLogs timeLogs) {
-        try {
-            return Serializer.serializeObject(timeLogs);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -278,6 +313,6 @@ public class TimeLogs implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

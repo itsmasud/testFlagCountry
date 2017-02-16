@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class UpdateModel implements Parcelable {
     @Json(name = "version")
     private String _version;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UpdateModel() {
     }
 
-    public void setMetadata(UpdateModelMetadata metadata) {
+    public void setMetadata(UpdateModelMetadata metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public UpdateModelMetadata getMetadata() {
         return _metadata;
     }
 
-    public UpdateModel metadata(UpdateModelMetadata metadata) {
+    public UpdateModel metadata(UpdateModelMetadata metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setParams(UpdateModelParams params) {
+    public void setParams(UpdateModelParams params) throws ParseException {
         _params = params;
+        SOURCE.put("params", params.getJson());
     }
 
     public UpdateModelParams getParams() {
         return _params;
     }
 
-    public UpdateModel params(UpdateModelParams params) {
+    public UpdateModel params(UpdateModelParams params) throws ParseException {
         _params = params;
+        SOURCE.put("params", params.getJson());
         return this;
     }
 
-    public void setServiceName(String serviceName) {
+    public void setServiceName(String serviceName) throws ParseException {
         _serviceName = serviceName;
+        SOURCE.put("service_name", serviceName);
     }
 
     public String getServiceName() {
         return _serviceName;
     }
 
-    public UpdateModel serviceName(String serviceName) {
+    public UpdateModel serviceName(String serviceName) throws ParseException {
         _serviceName = serviceName;
+        SOURCE.put("service_name", serviceName);
         return this;
     }
 
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(String timestamp) throws ParseException {
         _timestamp = timestamp;
+        SOURCE.put("timestamp", timestamp);
     }
 
     public String getTimestamp() {
         return _timestamp;
     }
 
-    public UpdateModel timestamp(String timestamp) {
+    public UpdateModel timestamp(String timestamp) throws ParseException {
         _timestamp = timestamp;
+        SOURCE.put("timestamp", timestamp);
         return this;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(String version) throws ParseException {
         _version = version;
+        SOURCE.put("version", version);
     }
 
     public String getVersion() {
         return _version;
     }
 
-    public UpdateModel version(String version) {
+    public UpdateModel version(String version) throws ParseException {
         _version = version;
+        SOURCE.put("version", version);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UpdateModel[] array) {
+        JsonArray list = new JsonArray();
+        for (UpdateModel item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UpdateModel[] fromJsonArray(JsonArray array) {
         UpdateModel[] list = new UpdateModel[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class UpdateModel implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UpdateModel updateModel) {
-        try {
-            return Serializer.serializeObject(updateModel);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class UpdateModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class Satisfaction implements Parcelable {
     @Json(name = "total_ratings")
     private Integer _totalRatings;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Satisfaction() {
     }
 
-    public void setAverageDaysToApproval(Integer averageDaysToApproval) {
+    public void setAverageDaysToApproval(Integer averageDaysToApproval) throws ParseException {
         _averageDaysToApproval = averageDaysToApproval;
+        SOURCE.put("average_days_to_approval", averageDaysToApproval);
     }
 
     public Integer getAverageDaysToApproval() {
         return _averageDaysToApproval;
     }
 
-    public Satisfaction averageDaysToApproval(Integer averageDaysToApproval) {
+    public Satisfaction averageDaysToApproval(Integer averageDaysToApproval) throws ParseException {
         _averageDaysToApproval = averageDaysToApproval;
+        SOURCE.put("average_days_to_approval", averageDaysToApproval);
         return this;
     }
 
-    public void setClearExpectation(Integer clearExpectation) {
+    public void setClearExpectation(Integer clearExpectation) throws ParseException {
         _clearExpectation = clearExpectation;
+        SOURCE.put("clear_expectation", clearExpectation);
     }
 
     public Integer getClearExpectation() {
         return _clearExpectation;
     }
 
-    public Satisfaction clearExpectation(Integer clearExpectation) {
+    public Satisfaction clearExpectation(Integer clearExpectation) throws ParseException {
         _clearExpectation = clearExpectation;
+        SOURCE.put("clear_expectation", clearExpectation);
         return this;
     }
 
-    public void setRespectRating(Integer respectRating) {
+    public void setRespectRating(Integer respectRating) throws ParseException {
         _respectRating = respectRating;
+        SOURCE.put("respect_rating", respectRating);
     }
 
     public Integer getRespectRating() {
         return _respectRating;
     }
 
-    public Satisfaction respectRating(Integer respectRating) {
+    public Satisfaction respectRating(Integer respectRating) throws ParseException {
         _respectRating = respectRating;
+        SOURCE.put("respect_rating", respectRating);
         return this;
     }
 
-    public void setStars(Double stars) {
+    public void setStars(Double stars) throws ParseException {
         _stars = stars;
+        SOURCE.put("stars", stars);
     }
 
     public Double getStars() {
         return _stars;
     }
 
-    public Satisfaction stars(Double stars) {
+    public Satisfaction stars(Double stars) throws ParseException {
         _stars = stars;
+        SOURCE.put("stars", stars);
         return this;
     }
 
-    public void setTotalRatings(Integer totalRatings) {
+    public void setTotalRatings(Integer totalRatings) throws ParseException {
         _totalRatings = totalRatings;
+        SOURCE.put("total_ratings", totalRatings);
     }
 
     public Integer getTotalRatings() {
         return _totalRatings;
     }
 
-    public Satisfaction totalRatings(Integer totalRatings) {
+    public Satisfaction totalRatings(Integer totalRatings) throws ParseException {
         _totalRatings = totalRatings;
+        SOURCE.put("total_ratings", totalRatings);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Satisfaction[] array) {
+        JsonArray list = new JsonArray();
+        for (Satisfaction item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Satisfaction[] fromJsonArray(JsonArray array) {
         Satisfaction[] list = new Satisfaction[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class Satisfaction implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Satisfaction satisfaction) {
-        try {
-            return Serializer.serializeObject(satisfaction);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class Satisfaction implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

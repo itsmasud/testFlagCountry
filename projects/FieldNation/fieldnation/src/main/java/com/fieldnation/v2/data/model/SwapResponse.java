@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class SwapResponse implements Parcelable {
     @Json(name = "success")
     private Boolean _success;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public SwapResponse() {
     }
 
-    public void setSuccess(Boolean success) {
+    public void setSuccess(Boolean success) throws ParseException {
         _success = success;
+        SOURCE.put("success", success);
     }
 
     public Boolean getSuccess() {
         return _success;
     }
 
-    public SwapResponse success(Boolean success) {
+    public SwapResponse success(Boolean success) throws ParseException {
         _success = success;
+        SOURCE.put("success", success);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(SwapResponse[] array) {
+        JsonArray list = new JsonArray();
+        for (SwapResponse item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static SwapResponse[] fromJsonArray(JsonArray array) {
         SwapResponse[] list = new SwapResponse[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class SwapResponse implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(SwapResponse swapResponse) {
-        try {
-            return Serializer.serializeObject(swapResponse);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class SwapResponse implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,61 @@ public class LocationValidation implements Parcelable {
     @Json(name = "messages")
     private String[] _messages;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public LocationValidation() {
     }
 
-    public void setIsValid(Boolean isValid) {
+    public void setIsValid(Boolean isValid) throws ParseException {
         _isValid = isValid;
+        SOURCE.put("is_valid", isValid);
     }
 
     public Boolean getIsValid() {
         return _isValid;
     }
 
-    public LocationValidation isValid(Boolean isValid) {
+    public LocationValidation isValid(Boolean isValid) throws ParseException {
         _isValid = isValid;
+        SOURCE.put("is_valid", isValid);
         return this;
     }
 
-    public void setMessages(String[] messages) {
+    public void setMessages(String[] messages) throws ParseException {
         _messages = messages;
+        JsonArray ja = new JsonArray();
+        for (String item : messages) {
+            ja.add(item);
+        }
+        SOURCE.put("messages", ja);
     }
 
     public String[] getMessages() {
         return _messages;
     }
 
-    public LocationValidation messages(String[] messages) {
+    public LocationValidation messages(String[] messages) throws ParseException {
         _messages = messages;
+        JsonArray ja = new JsonArray();
+        for (String item : messages) {
+            ja.add(item);
+        }
+        SOURCE.put("messages", ja, true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(LocationValidation[] array) {
+        JsonArray list = new JsonArray();
+        for (LocationValidation item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static LocationValidation[] fromJsonArray(JsonArray array) {
         LocationValidation[] list = new LocationValidation[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +98,8 @@ public class LocationValidation implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(LocationValidation locationValidation) {
-        try {
-            return Serializer.serializeObject(locationValidation);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +130,6 @@ public class LocationValidation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

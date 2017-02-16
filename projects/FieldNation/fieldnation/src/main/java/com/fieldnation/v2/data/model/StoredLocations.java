@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,71 +35,92 @@ public class StoredLocations implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public StoredLocations() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public StoredLocations actions(ActionsEnum[] actions) {
+    public StoredLocations actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setMode(ModeEnum mode) {
+    public void setMode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
     }
 
     public ModeEnum getMode() {
         return _mode;
     }
 
-    public StoredLocations mode(ModeEnum mode) {
+    public StoredLocations mode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
         return this;
     }
 
-    public void setResults(Location[] results) {
+    public void setResults(Location[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Location.toJsonArray(results));
     }
 
     public Location[] getResults() {
         return _results;
     }
 
-    public StoredLocations results(Location[] results) {
+    public StoredLocations results(Location[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Location.toJsonArray(results), true);
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public StoredLocations role(String role) {
+    public StoredLocations role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public StoredLocations workOrderId(Integer workOrderId) {
+    public StoredLocations workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
@@ -142,6 +166,14 @@ public class StoredLocations implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(StoredLocations[] array) {
+        JsonArray list = new JsonArray();
+        for (StoredLocations item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static StoredLocations[] fromJsonArray(JsonArray array) {
         StoredLocations[] list = new StoredLocations[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -159,17 +191,8 @@ public class StoredLocations implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(StoredLocations storedLocations) {
-        try {
-            return Serializer.serializeObject(storedLocations);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -200,6 +223,6 @@ public class StoredLocations implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class Cancellation implements Parcelable {
     @Json(name = "notes")
     private String _notes;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Cancellation() {
     }
 
-    public void setCancelReason(Integer cancelReason) {
+    public void setCancelReason(Integer cancelReason) throws ParseException {
         _cancelReason = cancelReason;
+        SOURCE.put("cancel_reason", cancelReason);
     }
 
     public Integer getCancelReason() {
         return _cancelReason;
     }
 
-    public Cancellation cancelReason(Integer cancelReason) {
+    public Cancellation cancelReason(Integer cancelReason) throws ParseException {
         _cancelReason = cancelReason;
+        SOURCE.put("cancel_reason", cancelReason);
         return this;
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
     }
 
     public String getNotes() {
         return _notes;
     }
 
-    public Cancellation notes(String notes) {
+    public Cancellation notes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Cancellation[] array) {
+        JsonArray list = new JsonArray();
+        for (Cancellation item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Cancellation[] fromJsonArray(JsonArray array) {
         Cancellation[] list = new Cancellation[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class Cancellation implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Cancellation cancellation) {
-        try {
-            return Serializer.serializeObject(cancellation);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class Cancellation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

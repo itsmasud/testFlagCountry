@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class PayRange implements Parcelable {
     @Json(name = "min")
     private Double _min;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayRange() {
     }
 
-    public void setMax(Double max) {
+    public void setMax(Double max) throws ParseException {
         _max = max;
+        SOURCE.put("max", max);
     }
 
     public Double getMax() {
         return _max;
     }
 
-    public PayRange max(Double max) {
+    public PayRange max(Double max) throws ParseException {
         _max = max;
+        SOURCE.put("max", max);
         return this;
     }
 
-    public void setMin(Double min) {
+    public void setMin(Double min) throws ParseException {
         _min = min;
+        SOURCE.put("min", min);
     }
 
     public Double getMin() {
         return _min;
     }
 
-    public PayRange min(Double min) {
+    public PayRange min(Double min) throws ParseException {
         _min = min;
+        SOURCE.put("min", min);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayRange[] array) {
+        JsonArray list = new JsonArray();
+        for (PayRange item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayRange[] fromJsonArray(JsonArray array) {
         PayRange[] list = new PayRange[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class PayRange implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayRange payRange) {
-        try {
-            return Serializer.serializeObject(payRange);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class PayRange implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

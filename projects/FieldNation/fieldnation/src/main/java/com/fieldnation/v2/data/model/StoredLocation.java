@@ -5,10 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -74,253 +76,302 @@ public class StoredLocation implements Parcelable {
     @Json(name = "zip")
     private String _zip;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public StoredLocation() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public StoredLocation actions(ActionsEnum[] actions) {
+    public StoredLocation actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(Boolean active) throws ParseException {
         _active = active;
+        SOURCE.put("active", active);
     }
 
     public Boolean getActive() {
         return _active;
     }
 
-    public StoredLocation active(Boolean active) {
+    public StoredLocation active(Boolean active) throws ParseException {
         _active = active;
+        SOURCE.put("active", active);
         return this;
     }
 
-    public void setAddress1(String address1) {
+    public void setAddress1(String address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1);
     }
 
     public String getAddress1() {
         return _address1;
     }
 
-    public StoredLocation address1(String address1) {
+    public StoredLocation address1(String address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1);
         return this;
     }
 
-    public void setAddress2(String address2) {
+    public void setAddress2(String address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2);
     }
 
     public String getAddress2() {
         return _address2;
     }
 
-    public StoredLocation address2(String address2) {
+    public StoredLocation address2(String address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2);
         return this;
     }
 
-    public void setAttributes(LocationAttribute[] attributes) {
+    public void setAttributes(LocationAttribute[] attributes) throws ParseException {
         _attributes = attributes;
+        SOURCE.put("attributes", LocationAttribute.toJsonArray(attributes));
     }
 
     public LocationAttribute[] getAttributes() {
         return _attributes;
     }
 
-    public StoredLocation attributes(LocationAttribute[] attributes) {
+    public StoredLocation attributes(LocationAttribute[] attributes) throws ParseException {
         _attributes = attributes;
+        SOURCE.put("attributes", LocationAttribute.toJsonArray(attributes), true);
         return this;
     }
 
-    public void setCity(String city) {
+    public void setCity(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
     }
 
     public String getCity() {
         return _city;
     }
 
-    public StoredLocation city(String city) {
+    public StoredLocation city(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
         return this;
     }
 
-    public void setClient(Company client) {
+    public void setClient(Company client) throws ParseException {
         _client = client;
+        SOURCE.put("client", client.getJson());
     }
 
     public Company getClient() {
         return _client;
     }
 
-    public StoredLocation client(Company client) {
+    public StoredLocation client(Company client) throws ParseException {
         _client = client;
+        SOURCE.put("client", client.getJson());
         return this;
     }
 
-    public void setCompany(Company company) {
+    public void setCompany(Company company) throws ParseException {
         _company = company;
+        SOURCE.put("company", company.getJson());
     }
 
     public Company getCompany() {
         return _company;
     }
 
-    public StoredLocation company(Company company) {
+    public StoredLocation company(Company company) throws ParseException {
         _company = company;
+        SOURCE.put("company", company.getJson());
         return this;
     }
 
-    public void setContact(Contact contact) {
+    public void setContact(Contact contact) throws ParseException {
         _contact = contact;
+        SOURCE.put("contact", contact.getJson());
     }
 
     public Contact getContact() {
         return _contact;
     }
 
-    public StoredLocation contact(Contact contact) {
+    public StoredLocation contact(Contact contact) throws ParseException {
         _contact = contact;
+        SOURCE.put("contact", contact.getJson());
         return this;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
     }
 
     public String getCountry() {
         return _country;
     }
 
-    public StoredLocation country(String country) {
+    public StoredLocation country(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
         return this;
     }
 
-    public void setGeo(Coords geo) {
+    public void setGeo(Coords geo) throws ParseException {
         _geo = geo;
+        SOURCE.put("geo", geo.getJson());
     }
 
     public Coords getGeo() {
         return _geo;
     }
 
-    public StoredLocation geo(Coords geo) {
+    public StoredLocation geo(Coords geo) throws ParseException {
         _geo = geo;
+        SOURCE.put("geo", geo.getJson());
         return this;
     }
 
-    public void setGroup(LocationGroup group) {
+    public void setGroup(LocationGroup group) throws ParseException {
         _group = group;
+        SOURCE.put("group", group.getJson());
     }
 
     public LocationGroup getGroup() {
         return _group;
     }
 
-    public StoredLocation group(LocationGroup group) {
+    public StoredLocation group(LocationGroup group) throws ParseException {
         _group = group;
+        SOURCE.put("group", group.getJson());
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public StoredLocation id(Integer id) {
+    public StoredLocation id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public StoredLocation name(String name) {
+    public StoredLocation name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setNotes(LocationNote[] notes) {
+    public void setNotes(LocationNote[] notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", LocationNote.toJsonArray(notes));
     }
 
     public LocationNote[] getNotes() {
         return _notes;
     }
 
-    public StoredLocation notes(LocationNote[] notes) {
+    public StoredLocation notes(LocationNote[] notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", LocationNote.toJsonArray(notes));
         return this;
     }
 
-    public void setState(String state) {
+    public void setState(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
     }
 
     public String getState() {
         return _state;
     }
 
-    public StoredLocation state(String state) {
+    public StoredLocation state(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
     }
 
     public TimeZone getTimeZone() {
         return _timeZone;
     }
 
-    public StoredLocation timeZone(TimeZone timeZone) {
+    public StoredLocation timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
         return this;
     }
 
-    public void setType(LocationType type) {
+    public void setType(LocationType type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.getJson());
     }
 
     public LocationType getType() {
         return _type;
     }
 
-    public StoredLocation type(LocationType type) {
+    public StoredLocation type(LocationType type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.getJson());
         return this;
     }
 
-    public void setZip(String zip) {
+    public void setZip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
     }
 
     public String getZip() {
         return _zip;
     }
 
-    public StoredLocation zip(String zip) {
+    public StoredLocation zip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
         return this;
     }
 
@@ -346,6 +397,14 @@ public class StoredLocation implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(StoredLocation[] array) {
+        JsonArray list = new JsonArray();
+        for (StoredLocation item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static StoredLocation[] fromJsonArray(JsonArray array) {
         StoredLocation[] list = new StoredLocation[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -363,17 +422,8 @@ public class StoredLocation implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(StoredLocation storedLocation) {
-        try {
-            return Serializer.serializeObject(storedLocation);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -404,6 +454,6 @@ public class StoredLocation implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

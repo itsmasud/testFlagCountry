@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class ProfileAndWorkHistory implements Parcelable {
     @Json(name = "rating")
     private ProfileAndWorkHistoryRating _rating;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ProfileAndWorkHistory() {
     }
 
-    public void setRating(ProfileAndWorkHistoryRating rating) {
+    public void setRating(ProfileAndWorkHistoryRating rating) throws ParseException {
         _rating = rating;
+        SOURCE.put("rating", rating.getJson());
     }
 
     public ProfileAndWorkHistoryRating getRating() {
         return _rating;
     }
 
-    public ProfileAndWorkHistory rating(ProfileAndWorkHistoryRating rating) {
+    public ProfileAndWorkHistory rating(ProfileAndWorkHistoryRating rating) throws ParseException {
         _rating = rating;
+        SOURCE.put("rating", rating.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ProfileAndWorkHistory[] array) {
+        JsonArray list = new JsonArray();
+        for (ProfileAndWorkHistory item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ProfileAndWorkHistory[] fromJsonArray(JsonArray array) {
         ProfileAndWorkHistory[] list = new ProfileAndWorkHistory[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class ProfileAndWorkHistory implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ProfileAndWorkHistory profileAndWorkHistory) {
-        try {
-            return Serializer.serializeObject(profileAndWorkHistory);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class ProfileAndWorkHistory implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

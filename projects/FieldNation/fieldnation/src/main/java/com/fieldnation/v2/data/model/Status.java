@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,18 +32,6 @@ public class Status implements Parcelable {
     @Json(name = "display")
     private String _display;
 
-        /*
-1    Created
-2    Published
-3    Assigned
-4    Work Done
-5    Approved
-6    Paid
-7    Cancelled
-8    Postponed
-9    Routed
-10    Deleted
-         */
     @Json(name = "id")
     private Integer _id;
 
@@ -59,142 +50,173 @@ public class Status implements Parcelable {
     @Json(name = "sub_status")
     private String _subStatus;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Status() {
     }
 
-    public void setCode(String code) {
+    public void setCode(String code) throws ParseException {
         _code = code;
+        SOURCE.put("code", code);
     }
 
     public String getCode() {
         return _code;
     }
 
-    public Status code(String code) {
+    public Status code(String code) throws ParseException {
         _code = code;
+        SOURCE.put("code", code);
         return this;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
     }
 
     public String getCorrelationId() {
         return _correlationId;
     }
 
-    public Status correlationId(String correlationId) {
+    public Status correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
-    public void setDelay(Integer delay) {
+    public void setDelay(Integer delay) throws ParseException {
         _delay = delay;
+        SOURCE.put("delay", delay);
     }
 
     public Integer getDelay() {
         return _delay;
     }
 
-    public Status delay(Integer delay) {
+    public Status delay(Integer delay) throws ParseException {
         _delay = delay;
+        SOURCE.put("delay", delay);
         return this;
     }
 
-    public void setDisplay(String display) {
+    public void setDisplay(String display) throws ParseException {
         _display = display;
+        SOURCE.put("display", display);
     }
 
     public String getDisplay() {
         return _display;
     }
 
-    public Status display(String display) {
+    public Status display(String display) throws ParseException {
         _display = display;
+        SOURCE.put("display", display);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Status id(Integer id) {
+    public Status id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setIsRouted(Boolean isRouted) {
+    public void setIsRouted(Boolean isRouted) throws ParseException {
         _isRouted = isRouted;
+        SOURCE.put("is_routed", isRouted);
     }
 
     public Boolean getIsRouted() {
         return _isRouted;
     }
 
-    public Status isRouted(Boolean isRouted) {
+    public Status isRouted(Boolean isRouted) throws ParseException {
         _isRouted = isRouted;
+        SOURCE.put("is_routed", isRouted);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public Status name(String name) {
+    public Status name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setNcns(Boolean ncns) {
+    public void setNcns(Boolean ncns) throws ParseException {
         _ncns = ncns;
+        SOURCE.put("ncns", ncns);
     }
 
     public Boolean getNcns() {
         return _ncns;
     }
 
-    public Status ncns(Boolean ncns) {
+    public Status ncns(Boolean ncns) throws ParseException {
         _ncns = ncns;
+        SOURCE.put("ncns", ncns);
         return this;
     }
 
-    public void setProblemReported(Boolean problemReported) {
+    public void setProblemReported(Boolean problemReported) throws ParseException {
         _problemReported = problemReported;
+        SOURCE.put("problem_reported", problemReported);
     }
 
     public Boolean getProblemReported() {
         return _problemReported;
     }
 
-    public Status problemReported(Boolean problemReported) {
+    public Status problemReported(Boolean problemReported) throws ParseException {
         _problemReported = problemReported;
+        SOURCE.put("problem_reported", problemReported);
         return this;
     }
 
-    public void setSubStatus(String subStatus) {
+    public void setSubStatus(String subStatus) throws ParseException {
         _subStatus = subStatus;
+        SOURCE.put("sub_status", subStatus);
     }
 
     public String getSubStatus() {
         return _subStatus;
     }
 
-    public Status subStatus(String subStatus) {
+    public Status subStatus(String subStatus) throws ParseException {
         _subStatus = subStatus;
+        SOURCE.put("sub_status", subStatus);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Status[] array) {
+        JsonArray list = new JsonArray();
+        for (Status item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Status[] fromJsonArray(JsonArray array) {
         Status[] list = new Status[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -212,17 +234,8 @@ public class Status implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Status status) {
-        try {
-            return Serializer.serializeObject(status);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -253,6 +266,6 @@ public class Status implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

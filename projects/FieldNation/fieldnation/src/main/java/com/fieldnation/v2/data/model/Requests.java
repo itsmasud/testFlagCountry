@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,58 +32,69 @@ public class Requests implements Parcelable {
     @Json(name = "results")
     private TimeLog[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Requests() {
     }
 
-    public void setActions(ActionsEnum actions) {
+    public void setActions(ActionsEnum actions) throws ParseException {
         _actions = actions;
+        SOURCE.put("actions", actions.toString());
     }
 
     public ActionsEnum getActions() {
         return _actions;
     }
 
-    public Requests actions(ActionsEnum actions) {
+    public Requests actions(ActionsEnum actions) throws ParseException {
         _actions = actions;
+        SOURCE.put("actions", actions.toString());
         return this;
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public Requests metadata(ListEnvelope metadata) {
+    public Requests metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setOpenRequest(Request openRequest) {
+    public void setOpenRequest(Request openRequest) throws ParseException {
         _openRequest = openRequest;
+        SOURCE.put("open_request", openRequest.getJson());
     }
 
     public Request getOpenRequest() {
         return _openRequest;
     }
 
-    public Requests openRequest(Request openRequest) {
+    public Requests openRequest(Request openRequest) throws ParseException {
         _openRequest = openRequest;
+        SOURCE.put("open_request", openRequest.getJson());
         return this;
     }
 
-    public void setResults(TimeLog[] results) {
+    public void setResults(TimeLog[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", TimeLog.toJsonArray(results));
     }
 
     public TimeLog[] getResults() {
         return _results;
     }
 
-    public Requests results(TimeLog[] results) {
+    public Requests results(TimeLog[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", TimeLog.toJsonArray(results), true);
         return this;
     }
 
@@ -106,6 +120,14 @@ public class Requests implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Requests[] array) {
+        JsonArray list = new JsonArray();
+        for (Requests item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Requests[] fromJsonArray(JsonArray array) {
         Requests[] list = new Requests[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -123,17 +145,8 @@ public class Requests implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Requests requests) {
-        try {
-            return Serializer.serializeObject(requests);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -164,6 +177,6 @@ public class Requests implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

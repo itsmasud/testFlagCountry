@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -80,279 +83,332 @@ public class Pay implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Pay() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Pay actions(ActionsEnum[] actions) {
+    public Pay actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setAdditional(PayAdditional additional) {
+    public void setAdditional(PayAdditional additional) throws ParseException {
         _additional = additional;
+        SOURCE.put("additional", additional.getJson());
     }
 
     public PayAdditional getAdditional() {
         return _additional;
     }
 
-    public Pay additional(PayAdditional additional) {
+    public Pay additional(PayAdditional additional) throws ParseException {
         _additional = additional;
+        SOURCE.put("additional", additional.getJson());
         return this;
     }
 
-    public void setBase(PayBase base) {
+    public void setBase(PayBase base) throws ParseException {
         _base = base;
+        SOURCE.put("base", base.getJson());
     }
 
     public PayBase getBase() {
         return _base;
     }
 
-    public Pay base(PayBase base) {
+    public Pay base(PayBase base) throws ParseException {
         _base = base;
+        SOURCE.put("base", base.getJson());
         return this;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
     }
 
     public String getCorrelationId() {
         return _correlationId;
     }
 
-    public Pay correlationId(String correlationId) {
+    public Pay correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
-    public void setEstimatedPaymentDate(Date estimatedPaymentDate) {
+    public void setEstimatedPaymentDate(Date estimatedPaymentDate) throws ParseException {
         _estimatedPaymentDate = estimatedPaymentDate;
+        SOURCE.put("estimated_payment_date", estimatedPaymentDate.getJson());
     }
 
     public Date getEstimatedPaymentDate() {
         return _estimatedPaymentDate;
     }
 
-    public Pay estimatedPaymentDate(Date estimatedPaymentDate) {
+    public Pay estimatedPaymentDate(Date estimatedPaymentDate) throws ParseException {
         _estimatedPaymentDate = estimatedPaymentDate;
+        SOURCE.put("estimated_payment_date", estimatedPaymentDate.getJson());
         return this;
     }
 
-    public void setExpenses(Expenses expenses) {
+    public void setExpenses(Expenses expenses) throws ParseException {
         _expenses = expenses;
+        SOURCE.put("expenses", expenses.getJson());
     }
 
     public Expenses getExpenses() {
         return _expenses;
     }
 
-    public Pay expenses(Expenses expenses) {
+    public Pay expenses(Expenses expenses) throws ParseException {
         _expenses = expenses;
+        SOURCE.put("expenses", expenses.getJson());
         return this;
     }
 
-    public void setFees(PayFees fees) {
+    public void setFees(PayFees fees) throws ParseException {
         _fees = fees;
+        SOURCE.put("fees", fees.getJson());
     }
 
     public PayFees getFees() {
         return _fees;
     }
 
-    public Pay fees(PayFees fees) {
+    public Pay fees(PayFees fees) throws ParseException {
         _fees = fees;
+        SOURCE.put("fees", fees.getJson());
         return this;
     }
 
-    public void setFinance(PayFinance finance) {
+    public void setFinance(PayFinance finance) throws ParseException {
         _finance = finance;
+        SOURCE.put("finance", finance.getJson());
     }
 
     public PayFinance getFinance() {
         return _finance;
     }
 
-    public Pay finance(PayFinance finance) {
+    public Pay finance(PayFinance finance) throws ParseException {
         _finance = finance;
+        SOURCE.put("finance", finance.getJson());
         return this;
     }
 
-    public void setHold(Fee hold) {
+    public void setHold(Fee hold) throws ParseException {
         _hold = hold;
+        SOURCE.put("hold", hold.getJson());
     }
 
     public Fee getHold() {
         return _hold;
     }
 
-    public Pay hold(Fee hold) {
+    public Pay hold(Fee hold) throws ParseException {
         _hold = hold;
+        SOURCE.put("hold", hold.getJson());
         return this;
     }
 
-    public void setIncreases(PayIncreases increases) {
+    public void setIncreases(PayIncreases increases) throws ParseException {
         _increases = increases;
+        SOURCE.put("increases", increases.getJson());
     }
 
     public PayIncreases getIncreases() {
         return _increases;
     }
 
-    public Pay increases(PayIncreases increases) {
+    public Pay increases(PayIncreases increases) throws ParseException {
         _increases = increases;
+        SOURCE.put("increases", increases.getJson());
         return this;
     }
 
-    public void setLaborSum(Double laborSum) {
+    public void setLaborSum(Double laborSum) throws ParseException {
         _laborSum = laborSum;
+        SOURCE.put("labor_sum", laborSum);
     }
 
     public Double getLaborSum() {
         return _laborSum;
     }
 
-    public Pay laborSum(Double laborSum) {
+    public Pay laborSum(Double laborSum) throws ParseException {
         _laborSum = laborSum;
+        SOURCE.put("labor_sum", laborSum);
         return this;
     }
 
-    public void setNumberOfDevices(Double numberOfDevices) {
+    public void setNumberOfDevices(Double numberOfDevices) throws ParseException {
         _numberOfDevices = numberOfDevices;
+        SOURCE.put("number_of_devices", numberOfDevices);
     }
 
     public Double getNumberOfDevices() {
         return _numberOfDevices;
     }
 
-    public Pay numberOfDevices(Double numberOfDevices) {
+    public Pay numberOfDevices(Double numberOfDevices) throws ParseException {
         _numberOfDevices = numberOfDevices;
+        SOURCE.put("number_of_devices", numberOfDevices);
         return this;
     }
 
-    public void setPayment(Fee payment) {
+    public void setPayment(Fee payment) throws ParseException {
         _payment = payment;
+        SOURCE.put("payment", payment.getJson());
     }
 
     public Fee getPayment() {
         return _payment;
     }
 
-    public Pay payment(Fee payment) {
+    public Pay payment(Fee payment) throws ParseException {
         _payment = payment;
+        SOURCE.put("payment", payment.getJson());
         return this;
     }
 
-    public void setPricingInsights(PricingInsights pricingInsights) {
+    public void setPricingInsights(PricingInsights pricingInsights) throws ParseException {
         _pricingInsights = pricingInsights;
+        SOURCE.put("pricing_insights", pricingInsights.getJson());
     }
 
     public PricingInsights getPricingInsights() {
         return _pricingInsights;
     }
 
-    public Pay pricingInsights(PricingInsights pricingInsights) {
+    public Pay pricingInsights(PricingInsights pricingInsights) throws ParseException {
         _pricingInsights = pricingInsights;
+        SOURCE.put("pricing_insights", pricingInsights.getJson());
         return this;
     }
 
-    public void setRange(PayRange range) {
+    public void setRange(PayRange range) throws ParseException {
         _range = range;
+        SOURCE.put("range", range.getJson());
     }
 
     public PayRange getRange() {
         return _range;
     }
 
-    public Pay range(PayRange range) {
+    public Pay range(PayRange range) throws ParseException {
         _range = range;
+        SOURCE.put("range", range.getJson());
         return this;
     }
 
-    public void setReportedHours(Double reportedHours) {
+    public void setReportedHours(Double reportedHours) throws ParseException {
         _reportedHours = reportedHours;
+        SOURCE.put("reported_hours", reportedHours);
     }
 
     public Double getReportedHours() {
         return _reportedHours;
     }
 
-    public Pay reportedHours(Double reportedHours) {
+    public Pay reportedHours(Double reportedHours) throws ParseException {
         _reportedHours = reportedHours;
+        SOURCE.put("reported_hours", reportedHours);
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public Pay role(String role) {
+    public Pay role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
-    public void setStatusId(Integer statusId) {
+    public void setStatusId(Integer statusId) throws ParseException {
         _statusId = statusId;
+        SOURCE.put("status_id", statusId);
     }
 
     public Integer getStatusId() {
         return _statusId;
     }
 
-    public Pay statusId(Integer statusId) {
+    public Pay statusId(Integer statusId) throws ParseException {
         _statusId = statusId;
+        SOURCE.put("status_id", statusId);
         return this;
     }
 
-    public void setTotal(Double total) {
+    public void setTotal(Double total) throws ParseException {
         _total = total;
+        SOURCE.put("total", total);
     }
 
     public Double getTotal() {
         return _total;
     }
 
-    public Pay total(Double total) {
+    public Pay total(Double total) throws ParseException {
         _total = total;
+        SOURCE.put("total", total);
         return this;
     }
 
-    public void setType(String type) {
+    public void setType(String type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type);
     }
 
     public String getType() {
         return _type;
     }
 
-    public Pay type(String type) {
+    public Pay type(String type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type);
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public Pay workOrderId(Integer workOrderId) {
+    public Pay workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
@@ -378,6 +434,14 @@ public class Pay implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Pay[] array) {
+        JsonArray list = new JsonArray();
+        for (Pay item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Pay[] fromJsonArray(JsonArray array) {
         Pay[] list = new Pay[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -395,17 +459,8 @@ public class Pay implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Pay pay) {
-        try {
-            return Serializer.serializeObject(pay);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -436,6 +491,6 @@ public class Pay implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

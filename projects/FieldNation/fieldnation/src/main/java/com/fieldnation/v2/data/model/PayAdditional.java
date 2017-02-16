@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class PayAdditional implements Parcelable {
     @Json(name = "units")
     private Double _units;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayAdditional() {
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
     }
 
     public Double getAmount() {
         return _amount;
     }
 
-    public PayAdditional amount(Double amount) {
+    public PayAdditional amount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
         return this;
     }
 
-    public void setUnits(Double units) {
+    public void setUnits(Double units) throws ParseException {
         _units = units;
+        SOURCE.put("units", units);
     }
 
     public Double getUnits() {
         return _units;
     }
 
-    public PayAdditional units(Double units) {
+    public PayAdditional units(Double units) throws ParseException {
         _units = units;
+        SOURCE.put("units", units);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayAdditional[] array) {
+        JsonArray list = new JsonArray();
+        for (PayAdditional item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayAdditional[] fromJsonArray(JsonArray array) {
         PayAdditional[] list = new PayAdditional[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class PayAdditional implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayAdditional payAdditional) {
-        try {
-            return Serializer.serializeObject(payAdditional);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class PayAdditional implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

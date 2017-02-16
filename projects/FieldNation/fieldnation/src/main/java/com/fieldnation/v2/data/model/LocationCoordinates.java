@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -44,129 +47,158 @@ public class LocationCoordinates implements Parcelable {
     @Json(name = "zip")
     private String _zip;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public LocationCoordinates() {
     }
 
-    public void setCity(String city) {
+    public void setCity(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
     }
 
     public String getCity() {
         return _city;
     }
 
-    public LocationCoordinates city(String city) {
+    public LocationCoordinates city(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
         return this;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
     }
 
     public String getCountry() {
         return _country;
     }
 
-    public LocationCoordinates country(String country) {
+    public LocationCoordinates country(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
         return this;
     }
 
-    public void setExact(Boolean exact) {
+    public void setExact(Boolean exact) throws ParseException {
         _exact = exact;
+        SOURCE.put("exact", exact);
     }
 
     public Boolean getExact() {
         return _exact;
     }
 
-    public LocationCoordinates exact(Boolean exact) {
+    public LocationCoordinates exact(Boolean exact) throws ParseException {
         _exact = exact;
+        SOURCE.put("exact", exact);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public LocationCoordinates id(Integer id) {
+    public LocationCoordinates id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setLatitude(Double latitude) {
+    public void setLatitude(Double latitude) throws ParseException {
         _latitude = latitude;
+        SOURCE.put("latitude", latitude);
     }
 
     public Double getLatitude() {
         return _latitude;
     }
 
-    public LocationCoordinates latitude(Double latitude) {
+    public LocationCoordinates latitude(Double latitude) throws ParseException {
         _latitude = latitude;
+        SOURCE.put("latitude", latitude);
         return this;
     }
 
-    public void setLongitude(Double longitude) {
+    public void setLongitude(Double longitude) throws ParseException {
         _longitude = longitude;
+        SOURCE.put("longitude", longitude);
     }
 
     public Double getLongitude() {
         return _longitude;
     }
 
-    public LocationCoordinates longitude(Double longitude) {
+    public LocationCoordinates longitude(Double longitude) throws ParseException {
         _longitude = longitude;
+        SOURCE.put("longitude", longitude);
         return this;
     }
 
-    public void setState(String state) {
+    public void setState(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
     }
 
     public String getState() {
         return _state;
     }
 
-    public LocationCoordinates state(String state) {
+    public LocationCoordinates state(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
         return this;
     }
 
-    public void setType(String type) {
+    public void setType(String type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type);
     }
 
     public String getType() {
         return _type;
     }
 
-    public LocationCoordinates type(String type) {
+    public LocationCoordinates type(String type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type);
         return this;
     }
 
-    public void setZip(String zip) {
+    public void setZip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
     }
 
     public String getZip() {
         return _zip;
     }
 
-    public LocationCoordinates zip(String zip) {
+    public LocationCoordinates zip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(LocationCoordinates[] array) {
+        JsonArray list = new JsonArray();
+        for (LocationCoordinates item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static LocationCoordinates[] fromJsonArray(JsonArray array) {
         LocationCoordinates[] list = new LocationCoordinates[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -184,17 +216,8 @@ public class LocationCoordinates implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(LocationCoordinates locationCoordinates) {
-        try {
-            return Serializer.serializeObject(locationCoordinates);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -225,6 +248,6 @@ public class LocationCoordinates implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

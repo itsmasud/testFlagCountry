@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class ShipmentCarrier implements Parcelable {
     @Json(name = "tracking")
     private String _tracking;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ShipmentCarrier() {
     }
 
-    public void setArrival(Date arrival) {
+    public void setArrival(Date arrival) throws ParseException {
         _arrival = arrival;
+        SOURCE.put("arrival", arrival.getJson());
     }
 
     public Date getArrival() {
         return _arrival;
     }
 
-    public ShipmentCarrier arrival(Date arrival) {
+    public ShipmentCarrier arrival(Date arrival) throws ParseException {
         _arrival = arrival;
+        SOURCE.put("arrival", arrival.getJson());
         return this;
     }
 
-    public void setArrived(Date arrived) {
+    public void setArrived(Date arrived) throws ParseException {
         _arrived = arrived;
+        SOURCE.put("arrived", arrived.getJson());
     }
 
     public Date getArrived() {
         return _arrived;
     }
 
-    public ShipmentCarrier arrived(Date arrived) {
+    public ShipmentCarrier arrived(Date arrived) throws ParseException {
         _arrived = arrived;
+        SOURCE.put("arrived", arrived.getJson());
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public ShipmentCarrier name(String name) {
+    public ShipmentCarrier name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setOther(String other) {
+    public void setOther(String other) throws ParseException {
         _other = other;
+        SOURCE.put("other", other);
     }
 
     public String getOther() {
         return _other;
     }
 
-    public ShipmentCarrier other(String other) {
+    public ShipmentCarrier other(String other) throws ParseException {
         _other = other;
+        SOURCE.put("other", other);
         return this;
     }
 
-    public void setTracking(String tracking) {
+    public void setTracking(String tracking) throws ParseException {
         _tracking = tracking;
+        SOURCE.put("tracking", tracking);
     }
 
     public String getTracking() {
         return _tracking;
     }
 
-    public ShipmentCarrier tracking(String tracking) {
+    public ShipmentCarrier tracking(String tracking) throws ParseException {
         _tracking = tracking;
+        SOURCE.put("tracking", tracking);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ShipmentCarrier[] array) {
+        JsonArray list = new JsonArray();
+        for (ShipmentCarrier item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ShipmentCarrier[] fromJsonArray(JsonArray array) {
         ShipmentCarrier[] list = new ShipmentCarrier[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class ShipmentCarrier implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ShipmentCarrier shipmentCarrier) {
-        try {
-            return Serializer.serializeObject(shipmentCarrier);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class ShipmentCarrier implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

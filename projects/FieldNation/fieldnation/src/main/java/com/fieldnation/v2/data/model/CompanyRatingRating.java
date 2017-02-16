@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class CompanyRatingRating implements Parcelable {
     @Json(name = "toggle_visible")
     private Boolean _toggleVisible;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CompanyRatingRating() {
     }
 
-    public void setMarketplace(Satisfaction marketplace) {
+    public void setMarketplace(Satisfaction marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
     }
 
     public Satisfaction getMarketplace() {
         return _marketplace;
     }
 
-    public CompanyRatingRating marketplace(Satisfaction marketplace) {
+    public CompanyRatingRating marketplace(Satisfaction marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
         return this;
     }
 
-    public void setMine(Satisfaction mine) {
+    public void setMine(Satisfaction mine) throws ParseException {
         _mine = mine;
+        SOURCE.put("mine", mine.getJson());
     }
 
     public Satisfaction getMine() {
         return _mine;
     }
 
-    public CompanyRatingRating mine(Satisfaction mine) {
+    public CompanyRatingRating mine(Satisfaction mine) throws ParseException {
         _mine = mine;
+        SOURCE.put("mine", mine.getJson());
         return this;
     }
 
-    public void setToggleVisible(Boolean toggleVisible) {
+    public void setToggleVisible(Boolean toggleVisible) throws ParseException {
         _toggleVisible = toggleVisible;
+        SOURCE.put("toggle_visible", toggleVisible);
     }
 
     public Boolean getToggleVisible() {
         return _toggleVisible;
     }
 
-    public CompanyRatingRating toggleVisible(Boolean toggleVisible) {
+    public CompanyRatingRating toggleVisible(Boolean toggleVisible) throws ParseException {
         _toggleVisible = toggleVisible;
+        SOURCE.put("toggle_visible", toggleVisible);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CompanyRatingRating[] array) {
+        JsonArray list = new JsonArray();
+        for (CompanyRatingRating item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CompanyRatingRating[] fromJsonArray(JsonArray array) {
         CompanyRatingRating[] list = new CompanyRatingRating[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class CompanyRatingRating implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CompanyRatingRating companyRatingRating) {
-        try {
-            return Serializer.serializeObject(companyRatingRating);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class CompanyRatingRating implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

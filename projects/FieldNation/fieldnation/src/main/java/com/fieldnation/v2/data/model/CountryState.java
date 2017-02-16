@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class CountryState implements Parcelable {
     @Json(name = "values")
     private CountryStateValues[] _values;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CountryState() {
     }
 
-    public void setLabel(String label) {
+    public void setLabel(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
     }
 
     public String getLabel() {
         return _label;
     }
 
-    public CountryState label(String label) {
+    public CountryState label(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
         return this;
     }
 
-    public void setRequired(Boolean required) {
+    public void setRequired(Boolean required) throws ParseException {
         _required = required;
+        SOURCE.put("required", required);
     }
 
     public Boolean getRequired() {
         return _required;
     }
 
-    public CountryState required(Boolean required) {
+    public CountryState required(Boolean required) throws ParseException {
         _required = required;
+        SOURCE.put("required", required);
         return this;
     }
 
-    public void setValues(CountryStateValues[] values) {
+    public void setValues(CountryStateValues[] values) throws ParseException {
         _values = values;
+        SOURCE.put("values", CountryStateValues.toJsonArray(values));
     }
 
     public CountryStateValues[] getValues() {
         return _values;
     }
 
-    public CountryState values(CountryStateValues[] values) {
+    public CountryState values(CountryStateValues[] values) throws ParseException {
         _values = values;
+        SOURCE.put("values", CountryStateValues.toJsonArray(values), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CountryState[] array) {
+        JsonArray list = new JsonArray();
+        for (CountryState item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CountryState[] fromJsonArray(JsonArray array) {
         CountryState[] list = new CountryState[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class CountryState implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CountryState countryState) {
-        try {
-            return Serializer.serializeObject(countryState);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class CountryState implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

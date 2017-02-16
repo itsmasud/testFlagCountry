@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -38,97 +41,114 @@ public class SelectionRule implements Parcelable {
     @Json(name = "sum")
     private SelectionRuleSum _sum;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public SelectionRule() {
     }
 
-    public void setActions(ActionsEnum actions) {
+    public void setActions(ActionsEnum actions) throws ParseException {
         _actions = actions;
+        SOURCE.put("actions", actions.toString());
     }
 
     public ActionsEnum getActions() {
         return _actions;
     }
 
-    public SelectionRule actions(ActionsEnum actions) {
+    public SelectionRule actions(ActionsEnum actions) throws ParseException {
         _actions = actions;
+        SOURCE.put("actions", actions.toString());
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public SelectionRule id(Integer id) {
+    public SelectionRule id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public SelectionRule metadata(ListEnvelope metadata) {
+    public SelectionRule metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public SelectionRule name(String name) {
+    public SelectionRule name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setResults(SelectionRuleCriteria[] results) {
+    public void setResults(SelectionRuleCriteria[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", SelectionRuleCriteria.toJsonArray(results));
     }
 
     public SelectionRuleCriteria[] getResults() {
         return _results;
     }
 
-    public SelectionRule results(SelectionRuleCriteria[] results) {
+    public SelectionRule results(SelectionRuleCriteria[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", SelectionRuleCriteria.toJsonArray(results), true);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public SelectionRule status(StatusEnum status) {
+    public SelectionRule status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setSum(SelectionRuleSum sum) {
+    public void setSum(SelectionRuleSum sum) throws ParseException {
         _sum = sum;
+        SOURCE.put("sum", sum.getJson());
     }
 
     public SelectionRuleSum getSum() {
         return _sum;
     }
 
-    public SelectionRule sum(SelectionRuleSum sum) {
+    public SelectionRule sum(SelectionRuleSum sum) throws ParseException {
         _sum = sum;
+        SOURCE.put("sum", sum.getJson());
         return this;
     }
 
@@ -174,6 +194,14 @@ public class SelectionRule implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(SelectionRule[] array) {
+        JsonArray list = new JsonArray();
+        for (SelectionRule item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static SelectionRule[] fromJsonArray(JsonArray array) {
         SelectionRule[] list = new SelectionRule[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -191,17 +219,8 @@ public class SelectionRule implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(SelectionRule selectionRule) {
-        try {
-            return Serializer.serializeObject(selectionRule);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -232,6 +251,6 @@ public class SelectionRule implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

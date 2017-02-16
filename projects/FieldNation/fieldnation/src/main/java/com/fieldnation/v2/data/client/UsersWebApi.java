@@ -791,7 +791,7 @@ public class UsersWebApi extends TopicClient {
                     .path("/api/rest/v2/users/" + userId + "/tax");
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")

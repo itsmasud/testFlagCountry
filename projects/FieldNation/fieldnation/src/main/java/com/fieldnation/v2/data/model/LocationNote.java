@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class LocationNote implements Parcelable {
     @Json(name = "user_id")
     private Integer _userId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public LocationNote() {
     }
 
-    public void setCreated(String created) {
+    public void setCreated(String created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created);
     }
 
     public String getCreated() {
         return _created;
     }
 
-    public LocationNote created(String created) {
+    public LocationNote created(String created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public LocationNote id(Integer id) {
+    public LocationNote id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setPrivate(Boolean privatee) {
+    public void setPrivate(Boolean privatee) throws ParseException {
         _private = privatee;
+        SOURCE.put("private", privatee);
     }
 
     public Boolean getPrivate() {
         return _private;
     }
 
-    public LocationNote privatee(Boolean privatee) {
+    public LocationNote privatee(Boolean privatee) throws ParseException {
         _private = privatee;
+        SOURCE.put("private", privatee);
         return this;
     }
 
-    public void setText(String text) {
+    public void setText(String text) throws ParseException {
         _text = text;
+        SOURCE.put("text", text);
     }
 
     public String getText() {
         return _text;
     }
 
-    public LocationNote text(String text) {
+    public LocationNote text(String text) throws ParseException {
         _text = text;
+        SOURCE.put("text", text);
         return this;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Integer userId) throws ParseException {
         _userId = userId;
+        SOURCE.put("user_id", userId);
     }
 
     public Integer getUserId() {
         return _userId;
     }
 
-    public LocationNote userId(Integer userId) {
+    public LocationNote userId(Integer userId) throws ParseException {
         _userId = userId;
+        SOURCE.put("user_id", userId);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(LocationNote[] array) {
+        JsonArray list = new JsonArray();
+        for (LocationNote item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static LocationNote[] fromJsonArray(JsonArray array) {
         LocationNote[] list = new LocationNote[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class LocationNote implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(LocationNote locationNote) {
-        try {
-            return Serializer.serializeObject(locationNote);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class LocationNote implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

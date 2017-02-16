@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class Signatures implements Parcelable {
     @Json(name = "results")
     private Signature[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Signatures() {
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public Signatures metadata(ListEnvelope metadata) {
+    public Signatures metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Signature[] results) {
+    public void setResults(Signature[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Signature.toJsonArray(results));
     }
 
     public Signature[] getResults() {
         return _results;
     }
 
-    public Signatures results(Signature[] results) {
+    public Signatures results(Signature[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Signature.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Signatures[] array) {
+        JsonArray list = new JsonArray();
+        for (Signatures item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Signatures[] fromJsonArray(JsonArray array) {
         Signatures[] list = new Signatures[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class Signatures implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Signatures signatures) {
-        try {
-            return Serializer.serializeObject(signatures);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class Signatures implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

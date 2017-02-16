@@ -60,7 +60,7 @@ public class BonusesWebApi extends TopicClient {
                     .path("/api/rest/v2/bonuses");
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/bonuses")
@@ -138,7 +138,7 @@ public class BonusesWebApi extends TopicClient {
                     .path("/api/rest/v2/bonuses/" + bonusId);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/bonuses/{bonus_id}")

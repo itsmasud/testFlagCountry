@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -53,162 +56,189 @@ public class SelectionRuleCriteria implements Parcelable {
     @Json(name = "weight")
     private Integer _weight;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public SelectionRuleCriteria() {
     }
 
-    public void setCustomField(CustomField customField) {
+    public void setCustomField(CustomField customField) throws ParseException {
         _customField = customField;
+        SOURCE.put("custom_field", customField.getJson());
     }
 
     public CustomField getCustomField() {
         return _customField;
     }
 
-    public SelectionRuleCriteria customField(CustomField customField) {
+    public SelectionRuleCriteria customField(CustomField customField) throws ParseException {
         _customField = customField;
+        SOURCE.put("custom_field", customField.getJson());
         return this;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public SelectionRuleCriteria description(String description) {
+    public SelectionRuleCriteria description(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setExtra(String extra) {
+    public void setExtra(String extra) throws ParseException {
         _extra = extra;
+        SOURCE.put("extra", extra);
     }
 
     public String getExtra() {
         return _extra;
     }
 
-    public SelectionRuleCriteria extra(String extra) {
+    public SelectionRuleCriteria extra(String extra) throws ParseException {
         _extra = extra;
+        SOURCE.put("extra", extra);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public SelectionRuleCriteria id(Integer id) {
+    public SelectionRuleCriteria id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(NameEnum name) {
+    public void setName(NameEnum name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name.toString());
     }
 
     public NameEnum getName() {
         return _name;
     }
 
-    public SelectionRuleCriteria name(NameEnum name) {
+    public SelectionRuleCriteria name(NameEnum name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name.toString());
         return this;
     }
 
-    public void setOperation(OperationEnum operation) {
+    public void setOperation(OperationEnum operation) throws ParseException {
         _operation = operation;
+        SOURCE.put("operation", operation.toString());
     }
 
     public OperationEnum getOperation() {
         return _operation;
     }
 
-    public SelectionRuleCriteria operation(OperationEnum operation) {
+    public SelectionRuleCriteria operation(OperationEnum operation) throws ParseException {
         _operation = operation;
+        SOURCE.put("operation", operation.toString());
         return this;
     }
 
-    public void setOrder(Integer order) {
+    public void setOrder(Integer order) throws ParseException {
         _order = order;
+        SOURCE.put("order", order);
     }
 
     public Integer getOrder() {
         return _order;
     }
 
-    public SelectionRuleCriteria order(Integer order) {
+    public SelectionRuleCriteria order(Integer order) throws ParseException {
         _order = order;
+        SOURCE.put("order", order);
         return this;
     }
 
-    public void setRequired(Boolean required) {
+    public void setRequired(Boolean required) throws ParseException {
         _required = required;
+        SOURCE.put("required", required);
     }
 
     public Boolean getRequired() {
         return _required;
     }
 
-    public SelectionRuleCriteria required(Boolean required) {
+    public SelectionRuleCriteria required(Boolean required) throws ParseException {
         _required = required;
+        SOURCE.put("required", required);
         return this;
     }
 
-    public void setService(String service) {
+    public void setService(String service) throws ParseException {
         _service = service;
+        SOURCE.put("service", service);
     }
 
     public String getService() {
         return _service;
     }
 
-    public SelectionRuleCriteria service(String service) {
+    public SelectionRuleCriteria service(String service) throws ParseException {
         _service = service;
+        SOURCE.put("service", service);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public SelectionRuleCriteria status(StatusEnum status) {
+    public SelectionRuleCriteria status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setValue(String value) {
+    public void setValue(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
     }
 
     public String getValue() {
         return _value;
     }
 
-    public SelectionRuleCriteria value(String value) {
+    public SelectionRuleCriteria value(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
         return this;
     }
 
-    public void setWeight(Integer weight) {
+    public void setWeight(Integer weight) throws ParseException {
         _weight = weight;
+        SOURCE.put("weight", weight);
     }
 
     public Integer getWeight() {
         return _weight;
     }
 
-    public SelectionRuleCriteria weight(Integer weight) {
+    public SelectionRuleCriteria weight(Integer weight) throws ParseException {
         _weight = weight;
+        SOURCE.put("weight", weight);
         return this;
     }
 
@@ -316,6 +346,14 @@ public class SelectionRuleCriteria implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(SelectionRuleCriteria[] array) {
+        JsonArray list = new JsonArray();
+        for (SelectionRuleCriteria item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static SelectionRuleCriteria[] fromJsonArray(JsonArray array) {
         SelectionRuleCriteria[] list = new SelectionRuleCriteria[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -333,17 +371,8 @@ public class SelectionRuleCriteria implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(SelectionRuleCriteria selectionRuleCriteria) {
-        try {
-            return Serializer.serializeObject(selectionRuleCriteria);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -374,6 +403,6 @@ public class SelectionRuleCriteria implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -50,149 +53,182 @@ public class Signature implements Parcelable {
     @Json(name = "worklog")
     private String _worklog;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Signature() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Signature actions(ActionsEnum[] actions) {
+    public Signature actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setClosingNotes(String closingNotes) {
+    public void setClosingNotes(String closingNotes) throws ParseException {
         _closingNotes = closingNotes;
+        SOURCE.put("closing_notes", closingNotes);
     }
 
     public String getClosingNotes() {
         return _closingNotes;
     }
 
-    public Signature closingNotes(String closingNotes) {
+    public Signature closingNotes(String closingNotes) throws ParseException {
         _closingNotes = closingNotes;
+        SOURCE.put("closing_notes", closingNotes);
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public Signature created(Date created) {
+    public Signature created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setData(String data) {
+    public void setData(String data) throws ParseException {
         _data = data;
+        SOURCE.put("data", data);
     }
 
     public String getData() {
         return _data;
     }
 
-    public Signature data(String data) {
+    public Signature data(String data) throws ParseException {
         _data = data;
+        SOURCE.put("data", data);
         return this;
     }
 
-    public void setFormat(String format) {
+    public void setFormat(String format) throws ParseException {
         _format = format;
+        SOURCE.put("format", format);
     }
 
     public String getFormat() {
         return _format;
     }
 
-    public Signature format(String format) {
+    public Signature format(String format) throws ParseException {
         _format = format;
+        SOURCE.put("format", format);
         return this;
     }
 
-    public void setHash(String hash) {
+    public void setHash(String hash) throws ParseException {
         _hash = hash;
+        SOURCE.put("hash", hash);
     }
 
     public String getHash() {
         return _hash;
     }
 
-    public Signature hash(String hash) {
+    public Signature hash(String hash) throws ParseException {
         _hash = hash;
+        SOURCE.put("hash", hash);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Signature id(Integer id) {
+    public Signature id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public Signature name(String name) {
+    public Signature name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setTask(Task task) {
+    public void setTask(Task task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
     }
 
     public Task getTask() {
         return _task;
     }
 
-    public Signature task(Task task) {
+    public Signature task(Task task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
     }
 
     public TimeZone getTimeZone() {
         return _timeZone;
     }
 
-    public Signature timeZone(TimeZone timeZone) {
+    public Signature timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
         return this;
     }
 
-    public void setWorklog(String worklog) {
+    public void setWorklog(String worklog) throws ParseException {
         _worklog = worklog;
+        SOURCE.put("worklog", worklog);
     }
 
     public String getWorklog() {
         return _worklog;
     }
 
-    public Signature worklog(String worklog) {
+    public Signature worklog(String worklog) throws ParseException {
         _worklog = worklog;
+        SOURCE.put("worklog", worklog);
         return this;
     }
 
@@ -218,6 +254,14 @@ public class Signature implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Signature[] array) {
+        JsonArray list = new JsonArray();
+        for (Signature item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Signature[] fromJsonArray(JsonArray array) {
         Signature[] list = new Signature[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -235,17 +279,8 @@ public class Signature implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Signature signature) {
-        try {
-            return Serializer.serializeObject(signature);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -276,6 +311,6 @@ public class Signature implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

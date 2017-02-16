@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class PayFees implements Parcelable {
     @Json(name = "provider")
     private Fee _provider;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayFees() {
     }
 
-    public void setBuyer(Fee buyer) {
+    public void setBuyer(Fee buyer) throws ParseException {
         _buyer = buyer;
+        SOURCE.put("buyer", buyer.getJson());
     }
 
     public Fee getBuyer() {
         return _buyer;
     }
 
-    public PayFees buyer(Fee buyer) {
+    public PayFees buyer(Fee buyer) throws ParseException {
         _buyer = buyer;
+        SOURCE.put("buyer", buyer.getJson());
         return this;
     }
 
-    public void setCancellation(Fee cancellation) {
+    public void setCancellation(Fee cancellation) throws ParseException {
         _cancellation = cancellation;
+        SOURCE.put("cancellation", cancellation.getJson());
     }
 
     public Fee getCancellation() {
         return _cancellation;
     }
 
-    public PayFees cancellation(Fee cancellation) {
+    public PayFees cancellation(Fee cancellation) throws ParseException {
         _cancellation = cancellation;
+        SOURCE.put("cancellation", cancellation.getJson());
         return this;
     }
 
-    public void setFlat(Fee flat) {
+    public void setFlat(Fee flat) throws ParseException {
         _flat = flat;
+        SOURCE.put("flat", flat.getJson());
     }
 
     public Fee getFlat() {
         return _flat;
     }
 
-    public PayFees flat(Fee flat) {
+    public PayFees flat(Fee flat) throws ParseException {
         _flat = flat;
+        SOURCE.put("flat", flat.getJson());
         return this;
     }
 
-    public void setInsurance(Fee insurance) {
+    public void setInsurance(Fee insurance) throws ParseException {
         _insurance = insurance;
+        SOURCE.put("insurance", insurance.getJson());
     }
 
     public Fee getInsurance() {
         return _insurance;
     }
 
-    public PayFees insurance(Fee insurance) {
+    public PayFees insurance(Fee insurance) throws ParseException {
         _insurance = insurance;
+        SOURCE.put("insurance", insurance.getJson());
         return this;
     }
 
-    public void setProvider(Fee provider) {
+    public void setProvider(Fee provider) throws ParseException {
         _provider = provider;
+        SOURCE.put("provider", provider.getJson());
     }
 
     public Fee getProvider() {
         return _provider;
     }
 
-    public PayFees provider(Fee provider) {
+    public PayFees provider(Fee provider) throws ParseException {
         _provider = provider;
+        SOURCE.put("provider", provider.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayFees[] array) {
+        JsonArray list = new JsonArray();
+        for (PayFees item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayFees[] fromJsonArray(JsonArray array) {
         PayFees[] list = new PayFees[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class PayFees implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayFees payFees) {
-        try {
-            return Serializer.serializeObject(payFees);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class PayFees implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

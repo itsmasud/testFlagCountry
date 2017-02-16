@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class LocationProviders implements Parcelable {
     @Json(name = "results")
     private User[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public LocationProviders() {
     }
 
-    public void setLocationId(Integer locationId) {
+    public void setLocationId(Integer locationId) throws ParseException {
         _locationId = locationId;
+        SOURCE.put("location_id", locationId);
     }
 
     public Integer getLocationId() {
         return _locationId;
     }
 
-    public LocationProviders locationId(Integer locationId) {
+    public LocationProviders locationId(Integer locationId) throws ParseException {
         _locationId = locationId;
+        SOURCE.put("location_id", locationId);
         return this;
     }
 
-    public void setResults(User[] results) {
+    public void setResults(User[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", User.toJsonArray(results));
     }
 
     public User[] getResults() {
         return _results;
     }
 
-    public LocationProviders results(User[] results) {
+    public LocationProviders results(User[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", User.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(LocationProviders[] array) {
+        JsonArray list = new JsonArray();
+        for (LocationProviders item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static LocationProviders[] fromJsonArray(JsonArray array) {
         LocationProviders[] list = new LocationProviders[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class LocationProviders implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(LocationProviders locationProviders) {
-        try {
-            return Serializer.serializeObject(locationProviders);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class LocationProviders implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

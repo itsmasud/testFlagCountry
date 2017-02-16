@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -41,110 +44,129 @@ public class Shipment implements Parcelable {
     @Json(name = "user")
     private User _user;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Shipment() {
     }
 
-    public void setCarrier(ShipmentCarrier carrier) {
+    public void setCarrier(ShipmentCarrier carrier) throws ParseException {
         _carrier = carrier;
+        SOURCE.put("carrier", carrier.getJson());
     }
 
     public ShipmentCarrier getCarrier() {
         return _carrier;
     }
 
-    public Shipment carrier(ShipmentCarrier carrier) {
+    public Shipment carrier(ShipmentCarrier carrier) throws ParseException {
         _carrier = carrier;
+        SOURCE.put("carrier", carrier.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public Shipment created(Date created) {
+    public Shipment created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setDirection(DirectionEnum direction) {
+    public void setDirection(DirectionEnum direction) throws ParseException {
         _direction = direction;
+        SOURCE.put("direction", direction.toString());
     }
 
     public DirectionEnum getDirection() {
         return _direction;
     }
 
-    public Shipment direction(DirectionEnum direction) {
+    public Shipment direction(DirectionEnum direction) throws ParseException {
         _direction = direction;
+        SOURCE.put("direction", direction.toString());
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Shipment id(Integer id) {
+    public Shipment id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public Shipment name(String name) {
+    public Shipment name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public Shipment status(StatusEnum status) {
+    public Shipment status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setTask(ShipmentTask task) {
+    public void setTask(ShipmentTask task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
     }
 
     public ShipmentTask getTask() {
         return _task;
     }
 
-    public Shipment task(ShipmentTask task) {
+    public Shipment task(ShipmentTask task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
         return this;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
     }
 
     public User getUser() {
         return _user;
     }
 
-    public Shipment user(User user) {
+    public Shipment user(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
         return this;
     }
 
@@ -196,6 +218,14 @@ public class Shipment implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Shipment[] array) {
+        JsonArray list = new JsonArray();
+        for (Shipment item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Shipment[] fromJsonArray(JsonArray array) {
         Shipment[] list = new Shipment[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -213,17 +243,8 @@ public class Shipment implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Shipment shipment) {
-        try {
-            return Serializer.serializeObject(shipment);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -254,6 +275,6 @@ public class Shipment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

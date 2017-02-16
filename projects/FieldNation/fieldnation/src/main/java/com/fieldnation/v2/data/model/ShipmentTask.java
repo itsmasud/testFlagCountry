@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class ShipmentTask implements Parcelable {
     @Json(name = "id")
     private Double _id;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ShipmentTask() {
     }
 
-    public void setId(Double id) {
+    public void setId(Double id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Double getId() {
         return _id;
     }
 
-    public ShipmentTask id(Double id) {
+    public ShipmentTask id(Double id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ShipmentTask[] array) {
+        JsonArray list = new JsonArray();
+        for (ShipmentTask item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ShipmentTask[] fromJsonArray(JsonArray array) {
         ShipmentTask[] list = new ShipmentTask[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class ShipmentTask implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ShipmentTask shipmentTask) {
-        try {
-            return Serializer.serializeObject(shipmentTask);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class ShipmentTask implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

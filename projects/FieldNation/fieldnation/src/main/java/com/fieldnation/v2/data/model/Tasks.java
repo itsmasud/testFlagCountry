@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class Tasks implements Parcelable {
     @Json(name = "results")
     private Task[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Tasks() {
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public Tasks metadata(ListEnvelope metadata) {
+    public Tasks metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Task[] results) {
+    public void setResults(Task[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Task.toJsonArray(results));
     }
 
     public Task[] getResults() {
         return _results;
     }
 
-    public Tasks results(Task[] results) {
+    public Tasks results(Task[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Task.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Tasks[] array) {
+        JsonArray list = new JsonArray();
+        for (Tasks item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Tasks[] fromJsonArray(JsonArray array) {
         Tasks[] list = new Tasks[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class Tasks implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Tasks tasks) {
-        try {
-            return Serializer.serializeObject(tasks);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class Tasks implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

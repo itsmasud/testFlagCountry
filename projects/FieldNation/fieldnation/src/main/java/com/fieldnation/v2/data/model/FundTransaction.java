@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -56,175 +59,204 @@ public class FundTransaction implements Parcelable {
     @Json(name = "work_order")
     private WorkOrder _workOrder;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public FundTransaction() {
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
     }
 
     public Double getAmount() {
         return _amount;
     }
 
-    public FundTransaction amount(Double amount) {
+    public FundTransaction amount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
         return this;
     }
 
-    public void setBillingAddress(BillingAddress billingAddress) {
+    public void setBillingAddress(BillingAddress billingAddress) throws ParseException {
         _billingAddress = billingAddress;
+        SOURCE.put("billing_address", billingAddress.getJson());
     }
 
     public BillingAddress getBillingAddress() {
         return _billingAddress;
     }
 
-    public FundTransaction billingAddress(BillingAddress billingAddress) {
+    public FundTransaction billingAddress(BillingAddress billingAddress) throws ParseException {
         _billingAddress = billingAddress;
+        SOURCE.put("billing_address", billingAddress.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public FundTransaction created(Date created) {
+    public FundTransaction created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setCreditCard(CreditCard creditCard) {
+    public void setCreditCard(CreditCard creditCard) throws ParseException {
         _creditCard = creditCard;
+        SOURCE.put("credit_card", creditCard.getJson());
     }
 
     public CreditCard getCreditCard() {
         return _creditCard;
     }
 
-    public FundTransaction creditCard(CreditCard creditCard) {
+    public FundTransaction creditCard(CreditCard creditCard) throws ParseException {
         _creditCard = creditCard;
+        SOURCE.put("credit_card", creditCard.getJson());
         return this;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public FundTransaction description(String description) {
+    public FundTransaction description(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setExternalId(String externalId) {
+    public void setExternalId(String externalId) throws ParseException {
         _externalId = externalId;
+        SOURCE.put("external_id", externalId);
     }
 
     public String getExternalId() {
         return _externalId;
     }
 
-    public FundTransaction externalId(String externalId) {
+    public FundTransaction externalId(String externalId) throws ParseException {
         _externalId = externalId;
+        SOURCE.put("external_id", externalId);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public FundTransaction id(Integer id) {
+    public FundTransaction id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setNote(String note) {
+    public void setNote(String note) throws ParseException {
         _note = note;
+        SOURCE.put("note", note);
     }
 
     public String getNote() {
         return _note;
     }
 
-    public FundTransaction note(String note) {
+    public FundTransaction note(String note) throws ParseException {
         _note = note;
+        SOURCE.put("note", note);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public FundTransaction status(StatusEnum status) {
+    public FundTransaction status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setStatusReason(String statusReason) {
+    public void setStatusReason(String statusReason) throws ParseException {
         _statusReason = statusReason;
+        SOURCE.put("status_reason", statusReason);
     }
 
     public String getStatusReason() {
         return _statusReason;
     }
 
-    public FundTransaction statusReason(String statusReason) {
+    public FundTransaction statusReason(String statusReason) throws ParseException {
         _statusReason = statusReason;
+        SOURCE.put("status_reason", statusReason);
         return this;
     }
 
-    public void setType(TypeEnum type) {
+    public void setType(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
     }
 
     public TypeEnum getType() {
         return _type;
     }
 
-    public FundTransaction type(TypeEnum type) {
+    public FundTransaction type(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
         return this;
     }
 
-    public void setUpdated(Date updated) {
+    public void setUpdated(Date updated) throws ParseException {
         _updated = updated;
+        SOURCE.put("updated", updated.getJson());
     }
 
     public Date getUpdated() {
         return _updated;
     }
 
-    public FundTransaction updated(Date updated) {
+    public FundTransaction updated(Date updated) throws ParseException {
         _updated = updated;
+        SOURCE.put("updated", updated.getJson());
         return this;
     }
 
-    public void setWorkOrder(WorkOrder workOrder) {
+    public void setWorkOrder(WorkOrder workOrder) throws ParseException {
         _workOrder = workOrder;
+        SOURCE.put("work_order", workOrder.getJson());
     }
 
     public WorkOrder getWorkOrder() {
         return _workOrder;
     }
 
-    public FundTransaction workOrder(WorkOrder workOrder) {
+    public FundTransaction workOrder(WorkOrder workOrder) throws ParseException {
         _workOrder = workOrder;
+        SOURCE.put("work_order", workOrder.getJson());
         return this;
     }
 
@@ -284,6 +316,14 @@ public class FundTransaction implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(FundTransaction[] array) {
+        JsonArray list = new JsonArray();
+        for (FundTransaction item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static FundTransaction[] fromJsonArray(JsonArray array) {
         FundTransaction[] list = new FundTransaction[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -301,17 +341,8 @@ public class FundTransaction implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(FundTransaction fundTransaction) {
-        try {
-            return Serializer.serializeObject(fundTransaction);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -342,6 +373,6 @@ public class FundTransaction implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

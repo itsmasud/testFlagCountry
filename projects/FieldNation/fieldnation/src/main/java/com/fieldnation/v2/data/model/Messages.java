@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,71 +35,92 @@ public class Messages implements Parcelable {
     @Json(name = "sum")
     private Integer _sum;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Messages() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Messages actions(ActionsEnum[] actions) {
+    public Messages actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public Messages metadata(ListEnvelope metadata) {
+    public Messages metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setProblemReported(Boolean problemReported) {
+    public void setProblemReported(Boolean problemReported) throws ParseException {
         _problemReported = problemReported;
+        SOURCE.put("problem_reported", problemReported);
     }
 
     public Boolean getProblemReported() {
         return _problemReported;
     }
 
-    public Messages problemReported(Boolean problemReported) {
+    public Messages problemReported(Boolean problemReported) throws ParseException {
         _problemReported = problemReported;
+        SOURCE.put("problem_reported", problemReported);
         return this;
     }
 
-    public void setResults(Message results) {
+    public void setResults(Message results) throws ParseException {
         _results = results;
+        SOURCE.put("results", results.getJson());
     }
 
     public Message getResults() {
         return _results;
     }
 
-    public Messages results(Message results) {
+    public Messages results(Message results) throws ParseException {
         _results = results;
+        SOURCE.put("results", results.getJson());
         return this;
     }
 
-    public void setSum(Integer sum) {
+    public void setSum(Integer sum) throws ParseException {
         _sum = sum;
+        SOURCE.put("sum", sum);
     }
 
     public Integer getSum() {
         return _sum;
     }
 
-    public Messages sum(Integer sum) {
+    public Messages sum(Integer sum) throws ParseException {
         _sum = sum;
+        SOURCE.put("sum", sum);
         return this;
     }
 
@@ -122,6 +146,14 @@ public class Messages implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Messages[] array) {
+        JsonArray list = new JsonArray();
+        for (Messages item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Messages[] fromJsonArray(JsonArray array) {
         Messages[] list = new Messages[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -139,17 +171,8 @@ public class Messages implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Messages messages) {
-        try {
-            return Serializer.serializeObject(messages);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -180,6 +203,6 @@ public class Messages implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

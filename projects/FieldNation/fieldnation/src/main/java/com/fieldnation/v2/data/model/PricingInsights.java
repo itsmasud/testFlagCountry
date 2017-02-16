@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class PricingInsights implements Parcelable {
     @Json(name = "region")
     private PricingInsightsRegion _region;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PricingInsights() {
     }
 
-    public void setRegion(PricingInsightsRegion region) {
+    public void setRegion(PricingInsightsRegion region) throws ParseException {
         _region = region;
+        SOURCE.put("region", region.getJson());
     }
 
     public PricingInsightsRegion getRegion() {
         return _region;
     }
 
-    public PricingInsights region(PricingInsightsRegion region) {
+    public PricingInsights region(PricingInsightsRegion region) throws ParseException {
         _region = region;
+        SOURCE.put("region", region.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PricingInsights[] array) {
+        JsonArray list = new JsonArray();
+        for (PricingInsights item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PricingInsights[] fromJsonArray(JsonArray array) {
         PricingInsights[] list = new PricingInsights[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class PricingInsights implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PricingInsights pricingInsights) {
-        try {
-            return Serializer.serializeObject(pricingInsights);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class PricingInsights implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

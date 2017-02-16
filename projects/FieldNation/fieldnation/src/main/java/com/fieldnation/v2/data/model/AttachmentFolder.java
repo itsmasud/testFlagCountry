@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,58 +32,69 @@ public class AttachmentFolder implements Parcelable {
     @Json(name = "type")
     private TypeEnum _type;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public AttachmentFolder() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public AttachmentFolder id(Integer id) {
+    public AttachmentFolder id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public AttachmentFolder name(String name) {
+    public AttachmentFolder name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setTask(Task task) {
+    public void setTask(Task task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
     }
 
     public Task getTask() {
         return _task;
     }
 
-    public AttachmentFolder task(Task task) {
+    public AttachmentFolder task(Task task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
         return this;
     }
 
-    public void setType(TypeEnum type) {
+    public void setType(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
     }
 
     public TypeEnum getType() {
         return _type;
     }
 
-    public AttachmentFolder type(TypeEnum type) {
+    public AttachmentFolder type(TypeEnum type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.toString());
         return this;
     }
 
@@ -108,6 +122,14 @@ public class AttachmentFolder implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(AttachmentFolder[] array) {
+        JsonArray list = new JsonArray();
+        for (AttachmentFolder item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static AttachmentFolder[] fromJsonArray(JsonArray array) {
         AttachmentFolder[] list = new AttachmentFolder[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -125,17 +147,8 @@ public class AttachmentFolder implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(AttachmentFolder attachmentFolder) {
-        try {
-            return Serializer.serializeObject(attachmentFolder);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -166,6 +179,6 @@ public class AttachmentFolder implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

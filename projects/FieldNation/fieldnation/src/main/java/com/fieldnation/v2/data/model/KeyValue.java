@@ -7,7 +7,11 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -16,12 +20,23 @@ import com.fieldnation.fnlog.Log;
 public class KeyValue implements Parcelable {
     private static final String TAG = "KeyValue";
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public KeyValue() {
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(KeyValue[] array) {
+        JsonArray list = new JsonArray();
+        for (KeyValue item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static KeyValue[] fromJsonArray(JsonArray array) {
         KeyValue[] list = new KeyValue[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -39,17 +54,8 @@ public class KeyValue implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(KeyValue keyValue) {
-        try {
-            return Serializer.serializeObject(keyValue);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -80,6 +86,6 @@ public class KeyValue implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

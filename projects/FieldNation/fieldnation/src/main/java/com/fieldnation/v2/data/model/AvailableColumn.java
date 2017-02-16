@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class AvailableColumn implements Parcelable {
     @Json(name = "items")
     private AvailableColumnItems[] _items;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public AvailableColumn() {
     }
 
-    public void setGroup(String group) {
+    public void setGroup(String group) throws ParseException {
         _group = group;
+        SOURCE.put("group", group);
     }
 
     public String getGroup() {
         return _group;
     }
 
-    public AvailableColumn group(String group) {
+    public AvailableColumn group(String group) throws ParseException {
         _group = group;
+        SOURCE.put("group", group);
         return this;
     }
 
-    public void setItems(AvailableColumnItems[] items) {
+    public void setItems(AvailableColumnItems[] items) throws ParseException {
         _items = items;
+        SOURCE.put("items", AvailableColumnItems.toJsonArray(items));
     }
 
     public AvailableColumnItems[] getItems() {
         return _items;
     }
 
-    public AvailableColumn items(AvailableColumnItems[] items) {
+    public AvailableColumn items(AvailableColumnItems[] items) throws ParseException {
         _items = items;
+        SOURCE.put("items", AvailableColumnItems.toJsonArray(items), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(AvailableColumn[] array) {
+        JsonArray list = new JsonArray();
+        for (AvailableColumn item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static AvailableColumn[] fromJsonArray(JsonArray array) {
         AvailableColumn[] list = new AvailableColumn[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class AvailableColumn implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(AvailableColumn availableColumn) {
-        try {
-            return Serializer.serializeObject(availableColumn);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class AvailableColumn implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

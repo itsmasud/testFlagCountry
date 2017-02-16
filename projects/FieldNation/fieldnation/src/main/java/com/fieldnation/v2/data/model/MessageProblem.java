@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class MessageProblem implements Parcelable {
     @Json(name = "type")
     private MessageProblemType _type;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public MessageProblem() {
     }
 
-    public void setFlagId(Integer flagId) {
+    public void setFlagId(Integer flagId) throws ParseException {
         _flagId = flagId;
+        SOURCE.put("flag_id", flagId);
     }
 
     public Integer getFlagId() {
         return _flagId;
     }
 
-    public MessageProblem flagId(Integer flagId) {
+    public MessageProblem flagId(Integer flagId) throws ParseException {
         _flagId = flagId;
+        SOURCE.put("flag_id", flagId);
         return this;
     }
 
-    public void setResolved(Boolean resolved) {
+    public void setResolved(Boolean resolved) throws ParseException {
         _resolved = resolved;
+        SOURCE.put("resolved", resolved);
     }
 
     public Boolean getResolved() {
         return _resolved;
     }
 
-    public MessageProblem resolved(Boolean resolved) {
+    public MessageProblem resolved(Boolean resolved) throws ParseException {
         _resolved = resolved;
+        SOURCE.put("resolved", resolved);
         return this;
     }
 
-    public void setType(MessageProblemType type) {
+    public void setType(MessageProblemType type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.getJson());
     }
 
     public MessageProblemType getType() {
         return _type;
     }
 
-    public MessageProblem type(MessageProblemType type) {
+    public MessageProblem type(MessageProblemType type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(MessageProblem[] array) {
+        JsonArray list = new JsonArray();
+        for (MessageProblem item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static MessageProblem[] fromJsonArray(JsonArray array) {
         MessageProblem[] list = new MessageProblem[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class MessageProblem implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(MessageProblem messageProblem) {
-        try {
-            return Serializer.serializeObject(messageProblem);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class MessageProblem implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

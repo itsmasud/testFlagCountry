@@ -184,7 +184,7 @@ public class CompanyWebApi extends TopicClient {
                     .path("/api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
             if (fundTransaction != null)
-                builder.body(fundTransaction.toJson().toString());
+                builder.body(fundTransaction.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")

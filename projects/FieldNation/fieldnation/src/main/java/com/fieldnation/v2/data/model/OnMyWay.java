@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -41,116 +44,143 @@ public class OnMyWay implements Parcelable {
     @Json(name = "substatus")
     private String _substatus;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public OnMyWay() {
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(Boolean active) throws ParseException {
         _active = active;
+        SOURCE.put("active", active);
     }
 
     public Boolean getActive() {
         return _active;
     }
 
-    public OnMyWay active(Boolean active) {
+    public OnMyWay active(Boolean active) throws ParseException {
         _active = active;
+        SOURCE.put("active", active);
         return this;
     }
 
-    public void setCoords(Coords coords) {
+    public void setCoords(Coords coords) throws ParseException {
         _coords = coords;
+        SOURCE.put("coords", coords.getJson());
     }
 
     public Coords getCoords() {
         return _coords;
     }
 
-    public OnMyWay coords(Coords coords) {
+    public OnMyWay coords(Coords coords) throws ParseException {
         _coords = coords;
+        SOURCE.put("coords", coords.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public OnMyWay created(Date created) {
+    public OnMyWay created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setDistance(Double distance) {
+    public void setDistance(Double distance) throws ParseException {
         _distance = distance;
+        SOURCE.put("distance", distance);
     }
 
     public Double getDistance() {
         return _distance;
     }
 
-    public OnMyWay distance(Double distance) {
+    public OnMyWay distance(Double distance) throws ParseException {
         _distance = distance;
+        SOURCE.put("distance", distance);
         return this;
     }
 
-    public void setDriveTime(Integer driveTime) {
+    public void setDriveTime(Integer driveTime) throws ParseException {
         _driveTime = driveTime;
+        SOURCE.put("drive_time", driveTime);
     }
 
     public Integer getDriveTime() {
         return _driveTime;
     }
 
-    public OnMyWay driveTime(Integer driveTime) {
+    public OnMyWay driveTime(Integer driveTime) throws ParseException {
         _driveTime = driveTime;
+        SOURCE.put("drive_time", driveTime);
         return this;
     }
 
-    public void setEstimatedDelay(Integer estimatedDelay) {
+    public void setEstimatedDelay(Integer estimatedDelay) throws ParseException {
         _estimatedDelay = estimatedDelay;
+        SOURCE.put("estimated_delay", estimatedDelay);
     }
 
     public Integer getEstimatedDelay() {
         return _estimatedDelay;
     }
 
-    public OnMyWay estimatedDelay(Integer estimatedDelay) {
+    public OnMyWay estimatedDelay(Integer estimatedDelay) throws ParseException {
         _estimatedDelay = estimatedDelay;
+        SOURCE.put("estimated_delay", estimatedDelay);
         return this;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(String status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status);
     }
 
     public String getStatus() {
         return _status;
     }
 
-    public OnMyWay status(String status) {
+    public OnMyWay status(String status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status);
         return this;
     }
 
-    public void setSubstatus(String substatus) {
+    public void setSubstatus(String substatus) throws ParseException {
         _substatus = substatus;
+        SOURCE.put("substatus", substatus);
     }
 
     public String getSubstatus() {
         return _substatus;
     }
 
-    public OnMyWay substatus(String substatus) {
+    public OnMyWay substatus(String substatus) throws ParseException {
         _substatus = substatus;
+        SOURCE.put("substatus", substatus);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(OnMyWay[] array) {
+        JsonArray list = new JsonArray();
+        for (OnMyWay item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static OnMyWay[] fromJsonArray(JsonArray array) {
         OnMyWay[] list = new OnMyWay[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -168,17 +198,8 @@ public class OnMyWay implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(OnMyWay onMyWay) {
-        try {
-            return Serializer.serializeObject(onMyWay);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -209,6 +230,6 @@ public class OnMyWay implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

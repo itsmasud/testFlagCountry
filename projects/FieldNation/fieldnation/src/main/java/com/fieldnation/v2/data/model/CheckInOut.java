@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -38,103 +41,128 @@ public class CheckInOut implements Parcelable {
     @Json(name = "verified")
     private Boolean _verified;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CheckInOut() {
     }
 
-    public void setActor(User actor) {
+    public void setActor(User actor) throws ParseException {
         _actor = actor;
+        SOURCE.put("actor", actor.getJson());
     }
 
     public User getActor() {
         return _actor;
     }
 
-    public CheckInOut actor(User actor) {
+    public CheckInOut actor(User actor) throws ParseException {
         _actor = actor;
+        SOURCE.put("actor", actor.getJson());
         return this;
     }
 
-    public void setCoords(Coords coords) {
+    public void setCoords(Coords coords) throws ParseException {
         _coords = coords;
+        SOURCE.put("coords", coords.getJson());
     }
 
     public Coords getCoords() {
         return _coords;
     }
 
-    public CheckInOut coords(Coords coords) {
+    public CheckInOut coords(Coords coords) throws ParseException {
         _coords = coords;
+        SOURCE.put("coords", coords.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public CheckInOut created(Date created) {
+    public CheckInOut created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setDistance(Double distance) {
+    public void setDistance(Double distance) throws ParseException {
         _distance = distance;
+        SOURCE.put("distance", distance);
     }
 
     public Double getDistance() {
         return _distance;
     }
 
-    public CheckInOut distance(Double distance) {
+    public CheckInOut distance(Double distance) throws ParseException {
         _distance = distance;
+        SOURCE.put("distance", distance);
         return this;
     }
 
-    public void setDistanceFromCheckIn(Double distanceFromCheckIn) {
+    public void setDistanceFromCheckIn(Double distanceFromCheckIn) throws ParseException {
         _distanceFromCheckIn = distanceFromCheckIn;
+        SOURCE.put("distance_from_check_in", distanceFromCheckIn);
     }
 
     public Double getDistanceFromCheckIn() {
         return _distanceFromCheckIn;
     }
 
-    public CheckInOut distanceFromCheckIn(Double distanceFromCheckIn) {
+    public CheckInOut distanceFromCheckIn(Double distanceFromCheckIn) throws ParseException {
         _distanceFromCheckIn = distanceFromCheckIn;
+        SOURCE.put("distance_from_check_in", distanceFromCheckIn);
         return this;
     }
 
-    public void setTimeLog(CheckInOutTimeLog timeLog) {
+    public void setTimeLog(CheckInOutTimeLog timeLog) throws ParseException {
         _timeLog = timeLog;
+        SOURCE.put("time_log", timeLog.getJson());
     }
 
     public CheckInOutTimeLog getTimeLog() {
         return _timeLog;
     }
 
-    public CheckInOut timeLog(CheckInOutTimeLog timeLog) {
+    public CheckInOut timeLog(CheckInOutTimeLog timeLog) throws ParseException {
         _timeLog = timeLog;
+        SOURCE.put("time_log", timeLog.getJson());
         return this;
     }
 
-    public void setVerified(Boolean verified) {
+    public void setVerified(Boolean verified) throws ParseException {
         _verified = verified;
+        SOURCE.put("verified", verified);
     }
 
     public Boolean getVerified() {
         return _verified;
     }
 
-    public CheckInOut verified(Boolean verified) {
+    public CheckInOut verified(Boolean verified) throws ParseException {
         _verified = verified;
+        SOURCE.put("verified", verified);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CheckInOut[] array) {
+        JsonArray list = new JsonArray();
+        for (CheckInOut item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CheckInOut[] fromJsonArray(JsonArray array) {
         CheckInOut[] list = new CheckInOut[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -152,17 +180,8 @@ public class CheckInOut implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CheckInOut checkInOut) {
-        try {
-            return Serializer.serializeObject(checkInOut);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -193,6 +212,6 @@ public class CheckInOut implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

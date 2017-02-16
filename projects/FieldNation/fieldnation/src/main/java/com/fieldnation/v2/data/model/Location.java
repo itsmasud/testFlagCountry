@@ -5,11 +5,13 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -81,279 +83,332 @@ public class Location implements Parcelable {
     @Json(name = "zip")
     private String _zip;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Location() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Location actions(ActionsEnum[] actions) {
+    public Location actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setAddress1(String address1) {
+    public void setAddress1(String address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1);
     }
 
     public String getAddress1() {
         return _address1;
     }
 
-    public Location address1(String address1) {
+    public Location address1(String address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1);
         return this;
     }
 
-    public void setAddress2(String address2) {
+    public void setAddress2(String address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2);
     }
 
     public String getAddress2() {
         return _address2;
     }
 
-    public Location address2(String address2) {
+    public Location address2(String address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2);
         return this;
     }
 
-    public void setCity(String city) {
+    public void setCity(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
     }
 
     public String getCity() {
         return _city;
     }
 
-    public Location city(String city) {
+    public Location city(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
         return this;
     }
 
-    public void setContacts(Contact[] contacts) {
+    public void setContacts(Contact[] contacts) throws ParseException {
         _contacts = contacts;
+        SOURCE.put("contacts", Contact.toJsonArray(contacts));
     }
 
     public Contact[] getContacts() {
         return _contacts;
     }
 
-    public Location contacts(Contact[] contacts) {
+    public Location contacts(Contact[] contacts) throws ParseException {
         _contacts = contacts;
+        SOURCE.put("contacts", Contact.toJsonArray(contacts), true);
         return this;
     }
 
-    public void setCoordinates(Coords coordinates) {
+    public void setCoordinates(Coords coordinates) throws ParseException {
         _coordinates = coordinates;
+        SOURCE.put("coordinates", coordinates.getJson());
     }
 
     public Coords getCoordinates() {
         return _coordinates;
     }
 
-    public Location coordinates(Coords coordinates) {
+    public Location coordinates(Coords coordinates) throws ParseException {
         _coordinates = coordinates;
+        SOURCE.put("coordinates", coordinates.getJson());
         return this;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
     }
 
     public String getCorrelationId() {
         return _correlationId;
     }
 
-    public Location correlationId(String correlationId) {
+    public Location correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
     }
 
     public String getCountry() {
         return _country;
     }
 
-    public Location country(String country) {
+    public Location country(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
         return this;
     }
 
-    public void setMap(Map map) {
+    public void setMap(Map map) throws ParseException {
         _map = map;
+        SOURCE.put("map", map.getJson());
     }
 
     public Map getMap() {
         return _map;
     }
 
-    public Location map(Map map) {
+    public Location map(Map map) throws ParseException {
         _map = map;
+        SOURCE.put("map", map.getJson());
         return this;
     }
 
-    public void setMode(ModeEnum mode) {
+    public void setMode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
     }
 
     public ModeEnum getMode() {
         return _mode;
     }
 
-    public Location mode(ModeEnum mode) {
+    public Location mode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public Location role(String role) {
+    public Location role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
-    public void setSaveLocation(String saveLocation) {
+    public void setSaveLocation(String saveLocation) throws ParseException {
         _saveLocation = saveLocation;
+        SOURCE.put("save_location", saveLocation);
     }
 
     public String getSaveLocation() {
         return _saveLocation;
     }
 
-    public Location saveLocation(String saveLocation) {
+    public Location saveLocation(String saveLocation) throws ParseException {
         _saveLocation = saveLocation;
+        SOURCE.put("save_location", saveLocation);
         return this;
     }
 
-    public void setSaveLocationGroup(Integer saveLocationGroup) {
+    public void setSaveLocationGroup(Integer saveLocationGroup) throws ParseException {
         _saveLocationGroup = saveLocationGroup;
+        SOURCE.put("save_location_group", saveLocationGroup);
     }
 
     public Integer getSaveLocationGroup() {
         return _saveLocationGroup;
     }
 
-    public Location saveLocationGroup(Integer saveLocationGroup) {
+    public Location saveLocationGroup(Integer saveLocationGroup) throws ParseException {
         _saveLocationGroup = saveLocationGroup;
+        SOURCE.put("save_location_group", saveLocationGroup);
         return this;
     }
 
-    public void setSavedLocation(StoredLocation savedLocation) {
+    public void setSavedLocation(StoredLocation savedLocation) throws ParseException {
         _savedLocation = savedLocation;
+        SOURCE.put("saved_location", savedLocation.getJson());
     }
 
     public StoredLocation getSavedLocation() {
         return _savedLocation;
     }
 
-    public Location savedLocation(StoredLocation savedLocation) {
+    public Location savedLocation(StoredLocation savedLocation) throws ParseException {
         _savedLocation = savedLocation;
+        SOURCE.put("saved_location", savedLocation.getJson());
         return this;
     }
 
-    public void setState(String state) {
+    public void setState(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
     }
 
     public String getState() {
         return _state;
     }
 
-    public Location state(String state) {
+    public Location state(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
         return this;
     }
 
-    public void setStatusId(Integer statusId) {
+    public void setStatusId(Integer statusId) throws ParseException {
         _statusId = statusId;
+        SOURCE.put("status_id", statusId);
     }
 
     public Integer getStatusId() {
         return _statusId;
     }
 
-    public Location statusId(Integer statusId) {
+    public Location statusId(Integer statusId) throws ParseException {
         _statusId = statusId;
+        SOURCE.put("status_id", statusId);
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
     }
 
     public TimeZone getTimeZone() {
         return _timeZone;
     }
 
-    public Location timeZone(TimeZone timeZone) {
+    public Location timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
         return this;
     }
 
-    public void setType(LocationType type) {
+    public void setType(LocationType type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.getJson());
     }
 
     public LocationType getType() {
         return _type;
     }
 
-    public Location type(LocationType type) {
+    public Location type(LocationType type) throws ParseException {
         _type = type;
+        SOURCE.put("type", type.getJson());
         return this;
     }
 
-    public void setValidation(LocationValidation validation) {
+    public void setValidation(LocationValidation validation) throws ParseException {
         _validation = validation;
+        SOURCE.put("validation", validation.getJson());
     }
 
     public LocationValidation getValidation() {
         return _validation;
     }
 
-    public Location validation(LocationValidation validation) {
+    public Location validation(LocationValidation validation) throws ParseException {
         _validation = validation;
+        SOURCE.put("validation", validation.getJson());
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public Location workOrderId(Integer workOrderId) {
+    public Location workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
-    public void setZip(String zip) {
+    public void setZip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
     }
 
     public String getZip() {
         return _zip;
     }
 
-    public Location zip(String zip) {
+    public Location zip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
         return this;
     }
 
@@ -399,6 +454,14 @@ public class Location implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Location[] array) {
+        JsonArray list = new JsonArray();
+        for (Location item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Location[] fromJsonArray(JsonArray array) {
         Location[] list = new Location[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -416,17 +479,8 @@ public class Location implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Location location) {
-        try {
-            return Serializer.serializeObject(location);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -457,7 +511,7 @@ public class Location implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 
    	/*-*************************************************-*/

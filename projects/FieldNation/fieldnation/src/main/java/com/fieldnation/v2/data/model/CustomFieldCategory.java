@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class CustomFieldCategory implements Parcelable {
     @Json(name = "role")
     private String _role;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CustomFieldCategory() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public CustomFieldCategory id(Integer id) {
+    public CustomFieldCategory id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public CustomFieldCategory metadata(ListEnvelope metadata) {
+    public CustomFieldCategory metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public CustomFieldCategory name(String name) {
+    public CustomFieldCategory name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setResults(CustomField[] results) {
+    public void setResults(CustomField[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", CustomField.toJsonArray(results));
     }
 
     public CustomField[] getResults() {
         return _results;
     }
 
-    public CustomFieldCategory results(CustomField[] results) {
+    public CustomFieldCategory results(CustomField[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", CustomField.toJsonArray(results), true);
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public CustomFieldCategory role(String role) {
+    public CustomFieldCategory role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CustomFieldCategory[] array) {
+        JsonArray list = new JsonArray();
+        for (CustomFieldCategory item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CustomFieldCategory[] fromJsonArray(JsonArray array) {
         CustomFieldCategory[] list = new CustomFieldCategory[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class CustomFieldCategory implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CustomFieldCategory customFieldCategory) {
-        try {
-            return Serializer.serializeObject(customFieldCategory);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class CustomFieldCategory implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

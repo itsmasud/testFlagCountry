@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,45 +29,54 @@ public class ScheduleServiceWindow implements Parcelable {
     @Json(name = "start")
     private Date _start;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ScheduleServiceWindow() {
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(Date end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end.getJson());
     }
 
     public Date getEnd() {
         return _end;
     }
 
-    public ScheduleServiceWindow end(Date end) {
+    public ScheduleServiceWindow end(Date end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end.getJson());
         return this;
     }
 
-    public void setMode(ModeEnum mode) {
+    public void setMode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
     }
 
     public ModeEnum getMode() {
         return _mode;
     }
 
-    public ScheduleServiceWindow mode(ModeEnum mode) {
+    public ScheduleServiceWindow mode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
         return this;
     }
 
-    public void setStart(Date start) {
+    public void setStart(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
     }
 
     public Date getStart() {
         return _start;
     }
 
-    public ScheduleServiceWindow start(Date start) {
+    public ScheduleServiceWindow start(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
         return this;
     }
 
@@ -94,6 +106,14 @@ public class ScheduleServiceWindow implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ScheduleServiceWindow[] array) {
+        JsonArray list = new JsonArray();
+        for (ScheduleServiceWindow item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ScheduleServiceWindow[] fromJsonArray(JsonArray array) {
         ScheduleServiceWindow[] list = new ScheduleServiceWindow[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -111,17 +131,8 @@ public class ScheduleServiceWindow implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ScheduleServiceWindow scheduleServiceWindow) {
-        try {
-            return Serializer.serializeObject(scheduleServiceWindow);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -152,6 +163,6 @@ public class ScheduleServiceWindow implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

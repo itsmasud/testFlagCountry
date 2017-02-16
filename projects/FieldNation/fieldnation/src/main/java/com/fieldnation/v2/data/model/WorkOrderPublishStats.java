@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class WorkOrderPublishStats implements Parcelable {
     @Json(name = "routes")
     private Integer _routes;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public WorkOrderPublishStats() {
     }
 
-    public void setCounterOffers(Integer counterOffers) {
+    public void setCounterOffers(Integer counterOffers) throws ParseException {
         _counterOffers = counterOffers;
+        SOURCE.put("counter_offers", counterOffers);
     }
 
     public Integer getCounterOffers() {
         return _counterOffers;
     }
 
-    public WorkOrderPublishStats counterOffers(Integer counterOffers) {
+    public WorkOrderPublishStats counterOffers(Integer counterOffers) throws ParseException {
         _counterOffers = counterOffers;
+        SOURCE.put("counter_offers", counterOffers);
         return this;
     }
 
-    public void setRequests(Integer requests) {
+    public void setRequests(Integer requests) throws ParseException {
         _requests = requests;
+        SOURCE.put("requests", requests);
     }
 
     public Integer getRequests() {
         return _requests;
     }
 
-    public WorkOrderPublishStats requests(Integer requests) {
+    public WorkOrderPublishStats requests(Integer requests) throws ParseException {
         _requests = requests;
+        SOURCE.put("requests", requests);
         return this;
     }
 
-    public void setRoutes(Integer routes) {
+    public void setRoutes(Integer routes) throws ParseException {
         _routes = routes;
+        SOURCE.put("routes", routes);
     }
 
     public Integer getRoutes() {
         return _routes;
     }
 
-    public WorkOrderPublishStats routes(Integer routes) {
+    public WorkOrderPublishStats routes(Integer routes) throws ParseException {
         _routes = routes;
+        SOURCE.put("routes", routes);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(WorkOrderPublishStats[] array) {
+        JsonArray list = new JsonArray();
+        for (WorkOrderPublishStats item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static WorkOrderPublishStats[] fromJsonArray(JsonArray array) {
         WorkOrderPublishStats[] list = new WorkOrderPublishStats[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class WorkOrderPublishStats implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(WorkOrderPublishStats workOrderPublishStats) {
-        try {
-            return Serializer.serializeObject(workOrderPublishStats);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class WorkOrderPublishStats implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

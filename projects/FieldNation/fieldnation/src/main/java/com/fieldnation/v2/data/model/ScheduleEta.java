@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -35,90 +38,113 @@ public class ScheduleEta implements Parcelable {
     @Json(name = "user")
     private User _user;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ScheduleEta() {
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(Date end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end.getJson());
     }
 
     public Date getEnd() {
         return _end;
     }
 
-    public ScheduleEta end(Date end) {
+    public ScheduleEta end(Date end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end.getJson());
         return this;
     }
 
-    public void setHourEstimate(Double hourEstimate) {
+    public void setHourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
     }
 
     public Double getHourEstimate() {
         return _hourEstimate;
     }
 
-    public ScheduleEta hourEstimate(Double hourEstimate) {
+    public ScheduleEta hourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
         return this;
     }
 
-    public void setMode(Boolean mode) {
+    public void setMode(Boolean mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode);
     }
 
     public Boolean getMode() {
         return _mode;
     }
 
-    public ScheduleEta mode(Boolean mode) {
+    public ScheduleEta mode(Boolean mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode);
         return this;
     }
 
-    public void setStart(Date start) {
+    public void setStart(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
     }
 
     public Date getStart() {
         return _start;
     }
 
-    public ScheduleEta start(Date start) {
+    public ScheduleEta start(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
         return this;
     }
 
-    public void setStatus(ScheduleEtaStatus status) {
+    public void setStatus(ScheduleEtaStatus status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.getJson());
     }
 
     public ScheduleEtaStatus getStatus() {
         return _status;
     }
 
-    public ScheduleEta status(ScheduleEtaStatus status) {
+    public ScheduleEta status(ScheduleEtaStatus status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.getJson());
         return this;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
     }
 
     public User getUser() {
         return _user;
     }
 
-    public ScheduleEta user(User user) {
+    public ScheduleEta user(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ScheduleEta[] array) {
+        JsonArray list = new JsonArray();
+        for (ScheduleEta item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ScheduleEta[] fromJsonArray(JsonArray array) {
         ScheduleEta[] list = new ScheduleEta[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -136,17 +162,8 @@ public class ScheduleEta implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ScheduleEta scheduleEta) {
-        try {
-            return Serializer.serializeObject(scheduleEta);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -177,6 +194,6 @@ public class ScheduleEta implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

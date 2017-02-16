@@ -15,11 +15,11 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ClosingNotesDialog extends SimpleDialog {
     private static final String TAG = "ClosingNotesDialog";
@@ -124,8 +124,8 @@ public class ClosingNotesDialog extends SimpleDialog {
             _onOkDispatcher.dispatch(getUid(), _editText.getText().toString());
 
             try {
-                JsonObject workOrder = new JsonObject();
-                workOrder.put("closing_notes", _editText.getText().toString());
+                WorkOrder workOrder = new WorkOrder();
+                workOrder.closingNotes(_editText.getText().toString());
                 WorkordersWebApi.updateWorkOrder(App.get(), _workOrderId, workOrder);
             } catch (Exception ex) {
                 Log.v(TAG, ex);

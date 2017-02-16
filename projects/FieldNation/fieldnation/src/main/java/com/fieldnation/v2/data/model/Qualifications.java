@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,32 +26,47 @@ public class Qualifications implements Parcelable {
     @Json(name = "selection_rule")
     private SelectionRule _selectionRule;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Qualifications() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Qualifications actions(ActionsEnum[] actions) {
+    public Qualifications actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setSelectionRule(SelectionRule selectionRule) {
+    public void setSelectionRule(SelectionRule selectionRule) throws ParseException {
         _selectionRule = selectionRule;
+        SOURCE.put("selection_rule", selectionRule.getJson());
     }
 
     public SelectionRule getSelectionRule() {
         return _selectionRule;
     }
 
-    public Qualifications selectionRule(SelectionRule selectionRule) {
+    public Qualifications selectionRule(SelectionRule selectionRule) throws ParseException {
         _selectionRule = selectionRule;
+        SOURCE.put("selection_rule", selectionRule.getJson());
         return this;
     }
 
@@ -74,6 +92,14 @@ public class Qualifications implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Qualifications[] array) {
+        JsonArray list = new JsonArray();
+        for (Qualifications item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Qualifications[] fromJsonArray(JsonArray array) {
         Qualifications[] list = new Qualifications[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -91,17 +117,8 @@ public class Qualifications implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Qualifications qualifications) {
-        try {
-            return Serializer.serializeObject(qualifications);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -132,6 +149,6 @@ public class Qualifications implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

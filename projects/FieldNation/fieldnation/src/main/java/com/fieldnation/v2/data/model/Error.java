@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class Error implements Parcelable {
     @Json(name = "trace")
     private ErrorTrace[] _trace;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Error() {
     }
 
-    public void setCode(Integer code) {
+    public void setCode(Integer code) throws ParseException {
         _code = code;
+        SOURCE.put("code", code);
     }
 
     public Integer getCode() {
         return _code;
     }
 
-    public Error code(Integer code) {
+    public Error code(Integer code) throws ParseException {
         _code = code;
+        SOURCE.put("code", code);
         return this;
     }
 
-    public void setFields(String fields) {
+    public void setFields(String fields) throws ParseException {
         _fields = fields;
+        SOURCE.put("fields", fields);
     }
 
     public String getFields() {
         return _fields;
     }
 
-    public Error fields(String fields) {
+    public Error fields(String fields) throws ParseException {
         _fields = fields;
+        SOURCE.put("fields", fields);
         return this;
     }
 
-    public void setMessage(String message) {
+    public void setMessage(String message) throws ParseException {
         _message = message;
+        SOURCE.put("message", message);
     }
 
     public String getMessage() {
         return _message;
     }
 
-    public Error message(String message) {
+    public Error message(String message) throws ParseException {
         _message = message;
+        SOURCE.put("message", message);
         return this;
     }
 
-    public void setTrace(ErrorTrace[] trace) {
+    public void setTrace(ErrorTrace[] trace) throws ParseException {
         _trace = trace;
+        SOURCE.put("trace", ErrorTrace.toJsonArray(trace));
     }
 
     public ErrorTrace[] getTrace() {
         return _trace;
     }
 
-    public Error trace(ErrorTrace[] trace) {
+    public Error trace(ErrorTrace[] trace) throws ParseException {
         _trace = trace;
+        SOURCE.put("trace", ErrorTrace.toJsonArray(trace), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Error[] array) {
+        JsonArray list = new JsonArray();
+        for (Error item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Error[] fromJsonArray(JsonArray array) {
         Error[] list = new Error[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class Error implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Error error) {
-        try {
-            return Serializer.serializeObject(error);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class Error implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

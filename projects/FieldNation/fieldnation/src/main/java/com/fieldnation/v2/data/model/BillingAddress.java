@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -38,103 +41,128 @@ public class BillingAddress implements Parcelable {
     @Json(name = "zip")
     private String _zip;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public BillingAddress() {
     }
 
-    public void setAddress(String address) {
+    public void setAddress(String address) throws ParseException {
         _address = address;
+        SOURCE.put("address", address);
     }
 
     public String getAddress() {
         return _address;
     }
 
-    public BillingAddress address(String address) {
+    public BillingAddress address(String address) throws ParseException {
         _address = address;
+        SOURCE.put("address", address);
         return this;
     }
 
-    public void setCity(String city) {
+    public void setCity(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
     }
 
     public String getCity() {
         return _city;
     }
 
-    public BillingAddress city(String city) {
+    public BillingAddress city(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
         return this;
     }
 
-    public void setCountry(String country) {
+    public void setCountry(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
     }
 
     public String getCountry() {
         return _country;
     }
 
-    public BillingAddress country(String country) {
+    public BillingAddress country(String country) throws ParseException {
         _country = country;
+        SOURCE.put("country", country);
         return this;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email) throws ParseException {
         _email = email;
+        SOURCE.put("email", email);
     }
 
     public String getEmail() {
         return _email;
     }
 
-    public BillingAddress email(String email) {
+    public BillingAddress email(String email) throws ParseException {
         _email = email;
+        SOURCE.put("email", email);
         return this;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(String phone) throws ParseException {
         _phone = phone;
+        SOURCE.put("phone", phone);
     }
 
     public String getPhone() {
         return _phone;
     }
 
-    public BillingAddress phone(String phone) {
+    public BillingAddress phone(String phone) throws ParseException {
         _phone = phone;
+        SOURCE.put("phone", phone);
         return this;
     }
 
-    public void setState(String state) {
+    public void setState(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
     }
 
     public String getState() {
         return _state;
     }
 
-    public BillingAddress state(String state) {
+    public BillingAddress state(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
         return this;
     }
 
-    public void setZip(String zip) {
+    public void setZip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
     }
 
     public String getZip() {
         return _zip;
     }
 
-    public BillingAddress zip(String zip) {
+    public BillingAddress zip(String zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(BillingAddress[] array) {
+        JsonArray list = new JsonArray();
+        for (BillingAddress item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static BillingAddress[] fromJsonArray(JsonArray array) {
         BillingAddress[] list = new BillingAddress[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -152,17 +180,8 @@ public class BillingAddress implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(BillingAddress billingAddress) {
-        try {
-            return Serializer.serializeObject(billingAddress);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -193,6 +212,6 @@ public class BillingAddress implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }
