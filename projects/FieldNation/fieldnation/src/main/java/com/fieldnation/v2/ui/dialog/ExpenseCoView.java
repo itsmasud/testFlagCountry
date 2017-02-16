@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.util.AttributeSet;

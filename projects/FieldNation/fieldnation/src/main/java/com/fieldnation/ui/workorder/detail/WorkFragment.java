@@ -47,7 +47,6 @@ import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
@@ -141,7 +140,6 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Dialogs
-    private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
     private DiscountDialog _discountDialog;
@@ -364,7 +362,6 @@ TODO        if (_currentTask != null)
     public void onAttach(Activity activity) {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
-        _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);

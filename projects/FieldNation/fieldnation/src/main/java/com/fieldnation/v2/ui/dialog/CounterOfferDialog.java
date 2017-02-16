@@ -1,39 +1,32 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
-import android.app.Dialog;
-import android.content.res.Configuration;
+import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CounterOfferInfo;
-import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.v2.ui.dialog.ExpenseDialog;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.PaymentCoView;
+import com.fieldnation.ui.dialog.ScheduleCoView;
+import com.fieldnation.ui.dialog.ScheduleDialog;
+import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by michael.carver on 11/5/2014.
  */
-public class CounterOfferDialog extends DialogFragmentBase {
+public class CounterOfferDialog extends SimpleDialog {
     private static final String TAG = "CounterOfferDialog";
 
     // Dialogs
@@ -65,11 +58,11 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private TermsDialog _termsDialog;
 
     // Data State
-    private final List<Expense> _expenses = new LinkedList<>();
+    //TODO    private final List<Expense> _expenses = new LinkedList<>();
 
-    private Workorder _workorder;
-    private Pay _counterPay;
-    private Schedule _counterSchedule;
+    private WorkOrder _workOrder;
+    //TODO    private Pay _counterPay;
+    //TODO    private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires = false;
     //    private String _expirationDate;
@@ -80,88 +73,17 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private boolean _tacAccpet;
     private Listener _listener;
 
-
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    public static CounterOfferDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, CounterOfferDialog.class);
+    public CounterOfferDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_WORKORDER))
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-            if (savedInstanceState.containsKey(STATE_COUNTER_PAY))
-                _counterPay = savedInstanceState.getParcelable(STATE_COUNTER_PAY);
-
-            if (savedInstanceState.containsKey(STATE_EXPENSES)) {
-                Parcelable[] parc = savedInstanceState.getParcelableArray(STATE_EXPENSES);
-                _expenses.clear();
-                for (Parcelable aParc : parc) {
-                    _expenses.add((Expense) aParc);
-                }
-            }
-
-            if (savedInstanceState.containsKey(STATE_COUNTER_SCHEDULE))
-                _counterSchedule = savedInstanceState.getParcelable(STATE_COUNTER_SCHEDULE);
-
-            if (savedInstanceState.containsKey(STATE_COUNTER_REASON))
-                _counterReason = savedInstanceState.getString(STATE_COUNTER_REASON);
-
-            if (savedInstanceState.containsKey(STATE_EXPIRES))
-                _expires = savedInstanceState.getBoolean(STATE_EXPIRES);
-
-            if (savedInstanceState.containsKey(STATE_EXPIRATION_IN_SECOND))
-                _expiresAfterInSecond = savedInstanceState.getInt(STATE_EXPIRATION_IN_SECOND);
-
-            if (savedInstanceState.containsKey(STATE_TAC))
-                _tacAccpet = savedInstanceState.getBoolean(STATE_TAC);
-        }
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        outState.putBoolean(STATE_EXPIRES, _expires);
-        outState.putBoolean(STATE_TAC, _tacAccpet);
-
-        if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
-
-        if (_counterPay != null)
-            outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
-
-        if (_expenses != null && _expenses.size() > 0) {
-            Expense[] exs = new Expense[_expenses.size()];
-
-            for (int i = 0; i < _expenses.size(); i++) {
-                exs[i] = _expenses.get(i);
-            }
-
-            outState.putParcelableArray(STATE_EXPENSES, exs);
-        }
-
-        if (_counterSchedule != null)
-            outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
-
-        if (_reasonView != null) {
-            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
-            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
-            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
-        }
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_counter_offer, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
 
         _tabHost = (TabHost) v.findViewById(R.id.tabhost);
         _tabHost.setup();
@@ -193,51 +115,38 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_ok_onClick);
-
         _backButton = (Button) v.findViewById(R.id.back_button);
-        _backButton.setOnClickListener(_back_onClick);
         _backButton.setVisibility(View.GONE);
-
         _paymentView = (PaymentCoView) v.findViewById(R.id.payment_view);
-        _paymentView.setListener(_payment_listener);
-
         _scheduleView = (ScheduleCoView) v.findViewById(R.id.schedule_view);
-        _scheduleView.setListener(_scheduleView_listener);
-
         _expenseView = (ExpenseCoView) v.findViewById(R.id.expenses_view);
-//TODO        _expenseView.setListener(_expenseView_listener);
-
         _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
-        _reasonView.setListener(getFragmentManager(), _reason_listener);
-
-        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
-        _payDialog.setListener(_payDialog_listener);
-
-        _scheduleDialog = ScheduleDialog.getInstance(getFragmentManager(), TAG);
-        _scheduleDialog.setListener(_scheduleDialog_listener);
-
         _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
 
+/*
+TODO        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
+        _scheduleDialog = ScheduleDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+*/
 
         return v;
     }
+
 
     @Override
     public void onStart() {
         super.onStart();
 
+        _okButton.setOnClickListener(_ok_onClick);
+        _backButton.setOnClickListener(_back_onClick);
+//TODO        _paymentView.setListener(_payment_listener);
+//TODO        _scheduleView.setListener(_scheduleView_listener);
+//TODO        _expenseView.setListener(_expenseView_listener);
+        _reasonView.setListener(_reason_listener);
+//TODO        _payDialog.setListener(_payDialog_listener);
+//TODO        _scheduleDialog.setListener(_scheduleDialog_listener);
+
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
     }
 
     @Override
@@ -245,7 +154,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
         Log.v(TAG, "onResume");
         super.onResume();
 
-        Dialog d = getDialog();
+/*
+TODO        Dialog d = getDialog();
         if (d == null)
             return;
 
@@ -258,59 +168,98 @@ public class CounterOfferDialog extends DialogFragmentBase {
         } else {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
         }
+*/
 
         populateUi();
     }
 
     @Override
-    public void init() {
-        Log.v(TAG, "init");
+    public void onStop() {
+        super.onStop();
+
+        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
     }
 
     @Override
-    public void reset() {
-        setTabPos(0);
-    }
+    public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveDialogState");
+        outState.putBoolean(STATE_EXPIRES, _expires);
+        outState.putBoolean(STATE_TAC, _tacAccpet);
 
-    private void populateUi() {
-        Log.v(TAG, "populateUi maybe!");
-        if (_workorder == null)
-            return;
+        if (_workOrder != null)
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
-        if (_paymentView == null)
-            return;
+/*
+TODO        if (_counterPay != null)
+            outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
 
-        if (_scheduleView == null)
-            return;
+        if (_expenses != null && _expenses.size() > 0) {
+            Expense[] exs = new Expense[_expenses.size()];
 
-        Log.v(TAG, "populateUi yes!");
+            for (int i = 0; i < _expenses.size(); i++) {
+                exs[i] = _expenses.get(i);
+            }
 
-        if (_counterPay != null)
-            _paymentView.setPay(_counterPay, true);
-        else
-            _paymentView.setPay(_workorder.getPay(), false);
-
-        if (_counterSchedule != null) {
-            _scheduleView.setSchedule(_counterSchedule, true);
-        } else {
-            _scheduleView.setSchedule(_workorder.getSchedule(), false);
+            outState.putParcelableArray(STATE_EXPENSES, exs);
         }
 
-//TODO        _expenseView.setData(_workorder, _expenses);
+        if (_counterSchedule != null)
+            outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
+*/
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
+        if (_reasonView != null) {
+            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
+            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
+            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
+        }
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onCreate");
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_WORKORDER))
+                _workOrder = savedState.getParcelable(STATE_WORKORDER);
+
+/*
+TODO            if (savedState.containsKey(STATE_COUNTER_PAY))
+                _counterPay = savedState.getParcelable(STATE_COUNTER_PAY);
+
+            if (savedState.containsKey(STATE_EXPENSES)) {
+                Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
+                _expenses.clear();
+                for (Parcelable aParc : parc) {
+                    _expenses.add((Expense) aParc);
+                }
+            }
+
+            if (savedState.containsKey(STATE_COUNTER_SCHEDULE))
+                _counterSchedule = savedState.getParcelable(STATE_COUNTER_SCHEDULE);
+*/
+
+            if (savedState.containsKey(STATE_COUNTER_REASON))
+                _counterReason = savedState.getString(STATE_COUNTER_REASON);
+
+            if (savedState.containsKey(STATE_EXPIRES))
+                _expires = savedState.getBoolean(STATE_EXPIRES);
+
+            if (savedState.containsKey(STATE_EXPIRATION_IN_SECOND))
+                _expiresAfterInSecond = savedState.getInt(STATE_EXPIRATION_IN_SECOND);
+
+            if (savedState.containsKey(STATE_TAC))
+                _tacAccpet = savedState.getBoolean(STATE_TAC);
+        }
     }
 
-    // this will only be called once.. will not be called on redraw
-    public void show(Workorder workorder) {
+    @Override
+    public void show(Bundle payload, boolean animate) {
+        super.show(payload, animate);
+
         Log.v(TAG, "show");
-        _workorder = workorder;
+        _workOrder = payload.getParcelable("workOrder");
 
-        CounterOfferInfo info = _workorder.getCounterOfferInfo();
+/*
+TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 
         _counterPay = null;
         _counterSchedule = null;
@@ -344,8 +293,38 @@ public class CounterOfferDialog extends DialogFragmentBase {
 //                }
             }
         }
+*/
+    }
 
-        super.show();
+    private void populateUi() {
+        Log.v(TAG, "populateUi maybe!");
+        if (_workOrder == null)
+            return;
+
+        if (_paymentView == null)
+            return;
+
+        if (_scheduleView == null)
+            return;
+
+        Log.v(TAG, "populateUi yes!");
+
+/*
+TODO        if (_counterPay != null)
+            _paymentView.setPay(_counterPay, true);
+        else
+            _paymentView.setPay(_workorder.getPay(), false);
+
+        if (_counterSchedule != null) {
+            _scheduleView.setSchedule(_counterSchedule, true);
+        } else {
+            _scheduleView.setSchedule(_workorder.getSchedule(), false);
+        }
+*/
+
+//TODO        _expenseView.setData(_workorder, _expenses);
+
+        _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
     }
 
     private void setTabPos(int pos) {
@@ -380,7 +359,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
+//TODO            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
         @Override
@@ -429,12 +408,13 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
     private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
-            _expenses.add(new Expense(description, amount, category));
+//TODO            _expenses.add(new Expense(description, amount, category));
             populateUi();
         }
     };
 
-    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
+/*
+TODO    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
         @Override
         public void onClear() {
             _counterSchedule = null;
@@ -483,6 +463,7 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
         public void onNothing() {
         }
     };
+*/
 
     private final TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override
@@ -508,7 +489,7 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
                 setTabPos(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
                 if (!_tacAccpet) {
-                    Toast.makeText(getActivity(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG).show();
+                    ToastClient.toast(App.get(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG);
                     return;
                 }
 
@@ -520,7 +501,8 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
 //                }
 
                 // Todo need to do some data validation
-                if (_listener != null) {
+/*
+TODO                if (_listener != null) {
                     Expense[] exp = new Expense[_expenses.size()];
                     for (int i = 0; i < _expenses.size(); i++) {
                         exp[i] = _expenses.get(i);
@@ -540,8 +522,9 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
 
                     _listener.onOk(_workorder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
                     _tacAccpet = false;
-                    dismiss();
+                    dismiss(true);
                 }
+*/
             }
         }
     };
@@ -554,7 +537,7 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
     };
 
     public interface Listener {
-        void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
+//TODO        void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
 }
