@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:paddingBottom="@dimen/dialogActionBarPadding">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/incompleteEta_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/x_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/incomplete_textview"
+                    android:layout_marginLeft="24dp"
+                    android:paddingRight="4dp"
+                    android:text="@string/icon_x"
+                    android:textColor="@color/fn_red" />
+
+                <TextView
+                    android:id="@+id/incomplete_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginBottom="10dp"
+                    android:layout_toRightOf="@+id/x_textview"
+                    android:gravity="center"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:text="@string/incomplete"
+                    android:textStyle="bold"/>
+
+                <View
+                    android:id="@+id/incomplete_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/incomplete_textview" />
+
+                <LinearLayout
+                    android:id="@+id/incompleteEta_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/incomplete_divider"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/completeEta_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/incompleteEta_layout"
+                android:layout_marginTop="12dp">
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/checkmark_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_alignBottom="@+id/complete_textview"
+                    android:layout_marginLeft="24dp"
+                    android:paddingRight="4dp"
+                    android:text="@string/icon_checkmark"
+                    android:textColor="@color/fn_accent_color_medium" />
+
+
+                <TextView
+                    android:id="@+id/complete_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:layout_toEndOf="@+id/checkmark_textview"
+                    android:layout_toRightOf="@+id/checkmark_textview"
+                    android:text="@string/complete" />
+
+
+                <View
+                    android:id="@+id/complete_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/complete_textview" />
+
+
+                <LinearLayout
+                    android:id="@+id/completeEta_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/complete_divider"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

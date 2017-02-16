@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="0dp"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="5dp"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="@string/placeholder_paragraph"
+        android:textColor="#FF333333"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/date_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="10dp"
+        android:text="Sept 12"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/hyphen_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_toRightOf="@+id/time_textview"
+        android:text="-"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/date2_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginBottom="5dp"
+        android:layout_toRightOf="@+id/hyphen_textview"
+        android:text="Sept 12"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/time2_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/date2_textview"
+        android:text="10:45 am"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp" />
+
+
+    <TextView
+        android:id="@+id/address_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_textview"
+        android:layout_marginLeft="10dp"
+        android:text="901 S Marquette Ave, Suit 2300"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/time_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10:45 am"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp"
+        android:layout_below="@+id/title_textview"
+        android:layout_toRightOf="@+id/date_textview"
+        android:layout_toEndOf="@+id/date_textview" />
+
+    <TextView
+        android:id="@+id/location_textview"
+        style="@style/Text_Roboto_Medium"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/address_textview"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Rancho Santa Margarita, CA"
+        android:textColor="@color/fn_light_text"
+        android:textSize="14sp" />
+
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/location_textview" />
+
+</RelativeLayout>
