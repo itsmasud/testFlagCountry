@@ -17,7 +17,7 @@ import java.text.ParseException;
  */
 
 public class TechnicianW9Status implements Parcelable {
-    private static final String TAG = "technicianW9Status";
+    private static final String TAG = "TechnicianW9Status";
 
     @Json(name = "status_name")
     private String _statusName;

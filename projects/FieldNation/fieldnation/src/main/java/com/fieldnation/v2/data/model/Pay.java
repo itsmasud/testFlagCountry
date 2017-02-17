@@ -45,7 +45,7 @@ public class Pay implements Parcelable {
     private PayFinance _finance;
 
     @Json(name = "hold")
-    private Fee _hold;
+    private PayModifier _hold;
 
     @Json(name = "increases")
     private PayIncreases _increases;
@@ -57,7 +57,7 @@ public class Pay implements Parcelable {
     private Double _numberOfDevices;
 
     @Json(name = "payment")
-    private Fee _payment;
+    private PayModifier _payment;
 
     @Json(name = "pricing_insights")
     private PricingInsights _pricingInsights;
@@ -217,16 +217,16 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setHold(Fee hold) throws ParseException {
+    public void setHold(PayModifier hold) throws ParseException {
         _hold = hold;
         SOURCE.put("hold", hold.getJson());
     }
 
-    public Fee getHold() {
+    public PayModifier getHold() {
         return _hold;
     }
 
-    public Pay hold(Fee hold) throws ParseException {
+    public Pay hold(PayModifier hold) throws ParseException {
         _hold = hold;
         SOURCE.put("hold", hold.getJson());
         return this;
@@ -277,16 +277,16 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setPayment(Fee payment) throws ParseException {
+    public void setPayment(PayModifier payment) throws ParseException {
         _payment = payment;
         SOURCE.put("payment", payment.getJson());
     }
 
-    public Fee getPayment() {
+    public PayModifier getPayment() {
         return _payment;
     }
 
-    public Pay payment(Fee payment) throws ParseException {
+    public Pay payment(PayModifier payment) throws ParseException {
         _payment = payment;
         SOURCE.put("payment", payment.getJson());
         return this;

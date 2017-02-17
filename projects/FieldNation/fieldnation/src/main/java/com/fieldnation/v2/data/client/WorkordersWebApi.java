@@ -1080,6 +1080,46 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: addWorkOrder
+     * Create a work order
+     *
+     * @param workOrder Work order
+     */
+    public static void addWorkOrder(Context context, WorkOrder workOrder) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders");
+
+            if (workOrder != null)
+                builder.body(workOrder.getJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders",
+                                    WorkordersWebApi.class, "addWorkOrder"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subAddWorkOrder() {
+        return register("TOPIC_ID_WEB_API_V2/workorders");
+    }
+
+    /**
      * Swagger operationId: approveWorkOrderByWorkOrder
      * Approves a completed work order and moves it to paid status
      *
@@ -6859,6 +6899,9 @@ public class WorkordersWebApi extends TopicClient {
         public void onAddTimeLog(TimeLog timeLog, boolean success, Error error) {
         }
 
+        public void onAddWorkOrder(boolean success, Error error) {
+        }
+
         public void onApproveWorkOrder(boolean success, Error error) {
         }
 
@@ -7260,6 +7303,10 @@ public class WorkordersWebApi extends TopicClient {
                         if (success)
                             successObject = TimeLog.fromJson(new JsonObject(data));
                         else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "addWorkOrder":
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "approveWorkOrder":
@@ -7802,6 +7849,9 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "addTimeLog":
                         listener.onAddTimeLog((TimeLog) successObject, success, (Error) failObject);
+                        break;
+                    case "addWorkOrder":
+                        listener.onAddWorkOrder(success, (Error) failObject);
                         break;
                     case "approveWorkOrder":
                         listener.onApproveWorkOrder(success, (Error) failObject);
