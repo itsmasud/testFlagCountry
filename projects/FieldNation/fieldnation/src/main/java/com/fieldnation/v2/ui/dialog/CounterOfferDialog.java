@@ -17,7 +17,6 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.KeyedDispatcher;
-import com.fieldnation.ui.dialog.ScheduleCoView;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
