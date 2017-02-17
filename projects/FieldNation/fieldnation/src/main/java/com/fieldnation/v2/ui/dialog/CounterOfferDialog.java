@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.ScheduleCoView;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -72,7 +74,6 @@ public class CounterOfferDialog extends SimpleDialog {
 
     // Data
     private boolean _tacAccpet;
-    private Listener _listener;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -169,84 +170,6 @@ TODO        Dialog d = getDialog();
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-
-        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        Log.v(TAG, "onSaveDialogState");
-        outState.putBoolean(STATE_EXPIRES, _expires);
-        outState.putBoolean(STATE_TAC, _tacAccpet);
-
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
-
-/*
-TODO        if (_counterPay != null)
-            outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
-
-        if (_expenses != null && _expenses.size() > 0) {
-            Expense[] exs = new Expense[_expenses.size()];
-
-            for (int i = 0; i < _expenses.size(); i++) {
-                exs[i] = _expenses.get(i);
-            }
-
-            outState.putParcelableArray(STATE_EXPENSES, exs);
-        }
-
-        if (_counterSchedule != null)
-            outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
-*/
-
-        if (_reasonView != null) {
-            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
-            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
-            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
-        }
-    }
-
-    @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        Log.v(TAG, "onCreate");
-        if (savedState != null) {
-            if (savedState.containsKey(STATE_WORKORDER))
-                _workOrder = savedState.getParcelable(STATE_WORKORDER);
-
-/*
-TODO            if (savedState.containsKey(STATE_COUNTER_PAY))
-                _counterPay = savedState.getParcelable(STATE_COUNTER_PAY);
-
-            if (savedState.containsKey(STATE_EXPENSES)) {
-                Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
-                _expenses.clear();
-                for (Parcelable aParc : parc) {
-                    _expenses.add((Expense) aParc);
-                }
-            }
-
-            if (savedState.containsKey(STATE_COUNTER_SCHEDULE))
-                _counterSchedule = savedState.getParcelable(STATE_COUNTER_SCHEDULE);
-*/
-
-            if (savedState.containsKey(STATE_COUNTER_REASON))
-                _counterReason = savedState.getString(STATE_COUNTER_REASON);
-
-            if (savedState.containsKey(STATE_EXPIRES))
-                _expires = savedState.getBoolean(STATE_EXPIRES);
-
-            if (savedState.containsKey(STATE_EXPIRATION_IN_SECOND))
-                _expiresAfterInSecond = savedState.getInt(STATE_EXPIRATION_IN_SECOND);
-
-            if (savedState.containsKey(STATE_TAC))
-                _tacAccpet = savedState.getBoolean(STATE_TAC);
-        }
-    }
-
-    @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
 
@@ -291,6 +214,82 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 */
     }
 
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onCreate");
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_WORKORDER))
+                _workOrder = savedState.getParcelable(STATE_WORKORDER);
+
+            if (savedState.containsKey(STATE_COUNTER_PAY))
+                _counterPay = savedState.getParcelable(STATE_COUNTER_PAY);
+
+            if (savedState.containsKey(STATE_EXPENSES)) {
+                Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
+                _expenses.clear();
+                for (Parcelable aParc : parc) {
+                    _expenses.add((Expense) aParc);
+                }
+            }
+
+            if (savedState.containsKey(STATE_COUNTER_SCHEDULE))
+                _counterSchedule = savedState.getParcelable(STATE_COUNTER_SCHEDULE);
+
+            if (savedState.containsKey(STATE_COUNTER_REASON))
+                _counterReason = savedState.getString(STATE_COUNTER_REASON);
+
+            if (savedState.containsKey(STATE_EXPIRES))
+                _expires = savedState.getBoolean(STATE_EXPIRES);
+
+            if (savedState.containsKey(STATE_EXPIRATION_IN_SECOND))
+                _expiresAfterInSecond = savedState.getInt(STATE_EXPIRATION_IN_SECOND);
+
+            if (savedState.containsKey(STATE_TAC))
+                _tacAccpet = savedState.getBoolean(STATE_TAC);
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+        ScheduleDialog.removeOnCompleteListener(DIALOG_SCHEDULE, _scheduleDialog_onComplete);
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveDialogState");
+        outState.putBoolean(STATE_EXPIRES, _expires);
+        outState.putBoolean(STATE_TAC, _tacAccpet);
+
+        if (_workOrder != null)
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
+
+        if (_counterPay != null)
+            outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
+
+        if (_expenses != null && _expenses.size() > 0) {
+            Expense[] exs = new Expense[_expenses.size()];
+
+            for (int i = 0; i < _expenses.size(); i++) {
+                exs[i] = _expenses.get(i);
+            }
+
+            outState.putParcelableArray(STATE_EXPENSES, exs);
+        }
+
+        if (_counterSchedule != null)
+            outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
+
+        if (_reasonView != null) {
+            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
+            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
+            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
+        }
+    }
+
     private void populateUi() {
         Log.v(TAG, "populateUi maybe!");
         if (_workOrder == null)
@@ -304,18 +303,16 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 
         Log.v(TAG, "populateUi yes!");
 
-/*
-TODO        if (_counterPay != null)
+        if (_counterPay != null)
             _paymentView.setPay(_counterPay, true);
         else
-            _paymentView.setPay(_workorder.getPay(), false);
+            _paymentView.setPay(_workOrder.getPay(), false);
 
         if (_counterSchedule != null) {
             _scheduleView.setSchedule(_counterSchedule, true);
         } else {
-            _scheduleView.setSchedule(_workorder.getSchedule(), false);
+            _scheduleView.setSchedule(_workOrder.getSchedule(), false);
         }
-*/
 
         _expenseView.setData(_workOrder, _expenses);
 
@@ -494,12 +491,10 @@ TODO             CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 //                }
 
                 // Todo need to do some data validation
-/*
-TODO                if (_listener != null) {
-                    Expense[] exp = new Expense[_expenses.size()];
-                    for (int i = 0; i < _expenses.size(); i++) {
-                        exp[i] = _expenses.get(i);
-                    }
+                Expense[] exp = new Expense[_expenses.size()];
+                for (int i = 0; i < _expenses.size(); i++) {
+                    exp[i] = _expenses.get(i);
+                }
 
 //                    int seconds = -1;
 //                    if (_expires) {
@@ -511,13 +506,11 @@ TODO                if (_listener != null) {
 //                        }
 //                    }
 
-                    Log.e(TAG, "_expireDuration: " + _expireDuration);
+                Log.e(TAG, "_expireDuration: " + _expireDuration);
 
-                    _listener.onOk(_workorder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
-                    _tacAccpet = false;
-                    dismiss(true);
-                }
-*/
+                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
+                _tacAccpet = false;
+                dismiss(true);
             }
         }
     };
@@ -529,8 +522,31 @@ TODO                if (_listener != null) {
         }
     };
 
-    public interface Listener {
-//TODO        void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
+    /*-**********************-*/
+    /*-         Ok           -*/
+    /*-**********************-*/
+    public interface OnOkListener {
+        void onOk(WorkOrder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
+        @Override
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk((WorkOrder) parameters[0], (String) parameters[1], (Boolean) parameters[2],
+                    (Integer) parameters[3], (Pay) parameters[4], (Schedule) parameters[5], (Expense[]) parameters[6]
+            );
+        }
+    };
+
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
 }
