@@ -1,6 +1,7 @@
 package com.fieldnation.v2.ui.dialog;
 
-import android.support.v4.app.FragmentManager;
+import android.content.Context;
+import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -11,29 +12,12 @@ import com.fieldnation.R;
 public class TermsDialog extends OneButtonDialog {
     private static final String TAG = "TermsDialog";
 
-    /*-*************************************-*/
-    /*-             Life Cycle              -*/
-    /*-*************************************-*/
-    public static TermsDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, TermsDialog.class);
+    public TermsDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
-    public void show(String title, String body) {
-        setData(title, body, App.get().getString(R.string.btn_done), _super_listener);
-
-        super.show();
+    public static void show(Context context, String uid, String title, String body) {
+        show(context, uid, TermsDialog.class, title, body, App.get().getString(R.string.btn_done), true);
     }
-
-    private final Listener _super_listener = new Listener() {
-        @Override
-        public void onButtonClick() {
-            dismiss();
-        }
-
-        @Override
-        public void onCancel() {
-
-        }
-    };
 }
 

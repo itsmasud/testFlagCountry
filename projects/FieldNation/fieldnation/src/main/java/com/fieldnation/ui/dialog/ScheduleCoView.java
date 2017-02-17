@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.v2.data.model.Schedule;
 
 /**
  * Created by michael.carver on 11/5/2014.
@@ -91,7 +92,7 @@ public class ScheduleCoView extends RelativeLayout {
             _statusTextView.setText("Buyer's Schedule");
         }
 
-        String display = _schedule.getDisplayString(false);
+        String display = _schedule.getServiceWindow().getDisplayString(false);
         _bodyTextView.setText(display);
     }
 

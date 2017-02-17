@@ -40,7 +40,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <com.fieldnation.ui.dialog.PaymentCoView
+                    <com.fieldnation.v2.ui.dialog.PaymentCoView
                         android:id="@+id/payment_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />

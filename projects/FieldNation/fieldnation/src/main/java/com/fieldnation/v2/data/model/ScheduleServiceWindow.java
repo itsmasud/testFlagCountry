@@ -5,13 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by dmgen from swagger.
@@ -165,4 +169,171 @@ public class ScheduleServiceWindow implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public String getFormatedDate() {
+        try {
+            if (!misc.isEmptyOrNull(getStart().getUtc())) {
+                String when = "";
+                Calendar cal = null;
+                cal = getStart().getCalendar();
+                when = DateUtils.formatDateReallyLong(cal);
+
+                // Wednesday, Dec 4, 2056
+                if (!misc.isEmptyOrNull(getEnd().getUtc())) {
+                    Calendar ecal = getEnd().getCalendar();
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
+                        when += "\n";
+                        when += DateUtils.formatDateReallyLong(ecal);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public String getFormatedTime() {
+        try {
+            if (!misc.isEmptyOrNull(getStart().getUtc())) {
+                String when = "";
+                Calendar cal = null;
+                cal = getStart().getCalendar();
+                when = DateUtils.formatTime(cal, false);
+
+                if (!misc.isEmptyOrNull(getEnd().getUtc())) {
+                    cal = getEnd().getCalendar();
+                    if (cal.get(Calendar.YEAR) > 2000) {
+                        when += " - ";
+                        when += DateUtils.formatTime(cal, false);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    // Todo, localize this
+    public String getFormatedStartTime() {
+        try {
+            if (!misc.isEmptyOrNull(getStart().getUtc())) {
+                String when = "";
+                Calendar cal = null;
+                Calendar ecal = null;
+                cal = getStart().getCalendar();
+                when = DateUtils.formatDate(cal);
+
+                if (!misc.isEmptyOrNull(getEnd().getUtc())) {
+                    ecal = getEnd().getCalendar();
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
+                        when += " - ";
+                        when += DateUtils.formatDate(ecal);
+                    }
+                }
+                when += " @ ";
+
+                when += DateUtils.formatTime(cal, false);
+
+                if (ecal != null
+                        && ((ecal.get(Calendar.HOUR_OF_DAY) != cal.get(Calendar.HOUR_OF_DAY))
+                        || (ecal.get(Calendar.MINUTE) != cal.get(Calendar.MINUTE)))) {
+                    when += " - ";
+                    when += DateUtils.formatTime(ecal, false);
+                }
+
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public String getDisplayString(boolean asStartAndDuration) {
+        if (getMode() == ModeEnum.EXACT) {
+            try {
+                String dayDate;
+                String time = "";
+                Calendar cal;
+
+                cal = getStart().getCalendar();
+                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                time = DateUtils.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, java.util.TimeZone.SHORT);
+
+                return "Exactly on " + dayDate + " @ " + time;
+
+            } catch (ParseException e) {
+                Log.v(TAG, e);
+            }
+        } else {
+            if (asStartAndDuration) {
+                try {
+                    Calendar cal = getStart().getCalendar();
+                    String dayDate;
+                    String time = "";
+
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                    time = DateUtils.formatTime(cal, false);
+
+                    String msg = "Exactly on " + dayDate + " @ " + time + ".\n\t for ";
+
+                    long length = getEnd().getUtcLong() - getStart().getUtcLong();
+
+                    msg += misc.convertMsToHuman(length);
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    Log.v(TAG, e);
+                }
+            } else {
+                try {
+                    Calendar cal = getStart().getCalendar();
+                    String dayDate;
+                    String time = "";
+
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                    time = DateUtils.formatTime(cal, false);
+
+                    String msg = "Between " + dayDate + " @ " + time + "\nand";
+
+                    Calendar cal2 = getEnd().getCalendar();
+
+                    // same day
+                    if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                        time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, java.util.TimeZone.SHORT);
+                        msg += time;
+
+                    } else {
+                        dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + DateUtils.formatDateLong(cal2);
+                        time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, java.util.TimeZone.SHORT);
+                        msg += dayDate + " @ " + time;
+                    }
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    Log.v(TAG, e);
+                }
+            }
+        }
+        return null;
+    }
+
 }

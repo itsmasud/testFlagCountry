@@ -12,16 +12,18 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.ui.dialog.PayDialog;
-import com.fieldnation.ui.dialog.PaymentCoView;
 import com.fieldnation.ui.dialog.ScheduleCoView;
-import com.fieldnation.ui.dialog.ScheduleDialog;
-import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.ExpenseCategory;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by michael.carver on 11/5/2014.
@@ -31,6 +33,9 @@ public class CounterOfferDialog extends SimpleDialog {
 
     // Dialogs
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
+    private static final String DIALOG_PAY = TAG + ".payDialog";
+    private static final String DIALOG_SCHEDULE = TAG + ".scheduleDialog";
+    private static final String DIALOG_TERMS = TAG + ".termsDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -53,16 +58,12 @@ public class CounterOfferDialog extends SimpleDialog {
     private ExpenseCoView _expenseView;
     private ReasonCoView _reasonView;
 
-    private PayDialog _payDialog;
-    private ScheduleDialog _scheduleDialog;
-    private TermsDialog _termsDialog;
-
     // Data State
-    //TODO    private final List<Expense> _expenses = new LinkedList<>();
+    private final List<Expense> _expenses = new LinkedList<>();
 
     private WorkOrder _workOrder;
-    //TODO    private Pay _counterPay;
-    //TODO    private Schedule _counterSchedule;
+    private Pay _counterPay;
+    private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires = false;
     //    private String _expirationDate;
@@ -123,10 +124,6 @@ public class CounterOfferDialog extends SimpleDialog {
         _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
         _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
 
-        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
-        _scheduleDialog = ScheduleDialog.getInstance(getFragmentManager(), TAG);
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-
         return v;
     }
 
@@ -137,14 +134,14 @@ public class CounterOfferDialog extends SimpleDialog {
 
         _okButton.setOnClickListener(_ok_onClick);
         _backButton.setOnClickListener(_back_onClick);
-//TODO        _paymentView.setListener(_payment_listener);
-//TODO        _scheduleView.setListener(_scheduleView_listener);
-//TODO        _expenseView.setListener(_expenseView_listener);
+        _paymentView.setListener(_payment_listener);
+        _scheduleView.setListener(_scheduleView_listener);
+        _expenseView.setListener(_expenseView_listener);
         _reasonView.setListener(_reason_listener);
-//TODO        _payDialog.setListener(_payDialog_listener);
-//TODO        _scheduleDialog.setListener(_scheduleDialog_listener);
 
+        PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+        ScheduleDialog.addOnCompleteListener(DIALOG_SCHEDULE, _scheduleDialog_onComplete);
     }
 
     @Override
@@ -320,7 +317,7 @@ TODO        if (_counterPay != null)
         }
 */
 
-//TODO        _expenseView.setData(_workorder, _expenses);
+        _expenseView.setData(_workOrder, _expenses);
 
         _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
     }
@@ -357,7 +354,8 @@ TODO        if (_counterPay != null)
     private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
-//TODO            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
+            TermsDialog.show(App.get(), DIALOG_TERMS, App.get().getString(R.string.dialog_terms_title),
+                    App.get().getString(R.string.dialog_terms_body));
         }
 
         @Override
@@ -372,8 +370,7 @@ TODO        if (_counterPay != null)
         }
     };
 
-/*
-TODO    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
+    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
         @Override
         public void addExpense() {
             ExpenseDialog.show(App.get(), DIALOG_EXPENSE, false);
@@ -387,12 +384,14 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
 
         @Override
         public void reset() {
-            CounterOfferInfo info = _workorder.getCounterOfferInfo();
+/*
+TODO             CounterOfferInfo info = _workOrder.getCounterOfferInfo();
             _expenses.clear();
             if (info != null && info.getExpense() != null && info.getExpense().length > 0) {
                 Expense[] exp = info.getExpense();
                 Collections.addAll(_expenses, exp);
             }
+*/
             populateUi();
         }
 
@@ -401,18 +400,23 @@ TODO    private final ExpenseCoView.Listener _expenseView_listener = new Expense
             // TODO editExpense
         }
     };
-*/
 
     private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
-//TODO            _expenses.add(new Expense(description, amount, category));
+            try {
+                _expenses.add(new Expense()
+                        .description(description)
+                        .amount(amount)
+                        .category(category));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             populateUi();
         }
     };
 
-/*
-TODO    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
+    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
         @Override
         public void onClear() {
             _counterSchedule = null;
@@ -421,19 +425,15 @@ TODO    private final ScheduleCoView.Listener _scheduleView_listener = new Sched
 
         @Override
         public void onChange(Schedule schedule) {
-            _scheduleDialog.show(schedule);
+            ScheduleDialog.show(App.get(), DIALOG_SCHEDULE, schedule);
         }
     };
 
-    private final ScheduleDialog.Listener _scheduleDialog_listener = new ScheduleDialog.Listener() {
+    private final ScheduleDialog.OnCompleteListener _scheduleDialog_onComplete = new ScheduleDialog.OnCompleteListener() {
         @Override
         public void onComplete(Schedule schedule) {
             _counterSchedule = schedule;
             populateUi();
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 
@@ -446,22 +446,17 @@ TODO    private final ScheduleCoView.Listener _scheduleView_listener = new Sched
 
         @Override
         public void onChangeClick(Pay pay) {
-            _payDialog.show(pay);
+            PayDialog.show(App.get(), DIALOG_PAY, pay, false);
         }
     };
 
-    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+    private final PayDialog.OnCompleteListener _payDialog_onComplete = new PayDialog.OnCompleteListener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
             _counterPay = pay;
             populateUi();
         }
-
-        @Override
-        public void onNothing() {
-        }
     };
-*/
 
     private final TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
         @Override

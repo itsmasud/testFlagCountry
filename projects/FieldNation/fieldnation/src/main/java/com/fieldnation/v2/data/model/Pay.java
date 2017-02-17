@@ -53,6 +53,9 @@ public class Pay implements Parcelable {
     @Json(name = "labor_sum")
     private Double _laborSum;
 
+    @Json(name = "notes")
+    private String _notes;
+
     @Json(name = "number_of_devices")
     private Double _numberOfDevices;
 
@@ -78,7 +81,7 @@ public class Pay implements Parcelable {
     private Double _total;
 
     @Json(name = "type")
-    private String _type;
+    private TypeEnum _type;
 
     @Json(name = "work_order_id")
     private Integer _workOrderId;
@@ -262,6 +265,21 @@ public class Pay implements Parcelable {
         return this;
     }
 
+    public void setNotes(String notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", notes);
+    }
+
+    public String getNotes() {
+        return _notes;
+    }
+
+    public Pay notes(String notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", notes);
+        return this;
+    }
+
     public void setNumberOfDevices(Double numberOfDevices) throws ParseException {
         _numberOfDevices = numberOfDevices;
         SOURCE.put("number_of_devices", numberOfDevices);
@@ -382,18 +400,18 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setType(String type) throws ParseException {
+    public void setType(TypeEnum type) throws ParseException {
         _type = type;
-        SOURCE.put("type", type);
+        SOURCE.put("type", type.toString());
     }
 
-    public String getType() {
+    public TypeEnum getType() {
         return _type;
     }
 
-    public Pay type(String type) throws ParseException {
+    public Pay type(TypeEnum type) throws ParseException {
         _type = type;
-        SOURCE.put("type", type);
+        SOURCE.put("type", type.toString());
         return this;
     }
 
@@ -415,6 +433,28 @@ public class Pay implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
+    public enum TypeEnum {
+        @Json(name = "blended")
+        BLENDED("blended"),
+        @Json(name = "device")
+        DEVICE("device"),
+        @Json(name = "fixed")
+        FIXED("fixed"),
+        @Json(name = "hourly")
+        HOURLY("hourly");
+
+        private String value;
+
+        TypeEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     public enum ActionsEnum {
         @Json(name = "edit")
         EDIT("edit");

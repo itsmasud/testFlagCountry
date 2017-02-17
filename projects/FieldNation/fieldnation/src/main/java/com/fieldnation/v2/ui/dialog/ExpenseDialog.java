@@ -17,8 +17,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -27,6 +25,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
 public class ExpenseDialog extends SimpleDialog {
     private static final String TAG = "ExpenseDialog";
@@ -89,7 +88,7 @@ public class ExpenseDialog extends SimpleDialog {
 
     @Override
     public void onResume() {
-        new ExpenseCategories(App.get()).setListener(_categoriesListener);
+//TODO        new ExpenseCategories(App.get()).setListener(_categoriesListener);
         populateUi();
     }
 
@@ -180,12 +179,14 @@ public class ExpenseDialog extends SimpleDialog {
         }
     };
 
-    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+/*
+TODO    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
             setCategories(categories);
         }
     };
+*/
 
     private final TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
         @Override

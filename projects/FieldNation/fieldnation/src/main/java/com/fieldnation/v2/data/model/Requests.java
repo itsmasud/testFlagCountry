@@ -103,7 +103,9 @@ public class Requests implements Parcelable {
     /*-******************************-*/
     public enum ActionsEnum {
         @Json(name = "add")
-        ADD("add");
+        ADD("add"),
+        @Json(name = "counter_offer")
+        COUNTER_OFFER("counter_offer");
 
         private String value;
 

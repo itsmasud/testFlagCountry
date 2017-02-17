@@ -21,19 +21,19 @@ public class PayFees implements Parcelable {
     private static final String TAG = "PayFees";
 
     @Json(name = "buyer")
-    private Fee _buyer;
+    private PayModifier _buyer;
 
     @Json(name = "cancellation")
-    private Fee _cancellation;
+    private PayModifier _cancellation;
 
     @Json(name = "flat")
-    private Fee _flat;
+    private PayModifier _flat;
 
     @Json(name = "insurance")
-    private Fee _insurance;
+    private PayModifier _insurance;
 
     @Json(name = "provider")
-    private Fee _provider;
+    private PayModifier _provider;
 
     @Source
     private JsonObject SOURCE = new JsonObject();
@@ -41,76 +41,76 @@ public class PayFees implements Parcelable {
     public PayFees() {
     }
 
-    public void setBuyer(Fee buyer) throws ParseException {
+    public void setBuyer(PayModifier buyer) throws ParseException {
         _buyer = buyer;
         SOURCE.put("buyer", buyer.getJson());
     }
 
-    public Fee getBuyer() {
+    public PayModifier getBuyer() {
         return _buyer;
     }
 
-    public PayFees buyer(Fee buyer) throws ParseException {
+    public PayFees buyer(PayModifier buyer) throws ParseException {
         _buyer = buyer;
         SOURCE.put("buyer", buyer.getJson());
         return this;
     }
 
-    public void setCancellation(Fee cancellation) throws ParseException {
+    public void setCancellation(PayModifier cancellation) throws ParseException {
         _cancellation = cancellation;
         SOURCE.put("cancellation", cancellation.getJson());
     }
 
-    public Fee getCancellation() {
+    public PayModifier getCancellation() {
         return _cancellation;
     }
 
-    public PayFees cancellation(Fee cancellation) throws ParseException {
+    public PayFees cancellation(PayModifier cancellation) throws ParseException {
         _cancellation = cancellation;
         SOURCE.put("cancellation", cancellation.getJson());
         return this;
     }
 
-    public void setFlat(Fee flat) throws ParseException {
+    public void setFlat(PayModifier flat) throws ParseException {
         _flat = flat;
         SOURCE.put("flat", flat.getJson());
     }
 
-    public Fee getFlat() {
+    public PayModifier getFlat() {
         return _flat;
     }
 
-    public PayFees flat(Fee flat) throws ParseException {
+    public PayFees flat(PayModifier flat) throws ParseException {
         _flat = flat;
         SOURCE.put("flat", flat.getJson());
         return this;
     }
 
-    public void setInsurance(Fee insurance) throws ParseException {
+    public void setInsurance(PayModifier insurance) throws ParseException {
         _insurance = insurance;
         SOURCE.put("insurance", insurance.getJson());
     }
 
-    public Fee getInsurance() {
+    public PayModifier getInsurance() {
         return _insurance;
     }
 
-    public PayFees insurance(Fee insurance) throws ParseException {
+    public PayFees insurance(PayModifier insurance) throws ParseException {
         _insurance = insurance;
         SOURCE.put("insurance", insurance.getJson());
         return this;
     }
 
-    public void setProvider(Fee provider) throws ParseException {
+    public void setProvider(PayModifier provider) throws ParseException {
         _provider = provider;
         SOURCE.put("provider", provider.getJson());
     }
 
-    public Fee getProvider() {
+    public PayModifier getProvider() {
         return _provider;
     }
 
-    public PayFees provider(Fee provider) throws ParseException {
+    public PayFees provider(PayModifier provider) throws ParseException {
         _provider = provider;
         SOURCE.put("provider", provider.getJson());
         return this;

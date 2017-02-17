@@ -1,14 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,13 +14,17 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.dialog.DialogFragmentBase;
+import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayAdditional;
+import com.fieldnation.v2.data.model.PayBase;
 
 public class PayDialog extends SimpleDialog {
     private static String TAG = "PayDialog";
@@ -82,70 +83,115 @@ public class PayDialog extends SimpleDialog {
 
     // Data
     private Pay _pay;
-    private Listener _listener;
     private boolean _showExplanation;
     private int _mode = MODE_FIXED;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
-    public static PayDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, PayDialog.class);
+    public PayDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.dialog_v2_pay, container, false);
 
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
+
+        // fixed
+        _fixedLayout = (LinearLayout) v.findViewById(R.id.fixed_layout);
+        _fixedEditText = (EditText) v.findViewById(R.id.fixed_edittext);
+
+        // hourly
+        _hourlyLayout = (LinearLayout) v.findViewById(R.id.hourly_layout);
+        _hourlyRateEditText = (EditText) v.findViewById(R.id.hourlyrate_edittext);
+        _maxHoursEditText = (EditText) v.findViewById(R.id.maxhours_edittext);
+
+        // per device
+        _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
+        _deviceRateEditText = (EditText) v.findViewById(R.id.devicerate_edittext);
+        _maxDevicesEditText = (EditText) v.findViewById(R.id.maxdevices_edittext);
+
+        // blended
+        _blendedLayout = (LinearLayout) v.findViewById(R.id.blended_layout);
+        _blendedFixedRateEditText = (EditText) v.findViewById(R.id.blendedFixedRate_edittext);
+        _blendedFixedMaxHoursEditText = (EditText) v.findViewById(R.id.blendedFixedMaxHours_edittext);
+        _extraHourlyEditText = (EditText) v.findViewById(R.id.extrahours_edittext);
+        _extraMaxHoursEditText = (EditText) v.findViewById(R.id.extramaxhours_edittext);
+
+        _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
+        _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
+
+        _okButton = (Button) v.findViewById(R.id.ok_button);
+
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+
+        return v;
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_MODE))
-                _mode = savedInstanceState.getInt(STATE_MODE);
+    public void onStart() {
+        super.onStart();
+        _typeSpinner.setOnItemSelectedListener(_type_selected);
+        _okButton.setOnClickListener(_ok_onClick);
+        _cancelButton.setOnClickListener(_cancel_onClick);
 
-            if (savedInstanceState.containsKey(STATE_SHOW_EXPLANATION))
-                _showExplanation = savedInstanceState.getBoolean(STATE_SHOW_EXPLANATION);
+    }
 
-            if (savedInstanceState.containsKey(STATE_EXPLANATION))
-                _explanationEditText.setText(savedInstanceState.getString(STATE_EXPLANATION));
+    @Override
+    public void show(Bundle payload, boolean animate) {
+        _pay = payload.getParcelable("pay");
+        _showExplanation = payload.getBoolean("showExplanation");
 
-            if (savedInstanceState.containsKey(STATE_FIXED))
-                _fixedEditText.setText(savedInstanceState.getString(STATE_FIXED));
+        super.show(payload, animate);
 
-            if (savedInstanceState.containsKey(STATE_HOURLY_RATE))
-                _hourlyRateEditText.setText(savedInstanceState.getString(STATE_HOURLY_RATE));
+        populateUi();
+    }
 
-            if (savedInstanceState.containsKey(STATE_HOURLY_MAX))
-                _maxHoursEditText.setText(savedInstanceState.getString(STATE_HOURLY_MAX));
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_MODE))
+                _mode = savedState.getInt(STATE_MODE);
 
-            if (savedInstanceState.containsKey(STATE_DEVICES_RATE))
-                _deviceRateEditText.setText(savedInstanceState.getString(STATE_DEVICES_RATE));
+            if (savedState.containsKey(STATE_SHOW_EXPLANATION))
+                _showExplanation = savedState.getBoolean(STATE_SHOW_EXPLANATION);
 
-            if (savedInstanceState.containsKey(STATE_DEVICES_MAX))
-                _maxDevicesEditText.setText(savedInstanceState.getString(STATE_DEVICES_MAX));
+            if (savedState.containsKey(STATE_EXPLANATION))
+                _explanationEditText.setText(savedState.getString(STATE_EXPLANATION));
 
-            if (savedInstanceState.containsKey(STATE_BLENDED_HOURLY))
-                _blendedFixedRateEditText.setText(savedInstanceState.getString(STATE_BLENDED_HOURLY));
+            if (savedState.containsKey(STATE_FIXED))
+                _fixedEditText.setText(savedState.getString(STATE_FIXED));
 
-            if (savedInstanceState.containsKey(STATE_BLENDED_HOURLY_MAX))
-                _blendedFixedMaxHoursEditText.setText(savedInstanceState.getString(STATE_BLENDED_HOURLY_MAX));
+            if (savedState.containsKey(STATE_HOURLY_RATE))
+                _hourlyRateEditText.setText(savedState.getString(STATE_HOURLY_RATE));
 
-            if (savedInstanceState.containsKey(STATE_BLENDED_XHOURLY))
-                _extraHourlyEditText.setText(savedInstanceState.getString(STATE_BLENDED_XHOURLY));
+            if (savedState.containsKey(STATE_HOURLY_MAX))
+                _maxHoursEditText.setText(savedState.getString(STATE_HOURLY_MAX));
 
-            if (savedInstanceState.containsKey(STATE_BLENDED_XHOURLY_MAX))
-                _extraMaxHoursEditText.setText(savedInstanceState.getString(STATE_BLENDED_XHOURLY_MAX));
+            if (savedState.containsKey(STATE_DEVICES_RATE))
+                _deviceRateEditText.setText(savedState.getString(STATE_DEVICES_RATE));
+
+            if (savedState.containsKey(STATE_DEVICES_MAX))
+                _maxDevicesEditText.setText(savedState.getString(STATE_DEVICES_MAX));
+
+            if (savedState.containsKey(STATE_BLENDED_HOURLY))
+                _blendedFixedRateEditText.setText(savedState.getString(STATE_BLENDED_HOURLY));
+
+            if (savedState.containsKey(STATE_BLENDED_HOURLY_MAX))
+                _blendedFixedMaxHoursEditText.setText(savedState.getString(STATE_BLENDED_HOURLY_MAX));
+
+            if (savedState.containsKey(STATE_BLENDED_XHOURLY))
+                _extraHourlyEditText.setText(savedState.getString(STATE_BLENDED_XHOURLY));
+
+            if (savedState.containsKey(STATE_BLENDED_XHOURLY_MAX))
+                _extraMaxHoursEditText.setText(savedState.getString(STATE_BLENDED_XHOURLY_MAX));
         }
-        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-
+    public void onSaveDialogState(Bundle outState) {
         outState.putInt(STATE_MODE, _mode);
         outState.putBoolean(STATE_SHOW_EXPLANATION, _showExplanation);
 
@@ -178,57 +224,8 @@ public class PayDialog extends SimpleDialog {
 
         if (_extraMaxHoursEditText != null && !misc.isEmptyOrNull(_extraMaxHoursEditText.getText().toString()))
             outState.putString(STATE_BLENDED_XHOURLY_MAX, _extraMaxHoursEditText.getText().toString());
-
-        super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_pay, container, false);
-
-        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemSelectedListener(_type_selected);
-
-        // fixed
-        _fixedLayout = (LinearLayout) v.findViewById(R.id.fixed_layout);
-        _fixedEditText = (EditText) v.findViewById(R.id.fixed_edittext);
-
-        // hourly
-        _hourlyLayout = (LinearLayout) v.findViewById(R.id.hourly_layout);
-        _hourlyRateEditText = (EditText) v.findViewById(R.id.hourlyrate_edittext);
-        _maxHoursEditText = (EditText) v.findViewById(R.id.maxhours_edittext);
-
-        // per device
-        _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
-        _deviceRateEditText = (EditText) v.findViewById(R.id.devicerate_edittext);
-        _maxDevicesEditText = (EditText) v.findViewById(R.id.maxdevices_edittext);
-
-        // blended
-        _blendedLayout = (LinearLayout) v.findViewById(R.id.blended_layout);
-        _blendedFixedRateEditText = (EditText) v.findViewById(R.id.blendedFixedRate_edittext);
-        _blendedFixedMaxHoursEditText = (EditText) v.findViewById(R.id.blendedFixedMaxHours_edittext);
-        _extraHourlyEditText = (EditText) v.findViewById(R.id.extrahours_edittext);
-        _extraMaxHoursEditText = (EditText) v.findViewById(R.id.extramaxhours_edittext);
-
-        _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
-        _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
-
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_ok_onClick);
-
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        return v;
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        populateUi();
-    }
 
     private HintSpinner getTypeSpinner() {
         if (_typeSpinner != null && _typeSpinner.getAdapter() == null) {
@@ -243,22 +240,6 @@ public class PayDialog extends SimpleDialog {
             _typeSpinner.setAdapter(adapter);
         }
         return _typeSpinner;
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
-    public void show(Pay pay, boolean showExplanation) {
-        _pay = pay;
-        _showExplanation = showExplanation;
-        super.show();
-    }
-
-    public void show(Pay pay) {
-        _showExplanation = false;
-        _pay = pay;
-        super.show();
     }
 
     private Double getDouble(String _amount) {
@@ -301,7 +282,7 @@ public class PayDialog extends SimpleDialog {
 //                    double blendedMaxHours = getDouble((_blendedFixedMaxHoursEditText.getText().toString()));
                     double extraHourly = getDouble((_extraHourlyEditText.getText().toString()));
                     double extraMaxHours = getDouble((_extraMaxHoursEditText.getText().toString()));
-                    return blendedFixedRate  + (extraHourly * extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
+                    return blendedFixedRate + (extraHourly * extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
             }
         } catch (Exception ex) {
             return false;
@@ -309,32 +290,43 @@ public class PayDialog extends SimpleDialog {
         return false;
     }
 
-
     private Pay makePay() {
-        Pay pay = null;
-        switch (_mode) {
-            case MODE_FIXED:
-                pay = new Pay(Double.parseDouble(_fixedEditText.getText().toString()));
-                break;
-            case MODE_HOURLY:
-                pay = new Pay(Double.parseDouble(_hourlyRateEditText.getText().toString()),
-                        Double.parseDouble(_maxHoursEditText.getText().toString()));
-                break;
-            case MODE_PER_DEVICE:
-                pay = new Pay(Double.parseDouble(_deviceRateEditText.getText().toString()),
-                        Integer.parseInt(_maxDevicesEditText.getText().toString()));
-                break;
-            case MODE_BLENDED:
-                pay = new Pay(Double.parseDouble(_blendedFixedRateEditText.getText().toString()),
-                        Double.parseDouble(_blendedFixedMaxHoursEditText.getText().toString()),
-                        Double.parseDouble(_extraHourlyEditText.getText().toString()),
-                        Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
-                break;
-        }
-        if (pay != null
-                && _explanationEditText != null
-                && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
-            pay.setDescription(_explanationEditText.getText().toString());
+        Pay pay = new Pay();
+        try {
+            switch (_mode) {
+                case MODE_FIXED:
+                    pay.setType(Pay.TypeEnum.FIXED);
+                    pay.setBase(new PayBase()
+                            .amount(Double.parseDouble(_fixedEditText.getText().toString()))
+                            .units(1.0));
+                    break;
+                case MODE_HOURLY:
+                    pay.setType(Pay.TypeEnum.HOURLY);
+                    pay.setBase(new PayBase()
+                            .amount(Double.parseDouble(_hourlyRateEditText.getText().toString()))
+                            .units(Double.parseDouble(_maxHoursEditText.getText().toString())));
+                    break;
+                case MODE_PER_DEVICE:
+                    pay.setType(Pay.TypeEnum.DEVICE);
+                    pay.setBase(new PayBase()
+                            .amount(Double.parseDouble(_deviceRateEditText.getText().toString()))
+                            .units(Double.parseDouble(_maxDevicesEditText.getText().toString())));
+                    break;
+                case MODE_BLENDED:
+                    pay.setType(Pay.TypeEnum.BLENDED);
+                    pay.setBase(new PayBase()
+                            .amount(Double.parseDouble(_blendedFixedRateEditText.getText().toString()))
+                            .units(Double.parseDouble(_blendedFixedMaxHoursEditText.getText().toString())));
+                    pay.setAdditional(new PayAdditional()
+                            .amount(Double.parseDouble(_extraHourlyEditText.getText().toString()))
+                            .units(Double.parseDouble(_extraMaxHoursEditText.getText().toString())));
+                    break;
+            }
+            if (_explanationEditText != null && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
+                pay.setNotes(_explanationEditText.getText().toString());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
         return pay;
     }
@@ -382,39 +374,34 @@ public class PayDialog extends SimpleDialog {
         if (_pay == null)
             return;
 
-        if (_pay.isBlendedRate()) {
-            setMode(MODE_BLENDED);
-            _blendedFixedRateEditText.setText(_pay.getBlendedStartRate() + "");
-            _blendedFixedMaxHoursEditText.setText(_pay.getBlendedFirstHours() + "");
-            _extraHourlyEditText.setText(_pay.getBlendedAdditionalRate() + "");
-            _extraMaxHoursEditText.setText(_pay.getBlendedAdditionalHours() + "");
-            _blendedFixedRateEditText.requestFocus();
-
-        } else if (_pay.isFixedRate()) {
-            setMode(MODE_FIXED);
-            _fixedEditText.setText((_pay.getFixedAmount() + "").trim());
-            _fixedEditText.requestFocus();
-
-        } else if (_pay.isHourlyRate()) {
-            setMode(MODE_HOURLY);
-            _hourlyRateEditText.setText((_pay.getPerHour() + "").trim());
-            _maxHoursEditText.setText((_pay.getMaxHour() + "").trim());
-            _hourlyRateEditText.requestFocus();
-
-        } else if (_pay.isPerDeviceRate()) {
-            setMode(MODE_PER_DEVICE);
-            _deviceRateEditText.setText((_pay.getPerDevice() + "").trim());
-            _maxDevicesEditText.setText((_pay.getMaxDevice() + "").trim());
-            _deviceRateEditText.requestFocus();
+        switch (_pay.getType()) {
+            case BLENDED:
+                setMode(MODE_BLENDED);
+                _blendedFixedRateEditText.setText(_pay.getBase().getAmount() + "");
+                _blendedFixedMaxHoursEditText.setText(_pay.getBase().getUnits() + "");
+                _extraHourlyEditText.setText(_pay.getAdditional().getAmount() + "");
+                _extraMaxHoursEditText.setText(_pay.getAdditional().getUnits() + "");
+                _blendedFixedRateEditText.requestFocus();
+                break;
+            case DEVICE:
+                setMode(MODE_PER_DEVICE);
+                _deviceRateEditText.setText((_pay.getBase().getAmount() + "").trim());
+                _maxDevicesEditText.setText((_pay.getBase().getUnits() + "").trim());
+                _deviceRateEditText.requestFocus();
+                break;
+            case FIXED:
+                setMode(MODE_FIXED);
+                _fixedEditText.setText((_pay.getBase().getAmount() + "").trim());
+                _fixedEditText.requestFocus();
+                break;
+            case HOURLY:
+                setMode(MODE_HOURLY);
+                _hourlyRateEditText.setText((_pay.getBase().getAmount() + "").trim());
+                _maxHoursEditText.setText((_pay.getBase().getUnits() + "").trim());
+                _hourlyRateEditText.requestFocus();
+                break;
         }
-        _explanationEditText.setText(_pay.getDescription());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        populateUi();
+        _explanationEditText.setText(_pay.getNotes());
     }
 
     /*-*********************************-*/
@@ -434,9 +421,8 @@ public class PayDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
-            if (_listener != null)
-                _listener.onNothing();
+            dismiss(true);
+            _onNothingDispatcher.dispatch(getUid());
         }
     };
 
@@ -444,27 +430,78 @@ public class PayDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             if (!isValidAmount()) {
-                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), App.get().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
 
-            if (_listener == null)
-                return;
-
             try {
-                _listener.onComplete(makePay(), _explanationEditText.getText().toString());
+                _onCompleteDispatcher.dispatch(getUid(), makePay(), _explanationEditText.getText().toString());
             } catch (Exception ex) {
                 ToastClient.toast(App.get(), R.string.please_enter_a_value_greater_than, Toast.LENGTH_SHORT);
                 return;
             }
-            dismiss();
+            dismiss(true);
         }
     };
 
-    public interface Listener {
-        void onComplete(Pay pay, String explanation);
 
+    public static void show(Context context, String uid, Pay pay, boolean showExplanation) {
+        Bundle params = new Bundle();
+        params.putParcelable("pay", pay);
+        params.putBoolean("showExplanation", showExplanation);
+
+        Controller.show(context, uid, PayDialog.class, params);
+    }
+
+    /*-****************************-*/
+    /*-         Complete           -*/
+    /*-****************************-*/
+    public interface OnCompleteListener {
+        void onComplete(Pay pay, String explanation);
+    }
+
+    private static KeyedDispatcher<OnCompleteListener> _onCompleteDispatcher = new KeyedDispatcher<OnCompleteListener>() {
+        @Override
+        public void onDispatch(OnCompleteListener listener, Object... parameters) {
+            listener.onComplete((Pay) parameters[0], (String) parameters[1]);
+        }
+    };
+
+    public static void addOnCompleteListener(String uid, OnCompleteListener onCompleteListener) {
+        _onCompleteDispatcher.add(uid, onCompleteListener);
+    }
+
+    public static void removeOnCompleteListener(String uid, OnCompleteListener onCompleteListener) {
+        _onCompleteDispatcher.remove(uid, onCompleteListener);
+    }
+
+    public static void removeAllOnCompleteListener(String uid) {
+        _onCompleteDispatcher.removeAll(uid);
+    }
+
+    /*-***************************-*/
+    /*-         Nothing           -*/
+    /*-***************************-*/
+    public interface OnNothingListener {
         void onNothing();
     }
 
+    private static KeyedDispatcher<OnNothingListener> _onNothingDispatcher = new KeyedDispatcher<OnNothingListener>() {
+        @Override
+        public void onDispatch(OnNothingListener listener, Object... parameters) {
+            listener.onNothing();
+        }
+    };
+
+    public static void addOnNothingListener(String uid, OnNothingListener onNothingListener) {
+        _onNothingDispatcher.add(uid, onNothingListener);
+    }
+
+    public static void removeOnNothingListener(String uid, OnNothingListener onNothingListener) {
+        _onNothingDispatcher.remove(uid, onNothingListener);
+    }
+
+    public static void removeAllOnNothingListener(String uid) {
+        _onNothingDispatcher.removeAll(uid);
+    }
 }

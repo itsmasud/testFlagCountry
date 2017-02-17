@@ -25,7 +25,6 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
@@ -52,11 +51,9 @@ import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
-import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
-import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
@@ -78,6 +75,7 @@ import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -105,6 +103,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG + ".locationDialogCheckOut";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
+    private static final String DIALOG_TERMS = TAG + ".termsDialog";
+    private static final String DIALOG_PAY = TAG + ".payDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -146,11 +146,9 @@ public class WorkFragment extends WorkorderFragment {
     private ExpenseDialog _expenseDialog;
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
-    private TermsDialog _termsDialog;
     private TermsScrollingDialog _termsScrollingDialog;
     private WorkLogDialog _worklogDialog;
     private OneButtonDialog _locationLoadingDialog;
-    private PayDialog _payDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
@@ -251,9 +249,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
 // TODO        _signatureView.setListener(_signaturelist_listener);
-
-        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
-// TODO        _payDialog.setListener(_payDialog_listener);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -369,12 +364,10 @@ TODO        if (_currentTask != null)
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -389,7 +382,6 @@ TODO        if (_currentTask != null)
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
 // TODO        _worklogDialog.setListener(_worklogDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
-// TODO        _payDialog.setListener(_payDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
@@ -398,7 +390,7 @@ TODO        if (_currentTask != null)
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
-        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+//TODO        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -412,6 +404,8 @@ TODO        if (_currentTask != null)
         LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onOkCheckOut);
         LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onCancelCheckOut);
         LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
+
+        PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
         _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workorderApi.connect(App.get());
@@ -437,7 +431,7 @@ TODO        if (_currentTask != null)
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
-        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+//TODO        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -451,6 +445,8 @@ TODO        if (_currentTask != null)
         LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onOkCheckOut);
         LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onCancelCheckOut);
         LocationDialog.removeOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
+
+        PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
         if (_workorderApi != null && _workorderApi.isConnected())
             _workorderApi.disconnect(App.get());
@@ -1466,8 +1462,7 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
 
         @Override
         public void onShowTerms(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title),
-                    getString(R.string.dialog_terms_body));
+            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title),getString(R.string.dialog_terms_body));
         }
     };
 */
@@ -1632,7 +1627,7 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
 
         @Override
         public void termsOnClick(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
+            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
     };
 */
@@ -1740,7 +1735,8 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         }
     };
 
-    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
+/*
+TODO    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
@@ -1749,6 +1745,7 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
             setLoading(true);
         }
     };
+*/
 
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
@@ -1811,22 +1808,15 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         }
     };
 
-/*
-TODO    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+    private final PayDialog.OnCompleteListener _payDialog_onComplete = new PayDialog.OnCompleteListener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
             // TODO analytics
-            WorkorderClient.actionChangePay(App.get(), _workOrder.getWorkOrderId(),
-                    pay, explanation);
+// TODO            WorkorderClient.actionChangePay(App.get(), _workOrder.getWorkOrderId(), pay, explanation);
 
             populateUi();
         }
-
-        @Override
-        public void onNothing() {
-        }
     };
-*/
 
     private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
         @Override
