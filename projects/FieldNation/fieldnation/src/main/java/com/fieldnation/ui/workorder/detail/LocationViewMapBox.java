@@ -32,9 +32,9 @@ import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
-public class LocationViewMapBox extends LinearLayout implements WorkorderRenderer {
+public class LocationViewMapBox extends LinearLayout {
     private static final String TAG = "LocationViewMapBox";
 
     private static final int ACTION_NAVIGATE = 0;
@@ -151,7 +151,6 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
         super.onDetachedFromWindow();
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
@@ -451,7 +450,7 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId(), WorkorderActivity.TAB_MESSAGE);
+                    WorkOrderActivity.startNew(getContext(), _workorder.getWorkorderId().intValue(), WorkOrderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {

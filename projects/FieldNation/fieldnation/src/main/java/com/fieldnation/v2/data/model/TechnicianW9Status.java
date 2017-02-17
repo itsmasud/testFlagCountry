@@ -1,0 +1,126 @@
+package com.fieldnation.v2.data.model;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
+import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
+
+/**
+ * Created by dmgen from swagger.
+ */
+
+public class TechnicianW9Status implements Parcelable {
+    private static final String TAG = "TechnicianW9Status";
+
+    @Json(name = "status_name")
+    private String _statusName;
+
+    @Json(name = "technician_w9_status_id")
+    private Integer _technicianW9StatusId;
+
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
+    public TechnicianW9Status() {
+    }
+
+    public void setStatusName(String statusName) throws ParseException {
+        _statusName = statusName;
+        SOURCE.put("status_name", statusName);
+    }
+
+    public String getStatusName() {
+        return _statusName;
+    }
+
+    public TechnicianW9Status statusName(String statusName) throws ParseException {
+        _statusName = statusName;
+        SOURCE.put("status_name", statusName);
+        return this;
+    }
+
+    public void setTechnicianW9StatusId(Integer technicianW9StatusId) throws ParseException {
+        _technicianW9StatusId = technicianW9StatusId;
+        SOURCE.put("technician_w9_status_id", technicianW9StatusId);
+    }
+
+    public Integer getTechnicianW9StatusId() {
+        return _technicianW9StatusId;
+    }
+
+    public TechnicianW9Status technicianW9StatusId(Integer technicianW9StatusId) throws ParseException {
+        _technicianW9StatusId = technicianW9StatusId;
+        SOURCE.put("technician_w9_status_id", technicianW9StatusId);
+        return this;
+    }
+
+    /*-*****************************-*/
+    /*-             Json            -*/
+    /*-*****************************-*/
+    public static JsonArray toJsonArray(TechnicianW9Status[] array) {
+        JsonArray list = new JsonArray();
+        for (TechnicianW9Status item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
+    public static TechnicianW9Status[] fromJsonArray(JsonArray array) {
+        TechnicianW9Status[] list = new TechnicianW9Status[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            list[i] = fromJson(array.getJsonObject(i));
+        }
+        return list;
+    }
+
+    public static TechnicianW9Status fromJson(JsonObject obj) {
+        try {
+            return Unserializer.unserializeObject(TechnicianW9Status.class, obj);
+        } catch (Exception ex) {
+            Log.v(TAG, TAG, ex);
+            return null;
+        }
+    }
+
+    public JsonObject getJson() {
+        return SOURCE;
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<TechnicianW9Status> CREATOR = new Parcelable.Creator<TechnicianW9Status>() {
+
+        @Override
+        public TechnicianW9Status createFromParcel(Parcel source) {
+            try {
+                return TechnicianW9Status.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public TechnicianW9Status[] newArray(int size) {
+            return new TechnicianW9Status[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(getJson(), flags);
+    }
+}

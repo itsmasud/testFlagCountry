@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class PayIncreases implements Parcelable {
     @Json(name = "results")
     private PayIncrease[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayIncreases() {
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public PayIncreases metadata(ListEnvelope metadata) {
+    public PayIncreases metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(PayIncrease[] results) {
+    public void setResults(PayIncrease[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", PayIncrease.toJsonArray(results));
     }
 
     public PayIncrease[] getResults() {
         return _results;
     }
 
-    public PayIncreases results(PayIncrease[] results) {
+    public PayIncreases results(PayIncrease[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", PayIncrease.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayIncreases[] array) {
+        JsonArray list = new JsonArray();
+        for (PayIncreases item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayIncreases[] fromJsonArray(JsonArray array) {
         PayIncreases[] list = new PayIncreases[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class PayIncreases implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayIncreases payIncreases) {
-        try {
-            return Serializer.serializeObject(payIncreases);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class PayIncreases implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

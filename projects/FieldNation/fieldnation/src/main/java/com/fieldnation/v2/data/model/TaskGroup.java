@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -18,43 +21,58 @@ public class TaskGroup implements Parcelable {
     private static final String TAG = "TaskGroup";
 
     @Json(name = "id")
-    private Integer _id;
+    private String _id;
 
     @Json(name = "label")
     private String _label;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public TaskGroup() {
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
-    public Integer getId() {
+    public String getId() {
         return _id;
     }
 
-    public TaskGroup id(Integer id) {
+    public TaskGroup id(String id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
     }
 
     public String getLabel() {
         return _label;
     }
 
-    public TaskGroup label(String label) {
+    public TaskGroup label(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(TaskGroup[] array) {
+        JsonArray list = new JsonArray();
+        for (TaskGroup item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static TaskGroup[] fromJsonArray(JsonArray array) {
         TaskGroup[] list = new TaskGroup[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class TaskGroup implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(TaskGroup taskGroup) {
-        try {
-            return Serializer.serializeObject(taskGroup);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class TaskGroup implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

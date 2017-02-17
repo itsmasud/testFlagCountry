@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class SelectionRuleSum implements Parcelable {
     @Json(name = "total")
     private Integer _total;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public SelectionRuleSum() {
     }
 
-    public void setMatch(Integer match) {
+    public void setMatch(Integer match) throws ParseException {
         _match = match;
+        SOURCE.put("match", match);
     }
 
     public Integer getMatch() {
         return _match;
     }
 
-    public SelectionRuleSum match(Integer match) {
+    public SelectionRuleSum match(Integer match) throws ParseException {
         _match = match;
+        SOURCE.put("match", match);
         return this;
     }
 
-    public void setNoMatchOptional(Integer noMatchOptional) {
+    public void setNoMatchOptional(Integer noMatchOptional) throws ParseException {
         _noMatchOptional = noMatchOptional;
+        SOURCE.put("no_match_optional", noMatchOptional);
     }
 
     public Integer getNoMatchOptional() {
         return _noMatchOptional;
     }
 
-    public SelectionRuleSum noMatchOptional(Integer noMatchOptional) {
+    public SelectionRuleSum noMatchOptional(Integer noMatchOptional) throws ParseException {
         _noMatchOptional = noMatchOptional;
+        SOURCE.put("no_match_optional", noMatchOptional);
         return this;
     }
 
-    public void setNoMatchRequired(Integer noMatchRequired) {
+    public void setNoMatchRequired(Integer noMatchRequired) throws ParseException {
         _noMatchRequired = noMatchRequired;
+        SOURCE.put("no_match_required", noMatchRequired);
     }
 
     public Integer getNoMatchRequired() {
         return _noMatchRequired;
     }
 
-    public SelectionRuleSum noMatchRequired(Integer noMatchRequired) {
+    public SelectionRuleSum noMatchRequired(Integer noMatchRequired) throws ParseException {
         _noMatchRequired = noMatchRequired;
+        SOURCE.put("no_match_required", noMatchRequired);
         return this;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(Integer total) throws ParseException {
         _total = total;
+        SOURCE.put("total", total);
     }
 
     public Integer getTotal() {
         return _total;
     }
 
-    public SelectionRuleSum total(Integer total) {
+    public SelectionRuleSum total(Integer total) throws ParseException {
         _total = total;
+        SOURCE.put("total", total);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(SelectionRuleSum[] array) {
+        JsonArray list = new JsonArray();
+        for (SelectionRuleSum item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static SelectionRuleSum[] fromJsonArray(JsonArray array) {
         SelectionRuleSum[] list = new SelectionRuleSum[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class SelectionRuleSum implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(SelectionRuleSum selectionRuleSum) {
-        try {
-            return Serializer.serializeObject(selectionRuleSum);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class SelectionRuleSum implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

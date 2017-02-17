@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class UserUpcomingSchedule implements Parcelable {
     @Json(name = "to")
     private String _to;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UserUpcomingSchedule() {
     }
 
-    public void setDate(String date) {
+    public void setDate(String date) throws ParseException {
         _date = date;
+        SOURCE.put("date", date);
     }
 
     public String getDate() {
         return _date;
     }
 
-    public UserUpcomingSchedule date(String date) {
+    public UserUpcomingSchedule date(String date) throws ParseException {
         _date = date;
+        SOURCE.put("date", date);
         return this;
     }
 
-    public void setFrom(String from) {
+    public void setFrom(String from) throws ParseException {
         _from = from;
+        SOURCE.put("from", from);
     }
 
     public String getFrom() {
         return _from;
     }
 
-    public UserUpcomingSchedule from(String from) {
+    public UserUpcomingSchedule from(String from) throws ParseException {
         _from = from;
+        SOURCE.put("from", from);
         return this;
     }
 
-    public void setTo(String to) {
+    public void setTo(String to) throws ParseException {
         _to = to;
+        SOURCE.put("to", to);
     }
 
     public String getTo() {
         return _to;
     }
 
-    public UserUpcomingSchedule to(String to) {
+    public UserUpcomingSchedule to(String to) throws ParseException {
         _to = to;
+        SOURCE.put("to", to);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UserUpcomingSchedule[] array) {
+        JsonArray list = new JsonArray();
+        for (UserUpcomingSchedule item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UserUpcomingSchedule[] fromJsonArray(JsonArray array) {
         UserUpcomingSchedule[] list = new UserUpcomingSchedule[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class UserUpcomingSchedule implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UserUpcomingSchedule userUpcomingSchedule) {
-        try {
-            return Serializer.serializeObject(userUpcomingSchedule);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class UserUpcomingSchedule implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

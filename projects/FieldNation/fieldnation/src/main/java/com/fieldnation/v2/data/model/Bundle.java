@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -17,44 +20,77 @@ import com.fieldnation.fnlog.Log;
 public class Bundle implements Parcelable {
     private static final String TAG = "Bundle";
 
-    @Json(name = "count")
-    private Integer _count;
-
     @Json(name = "id")
     private Integer _id;
+
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
+
+    @Json(name = "results")
+    private WorkOrder[] _results;
+
+    @Source
+    private JsonObject SOURCE = new JsonObject();
 
     public Bundle() {
     }
 
-    public void setCount(Integer count) {
-        _count = count;
-    }
-
-    public Integer getCount() {
-        return _count;
-    }
-
-    public Bundle count(Integer count) {
-        _count = count;
-        return this;
-    }
-
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Bundle id(Integer id) {
+    public Bundle id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
+        return this;
+    }
+
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
+        _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
+    }
+
+    public ListEnvelope getMetadata() {
+        return _metadata;
+    }
+
+    public Bundle metadata(ListEnvelope metadata) throws ParseException {
+        _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
+        return this;
+    }
+
+    public void setResults(WorkOrder[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", WorkOrder.toJsonArray(results));
+    }
+
+    public WorkOrder[] getResults() {
+        return _results;
+    }
+
+    public Bundle results(WorkOrder[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", WorkOrder.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Bundle[] array) {
+        JsonArray list = new JsonArray();
+        for (Bundle item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Bundle[] fromJsonArray(JsonArray array) {
         Bundle[] list = new Bundle[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +108,8 @@ public class Bundle implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Bundle bundle) {
-        try {
-            return Serializer.serializeObject(bundle);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +140,6 @@ public class Bundle implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

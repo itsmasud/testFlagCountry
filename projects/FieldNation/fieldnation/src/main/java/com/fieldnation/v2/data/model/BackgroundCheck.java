@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class BackgroundCheck implements Parcelable {
     @Json(name = "name")
     private String _name;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public BackgroundCheck() {
     }
 
-    public void setExpires(String expires) {
+    public void setExpires(String expires) throws ParseException {
         _expires = expires;
+        SOURCE.put("expires", expires);
     }
 
     public String getExpires() {
         return _expires;
     }
 
-    public BackgroundCheck expires(String expires) {
+    public BackgroundCheck expires(String expires) throws ParseException {
         _expires = expires;
+        SOURCE.put("expires", expires);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public BackgroundCheck id(Integer id) {
+    public BackgroundCheck id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public BackgroundCheck name(String name) {
+    public BackgroundCheck name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(BackgroundCheck[] array) {
+        JsonArray list = new JsonArray();
+        for (BackgroundCheck item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static BackgroundCheck[] fromJsonArray(JsonArray array) {
         BackgroundCheck[] list = new BackgroundCheck[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class BackgroundCheck implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(BackgroundCheck backgroundCheck) {
-        try {
-            return Serializer.serializeObject(backgroundCheck);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class BackgroundCheck implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

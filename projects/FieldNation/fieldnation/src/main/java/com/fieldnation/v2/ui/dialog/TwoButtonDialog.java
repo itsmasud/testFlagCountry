@@ -30,11 +30,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private static final String PARAM_PRIMARY_BUTTON = "buttonPrimary";
     private static final String PARAM_SECONDARY_BUTTON = "buttonSecondary";
     private static final String PARAM_CANCELABLE = "cancelable";
-    private static final String PARAM_RESPONSE = "response";
     private static final String PARAM_EXTRA_DATA = "extraData";
-    private static final int PARAM_RESPONSE_PRIMARY = 0;
-    private static final int PARAM_RESPONSE_SECONDARY = 1;
-    private static final int PARAM_RESPONSE_CANCEL = 2;
 
     // Ui
     private TextView _titleTextView;

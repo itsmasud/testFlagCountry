@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class TaskType implements Parcelable {
     @Json(name = "title")
     private String _title;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public TaskType() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public TaskType id(Integer id) {
+    public TaskType id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setKey(String key) {
+    public void setKey(String key) throws ParseException {
         _key = key;
+        SOURCE.put("key", key);
     }
 
     public String getKey() {
         return _key;
     }
 
-    public TaskType key(String key) {
+    public TaskType key(String key) throws ParseException {
         _key = key;
+        SOURCE.put("key", key);
         return this;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title) throws ParseException {
         _title = title;
+        SOURCE.put("title", title);
     }
 
     public String getTitle() {
         return _title;
     }
 
-    public TaskType title(String title) {
+    public TaskType title(String title) throws ParseException {
         _title = title;
+        SOURCE.put("title", title);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(TaskType[] array) {
+        JsonArray list = new JsonArray();
+        for (TaskType item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static TaskType[] fromJsonArray(JsonArray array) {
         TaskType[] list = new TaskType[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class TaskType implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(TaskType taskType) {
-        try {
-            return Serializer.serializeObject(taskType);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class TaskType implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

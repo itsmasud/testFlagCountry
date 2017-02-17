@@ -33,6 +33,8 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.v2.ui.AppPickerIntent;
+import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -290,14 +292,16 @@ public class ProfileInformationDialog extends FullScreenDialog {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            AppPickerDialog.addIntent(intent, "Get Content");
+            AppPickerIntent intent1 = new AppPickerIntent(intent, "Get Content");
 
             if (App.get().getPackageManager().hasSystemFeature(
                     PackageManager.FEATURE_CAMERA)) {
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                AppPickerDialog.addIntent(intent, "Take Picture");
+                AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
+                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2});
+            } else {
+                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1});
             }
-            AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG);
         }
     };
 

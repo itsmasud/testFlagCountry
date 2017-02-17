@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class EmailTemplates implements Parcelable {
     @Json(name = "results")
     private EmailTemplate[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public EmailTemplates() {
     }
 
-    public void setResults(EmailTemplate[] results) {
+    public void setResults(EmailTemplate[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", EmailTemplate.toJsonArray(results));
     }
 
     public EmailTemplate[] getResults() {
         return _results;
     }
 
-    public EmailTemplates results(EmailTemplate[] results) {
+    public EmailTemplates results(EmailTemplate[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", EmailTemplate.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(EmailTemplates[] array) {
+        JsonArray list = new JsonArray();
+        for (EmailTemplates item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static EmailTemplates[] fromJsonArray(JsonArray array) {
         EmailTemplates[] list = new EmailTemplates[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class EmailTemplates implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(EmailTemplates emailTemplates) {
-        try {
-            return Serializer.serializeObject(emailTemplates);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class EmailTemplates implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

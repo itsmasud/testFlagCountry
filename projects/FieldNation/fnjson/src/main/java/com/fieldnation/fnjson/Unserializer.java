@@ -2,6 +2,7 @@ package com.fieldnation.fnjson;
 
 import com.fieldnation.fnjson.annotations.CollectionParameterType;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.lang.reflect.Array;
@@ -59,7 +60,22 @@ public class Unserializer {
                 }
             }
         }
-        
+
+        Field sourceField = null;
+        for (Field field : targetFields) {
+            Source anno = ReflectionUtils.getAnnotation(field, Source.class);
+            if (anno != null) {
+                sourceField = field;
+                break;
+            }
+        }
+
+        if (sourceField != null) {
+            sourceField.setAccessible(true);
+            sourceField.set(dest, source);
+            sourceField.setAccessible(false);
+        }
+
         for (Field targetField : targetFields) {
             targetField.setAccessible(true);
 

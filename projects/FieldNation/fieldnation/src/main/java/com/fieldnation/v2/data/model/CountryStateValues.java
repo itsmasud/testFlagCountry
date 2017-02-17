@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class CountryStateValues implements Parcelable {
     @Json(name = "value")
     private String _value;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CountryStateValues() {
     }
 
-    public void setLabel(String label) {
+    public void setLabel(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
     }
 
     public String getLabel() {
         return _label;
     }
 
-    public CountryStateValues label(String label) {
+    public CountryStateValues label(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
         return this;
     }
 
-    public void setValue(String value) {
+    public void setValue(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
     }
 
     public String getValue() {
         return _value;
     }
 
-    public CountryStateValues value(String value) {
+    public CountryStateValues value(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CountryStateValues[] array) {
+        JsonArray list = new JsonArray();
+        for (CountryStateValues item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CountryStateValues[] fromJsonArray(JsonArray array) {
         CountryStateValues[] list = new CountryStateValues[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class CountryStateValues implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CountryStateValues countryStateValues) {
-        try {
-            return Serializer.serializeObject(countryStateValues);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class CountryStateValues implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

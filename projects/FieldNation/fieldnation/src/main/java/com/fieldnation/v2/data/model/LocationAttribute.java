@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class LocationAttribute implements Parcelable {
     @Json(name = "value")
     private String _value;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public LocationAttribute() {
     }
 
-    public void setKey(String key) {
+    public void setKey(String key) throws ParseException {
         _key = key;
+        SOURCE.put("key", key);
     }
 
     public String getKey() {
         return _key;
     }
 
-    public LocationAttribute key(String key) {
+    public LocationAttribute key(String key) throws ParseException {
         _key = key;
+        SOURCE.put("key", key);
         return this;
     }
 
-    public void setPrivate(Boolean privatee) {
+    public void setPrivate(Boolean privatee) throws ParseException {
         _private = privatee;
+        SOURCE.put("private", privatee);
     }
 
     public Boolean getPrivate() {
         return _private;
     }
 
-    public LocationAttribute privatee(Boolean privatee) {
+    public LocationAttribute privatee(Boolean privatee) throws ParseException {
         _private = privatee;
+        SOURCE.put("private", privatee);
         return this;
     }
 
-    public void setValue(String value) {
+    public void setValue(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
     }
 
     public String getValue() {
         return _value;
     }
 
-    public LocationAttribute value(String value) {
+    public LocationAttribute value(String value) throws ParseException {
         _value = value;
+        SOURCE.put("value", value);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(LocationAttribute[] array) {
+        JsonArray list = new JsonArray();
+        for (LocationAttribute item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static LocationAttribute[] fromJsonArray(JsonArray array) {
         LocationAttribute[] list = new LocationAttribute[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class LocationAttribute implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(LocationAttribute locationAttribute) {
-        try {
-            return Serializer.serializeObject(locationAttribute);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class LocationAttribute implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

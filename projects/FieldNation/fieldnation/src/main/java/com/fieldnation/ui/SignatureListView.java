@@ -14,14 +14,13 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
 
 import java.util.Random;
 
 /**
  * Created by michael.carver on 12/5/2014.
  */
-public class SignatureListView extends RelativeLayout implements WorkorderRenderer {
+public class SignatureListView extends RelativeLayout {
     private static final String TAG = "SignatureListView";
 
     // Ui
@@ -67,7 +66,6 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         populateUI();
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 

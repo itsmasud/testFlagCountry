@@ -10,7 +10,7 @@
 
     <screenName name="com.fieldnation.ui.workorder.MyWorkActivity">MyWorkActivity</screenName>
     <screenName name="com.fieldnation.ui.market.MarketActivity">MarketActivity</screenName>
-    <screenName name="com.fieldnation.ui.workorder.WorkorderActivity">WorkorderActivity</screenName>
+    <screenName name="com.fieldnation.ui.workorder.WorkOrderActivity">WorkorderActivity</screenName>
     <screenName name="com.fieldnation.ui.MessageListActivity">MessageListActivity</screenName>
     <screenName name="com.fieldnation.ui.NotificationListActivity">NotificationListActivity</screenName>
     <screenName name="com.fieldnation.ui.payment.PaymentDetailActivity">PaymentDetailActivity</screenName>

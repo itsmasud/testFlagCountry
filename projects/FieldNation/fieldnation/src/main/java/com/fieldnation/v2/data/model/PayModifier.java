@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,6 +35,9 @@ public class PayModifier implements Parcelable {
     @Json(name = "description")
     private String _description;
 
+    @Json(name = "hours24_applicable")
+    private Boolean _hours24Applicable;
+
     @Json(name = "id")
     private Integer _id;
 
@@ -41,110 +47,152 @@ public class PayModifier implements Parcelable {
     @Json(name = "name")
     private String _name;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayModifier() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public PayModifier actions(ActionsEnum[] actions) {
+    public PayModifier actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
     }
 
     public Double getAmount() {
         return _amount;
     }
 
-    public PayModifier amount(Double amount) {
+    public PayModifier amount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
         return this;
     }
 
-    public void setCalculation(CalculationEnum calculation) {
+    public void setCalculation(CalculationEnum calculation) throws ParseException {
         _calculation = calculation;
+        SOURCE.put("calculation", calculation.toString());
     }
 
     public CalculationEnum getCalculation() {
         return _calculation;
     }
 
-    public PayModifier calculation(CalculationEnum calculation) {
+    public PayModifier calculation(CalculationEnum calculation) throws ParseException {
         _calculation = calculation;
+        SOURCE.put("calculation", calculation.toString());
         return this;
     }
 
-    public void setCharged(Boolean charged) {
+    public void setCharged(Boolean charged) throws ParseException {
         _charged = charged;
+        SOURCE.put("charged", charged);
     }
 
     public Boolean getCharged() {
         return _charged;
     }
 
-    public PayModifier charged(Boolean charged) {
+    public PayModifier charged(Boolean charged) throws ParseException {
         _charged = charged;
+        SOURCE.put("charged", charged);
         return this;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public PayModifier description(String description) {
+    public PayModifier description(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setHours24Applicable(Boolean hours24Applicable) throws ParseException {
+        _hours24Applicable = hours24Applicable;
+        SOURCE.put("hours24_applicable", hours24Applicable);
+    }
+
+    public Boolean getHours24Applicable() {
+        return _hours24Applicable;
+    }
+
+    public PayModifier hours24Applicable(Boolean hours24Applicable) throws ParseException {
+        _hours24Applicable = hours24Applicable;
+        SOURCE.put("hours24_applicable", hours24Applicable);
+        return this;
+    }
+
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public PayModifier id(Integer id) {
+    public PayModifier id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setModifier(Double modifier) {
+    public void setModifier(Double modifier) throws ParseException {
         _modifier = modifier;
+        SOURCE.put("modifier", modifier);
     }
 
     public Double getModifier() {
         return _modifier;
     }
 
-    public PayModifier modifier(Double modifier) {
+    public PayModifier modifier(Double modifier) throws ParseException {
         _modifier = modifier;
+        SOURCE.put("modifier", modifier);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public PayModifier name(String name) {
+    public PayModifier name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
@@ -190,6 +238,14 @@ public class PayModifier implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayModifier[] array) {
+        JsonArray list = new JsonArray();
+        for (PayModifier item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayModifier[] fromJsonArray(JsonArray array) {
         PayModifier[] list = new PayModifier[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -207,17 +263,8 @@ public class PayModifier implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayModifier payModifier) {
-        try {
-            return Serializer.serializeObject(payModifier);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -248,6 +295,6 @@ public class PayModifier implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

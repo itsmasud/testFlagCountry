@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -59,188 +62,227 @@ public class TimeLog implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public TimeLog() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public TimeLog actions(ActionsEnum[] actions) {
+    public TimeLog actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setDevices(Double devices) {
+    public void setDevices(Double devices) throws ParseException {
         _devices = devices;
+        SOURCE.put("devices", devices);
     }
 
     public Double getDevices() {
         return _devices;
     }
 
-    public TimeLog devices(Double devices) {
+    public TimeLog devices(Double devices) throws ParseException {
         _devices = devices;
+        SOURCE.put("devices", devices);
         return this;
     }
 
-    public void setHours(Double hours) {
+    public void setHours(Double hours) throws ParseException {
         _hours = hours;
+        SOURCE.put("hours", hours);
     }
 
     public Double getHours() {
         return _hours;
     }
 
-    public TimeLog hours(Double hours) {
+    public TimeLog hours(Double hours) throws ParseException {
         _hours = hours;
+        SOURCE.put("hours", hours);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public TimeLog id(Integer id) {
+    public TimeLog id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setIn(CheckInOut in) {
+    public void setIn(CheckInOut in) throws ParseException {
         _in = in;
+        SOURCE.put("in", in.getJson());
     }
 
     public CheckInOut getIn() {
         return _in;
     }
 
-    public TimeLog in(CheckInOut in) {
+    public TimeLog in(CheckInOut in) throws ParseException {
         _in = in;
+        SOURCE.put("in", in.getJson());
         return this;
     }
 
-    public void setLoggedBy(User loggedBy) {
+    public void setLoggedBy(User loggedBy) throws ParseException {
         _loggedBy = loggedBy;
+        SOURCE.put("logged_by", loggedBy.getJson());
     }
 
     public User getLoggedBy() {
         return _loggedBy;
     }
 
-    public TimeLog loggedBy(User loggedBy) {
+    public TimeLog loggedBy(User loggedBy) throws ParseException {
         _loggedBy = loggedBy;
+        SOURCE.put("logged_by", loggedBy.getJson());
         return this;
     }
 
-    public void setOnMyWay(OnMyWay onMyWay) {
+    public void setOnMyWay(OnMyWay onMyWay) throws ParseException {
         _onMyWay = onMyWay;
+        SOURCE.put("on_my_way", onMyWay.getJson());
     }
 
     public OnMyWay getOnMyWay() {
         return _onMyWay;
     }
 
-    public TimeLog onMyWay(OnMyWay onMyWay) {
+    public TimeLog onMyWay(OnMyWay onMyWay) throws ParseException {
         _onMyWay = onMyWay;
+        SOURCE.put("on_my_way", onMyWay.getJson());
         return this;
     }
 
-    public void setOut(CheckInOut out) {
+    public void setOut(CheckInOut out) throws ParseException {
         _out = out;
+        SOURCE.put("out", out.getJson());
     }
 
     public CheckInOut getOut() {
         return _out;
     }
 
-    public TimeLog out(CheckInOut out) {
+    public TimeLog out(CheckInOut out) throws ParseException {
         _out = out;
+        SOURCE.put("out", out.getJson());
         return this;
     }
 
-    public void setShouldVerify(Boolean shouldVerify) {
+    public void setShouldVerify(Boolean shouldVerify) throws ParseException {
         _shouldVerify = shouldVerify;
+        SOURCE.put("should_verify", shouldVerify);
     }
 
     public Boolean getShouldVerify() {
         return _shouldVerify;
     }
 
-    public TimeLog shouldVerify(Boolean shouldVerify) {
+    public TimeLog shouldVerify(Boolean shouldVerify) throws ParseException {
         _shouldVerify = shouldVerify;
+        SOURCE.put("should_verify", shouldVerify);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public TimeLog status(StatusEnum status) {
+    public TimeLog status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
     }
 
     public TimeZone getTimeZone() {
         return _timeZone;
     }
 
-    public TimeLog timeZone(TimeZone timeZone) {
+    public TimeLog timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
         return this;
     }
 
-    public void setVerified(Boolean verified) {
+    public void setVerified(Boolean verified) throws ParseException {
         _verified = verified;
+        SOURCE.put("verified", verified);
     }
 
     public Boolean getVerified() {
         return _verified;
     }
 
-    public TimeLog verified(Boolean verified) {
+    public TimeLog verified(Boolean verified) throws ParseException {
         _verified = verified;
+        SOURCE.put("verified", verified);
         return this;
     }
 
-    public void setWasLate(Boolean wasLate) {
+    public void setWasLate(Boolean wasLate) throws ParseException {
         _wasLate = wasLate;
+        SOURCE.put("was_late", wasLate);
     }
 
     public Boolean getWasLate() {
         return _wasLate;
     }
 
-    public TimeLog wasLate(Boolean wasLate) {
+    public TimeLog wasLate(Boolean wasLate) throws ParseException {
         _wasLate = wasLate;
+        SOURCE.put("was_late", wasLate);
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public TimeLog workOrderId(Integer workOrderId) {
+    public TimeLog workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
@@ -286,6 +328,14 @@ public class TimeLog implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(TimeLog[] array) {
+        JsonArray list = new JsonArray();
+        for (TimeLog item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static TimeLog[] fromJsonArray(JsonArray array) {
         TimeLog[] list = new TimeLog[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -303,17 +353,8 @@ public class TimeLog implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(TimeLog timeLog) {
-        try {
-            return Serializer.serializeObject(timeLog);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -344,6 +385,6 @@ public class TimeLog implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

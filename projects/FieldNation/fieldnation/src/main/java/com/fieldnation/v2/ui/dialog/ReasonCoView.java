@@ -1,7 +1,6 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,6 @@ public class ReasonCoView extends RelativeLayout {
     private Button _tacButton;
 
     // Data
-    private FragmentManager _fm;
     private Listener _listener;
     private String _reason;
     private boolean _expires;
@@ -87,9 +85,8 @@ public class ReasonCoView extends RelativeLayout {
         return _requestReasonEditText.getText().toString();
     }
 
-    public void setListener(FragmentManager fm, Listener listener) {
+    public void setListener(Listener listener) {
         _listener = listener;
-        _fm = fm;
     }
 
     public void setCounterOffer(String reason, boolean expires, int expiresAfterInSecond) {
@@ -106,7 +103,6 @@ public class ReasonCoView extends RelativeLayout {
             }
         }
         _expireDurationSpinner.setSelection(_currentPosition);
-
 
         populateUi();
     }
@@ -154,7 +150,6 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-
     private final AdapterView.OnItemSelectedListener _expireSpinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -170,7 +165,6 @@ public class ReasonCoView extends RelativeLayout {
             _currentPosition = 1;
         }
     };
-
 
     private final View.OnClickListener _tacCheck_onClick = new OnClickListener() {
         @Override

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -41,116 +44,143 @@ public class AvailableColumnItems implements Parcelable {
     @Json(name = "sort_dir")
     private String _sortDir;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public AvailableColumnItems() {
     }
 
-    public void setCanSort(Boolean canSort) {
+    public void setCanSort(Boolean canSort) throws ParseException {
         _canSort = canSort;
+        SOURCE.put("can_sort", canSort);
     }
 
     public Boolean getCanSort() {
         return _canSort;
     }
 
-    public AvailableColumnItems canSort(Boolean canSort) {
+    public AvailableColumnItems canSort(Boolean canSort) throws ParseException {
         _canSort = canSort;
+        SOURCE.put("can_sort", canSort);
         return this;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(String group) throws ParseException {
         _group = group;
+        SOURCE.put("group", group);
     }
 
     public String getGroup() {
         return _group;
     }
 
-    public AvailableColumnItems group(String group) {
+    public AvailableColumnItems group(String group) throws ParseException {
         _group = group;
+        SOURCE.put("group", group);
         return this;
     }
 
-    public void setIcon(String icon) {
+    public void setIcon(String icon) throws ParseException {
         _icon = icon;
+        SOURCE.put("icon", icon);
     }
 
     public String getIcon() {
         return _icon;
     }
 
-    public AvailableColumnItems icon(String icon) {
+    public AvailableColumnItems icon(String icon) throws ParseException {
         _icon = icon;
+        SOURCE.put("icon", icon);
         return this;
     }
 
-    public void setId(String id) {
+    public void setId(String id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public String getId() {
         return _id;
     }
 
-    public AvailableColumnItems id(String id) {
+    public AvailableColumnItems id(String id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
     }
 
     public String getLabel() {
         return _label;
     }
 
-    public AvailableColumnItems label(String label) {
+    public AvailableColumnItems label(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
         return this;
     }
 
-    public void setOrder(Integer order) {
+    public void setOrder(Integer order) throws ParseException {
         _order = order;
+        SOURCE.put("order", order);
     }
 
     public Integer getOrder() {
         return _order;
     }
 
-    public AvailableColumnItems order(Integer order) {
+    public AvailableColumnItems order(Integer order) throws ParseException {
         _order = order;
+        SOURCE.put("order", order);
         return this;
     }
 
-    public void setSelected(Boolean selected) {
+    public void setSelected(Boolean selected) throws ParseException {
         _selected = selected;
+        SOURCE.put("selected", selected);
     }
 
     public Boolean getSelected() {
         return _selected;
     }
 
-    public AvailableColumnItems selected(Boolean selected) {
+    public AvailableColumnItems selected(Boolean selected) throws ParseException {
         _selected = selected;
+        SOURCE.put("selected", selected);
         return this;
     }
 
-    public void setSortDir(String sortDir) {
+    public void setSortDir(String sortDir) throws ParseException {
         _sortDir = sortDir;
+        SOURCE.put("sort_dir", sortDir);
     }
 
     public String getSortDir() {
         return _sortDir;
     }
 
-    public AvailableColumnItems sortDir(String sortDir) {
+    public AvailableColumnItems sortDir(String sortDir) throws ParseException {
         _sortDir = sortDir;
+        SOURCE.put("sort_dir", sortDir);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(AvailableColumnItems[] array) {
+        JsonArray list = new JsonArray();
+        for (AvailableColumnItems item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static AvailableColumnItems[] fromJsonArray(JsonArray array) {
         AvailableColumnItems[] list = new AvailableColumnItems[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -168,17 +198,8 @@ public class AvailableColumnItems implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(AvailableColumnItems availableColumnItems) {
-        try {
-            return Serializer.serializeObject(availableColumnItems);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -209,6 +230,6 @@ public class AvailableColumnItems implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

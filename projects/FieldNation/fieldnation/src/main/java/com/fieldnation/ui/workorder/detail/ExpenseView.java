@@ -3,16 +3,13 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.data.workorder.ExpenseCategory;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ExpenseView extends LinearLayout {
     private static final String TAG = "ExpenseView";
@@ -23,9 +20,9 @@ public class ExpenseView extends LinearLayout {
     private TextView _costTextView;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Expense _expense = null;
-    private ExpenseCategory[] _categories;
+    //TODO private ExpenseCategory[] _categories;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -50,28 +47,30 @@ public class ExpenseView extends LinearLayout {
         _categoryTextView = (TextView) findViewById(R.id.category_textview);
         _costTextView = (TextView) findViewById(R.id.cost_textview);
 
-        ExpenseCategories categories = new ExpenseCategories(getContext());
-        categories.setListener(_categoriesListener);
+//TODO        ExpenseCategories categories = new ExpenseCategories(getContext());
+//        categories.setListener(_categoriesListener);
     }
 
     /*-*********************************-*/
     /*-				Event				-*/
     /*-*********************************-*/
 
+/*
     private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
-            _categories = categories;
+//TODO            _categories = categories;
             refresh();
         }
     };
+*/
 
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-    public void setData(Workorder workorder, Expense expense) {
+    public void setData(WorkOrder workOrder, Expense expense) {
         _expense = expense;
-        _workorder = workorder;
+        _workOrder = workOrder;
         refresh();
     }
 
@@ -83,7 +82,8 @@ public class ExpenseView extends LinearLayout {
         if (_expense == null)
             return;
 
-        if (_categories == null)
+/*
+TODO        if (_categories == null)
             return;
 
         _descriptionTextView.setText(_expense.getDescription());
@@ -98,8 +98,9 @@ public class ExpenseView extends LinearLayout {
                 }
             }
         }
+*/
         // TODO, need to get quantity and price per item numbers
-        _costTextView.setText(misc.toCurrency(_expense.getPrice()));
+        _costTextView.setText(misc.toCurrency(_expense.getAmount()));
 
     }
 }

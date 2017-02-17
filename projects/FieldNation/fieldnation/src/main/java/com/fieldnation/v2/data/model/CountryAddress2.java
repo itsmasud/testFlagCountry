@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class CountryAddress2 implements Parcelable {
     @Json(name = "required")
     private Boolean _required;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CountryAddress2() {
     }
 
-    public void setLabel(String label) {
+    public void setLabel(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
     }
 
     public String getLabel() {
         return _label;
     }
 
-    public CountryAddress2 label(String label) {
+    public CountryAddress2 label(String label) throws ParseException {
         _label = label;
+        SOURCE.put("label", label);
         return this;
     }
 
-    public void setRequired(Boolean required) {
+    public void setRequired(Boolean required) throws ParseException {
         _required = required;
+        SOURCE.put("required", required);
     }
 
     public Boolean getRequired() {
         return _required;
     }
 
-    public CountryAddress2 required(Boolean required) {
+    public CountryAddress2 required(Boolean required) throws ParseException {
         _required = required;
+        SOURCE.put("required", required);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CountryAddress2[] array) {
+        JsonArray list = new JsonArray();
+        for (CountryAddress2 item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CountryAddress2[] fromJsonArray(JsonArray array) {
         CountryAddress2[] list = new CountryAddress2[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class CountryAddress2 implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CountryAddress2 countryAddress2) {
-        try {
-            return Serializer.serializeObject(countryAddress2);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class CountryAddress2 implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

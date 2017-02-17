@@ -25,7 +25,7 @@ import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.v2.UpdateDialog;
+import com.fieldnation.v2.ui.dialog.UpdateDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 /**

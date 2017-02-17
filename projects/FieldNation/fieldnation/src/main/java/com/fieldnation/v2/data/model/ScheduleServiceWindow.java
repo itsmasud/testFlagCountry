@@ -5,10 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.misc;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by dmgen from swagger.
@@ -26,45 +33,54 @@ public class ScheduleServiceWindow implements Parcelable {
     @Json(name = "start")
     private Date _start;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public ScheduleServiceWindow() {
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(Date end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end.getJson());
     }
 
     public Date getEnd() {
         return _end;
     }
 
-    public ScheduleServiceWindow end(Date end) {
+    public ScheduleServiceWindow end(Date end) throws ParseException {
         _end = end;
+        SOURCE.put("end", end.getJson());
         return this;
     }
 
-    public void setMode(ModeEnum mode) {
+    public void setMode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
     }
 
     public ModeEnum getMode() {
         return _mode;
     }
 
-    public ScheduleServiceWindow mode(ModeEnum mode) {
+    public ScheduleServiceWindow mode(ModeEnum mode) throws ParseException {
         _mode = mode;
+        SOURCE.put("mode", mode.toString());
         return this;
     }
 
-    public void setStart(Date start) {
+    public void setStart(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
     }
 
     public Date getStart() {
         return _start;
     }
 
-    public ScheduleServiceWindow start(Date start) {
+    public ScheduleServiceWindow start(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
         return this;
     }
 
@@ -94,6 +110,14 @@ public class ScheduleServiceWindow implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(ScheduleServiceWindow[] array) {
+        JsonArray list = new JsonArray();
+        for (ScheduleServiceWindow item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static ScheduleServiceWindow[] fromJsonArray(JsonArray array) {
         ScheduleServiceWindow[] list = new ScheduleServiceWindow[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -111,17 +135,8 @@ public class ScheduleServiceWindow implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(ScheduleServiceWindow scheduleServiceWindow) {
-        try {
-            return Serializer.serializeObject(scheduleServiceWindow);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -152,6 +167,173 @@ public class ScheduleServiceWindow implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public String getFormatedDate() {
+        try {
+            if (!misc.isEmptyOrNull(getStart().getUtc())) {
+                String when = "";
+                Calendar cal = null;
+                cal = getStart().getCalendar();
+                when = DateUtils.formatDateReallyLong(cal);
+
+                // Wednesday, Dec 4, 2056
+                if (!misc.isEmptyOrNull(getEnd().getUtc())) {
+                    Calendar ecal = getEnd().getCalendar();
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
+                        when += "\n";
+                        when += DateUtils.formatDateReallyLong(ecal);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public String getFormatedTime() {
+        try {
+            if (!misc.isEmptyOrNull(getStart().getUtc())) {
+                String when = "";
+                Calendar cal = null;
+                cal = getStart().getCalendar();
+                when = DateUtils.formatTime(cal, false);
+
+                if (!misc.isEmptyOrNull(getEnd().getUtc())) {
+                    cal = getEnd().getCalendar();
+                    if (cal.get(Calendar.YEAR) > 2000) {
+                        when += " - ";
+                        when += DateUtils.formatTime(cal, false);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    // Todo, localize this
+    public String getFormatedStartTime() {
+        try {
+            if (!misc.isEmptyOrNull(getStart().getUtc())) {
+                String when = "";
+                Calendar cal = null;
+                Calendar ecal = null;
+                cal = getStart().getCalendar();
+                when = DateUtils.formatDate(cal);
+
+                if (!misc.isEmptyOrNull(getEnd().getUtc())) {
+                    ecal = getEnd().getCalendar();
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
+                        when += " - ";
+                        when += DateUtils.formatDate(ecal);
+                    }
+                }
+                when += " @ ";
+
+                when += DateUtils.formatTime(cal, false);
+
+                if (ecal != null
+                        && ((ecal.get(Calendar.HOUR_OF_DAY) != cal.get(Calendar.HOUR_OF_DAY))
+                        || (ecal.get(Calendar.MINUTE) != cal.get(Calendar.MINUTE)))) {
+                    when += " - ";
+                    when += DateUtils.formatTime(ecal, false);
+                }
+
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public String getDisplayString(boolean asStartAndDuration) {
+        if (getMode() == ModeEnum.EXACT) {
+            try {
+                String dayDate;
+                String time = "";
+                Calendar cal;
+
+                cal = getStart().getCalendar();
+                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                time = DateUtils.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, java.util.TimeZone.SHORT);
+
+                return "Exactly on " + dayDate + " @ " + time;
+
+            } catch (ParseException e) {
+                Log.v(TAG, e);
+            }
+        } else {
+            if (asStartAndDuration) {
+                try {
+                    Calendar cal = getStart().getCalendar();
+                    String dayDate;
+                    String time = "";
+
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                    time = DateUtils.formatTime(cal, false);
+
+                    String msg = "Exactly on " + dayDate + " @ " + time + ".\n\t for ";
+
+                    long length = getEnd().getUtcLong() - getStart().getUtcLong();
+
+                    msg += misc.convertMsToHuman(length);
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    Log.v(TAG, e);
+                }
+            } else {
+                try {
+                    Calendar cal = getStart().getCalendar();
+                    String dayDate;
+                    String time = "";
+
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                    time = DateUtils.formatTime(cal, false);
+
+                    String msg = "Between " + dayDate + " @ " + time + "\nand";
+
+                    Calendar cal2 = getEnd().getCalendar();
+
+                    // same day
+                    if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                        time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, java.util.TimeZone.SHORT);
+                        msg += time;
+
+                    } else {
+                        dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + DateUtils.formatDateLong(cal2);
+                        time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, java.util.TimeZone.SHORT);
+                        msg += dayDate + " @ " + time;
+                    }
+
+                    return msg;
+
+                } catch (ParseException e) {
+                    Log.v(TAG, e);
+                }
+            }
+        }
+        return null;
+    }
+
 }

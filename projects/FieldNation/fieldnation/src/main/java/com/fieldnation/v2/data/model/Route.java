@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -35,90 +38,113 @@ public class Route implements Parcelable {
     @Json(name = "user")
     private User _user;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Route() {
     }
 
-    public void setCounter(Boolean counter) {
+    public void setCounter(Boolean counter) throws ParseException {
         _counter = counter;
+        SOURCE.put("counter", counter);
     }
 
     public Boolean getCounter() {
         return _counter;
     }
 
-    public Route counter(Boolean counter) {
+    public Route counter(Boolean counter) throws ParseException {
         _counter = counter;
+        SOURCE.put("counter", counter);
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public Route created(Date created) {
+    public Route created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Route id(Integer id) {
+    public Route id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
     }
 
     public String getNotes() {
         return _notes;
     }
 
-    public Route notes(String notes) {
+    public Route notes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
         return this;
     }
 
-    public void setSchedule(Schedule schedule) {
+    public void setSchedule(Schedule schedule) throws ParseException {
         _schedule = schedule;
+        SOURCE.put("schedule", schedule.getJson());
     }
 
     public Schedule getSchedule() {
         return _schedule;
     }
 
-    public Route schedule(Schedule schedule) {
+    public Route schedule(Schedule schedule) throws ParseException {
         _schedule = schedule;
+        SOURCE.put("schedule", schedule.getJson());
         return this;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
     }
 
     public User getUser() {
         return _user;
     }
 
-    public Route user(User user) {
+    public Route user(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Route[] array) {
+        JsonArray list = new JsonArray();
+        for (Route item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Route[] fromJsonArray(JsonArray array) {
         Route[] list = new Route[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -136,17 +162,8 @@ public class Route implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Route route) {
-        try {
-            return Serializer.serializeObject(route);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -177,6 +194,6 @@ public class Route implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

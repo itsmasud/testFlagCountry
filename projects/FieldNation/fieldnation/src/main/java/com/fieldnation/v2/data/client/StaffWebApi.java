@@ -125,6 +125,47 @@ public class StaffWebApi extends TopicClient {
         return register("TOPIC_ID_WEB_API_V2/staff/robocalls");
     }
 
+    /**
+     * Swagger operationId: sendCommunicationByWorkOrder
+     * Send recruitment email or robocalls
+     *
+     * @param workOrderId ID of work order
+     * @param body null
+     */
+    public static void sendCommunication(Context context, Integer workOrderId, String body) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/staff/recruitment/send-communications/" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/staff/recruitment/send-communications/" + workOrderId);
+
+            if (body != null)
+                builder.body(body);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/staff/recruitment/send-communications/{work_order_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi/" + workOrderId,
+                                    StaffWebApi.class, "sendCommunication"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subSendCommunication(Integer workOrderId) {
+        return register("TOPIC_ID_WEB_API_V2/StaffWebApi/" + workOrderId);
+    }
+
 
     /*-**********************************-*/
     /*-             Listener             -*/
@@ -142,6 +183,9 @@ public class StaffWebApi extends TopicClient {
         }
 
         public void onGetRobocalls(Robocalls robocalls, boolean success, Error error) {
+        }
+
+        public void onSendCommunication(byte[] data, boolean success, Error error) {
         }
 
     }
@@ -182,6 +226,12 @@ public class StaffWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "sendCommunication":
+                        if (success)
+                            successObject = data;
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                         break;
@@ -202,6 +252,9 @@ public class StaffWebApi extends TopicClient {
                         break;
                     case "getRobocalls":
                         listener.onGetRobocalls((Robocalls) successObject, success, (Error) failObject);
+                        break;
+                    case "sendCommunication":
+                        listener.onSendCommunication((byte[]) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

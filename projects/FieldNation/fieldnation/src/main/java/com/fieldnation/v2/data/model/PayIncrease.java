@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -41,110 +44,137 @@ public class PayIncrease implements Parcelable {
     @Json(name = "status_description")
     private String _statusDescription;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayIncrease() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public PayIncrease actions(ActionsEnum[] actions) {
+    public PayIncrease actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setAuthor(User author) {
+    public void setAuthor(User author) throws ParseException {
         _author = author;
+        SOURCE.put("author", author.getJson());
     }
 
     public User getAuthor() {
         return _author;
     }
 
-    public PayIncrease author(User author) {
+    public PayIncrease author(User author) throws ParseException {
         _author = author;
+        SOURCE.put("author", author.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public PayIncrease created(Date created) {
+    public PayIncrease created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public PayIncrease description(String description) {
+    public PayIncrease description(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public PayIncrease id(Integer id) {
+    public PayIncrease id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setPay(Pay pay) {
+    public void setPay(Pay pay) throws ParseException {
         _pay = pay;
+        SOURCE.put("pay", pay.getJson());
     }
 
     public Pay getPay() {
         return _pay;
     }
 
-    public PayIncrease pay(Pay pay) {
+    public PayIncrease pay(Pay pay) throws ParseException {
         _pay = pay;
+        SOURCE.put("pay", pay.getJson());
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public PayIncrease status(StatusEnum status) {
+    public PayIncrease status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setStatusDescription(String statusDescription) {
+    public void setStatusDescription(String statusDescription) throws ParseException {
         _statusDescription = statusDescription;
+        SOURCE.put("status_description", statusDescription);
     }
 
     public String getStatusDescription() {
         return _statusDescription;
     }
 
-    public PayIncrease statusDescription(String statusDescription) {
+    public PayIncrease statusDescription(String statusDescription) throws ParseException {
         _statusDescription = statusDescription;
+        SOURCE.put("status_description", statusDescription);
         return this;
     }
 
@@ -192,6 +222,14 @@ public class PayIncrease implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayIncrease[] array) {
+        JsonArray list = new JsonArray();
+        for (PayIncrease item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayIncrease[] fromJsonArray(JsonArray array) {
         PayIncrease[] list = new PayIncrease[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -209,17 +247,8 @@ public class PayIncrease implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayIncrease payIncrease) {
-        try {
-            return Serializer.serializeObject(payIncrease);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -250,6 +279,6 @@ public class PayIncrease implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

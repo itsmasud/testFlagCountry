@@ -60,7 +60,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .path("/api/rest/v2/custom-fields");
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/custom-fields")
@@ -178,7 +178,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .path("/api/rest/v2/custom-fields/" + customFieldId);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}")

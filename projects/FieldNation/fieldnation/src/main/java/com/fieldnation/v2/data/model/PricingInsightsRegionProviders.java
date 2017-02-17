@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class PricingInsightsRegionProviders implements Parcelable {
     @Json(name = "marketplace")
     private Integer _marketplace;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PricingInsightsRegionProviders() {
     }
 
-    public void setMarketplace(Integer marketplace) {
+    public void setMarketplace(Integer marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
     }
 
     public Integer getMarketplace() {
         return _marketplace;
     }
 
-    public PricingInsightsRegionProviders marketplace(Integer marketplace) {
+    public PricingInsightsRegionProviders marketplace(Integer marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PricingInsightsRegionProviders[] array) {
+        JsonArray list = new JsonArray();
+        for (PricingInsightsRegionProviders item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PricingInsightsRegionProviders[] fromJsonArray(JsonArray array) {
         PricingInsightsRegionProviders[] list = new PricingInsightsRegionProviders[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class PricingInsightsRegionProviders implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PricingInsightsRegionProviders pricingInsightsRegionProviders) {
-        try {
-            return Serializer.serializeObject(pricingInsightsRegionProviders);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class PricingInsightsRegionProviders implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

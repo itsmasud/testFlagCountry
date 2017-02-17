@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -47,136 +50,167 @@ public class Schedule implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Schedule() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Schedule actions(ActionsEnum[] actions) {
+    public Schedule actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
     }
 
     public String getCorrelationId() {
         return _correlationId;
     }
 
-    public Schedule correlationId(String correlationId) {
+    public Schedule correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
-    public void setEta(ScheduleEta eta) {
+    public void setEta(ScheduleEta eta) throws ParseException {
         _eta = eta;
+        SOURCE.put("eta", eta.getJson());
     }
 
     public ScheduleEta getEta() {
         return _eta;
     }
 
-    public Schedule eta(ScheduleEta eta) {
+    public Schedule eta(ScheduleEta eta) throws ParseException {
         _eta = eta;
+        SOURCE.put("eta", eta.getJson());
         return this;
     }
 
-    public void setNoRefresh(Boolean noRefresh) {
+    public void setNoRefresh(Boolean noRefresh) throws ParseException {
         _noRefresh = noRefresh;
+        SOURCE.put("no_refresh", noRefresh);
     }
 
     public Boolean getNoRefresh() {
         return _noRefresh;
     }
 
-    public Schedule noRefresh(Boolean noRefresh) {
+    public Schedule noRefresh(Boolean noRefresh) throws ParseException {
         _noRefresh = noRefresh;
+        SOURCE.put("no_refresh", noRefresh);
         return this;
     }
 
-    public void setOnMyWay(OnMyWay onMyWay) {
+    public void setOnMyWay(OnMyWay onMyWay) throws ParseException {
         _onMyWay = onMyWay;
+        SOURCE.put("on_my_way", onMyWay.getJson());
     }
 
     public OnMyWay getOnMyWay() {
         return _onMyWay;
     }
 
-    public Schedule onMyWay(OnMyWay onMyWay) {
+    public Schedule onMyWay(OnMyWay onMyWay) throws ParseException {
         _onMyWay = onMyWay;
+        SOURCE.put("on_my_way", onMyWay.getJson());
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public Schedule role(String role) {
+    public Schedule role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
-    public void setServiceWindow(ScheduleServiceWindow serviceWindow) {
+    public void setServiceWindow(ScheduleServiceWindow serviceWindow) throws ParseException {
         _serviceWindow = serviceWindow;
+        SOURCE.put("service_window", serviceWindow.getJson());
     }
 
     public ScheduleServiceWindow getServiceWindow() {
         return _serviceWindow;
     }
 
-    public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) {
+    public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) throws ParseException {
         _serviceWindow = serviceWindow;
+        SOURCE.put("service_window", serviceWindow.getJson());
         return this;
     }
 
-    public void setStatusId(Integer statusId) {
+    public void setStatusId(Integer statusId) throws ParseException {
         _statusId = statusId;
+        SOURCE.put("status_id", statusId);
     }
 
     public Integer getStatusId() {
         return _statusId;
     }
 
-    public Schedule statusId(Integer statusId) {
+    public Schedule statusId(Integer statusId) throws ParseException {
         _statusId = statusId;
+        SOURCE.put("status_id", statusId);
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) {
+    public void setTimeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
     }
 
     public TimeZone getTimeZone() {
         return _timeZone;
     }
 
-    public Schedule timeZone(TimeZone timeZone) {
+    public Schedule timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
+        SOURCE.put("time_zone", timeZone.getJson());
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public Schedule workOrderId(Integer workOrderId) {
+    public Schedule workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
@@ -202,6 +236,14 @@ public class Schedule implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Schedule[] array) {
+        JsonArray list = new JsonArray();
+        for (Schedule item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Schedule[] fromJsonArray(JsonArray array) {
         Schedule[] list = new Schedule[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -219,17 +261,8 @@ public class Schedule implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Schedule schedule) {
-        try {
-            return Serializer.serializeObject(schedule);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -260,6 +293,6 @@ public class Schedule implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

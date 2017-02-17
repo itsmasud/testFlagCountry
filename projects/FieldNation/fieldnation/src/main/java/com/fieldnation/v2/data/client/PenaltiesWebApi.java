@@ -134,7 +134,7 @@ public class PenaltiesWebApi extends TopicClient {
                     .path("/api/rest/v2/penalties/" + penaltyId);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/penalties/{penalty_id}")

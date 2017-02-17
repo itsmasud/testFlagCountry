@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -16,6 +19,9 @@ import com.fieldnation.fnlog.Log;
 
 public class Request implements Parcelable {
     private static final String TAG = "Request";
+
+    @Json(name = "actions")
+    private ActionsEnum _actions;
 
     @Json(name = "active")
     private Boolean _active;
@@ -28,6 +34,9 @@ public class Request implements Parcelable {
 
     @Json(name = "created")
     private Date _created;
+
+    @Json(name = "expenses")
+    private Expense[] _expenses;
 
     @Json(name = "expires")
     private Date _expires;
@@ -53,168 +62,252 @@ public class Request implements Parcelable {
     @Json(name = "work_order")
     private WorkOrder _workOrder;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Request() {
     }
 
-    public void setActive(Boolean active) {
+    public void setActions(ActionsEnum actions) throws ParseException {
+        _actions = actions;
+        SOURCE.put("actions", actions.toString());
+    }
+
+    public ActionsEnum getActions() {
+        return _actions;
+    }
+
+    public Request actions(ActionsEnum actions) throws ParseException {
+        _actions = actions;
+        SOURCE.put("actions", actions.toString());
+        return this;
+    }
+
+    public void setActive(Boolean active) throws ParseException {
         _active = active;
+        SOURCE.put("active", active);
     }
 
     public Boolean getActive() {
         return _active;
     }
 
-    public Request active(Boolean active) {
+    public Request active(Boolean active) throws ParseException {
         _active = active;
+        SOURCE.put("active", active);
         return this;
     }
 
-    public void setCounter(Boolean counter) {
+    public void setCounter(Boolean counter) throws ParseException {
         _counter = counter;
+        SOURCE.put("counter", counter);
     }
 
     public Boolean getCounter() {
         return _counter;
     }
 
-    public Request counter(Boolean counter) {
+    public Request counter(Boolean counter) throws ParseException {
         _counter = counter;
+        SOURCE.put("counter", counter);
         return this;
     }
 
-    public void setCounterNotes(String counterNotes) {
+    public void setCounterNotes(String counterNotes) throws ParseException {
         _counterNotes = counterNotes;
+        SOURCE.put("counter_notes", counterNotes);
     }
 
     public String getCounterNotes() {
         return _counterNotes;
     }
 
-    public Request counterNotes(String counterNotes) {
+    public Request counterNotes(String counterNotes) throws ParseException {
         _counterNotes = counterNotes;
+        SOURCE.put("counter_notes", counterNotes);
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public Request created(Date created) {
+    public Request created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setExpires(Date expires) {
+    public void setExpenses(Expense[] expenses) throws ParseException {
+        _expenses = expenses;
+        SOURCE.put("expenses", Expense.toJsonArray(expenses));
+    }
+
+    public Expense[] getExpenses() {
+        return _expenses;
+    }
+
+    public Request expenses(Expense[] expenses) throws ParseException {
+        _expenses = expenses;
+        SOURCE.put("expenses", Expense.toJsonArray(expenses), true);
+        return this;
+    }
+
+    public void setExpires(Date expires) throws ParseException {
         _expires = expires;
+        SOURCE.put("expires", expires.getJson());
     }
 
     public Date getExpires() {
         return _expires;
     }
 
-    public Request expires(Date expires) {
+    public Request expires(Date expires) throws ParseException {
         _expires = expires;
+        SOURCE.put("expires", expires.getJson());
         return this;
     }
 
-    public void setHourEstimate(Double hourEstimate) {
+    public void setHourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
     }
 
     public Double getHourEstimate() {
         return _hourEstimate;
     }
 
-    public Request hourEstimate(Double hourEstimate) {
+    public Request hourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Request id(Integer id) {
+    public Request id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
     }
 
     public String getNotes() {
         return _notes;
     }
 
-    public Request notes(String notes) {
+    public Request notes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
         return this;
     }
 
-    public void setPay(Pay pay) {
+    public void setPay(Pay pay) throws ParseException {
         _pay = pay;
+        SOURCE.put("pay", pay.getJson());
     }
 
     public Pay getPay() {
         return _pay;
     }
 
-    public Request pay(Pay pay) {
+    public Request pay(Pay pay) throws ParseException {
         _pay = pay;
+        SOURCE.put("pay", pay.getJson());
         return this;
     }
 
-    public void setSchedule(Schedule schedule) {
+    public void setSchedule(Schedule schedule) throws ParseException {
         _schedule = schedule;
+        SOURCE.put("schedule", schedule.getJson());
     }
 
     public Schedule getSchedule() {
         return _schedule;
     }
 
-    public Request schedule(Schedule schedule) {
+    public Request schedule(Schedule schedule) throws ParseException {
         _schedule = schedule;
+        SOURCE.put("schedule", schedule.getJson());
         return this;
     }
 
-    public void setUser(User user) {
+    public void setUser(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
     }
 
     public User getUser() {
         return _user;
     }
 
-    public Request user(User user) {
+    public Request user(User user) throws ParseException {
         _user = user;
+        SOURCE.put("user", user.getJson());
         return this;
     }
 
-    public void setWorkOrder(WorkOrder workOrder) {
+    public void setWorkOrder(WorkOrder workOrder) throws ParseException {
         _workOrder = workOrder;
+        SOURCE.put("work_order", workOrder.getJson());
     }
 
     public WorkOrder getWorkOrder() {
         return _workOrder;
     }
 
-    public Request workOrder(WorkOrder workOrder) {
+    public Request workOrder(WorkOrder workOrder) throws ParseException {
         _workOrder = workOrder;
+        SOURCE.put("work_order", workOrder.getJson());
         return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Request[] array) {
+        JsonArray list = new JsonArray();
+        for (Request item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Request[] fromJsonArray(JsonArray array) {
         Request[] list = new Request[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -232,17 +325,8 @@ public class Request implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Request request) {
-        try {
-            return Serializer.serializeObject(request);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -273,6 +357,6 @@ public class Request implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,106 @@ public class UserCompany implements Parcelable {
     @Json(name = "vendors")
     private Company[] _vendors;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UserCompany() {
     }
 
-    public void setFeatures(String[] features) {
+    public void setFeatures(String[] features) throws ParseException {
         _features = features;
+        JsonArray ja = new JsonArray();
+        for (String item : features) {
+            ja.add(item);
+        }
+        SOURCE.put("features", ja);
     }
 
     public String[] getFeatures() {
         return _features;
     }
 
-    public UserCompany features(String[] features) {
+    public UserCompany features(String[] features) throws ParseException {
         _features = features;
+        JsonArray ja = new JsonArray();
+        for (String item : features) {
+            ja.add(item);
+        }
+        SOURCE.put("features", ja, true);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public UserCompany id(Integer id) {
+    public UserCompany id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public UserCompany name(String name) {
+    public UserCompany name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setTechnicians(Integer technicians) {
+    public void setTechnicians(Integer technicians) throws ParseException {
         _technicians = technicians;
+        SOURCE.put("technicians", technicians);
     }
 
     public Integer getTechnicians() {
         return _technicians;
     }
 
-    public UserCompany technicians(Integer technicians) {
+    public UserCompany technicians(Integer technicians) throws ParseException {
         _technicians = technicians;
+        SOURCE.put("technicians", technicians);
         return this;
     }
 
-    public void setVendors(Company[] vendors) {
+    public void setVendors(Company[] vendors) throws ParseException {
         _vendors = vendors;
+        SOURCE.put("vendors", Company.toJsonArray(vendors));
     }
 
     public Company[] getVendors() {
         return _vendors;
     }
 
-    public UserCompany vendors(Company[] vendors) {
+    public UserCompany vendors(Company[] vendors) throws ParseException {
         _vendors = vendors;
+        SOURCE.put("vendors", Company.toJsonArray(vendors), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UserCompany[] array) {
+        JsonArray list = new JsonArray();
+        for (UserCompany item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UserCompany[] fromJsonArray(JsonArray array) {
         UserCompany[] list = new UserCompany[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +152,8 @@ public class UserCompany implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UserCompany userCompany) {
-        try {
-            return Serializer.serializeObject(userCompany);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +184,6 @@ public class UserCompany implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

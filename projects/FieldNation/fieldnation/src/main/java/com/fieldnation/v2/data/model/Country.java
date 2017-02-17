@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -38,103 +41,128 @@ public class Country implements Parcelable {
     @Json(name = "zip")
     private CountryZip _zip;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Country() {
     }
 
-    public void setAddress1(CountryAddress1 address1) {
+    public void setAddress1(CountryAddress1 address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1.getJson());
     }
 
     public CountryAddress1 getAddress1() {
         return _address1;
     }
 
-    public Country address1(CountryAddress1 address1) {
+    public Country address1(CountryAddress1 address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1.getJson());
         return this;
     }
 
-    public void setAddress2(CountryAddress2 address2) {
+    public void setAddress2(CountryAddress2 address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2.getJson());
     }
 
     public CountryAddress2 getAddress2() {
         return _address2;
     }
 
-    public Country address2(CountryAddress2 address2) {
+    public Country address2(CountryAddress2 address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2.getJson());
         return this;
     }
 
-    public void setCity(CountryCity city) {
+    public void setCity(CountryCity city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city.getJson());
     }
 
     public CountryCity getCity() {
         return _city;
     }
 
-    public Country city(CountryCity city) {
+    public Country city(CountryCity city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city.getJson());
         return this;
     }
 
-    public void setIso(String iso) {
+    public void setIso(String iso) throws ParseException {
         _iso = iso;
+        SOURCE.put("iso", iso);
     }
 
     public String getIso() {
         return _iso;
     }
 
-    public Country iso(String iso) {
+    public Country iso(String iso) throws ParseException {
         _iso = iso;
+        SOURCE.put("iso", iso);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public Country name(String name) {
+    public Country name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setState(CountryState state) {
+    public void setState(CountryState state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state.getJson());
     }
 
     public CountryState getState() {
         return _state;
     }
 
-    public Country state(CountryState state) {
+    public Country state(CountryState state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state.getJson());
         return this;
     }
 
-    public void setZip(CountryZip zip) {
+    public void setZip(CountryZip zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip.getJson());
     }
 
     public CountryZip getZip() {
         return _zip;
     }
 
-    public Country zip(CountryZip zip) {
+    public Country zip(CountryZip zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Country[] array) {
+        JsonArray list = new JsonArray();
+        for (Country item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Country[] fromJsonArray(JsonArray array) {
         Country[] list = new Country[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -152,17 +180,8 @@ public class Country implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Country country) {
-        try {
-            return Serializer.serializeObject(country);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -193,6 +212,6 @@ public class Country implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -1,0 +1,145 @@
+package com.fieldnation.v2.data.model;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
+import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
+
+/**
+ * Created by dmgen from swagger.
+ */
+
+public class CompanyRatingRating implements Parcelable {
+    private static final String TAG = "CompanyRatingRating";
+
+    @Json(name = "marketplace")
+    private Satisfaction _marketplace;
+
+    @Json(name = "mine")
+    private Satisfaction _mine;
+
+    @Json(name = "toggle_visible")
+    private Boolean _toggleVisible;
+
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
+    public CompanyRatingRating() {
+    }
+
+    public void setMarketplace(Satisfaction marketplace) throws ParseException {
+        _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
+    }
+
+    public Satisfaction getMarketplace() {
+        return _marketplace;
+    }
+
+    public CompanyRatingRating marketplace(Satisfaction marketplace) throws ParseException {
+        _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
+        return this;
+    }
+
+    public void setMine(Satisfaction mine) throws ParseException {
+        _mine = mine;
+        SOURCE.put("mine", mine.getJson());
+    }
+
+    public Satisfaction getMine() {
+        return _mine;
+    }
+
+    public CompanyRatingRating mine(Satisfaction mine) throws ParseException {
+        _mine = mine;
+        SOURCE.put("mine", mine.getJson());
+        return this;
+    }
+
+    public void setToggleVisible(Boolean toggleVisible) throws ParseException {
+        _toggleVisible = toggleVisible;
+        SOURCE.put("toggle_visible", toggleVisible);
+    }
+
+    public Boolean getToggleVisible() {
+        return _toggleVisible;
+    }
+
+    public CompanyRatingRating toggleVisible(Boolean toggleVisible) throws ParseException {
+        _toggleVisible = toggleVisible;
+        SOURCE.put("toggle_visible", toggleVisible);
+        return this;
+    }
+
+    /*-*****************************-*/
+    /*-             Json            -*/
+    /*-*****************************-*/
+    public static JsonArray toJsonArray(CompanyRatingRating[] array) {
+        JsonArray list = new JsonArray();
+        for (CompanyRatingRating item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
+    public static CompanyRatingRating[] fromJsonArray(JsonArray array) {
+        CompanyRatingRating[] list = new CompanyRatingRating[array.size()];
+        for (int i = 0; i < array.size(); i++) {
+            list[i] = fromJson(array.getJsonObject(i));
+        }
+        return list;
+    }
+
+    public static CompanyRatingRating fromJson(JsonObject obj) {
+        try {
+            return Unserializer.unserializeObject(CompanyRatingRating.class, obj);
+        } catch (Exception ex) {
+            Log.v(TAG, TAG, ex);
+            return null;
+        }
+    }
+
+    public JsonObject getJson() {
+        return SOURCE;
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation           -*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<CompanyRatingRating> CREATOR = new Parcelable.Creator<CompanyRatingRating>() {
+
+        @Override
+        public CompanyRatingRating createFromParcel(Parcel source) {
+            try {
+                return CompanyRatingRating.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public CompanyRatingRating[] newArray(int size) {
+            return new CompanyRatingRating[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(getJson(), flags);
+    }
+}

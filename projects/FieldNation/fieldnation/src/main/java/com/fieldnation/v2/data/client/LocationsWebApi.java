@@ -62,7 +62,7 @@ public class LocationsWebApi extends TopicClient {
                     .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/attributes/{attribute}")
@@ -102,7 +102,7 @@ public class LocationsWebApi extends TopicClient {
                     .path("/api/rest/v2/locations");
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations")
@@ -143,7 +143,7 @@ public class LocationsWebApi extends TopicClient {
                     .path("/api/rest/v2/locations/" + locationId + "/notes");
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/notes")
@@ -245,6 +245,47 @@ public class LocationsWebApi extends TopicClient {
 
     public boolean subGetLocations() {
         return register("TOPIC_ID_WEB_API_V2/locations");
+    }
+
+    /**
+     * Swagger operationId: getProvidersByLocationId
+     * Get Providers Info By Location ID
+     *
+     * @param locationId Location ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getProviders(Context context, Integer locationId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/locations/" + locationId + "/providers");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/locations/" + locationId + "/providers");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/locations/{location_id}/providers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/providers",
+                                    LocationsWebApi.class, "getProviders"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    public boolean subGetProviders(Integer locationId) {
+        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/providers");
     }
 
     /**
@@ -415,7 +456,7 @@ public class LocationsWebApi extends TopicClient {
                     .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId);
 
             if (json != null)
-                builder.body(json.toJson().toString());
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}/notes/{note_id}")
@@ -465,6 +506,9 @@ public class LocationsWebApi extends TopicClient {
         }
 
         public void onGetLocations(StoredLocations storedLocations, boolean success, Error error) {
+        }
+
+        public void onGetProviders(LocationProviders locationProviders, boolean success, Error error) {
         }
 
         public void onRemoveAttribute(boolean success, Error error) {
@@ -536,6 +580,12 @@ public class LocationsWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "getProviders":
+                        if (success)
+                            successObject = LocationProviders.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "removeAttribute":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
@@ -585,6 +635,9 @@ public class LocationsWebApi extends TopicClient {
                         break;
                     case "getLocations":
                         listener.onGetLocations((StoredLocations) successObject, success, (Error) failObject);
+                        break;
+                    case "getProviders":
+                        listener.onGetProviders((LocationProviders) successObject, success, (Error) failObject);
                         break;
                     case "removeAttribute":
                         listener.onRemoveAttribute(success, (Error) failObject);

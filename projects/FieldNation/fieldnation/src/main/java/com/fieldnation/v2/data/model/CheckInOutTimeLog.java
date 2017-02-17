@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class CheckInOutTimeLog implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CheckInOutTimeLog() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public CheckInOutTimeLog id(Integer id) {
+    public CheckInOutTimeLog id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CheckInOutTimeLog[] array) {
+        JsonArray list = new JsonArray();
+        for (CheckInOutTimeLog item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CheckInOutTimeLog[] fromJsonArray(JsonArray array) {
         CheckInOutTimeLog[] list = new CheckInOutTimeLog[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class CheckInOutTimeLog implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CheckInOutTimeLog checkInOutTimeLog) {
-        try {
-            return Serializer.serializeObject(checkInOutTimeLog);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class CheckInOutTimeLog implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

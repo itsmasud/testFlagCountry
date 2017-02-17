@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class UserRating implements Parcelable {
     @Json(name = "my_company")
     private Rating _myCompany;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UserRating() {
     }
 
-    public void setMarketplace(Rating marketplace) {
+    public void setMarketplace(Rating marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
     }
 
     public Rating getMarketplace() {
         return _marketplace;
     }
 
-    public UserRating marketplace(Rating marketplace) {
+    public UserRating marketplace(Rating marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace.getJson());
         return this;
     }
 
-    public void setMyCompany(Rating myCompany) {
+    public void setMyCompany(Rating myCompany) throws ParseException {
         _myCompany = myCompany;
+        SOURCE.put("my_company", myCompany.getJson());
     }
 
     public Rating getMyCompany() {
         return _myCompany;
     }
 
-    public UserRating myCompany(Rating myCompany) {
+    public UserRating myCompany(Rating myCompany) throws ParseException {
         _myCompany = myCompany;
+        SOURCE.put("my_company", myCompany.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UserRating[] array) {
+        JsonArray list = new JsonArray();
+        for (UserRating item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UserRating[] fromJsonArray(JsonArray array) {
         UserRating[] list = new UserRating[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class UserRating implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UserRating userRating) {
-        try {
-            return Serializer.serializeObject(userRating);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class UserRating implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

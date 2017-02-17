@@ -1,14 +1,11 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -18,17 +15,24 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Schedule;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.dialog.DatePickerDialog;
+import com.fieldnation.ui.dialog.TimePickerDialog;
+import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 
 import java.util.Calendar;
 
-public class ScheduleDialog extends DialogFragmentBase {
+public class ScheduleDialog extends SimpleDialog {
     private static final String TAG = "ScheduleDialog";
 
     // State
@@ -44,15 +48,11 @@ public class ScheduleDialog extends DialogFragmentBase {
 
     // UI
     private HintSpinner _typeSpinner;
-
     private LinearLayout _rangeLayout;
-
     private Button _startDateButton;
     private Button _endDateButton;
-
     private LinearLayout _exactLayout;
     private Button _dateTimeButton;
-
     private Button _cancelButton;
     private Button _okButton;
 
@@ -66,34 +66,86 @@ public class ScheduleDialog extends DialogFragmentBase {
     private Calendar _endCal;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
-    private Listener _listener;
     private String _stateFixedDateTime;
     private String _stateRangeStartDateTime;
     private String _stateRangeEndDateTime;
     private final Handler _handler = new Handler();
 
-
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    public static ScheduleDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, ScheduleDialog.class);
+    public ScheduleDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_SCHEDULE)) {
-                _sched = savedInstanceState.getParcelable(STATE_SCHEDULE);
-            }
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.dialog_schedule, container, false);
+
+        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
+        _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);
+        _exactLayout = (LinearLayout) v.findViewById(R.id.exact_layout);
+        _startDateButton = (Button) v.findViewById(R.id.start_date_button);
+        _endDateButton = (Button) v.findViewById(R.id.end_date_button);
+        _dateTimeButton = (Button) v.findViewById(R.id.date_time_button);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _okButton = (Button) v.findViewById(R.id.ok_button);
+
+        final Calendar c = Calendar.getInstance();
+        _datePicker = new DatePickerDialog(context, _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(context, _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+
+        _startCal = Calendar.getInstance();
+        _endCal = Calendar.getInstance();
+
+        return v;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        _typeSpinner.setOnItemSelectedListener(_type_selected);
+        _startDateButton.setOnClickListener(_startDateButton_onClick);
+        _endDateButton.setOnClickListener(_endDateButton_onClick);
+        _dateTimeButton.setOnClickListener(_dateTimeButton_onClick);
+        _cancelButton.setOnClickListener(_cancelButton_onClick);
+        _okButton.setOnClickListener(_okButton_onClick);
+    }
+
+    @Override
+    public void show(Bundle payload, boolean animate) {
+        _sched = payload.getParcelable("schedule");
+
+        super.show(payload, animate);
+
+        populateUi();
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState == null) {
+            return;
         }
-        super.onCreate(savedInstanceState);
-
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+        if (savedState.containsKey(STATE_SCHEDULE)) {
+            _sched = savedState.getParcelable(STATE_SCHEDULE);
+        }
+        if (savedState.containsKey(STATE_SPINNER)) {
+            _mode = savedState.getInt(STATE_SPINNER);
+        }
+        if (savedState.containsKey(STATE_FIXED_DATETIME)) {
+            _stateFixedDateTime = savedState.getString(STATE_FIXED_DATETIME);
+        }
+        if (savedState.containsKey(STATE_RANGE_DATETIME_START)) {
+            _stateRangeStartDateTime = savedState.getString(STATE_RANGE_DATETIME_START);
+        }
+        if (savedState.containsKey(STATE_RANGE_DATETIME_END)) {
+            _stateRangeEndDateTime = savedState.getString(STATE_RANGE_DATETIME_END);
+        }
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveDialogState(Bundle outState) {
         if (_sched != null) {
             outState.putParcelable(STATE_SCHEDULE, _sched);
         }
@@ -112,92 +164,26 @@ public class ScheduleDialog extends DialogFragmentBase {
         if (_endDateButton != null && !misc.isEmptyOrNull(_endDateButton.getText().toString())) {
             outState.putString(STATE_RANGE_DATETIME_END, _endDateButton.getText().toString());
         }
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_SPINNER)) {
-                _mode = savedInstanceState.getInt(STATE_SPINNER);
-            }
-            if (savedInstanceState.containsKey(STATE_FIXED_DATETIME)) {
-                _stateFixedDateTime = savedInstanceState.getString(STATE_FIXED_DATETIME);
-            }
-            if (savedInstanceState.containsKey(STATE_RANGE_DATETIME_START)) {
-                _stateRangeStartDateTime = savedInstanceState.getString(STATE_RANGE_DATETIME_START);
-            }
-            if (savedInstanceState.containsKey(STATE_RANGE_DATETIME_END)) {
-                _stateRangeEndDateTime = savedInstanceState.getString(STATE_RANGE_DATETIME_END);
-            }
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_schedule, container, false);
-
-        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemSelectedListener(_type_selected);
-
-        _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);
-        _exactLayout = (LinearLayout) v.findViewById(R.id.exact_layout);
-
-        _startDateButton = (Button) v.findViewById(R.id.start_date_button);
-        _startDateButton.setOnClickListener(_startDateButton_onClick);
-        _endDateButton = (Button) v.findViewById(R.id.end_date_button);
-        _endDateButton.setOnClickListener(_endDateButton_onClick);
-
-        _dateTimeButton = (Button) v.findViewById(R.id.date_time_button);
-        _dateTimeButton.setOnClickListener(_dateTimeButton_onClick);
-
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancelButton_onClick);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_okButton_onClick);
-
-        final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-
-        _startCal = Calendar.getInstance();
-        _endCal = Calendar.getInstance();
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        return v;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        populateUi();
-    }
-
-    @Override
-    public void init() {
-        populateUi();
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
-    public void show(Schedule schedule) {
-        _sched = schedule;
-        super.show();
-        populateUi();
     }
 
     private Schedule makeSchedule() {
-        switch (_mode) {
-            case MODE_EXACT:
-                return new Schedule(ISO8601.fromCalendar(_startCal));
-            case MODE_RANGE:
-                return new Schedule(ISO8601.fromCalendar(_startCal), ISO8601.fromCalendar(_endCal));
+        Schedule schedule = new Schedule();
+        try {
+            switch (_mode) {
+                case MODE_EXACT:
+                    schedule.setServiceWindow(new ScheduleServiceWindow()
+                            .mode(ScheduleServiceWindow.ModeEnum.EXACT)
+                            .start(new Date(_startCal)));
+                    return schedule;
+                case MODE_RANGE:
+                    schedule.setServiceWindow(new ScheduleServiceWindow()
+                            .mode(ScheduleServiceWindow.ModeEnum.BETWEEN)
+                            .start(new Date(_startCal))
+                            .end(new Date(_endCal)));
+                    return schedule;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -218,12 +204,12 @@ public class ScheduleDialog extends DialogFragmentBase {
         _typeSpinner.setAdapter(adapter);
 
         try {
-            _startCal = ISO8601.toCalendar(_sched.getStartTime());
+            _startCal = _sched.getServiceWindow().getStart().getCalendar();
         } catch (Exception e) {
             Log.v(TAG, e);
         }
         try {
-            _endCal = ISO8601.toCalendar(_sched.getEndTime());
+            _endCal = _sched.getServiceWindow().getEnd().getCalendar();
         } catch (Exception e) {
             Log.v(TAG, e);
         }
@@ -283,7 +269,7 @@ public class ScheduleDialog extends DialogFragmentBase {
             if (tag.equals("start")) {
                 _startCal.set(year, monthOfYear, dayOfMonth);
                 if (DateUtils.isBeforeToday(_startCal)) {
-                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -299,7 +285,7 @@ public class ScheduleDialog extends DialogFragmentBase {
             } else if (tag.equals("end")) {
                 _endCal.set(year, monthOfYear, dayOfMonth);
                 if (DateUtils.isBeforeToday(_endCal)) {
-                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -325,7 +311,7 @@ public class ScheduleDialog extends DialogFragmentBase {
 
                 // truncate milliseconds to seconds
                 if (_startCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
-                    Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -349,7 +335,7 @@ public class ScheduleDialog extends DialogFragmentBase {
 
                 // truncate milliseconds to seconds
                 if (_endCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
-                    Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -381,22 +367,18 @@ public class ScheduleDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (_startIsSet || _endIsSet) {
-                dismiss();
-                if (_listener != null) {
-                    _listener.onComplete(makeSchedule());
-                }
+                dismiss(true);
+                _onCompleteDispatcher.dispatch(getUid(), makeSchedule());
             } else {
-                Toast.makeText(getActivity(), R.string.toast_change_schedule_or_cancel, Toast.LENGTH_LONG).show();
+                ToastClient.toast(App.get(), R.string.toast_change_schedule_or_cancel, Toast.LENGTH_LONG);
             }
         }
     };
     private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
-            if (_listener != null) {
-                _listener.onCancel();
-            }
+            dismiss(true);
+            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
@@ -424,10 +406,62 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
     };
 
-    public interface Listener {
-        void onComplete(Schedule schedule);
+    public static void show(Context context, String uid, Schedule schedule) {
+        Bundle params = new Bundle();
+        params.putParcelable("schedule", schedule);
 
+        Controller.show(context, uid, ScheduleDialog.class, params);
+    }
+
+    /*-****************************-*/
+    /*-         Complete           -*/
+    /*-****************************-*/
+    public interface OnCompleteListener {
+        void onComplete(Schedule schedule);
+    }
+
+    private static KeyedDispatcher<OnCompleteListener> _onCompleteDispatcher = new KeyedDispatcher<OnCompleteListener>() {
+        @Override
+        public void onDispatch(OnCompleteListener listener, Object... parameters) {
+            listener.onComplete((Schedule) parameters[0]);
+        }
+    };
+
+    public static void addOnCompleteListener(String uid, OnCompleteListener onCompleteListener) {
+        _onCompleteDispatcher.add(uid, onCompleteListener);
+    }
+
+    public static void removeOnCompleteListener(String uid, OnCompleteListener onCompleteListener) {
+        _onCompleteDispatcher.remove(uid, onCompleteListener);
+    }
+
+    public static void removeAllOnCompleteListener(String uid) {
+        _onCompleteDispatcher.removeAll(uid);
+    }
+
+    /*-****************************-*/
+    /*-         Cancel           -*/
+    /*-****************************-*/
+    public interface OnCancelListener {
         void onCancel();
     }
 
+    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
+        @Override
+        public void onDispatch(OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
 }

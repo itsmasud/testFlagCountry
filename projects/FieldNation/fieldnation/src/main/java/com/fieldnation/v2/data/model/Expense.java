@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -35,6 +38,9 @@ public class Expense implements Parcelable {
     @Json(name = "description")
     private String _description;
 
+    @Json(name = "id")
+    private Integer _id;
+
     @Json(name = "quantity")
     private Integer _quantity;
 
@@ -47,136 +53,174 @@ public class Expense implements Parcelable {
     @Json(name = "status_description")
     private String _statusDescription;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Expense() {
     }
 
-    public void setAdded(Date added) {
+    public void setAdded(Date added) throws ParseException {
         _added = added;
+        SOURCE.put("added", added.getJson());
     }
 
     public Date getAdded() {
         return _added;
     }
 
-    public Expense added(Date added) {
+    public Expense added(Date added) throws ParseException {
         _added = added;
+        SOURCE.put("added", added.getJson());
         return this;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
     }
 
     public Double getAmount() {
         return _amount;
     }
 
-    public Expense amount(Double amount) {
+    public Expense amount(Double amount) throws ParseException {
         _amount = amount;
+        SOURCE.put("amount", amount);
         return this;
     }
 
-    public void setAuthor(User author) {
+    public void setAuthor(User author) throws ParseException {
         _author = author;
+        SOURCE.put("author", author.getJson());
     }
 
     public User getAuthor() {
         return _author;
     }
 
-    public Expense author(User author) {
+    public Expense author(User author) throws ParseException {
         _author = author;
+        SOURCE.put("author", author.getJson());
         return this;
     }
 
-    public void setCategory(ExpenseCategory category) {
+    public void setCategory(ExpenseCategory category) throws ParseException {
         _category = category;
+        SOURCE.put("category", category.getJson());
     }
 
     public ExpenseCategory getCategory() {
         return _category;
     }
 
-    public Expense category(ExpenseCategory category) {
+    public Expense category(ExpenseCategory category) throws ParseException {
         _category = category;
+        SOURCE.put("category", category.getJson());
         return this;
     }
 
-    public void setCompanyExpense(ExpenseCompanyExpense companyExpense) {
+    public void setCompanyExpense(ExpenseCompanyExpense companyExpense) throws ParseException {
         _companyExpense = companyExpense;
+        SOURCE.put("company_expense", companyExpense.getJson());
     }
 
     public ExpenseCompanyExpense getCompanyExpense() {
         return _companyExpense;
     }
 
-    public Expense companyExpense(ExpenseCompanyExpense companyExpense) {
+    public Expense companyExpense(ExpenseCompanyExpense companyExpense) throws ParseException {
         _companyExpense = companyExpense;
+        SOURCE.put("company_expense", companyExpense.getJson());
         return this;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public Expense description(String description) {
+    public Expense description(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setId(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+    }
+
+    public Integer getId() {
+        return _id;
+    }
+
+    public Expense id(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+        return this;
+    }
+
+    public void setQuantity(Integer quantity) throws ParseException {
         _quantity = quantity;
+        SOURCE.put("quantity", quantity);
     }
 
     public Integer getQuantity() {
         return _quantity;
     }
 
-    public Expense quantity(Integer quantity) {
+    public Expense quantity(Integer quantity) throws ParseException {
         _quantity = quantity;
+        SOURCE.put("quantity", quantity);
         return this;
     }
 
-    public void setReason(String reason) {
+    public void setReason(String reason) throws ParseException {
         _reason = reason;
+        SOURCE.put("reason", reason);
     }
 
     public String getReason() {
         return _reason;
     }
 
-    public Expense reason(String reason) {
+    public Expense reason(String reason) throws ParseException {
         _reason = reason;
+        SOURCE.put("reason", reason);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public Expense status(StatusEnum status) {
+    public Expense status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setStatusDescription(String statusDescription) {
+    public void setStatusDescription(String statusDescription) throws ParseException {
         _statusDescription = statusDescription;
+        SOURCE.put("status_description", statusDescription);
     }
 
     public String getStatusDescription() {
         return _statusDescription;
     }
 
-    public Expense statusDescription(String statusDescription) {
+    public Expense statusDescription(String statusDescription) throws ParseException {
         _statusDescription = statusDescription;
+        SOURCE.put("status_description", statusDescription);
         return this;
     }
 
@@ -206,6 +250,14 @@ public class Expense implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Expense[] array) {
+        JsonArray list = new JsonArray();
+        for (Expense item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Expense[] fromJsonArray(JsonArray array) {
         Expense[] list = new Expense[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -223,17 +275,8 @@ public class Expense implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Expense expense) {
-        try {
-            return Serializer.serializeObject(expense);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -264,6 +307,6 @@ public class Expense implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

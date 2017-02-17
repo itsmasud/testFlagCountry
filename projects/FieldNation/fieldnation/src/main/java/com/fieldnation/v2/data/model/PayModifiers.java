@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,58 +32,77 @@ public class PayModifiers implements Parcelable {
     @Json(name = "sum")
     private PayModifiersSum _sum;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayModifiers() {
     }
 
-    public void setActions(ActionsEnum[] actions) {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
     public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public PayModifiers actions(ActionsEnum[] actions) {
+    public PayModifiers actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public PayModifiers metadata(ListEnvelope metadata) {
+    public PayModifiers metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(PayModifier[] results) {
+    public void setResults(PayModifier[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", PayModifier.toJsonArray(results));
     }
 
     public PayModifier[] getResults() {
         return _results;
     }
 
-    public PayModifiers results(PayModifier[] results) {
+    public PayModifiers results(PayModifier[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", PayModifier.toJsonArray(results), true);
         return this;
     }
 
-    public void setSum(PayModifiersSum sum) {
+    public void setSum(PayModifiersSum sum) throws ParseException {
         _sum = sum;
+        SOURCE.put("sum", sum.getJson());
     }
 
     public PayModifiersSum getSum() {
         return _sum;
     }
 
-    public PayModifiers sum(PayModifiersSum sum) {
+    public PayModifiers sum(PayModifiersSum sum) throws ParseException {
         _sum = sum;
+        SOURCE.put("sum", sum.getJson());
         return this;
     }
 
@@ -106,6 +128,14 @@ public class PayModifiers implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayModifiers[] array) {
+        JsonArray list = new JsonArray();
+        for (PayModifiers item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayModifiers[] fromJsonArray(JsonArray array) {
         PayModifiers[] list = new PayModifiers[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -123,17 +153,8 @@ public class PayModifiers implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayModifiers payModifiers) {
-        try {
-            return Serializer.serializeObject(payModifiers);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -164,6 +185,6 @@ public class PayModifiers implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

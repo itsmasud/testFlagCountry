@@ -11,7 +11,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
 
-public class ScheduleView extends LinearLayout implements WorkorderRenderer {
+public class ScheduleView extends LinearLayout {
     private static final String TAG = "ui.workorder.detail.ScheduleView";
 
 
@@ -52,7 +52,6 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         _listener = listener;
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();

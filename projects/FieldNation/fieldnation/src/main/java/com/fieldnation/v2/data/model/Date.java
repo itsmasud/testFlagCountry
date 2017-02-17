@@ -5,9 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 
@@ -21,45 +21,62 @@ import java.util.Calendar;
 public class Date implements Parcelable {
     private static final String TAG = "Date";
 
-    @Json(name = "local") // Don't use if you can, this should be in local time zone
-    private Local _local;
+    /*
+        @Json(name = "local") // Don't use if you can, this should be in local time zone
+        private Local _local;
+    */
     @Json(name = "utc") // 2017-01-30 00:00:00
     private String _utc;
+
+    @Source
+    private JsonObject SOURCE = new JsonObject();
 
     public Date() {
     }
 
 /*
-    public void setLocal(Local local) {
+    public void setLocal(Local local) throws ParseException {
         _local = local;
+        SOURCE.put("local", local.getJson());
     }
 
     public Local getLocal() {
         return _local;
     }
 
-    public Date local(Local local) {
+    public Date local(Local local) throws ParseException {
         _local = local;
+        SOURCE.put("local", local.getJson());
         return this;
     }
 */
 
-    public void setUtc(String utc) {
+    public void setUtc(String utc) throws ParseException {
         _utc = utc;
+        SOURCE.put("utc", utc);
     }
 
-    public String getUtcString() {
+    public String getUtc() {
         return _utc;
     }
 
-    public Date utc(String utc) {
+    public Date utc(String utc) throws ParseException {
         _utc = utc;
+        SOURCE.put("utc", utc);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Date[] array) {
+        JsonArray list = new JsonArray();
+        for (Date item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Date[] fromJsonArray(JsonArray array) {
         Date[] list = new Date[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -77,17 +94,8 @@ public class Date implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Date date) {
-        try {
-            return Serializer.serializeObject(date);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -118,19 +126,19 @@ public class Date implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 
 
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    public Date(Calendar calendar) {
+    public Date(Calendar calendar) throws ParseException {
         super();
         utc(DateUtils.v2CalToUtc(calendar));
     }
 
-    public Date(long utcMilliseconds) {
+    public Date(long utcMilliseconds) throws ParseException {
         super();
         utc(DateUtils.v2LongToUtc(utcMilliseconds));
     }
@@ -139,7 +147,7 @@ public class Date implements Parcelable {
         return DateUtils.v2UtcToCalendar(_utc);
     }
 
-    public long getUtc() throws ParseException {
+    public long getUtcLong() throws ParseException {
         return DateUtils.v2UtcToLong(_utc);
     }
 }

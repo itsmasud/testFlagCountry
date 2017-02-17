@@ -13,7 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.search.SearchEditText;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 /**
  * Created by mc on 12/27/16.
@@ -113,7 +113,7 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
                 public void run() {
                     ActivityResultClient.startActivity(
                             App.get(),
-                            WorkorderActivity.makeIntentShow(App.get(), workOrderId),
+                            WorkOrderActivity.makeIntentShow(App.get(), (int) workOrderId),
                             R.anim.activity_slide_in_right,
                             R.anim.activity_slide_out_left);
                 }

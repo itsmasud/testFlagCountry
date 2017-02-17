@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -32,77 +35,98 @@ public class Eta implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Eta() {
     }
 
-    public void setBundleId(Integer bundleId) {
+    public void setBundleId(Integer bundleId) throws ParseException {
         _bundleId = bundleId;
+        SOURCE.put("bundle_id", bundleId);
     }
 
     public Integer getBundleId() {
         return _bundleId;
     }
 
-    public Eta bundleId(Integer bundleId) {
+    public Eta bundleId(Integer bundleId) throws ParseException {
         _bundleId = bundleId;
+        SOURCE.put("bundle_id", bundleId);
         return this;
     }
 
-    public void setHourEstimate(Double hourEstimate) {
+    public void setHourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
     }
 
     public Double getHourEstimate() {
         return _hourEstimate;
     }
 
-    public Eta hourEstimate(Double hourEstimate) {
+    public Eta hourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
         return this;
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
     }
 
     public String getNotes() {
         return _notes;
     }
 
-    public Eta notes(String notes) {
+    public Eta notes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
         return this;
     }
 
-    public void setStart(Date start) {
+    public void setStart(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
     }
 
     public Date getStart() {
         return _start;
     }
 
-    public Eta start(Date start) {
+    public Eta start(Date start) throws ParseException {
         _start = start;
+        SOURCE.put("start", start.getJson());
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public Eta workOrderId(Integer workOrderId) {
+    public Eta workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Eta[] array) {
+        JsonArray list = new JsonArray();
+        for (Eta item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Eta[] fromJsonArray(JsonArray array) {
         Eta[] list = new Eta[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -120,17 +144,8 @@ public class Eta implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Eta eta) {
-        try {
-            return Serializer.serializeObject(eta);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -161,6 +176,6 @@ public class Eta implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class Map implements Parcelable {
     @Json(name = "url")
     private String _url;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Map() {
     }
 
-    public void setHref(String href) {
+    public void setHref(String href) throws ParseException {
         _href = href;
+        SOURCE.put("href", href);
     }
 
     public String getHref() {
         return _href;
     }
 
-    public Map href(String href) {
+    public Map href(String href) throws ParseException {
         _href = href;
+        SOURCE.put("href", href);
         return this;
     }
 
-    public void setUrl(String url) {
+    public void setUrl(String url) throws ParseException {
         _url = url;
+        SOURCE.put("url", url);
     }
 
     public String getUrl() {
         return _url;
     }
 
-    public Map url(String url) {
+    public Map url(String url) throws ParseException {
         _url = url;
+        SOURCE.put("url", url);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Map[] array) {
+        JsonArray list = new JsonArray();
+        for (Map item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Map[] fromJsonArray(JsonArray array) {
         Map[] list = new Map[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class Map implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Map map) {
-        try {
-            return Serializer.serializeObject(map);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class Map implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

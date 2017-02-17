@@ -10,7 +10,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 /**
  * Created by Michael on 5/18/2016.
@@ -160,7 +160,7 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
     }
 
     private void createFailedNotification(long workorderId) {
-        Intent workorderIntent = WorkorderActivity.makeIntentShow(App.get(), workorderId);
+        Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), (int) workorderId);
         PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
 
         NotificationCompat.Builder

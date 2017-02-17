@@ -15,7 +15,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.search.SearchEditText;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 /**
  * Created by mc on 12/21/16.
@@ -81,7 +81,7 @@ public class SearchDialog extends SimpleDialog {
             } else {
                 ActivityResultClient.startActivity(
                         App.get(),
-                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
+                        WorkOrderActivity.makeIntentShow(App.get(), (int) workorderId),
                         R.anim.activity_slide_in_right,
                         R.anim.activity_slide_out_left);
             }

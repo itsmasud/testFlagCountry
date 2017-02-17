@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class CustomFields implements Parcelable {
     @Json(name = "results")
     private CustomFieldCategory[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public CustomFields() {
     }
 
-    public void setMetadata(ListEnvelope metadata) {
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
     public ListEnvelope getMetadata() {
         return _metadata;
     }
 
-    public CustomFields metadata(ListEnvelope metadata) {
+    public CustomFields metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(CustomFieldCategory[] results) {
+    public void setResults(CustomFieldCategory[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", CustomFieldCategory.toJsonArray(results));
     }
 
     public CustomFieldCategory[] getResults() {
         return _results;
     }
 
-    public CustomFields results(CustomFieldCategory[] results) {
+    public CustomFields results(CustomFieldCategory[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", CustomFieldCategory.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(CustomFields[] array) {
+        JsonArray list = new JsonArray();
+        for (CustomFields item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static CustomFields[] fromJsonArray(JsonArray array) {
         CustomFields[] list = new CustomFields[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class CustomFields implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(CustomFields customFields) {
-        try {
-            return Serializer.serializeObject(customFields);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class CustomFields implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

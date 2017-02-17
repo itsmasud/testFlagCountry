@@ -337,46 +337,49 @@ public class CheckInOutDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
-            setLoading(true);
-            if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
-                _itemSelectedPosition = 0;
-            }
-
-            if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
-                CheckInOut cio = new CheckInOut();
-                cio.created(new Date(_startCalendar));
-                if (_location != null) {
-                    cio.coords(new Coords(_location));
-                }
-                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), new TimeLog().in(cio));
-
-                _onCheckInDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
-
-            } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
-                boolean callMade = false;
-                CheckInOut cio = new CheckInOut();
-                cio.created(new Date(_startCalendar));
-                if (_location != null) {
-                    cio.coords(new Coords(_location));
+            try {
+                setLoading(true);
+                if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
+                    _itemSelectedPosition = 0;
                 }
 
-                for (TimeLog timeLog : _workOrder.getTimeLogs().getResults()) {
-                    if (timeLog.getStatus() == TimeLog.StatusEnum.CHECKED_IN) {
-                        if (_itemSelectedPosition > INVALID_NUMBER) {
-                            timeLog.devices((double) _itemSelectedPosition);
-                        }
-                        timeLog.out(cio);
-                        WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), timeLog);
-                        callMade = true;
-                        break;
+                if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
+                    CheckInOut cio = new CheckInOut();
+                    cio.created(new Date(_startCalendar));
+                    if (_location != null) {
+                        cio.coords(new Coords(_location));
                     }
-                }
+                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), new TimeLog().in(cio));
+                    _onCheckInDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
-                if (callMade) {
-                    Log.v(TAG, "break!");
-                }
+                } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
+                    boolean callMade = false;
+                    CheckInOut cio = new CheckInOut();
+                    cio.created(new Date(_startCalendar));
+                    if (_location != null) {
+                        cio.coords(new Coords(_location));
+                    }
 
-                _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                    for (TimeLog timeLog : _workOrder.getTimeLogs().getResults()) {
+                        if (timeLog.getStatus() == TimeLog.StatusEnum.CHECKED_IN) {
+                            if (_itemSelectedPosition > INVALID_NUMBER) {
+                                timeLog.devices((double) _itemSelectedPosition);
+                            }
+                            timeLog.out(cio);
+                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), timeLog);
+                            callMade = true;
+                            break;
+                        }
+                    }
+
+                    if (callMade) {
+                        Log.v(TAG, "break!");
+                    }
+
+                    _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             return true;
         }

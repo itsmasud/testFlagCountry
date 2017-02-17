@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class UpdateModelParams implements Parcelable {
     @Json(name = "updateScheduleByWorkOrder")
     private EventUpdateScheduleByWorkOrder _updateScheduleByWorkOrder;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UpdateModelParams() {
     }
 
-    public void setModel(UpdateModelParamsModel model) {
+    public void setModel(UpdateModelParamsModel model) throws ParseException {
         _model = model;
+        SOURCE.put("model", model.getJson());
     }
 
     public UpdateModelParamsModel getModel() {
         return _model;
     }
 
-    public UpdateModelParams model(UpdateModelParamsModel model) {
+    public UpdateModelParams model(UpdateModelParamsModel model) throws ParseException {
         _model = model;
+        SOURCE.put("model", model.getJson());
         return this;
     }
 
-    public void setUpdateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) {
+    public void setUpdateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) throws ParseException {
         _updateScheduleByWorkOrder = updateScheduleByWorkOrder;
+        SOURCE.put("updateScheduleByWorkOrder", updateScheduleByWorkOrder.getJson());
     }
 
     public EventUpdateScheduleByWorkOrder getUpdateScheduleByWorkOrder() {
         return _updateScheduleByWorkOrder;
     }
 
-    public UpdateModelParams updateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) {
+    public UpdateModelParams updateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) throws ParseException {
         _updateScheduleByWorkOrder = updateScheduleByWorkOrder;
+        SOURCE.put("updateScheduleByWorkOrder", updateScheduleByWorkOrder.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UpdateModelParams[] array) {
+        JsonArray list = new JsonArray();
+        for (UpdateModelParams item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UpdateModelParams[] fromJsonArray(JsonArray array) {
         UpdateModelParams[] list = new UpdateModelParams[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class UpdateModelParams implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UpdateModelParams updateModelParams) {
-        try {
-            return Serializer.serializeObject(updateModelParams);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class UpdateModelParams implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

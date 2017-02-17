@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class TypeOfWork implements Parcelable {
     @Json(name = "name")
     private String _name;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public TypeOfWork() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public TypeOfWork id(Integer id) {
+    public TypeOfWork id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setIndustry(String industry) {
+    public void setIndustry(String industry) throws ParseException {
         _industry = industry;
+        SOURCE.put("industry", industry);
     }
 
     public String getIndustry() {
         return _industry;
     }
 
-    public TypeOfWork industry(String industry) {
+    public TypeOfWork industry(String industry) throws ParseException {
         _industry = industry;
+        SOURCE.put("industry", industry);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public TypeOfWork name(String name) {
+    public TypeOfWork name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(TypeOfWork[] array) {
+        JsonArray list = new JsonArray();
+        for (TypeOfWork item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static TypeOfWork[] fromJsonArray(JsonArray array) {
         TypeOfWork[] list = new TypeOfWork[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class TypeOfWork implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(TypeOfWork typeOfWork) {
-        try {
-            return Serializer.serializeObject(typeOfWork);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class TypeOfWork implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

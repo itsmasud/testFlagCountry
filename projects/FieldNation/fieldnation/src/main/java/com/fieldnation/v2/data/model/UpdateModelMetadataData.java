@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -35,90 +38,113 @@ public class UpdateModelMetadataData implements Parcelable {
     @Json(name = "work_order_id")
     private Integer _workOrderId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UpdateModelMetadataData() {
     }
 
-    public void setCompanyId(Integer companyId) {
+    public void setCompanyId(Integer companyId) throws ParseException {
         _companyId = companyId;
+        SOURCE.put("company_id", companyId);
     }
 
     public Integer getCompanyId() {
         return _companyId;
     }
 
-    public UpdateModelMetadataData companyId(Integer companyId) {
+    public UpdateModelMetadataData companyId(Integer companyId) throws ParseException {
         _companyId = companyId;
+        SOURCE.put("company_id", companyId);
         return this;
     }
 
-    public void setGroupId(Integer groupId) {
+    public void setGroupId(Integer groupId) throws ParseException {
         _groupId = groupId;
+        SOURCE.put("group_id", groupId);
     }
 
     public Integer getGroupId() {
         return _groupId;
     }
 
-    public UpdateModelMetadataData groupId(Integer groupId) {
+    public UpdateModelMetadataData groupId(Integer groupId) throws ParseException {
         _groupId = groupId;
+        SOURCE.put("group_id", groupId);
         return this;
     }
 
-    public void setRole(String role) {
+    public void setRole(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
     }
 
     public String getRole() {
         return _role;
     }
 
-    public UpdateModelMetadataData role(String role) {
+    public UpdateModelMetadataData role(String role) throws ParseException {
         _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
-    public void setRoute(String route) {
+    public void setRoute(String route) throws ParseException {
         _route = route;
+        SOURCE.put("route", route);
     }
 
     public String getRoute() {
         return _route;
     }
 
-    public UpdateModelMetadataData route(String route) {
+    public UpdateModelMetadataData route(String route) throws ParseException {
         _route = route;
+        SOURCE.put("route", route);
         return this;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Integer userId) throws ParseException {
         _userId = userId;
+        SOURCE.put("user_id", userId);
     }
 
     public Integer getUserId() {
         return _userId;
     }
 
-    public UpdateModelMetadataData userId(Integer userId) {
+    public UpdateModelMetadataData userId(Integer userId) throws ParseException {
         _userId = userId;
+        SOURCE.put("user_id", userId);
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) {
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
     }
 
     public Integer getWorkOrderId() {
         return _workOrderId;
     }
 
-    public UpdateModelMetadataData workOrderId(Integer workOrderId) {
+    public UpdateModelMetadataData workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UpdateModelMetadataData[] array) {
+        JsonArray list = new JsonArray();
+        for (UpdateModelMetadataData item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UpdateModelMetadataData[] fromJsonArray(JsonArray array) {
         UpdateModelMetadataData[] list = new UpdateModelMetadataData[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -136,17 +162,8 @@ public class UpdateModelMetadataData implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UpdateModelMetadataData updateModelMetadataData) {
-        try {
-            return Serializer.serializeObject(updateModelMetadataData);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -177,6 +194,6 @@ public class UpdateModelMetadataData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

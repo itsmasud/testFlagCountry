@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
     @Json(name = "correlation_id")
     private String _correlationId;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UpdateModelMetadataUniversalContext() {
     }
 
-    public void setCorrelationId(String correlationId) {
+    public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
     }
 
     public String getCorrelationId() {
         return _correlationId;
     }
 
-    public UpdateModelMetadataUniversalContext correlationId(String correlationId) {
+    public UpdateModelMetadataUniversalContext correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UpdateModelMetadataUniversalContext[] array) {
+        JsonArray list = new JsonArray();
+        for (UpdateModelMetadataUniversalContext item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UpdateModelMetadataUniversalContext[] fromJsonArray(JsonArray array) {
         UpdateModelMetadataUniversalContext[] list = new UpdateModelMetadataUniversalContext[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UpdateModelMetadataUniversalContext updateModelMetadataUniversalContext) {
-        try {
-            return Serializer.serializeObject(updateModelMetadataUniversalContext);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

@@ -1,4 +1,4 @@
-package com.fieldnation.ui.v2;
+package com.fieldnation.v2.ui;
 
 import android.content.ComponentName;
 import android.content.Context;

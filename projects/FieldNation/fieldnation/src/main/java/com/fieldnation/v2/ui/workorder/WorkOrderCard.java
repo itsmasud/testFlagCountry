@@ -27,7 +27,7 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Pay;
@@ -304,19 +304,19 @@ public class WorkOrderCard extends RelativeLayout {
         _amountTextView.setVisibility(VISIBLE);
 
         switch (pay.getType()) {
-            case "fixed":
+            case FIXED:
                 _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
                 _payTypeTextView.setText(getResources().getString(R.string.payment_type_fixed));
                 break;
-            case "hourly":
+            case HOURLY:
                 _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
                 _payTypeTextView.setText(getResources().getString(R.string.payment_type_hourly, pay.getBase().getUnits().intValue()));
                 break;
-            case "blended":
+            case BLENDED:
                 _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
                 _payTypeTextView.setText(getResources().getString(R.string.payment_type_blended, pay.getAdditional().getAmount().intValue(), pay.getAdditional().getUnits().intValue()));
                 break;
-            case "device":
+            case DEVICE:
                 _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
                 _payTypeTextView.setText(getResources().getString(R.string.payment_type_device, pay.getBase().getUnits().intValue()));
                 break;
@@ -387,7 +387,7 @@ public class WorkOrderCard extends RelativeLayout {
             timeLogsActions.addAll(Arrays.asList(_workOrder.getTimeLogs().getActions()));
         }
 
-        // TODO Order
+        // Order of operations
         // check_out
         // check_in
         // set eta
@@ -432,7 +432,7 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setOnClickListener(_onMyWay_onClick);
 //            button.setText(R.string.btn_on_my_way);
 
-            // ack hold
+            // ack hold/
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
 //            button.setText(R.string.btn_acknowledge_hold);
@@ -450,7 +450,7 @@ public class WorkOrderCard extends RelativeLayout {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
             button.setText(getResources().getString(R.string.btn_view_bundle_num,
-                    _workOrder.getBundle().getCount()));
+                    _workOrder.getBundle().getMetadata().getTotal()));
 
             // accept
 //            button.setVisibility(VISIBLE);
@@ -777,7 +777,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.VIEW_MESSAGES, null, _workOrder.getWorkOrderId());
-            WorkorderActivity.startNew(App.get(), _workOrder.getWorkOrderId(), WorkorderActivity.TAB_MESSAGE);
+            WorkOrderActivity.startNew(App.get(), _workOrder.getWorkOrderId(), WorkOrderActivity.TAB_MESSAGE);
         }
     };
 
@@ -833,7 +833,7 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             ActivityResultClient.startActivity(
                     App.get(),
-                    WorkorderActivity.makeIntentShow(App.get(), _workOrder.getWorkOrderId()),
+                    WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getWorkOrderId()),
                     R.anim.activity_slide_in_right,
                     R.anim.activity_slide_out_left);
         }

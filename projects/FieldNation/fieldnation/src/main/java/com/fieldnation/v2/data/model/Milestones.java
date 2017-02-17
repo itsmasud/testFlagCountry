@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -50,155 +53,188 @@ public class Milestones implements Parcelable {
     @Json(name = "workdone")
     private Date _workdone;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Milestones() {
     }
 
-    public void setApproved(Date approved) {
+    public void setApproved(Date approved) throws ParseException {
         _approved = approved;
+        SOURCE.put("approved", approved.getJson());
     }
 
     public Date getApproved() {
         return _approved;
     }
 
-    public Milestones approved(Date approved) {
+    public Milestones approved(Date approved) throws ParseException {
         _approved = approved;
+        SOURCE.put("approved", approved.getJson());
         return this;
     }
 
-    public void setAssigned(Date assigned) {
+    public void setAssigned(Date assigned) throws ParseException {
         _assigned = assigned;
+        SOURCE.put("assigned", assigned.getJson());
     }
 
     public Date getAssigned() {
         return _assigned;
     }
 
-    public Milestones assigned(Date assigned) {
+    public Milestones assigned(Date assigned) throws ParseException {
         _assigned = assigned;
+        SOURCE.put("assigned", assigned.getJson());
         return this;
     }
 
-    public void setCanceled(Date canceled) {
+    public void setCanceled(Date canceled) throws ParseException {
         _canceled = canceled;
+        SOURCE.put("canceled", canceled.getJson());
     }
 
     public Date getCanceled() {
         return _canceled;
     }
 
-    public Milestones canceled(Date canceled) {
+    public Milestones canceled(Date canceled) throws ParseException {
         _canceled = canceled;
+        SOURCE.put("canceled", canceled.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public Milestones created(Date created) {
+    public Milestones created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setPaid(Date paid) {
+    public void setPaid(Date paid) throws ParseException {
         _paid = paid;
+        SOURCE.put("paid", paid.getJson());
     }
 
     public Date getPaid() {
         return _paid;
     }
 
-    public Milestones paid(Date paid) {
+    public Milestones paid(Date paid) throws ParseException {
         _paid = paid;
+        SOURCE.put("paid", paid.getJson());
         return this;
     }
 
-    public void setPublished(Date published) {
+    public void setPublished(Date published) throws ParseException {
         _published = published;
+        SOURCE.put("published", published.getJson());
     }
 
     public Date getPublished() {
         return _published;
     }
 
-    public Milestones published(Date published) {
+    public Milestones published(Date published) throws ParseException {
         _published = published;
+        SOURCE.put("published", published.getJson());
         return this;
     }
 
-    public void setRouted(Date routed) {
+    public void setRouted(Date routed) throws ParseException {
         _routed = routed;
+        SOURCE.put("routed", routed.getJson());
     }
 
     public Date getRouted() {
         return _routed;
     }
 
-    public Milestones routed(Date routed) {
+    public Milestones routed(Date routed) throws ParseException {
         _routed = routed;
+        SOURCE.put("routed", routed.getJson());
         return this;
     }
 
-    public void setTimeAlive(Double timeAlive) {
+    public void setTimeAlive(Double timeAlive) throws ParseException {
         _timeAlive = timeAlive;
+        SOURCE.put("time_alive", timeAlive);
     }
 
     public Double getTimeAlive() {
         return _timeAlive;
     }
 
-    public Milestones timeAlive(Double timeAlive) {
+    public Milestones timeAlive(Double timeAlive) throws ParseException {
         _timeAlive = timeAlive;
+        SOURCE.put("time_alive", timeAlive);
         return this;
     }
 
-    public void setTimeToDispatch(Double timeToDispatch) {
+    public void setTimeToDispatch(Double timeToDispatch) throws ParseException {
         _timeToDispatch = timeToDispatch;
+        SOURCE.put("time_to_dispatch", timeToDispatch);
     }
 
     public Double getTimeToDispatch() {
         return _timeToDispatch;
     }
 
-    public Milestones timeToDispatch(Double timeToDispatch) {
+    public Milestones timeToDispatch(Double timeToDispatch) throws ParseException {
         _timeToDispatch = timeToDispatch;
+        SOURCE.put("time_to_dispatch", timeToDispatch);
         return this;
     }
 
-    public void setTimeToWorkDone(Double timeToWorkDone) {
+    public void setTimeToWorkDone(Double timeToWorkDone) throws ParseException {
         _timeToWorkDone = timeToWorkDone;
+        SOURCE.put("time_to_work_done", timeToWorkDone);
     }
 
     public Double getTimeToWorkDone() {
         return _timeToWorkDone;
     }
 
-    public Milestones timeToWorkDone(Double timeToWorkDone) {
+    public Milestones timeToWorkDone(Double timeToWorkDone) throws ParseException {
         _timeToWorkDone = timeToWorkDone;
+        SOURCE.put("time_to_work_done", timeToWorkDone);
         return this;
     }
 
-    public void setWorkdone(Date workdone) {
+    public void setWorkdone(Date workdone) throws ParseException {
         _workdone = workdone;
+        SOURCE.put("workdone", workdone.getJson());
     }
 
     public Date getWorkdone() {
         return _workdone;
     }
 
-    public Milestones workdone(Date workdone) {
+    public Milestones workdone(Date workdone) throws ParseException {
         _workdone = workdone;
+        SOURCE.put("workdone", workdone.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Milestones[] array) {
+        JsonArray list = new JsonArray();
+        for (Milestones item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Milestones[] fromJsonArray(JsonArray array) {
         Milestones[] list = new Milestones[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -216,17 +252,8 @@ public class Milestones implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Milestones milestones) {
-        try {
-            return Serializer.serializeObject(milestones);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -257,6 +284,6 @@ public class Milestones implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

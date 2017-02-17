@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -23,38 +26,53 @@ public class UserJobs implements Parcelable {
     @Json(name = "marketplace")
     private Integer _marketplace;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UserJobs() {
     }
 
-    public void setCompany(Integer company) {
+    public void setCompany(Integer company) throws ParseException {
         _company = company;
+        SOURCE.put("company", company);
     }
 
     public Integer getCompany() {
         return _company;
     }
 
-    public UserJobs company(Integer company) {
+    public UserJobs company(Integer company) throws ParseException {
         _company = company;
+        SOURCE.put("company", company);
         return this;
     }
 
-    public void setMarketplace(Integer marketplace) {
+    public void setMarketplace(Integer marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
     }
 
     public Integer getMarketplace() {
         return _marketplace;
     }
 
-    public UserJobs marketplace(Integer marketplace) {
+    public UserJobs marketplace(Integer marketplace) throws ParseException {
         _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UserJobs[] array) {
+        JsonArray list = new JsonArray();
+        for (UserJobs item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UserJobs[] fromJsonArray(JsonArray array) {
         UserJobs[] list = new UserJobs[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -72,17 +90,8 @@ public class UserJobs implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UserJobs userJobs) {
-        try {
-            return Serializer.serializeObject(userJobs);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -113,6 +122,6 @@ public class UserJobs implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

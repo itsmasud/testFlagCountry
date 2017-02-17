@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -29,64 +32,83 @@ public class PayFinance implements Parcelable {
     @Json(name = "terms")
     private String _terms;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public PayFinance() {
     }
 
-    public void setDescription(String description) {
+    public void setDescription(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
     }
 
     public String getDescription() {
         return _description;
     }
 
-    public PayFinance description(String description) {
+    public PayFinance description(String description) throws ParseException {
         _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public PayFinance id(Integer id) {
+    public PayFinance id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setLimit(Double limit) {
+    public void setLimit(Double limit) throws ParseException {
         _limit = limit;
+        SOURCE.put("limit", limit);
     }
 
     public Double getLimit() {
         return _limit;
     }
 
-    public PayFinance limit(Double limit) {
+    public PayFinance limit(Double limit) throws ParseException {
         _limit = limit;
+        SOURCE.put("limit", limit);
         return this;
     }
 
-    public void setTerms(String terms) {
+    public void setTerms(String terms) throws ParseException {
         _terms = terms;
+        SOURCE.put("terms", terms);
     }
 
     public String getTerms() {
         return _terms;
     }
 
-    public PayFinance terms(String terms) {
+    public PayFinance terms(String terms) throws ParseException {
         _terms = terms;
+        SOURCE.put("terms", terms);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(PayFinance[] array) {
+        JsonArray list = new JsonArray();
+        for (PayFinance item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static PayFinance[] fromJsonArray(JsonArray array) {
         PayFinance[] list = new PayFinance[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -104,17 +126,8 @@ public class PayFinance implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(PayFinance payFinance) {
-        try {
-            return Serializer.serializeObject(payFinance);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -145,6 +158,6 @@ public class PayFinance implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

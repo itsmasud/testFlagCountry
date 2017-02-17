@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog.v2;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 /**
  * Created by Michael on 9/26/2016.

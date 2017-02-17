@@ -5,10 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -66,7 +68,7 @@ public class UserTaxInfo implements Parcelable {
     private Integer _techW9Id;
 
     @Json(name = "technician_w9_status")
-    private technicianW9Status[] _technicianW9Status;
+    private TechnicianW9Status[] _technicianW9Status;
 
     @Json(name = "technician_w9_status_id")
     private Integer _technicianW9StatusId;
@@ -80,285 +82,338 @@ public class UserTaxInfo implements Parcelable {
     @Json(name = "zip")
     private Integer _zip;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public UserTaxInfo() {
     }
 
-    public void setAddress1(String address1) {
+    public void setAddress1(String address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1);
     }
 
     public String getAddress1() {
         return _address1;
     }
 
-    public UserTaxInfo address1(String address1) {
+    public UserTaxInfo address1(String address1) throws ParseException {
         _address1 = address1;
+        SOURCE.put("address1", address1);
         return this;
     }
 
-    public void setAddress2(String address2) {
+    public void setAddress2(String address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2);
     }
 
     public String getAddress2() {
         return _address2;
     }
 
-    public UserTaxInfo address2(String address2) {
+    public UserTaxInfo address2(String address2) throws ParseException {
         _address2 = address2;
+        SOURCE.put("address2", address2);
         return this;
     }
 
-    public void setBusinessName(String businessName) {
+    public void setBusinessName(String businessName) throws ParseException {
         _businessName = businessName;
+        SOURCE.put("business_name", businessName);
     }
 
     public String getBusinessName() {
         return _businessName;
     }
 
-    public UserTaxInfo businessName(String businessName) {
+    public UserTaxInfo businessName(String businessName) throws ParseException {
         _businessName = businessName;
+        SOURCE.put("business_name", businessName);
         return this;
     }
 
-    public void setCity(String city) {
+    public void setCity(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
     }
 
     public String getCity() {
         return _city;
     }
 
-    public UserTaxInfo city(String city) {
+    public UserTaxInfo city(String city) throws ParseException {
         _city = city;
+        SOURCE.put("city", city);
         return this;
     }
 
-    public void setElectronicConsent(Integer electronicConsent) {
+    public void setElectronicConsent(Integer electronicConsent) throws ParseException {
         _electronicConsent = electronicConsent;
+        SOURCE.put("electronic_consent", electronicConsent);
     }
 
     public Integer getElectronicConsent() {
         return _electronicConsent;
     }
 
-    public UserTaxInfo electronicConsent(Integer electronicConsent) {
+    public UserTaxInfo electronicConsent(Integer electronicConsent) throws ParseException {
         _electronicConsent = electronicConsent;
+        SOURCE.put("electronic_consent", electronicConsent);
         return this;
     }
 
-    public void setEntityType(String entityType) {
+    public void setEntityType(String entityType) throws ParseException {
         _entityType = entityType;
+        SOURCE.put("entity_type", entityType);
     }
 
     public String getEntityType() {
         return _entityType;
     }
 
-    public UserTaxInfo entityType(String entityType) {
+    public UserTaxInfo entityType(String entityType) throws ParseException {
         _entityType = entityType;
+        SOURCE.put("entity_type", entityType);
         return this;
     }
 
-    public void setFilesSeparateBusinessTaxes(Integer filesSeparateBusinessTaxes) {
+    public void setFilesSeparateBusinessTaxes(Integer filesSeparateBusinessTaxes) throws ParseException {
         _filesSeparateBusinessTaxes = filesSeparateBusinessTaxes;
+        SOURCE.put("files_separate_business_taxes", filesSeparateBusinessTaxes);
     }
 
     public Integer getFilesSeparateBusinessTaxes() {
         return _filesSeparateBusinessTaxes;
     }
 
-    public UserTaxInfo filesSeparateBusinessTaxes(Integer filesSeparateBusinessTaxes) {
+    public UserTaxInfo filesSeparateBusinessTaxes(Integer filesSeparateBusinessTaxes) throws ParseException {
         _filesSeparateBusinessTaxes = filesSeparateBusinessTaxes;
+        SOURCE.put("files_separate_business_taxes", filesSeparateBusinessTaxes);
         return this;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName) throws ParseException {
         _firstName = firstName;
+        SOURCE.put("first_name", firstName);
     }
 
     public String getFirstName() {
         return _firstName;
     }
 
-    public UserTaxInfo firstName(String firstName) {
+    public UserTaxInfo firstName(String firstName) throws ParseException {
         _firstName = firstName;
+        SOURCE.put("first_name", firstName);
         return this;
     }
 
-    public void setHasEin(Integer hasEin) {
+    public void setHasEin(Integer hasEin) throws ParseException {
         _hasEin = hasEin;
+        SOURCE.put("has_ein", hasEin);
     }
 
     public Integer getHasEin() {
         return _hasEin;
     }
 
-    public UserTaxInfo hasEin(Integer hasEin) {
+    public UserTaxInfo hasEin(Integer hasEin) throws ParseException {
         _hasEin = hasEin;
+        SOURCE.put("has_ein", hasEin);
         return this;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName) throws ParseException {
         _lastName = lastName;
+        SOURCE.put("last_name", lastName);
     }
 
     public String getLastName() {
         return _lastName;
     }
 
-    public UserTaxInfo lastName(String lastName) {
+    public UserTaxInfo lastName(String lastName) throws ParseException {
         _lastName = lastName;
+        SOURCE.put("last_name", lastName);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public UserTaxInfo name(String name) {
+    public UserTaxInfo name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setOther(String other) {
+    public void setOther(String other) throws ParseException {
         _other = other;
+        SOURCE.put("other", other);
     }
 
     public String getOther() {
         return _other;
     }
 
-    public UserTaxInfo other(String other) {
+    public UserTaxInfo other(String other) throws ParseException {
         _other = other;
+        SOURCE.put("other", other);
         return this;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(String phone) throws ParseException {
         _phone = phone;
+        SOURCE.put("phone", phone);
     }
 
     public String getPhone() {
         return _phone;
     }
 
-    public UserTaxInfo phone(String phone) {
+    public UserTaxInfo phone(String phone) throws ParseException {
         _phone = phone;
+        SOURCE.put("phone", phone);
         return this;
     }
 
-    public void setState(String state) {
+    public void setState(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
     }
 
     public String getState() {
         return _state;
     }
 
-    public UserTaxInfo state(String state) {
+    public UserTaxInfo state(String state) throws ParseException {
         _state = state;
+        SOURCE.put("state", state);
         return this;
     }
 
-    public void setTechUserId(Integer techUserId) {
+    public void setTechUserId(Integer techUserId) throws ParseException {
         _techUserId = techUserId;
+        SOURCE.put("tech_user_id", techUserId);
     }
 
     public Integer getTechUserId() {
         return _techUserId;
     }
 
-    public UserTaxInfo techUserId(Integer techUserId) {
+    public UserTaxInfo techUserId(Integer techUserId) throws ParseException {
         _techUserId = techUserId;
+        SOURCE.put("tech_user_id", techUserId);
         return this;
     }
 
-    public void setTechW9Id(Integer techW9Id) {
+    public void setTechW9Id(Integer techW9Id) throws ParseException {
         _techW9Id = techW9Id;
+        SOURCE.put("tech_w9_id", techW9Id);
     }
 
     public Integer getTechW9Id() {
         return _techW9Id;
     }
 
-    public UserTaxInfo techW9Id(Integer techW9Id) {
+    public UserTaxInfo techW9Id(Integer techW9Id) throws ParseException {
         _techW9Id = techW9Id;
+        SOURCE.put("tech_w9_id", techW9Id);
         return this;
     }
 
-    public void setTechnicianW9Status(technicianW9Status[] technicianW9Status) {
+    public void setTechnicianW9Status(TechnicianW9Status[] technicianW9Status) throws ParseException {
         _technicianW9Status = technicianW9Status;
+        SOURCE.put("technician_w9_status", TechnicianW9Status.toJsonArray(technicianW9Status));
     }
 
-    public technicianW9Status[] getTechnicianW9Status() {
+    public TechnicianW9Status[] getTechnicianW9Status() {
         return _technicianW9Status;
     }
 
-    public UserTaxInfo technicianW9Status(technicianW9Status[] technicianW9Status) {
+    public UserTaxInfo technicianW9Status(TechnicianW9Status[] technicianW9Status) throws ParseException {
         _technicianW9Status = technicianW9Status;
+        SOURCE.put("technician_w9_status", TechnicianW9Status.toJsonArray(technicianW9Status), true);
         return this;
     }
 
-    public void setTechnicianW9StatusId(Integer technicianW9StatusId) {
+    public void setTechnicianW9StatusId(Integer technicianW9StatusId) throws ParseException {
         _technicianW9StatusId = technicianW9StatusId;
+        SOURCE.put("technician_w9_status_id", technicianW9StatusId);
     }
 
     public Integer getTechnicianW9StatusId() {
         return _technicianW9StatusId;
     }
 
-    public UserTaxInfo technicianW9StatusId(Integer technicianW9StatusId) {
+    public UserTaxInfo technicianW9StatusId(Integer technicianW9StatusId) throws ParseException {
         _technicianW9StatusId = technicianW9StatusId;
+        SOURCE.put("technician_w9_status_id", technicianW9StatusId);
         return this;
     }
 
-    public void setTin(String tin) {
+    public void setTin(String tin) throws ParseException {
         _tin = tin;
+        SOURCE.put("tin", tin);
     }
 
     public String getTin() {
         return _tin;
     }
 
-    public UserTaxInfo tin(String tin) {
+    public UserTaxInfo tin(String tin) throws ParseException {
         _tin = tin;
+        SOURCE.put("tin", tin);
         return this;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(Integer userId) throws ParseException {
         _userId = userId;
+        SOURCE.put("user_id", userId);
     }
 
     public Integer getUserId() {
         return _userId;
     }
 
-    public UserTaxInfo userId(Integer userId) {
+    public UserTaxInfo userId(Integer userId) throws ParseException {
         _userId = userId;
+        SOURCE.put("user_id", userId);
         return this;
     }
 
-    public void setZip(Integer zip) {
+    public void setZip(Integer zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
     }
 
     public Integer getZip() {
         return _zip;
     }
 
-    public UserTaxInfo zip(Integer zip) {
+    public UserTaxInfo zip(Integer zip) throws ParseException {
         _zip = zip;
+        SOURCE.put("zip", zip);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(UserTaxInfo[] array) {
+        JsonArray list = new JsonArray();
+        for (UserTaxInfo item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static UserTaxInfo[] fromJsonArray(JsonArray array) {
         UserTaxInfo[] list = new UserTaxInfo[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -376,17 +431,8 @@ public class UserTaxInfo implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(UserTaxInfo userTaxInfo) {
-        try {
-            return Serializer.serializeObject(userTaxInfo);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -417,6 +463,6 @@ public class UserTaxInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

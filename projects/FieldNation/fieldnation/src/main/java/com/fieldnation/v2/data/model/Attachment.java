@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -53,162 +56,189 @@ public class Attachment implements Parcelable {
     @Json(name = "task")
     private Task _task;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Attachment() {
     }
 
-    public void setAuthor(User author) {
+    public void setAuthor(User author) throws ParseException {
         _author = author;
+        SOURCE.put("author", author.getJson());
     }
 
     public User getAuthor() {
         return _author;
     }
 
-    public Attachment author(User author) {
+    public Attachment author(User author) throws ParseException {
         _author = author;
+        SOURCE.put("author", author.getJson());
         return this;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
     }
 
     public Date getCreated() {
         return _created;
     }
 
-    public Attachment created(Date created) {
+    public Attachment created(Date created) throws ParseException {
         _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
-    public void setFile(File file) {
+    public void setFile(File file) throws ParseException {
         _file = file;
+        SOURCE.put("file", file.getJson());
     }
 
     public File getFile() {
         return _file;
     }
 
-    public Attachment file(File file) {
+    public Attachment file(File file) throws ParseException {
         _file = file;
+        SOURCE.put("file", file.getJson());
         return this;
     }
 
-    public void setFolderId(Integer folderId) {
+    public void setFolderId(Integer folderId) throws ParseException {
         _folderId = folderId;
+        SOURCE.put("folder_id", folderId);
     }
 
     public Integer getFolderId() {
         return _folderId;
     }
 
-    public Attachment folderId(Integer folderId) {
+    public Attachment folderId(Integer folderId) throws ParseException {
         _folderId = folderId;
+        SOURCE.put("folder_id", folderId);
         return this;
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Attachment id(Integer id) {
+    public Attachment id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setNotes(String notes) {
+    public void setNotes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
     }
 
     public String getNotes() {
         return _notes;
     }
 
-    public Attachment notes(String notes) {
+    public Attachment notes(String notes) throws ParseException {
         _notes = notes;
+        SOURCE.put("notes", notes);
         return this;
     }
 
-    public void setReviewed(Date reviewed) {
+    public void setReviewed(Date reviewed) throws ParseException {
         _reviewed = reviewed;
+        SOURCE.put("reviewed", reviewed.getJson());
     }
 
     public Date getReviewed() {
         return _reviewed;
     }
 
-    public Attachment reviewed(Date reviewed) {
+    public Attachment reviewed(Date reviewed) throws ParseException {
         _reviewed = reviewed;
+        SOURCE.put("reviewed", reviewed.getJson());
         return this;
     }
 
-    public void setReviewer(User reviewer) {
+    public void setReviewer(User reviewer) throws ParseException {
         _reviewer = reviewer;
+        SOURCE.put("reviewer", reviewer.getJson());
     }
 
     public User getReviewer() {
         return _reviewer;
     }
 
-    public Attachment reviewer(User reviewer) {
+    public Attachment reviewer(User reviewer) throws ParseException {
         _reviewer = reviewer;
+        SOURCE.put("reviewer", reviewer.getJson());
         return this;
     }
 
-    public void setShowBeforeAssignment(Boolean showBeforeAssignment) {
+    public void setShowBeforeAssignment(Boolean showBeforeAssignment) throws ParseException {
         _showBeforeAssignment = showBeforeAssignment;
+        SOURCE.put("show_before_assignment", showBeforeAssignment);
     }
 
     public Boolean getShowBeforeAssignment() {
         return _showBeforeAssignment;
     }
 
-    public Attachment showBeforeAssignment(Boolean showBeforeAssignment) {
+    public Attachment showBeforeAssignment(Boolean showBeforeAssignment) throws ParseException {
         _showBeforeAssignment = showBeforeAssignment;
+        SOURCE.put("show_before_assignment", showBeforeAssignment);
         return this;
     }
 
-    public void setStatus(StatusEnum status) {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
     }
 
     public StatusEnum getStatus() {
         return _status;
     }
 
-    public Attachment status(StatusEnum status) {
+    public Attachment status(StatusEnum status) throws ParseException {
         _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
-    public void setStatusDescription(String statusDescription) {
+    public void setStatusDescription(String statusDescription) throws ParseException {
         _statusDescription = statusDescription;
+        SOURCE.put("status_description", statusDescription);
     }
 
     public String getStatusDescription() {
         return _statusDescription;
     }
 
-    public Attachment statusDescription(String statusDescription) {
+    public Attachment statusDescription(String statusDescription) throws ParseException {
         _statusDescription = statusDescription;
+        SOURCE.put("status_description", statusDescription);
         return this;
     }
 
-    public void setTask(Task task) {
+    public void setTask(Task task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
     }
 
     public Task getTask() {
         return _task;
     }
 
-    public Attachment task(Task task) {
+    public Attachment task(Task task) throws ParseException {
         _task = task;
+        SOURCE.put("task", task.getJson());
         return this;
     }
 
@@ -238,6 +268,14 @@ public class Attachment implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Attachment[] array) {
+        JsonArray list = new JsonArray();
+        for (Attachment item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Attachment[] fromJsonArray(JsonArray array) {
         Attachment[] list = new Attachment[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -255,17 +293,8 @@ public class Attachment implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Attachment attachment) {
-        try {
-            return Serializer.serializeObject(attachment);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -296,6 +325,6 @@ public class Attachment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

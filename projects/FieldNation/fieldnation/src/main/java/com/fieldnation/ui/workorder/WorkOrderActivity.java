@@ -15,26 +15,27 @@ import com.fieldnation.Debug;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.List;
 
-public class WorkorderActivity extends AuthSimpleActivity {
-    private static final String TAG = "WorkorderActivity";
+public class WorkOrderActivity extends AuthSimpleActivity {
+    private static final String TAG = "WorkOrderActivity";
 
-    public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
-    public static final String INTENT_FIELD_WORKORDER = "WorkorderActivity:workorder";
-    public static final String INTENT_FIELD_CURRENT_TAB = "WorkorderActivity:current_tab";
-    public static final String INTENT_FIELD_ACTION = "WorkorderActivity:INTENT_FIELD_ACTION";
+    public static final String INTENT_FIELD_WORKORDER_ID = TAG + ".workOrderId";
+    public static final String INTENT_FIELD_WORKORDER = TAG + ".workOrder";
+    public static final String INTENT_FIELD_CURRENT_TAB = TAG + ".currentTab";
+    public static final String INTENT_FIELD_ACTION = TAG + ".action";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
     public static final int TAB_DETAILS = 0;
@@ -54,12 +55,12 @@ public class WorkorderActivity extends AuthSimpleActivity {
     private WorkorderTabView _tabview;
 
     // Data
-    private WorkorderClient _workorderClient;
-    private long _workorderId = 0;
+    private WorkordersWebApi _workOrderApi;
+    private int _workOrderId = 0;
     private int _currentTab = 0;
     private int _currentFragment = 0;
     private boolean _created = false;
-    private Workorder _workorder = null;
+    private WorkOrder _workOrder = null;
     private boolean _hidingTasks;
 
     // Services
@@ -79,10 +80,10 @@ public class WorkorderActivity extends AuthSimpleActivity {
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
-                _workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, 0);
+                _workOrderId = intent.getIntExtra(INTENT_FIELD_WORKORDER_ID, 0);
             }
             if (intent.hasExtra(INTENT_FIELD_WORKORDER)) {
-                _workorder = intent.getParcelableExtra(INTENT_FIELD_WORKORDER);
+                _workOrder = intent.getParcelableExtra(INTENT_FIELD_WORKORDER);
             }
             if (intent.hasExtra(INTENT_FIELD_CURRENT_TAB)) {
                 _currentTab = intent.getIntExtra(INTENT_FIELD_CURRENT_TAB, 0);
@@ -102,13 +103,13 @@ public class WorkorderActivity extends AuthSimpleActivity {
                     final List<String> segments = intent.getData().getPathSegments();
                     if (segments.size() > 1) {
                         if (segments.get(0).equals("wo")) {
-                            _workorderId = Long.parseLong(segments.get(1));
+                            _workOrderId = Integer.parseInt(segments.get(1));
                         } else if (segments.get(0).equals("workorder")) {
-                            _workorderId = Long.parseLong(segments.get(2));
+                            _workOrderId = Integer.parseInt(segments.get(2));
                         } else if (segments.get(0).equals("marketplace")) {
-                            _workorderId = Long.parseLong(intent.getData().getQueryParameter("workorder_id"));
+                            _workOrderId = Integer.parseInt(intent.getData().getQueryParameter("workorder_id"));
                         } else if (segments.get(0).equals("w") && segments.get(1).equals("r")) {
-                            _workorderId = Long.parseLong(segments.get(2));
+                            _workOrderId = Integer.parseInt(segments.get(2));
                         }
                     }
                 } catch (Exception ex) {
@@ -119,7 +120,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDERID)) {
-                _workorderId = savedInstanceState.getLong(STATE_WORKORDERID);
+                _workOrderId = savedInstanceState.getInt(STATE_WORKORDERID);
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TAB)) {
                 _currentTab = savedInstanceState.getInt(STATE_CURRENT_TAB);
@@ -128,11 +129,11 @@ public class WorkorderActivity extends AuthSimpleActivity {
                 _currentFragment = savedInstanceState.getInt(STATE_CURRENTFRAG);
             }
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
         }
 
-        if (_workorderId == 0) {
+        if (_workOrderId == 0) {
             // epic fail!
             Log.e(TAG, "must have a workorder id!");
             finish();
@@ -161,8 +162,8 @@ public class WorkorderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (_workorderId != 0)
-            outState.putLong(STATE_WORKORDERID, _workorderId);
+        if (_workOrderId != 0)
+            outState.putInt(STATE_WORKORDERID, _workOrderId);
 
         if (_currentTab != 0)
             outState.putInt(STATE_CURRENT_TAB, _currentTab);
@@ -170,8 +171,8 @@ public class WorkorderActivity extends AuthSimpleActivity {
         if (_currentFragment != 0)
             outState.putInt(STATE_CURRENTFRAG, _currentFragment);
 
-        if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_workOrder != null)
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         super.onSaveInstanceState(outState);
     }
@@ -254,44 +255,45 @@ public class WorkorderActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
     }
 
     @Override
     protected void onPause() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
 
         super.onPause();
     }
 
     private void populateUi() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_tabview == null)
             return;
 
-        setTitle("WO: " + _workorder.getWorkorderId());
+        setTitle("WO: " + _workOrder.getWorkOrderId());
 
-        if (_workorder.getAlertCount() != null) {
-            _tabview.setAlertsCount(_workorder.getAlertCount());
-        } else {
-            _tabview.setAlertsCount(0);
-        }
+        // TODO need to figure this out
+//        if (_workOrder.getAlertCount() != null) {
+//            _tabview.setAlertsCount(_workorder.getAlertCount());
+//        } else {
+        _tabview.setAlertsCount(0);
+//        }
 
-        if (_workorder.getMessageCount() != null) {
-            _tabview.setMessagesCount(_workorder.getMessageCount());
-        } else {
-            _tabview.setMessagesCount(0);
-        }
+//        if (_workorder.getMessageCount() != null) {
+//            _tabview.setMessagesCount(_workorder.getMessageCount());
+//        } else {
+        _tabview.setMessagesCount(0);
+//        }
 
 //        for (int i = 0; i < _fragments.length; i++) {
 //            _fragments[i].setWorkorder(_workorder);
 //        }
 
-        _fragments[_currentFragment].setWorkorder(_workorder);
+        _fragments[_currentFragment].setWorkorder(_workOrder);
 
 
 //        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
@@ -315,10 +317,10 @@ public class WorkorderActivity extends AuthSimpleActivity {
         }
     }
 
-    public void getData(boolean allowCache) {
+    public void getData() {
         Log.v(TAG, "getData");
         setLoading(true);
-        WorkorderClient.get(this, _workorderId, allowCache);
+        WorkordersWebApi.getWorkOrder(this, _workOrderId, false);
     }
 
     /*-*************************-*/
@@ -369,7 +371,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
         public void onPageSelected(int position) {
             try {
                 WorkOrderTracker.onTabSwitchEvent(App.get(), WorkOrderTracker.Tab.values()[_currentFragment], WorkOrderTracker.Tab.values()[position]);
-                WorkOrderTracker.onShow(App.get(), WorkOrderTracker.Tab.values()[position], _workorderId);
+                WorkOrderTracker.onShow(App.get(), WorkOrderTracker.Tab.values()[position], _workOrderId);
                 _currentFragment = position;
                 _tabview.setSelected(position);
                 _fragments[position].update();
@@ -392,18 +394,10 @@ public class WorkorderActivity extends AuthSimpleActivity {
         }
     };
 
-    private final Workorder.Listener _workorder_listener = new Workorder.Listener() {
-        @Override
-        public void onChange(Workorder workorder) {
-            Log.v(TAG, "_workorder_listener");
-            getData(false);
-        }
-    };
-
     private final WorkorderFragment.LoadingListener _workorderFrag_loadingListener = new WorkorderFragment.LoadingListener() {
         @Override
         public void setLoading(boolean isLoading) {
-            WorkorderActivity.this.setLoading(isLoading);
+            WorkOrderActivity.this.setLoading(isLoading);
         }
     };
 
@@ -415,67 +409,65 @@ public class WorkorderActivity extends AuthSimpleActivity {
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
-            _workorderClient.subGet(_workorderId);
-            _workorderClient.subActions();
-            getData(true);
+            Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
+            _workOrderApi.subGetWorkOrder(_workOrderId);
+            _workOrderApi.subWorkordersWebApi();
+            getData();
         }
 
         @Override
-        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
-            Log.v(TAG, "_workorderClient_listener.onDetails");
-            if (workorder == null || failed) {
-                if (isCached) {
-                    WorkorderClient.get(App.get(), _workorderId, false);
-                } else {
-                    setLoading(false);
-                }
+        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
+            Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
+            if (workOrder == null || !success) {
+                setLoading(false);
                 return;
             }
 
-            Debug.setLong("last_workorder", workorder.getWorkorderId());
-            workorder.addListener(_workorder_listener);
-            _workorder = workorder;
+            Debug.setLong("last_workorder", workOrder.getWorkOrderId());
+            _workOrder = workOrder;
             populateUi();
         }
 
         @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            WorkorderClient.get(App.get(), workorderId, false, false);
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrder") || !success)
+                return;
+
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false);
         }
     };
 
-    public static void startNew(Context context, long workorderId) {
-        startNew(context, workorderId, TAB_DETAILS);
+    public static void startNew(Context context, int workOrderId) {
+        startNew(context, workOrderId, TAB_DETAILS);
     }
 
-    public static void startNew(Context context, long workorderId, int tab) {
-        Intent intent = new Intent(context, WorkorderActivity.class);
+    public static void startNew(Context context, int workOrderId, int tab) {
+        Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, tab);
         ActivityResultClient.startActivity(context, intent);
     }
 
-    public static Intent makeIntentConfirm(Context context, long workorderId) {
+    public static Intent makeIntentConfirm(Context context, int workOrderId) {
         Log.v(TAG, "makeIntentConfirm");
-        Intent intent = new Intent(context, WorkorderActivity.class);
+        Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
         return intent;
     }
 
-    public static Intent makeIntentShow(Context context, long workorderId) {
-        Intent intent = new Intent(context, WorkorderActivity.class);
+    public static Intent makeIntentShow(Context context, int workOrderId) {
+        Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
         return intent;
     }

@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -20,25 +23,38 @@ public class Robocalls implements Parcelable {
     @Json(name = "results")
     private Robocall[] _results;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Robocalls() {
     }
 
-    public void setResults(Robocall[] results) {
+    public void setResults(Robocall[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Robocall.toJsonArray(results));
     }
 
     public Robocall[] getResults() {
         return _results;
     }
 
-    public Robocalls results(Robocall[] results) {
+    public Robocalls results(Robocall[] results) throws ParseException {
         _results = results;
+        SOURCE.put("results", Robocall.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Robocalls[] array) {
+        JsonArray list = new JsonArray();
+        for (Robocalls item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Robocalls[] fromJsonArray(JsonArray array) {
         Robocalls[] list = new Robocalls[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -56,17 +72,8 @@ public class Robocalls implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Robocalls robocalls) {
-        try {
-            return Serializer.serializeObject(robocalls);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -97,6 +104,6 @@ public class Robocalls implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

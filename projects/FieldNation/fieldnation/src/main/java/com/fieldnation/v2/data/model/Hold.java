@@ -8,7 +8,10 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+
+import java.text.ParseException;
 
 /**
  * Created by dmgen from swagger.
@@ -26,51 +29,68 @@ public class Hold implements Parcelable {
     @Json(name = "reason")
     private String _reason;
 
+    @Source
+    private JsonObject SOURCE = new JsonObject();
+
     public Hold() {
     }
 
-    public void setId(Integer id) {
+    public void setId(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
     }
 
     public Integer getId() {
         return _id;
     }
 
-    public Hold id(Integer id) {
+    public Hold id(Integer id) throws ParseException {
         _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
     }
 
     public String getName() {
         return _name;
     }
 
-    public Hold name(String name) {
+    public Hold name(String name) throws ParseException {
         _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
-    public void setReason(String reason) {
+    public void setReason(String reason) throws ParseException {
         _reason = reason;
+        SOURCE.put("reason", reason);
     }
 
     public String getReason() {
         return _reason;
     }
 
-    public Hold reason(String reason) {
+    public Hold reason(String reason) throws ParseException {
         _reason = reason;
+        SOURCE.put("reason", reason);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
+    public static JsonArray toJsonArray(Hold[] array) {
+        JsonArray list = new JsonArray();
+        for (Hold item : array) {
+            list.add(item.getJson());
+        }
+        return list;
+    }
+
     public static Hold[] fromJsonArray(JsonArray array) {
         Hold[] list = new Hold[array.size()];
         for (int i = 0; i < array.size(); i++) {
@@ -88,17 +108,8 @@ public class Hold implements Parcelable {
         }
     }
 
-    public JsonObject toJson() {
-        return toJson(this);
-    }
-
-    public static JsonObject toJson(Hold hold) {
-        try {
-            return Serializer.serializeObject(hold);
-        } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
-            return null;
-        }
+    public JsonObject getJson() {
+        return SOURCE;
     }
 
     /*-*********************************************-*/
@@ -129,6 +140,6 @@ public class Hold implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(toJson(), flags);
+        dest.writeParcelable(getJson(), flags);
     }
 }

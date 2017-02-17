@@ -1,15 +1,11 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
@@ -21,19 +17,20 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
-public class ExpenseDialog extends DialogFragmentBase {
+public class ExpenseDialog extends SimpleDialog {
     private static final String TAG = "ExpenseDialog";
 
     // State
-    private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";
     private static final String STATE_CATEGORY_SELECTION = "STATE_CATEGORY_SELECTION";
 
     // Ui
@@ -45,96 +42,96 @@ public class ExpenseDialog extends DialogFragmentBase {
     private LinearLayout _categoryLayout;
 
     // Data
-    private Listener _listener;
     private ExpenseCategory[] _categories;
     private HintArrayAdapter _adapter;
     private InputMethodManager _imm;
-    private boolean _reset = false;
     private boolean _showCategories = true;
     private int _itemSelectedPosition = -1;
-
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
     /*-*************************************-*/
-    public static ExpenseDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, ExpenseDialog.class);
+    public ExpenseDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(STATE_SHOW_CATEGORIES, _showCategories);
-        if (_itemSelectedPosition != -1)
-            outState.putInt(STATE_CATEGORY_SELECTION, _itemSelectedPosition);
-
-        outState.putBoolean(STATE_SHOW_CATEGORIES, _showCategories);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_expense, container, false);
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.dialog_v2_expense, container, false);
 
         _amountEditText = (EditText) v.findViewById(R.id.amount_edittext);
-        _amountEditText.setOnEditorActionListener(_oneditor_listener);
-
         _categoryLayout = (LinearLayout) v.findViewById(R.id.category_layout);
-
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-
         _categorySpinner = (HintSpinner) v.findViewById(R.id.category_spinner);
-        _categorySpinner.setOnItemSelectedListener(_spinner_selected);
-
         _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_okButton_onClick);
-
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancelButton_onClick);
-
-        _imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        _imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         return v;
     }
 
     @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_SHOW_CATEGORIES))
-                _showCategories = savedInstanceState.getBoolean(STATE_SHOW_CATEGORIES);
+    public void show(Bundle payload, boolean animate) {
+        _showCategories = payload.getBoolean("showCategories");
+        super.show(payload, animate);
+    }
 
-            if (savedInstanceState.containsKey(STATE_CATEGORY_SELECTION)) {
-                _itemSelectedPosition = savedInstanceState.getInt(STATE_CATEGORY_SELECTION);
-            }
-        }
+    @Override
+    public void onStart() {
+        _amountEditText.setOnEditorActionListener(_oneditor_listener);
+        _categorySpinner.setOnItemSelectedListener(_spinner_selected);
+        _okButton.setOnClickListener(_okButton_onClick);
+        _cancelButton.setOnClickListener(_cancelButton_onClick);
 
-        populateUi();
+        super.onStart();
     }
 
     @Override
     public void onResume() {
-        super.onResume();
-
-        new ExpenseCategories(getActivity()).setListener(_categoriesListener);
-
+//TODO        new ExpenseCategories(App.get()).setListener(_categoriesListener);
         populateUi();
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_CATEGORY_SELECTION)) {
+                _itemSelectedPosition = savedState.getInt(STATE_CATEGORY_SELECTION);
+            }
+        }
+        populateUi();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_itemSelectedPosition != -1)
+            outState.putInt(STATE_CATEGORY_SELECTION, _itemSelectedPosition);
+
+        super.onSaveDialogState(outState);
+    }
+
+    public void populateUi() {
+        if (_showCategories) {
+            _categoryLayout.setVisibility(View.VISIBLE);
+        } else {
+            _categoryLayout.setVisibility(View.GONE);
+        }
+
+        if (_descriptionEditText != null)
+            _descriptionEditText.setText("");
+
+        if (_amountEditText != null)
+            _amountEditText.setText("");
+
+        if (_categorySpinner != null)
+            _categorySpinner.clearSelection();
     }
 
     private void setCategories(ExpenseCategory[] categories) {
         try {
             _categories = categories;
-            _adapter = HintArrayAdapter.createFromArray(
-                    getActivity(), categories, R.layout.view_spinner_item);
+            _adapter = HintArrayAdapter.createFromArray(getView().getContext(), categories,
+                    R.layout.view_spinner_item);
 
             _adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
@@ -146,39 +143,6 @@ public class ExpenseDialog extends DialogFragmentBase {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-    }
-
-    public void populateUi() {
-
-        if (_showCategories) {
-            _categoryLayout.setVisibility(View.VISIBLE);
-        } else {
-            _categoryLayout.setVisibility(View.GONE);
-        }
-
-        if (!_reset)
-            return;
-
-        if (_descriptionEditText != null)
-            _descriptionEditText.setText("");
-
-        if (_amountEditText != null)
-            _amountEditText.setText("");
-
-        if (_categorySpinner != null)
-            _categorySpinner.clearSelection();
-
-    }
-
-
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
-    public void show(boolean showCategories) {
-        _showCategories = showCategories;
-        _reset = true;
-        super.show();
     }
 
     public String getDescription() {
@@ -210,16 +174,19 @@ public class ExpenseDialog extends DialogFragmentBase {
     private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
+            dismiss(true);
+            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
-    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+/*
+TODO    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
             setCategories(categories);
         }
     };
+*/
 
     private final TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
         @Override
@@ -251,10 +218,9 @@ public class ExpenseDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (_listener != null)
-                _listener.onOk(getDescription(), getAmount(), getCategory());
+            _onOkDispatcher.dispatch(getUid(), getDescription(), getAmount(), getCategory());
 
-            ExpenseDialog.this.dismiss();
+            ExpenseDialog.this.dismiss(true);
         }
     };
 
@@ -270,9 +236,61 @@ public class ExpenseDialog extends DialogFragmentBase {
         }
     };
 
-    public interface Listener {
-        void onOk(String description, double amount, ExpenseCategory category);
+    public static void show(Context context, String uid, boolean showCategories) {
+        Bundle params = new Bundle();
+        params.putBoolean("showCategories", showCategories);
+        Controller.show(context, uid, ExpenseDialog.class, params);
+    }
 
+    /*-**********************-*/
+    /*-         Ok           -*/
+    /*-**********************-*/
+    public interface OnOkListener {
+        void onOk(String description, double amount, ExpenseCategory category);
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
+        @Override
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk((String) parameters[0], (Double) parameters[1], (ExpenseCategory) parameters[2]);
+        }
+    };
+
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-**********************-*/
+    /*-         Cancel           -*/
+    /*-**********************-*/
+    public interface OnCancelListener {
         void onCancel();
+    }
+
+    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
+        @Override
+        public void onDispatch(OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
     }
 }
