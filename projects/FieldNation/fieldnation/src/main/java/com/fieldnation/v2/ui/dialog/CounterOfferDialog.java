@@ -123,11 +123,9 @@ public class CounterOfferDialog extends SimpleDialog {
         _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
         _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
 
-/*
-TODO        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
+        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
         _scheduleDialog = ScheduleDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
-*/
 
         return v;
     }

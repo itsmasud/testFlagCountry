@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
 import android.support.v4.app.FragmentManager;
 
@@ -24,7 +24,7 @@ public class TermsDialog extends OneButtonDialog {
         super.show();
     }
 
-    private final OneButtonDialog.Listener _super_listener = new Listener() {
+    private final Listener _super_listener = new Listener() {
         @Override
         public void onButtonClick() {
             dismiss();

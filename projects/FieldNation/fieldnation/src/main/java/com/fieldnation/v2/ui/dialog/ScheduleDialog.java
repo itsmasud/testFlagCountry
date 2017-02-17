@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,16 +19,19 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
+import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.dialog.DatePickerDialog;
+import com.fieldnation.ui.dialog.TimePickerDialog;
 
 import java.util.Calendar;
 
-public class ScheduleDialog extends DialogFragmentBase {
+public class ScheduleDialog extends SimpleDialog {
     private static final String TAG = "ScheduleDialog";
 
     // State

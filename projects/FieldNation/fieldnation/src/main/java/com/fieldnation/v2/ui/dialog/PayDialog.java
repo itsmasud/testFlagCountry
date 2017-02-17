@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,12 +18,14 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.dialog.DialogFragmentBase;
 
-public class PayDialog extends DialogFragmentBase {
+public class PayDialog extends SimpleDialog {
     private static String TAG = "PayDialog";
 
     private static final double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
