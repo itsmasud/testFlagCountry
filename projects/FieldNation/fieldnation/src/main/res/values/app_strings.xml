@@ -119,6 +119,8 @@
     <string name="btn_yes">YES</string>
 
     <string name="switch_text_set_eta">Set an ETA</string>
+    <string name="incomplete">Incomplete</string>
+    <string name="complete">Complete</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
