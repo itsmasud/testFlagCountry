@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -30,7 +29,7 @@ public class Requests implements Parcelable {
     private Request _openRequest;
 
     @Json(name = "results")
-    private TimeLog[] _results;
+    private Request[] _results;
 
     @Source
     private JsonObject SOURCE = new JsonObject();
@@ -83,18 +82,18 @@ public class Requests implements Parcelable {
         return this;
     }
 
-    public void setResults(TimeLog[] results) throws ParseException {
+    public void setResults(Request[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", TimeLog.toJsonArray(results));
+        SOURCE.put("results", Request.toJsonArray(results));
     }
 
-    public TimeLog[] getResults() {
+    public Request[] getResults() {
         return _results;
     }
 
-    public Requests results(TimeLog[] results) throws ParseException {
+    public Requests results(Request[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", TimeLog.toJsonArray(results), true);
+        SOURCE.put("results", Request.toJsonArray(results), true);
         return this;
     }
 
@@ -180,5 +179,20 @@ public class Requests implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public Request getCounterOffer() {
+        if (getResults() == null || getResults().length == 0)
+            return null;
+
+        for (Request request : getResults()) {
+            if (request.getActive() && request.getCounter())
+                return request;
+        }
+
+        return null;
     }
 }
