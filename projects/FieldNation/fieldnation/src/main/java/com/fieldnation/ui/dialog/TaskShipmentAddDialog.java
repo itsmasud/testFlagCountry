@@ -135,7 +135,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
             for (int i = 0; i < shipments.length; i++) {
                 ShipmentRowView view = new ShipmentRowView(getActivity());
                 _shipmentsLayout.addView(view);
-                view.setData(_workorder, shipments[i]);
+                // TODO
+//                view.setData(_workorder, shipments[i]);
                 view.hideForTaskShipmentDialog();
                 view.setListener(_summaryListener);
             }
