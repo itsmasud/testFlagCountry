@@ -871,7 +871,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            Intent workorderIntent = WorkorderActivity.makeIntentShow(App.get(), workorderId);
+            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), (int) workorderId);
             PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
             UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
 
