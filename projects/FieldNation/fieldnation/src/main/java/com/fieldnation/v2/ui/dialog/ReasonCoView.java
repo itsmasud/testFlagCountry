@@ -89,7 +89,7 @@ public class ReasonCoView extends RelativeLayout {
         _listener = listener;
     }
 
-    public void setCounterOffer(String reason, boolean expires, int expiresAfterInSecond) {
+    public void setCounterOffer(String reason, long expires) {
         _reset = true;
         _reason = reason;
         _expires = expires;

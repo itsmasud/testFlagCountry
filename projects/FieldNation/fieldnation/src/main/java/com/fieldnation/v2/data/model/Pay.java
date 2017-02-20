@@ -39,7 +39,7 @@ public class Pay implements Parcelable {
     private Expenses _expenses;
 
     @Json(name = "fees")
-    private PayFees _fees;
+    private PayModifier[] _fees;
 
     @Json(name = "finance")
     private PayFinance _finance;
@@ -190,18 +190,18 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setFees(PayFees fees) throws ParseException {
+    public void setFees(PayModifier[] fees) throws ParseException {
         _fees = fees;
-        SOURCE.put("fees", fees.getJson());
+        SOURCE.put("fees", PayModifier.toJsonArray(fees));
     }
 
-    public PayFees getFees() {
+    public PayModifier[] getFees() {
         return _fees;
     }
 
-    public Pay fees(PayFees fees) throws ParseException {
+    public Pay fees(PayModifier[] fees) throws ParseException {
         _fees = fees;
-        SOURCE.put("fees", fees.getJson());
+        SOURCE.put("fees", PayModifier.toJsonArray(fees), true);
         return this;
     }
 

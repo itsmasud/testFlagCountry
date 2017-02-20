@@ -95,6 +95,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "qualifications")
     private Qualifications _qualifications;
 
+    @Json(name = "ratings")
+    private Rating _ratings;
+
     @Json(name = "requests")
     private Requests _requests;
 
@@ -516,6 +519,21 @@ public class WorkOrder implements Parcelable {
     public WorkOrder qualifications(Qualifications qualifications) throws ParseException {
         _qualifications = qualifications;
         SOURCE.put("qualifications", qualifications.getJson());
+        return this;
+    }
+
+    public void setRatings(Rating ratings) throws ParseException {
+        _ratings = ratings;
+        SOURCE.put("ratings", ratings.getJson());
+    }
+
+    public Rating getRatings() {
+        return _ratings;
+    }
+
+    public WorkOrder ratings(Rating ratings) throws ParseException {
+        _ratings = ratings;
+        SOURCE.put("ratings", ratings.getJson());
         return this;
     }
 

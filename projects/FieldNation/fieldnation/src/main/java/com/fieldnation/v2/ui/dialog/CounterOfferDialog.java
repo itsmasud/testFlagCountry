@@ -275,7 +275,6 @@ TODO        Dialog d = getDialog();
         if (_reasonView != null) {
             Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
             outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
-            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
         }
     }
 
@@ -501,7 +500,8 @@ TODO        Dialog d = getDialog();
 
                 Log.e(TAG, "_expireDuration: " + _expireDuration);
 
-                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
+                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _expireDuration,
+                        _counterPay, _counterSchedule, exp);
                 _tacAccpet = false;
                 dismiss(true);
             }
