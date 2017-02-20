@@ -169,7 +169,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                 WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
 
                 if (extras.getBoolean(PARAM_TRACK)) {
-                    UploadTrackerClient.uploadQueued(ContextProvider.get());
+                    UploadTrackerClient.uploadQueued(ContextProvider.get(), transaction.getTrackType());
                 }
 
                 Log.v(TAG, "processIntent building transforms");
