@@ -64,13 +64,17 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
+import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
@@ -105,6 +109,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
+    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -374,7 +379,6 @@ TODO        if (_currentTask != null)
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-// TODO        _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
@@ -387,6 +391,7 @@ TODO        if (_currentTask != null)
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
+        CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
@@ -428,6 +433,7 @@ TODO        if (_currentTask != null)
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
+        CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
@@ -949,6 +955,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
     };
 
@@ -1076,7 +1083,7 @@ TODO            if (_workorder.getPaymentId() != null) {
         @Override
         public void onViewCounter() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workOrder.getWorkOrderId());
-// TODO            _counterOfferDialog.show(_workorder);
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
 
         @Override
@@ -1470,7 +1477,7 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
-// TODO            _counterOfferDialog.show(_workorder);
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
     };
 
@@ -1632,18 +1639,40 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
     };
 */
 
-/*
-TODO    private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
+    private final CounterOfferDialog.OnOkListener _counterOfferDialog_onOk = new CounterOfferDialog.OnOkListener() {
         @Override
-        public void onOk(Workorder workorder, String reason, boolean expires,
-                         int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER, WorkOrderTracker.Action.COUNTER_OFFER, workorder.getWorkorderId());
-            WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(), expires,
-                    reason, expirationInSeconds, pay, schedule, expenses);
+        public void onOk(WorkOrder workorder, String reason, long expires, Pay pay, Schedule schedule,
+                         Expense[] expenses) {
+
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
+                    WorkOrderTracker.Action.COUNTER_OFFER, workorder.getWorkOrderId());
+
+            try {
+                Request request = new Request();
+                request.counter(true);
+
+                if (!misc.isEmptyOrNull(reason))
+                    request.counterNotes(reason);
+
+                if (pay != null)
+                    request.pay(pay);
+
+                if (schedule != null)
+                    request.schedule(schedule);
+
+                if (expenses != null)
+                    request.expenses(expenses);
+
+                if (expires != 0)
+                    request.expires(new Date(expires));
+
+                WorkordersWebApi.request(App.get(), workorder.getWorkOrderId(), request);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
     };
-*/
 
 /*
 TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {

@@ -8,6 +8,7 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
 public class Expense implements Parcelable {
     private static final String TAG = "Expense";

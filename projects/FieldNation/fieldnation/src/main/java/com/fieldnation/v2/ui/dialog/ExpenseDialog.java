@@ -25,6 +25,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.model.ExpenseCategories;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 
 public class ExpenseDialog extends SimpleDialog {
@@ -88,7 +89,7 @@ public class ExpenseDialog extends SimpleDialog {
 
     @Override
     public void onResume() {
-//TODO        new ExpenseCategories(App.get()).setListener(_categoriesListener);
+        new ExpenseCategories(App.get()).setListener(_categoriesListener);
         populateUi();
     }
 
@@ -179,14 +180,12 @@ public class ExpenseDialog extends SimpleDialog {
         }
     };
 
-/*
-TODO    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
+    private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
             setCategories(categories);
         }
     };
-*/
 
     private final TextView.OnEditorActionListener _oneditor_listener = new TextView.OnEditorActionListener() {
         @Override

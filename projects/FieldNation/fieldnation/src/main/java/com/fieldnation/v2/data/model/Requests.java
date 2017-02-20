@@ -11,6 +11,9 @@ import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -20,7 +23,7 @@ public class Requests implements Parcelable {
     private static final String TAG = "Requests";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
@@ -37,18 +40,26 @@ public class Requests implements Parcelable {
     public Requests() {
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Requests actions(ActionsEnum actions) throws ParseException {
+    public Requests actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -194,5 +205,15 @@ public class Requests implements Parcelable {
         }
 
         return null;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(_actions));
+        }
+        return _actionsSet;
     }
 }

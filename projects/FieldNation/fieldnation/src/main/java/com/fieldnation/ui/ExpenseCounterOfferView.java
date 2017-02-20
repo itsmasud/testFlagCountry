@@ -8,9 +8,9 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.ExpenseCategories;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
 /**
  * Created by Michael Carver on 7/24/2015.

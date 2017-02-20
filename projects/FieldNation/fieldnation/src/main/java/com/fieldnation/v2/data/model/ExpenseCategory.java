@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -30,6 +29,11 @@ public class ExpenseCategory implements Parcelable {
     private JsonObject SOURCE = new JsonObject();
 
     public ExpenseCategory() {
+    }
+
+    public ExpenseCategory(int id, String name) {
+        _id = id;
+        _name = name;
     }
 
     public void setId(Integer id) throws ParseException {

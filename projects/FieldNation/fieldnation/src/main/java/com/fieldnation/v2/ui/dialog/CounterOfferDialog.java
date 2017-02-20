@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -24,7 +25,6 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -68,7 +68,7 @@ public class CounterOfferDialog extends SimpleDialog {
     private Pay _counterPay;
     private Schedule _counterSchedule;
     private String _counterReason;
-    private Long _expires = null;
+    private long _expires = 0;
 
     // Data
     private boolean _tacAccpet;
@@ -90,22 +90,22 @@ public class CounterOfferDialog extends SimpleDialog {
 
         TabHost.TabSpec tab1 = _tabHost.newTabSpec("start");
         tab1.setIndicator("Pay");
-        tab1.setContent(R.id.scrollview1);
+        tab1.setContent(R.id.payment_view);
         _tabHost.addTab(tab1);
 
         TabHost.TabSpec tab2 = _tabHost.newTabSpec("mid1");
         tab2.setIndicator("Schedule");
-        tab2.setContent(R.id.scrollview2);
+        tab2.setContent(R.id.schedule_view);
         _tabHost.addTab(tab2);
 
         TabHost.TabSpec tab3 = _tabHost.newTabSpec("mid2");
         tab3.setIndicator("Expense");
-        tab3.setContent(R.id.scrollview3);
+        tab3.setContent(R.id.expenses_view);
         _tabHost.addTab(tab3);
 
         TabHost.TabSpec tab4 = _tabHost.newTabSpec("end");
         tab4.setIndicator("Reason");
-        tab4.setContent(R.id.scrollview4);
+        tab4.setContent(R.id.reasons_view);
         _tabHost.addTab(tab4);
 
         _tabHost.setOnTabChangedListener(_tab_changeListener);
@@ -147,22 +147,6 @@ public class CounterOfferDialog extends SimpleDialog {
         Log.v(TAG, "onResume");
         super.onResume();
 
-/*
-TODO        Dialog d = getDialog();
-        if (d == null)
-            return;
-
-        Window window = d.getWindow();
-
-        Display display = window.getWindowManager().getDefaultDisplay();
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 7) / 10);
-        } else {
-            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
-        }
-*/
-
         populateUi();
     }
 
@@ -181,7 +165,7 @@ TODO        Dialog d = getDialog();
         _counterPay = null;
         _counterSchedule = null;
         _counterReason = null;
-        _expires = null;
+        _expires = 0;
 
         if (coRequest != null) {
             if (coRequest.getPay() != null) {
@@ -231,7 +215,7 @@ TODO        Dialog d = getDialog();
                 _counterReason = savedState.getString(STATE_COUNTER_REASON);
 
             if (savedState.containsKey(STATE_EXPIRES))
-                _expires = savedState.getParcelable(STATE_EXPIRES);
+                _expires = savedState.getLong(STATE_EXPIRES);
 
             if (savedState.containsKey(STATE_TAC))
                 _tacAccpet = savedState.getBoolean(STATE_TAC);
@@ -273,7 +257,6 @@ TODO        Dialog d = getDialog();
             outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
 
         if (_reasonView != null) {
-            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
             outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
         }
     }
@@ -304,7 +287,7 @@ TODO        Dialog d = getDialog();
 
         _expenseView.setData(_workOrder, _expenses);
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
+        _reasonView.setCounterOffer(_counterReason, _expires);
     }
 
     private void setTabPos(int pos) {
@@ -315,19 +298,16 @@ TODO        Dialog d = getDialog();
                 public void run() {
                     _tabScrollView.fullScroll(View.FOCUS_LEFT);
                     _tabHost.setCurrentTab(0);
-
                 }
             });
         } else if (pos > 0 && pos < 4) {
             _tabHost.setCurrentTab(pos);
-
         } else {
             _tabScrollView.post(new Runnable() {
                 @Override
                 public void run() {
                     _tabScrollView.fullScroll(View.FOCUS_RIGHT);
                     _tabHost.setCurrentTab(4);
-
                 }
             });
         }
@@ -349,11 +329,8 @@ TODO        Dialog d = getDialog();
         }
 
         @Override
-        public void onExpirationChange(boolean expires, int second) {
-            if (expires)
-                _expires = Calendar.getInstance().getTimeInMillis() + (second * 1000);
-            else
-                _expires = null;
+        public void onExpirationChange(long expires) {
+            _expires = expires;
         }
     };
 
@@ -498,10 +475,9 @@ TODO        Dialog d = getDialog();
 //                        }
 //                    }
 
-                Log.e(TAG, "_expireDuration: " + _expireDuration);
+                Log.e(TAG, "_expireDuration: " + _expires);
 
-                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _expireDuration,
-                        _counterPay, _counterSchedule, exp);
+                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
                 _tacAccpet = false;
                 dismiss(true);
             }
@@ -515,18 +491,25 @@ TODO        Dialog d = getDialog();
         }
     };
 
+    public static void show(Context context, String uid, WorkOrder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable("workOrder", workOrder);
+
+        Controller.show(context, uid, CounterOfferDialog.class, params);
+    }
+
     /*-**********************-*/
     /*-         Ok           -*/
     /*-**********************-*/
     public interface OnOkListener {
-        void onOk(WorkOrder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
+        void onOk(WorkOrder workorder, String reason, long expires, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
     private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
         @Override
         public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((WorkOrder) parameters[0], (String) parameters[1], (Boolean) parameters[2],
-                    (Integer) parameters[3], (Pay) parameters[4], (Schedule) parameters[5], (Expense[]) parameters[6]
+            listener.onOk((WorkOrder) parameters[0], (String) parameters[1], (Long) parameters[2],
+                    (Pay) parameters[3], (Schedule) parameters[4], (Expense[]) parameters[5]
             );
         }
     };

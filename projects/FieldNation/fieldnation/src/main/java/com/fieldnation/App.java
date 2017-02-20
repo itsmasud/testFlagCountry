@@ -26,7 +26,6 @@ import android.text.TextUtils;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
@@ -182,9 +181,6 @@ public class App extends Application {
         // load the icon fonts
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
         Log.v(TAG, "load iconfont time: " + watch.finishAndRestart());
-
-        // read in exepense categories
-        new ExpenseCategories(this);
 
         watch.finishAndRestart();
         // in pre FROYO keepalive = true is buggy. disable for those versions
