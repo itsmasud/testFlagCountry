@@ -92,6 +92,34 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return null;
     }
 
+    /*-***********************************-*/
+    /*-             onStart               -*/
+    /*-***********************************-*/
+    @Override
+    public void onStart(Context context, WebTransaction transaction) {
+        try {
+            JsonObject params = new JsonObject(transaction.getListenerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadPhoto":
+                    onStartUploadPhoto(context, transaction, params);
+                    break;
+
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private void onStartUploadPhoto(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        Log.v(TAG, "onStartUploadPhoto");
+        UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+    }
+
+    /*-**************************************-*/
+    /*-             onComplete               -*/
+    /*-**************************************-*/
+
     @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Log.v(TAG, "onComplete");
@@ -238,11 +266,11 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         if (result == Result.CONTINUE) {
             ProfileDispatch.uploadProfilePhoto(context, filename, true, false);
             ProfileClient.get(context, false);
-            UploadTrackerClient.uploadSuccess(context, PARAM_ACTION_PHOTO_UPLOAD);
+            UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            UploadTrackerClient.uploadFailed(context);
+            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
 
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);

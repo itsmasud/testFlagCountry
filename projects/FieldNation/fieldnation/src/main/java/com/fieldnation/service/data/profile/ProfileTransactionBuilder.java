@@ -9,14 +9,13 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 
 /**
@@ -278,6 +277,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(builder)
                     .setWifiRequired(App.get().onlyUploadWithWifi())
                     .setTrack(true)
+                    .setTrackType(TrackerEnum.PHOTOS)
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
