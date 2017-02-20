@@ -592,8 +592,8 @@ TODO     private void setTasks(List<Task> tasks) {
 
         if (_shipments != null) {
             Stopwatch watch = new Stopwatch(true);
-//TODO            _shipments.setWorkorder(_workOrder);
-            //Log.v(TAG, "_shipments time: " + watch.finish());
+            _shipments.setWorkorder(_workOrder);
+            Log.v(TAG, "_shipments time: " + watch.finish());
         }
 
         if (_timeLogged != null) {
