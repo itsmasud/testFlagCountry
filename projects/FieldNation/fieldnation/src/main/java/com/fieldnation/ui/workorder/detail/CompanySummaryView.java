@@ -12,11 +12,12 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
  * Created by Michael Carver on 5/22/2015.
  */
-public class CompanySummaryView extends RelativeLayout {
+public class CompanySummaryView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "CompanySummaryView";
 
     private TextView _nameTextView;
@@ -72,6 +73,7 @@ public class CompanySummaryView extends RelativeLayout {
         setVisibility(GONE);
     }
 
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();

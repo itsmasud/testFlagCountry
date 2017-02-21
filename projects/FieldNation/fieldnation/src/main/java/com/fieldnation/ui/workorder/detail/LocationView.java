@@ -34,8 +34,9 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Location;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class LocationView extends LinearLayout {
+public class LocationView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "LocationView";
 
     private static final int ACTION_NAVIGATE = 0;

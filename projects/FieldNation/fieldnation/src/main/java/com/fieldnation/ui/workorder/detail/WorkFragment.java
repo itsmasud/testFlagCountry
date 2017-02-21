@@ -31,6 +31,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
@@ -81,6 +82,7 @@ import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -143,6 +145,7 @@ public class WorkFragment extends WorkorderFragment {
     private ExpenseListLayout _expenseListView;
     private DiscountListLayout _discountListView;
     private RefreshView _refreshView;
+    private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Dialogs
     private CustomFieldDialog _customFieldDialog;
@@ -165,9 +168,6 @@ public class WorkFragment extends WorkorderFragment {
     private File _tempFile;
     private Uri _tempUri;
     private GpsLocationService _gpsLocationService;
-    //TODO    private List<Signature> _signatures = null;
-    //TODO    private List<Task> _tasks = null;
-    //TODO    private Task _currentTask;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
@@ -198,35 +198,49 @@ public class WorkFragment extends WorkorderFragment {
         Log.v(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
 
+        _renderers.clear();
+
         _testButton = (Button) view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
+//        _renderers.add(_topBar);
 
         _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
+        _renderers.add(_sumView);
 
         _companySummaryView = (CompanySummaryView) view.findViewById(R.id.companySummary_view);
+        _renderers.add(_companySummaryView);
 
         _contactListView = (ContactListView) view.findViewById(R.id.contactList_view);
+        _renderers.add(_contactListView);
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
+        _renderers.add(_locView);
+
         _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
+        _renderers.add(_scheduleView);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
 // TODO        _payView.setListener(_paymentView_listener);
+//TODO        _renderers.add(_payView);
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
+//TODO        _renderers.add(_coSummaryView);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
+        _renderers.add(_expenseListView);
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
+        _renderers.add(_discountListView);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
+        _renderers.add(_exView);
 
         _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -239,21 +253,27 @@ public class WorkFragment extends WorkorderFragment {
 
         _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
 // TODO        _shipments.setListener(_shipments_listener);
+// TODO        _renderers.add(_shipments);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
 // TODO        _taskList.setTaskListViewListener(_taskListView_listener);
+// TODO        _renderers.add(_taskList);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
 // TODO        _timeLogged.setListener(_timeLoggedView_listener);
+// TODO        _renderers.add(_timeLogged);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
+        _renderers.add(_closingNotes);
 
         _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
 // TODO        _customFields.setListener(_customFields_listener);
+// TODO        _renderers.add(_customFields);
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
 // TODO        _signatureView.setListener(_signaturelist_listener);
+// TODO        _renderers.add(_signatureView);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -508,117 +528,13 @@ TODO     private void setTasks(List<Task> tasks) {
 
         setLoading(true);
 
-        if (_sumView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _sumView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_sumView time: " + watch.finish());
-        }
-
-        if (_companySummaryView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _companySummaryView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_companySummaryView time: " + watch.finish());
-        }
-
-        if (_locView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _locView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_locView time: " + watch.finish());
-        }
-
-        if (_scheduleView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _scheduleView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_scheduleView time: " + watch.finish());
-        }
-
-        if (_contactListView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _contactListView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_contactListView time: " + watch.finish());
-        }
-
-        if (_payView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _payView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_payView time: " + watch.finish());
-        }
-
-        if (_coSummaryView != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _coSummaryView.setData(_workOrder);
-            //Log.v(TAG, "_coSummaryView time: " + watch.finish());
-        }
-
-        if (_expenseListView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _expenseListView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_expenseListView time: " + watch.finish());
-        }
-
-        if (_discountListView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _discountListView.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_discountListView time: " + watch.finish());
-        }
-
-        if (_topBar != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _topBar.setWorkorder(_workOrder);
-            //Log.v(TAG, "_topBar time: " + watch.finish());
-        }
-
-        if (_exView != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _exView.setWorkorder(_workOrder);
-            //Log.v(TAG, "_exView time: " + watch.finish());
-        }
-
-        if (_shipments != null && _timeLogged != null) {
-            Stopwatch watch = new Stopwatch(true);
-
-            if (_workOrder.getStatus().getId() == 3) {
-                _timeLogged.setVisibility(View.GONE);
-                _shipments.setVisibility(View.GONE);
-                _closingNotes.setVisibility(View.GONE);
-            } else {
-                _shipments.setVisibility(View.VISIBLE);
-                _timeLogged.setVisibility(View.VISIBLE);
-                _closingNotes.setVisibility(View.VISIBLE);
+        ForLoopRunnable runnable = new ForLoopRunnable(_renderers.size(), new Handler(), 100) {
+            @Override
+            public void next(int i) throws Exception {
+                _renderers.get(i).setWorkOrder(_workOrder);
             }
-
-            //Log.v(TAG, "_shipments time: " + watch.finish());
-        }
-
-        if (_shipments != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _shipments.setWorkorder(_workOrder);
-            Log.v(TAG, "_shipments time: " + watch.finish());
-        }
-
-        if (_timeLogged != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _timeLogged.setWorkorder(_workOrder);
-            //Log.v(TAG, "_timeLogged time: " + watch.finish());
-        }
-
-        if (_closingNotes != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _closingNotes.setWorkOrder(_workOrder);
-            //Log.v(TAG, "_closingNotes time: " + watch.finish());
-        }
-
-        if (_customFields != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _customFields.setData(_workOrder);
-            //Log.v(TAG, "_customFields time: " + watch.finish());
-        }
-
-        if (_signatureView != null) {
-            Stopwatch watch = new Stopwatch(true);
-//TODO            _signatureView.setWorkorder(_workOrder);
-            //Log.v(TAG, "_signatureView time: " + watch.finish());
-        }
+        };
+        getView().post(runnable);
 
         setLoading(false);
 

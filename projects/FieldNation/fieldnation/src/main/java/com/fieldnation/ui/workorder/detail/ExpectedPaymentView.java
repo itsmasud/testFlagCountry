@@ -7,18 +7,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Bonus;
-import com.fieldnation.data.workorder.ExpectedPayment;
-import com.fieldnation.data.workorder.Penalty;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class ExpectedPaymentView extends LinearLayout {
+public class ExpectedPaymentView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ExpectedPaymentView";
 
     // UI
@@ -36,7 +30,7 @@ public class ExpectedPaymentView extends LinearLayout {
     private TextView _payStatusTextView;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -76,12 +70,12 @@ public class ExpectedPaymentView extends LinearLayout {
         populateUi();
     }
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
@@ -91,26 +85,27 @@ public class ExpectedPaymentView extends LinearLayout {
         if (_payStatusTextView == null)
             return;
 
-        if (_workorder == null) {
+        if (_workOrder == null) {
             setVisibility(View.GONE);
             return;
         }
 
         setVisibility(View.VISIBLE);
 
-        ExpectedPayment expectedPayment = _workorder.getExpectedPayment();
+/*
+TODO        ExpectedPayment expectedPayment = _workOrder.getExpectedPayment();
 
         if (expectedPayment == null) {
             this.setVisibility(GONE);
             return;
-        } else if (_workorder.getPay() == null || _workorder.getPay().hidePay()) {
+        } else if (_workOrder.getPay() == null || _workOrder.getPay().hidePay()) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
 
-        WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
+        WorkorderStatus status = _workOrder.getStatus().getWorkorderStatus();
         if (status == WorkorderStatus.AVAILABLE) {
             this.setVisibility(GONE);
             return;
@@ -162,5 +157,6 @@ public class ExpectedPaymentView extends LinearLayout {
             }
         }
         _bonusTextView.setText(misc.toCurrency(bonuses));
+*/
     }
 }

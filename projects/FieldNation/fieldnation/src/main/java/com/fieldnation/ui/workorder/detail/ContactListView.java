@@ -12,6 +12,7 @@ import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -20,7 +21,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 5/26/2015.
  */
-public class ContactListView extends RelativeLayout {
+public class ContactListView extends RelativeLayout implements WorkOrderRenderer {
 
     private LinearLayout _listLayout;
 
@@ -54,6 +55,7 @@ public class ContactListView extends RelativeLayout {
         setVisibility(GONE);
     }
 
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
