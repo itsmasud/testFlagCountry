@@ -31,6 +31,9 @@ public class Expenses implements Parcelable {
     @Json(name = "results")
     private Expense[] _results;
 
+    @Json(name = "sum")
+    private ExpensesSum _sum;
+
     @Source
     private JsonObject SOURCE = new JsonObject();
 
@@ -87,6 +90,21 @@ public class Expenses implements Parcelable {
     public Expenses results(Expense[] results) throws ParseException {
         _results = results;
         SOURCE.put("results", Expense.toJsonArray(results), true);
+        return this;
+    }
+
+    public void setSum(ExpensesSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
+    }
+
+    public ExpensesSum getSum() {
+        return _sum;
+    }
+
+    public Expenses sum(ExpensesSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
         return this;
     }
 

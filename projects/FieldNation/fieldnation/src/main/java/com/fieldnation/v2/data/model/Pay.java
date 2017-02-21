@@ -29,8 +29,14 @@ public class Pay implements Parcelable {
     @Json(name = "base")
     private PayBase _base;
 
+    @Json(name = "bonuses")
+    private PayModifiers _bonuses;
+
     @Json(name = "correlation_id")
     private String _correlationId;
+
+    @Json(name = "discounts")
+    private PayModifiers _discounts;
 
     @Json(name = "estimated_payment_date")
     private Date _estimatedPaymentDate;
@@ -45,7 +51,7 @@ public class Pay implements Parcelable {
     private PayFinance _finance;
 
     @Json(name = "hold")
-    private PayModifier _hold;
+    private PayModifiers _hold;
 
     @Json(name = "increases")
     private PayIncreases _increases;
@@ -60,7 +66,10 @@ public class Pay implements Parcelable {
     private Double _numberOfDevices;
 
     @Json(name = "payment")
-    private PayModifier _payment;
+    private PayModifiers _payment;
+
+    @Json(name = "penalties")
+    private PayModifiers _penalties;
 
     @Json(name = "pricing_insights")
     private PricingInsights _pricingInsights;
@@ -145,6 +154,21 @@ public class Pay implements Parcelable {
         return this;
     }
 
+    public void setBonuses(PayModifiers bonuses) throws ParseException {
+        _bonuses = bonuses;
+        SOURCE.put("bonuses", bonuses.getJson());
+    }
+
+    public PayModifiers getBonuses() {
+        return _bonuses;
+    }
+
+    public Pay bonuses(PayModifiers bonuses) throws ParseException {
+        _bonuses = bonuses;
+        SOURCE.put("bonuses", bonuses.getJson());
+        return this;
+    }
+
     public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
         SOURCE.put("correlation_id", correlationId);
@@ -157,6 +181,21 @@ public class Pay implements Parcelable {
     public Pay correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
         SOURCE.put("correlation_id", correlationId);
+        return this;
+    }
+
+    public void setDiscounts(PayModifiers discounts) throws ParseException {
+        _discounts = discounts;
+        SOURCE.put("discounts", discounts.getJson());
+    }
+
+    public PayModifiers getDiscounts() {
+        return _discounts;
+    }
+
+    public Pay discounts(PayModifiers discounts) throws ParseException {
+        _discounts = discounts;
+        SOURCE.put("discounts", discounts.getJson());
         return this;
     }
 
@@ -220,16 +259,16 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setHold(PayModifier hold) throws ParseException {
+    public void setHold(PayModifiers hold) throws ParseException {
         _hold = hold;
         SOURCE.put("hold", hold.getJson());
     }
 
-    public PayModifier getHold() {
+    public PayModifiers getHold() {
         return _hold;
     }
 
-    public Pay hold(PayModifier hold) throws ParseException {
+    public Pay hold(PayModifiers hold) throws ParseException {
         _hold = hold;
         SOURCE.put("hold", hold.getJson());
         return this;
@@ -295,18 +334,33 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setPayment(PayModifier payment) throws ParseException {
+    public void setPayment(PayModifiers payment) throws ParseException {
         _payment = payment;
         SOURCE.put("payment", payment.getJson());
     }
 
-    public PayModifier getPayment() {
+    public PayModifiers getPayment() {
         return _payment;
     }
 
-    public Pay payment(PayModifier payment) throws ParseException {
+    public Pay payment(PayModifiers payment) throws ParseException {
         _payment = payment;
         SOURCE.put("payment", payment.getJson());
+        return this;
+    }
+
+    public void setPenalties(PayModifiers penalties) throws ParseException {
+        _penalties = penalties;
+        SOURCE.put("penalties", penalties.getJson());
+    }
+
+    public PayModifiers getPenalties() {
+        return _penalties;
+    }
+
+    public Pay penalties(PayModifiers penalties) throws ParseException {
+        _penalties = penalties;
+        SOURCE.put("penalties", penalties.getJson());
         return this;
     }
 

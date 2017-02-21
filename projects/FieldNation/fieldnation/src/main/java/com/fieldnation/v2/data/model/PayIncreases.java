@@ -26,6 +26,9 @@ public class PayIncreases implements Parcelable {
     @Json(name = "results")
     private PayIncrease[] _results;
 
+    @Json(name = "sum")
+    private PayIncreasesSum _sum;
+
     @Source
     private JsonObject SOURCE = new JsonObject();
 
@@ -59,6 +62,21 @@ public class PayIncreases implements Parcelable {
     public PayIncreases results(PayIncrease[] results) throws ParseException {
         _results = results;
         SOURCE.put("results", PayIncrease.toJsonArray(results), true);
+        return this;
+    }
+
+    public void setSum(PayIncreasesSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
+    }
+
+    public PayIncreasesSum getSum() {
+        return _sum;
+    }
+
+    public PayIncreases sum(PayIncreasesSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
         return this;
     }
 
