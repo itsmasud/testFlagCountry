@@ -31,11 +31,6 @@ public class ExpenseCategory implements Parcelable {
     public ExpenseCategory() {
     }
 
-    public ExpenseCategory(int id, String name) {
-        _id = id;
-        _name = name;
-    }
-
     public void setId(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
@@ -127,5 +122,13 @@ public class ExpenseCategory implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public ExpenseCategory(int id, String name) {
+        _id = id;
+        _name = name;
     }
 }

@@ -3,8 +3,6 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -22,7 +20,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _list;
 
     @Json(name = "columns")
-    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status";
+    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests";
 
     @Json(name = "page")
     private Integer _page;

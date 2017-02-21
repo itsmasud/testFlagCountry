@@ -69,6 +69,7 @@ import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.User;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
@@ -1077,7 +1078,7 @@ TODO            if (_workorder.getPaymentId() != null) {
         public void onWithdraw() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getWorkOrderId());
 
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getWorkOrderId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getWorkOrderId(), _workOrder.getRequests().getOpenRequest().getId());
         }
 
         @Override
@@ -1651,6 +1652,8 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                 Request request = new Request();
                 request.counter(true);
 
+                request.user(new User().id((int) App.getProfileId()));
+
                 if (!misc.isEmptyOrNull(reason))
                     request.counterNotes(reason);
 
@@ -1663,7 +1666,7 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                 if (expenses != null)
                     request.expenses(expenses);
 
-                if (expires != 0)
+                if (expires > 0)
                     request.expires(new Date(expires));
 
                 WorkordersWebApi.request(App.get(), workorder.getWorkOrderId(), request);

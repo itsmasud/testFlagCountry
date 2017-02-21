@@ -64,7 +64,8 @@ public class ReasonCoView extends RelativeLayout {
 
         _expireDurationSpinner = (HintSpinner) findViewById(R.id.expire_duration_spinner);
         _expireDurationSpinner.setOnItemSelectedListener(_expireSpinner_selected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.expire_duration_titles,
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(),
+                R.array.expire_duration_titles,
                 R.layout.view_counter_offer_reason_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _expireDurationSpinner.setAdapter(adapter);
@@ -147,7 +148,7 @@ public class ReasonCoView extends RelativeLayout {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _currentPosition = position;
 
-            if (_listener != null) {
+            if (_expiresCheckBox.isChecked() && _listener != null) {
                 _listener.onExpirationChange(System.currentTimeMillis() + (_durations[_currentPosition] * 1000));
             }
         }
@@ -155,7 +156,7 @@ public class ReasonCoView extends RelativeLayout {
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             _currentPosition = 1;
-            if (_listener != null) {
+            if (_expiresCheckBox.isChecked() && _listener != null) {
                 _listener.onExpirationChange(System.currentTimeMillis() + (_durations[_currentPosition] * 1000));
             }
         }

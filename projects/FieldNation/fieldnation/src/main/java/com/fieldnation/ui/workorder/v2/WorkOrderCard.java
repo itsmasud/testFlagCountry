@@ -726,7 +726,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getId());
+            // WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getId());
         }
     };
 

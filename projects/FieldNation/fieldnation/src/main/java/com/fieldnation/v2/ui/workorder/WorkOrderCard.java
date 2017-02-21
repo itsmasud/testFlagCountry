@@ -31,6 +31,7 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.TimeLogs;
@@ -354,24 +355,12 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateButtons() {
-        WorkOrder.ActionsEnum[] actions = _workOrder.getSortedActions();
-
         _primaryButton.setVisibility(GONE);
-
-        for (Button button : _secondaryButtons) {
-            button.setVisibility(GONE);
-        }
-
-        if (actions == null || actions.length == 0) {
-            return;
-        }
-
         populatePrimaryButton(_primaryButton);
 
         for (Button button : _secondaryButtons) {
             button.setVisibility(GONE);
         }
-
         populateSecondaryButtons();
     }
 
@@ -464,7 +453,9 @@ public class WorkOrderCard extends RelativeLayout {
             button.setText(R.string.btn_request);
 
             // withdraw
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.WITHDRAW_REQUEST)) {
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getOpenRequest() != null
+                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_withdraw_onClick);
             button.setText(R.string.btn_withdraw);
@@ -761,7 +752,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getWorkOrderId());
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getWorkOrderId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getWorkOrderId(), _workOrder.getRequests().getOpenRequest().getId());
         }
     };
 

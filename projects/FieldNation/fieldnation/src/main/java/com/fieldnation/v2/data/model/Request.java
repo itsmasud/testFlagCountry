@@ -5,13 +5,15 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -21,7 +23,7 @@ public class Request implements Parcelable {
     private static final String TAG = "Request";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "active")
     private Boolean _active;
@@ -68,18 +70,26 @@ public class Request implements Parcelable {
     public Request() {
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public Request actions(ActionsEnum actions) throws ParseException {
+    public Request actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -282,8 +292,8 @@ public class Request implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "delete")
-        DELETE("delete");
+        @Json(name = "remove")
+        REMOVE("remove");
 
         private String value;
 
@@ -358,5 +368,20 @@ public class Request implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(_actions));
+        }
+
+        return _actionsSet;
     }
 }
