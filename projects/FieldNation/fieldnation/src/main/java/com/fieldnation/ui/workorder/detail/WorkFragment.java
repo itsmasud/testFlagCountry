@@ -1652,8 +1652,6 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                 Request request = new Request();
                 request.counter(true);
 
-                request.user(new User().id((int) App.getProfileId()));
-
                 if (!misc.isEmptyOrNull(reason))
                     request.counterNotes(reason);
 

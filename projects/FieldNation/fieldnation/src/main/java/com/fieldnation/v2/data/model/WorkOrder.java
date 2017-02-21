@@ -751,10 +751,6 @@ public class WorkOrder implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "check_in")
-        CHECK_IN("check_in"),
-        @Json(name = "check_out")
-        CHECK_OUT("check_out"),
         @Json(name = "closing_notes")
         CLOSING_NOTES("closing_notes"),
         @Json(name = "confirm")
@@ -769,12 +765,8 @@ public class WorkOrder implements Parcelable {
         MESSAGING("messaging"),
         @Json(name = "report_a_problem")
         REPORT_A_PROBLEM("report_a_problem"),
-        @Json(name = "request")
-        REQUEST("request"),
         @Json(name = "view_problem")
-        VIEW_PROBLEM("view_problem"),
-        @Json(name = "withdraw_request")
-        WITHDRAW_REQUEST("withdraw_request");
+        VIEW_PROBLEM("view_problem");
 
         private String value;
 

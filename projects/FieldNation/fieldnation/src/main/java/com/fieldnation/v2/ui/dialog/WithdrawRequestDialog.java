@@ -11,7 +11,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.User;
 
 /**
  * Created by mc on 11/7/16.
@@ -36,7 +35,6 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
             try {
                 Request request = new Request();
                 request.id(requestId);
-                request.user(new User().id((int) App.getProfileId()));
                 WorkordersWebApi.removeRequest(App.get(), workOrderId, request);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
