@@ -21,7 +21,7 @@ public class SelectionRule implements Parcelable {
     private static final String TAG = "SelectionRule";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "id")
     private Integer _id;
@@ -47,18 +47,26 @@ public class SelectionRule implements Parcelable {
     public SelectionRule() {
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         return _actions;
     }
 
-    public SelectionRule actions(ActionsEnum actions) throws ParseException {
+    public SelectionRule actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -155,22 +163,6 @@ public class SelectionRule implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
-    public enum ActionsEnum {
-        @Json(name = "delete")
-        DELETE("delete");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     public enum StatusEnum {
         @Json(name = "match")
         MATCH("match"),
@@ -182,6 +174,22 @@ public class SelectionRule implements Parcelable {
         private String value;
 
         StatusEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete");
+
+        private String value;
+
+        ActionsEnum(String value) {
             this.value = value;
         }
 
