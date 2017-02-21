@@ -9,6 +9,8 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -92,29 +94,29 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
         setVisibility(View.VISIBLE);
 
-/*
-TODO        ExpectedPayment expectedPayment = _workOrder.getExpectedPayment();
+        Pay pay = _workOrder.getPay();
 
-        if (expectedPayment == null) {
+        if (pay == null) {
             this.setVisibility(GONE);
             return;
-        } else if (_workOrder.getPay() == null || _workOrder.getPay().hidePay()) {
+        } else if (_workOrder.getPay() == null /* TODO || _workOrder.getPay().hidePay()*/) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
 
-        WorkorderStatus status = _workOrder.getStatus().getWorkorderStatus();
-        if (status == WorkorderStatus.AVAILABLE) {
+        if (_workOrder.getStatus().getId() == 2) {
             this.setVisibility(GONE);
             return;
         }
 
-        _laborTextView.setText(misc.toCurrency(expectedPayment.getLaborEarned()));
-        _expensesTextView.setText(misc.toCurrency(expectedPayment.getExpensesApproved()));
+        //_laborTextView.setText(misc.toCurrency(expectedPayment.getLaborEarned()));
+        _laborTextView.setText(misc.toCurrency(pay.getLaborSum()));
+/*
+TODO        _expensesTextView.setText(misc.toCurrency(expectedPayment.getExpensesApproved()));
         _discountsTextView.setText(misc.toCurrency(expectedPayment.getDiscounts()));
-        _expectedTotalTextView.setText(misc.toCurrency(expectedPayment.getExpectedTotal()));
+        _expectedTotalTextView.setText(misc.toCurrency(pay.getTotal()));
         _feeTextView.setText(misc.toCurrency(expectedPayment.getExpectedServiceFee()));
         _totalTextView.setText(misc.toCurrency(expectedPayment.getExpectedAmount()));
         _payStatusTextView.setText(misc.capitalize(expectedPayment.getPaymentStatus()));
