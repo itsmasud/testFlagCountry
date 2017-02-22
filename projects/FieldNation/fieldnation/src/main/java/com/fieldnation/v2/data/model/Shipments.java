@@ -95,8 +95,8 @@ public class Shipments implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "add")
+        ADD("add");
 
         private String value;
 
@@ -177,7 +177,7 @@ public class Shipments implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    private Set<Shipments.ActionsEnum> _actionsSet = null;
+    private Set<ActionsEnum> _actionsSet = null;
 
     public Set<Shipments.ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {

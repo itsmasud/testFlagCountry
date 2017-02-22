@@ -70,6 +70,7 @@ import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
@@ -252,8 +253,8 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView.setOnOverScrollListener(_refreshView);
 
         _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
-// TODO        _shipments.setListener(_shipments_listener);
-// TODO        _renderers.add(_shipments);
+        _shipments.setListener(_shipments_listener);
+        _renderers.add(_shipments);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
 // TODO        _taskList.setTaskListViewListener(_taskListView_listener);
@@ -1272,8 +1273,8 @@ TODO    private final CustomFieldRowView.Listener _customFields_listener = new C
     };
 */
 
-/*
-TODO    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+
+    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
         @Override
         public void addShipment() {
@@ -1281,8 +1282,13 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
         }
 
         @Override
-        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
-            if ((long) shipment.getUserId() != (long) App.getProfileId()) {
+        public void onAssign(WorkOrder workOrder, Shipment shipment) {
+
+        }
+
+        @Override
+        public void onDelete(WorkOrder workOrder, final Shipment shipment) {
+            if ((long) shipment.getUser().getId() != (long) App.getProfileId()) {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
                 return;
             }
@@ -1293,7 +1299,7 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workOrder.getWorkOrderId(), shipment.getWorkorderShipmentId());
+                                    _workOrder.getWorkOrderId(), shipment.getId());
                         }
 
                         @Override
@@ -1306,15 +1312,15 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
                     });
             _yesNoDialog.show();
         }
-
-        @Override
-        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
-            // TODO STUB .onAssign()
-            Log.v(TAG, "STUB .onAssign()");
-            // TODO present a picker of the tasks that this can be assigned too
-        }
+//
+//        @Override
+//        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
+//            // TODO STUB .onAssign()
+//            Log.v(TAG, "STUB .onAssign()");
+//            // TODO present a picker of the tasks that this can be assigned too
+//        }
     };
-*/
+
 
     private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override

@@ -138,7 +138,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
                 // TODO
 //                view.setData(_workorder, shipments[i]);
                 view.hideForTaskShipmentDialog();
-                view.setListener(_summaryListener);
+//TODO                view.setListener(_summaryListener);
             }
 
         } catch (Exception ex) {
@@ -178,23 +178,23 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
-        @Override
-        public void onDelete(ShipmentTracking shipment) {
-            if (_listener != null) {
-                _listener.onDelete(_workorder, shipment);
-            }
-        }
-
-        @Override
-        public void onEdit(ShipmentTracking shipment) {
-            // TODO need to present an edit dialog
-            dismiss();
-            if (_listener != null) {
-                _listener.onAddShipment(shipment, _task);
-            }
-        }
-    };
+//TODO    private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
+//        @Override
+//        public void onDelete(ShipmentTracking shipment) {
+//            if (_listener != null) {
+//                _listener.onDelete(_workorder, shipment);
+//            }
+//        }
+//
+//        @Override
+//        public void onEdit(ShipmentTracking shipment) {
+//            // TODO need to present an edit dialog
+//            dismiss();
+//            if (_listener != null) {
+//                _listener.onAddShipment(shipment, _task);
+//            }
+//        }
+//    };
 
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override

@@ -112,11 +112,10 @@ public class ShipmentRowView extends RelativeLayout {
     private final View.OnLongClickListener _delete_onClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            // TODO action is not defined in swagger.yaml. See comment in PA-613
-//            if (_listener != null) {
-//                _listener.onDelete(_shipment);
-//                return true;
-//            }
+            if (_listener != null) {
+                _listener.onDelete(_shipment);
+                return true;
+            }
             return false;
         }
     };
@@ -133,7 +132,7 @@ public class ShipmentRowView extends RelativeLayout {
 
     // TODO: need to remove ShipmentTracking when action will be defined in swagger.yaml
     public interface Listener {
-        void onDelete(ShipmentTracking shipment);
+        void onDelete(Shipment shipment);
         void onEdit(ShipmentTracking shipment);
     }
 }

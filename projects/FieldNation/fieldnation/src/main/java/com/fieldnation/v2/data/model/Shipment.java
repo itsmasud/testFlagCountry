@@ -12,6 +12,9 @@ import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -19,6 +22,9 @@ import java.text.ParseException;
 
 public class Shipment implements Parcelable {
     private static final String TAG = "Shipment";
+
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "carrier")
     private ShipmentCarrier _carrier;
@@ -48,6 +54,29 @@ public class Shipment implements Parcelable {
     private JsonObject SOURCE = new JsonObject();
 
     public Shipment() {
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        return _actions;
+    }
+
+    public Shipment actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
     }
 
     public void setCarrier(ShipmentCarrier carrier) throws ParseException {
@@ -215,6 +244,24 @@ public class Shipment implements Parcelable {
         }
     }
 
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -276,5 +323,19 @@ public class Shipment implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    private Set<Shipment.ActionsEnum> _actionsSet = null;
+
+    public Set<Shipment.ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(_actions));
+        }
+        return _actionsSet;
     }
 }

@@ -11,14 +11,15 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Random;
 
-public class ShipmentListView extends LinearLayout {
+public class ShipmentListView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ShipmentListView";
 
     // UI
@@ -52,28 +53,28 @@ public class ShipmentListView extends LinearLayout {
         _addButton.setOnClickListener(_add_onClick);
     }
 
-    // TODO calling this method is not implemented
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void setWorkorder(WorkOrder workOrder) {
+
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         refresh();
     }
 
+
     private void refresh() {
         final Shipment[] shipments = _workOrder.getShipments().getResults();
-        Log.e(TAG, "shipment size: " + shipments.length);
 
-        // TODO
-//        if (_workOrder.canChangeShipments()) {
-//            _addButton.setVisibility(View.VISIBLE);
-//        } else {
-//            _addButton.setVisibility(View.GONE);
-//        }
+        if (_workOrder.getShipments() != null
+                && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+            _addButton.setVisibility(VISIBLE);
+        } else {
+            _addButton.setVisibility(GONE);
+        }
 
-        // TODO
         if ((shipments == null || shipments.length == 0)) {
             setVisibility(View.GONE);
             return;
@@ -119,24 +120,23 @@ public class ShipmentListView extends LinearLayout {
         @Override
         public void onClick(View v) {
 
-            // TODO swagger.yaml doesn't provide any action for shipment. described in comment @ PA-613
-//            if (_listener != null
-//                    && _workOrder.getShipments() != null
-//                    && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
-//                _listener.addShipment();
-//            }
+            if (_listener != null
+                    && _workOrder.getShipments() != null
+                    && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+                _listener.addShipment();
+            }
         }
 
 
     };
 
-    // TODO swagger.yaml doesn't provide any action for shipment. described in comment @ PA-613
     private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
-        public void onDelete(ShipmentTracking shipment) {
-//            if (_listener != null && _workOrder.canChangeShipments()) {
-//                _listener.onDelete(_workOrder, shipment);
-//            }
+        public void onDelete(Shipment shipment) {
+
+            if (_listener != null && shipment.getActionsSet().contains(Shipment.ActionsEnum.DELETE)) {
+                _listener.onDelete(_workOrder, shipment);
+            }
 
         }
 
