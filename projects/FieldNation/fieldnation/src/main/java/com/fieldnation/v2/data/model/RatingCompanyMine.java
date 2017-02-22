@@ -36,9 +36,14 @@ public class RatingCompanyMine implements Parcelable {
     private Integer _totalRatings;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public RatingCompanyMine() {
+        SOURCE = new JsonObject();
+    }
+
+    public RatingCompanyMine(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAverageDaysToApproval(Integer averageDaysToApproval) throws ParseException {
@@ -47,6 +52,17 @@ public class RatingCompanyMine implements Parcelable {
     }
 
     public Integer getAverageDaysToApproval() {
+        try {
+            if (_averageDaysToApproval != null)
+                return _averageDaysToApproval;
+
+            if (SOURCE.has("average_days_to_approval") && SOURCE.get("average_days_to_approval") != null)
+                _averageDaysToApproval = SOURCE.getInt("average_days_to_approval");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _averageDaysToApproval;
     }
 
@@ -62,6 +78,17 @@ public class RatingCompanyMine implements Parcelable {
     }
 
     public Integer getClearExpectations() {
+        try {
+            if (_clearExpectations != null)
+                return _clearExpectations;
+
+            if (SOURCE.has("clear_expectations") && SOURCE.get("clear_expectations") != null)
+                _clearExpectations = SOURCE.getInt("clear_expectations");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _clearExpectations;
     }
 
@@ -77,6 +104,17 @@ public class RatingCompanyMine implements Parcelable {
     }
 
     public Integer getRespectRating() {
+        try {
+            if (_respectRating != null)
+                return _respectRating;
+
+            if (SOURCE.has("respect_rating") && SOURCE.get("respect_rating") != null)
+                _respectRating = SOURCE.getInt("respect_rating");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _respectRating;
     }
 
@@ -92,6 +130,17 @@ public class RatingCompanyMine implements Parcelable {
     }
 
     public Double getStars() {
+        try {
+            if (_stars != null)
+                return _stars;
+
+            if (SOURCE.has("stars") && SOURCE.get("stars") != null)
+                _stars = SOURCE.getDouble("stars");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _stars;
     }
 
@@ -107,6 +156,17 @@ public class RatingCompanyMine implements Parcelable {
     }
 
     public Integer getTotalRatings() {
+        try {
+            if (_totalRatings != null)
+                return _totalRatings;
+
+            if (SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
+                _totalRatings = SOURCE.getInt("total_ratings");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _totalRatings;
     }
 
@@ -137,7 +197,7 @@ public class RatingCompanyMine implements Parcelable {
 
     public static RatingCompanyMine fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(RatingCompanyMine.class, obj);
+            return new RatingCompanyMine(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

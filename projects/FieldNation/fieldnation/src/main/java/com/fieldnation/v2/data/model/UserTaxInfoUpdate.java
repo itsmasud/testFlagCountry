@@ -84,9 +84,14 @@ public class UserTaxInfoUpdate implements Parcelable {
     private Integer _zip;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserTaxInfoUpdate() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserTaxInfoUpdate(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAddress1(String address1) throws ParseException {
@@ -95,6 +100,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getAddress1() {
+        try {
+            if (_address1 != null)
+                return _address1;
+
+            if (SOURCE.has("address1") && SOURCE.get("address1") != null)
+                _address1 = SOURCE.getString("address1");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address1;
     }
 
@@ -110,6 +126,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getAddress2() {
+        try {
+            if (_address2 != null)
+                return _address2;
+
+            if (SOURCE.has("address2") && SOURCE.get("address2") != null)
+                _address2 = SOURCE.getString("address2");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address2;
     }
 
@@ -125,6 +152,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getBusinessName() {
+        try {
+            if (_businessName != null)
+                return _businessName;
+
+            if (SOURCE.has("business_name") && SOURCE.get("business_name") != null)
+                _businessName = SOURCE.getString("business_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _businessName;
     }
 
@@ -140,6 +178,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getBuyerCompanyId() {
+        try {
+            if (_buyerCompanyId != null)
+                return _buyerCompanyId;
+
+            if (SOURCE.has("buyer_company_id") && SOURCE.get("buyer_company_id") != null)
+                _buyerCompanyId = SOURCE.getInt("buyer_company_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _buyerCompanyId;
     }
 
@@ -155,6 +204,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getCity() {
+        try {
+            if (_city != null)
+                return _city;
+
+            if (SOURCE.has("city") && SOURCE.get("city") != null)
+                _city = SOURCE.getString("city");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _city;
     }
 
@@ -170,6 +230,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getCompanyId() {
+        try {
+            if (_companyId != null)
+                return _companyId;
+
+            if (SOURCE.has("company_id") && SOURCE.get("company_id") != null)
+                _companyId = SOURCE.getInt("company_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _companyId;
     }
 
@@ -185,6 +256,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getElectronicConsent() {
+        try {
+            if (_electronicConsent != null)
+                return _electronicConsent;
+
+            if (SOURCE.has("electronic_consent") && SOURCE.get("electronic_consent") != null)
+                _electronicConsent = SOURCE.getInt("electronic_consent");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _electronicConsent;
     }
 
@@ -200,6 +282,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getEntityType() {
+        try {
+            if (_entityType != null)
+                return _entityType;
+
+            if (SOURCE.has("entity_type") && SOURCE.get("entity_type") != null)
+                _entityType = SOURCE.getString("entity_type");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _entityType;
     }
 
@@ -215,6 +308,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getFirstName() {
+        try {
+            if (_firstName != null)
+                return _firstName;
+
+            if (SOURCE.has("first_name") && SOURCE.get("first_name") != null)
+                _firstName = SOURCE.getString("first_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _firstName;
     }
 
@@ -230,6 +334,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getFromVendorBuyerInvite() {
+        try {
+            if (_fromVendorBuyerInvite != null)
+                return _fromVendorBuyerInvite;
+
+            if (SOURCE.has("from_vendor_buyer_invite") && SOURCE.get("from_vendor_buyer_invite") != null)
+                _fromVendorBuyerInvite = SOURCE.getInt("from_vendor_buyer_invite");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _fromVendorBuyerInvite;
     }
 
@@ -245,6 +360,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getHasEin() {
+        try {
+            if (_hasEin != null)
+                return _hasEin;
+
+            if (SOURCE.has("has_ein") && SOURCE.get("has_ein") != null)
+                _hasEin = SOURCE.getInt("has_ein");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hasEin;
     }
 
@@ -260,6 +386,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getHasSeparateTax() {
+        try {
+            if (_hasSeparateTax != null)
+                return _hasSeparateTax;
+
+            if (SOURCE.has("has_separate_tax") && SOURCE.get("has_separate_tax") != null)
+                _hasSeparateTax = SOURCE.getInt("has_separate_tax");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hasSeparateTax;
     }
 
@@ -275,6 +412,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getLastName() {
+        try {
+            if (_lastName != null)
+                return _lastName;
+
+            if (SOURCE.has("last_name") && SOURCE.get("last_name") != null)
+                _lastName = SOURCE.getString("last_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _lastName;
     }
 
@@ -290,6 +438,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -305,6 +464,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getOther() {
+        try {
+            if (_other != null)
+                return _other;
+
+            if (SOURCE.has("other") && SOURCE.get("other") != null)
+                _other = SOURCE.getString("other");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _other;
     }
 
@@ -320,6 +490,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getPhone() {
+        try {
+            if (_phone != null)
+                return _phone;
+
+            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+                _phone = SOURCE.getString("phone");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _phone;
     }
 
@@ -335,6 +516,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getState() {
+        try {
+            if (_state != null)
+                return _state;
+
+            if (SOURCE.has("state") && SOURCE.get("state") != null)
+                _state = SOURCE.getString("state");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _state;
     }
 
@@ -350,6 +542,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getTechnicianW9StatusId() {
+        try {
+            if (_technicianW9StatusId != null)
+                return _technicianW9StatusId;
+
+            if (SOURCE.has("technician_w9_status_id") && SOURCE.get("technician_w9_status_id") != null)
+                _technicianW9StatusId = SOURCE.getInt("technician_w9_status_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _technicianW9StatusId;
     }
 
@@ -365,6 +568,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public String getTin() {
+        try {
+            if (_tin != null)
+                return _tin;
+
+            if (SOURCE.has("tin") && SOURCE.get("tin") != null)
+                _tin = SOURCE.getString("tin");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _tin;
     }
 
@@ -380,6 +594,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getVendorCompanyId() {
+        try {
+            if (_vendorCompanyId != null)
+                return _vendorCompanyId;
+
+            if (SOURCE.has("vendor_company_id") && SOURCE.get("vendor_company_id") != null)
+                _vendorCompanyId = SOURCE.getInt("vendor_company_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _vendorCompanyId;
     }
 
@@ -395,6 +620,17 @@ public class UserTaxInfoUpdate implements Parcelable {
     }
 
     public Integer getZip() {
+        try {
+            if (_zip != null)
+                return _zip;
+
+            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+                _zip = SOURCE.getInt("zip");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _zip;
     }
 
@@ -425,7 +661,7 @@ public class UserTaxInfoUpdate implements Parcelable {
 
     public static UserTaxInfoUpdate fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserTaxInfoUpdate.class, obj);
+            return new UserTaxInfoUpdate(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

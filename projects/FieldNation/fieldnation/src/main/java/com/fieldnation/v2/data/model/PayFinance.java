@@ -33,9 +33,14 @@ public class PayFinance implements Parcelable {
     private String _terms;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayFinance() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayFinance(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setDescription(String description) throws ParseException {
@@ -44,6 +49,17 @@ public class PayFinance implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -59,6 +75,17 @@ public class PayFinance implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -74,6 +101,17 @@ public class PayFinance implements Parcelable {
     }
 
     public Double getLimit() {
+        try {
+            if (_limit != null)
+                return _limit;
+
+            if (SOURCE.has("limit") && SOURCE.get("limit") != null)
+                _limit = SOURCE.getDouble("limit");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _limit;
     }
 
@@ -89,6 +127,17 @@ public class PayFinance implements Parcelable {
     }
 
     public String getTerms() {
+        try {
+            if (_terms != null)
+                return _terms;
+
+            if (SOURCE.has("terms") && SOURCE.get("terms") != null)
+                _terms = SOURCE.getString("terms");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _terms;
     }
 
@@ -119,7 +168,7 @@ public class PayFinance implements Parcelable {
 
     public static PayFinance fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayFinance.class, obj);
+            return new PayFinance(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

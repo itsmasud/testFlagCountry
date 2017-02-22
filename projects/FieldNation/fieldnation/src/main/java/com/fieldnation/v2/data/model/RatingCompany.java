@@ -33,9 +33,14 @@ public class RatingCompany implements Parcelable {
     private Integer _workCompleted;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public RatingCompany() {
+        SOURCE = new JsonObject();
+    }
+
+    public RatingCompany(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setBlocked(Boolean blocked) throws ParseException {
@@ -44,6 +49,17 @@ public class RatingCompany implements Parcelable {
     }
 
     public Boolean getBlocked() {
+        try {
+            if (_blocked != null)
+                return _blocked;
+
+            if (SOURCE.has("blocked") && SOURCE.get("blocked") != null)
+                _blocked = SOURCE.getBoolean("blocked");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _blocked;
     }
 
@@ -59,6 +75,17 @@ public class RatingCompany implements Parcelable {
     }
 
     public RatingCompanyMarketplace getMarketplace() {
+        try {
+            if (_marketplace != null)
+                return _marketplace;
+
+            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = RatingCompanyMarketplace.fromJson(SOURCE.getJsonObject("marketplace"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _marketplace;
     }
 
@@ -74,6 +101,17 @@ public class RatingCompany implements Parcelable {
     }
 
     public RatingCompanyMine getMine() {
+        try {
+            if (_mine != null)
+                return _mine;
+
+            if (SOURCE.has("mine") && SOURCE.get("mine") != null)
+                _mine = RatingCompanyMine.fromJson(SOURCE.getJsonObject("mine"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mine;
     }
 
@@ -89,6 +127,17 @@ public class RatingCompany implements Parcelable {
     }
 
     public Integer getWorkCompleted() {
+        try {
+            if (_workCompleted != null)
+                return _workCompleted;
+
+            if (SOURCE.has("work_completed") && SOURCE.get("work_completed") != null)
+                _workCompleted = SOURCE.getInt("work_completed");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workCompleted;
     }
 
@@ -119,7 +168,7 @@ public class RatingCompany implements Parcelable {
 
     public static RatingCompany fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(RatingCompany.class, obj);
+            return new RatingCompany(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

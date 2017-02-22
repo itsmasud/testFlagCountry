@@ -68,7 +68,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/integrations",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getIntegrations"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -81,10 +81,6 @@ public class CompanyWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetIntegrations(String companyId) {
-        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/integrations");
     }
 
     /**
@@ -109,7 +105,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/ratings",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getRatings"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -124,13 +120,9 @@ public class CompanyWebApi extends TopicClient {
         }
     }
 
-    public boolean subGetRatings(Integer companyId) {
-        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/ratings");
-    }
-
     /**
      * Swagger operationId: updateFundByFund
-     * Perform credit card deposit
+     * Perform fund deposit
      *
      * @param companyId ID of company
      * @param financeId ID of finance account
@@ -150,7 +142,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/funds/" + financeId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "updateFund"))
                     .useAuth(true)
                     .request(builder)
@@ -162,13 +154,9 @@ public class CompanyWebApi extends TopicClient {
         }
     }
 
-    public boolean subUpdateFund(Integer companyId, Integer financeId) {
-        return register("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/funds/" + financeId);
-    }
-
     /**
      * Swagger operationId: updateFundByFund
-     * Perform credit card deposit
+     * Perform fund deposit
      *
      * @param companyId ID of company
      * @param financeId ID of finance account
@@ -192,7 +180,7 @@ public class CompanyWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi/" + companyId + "/funds/" + financeId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "updateFund"))
                     .useAuth(true)
                     .request(builder)

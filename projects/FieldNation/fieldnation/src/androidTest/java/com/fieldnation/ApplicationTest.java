@@ -45,7 +45,7 @@ public class ApplicationTest extends ApplicationTestCase<App> {
     private WorkordersWebApi.Listener _workordersWebApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            _client.subGetWorkOrderLists();
+            _client.subWorkordersWebApi();
         }
 
         @Override

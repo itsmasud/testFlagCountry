@@ -54,9 +54,14 @@ public class Expense implements Parcelable {
     private String _statusDescription;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Expense() {
+        SOURCE = new JsonObject();
+    }
+
+    public Expense(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAdded(Date added) throws ParseException {
@@ -65,6 +70,17 @@ public class Expense implements Parcelable {
     }
 
     public Date getAdded() {
+        try {
+            if (_added != null)
+                return _added;
+
+            if (SOURCE.has("added") && SOURCE.get("added") != null)
+                _added = Date.fromJson(SOURCE.getJsonObject("added"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _added;
     }
 
@@ -80,6 +96,17 @@ public class Expense implements Parcelable {
     }
 
     public Double getAmount() {
+        try {
+            if (_amount != null)
+                return _amount;
+
+            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+                _amount = SOURCE.getDouble("amount");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _amount;
     }
 
@@ -95,6 +122,17 @@ public class Expense implements Parcelable {
     }
 
     public User getAuthor() {
+        try {
+            if (_author != null)
+                return _author;
+
+            if (SOURCE.has("author") && SOURCE.get("author") != null)
+                _author = User.fromJson(SOURCE.getJsonObject("author"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _author;
     }
 
@@ -110,6 +148,17 @@ public class Expense implements Parcelable {
     }
 
     public ExpenseCategory getCategory() {
+        try {
+            if (_category != null)
+                return _category;
+
+            if (SOURCE.has("category") && SOURCE.get("category") != null)
+                _category = ExpenseCategory.fromJson(SOURCE.getJsonObject("category"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _category;
     }
 
@@ -125,6 +174,17 @@ public class Expense implements Parcelable {
     }
 
     public ExpenseCompanyExpense getCompanyExpense() {
+        try {
+            if (_companyExpense != null)
+                return _companyExpense;
+
+            if (SOURCE.has("company_expense") && SOURCE.get("company_expense") != null)
+                _companyExpense = ExpenseCompanyExpense.fromJson(SOURCE.getJsonObject("company_expense"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _companyExpense;
     }
 
@@ -140,6 +200,17 @@ public class Expense implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -155,6 +226,17 @@ public class Expense implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -170,6 +252,17 @@ public class Expense implements Parcelable {
     }
 
     public Integer getQuantity() {
+        try {
+            if (_quantity != null)
+                return _quantity;
+
+            if (SOURCE.has("quantity") && SOURCE.get("quantity") != null)
+                _quantity = SOURCE.getInt("quantity");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _quantity;
     }
 
@@ -185,6 +278,17 @@ public class Expense implements Parcelable {
     }
 
     public String getReason() {
+        try {
+            if (_reason != null)
+                return _reason;
+
+            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+                _reason = SOURCE.getString("reason");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _reason;
     }
 
@@ -200,6 +304,17 @@ public class Expense implements Parcelable {
     }
 
     public StatusEnum getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -215,6 +330,17 @@ public class Expense implements Parcelable {
     }
 
     public String getStatusDescription() {
+        try {
+            if (_statusDescription != null)
+                return _statusDescription;
+
+            if (SOURCE.has("status_description") && SOURCE.get("status_description") != null)
+                _statusDescription = SOURCE.getString("status_description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusDescription;
     }
 
@@ -239,6 +365,23 @@ public class Expense implements Parcelable {
 
         StatusEnum(String value) {
             this.value = value;
+        }
+
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -268,7 +411,7 @@ public class Expense implements Parcelable {
 
     public static Expense fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Expense.class, obj);
+            return new Expense(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

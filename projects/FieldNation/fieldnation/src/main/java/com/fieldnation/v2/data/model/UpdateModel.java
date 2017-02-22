@@ -36,9 +36,14 @@ public class UpdateModel implements Parcelable {
     private String _version;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UpdateModel() {
+        SOURCE = new JsonObject();
+    }
+
+    public UpdateModel(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(UpdateModelMetadata metadata) throws ParseException {
@@ -47,6 +52,17 @@ public class UpdateModel implements Parcelable {
     }
 
     public UpdateModelMetadata getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = UpdateModelMetadata.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -62,6 +78,17 @@ public class UpdateModel implements Parcelable {
     }
 
     public UpdateModelParams getParams() {
+        try {
+            if (_params != null)
+                return _params;
+
+            if (SOURCE.has("params") && SOURCE.get("params") != null)
+                _params = UpdateModelParams.fromJson(SOURCE.getJsonObject("params"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _params;
     }
 
@@ -77,6 +104,17 @@ public class UpdateModel implements Parcelable {
     }
 
     public String getServiceName() {
+        try {
+            if (_serviceName != null)
+                return _serviceName;
+
+            if (SOURCE.has("service_name") && SOURCE.get("service_name") != null)
+                _serviceName = SOURCE.getString("service_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _serviceName;
     }
 
@@ -92,6 +130,17 @@ public class UpdateModel implements Parcelable {
     }
 
     public String getTimestamp() {
+        try {
+            if (_timestamp != null)
+                return _timestamp;
+
+            if (SOURCE.has("timestamp") && SOURCE.get("timestamp") != null)
+                _timestamp = SOURCE.getString("timestamp");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timestamp;
     }
 
@@ -107,6 +156,17 @@ public class UpdateModel implements Parcelable {
     }
 
     public String getVersion() {
+        try {
+            if (_version != null)
+                return _version;
+
+            if (SOURCE.has("version") && SOURCE.get("version") != null)
+                _version = SOURCE.getString("version");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _version;
     }
 
@@ -137,7 +197,7 @@ public class UpdateModel implements Parcelable {
 
     public static UpdateModel fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateModel.class, obj);
+            return new UpdateModel(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

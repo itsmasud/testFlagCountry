@@ -66,7 +66,7 @@ public class StaffWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi/" + category,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
                                     StaffWebApi.class, "getEmailTemplates"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -79,10 +79,6 @@ public class StaffWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetEmailTemplates(String category) {
-        return register("TOPIC_ID_WEB_API_V2/StaffWebApi/" + category);
     }
 
     /**
@@ -106,7 +102,7 @@ public class StaffWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/staff/robocalls",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
                                     StaffWebApi.class, "getRobocalls"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -119,10 +115,6 @@ public class StaffWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetRobocalls() {
-        return register("TOPIC_ID_WEB_API_V2/staff/robocalls");
     }
 
     /**
@@ -150,7 +142,7 @@ public class StaffWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
                                     StaffWebApi.class, "sendCommunication"))
                     .useAuth(true)
                     .request(builder)
@@ -160,10 +152,6 @@ public class StaffWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSendCommunication(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/StaffWebApi/" + workOrderId);
     }
 
 

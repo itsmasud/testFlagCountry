@@ -33,9 +33,14 @@ public class AttachmentFolder implements Parcelable {
     private TypeEnum _type;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public AttachmentFolder() {
+        SOURCE = new JsonObject();
+    }
+
+    public AttachmentFolder(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -44,6 +49,17 @@ public class AttachmentFolder implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -59,6 +75,17 @@ public class AttachmentFolder implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -74,6 +101,17 @@ public class AttachmentFolder implements Parcelable {
     }
 
     public Task getTask() {
+        try {
+            if (_task != null)
+                return _task;
+
+            if (SOURCE.has("task") && SOURCE.get("task") != null)
+                _task = Task.fromJson(SOURCE.getJsonObject("task"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _task;
     }
 
@@ -89,6 +127,17 @@ public class AttachmentFolder implements Parcelable {
     }
 
     public TypeEnum getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = TypeEnum.fromString(SOURCE.getString("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -111,6 +160,23 @@ public class AttachmentFolder implements Parcelable {
 
         TypeEnum(String value) {
             this.value = value;
+        }
+
+        public static TypeEnum fromString(String value) {
+            TypeEnum[] values = values();
+            for (TypeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static TypeEnum[] fromJsonArray(JsonArray jsonArray) {
+            TypeEnum[] list = new TypeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -140,7 +206,7 @@ public class AttachmentFolder implements Parcelable {
 
     public static AttachmentFolder fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(AttachmentFolder.class, obj);
+            return new AttachmentFolder(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -42,9 +42,14 @@ public class Country implements Parcelable {
     private CountryZip _zip;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Country() {
+        SOURCE = new JsonObject();
+    }
+
+    public Country(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAddress1(CountryAddress1 address1) throws ParseException {
@@ -53,6 +58,17 @@ public class Country implements Parcelable {
     }
 
     public CountryAddress1 getAddress1() {
+        try {
+            if (_address1 != null)
+                return _address1;
+
+            if (SOURCE.has("address1") && SOURCE.get("address1") != null)
+                _address1 = CountryAddress1.fromJson(SOURCE.getJsonObject("address1"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address1;
     }
 
@@ -68,6 +84,17 @@ public class Country implements Parcelable {
     }
 
     public CountryAddress2 getAddress2() {
+        try {
+            if (_address2 != null)
+                return _address2;
+
+            if (SOURCE.has("address2") && SOURCE.get("address2") != null)
+                _address2 = CountryAddress2.fromJson(SOURCE.getJsonObject("address2"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address2;
     }
 
@@ -83,6 +110,17 @@ public class Country implements Parcelable {
     }
 
     public CountryCity getCity() {
+        try {
+            if (_city != null)
+                return _city;
+
+            if (SOURCE.has("city") && SOURCE.get("city") != null)
+                _city = CountryCity.fromJson(SOURCE.getJsonObject("city"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _city;
     }
 
@@ -98,6 +136,17 @@ public class Country implements Parcelable {
     }
 
     public String getIso() {
+        try {
+            if (_iso != null)
+                return _iso;
+
+            if (SOURCE.has("iso") && SOURCE.get("iso") != null)
+                _iso = SOURCE.getString("iso");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _iso;
     }
 
@@ -113,6 +162,17 @@ public class Country implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -128,6 +188,17 @@ public class Country implements Parcelable {
     }
 
     public CountryState getState() {
+        try {
+            if (_state != null)
+                return _state;
+
+            if (SOURCE.has("state") && SOURCE.get("state") != null)
+                _state = CountryState.fromJson(SOURCE.getJsonObject("state"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _state;
     }
 
@@ -143,6 +214,17 @@ public class Country implements Parcelable {
     }
 
     public CountryZip getZip() {
+        try {
+            if (_zip != null)
+                return _zip;
+
+            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+                _zip = CountryZip.fromJson(SOURCE.getJsonObject("zip"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _zip;
     }
 
@@ -173,7 +255,7 @@ public class Country implements Parcelable {
 
     public static Country fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Country.class, obj);
+            return new Country(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

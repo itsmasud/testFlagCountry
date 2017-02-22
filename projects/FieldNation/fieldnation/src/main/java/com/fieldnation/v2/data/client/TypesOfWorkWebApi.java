@@ -65,7 +65,7 @@ public class TypesOfWorkWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/types-of-work",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/TypesOfWorkWebApi",
                                     TypesOfWorkWebApi.class, "getTypesOfWork"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -78,10 +78,6 @@ public class TypesOfWorkWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetTypesOfWork() {
-        return register("TOPIC_ID_WEB_API_V2/types-of-work");
     }
 
 

@@ -71,7 +71,7 @@ public class SystemWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/system/update-model",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/SystemWebApi",
                                     SystemWebApi.class, "systemUpdateModel"))
                     .useAuth(true)
                     .request(builder)
@@ -81,10 +81,6 @@ public class SystemWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSystemUpdateModel() {
-        return register("TOPIC_ID_WEB_API_V2/system/update-model");
     }
 
     /**
@@ -115,7 +111,7 @@ public class SystemWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/system/update-model",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/SystemWebApi",
                                     SystemWebApi.class, "systemUpdateModel"))
                     .useAuth(true)
                     .request(builder)

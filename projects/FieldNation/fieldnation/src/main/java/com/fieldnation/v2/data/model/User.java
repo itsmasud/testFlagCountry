@@ -117,9 +117,14 @@ public class User implements Parcelable {
     private String _zip;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public User() {
+        SOURCE = new JsonObject();
+    }
+
+    public User(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAddress(String address) throws ParseException {
@@ -128,6 +133,17 @@ public class User implements Parcelable {
     }
 
     public String getAddress() {
+        try {
+            if (_address != null)
+                return _address;
+
+            if (SOURCE.has("address") && SOURCE.get("address") != null)
+                _address = SOURCE.getString("address");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address;
     }
 
@@ -143,6 +159,18 @@ public class User implements Parcelable {
     }
 
     public BackgroundCheck[] getBackgroundChecks() {
+        try {
+            if (_backgroundChecks != null)
+                return _backgroundChecks;
+
+            if (SOURCE.has("background_checks") && SOURCE.get("background_checks") != null) {
+                _backgroundChecks = BackgroundCheck.fromJsonArray(SOURCE.getJsonArray("background_checks"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _backgroundChecks;
     }
 
@@ -158,6 +186,18 @@ public class User implements Parcelable {
     }
 
     public UserBlocked[] getBlocked() {
+        try {
+            if (_blocked != null)
+                return _blocked;
+
+            if (SOURCE.has("blocked") && SOURCE.get("blocked") != null) {
+                _blocked = UserBlocked.fromJsonArray(SOURCE.getJsonArray("blocked"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _blocked;
     }
 
@@ -173,6 +213,17 @@ public class User implements Parcelable {
     }
 
     public String getCity() {
+        try {
+            if (_city != null)
+                return _city;
+
+            if (SOURCE.has("city") && SOURCE.get("city") != null)
+                _city = SOURCE.getString("city");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _city;
     }
 
@@ -188,6 +239,17 @@ public class User implements Parcelable {
     }
 
     public Company getClient() {
+        try {
+            if (_client != null)
+                return _client;
+
+            if (SOURCE.has("client") && SOURCE.get("client") != null)
+                _client = Company.fromJson(SOURCE.getJsonObject("client"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _client;
     }
 
@@ -203,6 +265,17 @@ public class User implements Parcelable {
     }
 
     public UserCompany getCompany() {
+        try {
+            if (_company != null)
+                return _company;
+
+            if (SOURCE.has("company") && SOURCE.get("company") != null)
+                _company = UserCompany.fromJson(SOURCE.getJsonObject("company"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _company;
     }
 
@@ -218,6 +291,17 @@ public class User implements Parcelable {
     }
 
     public Coords getCoords() {
+        try {
+            if (_coords != null)
+                return _coords;
+
+            if (SOURCE.has("coords") && SOURCE.get("coords") != null)
+                _coords = Coords.fromJson(SOURCE.getJsonObject("coords"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _coords;
     }
 
@@ -233,6 +317,17 @@ public class User implements Parcelable {
     }
 
     public String getCountry() {
+        try {
+            if (_country != null)
+                return _country;
+
+            if (SOURCE.has("country") && SOURCE.get("country") != null)
+                _country = SOURCE.getString("country");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _country;
     }
 
@@ -248,6 +343,18 @@ public class User implements Parcelable {
     }
 
     public DrugTest[] getDrugTests() {
+        try {
+            if (_drugTests != null)
+                return _drugTests;
+
+            if (SOURCE.has("drug_tests") && SOURCE.get("drug_tests") != null) {
+                _drugTests = DrugTest.fromJsonArray(SOURCE.getJsonArray("drug_tests"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _drugTests;
     }
 
@@ -263,6 +370,17 @@ public class User implements Parcelable {
     }
 
     public String getEmail() {
+        try {
+            if (_email != null)
+                return _email;
+
+            if (SOURCE.has("email") && SOURCE.get("email") != null)
+                _email = SOURCE.getString("email");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _email;
     }
 
@@ -278,6 +396,17 @@ public class User implements Parcelable {
     }
 
     public String getFirstName() {
+        try {
+            if (_firstName != null)
+                return _firstName;
+
+            if (SOURCE.has("first_name") && SOURCE.get("first_name") != null)
+                _firstName = SOURCE.getString("first_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _firstName;
     }
 
@@ -293,6 +422,17 @@ public class User implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -308,6 +448,17 @@ public class User implements Parcelable {
     }
 
     public UserJobs getJobs() {
+        try {
+            if (_jobs != null)
+                return _jobs;
+
+            if (SOURCE.has("jobs") && SOURCE.get("jobs") != null)
+                _jobs = UserJobs.fromJson(SOURCE.getJsonObject("jobs"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _jobs;
     }
 
@@ -323,6 +474,17 @@ public class User implements Parcelable {
     }
 
     public Date getLastActive() {
+        try {
+            if (_lastActive != null)
+                return _lastActive;
+
+            if (SOURCE.has("last_active") && SOURCE.get("last_active") != null)
+                _lastActive = Date.fromJson(SOURCE.getJsonObject("last_active"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _lastActive;
     }
 
@@ -338,6 +500,17 @@ public class User implements Parcelable {
     }
 
     public String getLastName() {
+        try {
+            if (_lastName != null)
+                return _lastName;
+
+            if (SOURCE.has("last_name") && SOURCE.get("last_name") != null)
+                _lastName = SOURCE.getString("last_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _lastName;
     }
 
@@ -353,6 +526,17 @@ public class User implements Parcelable {
     }
 
     public Boolean getManaged() {
+        try {
+            if (_managed != null)
+                return _managed;
+
+            if (SOURCE.has("managed") && SOURCE.get("managed") != null)
+                _managed = SOURCE.getBoolean("managed");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _managed;
     }
 
@@ -368,6 +552,17 @@ public class User implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -383,6 +578,17 @@ public class User implements Parcelable {
     }
 
     public String getPhone() {
+        try {
+            if (_phone != null)
+                return _phone;
+
+            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+                _phone = SOURCE.getString("phone");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _phone;
     }
 
@@ -398,6 +604,18 @@ public class User implements Parcelable {
     }
 
     public UserPreferredGroups[] getPreferredGroups() {
+        try {
+            if (_preferredGroups != null)
+                return _preferredGroups;
+
+            if (SOURCE.has("preferred_groups") && SOURCE.get("preferred_groups") != null) {
+                _preferredGroups = UserPreferredGroups.fromJsonArray(SOURCE.getJsonArray("preferred_groups"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _preferredGroups;
     }
 
@@ -413,6 +631,17 @@ public class User implements Parcelable {
     }
 
     public Boolean getProtec() {
+        try {
+            if (_protec != null)
+                return _protec;
+
+            if (SOURCE.has("protec") && SOURCE.get("protec") != null)
+                _protec = SOURCE.getBoolean("protec");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _protec;
     }
 
@@ -428,6 +657,17 @@ public class User implements Parcelable {
     }
 
     public UserRating getRating() {
+        try {
+            if (_rating != null)
+                return _rating;
+
+            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+                _rating = UserRating.fromJson(SOURCE.getJsonObject("rating"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _rating;
     }
 
@@ -443,6 +683,17 @@ public class User implements Parcelable {
     }
 
     public Request getRequest() {
+        try {
+            if (_request != null)
+                return _request;
+
+            if (SOURCE.has("request") && SOURCE.get("request") != null)
+                _request = Request.fromJson(SOURCE.getJsonObject("request"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _request;
     }
 
@@ -458,6 +709,17 @@ public class User implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -473,6 +735,17 @@ public class User implements Parcelable {
     }
 
     public Route getRoute() {
+        try {
+            if (_route != null)
+                return _route;
+
+            if (SOURCE.has("route") && SOURCE.get("route") != null)
+                _route = Route.fromJson(SOURCE.getJsonObject("route"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _route;
     }
 
@@ -488,6 +761,17 @@ public class User implements Parcelable {
     }
 
     public String getState() {
+        try {
+            if (_state != null)
+                return _state;
+
+            if (SOURCE.has("state") && SOURCE.get("state") != null)
+                _state = SOURCE.getString("state");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _state;
     }
 
@@ -503,6 +787,17 @@ public class User implements Parcelable {
     }
 
     public String getThumbnail() {
+        try {
+            if (_thumbnail != null)
+                return _thumbnail;
+
+            if (SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
+                _thumbnail = SOURCE.getString("thumbnail");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _thumbnail;
     }
 
@@ -518,6 +813,17 @@ public class User implements Parcelable {
     }
 
     public TimeZone getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -533,6 +839,18 @@ public class User implements Parcelable {
     }
 
     public UserUpcomingSchedule[] getUpcomingSchedule() {
+        try {
+            if (_upcomingSchedule != null)
+                return _upcomingSchedule;
+
+            if (SOURCE.has("upcoming_schedule") && SOURCE.get("upcoming_schedule") != null) {
+                _upcomingSchedule = UserUpcomingSchedule.fromJsonArray(SOURCE.getJsonArray("upcoming_schedule"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _upcomingSchedule;
     }
 
@@ -548,6 +866,17 @@ public class User implements Parcelable {
     }
 
     public String getWebsite() {
+        try {
+            if (_website != null)
+                return _website;
+
+            if (SOURCE.has("website") && SOURCE.get("website") != null)
+                _website = SOURCE.getString("website");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _website;
     }
 
@@ -563,6 +892,17 @@ public class User implements Parcelable {
     }
 
     public Boolean getWorkedWith() {
+        try {
+            if (_workedWith != null)
+                return _workedWith;
+
+            if (SOURCE.has("worked_with") && SOURCE.get("worked_with") != null)
+                _workedWith = SOURCE.getBoolean("worked_with");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workedWith;
     }
 
@@ -578,6 +918,17 @@ public class User implements Parcelable {
     }
 
     public Boolean getWorkerCompensation() {
+        try {
+            if (_workerCompensation != null)
+                return _workerCompensation;
+
+            if (SOURCE.has("worker_compensation") && SOURCE.get("worker_compensation") != null)
+                _workerCompensation = SOURCE.getBoolean("worker_compensation");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workerCompensation;
     }
 
@@ -593,6 +944,17 @@ public class User implements Parcelable {
     }
 
     public String getZip() {
+        try {
+            if (_zip != null)
+                return _zip;
+
+            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+                _zip = SOURCE.getString("zip");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _zip;
     }
 
@@ -623,7 +985,7 @@ public class User implements Parcelable {
 
     public static User fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(User.class, obj);
+            return new User(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

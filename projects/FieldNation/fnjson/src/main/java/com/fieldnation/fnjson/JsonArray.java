@@ -363,6 +363,21 @@ public class JsonArray implements Parcelable {
         return this;
     }
 
+    public Object[] toArray() {
+        Object[] array = new Object[_objs.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = _objs.get(i + "");
+        }
+        return array;
+    }
+
+    public <T> T[] toArray(T[] var1) {
+        for (int i = 0; i < var1.length; i++) {
+            var1[i] = (T) _objs.get(i + "");
+        }
+        return var1;
+    }
+
     public String display() {
         return display(0).toString();
     }

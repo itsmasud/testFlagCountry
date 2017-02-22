@@ -181,7 +181,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            _workOrderClient.subGetWorkOrderLists();
+            _workOrderClient.subWorkordersWebApi();
             WorkordersWebApi.getWorkOrderLists(App.get(), false);
         }
 

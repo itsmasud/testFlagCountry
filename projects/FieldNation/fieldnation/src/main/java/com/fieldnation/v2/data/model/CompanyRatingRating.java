@@ -30,9 +30,14 @@ public class CompanyRatingRating implements Parcelable {
     private Boolean _toggleVisible;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CompanyRatingRating() {
+        SOURCE = new JsonObject();
+    }
+
+    public CompanyRatingRating(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMarketplace(Satisfaction marketplace) throws ParseException {
@@ -41,6 +46,17 @@ public class CompanyRatingRating implements Parcelable {
     }
 
     public Satisfaction getMarketplace() {
+        try {
+            if (_marketplace != null)
+                return _marketplace;
+
+            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = Satisfaction.fromJson(SOURCE.getJsonObject("marketplace"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _marketplace;
     }
 
@@ -56,6 +72,17 @@ public class CompanyRatingRating implements Parcelable {
     }
 
     public Satisfaction getMine() {
+        try {
+            if (_mine != null)
+                return _mine;
+
+            if (SOURCE.has("mine") && SOURCE.get("mine") != null)
+                _mine = Satisfaction.fromJson(SOURCE.getJsonObject("mine"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mine;
     }
 
@@ -71,6 +98,17 @@ public class CompanyRatingRating implements Parcelable {
     }
 
     public Boolean getToggleVisible() {
+        try {
+            if (_toggleVisible != null)
+                return _toggleVisible;
+
+            if (SOURCE.has("toggle_visible") && SOURCE.get("toggle_visible") != null)
+                _toggleVisible = SOURCE.getBoolean("toggle_visible");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _toggleVisible;
     }
 
@@ -101,7 +139,7 @@ public class CompanyRatingRating implements Parcelable {
 
     public static CompanyRatingRating fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CompanyRatingRating.class, obj);
+            return new CompanyRatingRating(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

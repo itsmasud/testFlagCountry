@@ -39,9 +39,14 @@ public class Assignee implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Assignee() {
+        SOURCE = new JsonObject();
+    }
+
+    public Assignee(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -54,6 +59,18 @@ public class Assignee implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -73,6 +90,17 @@ public class Assignee implements Parcelable {
     }
 
     public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _correlationId;
     }
 
@@ -88,6 +116,17 @@ public class Assignee implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -103,6 +142,17 @@ public class Assignee implements Parcelable {
     }
 
     public Integer getStatusId() {
+        try {
+            if (_statusId != null)
+                return _statusId;
+
+            if (SOURCE.has("status_id") && SOURCE.get("status_id") != null)
+                _statusId = SOURCE.getInt("status_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusId;
     }
 
@@ -118,6 +168,17 @@ public class Assignee implements Parcelable {
     }
 
     public User getUser() {
+        try {
+            if (_user != null)
+                return _user;
+
+            if (SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _user;
     }
 
@@ -133,6 +194,17 @@ public class Assignee implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -153,6 +225,23 @@ public class Assignee implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -182,7 +271,7 @@ public class Assignee implements Parcelable {
 
     public static Assignee fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Assignee.class, obj);
+            return new Assignee(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

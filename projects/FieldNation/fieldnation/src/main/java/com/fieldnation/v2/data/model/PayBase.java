@@ -27,9 +27,14 @@ public class PayBase implements Parcelable {
     private Double _units;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayBase() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayBase(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAmount(Double amount) throws ParseException {
@@ -38,6 +43,17 @@ public class PayBase implements Parcelable {
     }
 
     public Double getAmount() {
+        try {
+            if (_amount != null)
+                return _amount;
+
+            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+                _amount = SOURCE.getDouble("amount");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _amount;
     }
 
@@ -53,6 +69,17 @@ public class PayBase implements Parcelable {
     }
 
     public Double getUnits() {
+        try {
+            if (_units != null)
+                return _units;
+
+            if (SOURCE.has("units") && SOURCE.get("units") != null)
+                _units = SOURCE.getDouble("units");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _units;
     }
 
@@ -83,7 +110,7 @@ public class PayBase implements Parcelable {
 
     public static PayBase fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayBase.class, obj);
+            return new PayBase(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

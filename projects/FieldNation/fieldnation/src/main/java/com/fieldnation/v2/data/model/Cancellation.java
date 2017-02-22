@@ -27,9 +27,14 @@ public class Cancellation implements Parcelable {
     private String _notes;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Cancellation() {
+        SOURCE = new JsonObject();
+    }
+
+    public Cancellation(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCancelReason(Integer cancelReason) throws ParseException {
@@ -38,6 +43,17 @@ public class Cancellation implements Parcelable {
     }
 
     public Integer getCancelReason() {
+        try {
+            if (_cancelReason != null)
+                return _cancelReason;
+
+            if (SOURCE.has("cancel_reason") && SOURCE.get("cancel_reason") != null)
+                _cancelReason = SOURCE.getInt("cancel_reason");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _cancelReason;
     }
 
@@ -53,6 +69,17 @@ public class Cancellation implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -83,7 +110,7 @@ public class Cancellation implements Parcelable {
 
     public static Cancellation fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Cancellation.class, obj);
+            return new Cancellation(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

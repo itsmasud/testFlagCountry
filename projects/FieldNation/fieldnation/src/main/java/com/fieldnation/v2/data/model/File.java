@@ -51,9 +51,14 @@ public class File implements Parcelable {
     private TypeEnum _type;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public File() {
+        SOURCE = new JsonObject();
+    }
+
+    public File(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setDescription(String description) throws ParseException {
@@ -62,6 +67,17 @@ public class File implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -77,6 +93,17 @@ public class File implements Parcelable {
     }
 
     public String getIcon() {
+        try {
+            if (_icon != null)
+                return _icon;
+
+            if (SOURCE.has("icon") && SOURCE.get("icon") != null)
+                _icon = SOURCE.getString("icon");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _icon;
     }
 
@@ -92,6 +119,17 @@ public class File implements Parcelable {
     }
 
     public String getLink() {
+        try {
+            if (_link != null)
+                return _link;
+
+            if (SOURCE.has("link") && SOURCE.get("link") != null)
+                _link = SOURCE.getString("link");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _link;
     }
 
@@ -107,6 +145,17 @@ public class File implements Parcelable {
     }
 
     public String getMime() {
+        try {
+            if (_mime != null)
+                return _mime;
+
+            if (SOURCE.has("mime") && SOURCE.get("mime") != null)
+                _mime = SOURCE.getString("mime");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mime;
     }
 
@@ -122,6 +171,17 @@ public class File implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -137,6 +197,17 @@ public class File implements Parcelable {
     }
 
     public String getPreviewFull() {
+        try {
+            if (_previewFull != null)
+                return _previewFull;
+
+            if (SOURCE.has("preview_full") && SOURCE.get("preview_full") != null)
+                _previewFull = SOURCE.getString("preview_full");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _previewFull;
     }
 
@@ -152,6 +223,17 @@ public class File implements Parcelable {
     }
 
     public Integer getSizeBytes() {
+        try {
+            if (_sizeBytes != null)
+                return _sizeBytes;
+
+            if (SOURCE.has("size_bytes") && SOURCE.get("size_bytes") != null)
+                _sizeBytes = SOURCE.getInt("size_bytes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sizeBytes;
     }
 
@@ -167,6 +249,17 @@ public class File implements Parcelable {
     }
 
     public StorageEnum getStorage() {
+        try {
+            if (_storage != null)
+                return _storage;
+
+            if (SOURCE.has("storage") && SOURCE.get("storage") != null)
+                _storage = StorageEnum.fromString(SOURCE.getString("storage"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _storage;
     }
 
@@ -182,6 +275,17 @@ public class File implements Parcelable {
     }
 
     public String getThumbnail() {
+        try {
+            if (_thumbnail != null)
+                return _thumbnail;
+
+            if (SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
+                _thumbnail = SOURCE.getString("thumbnail");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _thumbnail;
     }
 
@@ -197,6 +301,17 @@ public class File implements Parcelable {
     }
 
     public TypeEnum getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = TypeEnum.fromString(SOURCE.getString("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -219,6 +334,23 @@ public class File implements Parcelable {
             this.value = value;
         }
 
+        public static StorageEnum fromString(String value) {
+            StorageEnum[] values = values();
+            for (StorageEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StorageEnum[] fromJsonArray(JsonArray jsonArray) {
+            StorageEnum[] list = new StorageEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -235,6 +367,23 @@ public class File implements Parcelable {
 
         TypeEnum(String value) {
             this.value = value;
+        }
+
+        public static TypeEnum fromString(String value) {
+            TypeEnum[] values = values();
+            for (TypeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static TypeEnum[] fromJsonArray(JsonArray jsonArray) {
+            TypeEnum[] list = new TypeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -264,7 +413,7 @@ public class File implements Parcelable {
 
     public static File fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(File.class, obj);
+            return new File(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

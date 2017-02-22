@@ -30,9 +30,14 @@ public class Problems implements Parcelable {
     private String _reason;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Problems() {
+        SOURCE = new JsonObject();
+    }
+
+    public Problems(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setNext(ProblemsNext[] next) throws ParseException {
@@ -41,6 +46,18 @@ public class Problems implements Parcelable {
     }
 
     public ProblemsNext[] getNext() {
+        try {
+            if (_next != null)
+                return _next;
+
+            if (SOURCE.has("next") && SOURCE.get("next") != null) {
+                _next = ProblemsNext.fromJsonArray(SOURCE.getJsonArray("next"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _next;
     }
 
@@ -56,6 +73,17 @@ public class Problems implements Parcelable {
     }
 
     public Integer getProblemId() {
+        try {
+            if (_problemId != null)
+                return _problemId;
+
+            if (SOURCE.has("problem_id") && SOURCE.get("problem_id") != null)
+                _problemId = SOURCE.getInt("problem_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _problemId;
     }
 
@@ -71,6 +99,17 @@ public class Problems implements Parcelable {
     }
 
     public String getReason() {
+        try {
+            if (_reason != null)
+                return _reason;
+
+            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+                _reason = SOURCE.getString("reason");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _reason;
     }
 
@@ -101,7 +140,7 @@ public class Problems implements Parcelable {
 
     public static Problems fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Problems.class, obj);
+            return new Problems(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

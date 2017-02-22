@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -26,9 +27,14 @@ public class ExpenseCategory implements Parcelable {
     private String _name;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ExpenseCategory() {
+        SOURCE = new JsonObject();
+    }
+
+    public ExpenseCategory(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -37,6 +43,17 @@ public class ExpenseCategory implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -52,6 +69,17 @@ public class ExpenseCategory implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -82,7 +110,7 @@ public class ExpenseCategory implements Parcelable {
 
     public static ExpenseCategory fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ExpenseCategory.class, obj);
+            return new ExpenseCategory(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

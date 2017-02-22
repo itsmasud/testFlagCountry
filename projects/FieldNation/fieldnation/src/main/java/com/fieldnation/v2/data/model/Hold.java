@@ -30,9 +30,14 @@ public class Hold implements Parcelable {
     private String _reason;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Hold() {
+        SOURCE = new JsonObject();
+    }
+
+    public Hold(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -41,6 +46,17 @@ public class Hold implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -56,6 +72,17 @@ public class Hold implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -71,6 +98,17 @@ public class Hold implements Parcelable {
     }
 
     public String getReason() {
+        try {
+            if (_reason != null)
+                return _reason;
+
+            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+                _reason = SOURCE.getString("reason");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _reason;
     }
 
@@ -101,7 +139,7 @@ public class Hold implements Parcelable {
 
     public static Hold fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Hold.class, obj);
+            return new Hold(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -27,9 +27,14 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     private EventUpdateScheduleByWorkOrderOld _old;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public EventUpdateScheduleByWorkOrder() {
+        SOURCE = new JsonObject();
+    }
+
+    public EventUpdateScheduleByWorkOrder(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setNew(EventUpdateScheduleByWorkOrderNew neww) throws ParseException {
@@ -38,6 +43,17 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     }
 
     public EventUpdateScheduleByWorkOrderNew getNew() {
+        try {
+            if (_new != null)
+                return _new;
+
+            if (SOURCE.has("new") && SOURCE.get("new") != null)
+                _new = EventUpdateScheduleByWorkOrderNew.fromJson(SOURCE.getJsonObject("new"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _new;
     }
 
@@ -53,6 +69,17 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     }
 
     public EventUpdateScheduleByWorkOrderOld getOld() {
+        try {
+            if (_old != null)
+                return _old;
+
+            if (SOURCE.has("old") && SOURCE.get("old") != null)
+                _old = EventUpdateScheduleByWorkOrderOld.fromJson(SOURCE.getJsonObject("old"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _old;
     }
 
@@ -83,7 +110,7 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
 
     public static EventUpdateScheduleByWorkOrder fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(EventUpdateScheduleByWorkOrder.class, obj);
+            return new EventUpdateScheduleByWorkOrder(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

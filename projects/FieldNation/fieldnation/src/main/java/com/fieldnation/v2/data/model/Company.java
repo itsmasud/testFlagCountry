@@ -36,9 +36,14 @@ public class Company implements Parcelable {
     private Rating _rating;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Company() {
+        SOURCE = new JsonObject();
+    }
+
+    public Company(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setBlocked(Boolean blocked) throws ParseException {
@@ -47,6 +52,17 @@ public class Company implements Parcelable {
     }
 
     public Boolean getBlocked() {
+        try {
+            if (_blocked != null)
+                return _blocked;
+
+            if (SOURCE.has("blocked") && SOURCE.get("blocked") != null)
+                _blocked = SOURCE.getBoolean("blocked");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _blocked;
     }
 
@@ -66,6 +82,19 @@ public class Company implements Parcelable {
     }
 
     public String[] getFeatures() {
+        try {
+            if (_features != null)
+                return _features;
+
+            if (SOURCE.has("features") && SOURCE.get("features") != null) {
+                JsonArray ja = SOURCE.getJsonArray("features");
+                _features = ja.toArray(new String[ja.size()]);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _features;
     }
 
@@ -85,6 +114,17 @@ public class Company implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -100,6 +140,17 @@ public class Company implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -115,6 +166,17 @@ public class Company implements Parcelable {
     }
 
     public Rating getRating() {
+        try {
+            if (_rating != null)
+                return _rating;
+
+            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+                _rating = Rating.fromJson(SOURCE.getJsonObject("rating"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _rating;
     }
 
@@ -145,7 +207,7 @@ public class Company implements Parcelable {
 
     public static Company fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Company.class, obj);
+            return new Company(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

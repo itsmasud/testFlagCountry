@@ -169,7 +169,6 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
     private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            _workOrderClient.subGetWorkOrders();
             _workOrderClient.subWorkordersWebApi();
         }
 
@@ -211,7 +210,7 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
 
-            if (methodName.equals("getWorkOrderLists") || methodName.equals("getWorkOrders"))
+            if (methodName.startsWith("get"))
                 return;
 
             _adapter.refreshAll();

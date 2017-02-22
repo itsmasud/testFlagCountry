@@ -69,7 +69,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/pay",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "addPay"))
                     .useAuth(true)
                     .request(builder)
@@ -79,10 +79,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddPay(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/pay");
     }
 
     /**
@@ -110,7 +106,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/types-of-work",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "addTypesOfWork"))
                     .useAuth(true)
                     .request(builder)
@@ -120,10 +116,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddTypesOfWork(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/types-of-work");
     }
 
     /**
@@ -148,7 +140,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/pay",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getPay"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -161,10 +153,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetPay(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/pay");
     }
 
     /**
@@ -190,7 +178,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/workorder/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getProfileAndWorkHistory"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -203,10 +191,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetProfileAndWorkHistory(Integer userId, Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/workorder/" + workOrderId);
     }
 
     /**
@@ -231,7 +215,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/settings",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getSettings"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -244,10 +228,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetSettings(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/settings");
     }
 
     /**
@@ -272,7 +252,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tax",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getTax"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -285,10 +265,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetTax(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tax");
     }
 
     /**
@@ -313,7 +289,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getTour"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -326,10 +302,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetTour(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour");
     }
 
     /**
@@ -354,7 +326,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + user,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUser"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -367,10 +339,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetUser(String user) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + user);
     }
 
     /**
@@ -396,7 +364,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserPreferenceValue"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -409,10 +377,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetUserPreferenceValue(Integer userId, String preference) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference);
     }
 
     /**
@@ -437,7 +401,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/types-of-work",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserTypesOfWork"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -450,10 +414,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetUserTypesOfWork(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/types-of-work");
     }
 
     /**
@@ -478,7 +438,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/work_history",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getWorkHistory"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -491,10 +451,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetWorkHistory(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/work_history");
     }
 
     /**
@@ -522,7 +478,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/email",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "sendAccountActivationLink"))
                     .useAuth(true)
                     .request(builder)
@@ -532,10 +488,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSendAccountActivationLink(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/email");
     }
 
     /**
@@ -563,7 +515,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/text",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "sendVerificationCodeViaSms"))
                     .useAuth(true)
                     .request(builder)
@@ -573,10 +525,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSendVerificationCodeViaSms(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/text");
     }
 
     /**
@@ -604,7 +552,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/phone",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "sendVerificationCodeViaVoiceCall"))
                     .useAuth(true)
                     .request(builder)
@@ -614,10 +562,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSendVerificationCodeViaVoiceCall(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/phone");
     }
 
     /**
@@ -646,7 +590,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "setUserPreference"))
                     .useAuth(true)
                     .request(builder)
@@ -656,10 +600,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSetUserPreference(Integer userId, String preference) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/preferences/" + preference);
     }
 
     /**
@@ -684,7 +624,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/notifications/" + notificationId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "swipNotification"))
                     .useAuth(true)
                     .request(builder)
@@ -694,10 +634,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subSwipNotification(Integer userId, Integer notificationId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/notifications/" + notificationId);
     }
 
     /**
@@ -721,7 +657,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/pay",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updatePay"))
                     .useAuth(true)
                     .request(builder)
@@ -731,10 +667,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdatePay(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/pay");
     }
 
     /**
@@ -758,7 +690,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/settings",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updateSettings"))
                     .useAuth(true)
                     .request(builder)
@@ -768,10 +700,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateSettings(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/settings");
     }
 
     /**
@@ -799,7 +727,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tax",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updateTax"))
                     .useAuth(true)
                     .request(builder)
@@ -809,10 +737,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateTax(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tax");
     }
 
     /**
@@ -836,7 +760,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "updateTour"))
                     .useAuth(true)
                     .request(builder)
@@ -846,10 +770,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateTour(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/tour");
     }
 
     /**
@@ -875,7 +795,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/profile/avatar",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "uploadProfilePhoto"))
                     .useAuth(true)
                     .request(builder)
@@ -885,10 +805,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUploadProfilePhoto(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/profile/avatar");
     }
 
     /**
@@ -916,7 +832,7 @@ public class UsersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/2fa",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "verifyAccount"))
                     .useAuth(true)
                     .request(builder)
@@ -926,10 +842,6 @@ public class UsersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subVerifyAccount(Integer userId) {
-        return register("TOPIC_ID_WEB_API_V2/UsersWebApi/" + userId + "/verify/2fa");
     }
 
 

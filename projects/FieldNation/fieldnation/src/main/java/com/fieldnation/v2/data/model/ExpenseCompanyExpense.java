@@ -33,9 +33,14 @@ public class ExpenseCompanyExpense implements Parcelable {
     private Integer _id;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ExpenseCompanyExpense() {
+        SOURCE = new JsonObject();
+    }
+
+    public ExpenseCompanyExpense(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setApiCode(String apiCode) throws ParseException {
@@ -44,6 +49,17 @@ public class ExpenseCompanyExpense implements Parcelable {
     }
 
     public String getApiCode() {
+        try {
+            if (_apiCode != null)
+                return _apiCode;
+
+            if (SOURCE.has("api_code") && SOURCE.get("api_code") != null)
+                _apiCode = SOURCE.getString("api_code");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _apiCode;
     }
 
@@ -59,6 +75,17 @@ public class ExpenseCompanyExpense implements Parcelable {
     }
 
     public Double getExpenseAmount() {
+        try {
+            if (_expenseAmount != null)
+                return _expenseAmount;
+
+            if (SOURCE.has("expense_amount") && SOURCE.get("expense_amount") != null)
+                _expenseAmount = SOURCE.getDouble("expense_amount");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _expenseAmount;
     }
 
@@ -74,6 +101,17 @@ public class ExpenseCompanyExpense implements Parcelable {
     }
 
     public String getHiddenTags() {
+        try {
+            if (_hiddenTags != null)
+                return _hiddenTags;
+
+            if (SOURCE.has("hidden_tags") && SOURCE.get("hidden_tags") != null)
+                _hiddenTags = SOURCE.getString("hidden_tags");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hiddenTags;
     }
 
@@ -89,6 +127,17 @@ public class ExpenseCompanyExpense implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -119,7 +168,7 @@ public class ExpenseCompanyExpense implements Parcelable {
 
     public static ExpenseCompanyExpense fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ExpenseCompanyExpense.class, obj);
+            return new ExpenseCompanyExpense(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

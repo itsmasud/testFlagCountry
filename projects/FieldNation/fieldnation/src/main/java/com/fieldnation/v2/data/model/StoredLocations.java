@@ -36,9 +36,14 @@ public class StoredLocations implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public StoredLocations() {
+        SOURCE = new JsonObject();
+    }
+
+    public StoredLocations(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -51,6 +56,18 @@ public class StoredLocations implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -70,6 +87,17 @@ public class StoredLocations implements Parcelable {
     }
 
     public ModeEnum getMode() {
+        try {
+            if (_mode != null)
+                return _mode;
+
+            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+                _mode = ModeEnum.fromString(SOURCE.getString("mode"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mode;
     }
 
@@ -85,6 +113,18 @@ public class StoredLocations implements Parcelable {
     }
 
     public Location[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Location.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -100,6 +140,17 @@ public class StoredLocations implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -115,6 +166,17 @@ public class StoredLocations implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -141,6 +203,23 @@ public class StoredLocations implements Parcelable {
             this.value = value;
         }
 
+        public static ModeEnum fromString(String value) {
+            ModeEnum[] values = values();
+            for (ModeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ModeEnum[] fromJsonArray(JsonArray jsonArray) {
+            ModeEnum[] list = new ModeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -155,6 +234,23 @@ public class StoredLocations implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -184,7 +280,7 @@ public class StoredLocations implements Parcelable {
 
     public static StoredLocations fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(StoredLocations.class, obj);
+            return new StoredLocations(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

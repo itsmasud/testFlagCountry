@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -16,26 +17,26 @@ import java.text.ParseException;
  * Created by dmgen from swagger.
  */
 
-public class PayModifiersSum implements Parcelable {
-    private static final String TAG = "PayModifiersSum";
+public class ExpensesSum implements Parcelable {
+    private static final String TAG = "ExpensesSum";
 
     @Json(name = "all")
-    private Double _all = 0.0;
+    private Double _all;
 
     @Json(name = "charged")
-    private Double _charged = 0.0;
+    private Double _charged;
 
     @Json(name = "uncharged")
-    private Double _uncharged = 0.0;
+    private Double _uncharged;
 
     @Source
     private JsonObject SOURCE;
 
-    public PayModifiersSum() {
+    public ExpensesSum() {
         SOURCE = new JsonObject();
     }
 
-    public PayModifiersSum(JsonObject obj) {
+    public ExpensesSum(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -59,7 +60,7 @@ public class PayModifiersSum implements Parcelable {
         return _all;
     }
 
-    public PayModifiersSum all(Double all) throws ParseException {
+    public ExpensesSum all(Double all) throws ParseException {
         _all = all;
         SOURCE.put("all", all);
         return this;
@@ -85,7 +86,7 @@ public class PayModifiersSum implements Parcelable {
         return _charged;
     }
 
-    public PayModifiersSum charged(Double charged) throws ParseException {
+    public ExpensesSum charged(Double charged) throws ParseException {
         _charged = charged;
         SOURCE.put("charged", charged);
         return this;
@@ -111,7 +112,7 @@ public class PayModifiersSum implements Parcelable {
         return _uncharged;
     }
 
-    public PayModifiersSum uncharged(Double uncharged) throws ParseException {
+    public ExpensesSum uncharged(Double uncharged) throws ParseException {
         _uncharged = uncharged;
         SOURCE.put("uncharged", uncharged);
         return this;
@@ -120,25 +121,25 @@ public class PayModifiersSum implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(PayModifiersSum[] array) {
+    public static JsonArray toJsonArray(ExpensesSum[] array) {
         JsonArray list = new JsonArray();
-        for (PayModifiersSum item : array) {
+        for (ExpensesSum item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static PayModifiersSum[] fromJsonArray(JsonArray array) {
-        PayModifiersSum[] list = new PayModifiersSum[array.size()];
+    public static ExpensesSum[] fromJsonArray(JsonArray array) {
+        ExpensesSum[] list = new ExpensesSum[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static PayModifiersSum fromJson(JsonObject obj) {
+    public static ExpensesSum fromJson(JsonObject obj) {
         try {
-            return new PayModifiersSum(obj);
+            return new ExpensesSum(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -152,12 +153,12 @@ public class PayModifiersSum implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<PayModifiersSum> CREATOR = new Parcelable.Creator<PayModifiersSum>() {
+    public static final Parcelable.Creator<ExpensesSum> CREATOR = new Parcelable.Creator<ExpensesSum>() {
 
         @Override
-        public PayModifiersSum createFromParcel(Parcel source) {
+        public ExpensesSum createFromParcel(Parcel source) {
             try {
-                return PayModifiersSum.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return ExpensesSum.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -165,8 +166,8 @@ public class PayModifiersSum implements Parcelable {
         }
 
         @Override
-        public PayModifiersSum[] newArray(int size) {
-            return new PayModifiersSum[size];
+        public ExpensesSum[] newArray(int size) {
+            return new ExpensesSum[size];
         }
     };
 

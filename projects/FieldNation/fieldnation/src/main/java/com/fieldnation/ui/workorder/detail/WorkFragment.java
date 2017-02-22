@@ -31,7 +31,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
@@ -528,13 +527,9 @@ TODO     private void setTasks(List<Task> tasks) {
 
         setLoading(true);
 
-        ForLoopRunnable runnable = new ForLoopRunnable(_renderers.size(), new Handler(), 100) {
-            @Override
-            public void next(int i) throws Exception {
-                _renderers.get(i).setWorkOrder(_workOrder);
-            }
-        };
-        getView().post(runnable);
+        for (WorkOrderRenderer renderer : _renderers) {
+            renderer.setWorkOrder(_workOrder);
+        }
 
         setLoading(false);
 
@@ -545,7 +540,6 @@ TODO     private void setTasks(List<Task> tasks) {
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
-            //Log.v(TAG, "_bundleWarningTextView time: " + watch.finish());
         }
 
         if (getArguments() != null) {

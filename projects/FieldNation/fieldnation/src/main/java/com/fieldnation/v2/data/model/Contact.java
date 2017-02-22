@@ -39,9 +39,14 @@ public class Contact implements Parcelable {
     private String _role;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Contact() {
+        SOURCE = new JsonObject();
+    }
+
+    public Contact(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setEmail(String email) throws ParseException {
@@ -50,6 +55,17 @@ public class Contact implements Parcelable {
     }
 
     public String getEmail() {
+        try {
+            if (_email != null)
+                return _email;
+
+            if (SOURCE.has("email") && SOURCE.get("email") != null)
+                _email = SOURCE.getString("email");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _email;
     }
 
@@ -65,6 +81,17 @@ public class Contact implements Parcelable {
     }
 
     public String getExt() {
+        try {
+            if (_ext != null)
+                return _ext;
+
+            if (SOURCE.has("ext") && SOURCE.get("ext") != null)
+                _ext = SOURCE.getString("ext");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _ext;
     }
 
@@ -80,6 +107,17 @@ public class Contact implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -95,6 +133,17 @@ public class Contact implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -110,6 +159,17 @@ public class Contact implements Parcelable {
     }
 
     public String getPhone() {
+        try {
+            if (_phone != null)
+                return _phone;
+
+            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+                _phone = SOURCE.getString("phone");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _phone;
     }
 
@@ -125,6 +185,17 @@ public class Contact implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -155,7 +226,7 @@ public class Contact implements Parcelable {
 
     public static Contact fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Contact.class, obj);
+            return new Contact(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

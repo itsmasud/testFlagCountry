@@ -27,9 +27,14 @@ public class Map implements Parcelable {
     private String _url;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Map() {
+        SOURCE = new JsonObject();
+    }
+
+    public Map(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setHref(String href) throws ParseException {
@@ -38,6 +43,17 @@ public class Map implements Parcelable {
     }
 
     public String getHref() {
+        try {
+            if (_href != null)
+                return _href;
+
+            if (SOURCE.has("href") && SOURCE.get("href") != null)
+                _href = SOURCE.getString("href");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _href;
     }
 
@@ -53,6 +69,17 @@ public class Map implements Parcelable {
     }
 
     public String getUrl() {
+        try {
+            if (_url != null)
+                return _url;
+
+            if (SOURCE.has("url") && SOURCE.get("url") != null)
+                _url = SOURCE.getString("url");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _url;
     }
 
@@ -83,7 +110,7 @@ public class Map implements Parcelable {
 
     public static Map fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Map.class, obj);
+            return new Map(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

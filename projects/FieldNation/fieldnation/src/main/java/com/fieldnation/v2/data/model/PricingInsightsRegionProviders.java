@@ -24,9 +24,14 @@ public class PricingInsightsRegionProviders implements Parcelable {
     private Integer _marketplace;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PricingInsightsRegionProviders() {
+        SOURCE = new JsonObject();
+    }
+
+    public PricingInsightsRegionProviders(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMarketplace(Integer marketplace) throws ParseException {
@@ -35,6 +40,17 @@ public class PricingInsightsRegionProviders implements Parcelable {
     }
 
     public Integer getMarketplace() {
+        try {
+            if (_marketplace != null)
+                return _marketplace;
+
+            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = SOURCE.getInt("marketplace");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _marketplace;
     }
 
@@ -65,7 +81,7 @@ public class PricingInsightsRegionProviders implements Parcelable {
 
     public static PricingInsightsRegionProviders fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PricingInsightsRegionProviders.class, obj);
+            return new PricingInsightsRegionProviders(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -77,9 +77,14 @@ public class StoredLocation implements Parcelable {
     private String _zip;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public StoredLocation() {
+        SOURCE = new JsonObject();
+    }
+
+    public StoredLocation(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -92,6 +97,18 @@ public class StoredLocation implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -111,6 +128,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public Boolean getActive() {
+        try {
+            if (_active != null)
+                return _active;
+
+            if (SOURCE.has("active") && SOURCE.get("active") != null)
+                _active = SOURCE.getBoolean("active");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _active;
     }
 
@@ -126,6 +154,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getAddress1() {
+        try {
+            if (_address1 != null)
+                return _address1;
+
+            if (SOURCE.has("address1") && SOURCE.get("address1") != null)
+                _address1 = SOURCE.getString("address1");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address1;
     }
 
@@ -141,6 +180,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getAddress2() {
+        try {
+            if (_address2 != null)
+                return _address2;
+
+            if (SOURCE.has("address2") && SOURCE.get("address2") != null)
+                _address2 = SOURCE.getString("address2");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address2;
     }
 
@@ -156,6 +206,18 @@ public class StoredLocation implements Parcelable {
     }
 
     public LocationAttribute[] getAttributes() {
+        try {
+            if (_attributes != null)
+                return _attributes;
+
+            if (SOURCE.has("attributes") && SOURCE.get("attributes") != null) {
+                _attributes = LocationAttribute.fromJsonArray(SOURCE.getJsonArray("attributes"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _attributes;
     }
 
@@ -171,6 +233,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getCity() {
+        try {
+            if (_city != null)
+                return _city;
+
+            if (SOURCE.has("city") && SOURCE.get("city") != null)
+                _city = SOURCE.getString("city");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _city;
     }
 
@@ -186,6 +259,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public Company getClient() {
+        try {
+            if (_client != null)
+                return _client;
+
+            if (SOURCE.has("client") && SOURCE.get("client") != null)
+                _client = Company.fromJson(SOURCE.getJsonObject("client"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _client;
     }
 
@@ -201,6 +285,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public Company getCompany() {
+        try {
+            if (_company != null)
+                return _company;
+
+            if (SOURCE.has("company") && SOURCE.get("company") != null)
+                _company = Company.fromJson(SOURCE.getJsonObject("company"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _company;
     }
 
@@ -216,6 +311,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public Contact getContact() {
+        try {
+            if (_contact != null)
+                return _contact;
+
+            if (SOURCE.has("contact") && SOURCE.get("contact") != null)
+                _contact = Contact.fromJson(SOURCE.getJsonObject("contact"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _contact;
     }
 
@@ -231,6 +337,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getCountry() {
+        try {
+            if (_country != null)
+                return _country;
+
+            if (SOURCE.has("country") && SOURCE.get("country") != null)
+                _country = SOURCE.getString("country");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _country;
     }
 
@@ -246,6 +363,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public Coords getGeo() {
+        try {
+            if (_geo != null)
+                return _geo;
+
+            if (SOURCE.has("geo") && SOURCE.get("geo") != null)
+                _geo = Coords.fromJson(SOURCE.getJsonObject("geo"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _geo;
     }
 
@@ -261,6 +389,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public LocationGroup getGroup() {
+        try {
+            if (_group != null)
+                return _group;
+
+            if (SOURCE.has("group") && SOURCE.get("group") != null)
+                _group = LocationGroup.fromJson(SOURCE.getJsonObject("group"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _group;
     }
 
@@ -276,6 +415,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -291,6 +441,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -306,12 +467,24 @@ public class StoredLocation implements Parcelable {
     }
 
     public LocationNote[] getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null) {
+                _notes = LocationNote.fromJsonArray(SOURCE.getJsonArray("notes"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
     public StoredLocation notes(LocationNote[] notes) throws ParseException {
         _notes = notes;
-        SOURCE.put("notes", LocationNote.toJsonArray(notes));
+        SOURCE.put("notes", LocationNote.toJsonArray(notes), true);
         return this;
     }
 
@@ -321,6 +494,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getState() {
+        try {
+            if (_state != null)
+                return _state;
+
+            if (SOURCE.has("state") && SOURCE.get("state") != null)
+                _state = SOURCE.getString("state");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _state;
     }
 
@@ -336,6 +520,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public TimeZone getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -351,6 +546,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public LocationType getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = LocationType.fromJson(SOURCE.getJsonObject("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -366,6 +572,17 @@ public class StoredLocation implements Parcelable {
     }
 
     public String getZip() {
+        try {
+            if (_zip != null)
+                return _zip;
+
+            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+                _zip = SOURCE.getString("zip");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _zip;
     }
 
@@ -386,6 +603,23 @@ public class StoredLocation implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -415,7 +649,7 @@ public class StoredLocation implements Parcelable {
 
     public static StoredLocation fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(StoredLocation.class, obj);
+            return new StoredLocation(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

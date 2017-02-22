@@ -24,9 +24,14 @@ public class CheckInOutTimeLog implements Parcelable {
     private Integer _id;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CheckInOutTimeLog() {
+        SOURCE = new JsonObject();
+    }
+
+    public CheckInOutTimeLog(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -35,6 +40,17 @@ public class CheckInOutTimeLog implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -65,7 +81,7 @@ public class CheckInOutTimeLog implements Parcelable {
 
     public static CheckInOutTimeLog fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CheckInOutTimeLog.class, obj);
+            return new CheckInOutTimeLog(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

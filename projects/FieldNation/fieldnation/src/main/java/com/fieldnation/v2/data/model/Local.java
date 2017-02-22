@@ -27,9 +27,14 @@ public class Local implements Parcelable {
     private String _time;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Local() {
+        SOURCE = new JsonObject();
+    }
+
+    public Local(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setDate(String date) throws ParseException {
@@ -38,6 +43,17 @@ public class Local implements Parcelable {
     }
 
     public String getDate() {
+        try {
+        if (_date != null)
+            return _date;
+
+        if (SOURCE.has("date") && SOURCE.get("date") != null)
+            _date = SOURCE.getString("date");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _date;
     }
 
@@ -53,6 +69,17 @@ public class Local implements Parcelable {
     }
 
     public String getTime() {
+        try {
+            if (_time != null)
+                return _time;
+
+            if (SOURCE.has("time") && SOURCE.get("time") != null)
+                _time = SOURCE.getString("time");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _time;
     }
 
@@ -83,7 +110,7 @@ public class Local implements Parcelable {
 
     public static Local fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Local.class, obj);
+            return new Local(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

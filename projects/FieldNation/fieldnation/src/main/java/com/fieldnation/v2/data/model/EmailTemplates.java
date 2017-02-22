@@ -24,9 +24,14 @@ public class EmailTemplates implements Parcelable {
     private EmailTemplate[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public EmailTemplates() {
+        SOURCE = new JsonObject();
+    }
+
+    public EmailTemplates(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setResults(EmailTemplate[] results) throws ParseException {
@@ -35,6 +40,18 @@ public class EmailTemplates implements Parcelable {
     }
 
     public EmailTemplate[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = EmailTemplate.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -65,7 +82,7 @@ public class EmailTemplates implements Parcelable {
 
     public static EmailTemplates fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(EmailTemplates.class, obj);
+            return new EmailTemplates(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

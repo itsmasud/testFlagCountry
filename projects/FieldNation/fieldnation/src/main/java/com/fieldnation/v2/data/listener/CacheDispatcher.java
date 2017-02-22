@@ -10,6 +10,7 @@ import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.StreamUtils;
 
 import java.io.FileInputStream;
@@ -29,6 +30,7 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
 
     @Override
     protected Bundle doInBackground(Object... params) {
+        Stopwatch stopwatch = new Stopwatch(true);
         try {
             _context = (Context) params[0];
             String key = (String) params[1];
@@ -53,6 +55,9 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
             return bundle;
         } catch (Exception ex) {
             Log.v(TAG, ex);
+        } finally {
+            if (_transactionParams != null && _transactionParams.apiFunction != null)
+                Log.v(TAG, _transactionParams.apiFunction + " time: " + stopwatch.finish());
         }
         return null;
     }

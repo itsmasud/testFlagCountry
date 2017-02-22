@@ -27,9 +27,14 @@ public class RichText implements Parcelable {
     private String _markdown;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public RichText() {
+        SOURCE = new JsonObject();
+    }
+
+    public RichText(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setHtml(String html) throws ParseException {
@@ -38,6 +43,17 @@ public class RichText implements Parcelable {
     }
 
     public String getHtml() {
+        try {
+            if (_html != null)
+                return _html;
+
+            if (SOURCE.has("html") && SOURCE.get("html") != null)
+                _html = SOURCE.getString("html");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _html;
     }
 
@@ -53,6 +69,17 @@ public class RichText implements Parcelable {
     }
 
     public String getMarkdown() {
+        try {
+            if (_markdown != null)
+                return _markdown;
+
+            if (SOURCE.has("markdown") && SOURCE.get("markdown") != null)
+                _markdown = SOURCE.getString("markdown");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _markdown;
     }
 
@@ -83,7 +110,7 @@ public class RichText implements Parcelable {
 
     public static RichText fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(RichText.class, obj);
+            return new RichText(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

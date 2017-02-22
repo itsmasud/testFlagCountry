@@ -27,9 +27,14 @@ public class UserBlocked implements Parcelable {
     private UserBlockedBy _by;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserBlocked() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserBlocked(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAt(String at) throws ParseException {
@@ -38,6 +43,17 @@ public class UserBlocked implements Parcelable {
     }
 
     public String getAt() {
+        try {
+            if (_at != null)
+                return _at;
+
+            if (SOURCE.has("at") && SOURCE.get("at") != null)
+                _at = SOURCE.getString("at");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _at;
     }
 
@@ -53,6 +69,17 @@ public class UserBlocked implements Parcelable {
     }
 
     public UserBlockedBy getBy() {
+        try {
+            if (_by != null)
+                return _by;
+
+            if (SOURCE.has("by") && SOURCE.get("by") != null)
+                _by = UserBlockedBy.fromJson(SOURCE.getJsonObject("by"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _by;
     }
 
@@ -83,7 +110,7 @@ public class UserBlocked implements Parcelable {
 
     public static UserBlocked fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserBlocked.class, obj);
+            return new UserBlocked(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

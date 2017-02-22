@@ -54,9 +54,14 @@ public class CustomField implements Parcelable {
     private String _value;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CustomField() {
+        SOURCE = new JsonObject();
+    }
+
+    public CustomField(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -69,6 +74,18 @@ public class CustomField implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -88,6 +105,17 @@ public class CustomField implements Parcelable {
     }
 
     public String getCategory() {
+        try {
+            if (_category != null)
+                return _category;
+
+            if (SOURCE.has("category") && SOURCE.get("category") != null)
+                _category = SOURCE.getString("category");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _category;
     }
 
@@ -103,6 +131,17 @@ public class CustomField implements Parcelable {
     }
 
     public CustomFieldDependency getDependency() {
+        try {
+            if (_dependency != null)
+                return _dependency;
+
+            if (SOURCE.has("dependency") && SOURCE.get("dependency") != null)
+                _dependency = CustomFieldDependency.fromJson(SOURCE.getJsonObject("dependency"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _dependency;
     }
 
@@ -122,6 +161,18 @@ public class CustomField implements Parcelable {
     }
 
     public FlagsEnum[] getFlags() {
+        try {
+            if (_flags != null)
+                return _flags;
+
+            if (SOURCE.has("flags") && SOURCE.get("flags") != null) {
+                _flags = FlagsEnum.fromJsonArray(SOURCE.getJsonArray("flags"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _flags;
     }
 
@@ -141,6 +192,17 @@ public class CustomField implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -156,6 +218,17 @@ public class CustomField implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -175,6 +248,19 @@ public class CustomField implements Parcelable {
     }
 
     public String[] getOptions() {
+        try {
+            if (_options != null)
+                return _options;
+
+            if (SOURCE.has("options") && SOURCE.get("options") != null) {
+                JsonArray ja = SOURCE.getJsonArray("options");
+                _options = ja.toArray(new String[ja.size()]);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _options;
     }
 
@@ -194,6 +280,17 @@ public class CustomField implements Parcelable {
     }
 
     public RoleEnum getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = RoleEnum.fromString(SOURCE.getString("role"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -209,6 +306,17 @@ public class CustomField implements Parcelable {
     }
 
     public String getTip() {
+        try {
+            if (_tip != null)
+                return _tip;
+
+            if (SOURCE.has("tip") && SOURCE.get("tip") != null)
+                _tip = SOURCE.getString("tip");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _tip;
     }
 
@@ -224,6 +332,17 @@ public class CustomField implements Parcelable {
     }
 
     public TypeEnum getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = TypeEnum.fromString(SOURCE.getString("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -239,6 +358,17 @@ public class CustomField implements Parcelable {
     }
 
     public String getValue() {
+        try {
+            if (_value != null)
+                return _value;
+
+            if (SOURCE.has("value") && SOURCE.get("value") != null)
+                _value = SOURCE.getString("value");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _value;
     }
 
@@ -261,6 +391,23 @@ public class CustomField implements Parcelable {
 
         RoleEnum(String value) {
             this.value = value;
+        }
+
+        public static RoleEnum fromString(String value) {
+            RoleEnum[] values = values();
+            for (RoleEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static RoleEnum[] fromJsonArray(JsonArray jsonArray) {
+            RoleEnum[] list = new RoleEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -291,6 +438,23 @@ public class CustomField implements Parcelable {
             this.value = value;
         }
 
+        public static TypeEnum fromString(String value) {
+            TypeEnum[] values = values();
+            for (TypeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static TypeEnum[] fromJsonArray(JsonArray jsonArray) {
+            TypeEnum[] list = new TypeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -305,6 +469,23 @@ public class CustomField implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -343,6 +524,23 @@ public class CustomField implements Parcelable {
             this.value = value;
         }
 
+        public static FlagsEnum fromString(String value) {
+            FlagsEnum[] values = values();
+            for (FlagsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static FlagsEnum[] fromJsonArray(JsonArray jsonArray) {
+            FlagsEnum[] list = new FlagsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -370,7 +568,7 @@ public class CustomField implements Parcelable {
 
     public static CustomField fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CustomField.class, obj);
+            return new CustomField(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -33,9 +33,14 @@ public class MessageTo implements Parcelable {
     private String _thumbnail;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public MessageTo() {
+        SOURCE = new JsonObject();
+    }
+
+    public MessageTo(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -44,6 +49,17 @@ public class MessageTo implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -59,6 +75,17 @@ public class MessageTo implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -74,6 +101,17 @@ public class MessageTo implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -89,6 +127,17 @@ public class MessageTo implements Parcelable {
     }
 
     public String getThumbnail() {
+        try {
+            if (_thumbnail != null)
+                return _thumbnail;
+
+            if (SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
+                _thumbnail = SOURCE.getString("thumbnail");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _thumbnail;
     }
 
@@ -119,7 +168,7 @@ public class MessageTo implements Parcelable {
 
     public static MessageTo fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(MessageTo.class, obj);
+            return new MessageTo(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

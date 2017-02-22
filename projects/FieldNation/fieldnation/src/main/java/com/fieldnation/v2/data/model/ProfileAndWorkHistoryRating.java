@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -26,12 +25,17 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
     private User _profile;
 
     @Json(name = "work_history")
-    private byte[] _workHistory;
+    private JsonObject _workHistory;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ProfileAndWorkHistoryRating() {
+        SOURCE = new JsonObject();
+    }
+
+    public ProfileAndWorkHistoryRating(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMoreResults(Boolean moreResults) throws ParseException {
@@ -40,6 +44,17 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
     }
 
     public Boolean getMoreResults() {
+        try {
+            if (_moreResults != null)
+                return _moreResults;
+
+            if (SOURCE.has("more_results") && SOURCE.get("more_results") != null)
+                _moreResults = SOURCE.getBoolean("more_results");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _moreResults;
     }
 
@@ -55,6 +70,17 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
     }
 
     public User getProfile() {
+        try {
+            if (_profile != null)
+                return _profile;
+
+            if (SOURCE.has("profile") && SOURCE.get("profile") != null)
+                _profile = User.fromJson(SOURCE.getJsonObject("profile"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _profile;
     }
 
@@ -64,16 +90,27 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
         return this;
     }
 
-    public void setWorkHistory(byte[] workHistory) throws ParseException {
+    public void setWorkHistory(JsonObject workHistory) throws ParseException {
         _workHistory = workHistory;
         SOURCE.put("work_history", workHistory);
     }
 
-    public byte[] getWorkHistory() {
+    public JsonObject getWorkHistory() {
+        try {
+            if (_workHistory != null)
+                return _workHistory;
+
+            if (SOURCE.has("work_history") && SOURCE.get("work_history") != null)
+                _workHistory = SOURCE.getJsonObject("work_history");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workHistory;
     }
 
-    public ProfileAndWorkHistoryRating workHistory(byte[] workHistory) throws ParseException {
+    public ProfileAndWorkHistoryRating workHistory(JsonObject workHistory) throws ParseException {
         _workHistory = workHistory;
         SOURCE.put("work_history", workHistory);
         return this;
@@ -100,7 +137,7 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
 
     public static ProfileAndWorkHistoryRating fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ProfileAndWorkHistoryRating.class, obj);
+            return new ProfileAndWorkHistoryRating(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

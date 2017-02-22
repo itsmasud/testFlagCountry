@@ -24,9 +24,14 @@ public class ShipmentTask implements Parcelable {
     private Double _id;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ShipmentTask() {
+        SOURCE = new JsonObject();
+    }
+
+    public ShipmentTask(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Double id) throws ParseException {
@@ -35,6 +40,17 @@ public class ShipmentTask implements Parcelable {
     }
 
     public Double getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getDouble("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -65,7 +81,7 @@ public class ShipmentTask implements Parcelable {
 
     public static ShipmentTask fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ShipmentTask.class, obj);
+            return new ShipmentTask(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

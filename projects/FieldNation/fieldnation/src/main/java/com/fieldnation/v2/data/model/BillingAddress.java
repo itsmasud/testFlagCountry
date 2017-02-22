@@ -42,9 +42,14 @@ public class BillingAddress implements Parcelable {
     private String _zip;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public BillingAddress() {
+        SOURCE = new JsonObject();
+    }
+
+    public BillingAddress(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAddress(String address) throws ParseException {
@@ -53,6 +58,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getAddress() {
+        try {
+            if (_address != null)
+                return _address;
+
+            if (SOURCE.has("address") && SOURCE.get("address") != null)
+                _address = SOURCE.getString("address");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _address;
     }
 
@@ -68,6 +84,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getCity() {
+        try {
+            if (_city != null)
+                return _city;
+
+            if (SOURCE.has("city") && SOURCE.get("city") != null)
+                _city = SOURCE.getString("city");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _city;
     }
 
@@ -83,6 +110,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getCountry() {
+        try {
+            if (_country != null)
+                return _country;
+
+            if (SOURCE.has("country") && SOURCE.get("country") != null)
+                _country = SOURCE.getString("country");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _country;
     }
 
@@ -98,6 +136,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getEmail() {
+        try {
+            if (_email != null)
+                return _email;
+
+            if (SOURCE.has("email") && SOURCE.get("email") != null)
+                _email = SOURCE.getString("email");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _email;
     }
 
@@ -113,6 +162,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getPhone() {
+        try {
+            if (_phone != null)
+                return _phone;
+
+            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+                _phone = SOURCE.getString("phone");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _phone;
     }
 
@@ -128,6 +188,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getState() {
+        try {
+            if (_state != null)
+                return _state;
+
+            if (SOURCE.has("state") && SOURCE.get("state") != null)
+                _state = SOURCE.getString("state");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _state;
     }
 
@@ -143,6 +214,17 @@ public class BillingAddress implements Parcelable {
     }
 
     public String getZip() {
+        try {
+            if (_zip != null)
+                return _zip;
+
+            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+                _zip = SOURCE.getString("zip");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _zip;
     }
 
@@ -173,7 +255,7 @@ public class BillingAddress implements Parcelable {
 
     public static BillingAddress fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(BillingAddress.class, obj);
+            return new BillingAddress(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

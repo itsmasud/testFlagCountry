@@ -27,9 +27,14 @@ public class Countries implements Parcelable {
     private Country[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Countries() {
+        SOURCE = new JsonObject();
+    }
+
+    public Countries(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -38,6 +43,17 @@ public class Countries implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -53,6 +69,18 @@ public class Countries implements Parcelable {
     }
 
     public Country[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Country.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -83,7 +111,7 @@ public class Countries implements Parcelable {
 
     public static Countries fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Countries.class, obj);
+            return new Countries(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

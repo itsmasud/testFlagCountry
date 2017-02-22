@@ -36,9 +36,14 @@ public class ShipmentCarrier implements Parcelable {
     private String _tracking;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ShipmentCarrier() {
+        SOURCE = new JsonObject();
+    }
+
+    public ShipmentCarrier(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setArrival(Date arrival) throws ParseException {
@@ -47,6 +52,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public Date getArrival() {
+        try {
+            if (_arrival != null)
+                return _arrival;
+
+            if (SOURCE.has("arrival") && SOURCE.get("arrival") != null)
+                _arrival = Date.fromJson(SOURCE.getJsonObject("arrival"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _arrival;
     }
 
@@ -62,6 +78,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public Date getArrived() {
+        try {
+            if (_arrived != null)
+                return _arrived;
+
+            if (SOURCE.has("arrived") && SOURCE.get("arrived") != null)
+                _arrived = Date.fromJson(SOURCE.getJsonObject("arrived"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _arrived;
     }
 
@@ -77,6 +104,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -92,6 +130,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public String getOther() {
+        try {
+            if (_other != null)
+                return _other;
+
+            if (SOURCE.has("other") && SOURCE.get("other") != null)
+                _other = SOURCE.getString("other");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _other;
     }
 
@@ -107,6 +156,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public String getTracking() {
+        try {
+            if (_tracking != null)
+                return _tracking;
+
+            if (SOURCE.has("tracking") && SOURCE.get("tracking") != null)
+                _tracking = SOURCE.getString("tracking");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _tracking;
     }
 
@@ -137,7 +197,7 @@ public class ShipmentCarrier implements Parcelable {
 
     public static ShipmentCarrier fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ShipmentCarrier.class, obj);
+            return new ShipmentCarrier(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

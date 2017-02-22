@@ -27,9 +27,14 @@ public class Tasks implements Parcelable {
     private Task[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Tasks() {
+        SOURCE = new JsonObject();
+    }
+
+    public Tasks(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -38,6 +43,17 @@ public class Tasks implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -53,6 +69,18 @@ public class Tasks implements Parcelable {
     }
 
     public Task[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Task.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -83,7 +111,7 @@ public class Tasks implements Parcelable {
 
     public static Tasks fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Tasks.class, obj);
+            return new Tasks(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

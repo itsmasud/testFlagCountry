@@ -11,6 +11,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
@@ -23,7 +24,6 @@ import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.BundleWorkOrders;
 import com.fieldnation.v2.data.model.Cancellation;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Contacts;
@@ -108,7 +108,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId + "/accept",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "acceptIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -118,10 +118,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAcceptIncrease(Integer workOrderId, Integer increaseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId + "/accept");
     }
 
     /**
@@ -143,7 +139,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/{work_order_id}/swaps/{swap_request_id}/accept",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "acceptSwapRequest"))
                     .useAuth(true)
                     .request(builder)
@@ -153,10 +149,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAcceptSwapRequest() {
-        return register("TOPIC_ID_WEB_API_V2/workorders/{work_order_id}/swaps/{swap_request_id}/accept");
     }
 
     /**
@@ -185,7 +177,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/alerts",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addAlertToWorkOrderAndTask"))
                     .useAuth(true)
                     .request(builder)
@@ -195,10 +187,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddAlertToWorkOrderAndTask(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/alerts");
     }
 
     /**
@@ -227,7 +215,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addAttachment"))
                     .useAuth(true)
                     .request(builder)
@@ -237,10 +225,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddAttachment(Integer workOrderId, Integer folderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId);
     }
 
     /**
@@ -271,7 +255,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addAttachment"))
                     .useAuth(true)
                     .request(builder)
@@ -305,7 +289,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -315,10 +299,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddBonus(Integer workOrderId, Integer bonusId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId);
     }
 
     /**
@@ -347,7 +327,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -384,7 +364,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addContact"))
                     .useAuth(true)
                     .request(builder)
@@ -394,10 +374,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddContact(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts");
     }
 
     /**
@@ -425,7 +401,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addDiscount"))
                     .useAuth(true)
                     .request(builder)
@@ -435,10 +411,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddDiscount(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts");
     }
 
     /**
@@ -466,7 +438,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addExpense"))
                     .useAuth(true)
                     .request(builder)
@@ -476,10 +448,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddExpense(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses");
     }
 
     /**
@@ -509,7 +477,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addExpense"))
                     .useAuth(true)
                     .request(builder)
@@ -546,7 +514,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder"))
                     .useAuth(true)
                     .request(builder)
@@ -556,10 +524,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddFolder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments");
     }
 
     /**
@@ -589,7 +553,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder"))
                     .useAuth(true)
                     .request(builder)
@@ -626,7 +590,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -636,10 +600,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddIncrease(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases");
     }
 
     /**
@@ -669,7 +629,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -706,7 +666,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addMessage"))
                     .useAuth(true)
                     .request(builder)
@@ -716,10 +676,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddMessage(String workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages");
     }
 
     /**
@@ -749,7 +705,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addMessage"))
                     .useAuth(true)
                     .request(builder)
@@ -783,7 +739,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addPenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -793,10 +749,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddPenalty(Integer workOrderId, Integer penaltyId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId);
     }
 
     /**
@@ -825,7 +777,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addPenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -862,7 +814,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addShipment"))
                     .useAuth(true)
                     .request(builder)
@@ -872,10 +824,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddShipment(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments");
     }
 
     /**
@@ -905,7 +853,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addShipment"))
                     .useAuth(true)
                     .request(builder)
@@ -942,7 +890,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature"))
                     .useAuth(true)
                     .request(builder)
@@ -952,10 +900,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddSignature(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures");
     }
 
     /**
@@ -985,7 +929,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature"))
                     .useAuth(true)
                     .request(builder)
@@ -1022,7 +966,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTask"))
                     .useAuth(true)
                     .request(builder)
@@ -1032,10 +976,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddTask(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks");
     }
 
     /**
@@ -1063,7 +1003,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -1073,10 +1013,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddTimeLog(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs");
     }
 
     /**
@@ -1103,7 +1039,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -1113,10 +1049,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddWorkOrder() {
-        return register("TOPIC_ID_WEB_API_V2/workorders");
     }
 
     /**
@@ -1140,7 +1072,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/approve",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "approveWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -1150,10 +1082,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subApproveWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/approve");
     }
 
     /**
@@ -1179,7 +1107,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/approve",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "approveWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -1216,7 +1144,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "assignUser"))
                     .useAuth(true)
                     .request(builder)
@@ -1226,10 +1154,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAssignUser(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee");
     }
 
     /**
@@ -1259,7 +1183,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "assignUser"))
                     .useAuth(true)
                     .request(builder)
@@ -1290,7 +1214,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "cancelSwapRequest"))
                     .useAuth(true)
                     .request(builder)
@@ -1300,10 +1224,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subCancelSwapRequest() {
-        return register("TOPIC_ID_WEB_API_V2/workorders/{work_order_id}/swaps/{swap_request_id}/cancel");
     }
 
     /**
@@ -1328,7 +1248,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/complete",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeTask"))
                     .useAuth(true)
                     .request(builder)
@@ -1338,10 +1258,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subCompleteTask(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/complete");
     }
 
     /**
@@ -1365,7 +1281,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/complete",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -1375,10 +1291,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subCompleteWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/complete");
     }
 
     /**
@@ -1404,7 +1316,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/complete",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "completeWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -1439,7 +1351,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/confirm",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "Confirm"))
                     .useAuth(true)
                     .request(builder)
@@ -1449,10 +1361,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subConfirm(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/confirm");
     }
 
     /**
@@ -1474,7 +1382,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/{work_order_id}/swaps/{swap_request_id}/decline",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "declineSwapRequest"))
                     .useAuth(true)
                     .request(builder)
@@ -1484,10 +1392,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeclineSwapRequest() {
-        return register("TOPIC_ID_WEB_API_V2/workorders/{work_order_id}/swaps/{swap_request_id}/decline");
     }
 
     /**
@@ -1513,7 +1417,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAttachment"))
                     .useAuth(true)
                     .request(builder)
@@ -1523,10 +1427,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteAttachment(Integer workOrderId, Integer folderId, Integer attachmentId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
     }
 
     /**
@@ -1554,7 +1454,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteAttachment"))
                     .useAuth(true)
                     .request(builder)
@@ -1588,7 +1488,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses/" + expenseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteExpense"))
                     .useAuth(true)
                     .request(builder)
@@ -1598,10 +1498,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteExpense(Integer workOrderId, Integer expenseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses/" + expenseId);
     }
 
     /**
@@ -1628,7 +1524,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses/" + expenseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteExpense"))
                     .useAuth(true)
                     .request(builder)
@@ -1662,7 +1558,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteFolder"))
                     .useAuth(true)
                     .request(builder)
@@ -1672,10 +1568,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteFolder(Integer workOrderId, Integer folderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId);
     }
 
     /**
@@ -1702,7 +1594,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteFolder"))
                     .useAuth(true)
                     .request(builder)
@@ -1736,7 +1628,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -1746,10 +1638,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteIncrease(Integer workOrderId, Integer increaseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId);
     }
 
     /**
@@ -1776,7 +1664,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -1810,7 +1698,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments/" + shipmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteShipment"))
                     .useAuth(true)
                     .request(builder)
@@ -1820,10 +1708,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteShipment(Integer workOrderId, Integer shipmentId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments/" + shipmentId);
     }
 
     /**
@@ -1850,7 +1734,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments/" + shipmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteShipment"))
                     .useAuth(true)
                     .request(builder)
@@ -1884,7 +1768,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures/" + signatureId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteSignature"))
                     .useAuth(true)
                     .request(builder)
@@ -1894,10 +1778,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteSignature(Integer workOrderId, Integer signatureId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures/" + signatureId);
     }
 
     /**
@@ -1924,7 +1804,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures/" + signatureId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteSignature"))
                     .useAuth(true)
                     .request(builder)
@@ -1961,7 +1841,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -1971,10 +1851,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDeleteWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId);
     }
 
     /**
@@ -2004,7 +1880,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -2038,7 +1914,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId + "/deny",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "denyIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -2048,10 +1924,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subDenyIncrease(Integer workOrderId, Integer increaseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId + "/deny");
     }
 
     /**
@@ -2076,7 +1948,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getAssignee"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2089,10 +1961,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetAssignee(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee");
     }
 
     /**
@@ -2117,7 +1985,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getAttachments"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2130,10 +1998,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetAttachments(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments");
     }
 
     /**
@@ -2159,7 +2023,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getBonus"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2172,10 +2036,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetBonus(Integer workOrderId, Integer bonusId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId);
     }
 
     /**
@@ -2205,7 +2065,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getBonus"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2242,7 +2102,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getBonuses"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2255,10 +2115,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetBonuses(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses");
     }
 
     /**
@@ -2283,7 +2139,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getContacts"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2296,10 +2152,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetContacts(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts");
     }
 
     /**
@@ -2325,7 +2177,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields/" + customFieldId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getCustomField"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2338,10 +2190,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetCustomField(Integer workOrderId, Integer customFieldId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields/" + customFieldId);
     }
 
     /**
@@ -2366,7 +2214,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getCustomFields"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2379,10 +2227,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetCustomFields(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields");
     }
 
     /**
@@ -2407,7 +2251,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getDiscounts"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2420,10 +2264,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetDiscounts(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts");
     }
 
     /**
@@ -2448,7 +2288,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getExpenses"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2461,10 +2301,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetExpenses(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses");
     }
 
     /**
@@ -2491,7 +2327,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getFile"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2504,10 +2340,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetFile(Integer workOrderId, Integer folderId, Integer attachmentId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
     }
 
     /**
@@ -2533,7 +2365,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getFolder"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2546,10 +2378,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetFolder(Integer workOrderId, Integer folderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId);
     }
 
     /**
@@ -2575,7 +2403,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getIncrease"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2588,10 +2416,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetIncrease(Integer workOrderId, Integer increaseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId);
     }
 
     /**
@@ -2619,7 +2443,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getIncrease"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2656,7 +2480,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getIncreases"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2669,10 +2493,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetIncreases(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases");
     }
 
     /**
@@ -2697,7 +2517,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/location",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getLocation"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2710,10 +2530,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetLocation(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/location");
     }
 
     /**
@@ -2738,7 +2554,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getMessages"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2751,10 +2567,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetMessages(String workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages");
     }
 
     /**
@@ -2779,7 +2591,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/milestones",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getMilestones"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2792,10 +2604,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetMilestones(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/milestones");
     }
 
     /**
@@ -2820,7 +2628,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/pay",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getPay"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2833,10 +2641,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetPay(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/pay");
     }
 
     /**
@@ -2861,7 +2665,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getPenalties"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2874,10 +2678,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetPenalties(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties");
     }
 
     /**
@@ -2903,7 +2703,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getPenalty"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2916,10 +2716,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetPenalty(Integer workOrderId, Integer penaltyId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId);
     }
 
     /**
@@ -2944,7 +2740,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/problems/messages",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProblemReasons"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2957,10 +2753,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetProblemReasons(String workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/problems/messages");
     }
 
     /**
@@ -2985,7 +2777,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/providers",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProviders"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -2998,10 +2790,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetProviders(String workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/providers");
     }
 
     /**
@@ -3034,7 +2822,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/providers",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProviders"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3072,7 +2860,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests/" + requestId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRequest"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3085,10 +2873,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetRequest(Integer workOrderId, Integer requestId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests/" + requestId);
     }
 
     /**
@@ -3116,7 +2900,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests/" + requestId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRequest"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3153,7 +2937,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getRequests"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3166,10 +2950,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetRequests(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests");
     }
 
     /**
@@ -3195,7 +2975,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/mass-accept",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "GetScheduleAndLocation"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3208,10 +2988,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetScheduleAndLocation() {
-        return register("TOPIC_ID_WEB_API_V2/workorders/mass-accept");
     }
 
     /**
@@ -3236,7 +3012,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/schedule",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getSchedule"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3249,10 +3025,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetSchedule(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/schedule");
     }
 
     /**
@@ -3277,7 +3049,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getShipments"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3290,10 +3062,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetShipments(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments");
     }
 
     /**
@@ -3319,7 +3087,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures/" + signatureId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getSignature"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3332,10 +3100,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetSignature(Integer workOrderId, Integer signatureId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures/" + signatureId);
     }
 
     /**
@@ -3360,7 +3124,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getSignatures"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3373,10 +3137,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetSignatures(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/signatures");
     }
 
     /**
@@ -3401,7 +3161,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/status",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getStatus"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3414,10 +3174,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetStatus(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/status");
     }
 
     /**
@@ -3443,7 +3199,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTask"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3456,10 +3212,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetTask(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId);
     }
 
     /**
@@ -3484,7 +3236,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTasks"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3497,10 +3249,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetTasks(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks");
     }
 
     /**
@@ -3525,7 +3273,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getTimeLogs"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3538,10 +3286,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetTimeLogs(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs");
     }
 
     /**
@@ -3566,7 +3310,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrder"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3579,10 +3323,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId);
     }
 
     /**
@@ -3606,7 +3346,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/lists",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrderLists"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3619,10 +3359,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetWorkOrderLists() {
-        return register("TOPIC_ID_WEB_API_V2/workorders/lists");
     }
 
     /**
@@ -3646,7 +3382,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrders"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3659,10 +3395,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetWorkOrders() {
-        return register("TOPIC_ID_WEB_API_V2/workorders");
     }
 
     /**
@@ -3790,7 +3522,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getWorkOrders"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -3829,7 +3561,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/group/" + group + "/" + destination,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "groupTask"))
                     .useAuth(true)
                     .request(builder)
@@ -3839,10 +3571,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGroupTask(Integer workOrderId, Integer taskId, String group, String destination) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/group/" + group + "/" + destination);
     }
 
     /**
@@ -3867,7 +3595,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/incomplete",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteTask"))
                     .useAuth(true)
                     .request(builder)
@@ -3877,10 +3605,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subIncompleteTask(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/incomplete");
     }
 
     /**
@@ -3904,7 +3628,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/complete",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -3914,10 +3638,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subIncompleteWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/complete");
     }
 
     /**
@@ -3947,7 +3667,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/complete",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "incompleteWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -3983,7 +3703,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/mass-accept",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -3993,10 +3713,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subMassAcceptWorkOrder() {
-        return register("TOPIC_ID_WEB_API_V2/workorders/mass-accept");
     }
 
     /**
@@ -4025,7 +3741,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/workorders/mass-accept",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -4058,7 +3774,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/on-my-way",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "onMyWay"))
                     .useAuth(true)
                     .request(builder)
@@ -4068,10 +3784,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subOnMyWay(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/on-my-way");
     }
 
     /**
@@ -4095,7 +3807,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/publish",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish"))
                     .useAuth(true)
                     .request(builder)
@@ -4105,10 +3817,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subPublish(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/publish");
     }
 
     /**
@@ -4134,7 +3842,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/publish",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish"))
                     .useAuth(true)
                     .request(builder)
@@ -4169,7 +3877,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/alerts/" + alertId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeAlert"))
                     .useAuth(true)
                     .request(builder)
@@ -4179,10 +3887,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveAlert(Integer workOrderId, Integer taskId, Integer alertId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/alerts/" + alertId);
     }
 
     /**
@@ -4207,7 +3911,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/alerts",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeAlerts"))
                     .useAuth(true)
                     .request(builder)
@@ -4217,10 +3921,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveAlerts(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/alerts");
     }
 
     /**
@@ -4245,7 +3945,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -4255,10 +3955,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveBonus(Integer workOrderId, Integer bonusId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId);
     }
 
     /**
@@ -4283,7 +3979,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts/" + contactId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeContact"))
                     .useAuth(true)
                     .request(builder)
@@ -4293,10 +3989,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveContact(Integer workOrderId, Integer contactId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts/" + contactId);
     }
 
     /**
@@ -4321,7 +4013,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts/" + discountId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeDiscount"))
                     .useAuth(true)
                     .request(builder)
@@ -4331,10 +4023,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveDiscount(Integer workOrderId, Integer discountId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts/" + discountId);
     }
 
     /**
@@ -4359,7 +4047,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeMessage"))
                     .useAuth(true)
                     .request(builder)
@@ -4369,10 +4057,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveMessage(String workOrderId, String messageId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId);
     }
 
     /**
@@ -4397,7 +4081,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removePenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -4407,10 +4091,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemovePenalty(Integer workOrderId, Integer penaltyId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId);
     }
 
     /**
@@ -4438,7 +4118,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeRequest"))
                     .useAuth(true)
                     .request(builder)
@@ -4448,10 +4128,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveRequest(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests");
     }
 
     /**
@@ -4481,7 +4157,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeRequest"))
                     .useAuth(true)
                     .request(builder)
@@ -4515,7 +4191,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeTask"))
                     .useAuth(true)
                     .request(builder)
@@ -4525,10 +4201,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveTask(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId);
     }
 
     /**
@@ -4553,7 +4225,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -4563,10 +4235,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveTimeLog(Integer workOrderId, Integer workorderHoursId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId);
     }
 
     /**
@@ -4593,7 +4261,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -4629,7 +4297,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/reorder/" + position + "/" + targetTaskId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "reorderTask"))
                     .useAuth(true)
                     .request(builder)
@@ -4639,10 +4307,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subReorderTask(Integer workOrderId, Integer taskId, Integer targetTaskId, String position) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId + "/reorder/" + position + "/" + targetTaskId);
     }
 
     /**
@@ -4671,7 +4335,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "replyMessage"))
                     .useAuth(true)
                     .request(builder)
@@ -4681,10 +4345,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subReplyMessage(String workOrderId, String messageId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId);
     }
 
     /**
@@ -4715,7 +4375,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "replyMessage"))
                     .useAuth(true)
                     .request(builder)
@@ -4752,7 +4412,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/report-problem/messages",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "reportProblem"))
                     .useAuth(true)
                     .request(builder)
@@ -4762,10 +4422,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subReportProblem(String workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/report-problem/messages");
     }
 
     /**
@@ -4795,7 +4451,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/report-problem/messages",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "reportProblem"))
                     .useAuth(true)
                     .request(builder)
@@ -4832,7 +4488,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "request"))
                     .useAuth(true)
                     .request(builder)
@@ -4842,10 +4498,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRequest(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests");
     }
 
     /**
@@ -4875,7 +4527,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/requests",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "request"))
                     .useAuth(true)
                     .request(builder)
@@ -4913,7 +4565,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/report-problem/" + flagId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "resolveReopenReportProblem"))
                     .useAuth(true)
                     .request(builder)
@@ -4923,10 +4575,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subResolveReopenReportProblem(Integer workOrderId, Integer flagId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/report-problem/" + flagId);
     }
 
     /**
@@ -4957,7 +4605,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/report-problem/" + flagId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "resolveReopenReportProblem"))
                     .useAuth(true)
                     .request(builder)
@@ -4990,7 +4638,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/draft",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "revertWorkOrderToDraft"))
                     .useAuth(true)
                     .request(builder)
@@ -5000,10 +4648,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRevertWorkOrderToDraft(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/draft");
     }
 
     /**
@@ -5029,7 +4673,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/draft",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "revertWorkOrderToDraft"))
                     .useAuth(true)
                     .request(builder)
@@ -5066,7 +4710,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/route",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "routeUser"))
                     .useAuth(true)
                     .request(builder)
@@ -5076,10 +4720,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRouteUser(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/route");
     }
 
     /**
@@ -5109,7 +4749,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/route",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "routeUser"))
                     .useAuth(true)
                     .request(builder)
@@ -5142,7 +4782,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/approve",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unapproveWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -5152,10 +4792,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUnapproveWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/approve");
     }
 
     /**
@@ -5181,7 +4817,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/approve",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unapproveWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -5218,7 +4854,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unassignUser"))
                     .useAuth(true)
                     .request(builder)
@@ -5228,10 +4864,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUnassignUser(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee");
     }
 
     /**
@@ -5261,7 +4893,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/assignee",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unassignUser"))
                     .useAuth(true)
                     .request(builder)
@@ -5294,7 +4926,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/publish",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unpublish"))
                     .useAuth(true)
                     .request(builder)
@@ -5304,10 +4936,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUnpublish(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/publish");
     }
 
     /**
@@ -5333,7 +4961,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/publish",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unpublish"))
                     .useAuth(true)
                     .request(builder)
@@ -5370,7 +4998,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/route",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unRouteUser"))
                     .useAuth(true)
                     .request(builder)
@@ -5380,10 +5008,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUnRouteUser(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/route");
     }
 
     /**
@@ -5413,7 +5037,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/route",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "unRouteUser"))
                     .useAuth(true)
                     .request(builder)
@@ -5450,7 +5074,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAllTimeLogs"))
                     .useAuth(true)
                     .request(builder)
@@ -5460,10 +5084,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateAllTimeLogs(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs");
     }
 
     /**
@@ -5493,7 +5113,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAllTimeLogs"))
                     .useAuth(true)
                     .request(builder)
@@ -5532,7 +5152,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAttachment"))
                     .useAuth(true)
                     .request(builder)
@@ -5542,10 +5162,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateAttachment(Integer workOrderId, Integer folderId, Integer attachmentId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
     }
 
     /**
@@ -5577,7 +5193,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateAttachment"))
                     .useAuth(true)
                     .request(builder)
@@ -5615,7 +5231,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -5625,10 +5241,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateBonus(Integer workOrderId, Integer bonusId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/bonuses/" + bonusId);
     }
 
     /**
@@ -5657,7 +5269,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts/" + contactId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateContact"))
                     .useAuth(true)
                     .request(builder)
@@ -5667,10 +5279,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateContact(Integer workOrderId, Integer contactId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/contacts/" + contactId);
     }
 
     /**
@@ -5699,7 +5307,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields/" + customFieldId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateCustomField"))
                     .useAuth(true)
                     .request(builder)
@@ -5709,10 +5317,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateCustomField(Integer workOrderId, Integer customFieldId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields/" + customFieldId);
     }
 
     /**
@@ -5743,7 +5347,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/custom_fields/" + customFieldId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateCustomField"))
                     .useAuth(true)
                     .request(builder)
@@ -5781,7 +5385,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts/" + discountId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateDiscount"))
                     .useAuth(true)
                     .request(builder)
@@ -5791,10 +5395,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateDiscount(Integer workOrderId, Integer discountId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/discounts/" + discountId);
     }
 
     /**
@@ -5819,7 +5419,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses/" + expenseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateExpense"))
                     .useAuth(true)
                     .request(builder)
@@ -5829,10 +5429,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateExpense(Integer workOrderId, Integer expenseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses/" + expenseId);
     }
 
     /**
@@ -5864,7 +5460,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/expenses/" + expenseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateExpense"))
                     .useAuth(true)
                     .request(builder)
@@ -5902,7 +5498,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateFolder"))
                     .useAuth(true)
                     .request(builder)
@@ -5912,10 +5508,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateFolder(Integer workOrderId, Integer folderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId);
     }
 
     /**
@@ -5946,7 +5538,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/attachments/" + folderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateFolder"))
                     .useAuth(true)
                     .request(builder)
@@ -5983,7 +5575,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/holds",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHolds"))
                     .useAuth(true)
                     .request(builder)
@@ -5993,10 +5585,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateHolds(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/holds");
     }
 
     /**
@@ -6026,7 +5614,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/holds",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHolds"))
                     .useAuth(true)
                     .request(builder)
@@ -6064,7 +5652,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -6074,10 +5662,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateIncrease(Integer workOrderId, Integer increaseId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId);
     }
 
     /**
@@ -6108,7 +5692,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/increases/" + increaseId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateIncrease"))
                     .useAuth(true)
                     .request(builder)
@@ -6145,7 +5729,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/location",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateLocation"))
                     .useAuth(true)
                     .request(builder)
@@ -6155,10 +5739,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateLocation(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/location");
     }
 
     /**
@@ -6188,7 +5768,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/location",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateLocation"))
                     .useAuth(true)
                     .request(builder)
@@ -6226,7 +5806,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateMessage"))
                     .useAuth(true)
                     .request(builder)
@@ -6236,10 +5816,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateMessage(String workOrderId, String messageId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/messages/" + messageId);
     }
 
     /**
@@ -6267,7 +5843,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/pay",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePay"))
                     .useAuth(true)
                     .request(builder)
@@ -6277,10 +5853,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdatePay(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/pay");
     }
 
     /**
@@ -6310,7 +5882,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/pay",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePay"))
                     .useAuth(true)
                     .request(builder)
@@ -6344,7 +5916,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -6354,10 +5926,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdatePenalty(Integer workOrderId, Integer penaltyId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId);
     }
 
     /**
@@ -6386,7 +5954,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/penalties/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updatePenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -6423,7 +5991,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/schedule",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateSchedule"))
                     .useAuth(true)
                     .request(builder)
@@ -6433,10 +6001,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateSchedule(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/schedule");
     }
 
     /**
@@ -6466,7 +6030,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/schedule",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateSchedule"))
                     .useAuth(true)
                     .request(builder)
@@ -6504,7 +6068,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments/" + shipmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment"))
                     .useAuth(true)
                     .request(builder)
@@ -6514,10 +6078,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateShipment(Integer workOrderId, Integer shipmentId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments/" + shipmentId);
     }
 
     /**
@@ -6548,7 +6108,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/shipments/" + shipmentId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment"))
                     .useAuth(true)
                     .request(builder)
@@ -6586,7 +6146,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTask"))
                     .useAuth(true)
                     .request(builder)
@@ -6596,10 +6156,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateTask(Integer workOrderId, Integer taskId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/tasks/" + taskId);
     }
 
     /**
@@ -6628,7 +6184,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -6638,10 +6194,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateTimeLog(Integer workOrderId, Integer workorderHoursId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId);
     }
 
     /**
@@ -6672,7 +6224,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -6709,7 +6261,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -6719,10 +6271,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateWorkOrder(Integer workOrderId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId);
     }
 
     /**
@@ -6752,7 +6300,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateWorkOrder"))
                     .useAuth(true)
                     .request(builder)
@@ -6786,7 +6334,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "verifyTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -6796,10 +6344,6 @@ public class WorkordersWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subVerifyTimeLog(Integer workOrderId, Integer workorderHoursId) {
-        return register("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify");
     }
 
     /**
@@ -6826,7 +6370,7 @@ public class WorkordersWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "verifyTimeLog"))
                     .useAuth(true)
                     .request(builder)
@@ -6845,6 +6389,7 @@ public class WorkordersWebApi extends TopicClient {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
+            Log.v(STAG, "Listener " + topicId);
             new AsyncParser(this, (Bundle) payload);
         }
 
@@ -7192,7 +6737,6 @@ public class WorkordersWebApi extends TopicClient {
 
         public void onVerifyTimeLog(boolean success, Error error) {
         }
-
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -7217,6 +6761,8 @@ public class WorkordersWebApi extends TopicClient {
 
         @Override
         protected Object doInBackground(Object... params) {
+            Log.v(TAG, "Start doInBackground");
+            Stopwatch watch = new Stopwatch(true);
             try {
                 switch (transactionParams.apiFunction) {
                     case "acceptIncrease":
@@ -7793,6 +7339,8 @@ public class WorkordersWebApi extends TopicClient {
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+            } finally {
+                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
             }
             return null;
         }

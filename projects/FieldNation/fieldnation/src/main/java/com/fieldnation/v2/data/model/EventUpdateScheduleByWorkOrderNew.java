@@ -33,9 +33,14 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     private String _timeZone;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public EventUpdateScheduleByWorkOrderNew() {
+        SOURCE = new JsonObject();
+    }
+
+    public EventUpdateScheduleByWorkOrderNew(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setEnd(String end) throws ParseException {
@@ -44,6 +49,17 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     }
 
     public String getEnd() {
+        try {
+            if (_end != null)
+                return _end;
+
+            if (SOURCE.has("end") && SOURCE.get("end") != null)
+                _end = SOURCE.getString("end");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _end;
     }
 
@@ -59,6 +75,17 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     }
 
     public String getMode() {
+        try {
+            if (_mode != null)
+                return _mode;
+
+            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+                _mode = SOURCE.getString("mode");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mode;
     }
 
@@ -74,6 +101,17 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     }
 
     public String getStart() {
+        try {
+            if (_start != null)
+                return _start;
+
+            if (SOURCE.has("start") && SOURCE.get("start") != null)
+                _start = SOURCE.getString("start");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _start;
     }
 
@@ -89,6 +127,17 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     }
 
     public String getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = SOURCE.getString("time_zone");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -119,7 +168,7 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
 
     public static EventUpdateScheduleByWorkOrderNew fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(EventUpdateScheduleByWorkOrderNew.class, obj);
+            return new EventUpdateScheduleByWorkOrderNew(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
