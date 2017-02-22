@@ -59,7 +59,7 @@ public class ExpensesSum implements Parcelable {
     }
 
     public Double getCharged() {
-        return _charged;
+        return _charged == null ? 0.0 : _charged;
     }
 
     public ExpensesSum charged(Double charged) throws ParseException {

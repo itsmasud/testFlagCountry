@@ -56,7 +56,7 @@ public class PayModifiersSum implements Parcelable {
     }
 
     public Double getCharged() {
-        return _charged;
+        return _charged == null ? 0.0 : _charged;
     }
 
     public PayModifiersSum charged(Double charged) throws ParseException {
