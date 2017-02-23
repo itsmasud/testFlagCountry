@@ -83,13 +83,13 @@ public class GpsTrackingService extends MultiThreadedService {
 
     private SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(Location location) {
+        public void onLocation(SimpleGps simpleGps, Location location) {
             Log.v(TAG, location.toString());
             ProfileTransactionBuilder.geo(App.get(), location.getLatitude(), location.getLongitude());
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             _expirationTime = 0;
         }
     };

@@ -10,19 +10,17 @@ import android.widget.LinearLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.v2.actions.Action;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.RunningLateDialog;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class ActionBarTopView extends LinearLayout {
+public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ActionBarTopView";
 
     // Dalog UIDs
-    private static final String DIALOG_RUNNING_LATE_LEGACY = TAG + ".runningLateLegacyDialog";
+    private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
 
     // Ui
     private Button _leftWhiteButton;
@@ -36,7 +34,7 @@ public class ActionBarTopView extends LinearLayout {
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private boolean _inflated = false;
 
     public ActionBarTopView(Context context) {
@@ -58,14 +56,14 @@ public class ActionBarTopView extends LinearLayout {
         if (isInEditMode())
             return;
 
-        RunningLateDialogLegacy.addOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
+        RunningLateDialog.addOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
 
         setVisibility(View.GONE);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        RunningLateDialogLegacy.removeOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
+        RunningLateDialog.removeOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
 
         super.onDetachedFromWindow();
     }
@@ -89,8 +87,9 @@ public class ActionBarTopView extends LinearLayout {
         _inflated = true;
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
 
         if (_inflated) {
             _leftWhiteButton.setVisibility(View.GONE);
@@ -112,6 +111,7 @@ public class ActionBarTopView extends LinearLayout {
 
     private void populateButtons() {
         Log.v(TAG, "populateButtons");
+/*
         WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
 
         switch (substatus) {
@@ -340,9 +340,11 @@ public class ActionBarTopView extends LinearLayout {
             default:
                 break;
         }
+*/
     }
 
     private void populateButtonsNCNS() {
+/*
         Log.v(TAG, "populateButtonsNCNS");
         // Primary actions
         if (_workorder.getPrimaryActions() != null && _workorder.getPrimaryActions().length > 0) {
@@ -371,8 +373,10 @@ public class ActionBarTopView extends LinearLayout {
                 }
             }
         }
+*/
     }
 
+/*
     private boolean populateButton(Button button, Action action) {
         switch (action.getType()) {
             case ACCEPT:
@@ -478,6 +482,7 @@ public class ActionBarTopView extends LinearLayout {
         }
         return true;
     }
+*/
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -516,9 +521,9 @@ public class ActionBarTopView extends LinearLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE,
-                    null, _workorder.getWorkorderId().intValue());
+                    null, _workOrder.getWorkOrderId().intValue());
 
-            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
+            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
         }
     };
 
@@ -535,16 +540,16 @@ public class ActionBarTopView extends LinearLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                    null, _workorder.getWorkorderId().intValue());
+                    null, _workOrder.getWorkOrderId());
 
-            RunningLateDialogLegacy.show(App.get(), DIALOG_RUNNING_LATE_LEGACY, _workorder);
+            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
         }
     };
 
-    private final RunningLateDialogLegacy.OnSendListener _runningLateDialogLegacy_onSend = new RunningLateDialogLegacy.OnSendListener() {
+    private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
-        public void onSend(long workOrderId, int delayMin) {
-            if (_workorder.getWorkorderId() == workOrderId)
+        public void onSend(long workOrderId) {
+            if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                         WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
         }

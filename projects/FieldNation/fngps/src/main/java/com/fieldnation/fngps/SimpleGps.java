@@ -131,7 +131,7 @@ public class SimpleGps {
         } catch (Exception ex) {
             Log.v(TAG, ex);
             if (_listener != null)
-                _listener.onFail();
+                _listener.onFail(this);
         }
         return this;
     }
@@ -166,12 +166,12 @@ public class SimpleGps {
 
                 if (location != null && _listener != null) {
                     Log.v(TAG, location.toString());
-                    _listener.onLocation(location);
+                    _listener.onLocation(SimpleGps.this, location);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 if (_listener != null)
-                    _listener.onFail();
+                    _listener.onFail(SimpleGps.this);
                 stop();
             }
         }
@@ -182,7 +182,7 @@ public class SimpleGps {
                 return;
             Log.v(TAG, "onConnectionSuspended");
             if (_listener != null)
-                _listener.onFail();
+                _listener.onFail(SimpleGps.this);
             stop();
         }
     };
@@ -194,7 +194,7 @@ public class SimpleGps {
                 return;
             Log.v(TAG, "onConnectionFailed");
             if (_listener != null)
-                _listener.onFail();
+                _listener.onFail(SimpleGps.this);
             stop();
         }
     };
@@ -207,14 +207,14 @@ public class SimpleGps {
             Log.v(TAG, "onLocationChanged");
             Log.v(TAG, location.toString());
             if (_listener != null)
-                _listener.onLocation(location);
+                _listener.onLocation(SimpleGps.this, location);
         }
     };
 
 
     public interface Listener {
-        void onLocation(Location location);
+        void onLocation(SimpleGps simpleGps, Location location);
 
-        void onFail();
+        void onFail(SimpleGps simpleGps);
     }
 }

@@ -26,7 +26,8 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
@@ -50,7 +51,6 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -79,6 +79,7 @@ import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
@@ -94,23 +95,24 @@ public class WorkFragment extends WorkorderFragment {
     private static final String TAG = "WorkFragment";
 
     // Dialog tags
-    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
-    private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
-    private static final String DIALOG_ETA = TAG + ".etaDialog";
-    private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
-    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
-    private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
-    private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
-    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
-    private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
+    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
+    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
+    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_ETA = TAG + ".etaDialog";
+    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG + ".locationDialogCheckIn";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG + ".locationDialogCheckOut";
-    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
-    private static final String DIALOG_TERMS = TAG + ".termsDialog";
+    private static final String DIALOG_LOCATION_LOADING = TAG + ".locationLoadingDialog";
+    private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
+    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
-    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
+    private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
+    private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
+    private static final String DIALOG_TERMS = TAG + ".termsDialog";
+    private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -155,7 +157,6 @@ public class WorkFragment extends WorkorderFragment {
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsScrollingDialog _termsScrollingDialog;
     private WorkLogDialog _worklogDialog;
-    private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
@@ -166,10 +167,11 @@ public class WorkFragment extends WorkorderFragment {
     private WorkordersWebApi _workorderApi;
     private File _tempFile;
     private Uri _tempUri;
-    private GpsLocationService _gpsLocationService;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
+    private Location _currentLocation;
+    private boolean _locationFailed = false;
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -204,7 +206,7 @@ public class WorkFragment extends WorkorderFragment {
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
-//        _renderers.add(_topBar);
+        _renderers.add(_topBar);
 
         _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
@@ -228,7 +230,7 @@ public class WorkFragment extends WorkorderFragment {
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
-       _renderers.add(_coSummaryView);
+        _renderers.add(_coSummaryView);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
@@ -385,19 +387,12 @@ TODO        if (_currentTask != null)
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
-
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
@@ -421,6 +416,9 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
 
+        OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
+        OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
+
         LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
         LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
         LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onNotNowCheckIn);
@@ -436,8 +434,6 @@ TODO        if (_currentTask != null)
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
-
-        _gpsLocationService = new GpsLocationService(getActivity());
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -463,6 +459,9 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
 
+        OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
+        OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
+
         LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
         LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
         LocationDialog.removeOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onNotNowCheckIn);
@@ -486,11 +485,15 @@ TODO        if (_currentTask != null)
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+    }
+
+    @Override
     public void onPause() {
         Log.v(TAG, "onPause");
-        if (_gpsLocationService != null && _gpsLocationService.isRunning()) {
-            _gpsLocationService.stopLocationUpdates();
-        }
         super.onPause();
     }
 
@@ -586,32 +589,27 @@ TODO     private void setTasks(List<Task> tasks) {
     /*-*********************************************-*/
     /*-				Check In Process				-*/
     /*-*********************************************-*/
-    private void startCheckin() {
-        // everything is awsome. checkin
-/*
-TODO        _gpsLocationService.setListener(_gps_checkInListener);
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
-        } else if (_gpsLocationService.hasLocation()) {
-            doCheckin();
-        } else if (_gpsLocationService.isRunning()) {
-            _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
-            _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
-        } else {
-            // location is disabled, or failed. ask for them to be enabled
-            Log.v(TAG, "Should not be here");
+    private final Runnable _startCheckIn = new Runnable() {
+        @Override
+        public void run() {
+            if (_currentLocation == null && !_locationFailed) {
+                OneButtonDialog.show(App.get(), DIALOG_LOCATION_LOADING,
+                        R.string.dialog_location_loading_title, R.string.dialog_location_loading_body,
+                        R.string.dialog_location_loading_button, true);
+            } else if (_currentLocation != null) {
+                doCheckin();
+            } else if (_locationFailed) {
+
+            }
+            setLoading(true);
         }
-*/
-//        setLoading(true);
-    }
+    };
+
 
     private void doCheckin() {
 //        setLoading(true);
-        _gpsLocationService.setListener(null);
-        if (_gpsLocationService.hasLocation()) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+        if (_currentLocation != null) {
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
 
@@ -648,40 +646,27 @@ TODO        _gpsLocationService.setListener(_gps_checkInListener);
         }
     };
 
-    private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
-        @Override
-        public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkInListener.onLocation");
-            startCheckin();
-            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-                _locationLoadingDialog.dismiss();
-            }
-        }
-    };
-
     /*-*********************************************-*/
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
-
-    private void startCheckOut() {
-/*
-TODO        _gpsLocationService.setListener(_gps_checkOutListener);
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
-        } else if (_gpsLocationService.hasLocation()) {
-            doCheckOut();
-        } else if (_gpsLocationService.isRunning()) {
-            _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
-            _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
-        } else {
-            // location is disabled, or failed. ask for them to be enabled
-            Log.v(TAG, "Should not be here");
+    private final Runnable _startCheckOut = new Runnable() {
+        @Override
+        public void run() {
+            if (_currentLocation == null && !_locationFailed) {
+                // waiting for response
+                OneButtonDialog.show(App.get(), DIALOG_LOCATION_LOADING,
+                        R.string.dialog_location_loading_title, R.string.dialog_location_loading_body,
+                        R.string.dialog_location_loading_button, true);
+                _gpsRunnable = _startCheckOut;
+            } else if (_currentLocation != null) {
+                // have location
+                doCheckOut();
+            } else if (_locationFailed) {
+                // location failed
+            }
+            setLoading(true);
         }
-*/
-//        setLoading(true);
-    }
+    };
 
     private void doCheckOut() {
 //        setLoading(true);
@@ -691,12 +676,11 @@ TODO        _gpsLocationService.setListener(_gps_checkOutListener);
             _deviceCount = pay.getRange().getMax().intValue();
         }
 
-        _gpsLocationService.setListener(null);
-        if (_gpsLocationService.hasLocation()) {
+        if (_currentLocation != null) {
             if (_deviceCount > -1) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         } else {
             if (_deviceCount > -1) {
@@ -737,20 +721,30 @@ TODO        _gpsLocationService.setListener(_gps_checkOutListener);
         }
     };
 
-    private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
-        @Override
-        public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkOutListener.onLocation");
-            startCheckOut();
-            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-                _locationLoadingDialog.dismiss();
-            }
-        }
-    };
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private Runnable _gpsRunnable = null;
+
+    private final SimpleGps.Listener _simpleGps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(SimpleGps simpleGps, Location location) {
+            simpleGps.stop();
+            _currentLocation = location;
+            _locationFailed = false;
+            if (_gpsRunnable != null) _gpsRunnable.run();
+            Controller.dismiss(App.get(), DIALOG_LOCATION_LOADING);
+        }
+
+        @Override
+        public void onFail(SimpleGps simpleGps) {
+            _locationFailed = true;
+            simpleGps.stop();
+            if (_gpsRunnable != null) _gpsRunnable.run();
+            Controller.dismiss(App.get(), DIALOG_LOCATION_LOADING);
+        }
+    };
+
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
@@ -843,9 +837,9 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 }
 */
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
-                startCheckin();
+                _startCheckIn.run();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-                startCheckOut();
+                _startCheckOut.run();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -875,7 +869,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
                     null, _workOrder.getWorkOrderId());
 
-            startCheckOut();
+            _startCheckOut.run();
         }
 
         @Override
@@ -883,7 +877,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
                     null, _workOrder.getWorkOrderId());
 
-            startCheckin();
+            _startCheckIn.run();
         }
 
         @Override
@@ -891,7 +885,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
                     null, _workOrder.getWorkOrderId());
 
-            startCheckin();
+            _startCheckIn.run();
         }
 
         @Override
@@ -934,9 +928,8 @@ TODO            if (_workorder.getPaymentId() != null) {
         public void onMyWay() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
 
-            if (_gpsLocationService != null && _gpsLocationService.hasLocation() && _gpsLocationService.getLocation() != null) {
-                Location location = _gpsLocationService.getLocation();
-                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), location.getLatitude(), location.getLongitude());
+            if (_currentLocation != null) {
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), _currentLocation.getLatitude(), _currentLocation.getLongitude());
             } else {
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), null, null);
             }
@@ -1499,15 +1492,16 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         }
     };
 
-    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+    private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
-        public void onButtonClick() {
-            _gpsLocationService.stopLocationUpdates();
+        public void onPrimary() {
             setLoading(false);
         }
+    };
 
+    private final OneButtonDialog.OnCanceledListener _locationLoadingDialog_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
-        public void onCancel() {
+        public void onCanceled() {
             setLoading(false);
         }
     };
