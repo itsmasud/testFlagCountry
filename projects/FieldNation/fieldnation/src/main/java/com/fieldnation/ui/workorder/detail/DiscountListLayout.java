@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Discount;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -78,32 +80,34 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
         if (_workOrder.getPay() == null)
             return;
 
-/*
-TODO        if (_workOrder.getStatus().getId() == 2                || _workorder.getPay().hidePay()) {
+
+        if (_workOrder.getStatus().getId() == 2 /*TODO   || _workorder.getPay().hidePay() */) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
-*/
 
-/*
-TODO        if (_workorder.canChangeDiscounts()) {
+        if (_workOrder.getPay() != null
+                && _workOrder.getPay().getDiscounts() != null
+                && _workOrder.getPay().getDiscounts().getActionsSet() != null
+                && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
         }
 
-        final Discount[] list = _workorder.getDiscounts();
+
+        final PayModifier[] list = _workOrder.getPay().getDiscounts().getResults();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
             return;
         }
-*/
 
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
+
 
 /*
         if (_listView.getChildCount() > list.length) {
@@ -164,11 +168,13 @@ TODO        if (_workorder.canChangeDiscounts()) {
     private final OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-/*
-            if (_listener != null && _workorder.canChangeDiscounts()) {
+            if (_listener != null
+                    && _workOrder.getPay() != null
+                    && _workOrder.getPay().getDiscounts() != null
+                    && _workOrder.getPay().getDiscounts().getActionsSet() != null
+                    && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
                 _listener.addDiscount();
             }
-*/
         }
     };
 
