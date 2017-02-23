@@ -229,7 +229,7 @@ public class WorkFragment extends WorkorderFragment {
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
-//TODO        _renderers.add(_coSummaryView);
+       _renderers.add(_coSummaryView);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
