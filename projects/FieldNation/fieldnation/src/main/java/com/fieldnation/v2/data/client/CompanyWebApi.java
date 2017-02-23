@@ -45,6 +45,43 @@ public class CompanyWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getCompanyDetails
+     * Get Company Details
+     *
+     * @param companyId ID of company
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getCompanyDetails(Context context, Integer companyId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/" + companyId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/" + companyId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/{company_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getCompanyDetails"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getIntegrations
      * Get a list of all company_integrations for a company.
      *
@@ -205,6 +242,9 @@ public class CompanyWebApi extends TopicClient {
         public void onCompanyWebApi(String methodName, Object successObject, boolean success, Object failObject) {
         }
 
+        public void onGetCompanyDetails(boolean success, Error error) {
+        }
+
         public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
         }
 
@@ -240,6 +280,10 @@ public class CompanyWebApi extends TopicClient {
         protected Object doInBackground(Object... params) {
             try {
                 switch (transactionParams.apiFunction) {
+                    case "getCompanyDetails":
+                        if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "getIntegrations":
                         if (success)
                             successObject = CompanyIntegrations.fromJson(new JsonObject(data));
@@ -271,6 +315,9 @@ public class CompanyWebApi extends TopicClient {
             try {
                 listener.onCompanyWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
+                    case "getCompanyDetails":
+                        listener.onGetCompanyDetails(success, (Error) failObject);
+                        break;
                     case "getIntegrations":
                         listener.onGetIntegrations((CompanyIntegrations) successObject, success, (Error) failObject);
                         break;

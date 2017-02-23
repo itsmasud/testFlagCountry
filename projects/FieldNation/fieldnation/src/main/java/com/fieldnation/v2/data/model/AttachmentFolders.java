@@ -132,8 +132,10 @@ public class AttachmentFolders implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "add_slot")
+        ADD_SLOT("add_slot"),
+        @Json(name = "download")
+        DOWNLOAD("download");
 
         private String value;
 

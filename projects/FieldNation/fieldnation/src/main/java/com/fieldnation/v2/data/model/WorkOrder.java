@@ -25,9 +25,6 @@ public class WorkOrder implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
-    @Json(name = "allow_counter_offers")
-    private Boolean _allowCounterOffers;
-
     @Json(name = "assignee")
     private Assignee _assignee;
 
@@ -185,32 +182,6 @@ public class WorkOrder implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
-        return this;
-    }
-
-    public void setAllowCounterOffers(Boolean allowCounterOffers) throws ParseException {
-        _allowCounterOffers = allowCounterOffers;
-        SOURCE.put("allow_counter_offers", allowCounterOffers);
-    }
-
-    public Boolean getAllowCounterOffers() {
-        try {
-            if (_allowCounterOffers != null)
-                return _allowCounterOffers;
-
-            if (SOURCE.has("allow_counter_offers") && SOURCE.get("allow_counter_offers") != null)
-                _allowCounterOffers = SOURCE.getBoolean("allow_counter_offers");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _allowCounterOffers;
-    }
-
-    public WorkOrder allowCounterOffers(Boolean allowCounterOffers) throws ParseException {
-        _allowCounterOffers = allowCounterOffers;
-        SOURCE.put("allow_counter_offers", allowCounterOffers);
         return this;
     }
 

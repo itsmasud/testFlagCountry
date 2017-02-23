@@ -20,6 +20,7 @@ import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.AaaaPlaceholder;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.PPNs;
 import com.fieldnation.v2.data.model.ProfileAndWorkHistory;
 import com.fieldnation.v2.data.model.TypesOfWork;
 import com.fieldnation.v2.data.model.User;
@@ -366,6 +367,43 @@ public class UsersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
                                     UsersWebApi.class, "getUserPreferenceValue"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getUserPreferredProviderNetworks
+     * Get the Preferred Provider Networks the user is a part of
+     *
+     * @param userId User ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/users/" + userId + "/preferredprovidernetworks");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/users/{user_id}/preferredprovidernetworks")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                                    UsersWebApi.class, "getUserPreferredProviderNetworks"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -884,6 +922,9 @@ public class UsersWebApi extends TopicClient {
         public void onGetUserPreferenceValue(AaaaPlaceholder aaaaPlaceholder, boolean success, Error error) {
         }
 
+        public void onGetUserPreferredProviderNetworks(PPNs pPNs, boolean success, Error error) {
+        }
+
         public void onGetUserTypesOfWork(TypesOfWork typesOfWork, boolean success, Error error) {
         }
 
@@ -1001,6 +1042,12 @@ public class UsersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "getUserPreferredProviderNetworks":
+                        if (success)
+                            successObject = PPNs.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "getUserTypesOfWork":
                         if (success)
                             successObject = TypesOfWork.fromJson(new JsonObject(data));
@@ -1104,6 +1151,9 @@ public class UsersWebApi extends TopicClient {
                         break;
                     case "getUserPreferenceValue":
                         listener.onGetUserPreferenceValue((AaaaPlaceholder) successObject, success, (Error) failObject);
+                        break;
+                    case "getUserPreferredProviderNetworks":
+                        listener.onGetUserPreferredProviderNetworks((PPNs) successObject, success, (Error) failObject);
                         break;
                     case "getUserTypesOfWork":
                         listener.onGetUserTypesOfWork((TypesOfWork) successObject, success, (Error) failObject);

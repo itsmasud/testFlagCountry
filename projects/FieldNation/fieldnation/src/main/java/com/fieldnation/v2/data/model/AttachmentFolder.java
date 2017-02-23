@@ -20,6 +20,9 @@ import java.text.ParseException;
 public class AttachmentFolder implements Parcelable {
     private static final String TAG = "AttachmentFolder";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "id")
     private Integer _id;
 
@@ -41,6 +44,41 @@ public class AttachmentFolder implements Parcelable {
 
     public AttachmentFolder(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public AttachmentFolder actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -173,6 +211,41 @@ public class AttachmentFolder implements Parcelable {
 
         public static TypeEnum[] fromJsonArray(JsonArray jsonArray) {
             TypeEnum[] list = new TypeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "upload")
+        UPLOAD("upload");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
             for (int i = 0; i < list.length; i++) {
                 list[i] = fromString(jsonArray.getString(i));
             }

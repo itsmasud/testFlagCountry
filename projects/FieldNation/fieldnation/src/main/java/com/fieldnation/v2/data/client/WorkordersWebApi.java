@@ -6737,6 +6737,7 @@ public class WorkordersWebApi extends TopicClient {
 
         public void onVerifyTimeLog(boolean success, Error error) {
         }
+
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {

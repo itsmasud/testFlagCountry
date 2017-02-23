@@ -135,8 +135,8 @@ public class Shipments implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "add")
+        ADD("add");
 
         private String value;
 
