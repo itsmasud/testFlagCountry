@@ -1306,7 +1306,6 @@ public class WorkOrder implements Parcelable {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
-
         return _actionsSet;
     }
 }

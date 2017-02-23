@@ -269,13 +269,13 @@ public class Coords implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    public Coords(double latitude, double longitude) {
-        super();
-        _latitude = latitude;
-        _longitude = longitude;
+    public Coords(double latitude, double longitude) throws ParseException {
+        this();
+        setLatitude(latitude);
+        setLongitude(longitude);
     }
 
-    public Coords(android.location.Location location) {
+    public Coords(android.location.Location location) throws ParseException {
         this(location.getLatitude(), location.getLongitude());
     }
 }

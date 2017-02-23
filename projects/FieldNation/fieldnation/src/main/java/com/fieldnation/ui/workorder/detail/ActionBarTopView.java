@@ -108,11 +108,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightGrayButton.setVisibility(View.GONE);
         }
         setVisibility(View.GONE);
-        if (App.isNcns()) {
-            populateButtonsNCNS();
-        } else {
-            populateButtons();
-        }
+        populateButtons();
     }
 
     private void populateButtons() {
@@ -136,7 +132,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         // ---confirm
 
         // view counter
-        // ready to go
         // closing notes
         // check in again
         // report a problem
@@ -149,52 +144,68 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // check_out
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
                 && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_checkout_onClick);
             _rightWhiteButton.setText(R.string.btn_check_out);
+            setVisibility(View.VISIBLE);
 
             // check_in
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_checkin_onClick);
             _rightWhiteButton.setText(R.string.btn_check_in);
+            setVisibility(View.VISIBLE);
 
             // set eta
         } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_eta_onClick);
             _rightWhiteButton.setText(R.string.btn_set_eta);
+            setVisibility(View.VISIBLE);
 
             // ready (NCNS confirm)
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.CONFIRM)) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_readyToGo_onClick);
             _rightWhiteButton.setText(R.string.btn_confirm);
+            setVisibility(View.VISIBLE);
 
             // on my way
+//            inflate();
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_onMyWay_onClick);
 //            button.setText(R.string.btn_on_my_way);
+//            setVisibility(View.VISIBLE);
 
             // ack hold/
+//            inflate();
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
 //            button.setText(R.string.btn_acknowledge_hold);
+//            setVisibility(View.VISIBLE);
 
             // mark incomplete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_markIncomplete_onClick);
             _rightWhiteButton.setText(R.string.btn_incomplete);
+            setVisibility(View.VISIBLE);
 
             // view_bundle
         } else if (_workOrder.getBundle() != null
                 && _workOrder.getBundle().getId() != null
                 && _workOrder.getBundle().getId() > 0) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
             _rightWhiteButton.setText(getResources().getString(R.string.btn_view_bundle_num,
                     _workOrder.getBundle().getMetadata().getTotal()));
+            setVisibility(View.VISIBLE);
 
             // accept
 //            button.setVisibility(VISIBLE);
@@ -204,22 +215,28 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // request
         } else if (_workOrder.getRequests() != null
                 && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_request_onClick);
             _rightWhiteButton.setText(R.string.btn_request);
+            setVisibility(View.VISIBLE);
 
             // withdraw
         } else if (_workOrder.getRequests() != null
                 && _workOrder.getRequests().getOpenRequest() != null
                 && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
+            inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_withdraw_onClick);
             _rightWhiteButton.setText(R.string.btn_withdraw);
+            setVisibility(View.VISIBLE);
 
 //        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+//            inflate();
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_complete_onClick);
 //            button.setText(R.string.btn_complete);
+//            setVisibility(View.VISIBLE);
         }
 
 

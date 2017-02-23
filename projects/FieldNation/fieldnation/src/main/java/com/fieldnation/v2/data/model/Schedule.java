@@ -433,7 +433,6 @@ public class Schedule implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -441,7 +440,6 @@ public class Schedule implements Parcelable {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
-
         return _actionsSet;
     }
 }
