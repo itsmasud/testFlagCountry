@@ -12,9 +12,15 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+
+import java.util.Set;
 
 public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ActionBarTopView";
@@ -111,6 +117,112 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
     private void populateButtons() {
         Log.v(TAG, "populateButtons");
+
+        Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
+        Set<Schedule.ActionsEnum> scheduleActions = _workOrder.getSchedule().getActionsSet();
+        Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
+
+        // ---view bundle
+        // ---request
+        // ---accept
+        // ---check in
+        // ---mark complete
+        // ---check out
+        // ---acknowledge hold
+        // ---mark incomplete
+        // +++set eta
+        // +++on my way
+        // +++withdraw
+        // ---confirm
+
+        // view counter
+        // ready to go
+        // closing notes
+        // check in again
+        // report a problem
+        // payments (paid work - view payments)
+        // fees (cancelled work - view payments)
+
+
+        if (false) {
+
+            // check_out
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
+                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_checkout_onClick);
+            _rightWhiteButton.setText(R.string.btn_check_out);
+
+            // check_in
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_checkin_onClick);
+            _rightWhiteButton.setText(R.string.btn_check_in);
+
+            // set eta
+        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_eta_onClick);
+            _rightWhiteButton.setText(R.string.btn_set_eta);
+
+            // ready (NCNS confirm)
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.CONFIRM)) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_readyToGo_onClick);
+            _rightWhiteButton.setText(R.string.btn_confirm);
+
+            // on my way
+//            button.setVisibility(VISIBLE);
+//            button.setOnClickListener(_onMyWay_onClick);
+//            button.setText(R.string.btn_on_my_way);
+
+            // ack hold/
+//            button.setVisibility(VISIBLE);
+//            button.setOnClickListener(_ackHold_onClick);
+//            button.setText(R.string.btn_acknowledge_hold);
+
+            // mark incomplete
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_markIncomplete_onClick);
+            _rightWhiteButton.setText(R.string.btn_incomplete);
+
+            // view_bundle
+        } else if (_workOrder.getBundle() != null
+                && _workOrder.getBundle().getId() != null
+                && _workOrder.getBundle().getId() > 0) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
+            _rightWhiteButton.setText(getResources().getString(R.string.btn_view_bundle_num,
+                    _workOrder.getBundle().getMetadata().getTotal()));
+
+            // accept
+//            button.setVisibility(VISIBLE);
+//            button.setOnClickListener(_accept_onClick);
+//            button.setText(R.string.btn_accept);
+
+            // request
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_request_onClick);
+            _rightWhiteButton.setText(R.string.btn_request);
+
+            // withdraw
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getOpenRequest() != null
+                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_withdraw_onClick);
+            _rightWhiteButton.setText(R.string.btn_withdraw);
+
+//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+//            button.setVisibility(VISIBLE);
+//            button.setOnClickListener(_complete_onClick);
+//            button.setText(R.string.btn_complete);
+        }
+
+
 /*
         WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
 
@@ -343,6 +455,13 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 */
     }
 
+    // left side
+    // not interested
+    // withdraw
+    // report a problem
+    // check in
+    // check in again
+
     private void populateButtonsNCNS() {
 /*
         Log.v(TAG, "populateButtonsNCNS");
@@ -555,113 +674,101 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
+    private final OnClickListener _eta_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) _listener.onEta();
+        }
+    };
+
     private final View.OnClickListener _confirmAssignment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onConfirmAssignment();
-            }
+            if (_listener != null) _listener.onConfirmAssignment();
         }
     };
 
     private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onWithdraw();
-            }
+            if (_listener != null) _listener.onWithdraw();
         }
     };
 
     private final View.OnClickListener _viewCounter_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onViewCounter();
-            }
+            if (_listener != null) _listener.onViewCounter();
         }
     };
 
     private final View.OnClickListener _readyToGo_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onReadyToGo();
-            }
+            if (_listener != null) _listener.onReadyToGo();
         }
     };
 
     private final View.OnClickListener _markComplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onMarkComplete();
-            }
+            if (_listener != null) _listener.onMarkComplete();
         }
     };
 
     private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onEnterClosingNotes();
-            }
+            if (_listener != null) _listener.onEnterClosingNotes();
         }
     };
 
     private final View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onConfirm();
+            if (_listener != null) _listener.onConfirm();
         }
     };
 
     private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onCheckIn();
+            if (_listener != null) _listener.onCheckIn();
         }
     };
 
     private final View.OnClickListener _checkinAgain_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onCheckInAgain();
+            if (_listener != null) _listener.onCheckInAgain();
         }
     };
 
     private final View.OnClickListener _checkout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onCheckOut();
+            if (_listener != null) _listener.onCheckOut();
         }
     };
 
     private final View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onAcknowledgeHold();
+            if (_listener != null) _listener.onAcknowledgeHold();
         }
     };
 
     private final View.OnClickListener _markIncomplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onMarkIncomplete();
+            if (_listener != null) _listener.onMarkIncomplete();
         }
     };
 
     private final View.OnClickListener _viewPayment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onViewPayment();
+            if (_listener != null) _listener.onViewPayment();
         }
     };
 
@@ -699,5 +806,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         void onReportProblem();
 
         void onMyWay();
+
+        void onEta();
     }
 }

@@ -11,7 +11,6 @@ import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -1300,25 +1299,6 @@ public class WorkOrder implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public ActionsEnum[] getSortedActions() {
-        Arrays.sort(getActions(), new Comparator<ActionsEnum>() {
-            @Override
-            public int compare(ActionsEnum lhs, ActionsEnum rhs) {
-                if (lhs == null || rhs == null)
-                    return 0;
-
-                if (lhs.ordinal() < rhs.ordinal())
-                    return -1;
-                else if (lhs.ordinal() > rhs.ordinal())
-                    return 1;
-                else
-                    return 0;
-            }
-        });
-        return getActions();
-    }
-
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {

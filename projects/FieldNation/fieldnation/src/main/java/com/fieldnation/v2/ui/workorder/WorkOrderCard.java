@@ -366,16 +366,9 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populatePrimaryButton(Button button) {
-        Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
-        workOrderActions.addAll(Arrays.asList(_workOrder.getActions()));
-
-        Set<Schedule.ActionsEnum> scheduleActions = new HashSet<>();
-        scheduleActions.addAll(Arrays.asList(_workOrder.getSchedule().getActions()));
-
-        Set<TimeLogs.ActionsEnum> timeLogsActions = new HashSet<>();
-        if (_workOrder.getTimeLogs() != null && _workOrder.getTimeLogs().getActions() != null) {
-            timeLogsActions.addAll(Arrays.asList(_workOrder.getTimeLogs().getActions()));
-        }
+        Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
+        Set<Schedule.ActionsEnum> scheduleActions = _workOrder.getSchedule().getActionsSet();
+        Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
 
         // Order of operations
         // check_out
