@@ -45,7 +45,7 @@ public class Date implements Parcelable {
         SOURCE.put("local", local.getJson());
     }
 
-    public Local getLocal() throws ParseException {
+    public Local getLocal() {
         try {
         if (_local != null)
             return _local;

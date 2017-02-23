@@ -61,6 +61,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "description")
     private RichText _description;
 
+    @Json(name = "discounts")
+    private PayModifiers _discounts;
+
     @Json(name = "holds")
     private Hold[] _holds;
 
@@ -494,6 +497,32 @@ public class WorkOrder implements Parcelable {
     public WorkOrder description(RichText description) throws ParseException {
         _description = description;
         SOURCE.put("description", description.getJson());
+        return this;
+    }
+
+    public void setDiscounts(PayModifiers discounts) throws ParseException {
+        _discounts = discounts;
+        SOURCE.put("discounts", discounts.getJson());
+    }
+
+    public PayModifiers getDiscounts() {
+        try {
+            if (_discounts != null)
+                return _discounts;
+
+            if (SOURCE.has("discounts") && SOURCE.get("discounts") != null)
+                _discounts = PayModifiers.fromJson(SOURCE.getJsonObject("discounts"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _discounts;
+    }
+
+    public WorkOrder discounts(PayModifiers discounts) throws ParseException {
+        _discounts = discounts;
+        SOURCE.put("discounts", discounts.getJson());
         return this;
     }
 
