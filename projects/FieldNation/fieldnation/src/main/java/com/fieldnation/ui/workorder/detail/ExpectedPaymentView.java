@@ -28,7 +28,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
     private TextView _feePercentTextView;
     private TextView _feeTextView;
     private TextView _insurancePercentTextView;
-    private TextView _insuraceFeeTextView;
+    private TextView _insuranceFeeTextView;
     private TextView _totalTextView;
     private TextView _payStatusTextView;
 
@@ -66,7 +66,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _feeTextView = (TextView) findViewById(R.id.fee_textview);
 
         _insurancePercentTextView = (TextView) findViewById(R.id.insurancePercentage_textview);
-        _insuraceFeeTextView = (TextView) findViewById(R.id.insuranceFee_textview);
+        _insuranceFeeTextView = (TextView) findViewById(R.id.insuranceFee_textview);
         _totalTextView = (TextView) findViewById(R.id.total_textview);
         _payStatusTextView = (TextView) findViewById(R.id.paystatus_textview);
 
@@ -151,7 +151,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _feePercentTextView.setVisibility(GONE);
         _feeTextView.setVisibility(GONE);
         _insurancePercentTextView.setVisibility(GONE);
-        _insuraceFeeTextView.setVisibility(GONE);
+        _insuranceFeeTextView.setVisibility(GONE);
         PayModifier[] fees = pay.getFees();
         for (PayModifier fee : fees) {
             if (fee.getName().equals("provider")) {
@@ -164,12 +164,12 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
                 _feePercentTextView.setVisibility(VISIBLE);
                 sum -= fee.getModifier() * pay.getTotal();
             } else if (fee.getName().equals("insurance")) {
-                _insuraceFeeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _insuranceFeeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
                 _insurancePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_insurance_percentage),
                         (float) (fee.getModifier() * 100)));
 
-                _insuraceFeeTextView.setVisibility(VISIBLE);
+                _insuranceFeeTextView.setVisibility(VISIBLE);
                 _insurancePercentTextView.setVisibility(VISIBLE);
 
                 sum -= fee.getModifier() * pay.getTotal();
