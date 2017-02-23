@@ -16,13 +16,14 @@ import com.fieldnation.v2.data.model.ScheduleEta;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ScheduleSummaryView extends LinearLayout {
+public class ScheduleSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ScheduleSummaryView";
 
     private static final String DIALOG_ETA = TAG + ".etaDialog";
@@ -70,6 +71,7 @@ public class ScheduleSummaryView extends LinearLayout {
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         refresh();

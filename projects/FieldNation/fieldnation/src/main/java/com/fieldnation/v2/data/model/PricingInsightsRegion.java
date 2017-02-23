@@ -36,9 +36,14 @@ public class PricingInsightsRegion implements Parcelable {
     private PricingInsightsRegionProviders _providers;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PricingInsightsRegion() {
+        SOURCE = new JsonObject();
+    }
+
+    public PricingInsightsRegion(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAverageRate(PricingInsightsRegionAverageRate averageRate) throws ParseException {
@@ -47,6 +52,17 @@ public class PricingInsightsRegion implements Parcelable {
     }
 
     public PricingInsightsRegionAverageRate getAverageRate() {
+        try {
+            if (_averageRate != null)
+                return _averageRate;
+
+            if (SOURCE.has("average_rate") && SOURCE.get("average_rate") != null)
+                _averageRate = PricingInsightsRegionAverageRate.fromJson(SOURCE.getJsonObject("average_rate"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _averageRate;
     }
 
@@ -62,6 +78,17 @@ public class PricingInsightsRegion implements Parcelable {
     }
 
     public Double getDistance() {
+        try {
+            if (_distance != null)
+                return _distance;
+
+            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+                _distance = SOURCE.getDouble("distance");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _distance;
     }
 
@@ -77,6 +104,17 @@ public class PricingInsightsRegion implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -92,6 +130,17 @@ public class PricingInsightsRegion implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -107,6 +156,17 @@ public class PricingInsightsRegion implements Parcelable {
     }
 
     public PricingInsightsRegionProviders getProviders() {
+        try {
+            if (_providers != null)
+                return _providers;
+
+            if (SOURCE.has("providers") && SOURCE.get("providers") != null)
+                _providers = PricingInsightsRegionProviders.fromJson(SOURCE.getJsonObject("providers"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _providers;
     }
 
@@ -137,7 +197,7 @@ public class PricingInsightsRegion implements Parcelable {
 
     public static PricingInsightsRegion fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PricingInsightsRegion.class, obj);
+            return new PricingInsightsRegion(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

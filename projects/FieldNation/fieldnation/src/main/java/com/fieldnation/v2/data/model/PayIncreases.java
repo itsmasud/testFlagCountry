@@ -26,10 +26,18 @@ public class PayIncreases implements Parcelable {
     @Json(name = "results")
     private PayIncrease[] _results;
 
+    @Json(name = "sum")
+    private PayIncreasesSum _sum;
+
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayIncreases() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayIncreases(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -38,6 +46,17 @@ public class PayIncreases implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -53,12 +72,50 @@ public class PayIncreases implements Parcelable {
     }
 
     public PayIncrease[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = PayIncrease.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
     public PayIncreases results(PayIncrease[] results) throws ParseException {
         _results = results;
         SOURCE.put("results", PayIncrease.toJsonArray(results), true);
+        return this;
+    }
+
+    public void setSum(PayIncreasesSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
+    }
+
+    public PayIncreasesSum getSum() {
+        try {
+            if (_sum != null)
+                return _sum;
+
+            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+                _sum = PayIncreasesSum.fromJson(SOURCE.getJsonObject("sum"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _sum;
+    }
+
+    public PayIncreases sum(PayIncreasesSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
         return this;
     }
 
@@ -83,7 +140,7 @@ public class PayIncreases implements Parcelable {
 
     public static PayIncreases fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayIncreases.class, obj);
+            return new PayIncreases(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

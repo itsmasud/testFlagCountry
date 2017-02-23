@@ -27,9 +27,14 @@ public class ProblemsNext implements Parcelable {
     private String _reason;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ProblemsNext() {
+        SOURCE = new JsonObject();
+    }
+
+    public ProblemsNext(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setProblemId(Integer problemId) throws ParseException {
@@ -38,6 +43,17 @@ public class ProblemsNext implements Parcelable {
     }
 
     public Integer getProblemId() {
+        try {
+            if (_problemId != null)
+                return _problemId;
+
+            if (SOURCE.has("problem_id") && SOURCE.get("problem_id") != null)
+                _problemId = SOURCE.getInt("problem_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _problemId;
     }
 
@@ -53,6 +69,17 @@ public class ProblemsNext implements Parcelable {
     }
 
     public String getReason() {
+        try {
+            if (_reason != null)
+                return _reason;
+
+            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+                _reason = SOURCE.getString("reason");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _reason;
     }
 
@@ -83,7 +110,7 @@ public class ProblemsNext implements Parcelable {
 
     public static ProblemsNext fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ProblemsNext.class, obj);
+            return new ProblemsNext(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

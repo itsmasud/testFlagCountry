@@ -67,7 +67,7 @@ public class MapsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/maps/search",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/MapsWebApi",
                                     MapsWebApi.class, "getMaps"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -80,10 +80,6 @@ public class MapsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetMaps() {
-        return register("TOPIC_ID_WEB_API_V2/maps/search");
     }
 
 

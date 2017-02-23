@@ -11,8 +11,10 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
-import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.Random;
 
@@ -25,7 +27,7 @@ public class ShipmentListView extends LinearLayout {
     private Button _addButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
 
 	/*-*************************************-*/
@@ -50,25 +52,29 @@ public class ShipmentListView extends LinearLayout {
         _addButton.setOnClickListener(_add_onClick);
     }
 
+    // TODO calling this method is not implemented
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkorder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         refresh();
     }
 
     private void refresh() {
-        final ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+        final Shipment[] shipments = _workOrder.getShipments().getResults();
+        Log.e(TAG, "shipment size: " + shipments.length);
 
-        if (_workorder.canChangeShipments()) {
-            _addButton.setVisibility(View.VISIBLE);
-        } else {
-            _addButton.setVisibility(View.GONE);
-        }
+        // TODO
+//        if (_workOrder.canChangeShipments()) {
+//            _addButton.setVisibility(View.VISIBLE);
+//        } else {
+//            _addButton.setVisibility(View.GONE);
+//        }
 
-        if ((shipments == null || shipments.length == 0) && !_workorder.canChangeShipments()) {
+        // TODO
+        if ((shipments == null || shipments.length == 0)) {
             setVisibility(View.GONE);
             return;
         }
@@ -88,7 +94,7 @@ public class ShipmentListView extends LinearLayout {
         }
 
         ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
-            private final ShipmentTracking[] _shipments = shipments;
+            private final Shipment[] _shipments = shipments;
 
             @Override
             public void next(int i) throws Exception {
@@ -99,7 +105,7 @@ public class ShipmentListView extends LinearLayout {
                     v = new ShipmentRowView(getContext());
                     _shipmentsLayout.addView(v);
                 }
-                v.setData(_workorder, _shipments[i]);
+                v.setData(_workOrder, _shipments[i]);
                 v.setListener(_summaryListener);
             }
         };
@@ -112,34 +118,43 @@ public class ShipmentListView extends LinearLayout {
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.addShipment();
+
+            // TODO swagger.yaml doesn't provide any action for shipment. described in comment @ PA-613
+//            if (_listener != null
+//                    && _workOrder.getShipments() != null
+//                    && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+//                _listener.addShipment();
+//            }
         }
+
+
     };
 
+    // TODO swagger.yaml doesn't provide any action for shipment. described in comment @ PA-613
     private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
         public void onDelete(ShipmentTracking shipment) {
-            if (_listener != null && _workorder.canChangeShipments()) {
-                _listener.onDelete(_workorder, shipment);
-            }
+//            if (_listener != null && _workOrder.canChangeShipments()) {
+//                _listener.onDelete(_workOrder, shipment);
+//            }
+
         }
 
         @Override
         public void onEdit(ShipmentTracking shipment) {
             // TODO need to show an edit dialog
-            if (_listener != null && _workorder.canChangeShipments()) {
-                _listener.onAssign(_workorder, shipment);
-            }
+//            if (_listener != null && _workOrder.canChangeShipments()) {
+//                _listener.onAssign(_workOrder, shipment);
+//            }
         }
     };
 
     public interface Listener {
         void addShipment();
 
-        void onDelete(Workorder workorder, ShipmentTracking shipmentId);
+        void onDelete(WorkOrder workOrder, Shipment shipmentId);
 
-        void onAssign(Workorder workorder, ShipmentTracking shipmentId);
+        void onAssign(WorkOrder workOrder, Shipment shipmentId);
     }
 
 

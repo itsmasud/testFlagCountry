@@ -54,9 +54,14 @@ public class Message implements Parcelable {
     private MessageTo _to;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Message() {
+        SOURCE = new JsonObject();
+    }
+
+    public Message(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -69,6 +74,18 @@ public class Message implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -88,6 +105,17 @@ public class Message implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -103,6 +131,17 @@ public class Message implements Parcelable {
     }
 
     public MessageFrom getFrom() {
+        try {
+            if (_from != null)
+                return _from;
+
+            if (SOURCE.has("from") && SOURCE.get("from") != null)
+                _from = MessageFrom.fromJson(SOURCE.getJsonObject("from"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _from;
     }
 
@@ -118,6 +157,17 @@ public class Message implements Parcelable {
     }
 
     public String getMessage() {
+        try {
+            if (_message != null)
+                return _message;
+
+            if (SOURCE.has("message") && SOURCE.get("message") != null)
+                _message = SOURCE.getString("message");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _message;
     }
 
@@ -133,6 +183,17 @@ public class Message implements Parcelable {
     }
 
     public Integer getMsgId() {
+        try {
+            if (_msgId != null)
+                return _msgId;
+
+            if (SOURCE.has("msg_id") && SOURCE.get("msg_id") != null)
+                _msgId = SOURCE.getInt("msg_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _msgId;
     }
 
@@ -148,6 +209,17 @@ public class Message implements Parcelable {
     }
 
     public Boolean getParentId() {
+        try {
+            if (_parentId != null)
+                return _parentId;
+
+            if (SOURCE.has("parent_id") && SOURCE.get("parent_id") != null)
+                _parentId = SOURCE.getBoolean("parent_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _parentId;
     }
 
@@ -163,6 +235,17 @@ public class Message implements Parcelable {
     }
 
     public MessageProblem getProblem() {
+        try {
+            if (_problem != null)
+                return _problem;
+
+            if (SOURCE.has("problem") && SOURCE.get("problem") != null)
+                _problem = MessageProblem.fromJson(SOURCE.getJsonObject("problem"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _problem;
     }
 
@@ -178,6 +261,17 @@ public class Message implements Parcelable {
     }
 
     public Boolean getRead() {
+        try {
+            if (_read != null)
+                return _read;
+
+            if (SOURCE.has("read") && SOURCE.get("read") != null)
+                _read = SOURCE.getBoolean("read");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _read;
     }
 
@@ -193,6 +287,17 @@ public class Message implements Parcelable {
     }
 
     public Message getReplies() {
+        try {
+            if (_replies != null)
+                return _replies;
+
+            if (SOURCE.has("replies") && SOURCE.get("replies") != null)
+                _replies = Message.fromJson(SOURCE.getJsonObject("replies"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _replies;
     }
 
@@ -208,6 +313,17 @@ public class Message implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -223,6 +339,17 @@ public class Message implements Parcelable {
     }
 
     public MessageTo getTo() {
+        try {
+            if (_to != null)
+                return _to;
+
+            if (SOURCE.has("to") && SOURCE.get("to") != null)
+                _to = MessageTo.fromJson(SOURCE.getJsonObject("to"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _to;
     }
 
@@ -243,6 +370,23 @@ public class Message implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -272,7 +416,7 @@ public class Message implements Parcelable {
 
     public static Message fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Message.class, obj);
+            return new Message(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -2,13 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TabHost
         android:id="@+id/tabhost"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/actionbar_view"
         android:layout_alignParentTop="true">
 
         <LinearLayout
@@ -29,63 +28,45 @@
                     android:layout_height="wrap_content" />
             </HorizontalScrollView>
 
-            <FrameLayout
+            <ScrollView
                 android:id="@android:id/tabcontent"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
+                android:layout_height="match_parent">
 
-                <ScrollView
-                    android:id="@+id/scrollview1"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="wrap_content"
+                    android:padding="5dp">
+
 
                     <com.fieldnation.v2.ui.dialog.PaymentCoView
                         android:id="@+id/payment_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </ScrollView>
 
-                <ScrollView
-                    android:id="@+id/scrollview2"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <com.fieldnation.ui.dialog.ScheduleCoView
+                    <com.fieldnation.v2.ui.dialog.ScheduleCoView
                         android:id="@+id/schedule_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </ScrollView>
-
-                <ScrollView
-                    android:id="@+id/scrollview3"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
 
                     <com.fieldnation.v2.ui.dialog.ExpenseCoView
                         android:id="@+id/expenses_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </ScrollView>
-
-                <ScrollView
-                    android:id="@+id/scrollview4"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
 
                     <com.fieldnation.v2.ui.dialog.ReasonCoView
                         android:id="@+id/reasons_view"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
-                </ScrollView>
-            </FrameLayout>
+                </FrameLayout>
+            </ScrollView>
         </LinearLayout>
     </TabHost>
 
     <LinearLayout
         android:id="@+id/actionbar_view"
         style="?attr/dialogActionBarStyle"
-        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/tabhost"
         android:orientation="horizontal">
 
         <Button
@@ -106,5 +87,4 @@
         android:layout_height="match_parent"
         android:clickable="true"
         android:visibility="gone" />
-
 </RelativeLayout>

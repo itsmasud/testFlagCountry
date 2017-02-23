@@ -33,9 +33,14 @@ public class SelectionRuleSum implements Parcelable {
     private Integer _total;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public SelectionRuleSum() {
+        SOURCE = new JsonObject();
+    }
+
+    public SelectionRuleSum(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMatch(Integer match) throws ParseException {
@@ -44,6 +49,17 @@ public class SelectionRuleSum implements Parcelable {
     }
 
     public Integer getMatch() {
+        try {
+            if (_match != null)
+                return _match;
+
+            if (SOURCE.has("match") && SOURCE.get("match") != null)
+                _match = SOURCE.getInt("match");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _match;
     }
 
@@ -59,6 +75,17 @@ public class SelectionRuleSum implements Parcelable {
     }
 
     public Integer getNoMatchOptional() {
+        try {
+            if (_noMatchOptional != null)
+                return _noMatchOptional;
+
+            if (SOURCE.has("no_match_optional") && SOURCE.get("no_match_optional") != null)
+                _noMatchOptional = SOURCE.getInt("no_match_optional");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _noMatchOptional;
     }
 
@@ -74,6 +101,17 @@ public class SelectionRuleSum implements Parcelable {
     }
 
     public Integer getNoMatchRequired() {
+        try {
+            if (_noMatchRequired != null)
+                return _noMatchRequired;
+
+            if (SOURCE.has("no_match_required") && SOURCE.get("no_match_required") != null)
+                _noMatchRequired = SOURCE.getInt("no_match_required");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _noMatchRequired;
     }
 
@@ -89,6 +127,17 @@ public class SelectionRuleSum implements Parcelable {
     }
 
     public Integer getTotal() {
+        try {
+            if (_total != null)
+                return _total;
+
+            if (SOURCE.has("total") && SOURCE.get("total") != null)
+                _total = SOURCE.getInt("total");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _total;
     }
 
@@ -119,7 +168,7 @@ public class SelectionRuleSum implements Parcelable {
 
     public static SelectionRuleSum fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(SelectionRuleSum.class, obj);
+            return new SelectionRuleSum(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -42,9 +42,14 @@ public class SavedList implements Parcelable {
     private String _sort;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public SavedList() {
+        SOURCE = new JsonObject();
+    }
+
+    public SavedList(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setColumns(String columns) throws ParseException {
@@ -53,6 +58,17 @@ public class SavedList implements Parcelable {
     }
 
     public String getColumns() {
+        try {
+            if (_columns != null)
+                return _columns;
+
+            if (SOURCE.has("columns") && SOURCE.get("columns") != null)
+                _columns = SOURCE.getString("columns");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _columns;
     }
 
@@ -68,6 +84,17 @@ public class SavedList implements Parcelable {
     }
 
     public Integer getCount() {
+        try {
+            if (_count != null)
+                return _count;
+
+            if (SOURCE.has("count") && SOURCE.get("count") != null)
+                _count = SOURCE.getInt("count");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _count;
     }
 
@@ -83,6 +110,17 @@ public class SavedList implements Parcelable {
     }
 
     public Boolean getDefault() {
+        try {
+            if (_default != null)
+                return _default;
+
+            if (SOURCE.has("default") && SOURCE.get("default") != null)
+                _default = SOURCE.getBoolean("default");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _default;
     }
 
@@ -98,6 +136,17 @@ public class SavedList implements Parcelable {
     }
 
     public String getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getString("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -113,6 +162,17 @@ public class SavedList implements Parcelable {
     }
 
     public String getLabel() {
+        try {
+            if (_label != null)
+                return _label;
+
+            if (SOURCE.has("label") && SOURCE.get("label") != null)
+                _label = SOURCE.getString("label");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _label;
     }
 
@@ -128,6 +188,17 @@ public class SavedList implements Parcelable {
     }
 
     public OrderEnum getOrder() {
+        try {
+            if (_order != null)
+                return _order;
+
+            if (SOURCE.has("order") && SOURCE.get("order") != null)
+                _order = OrderEnum.fromString(SOURCE.getString("order"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _order;
     }
 
@@ -143,6 +214,17 @@ public class SavedList implements Parcelable {
     }
 
     public String getSort() {
+        try {
+            if (_sort != null)
+                return _sort;
+
+            if (SOURCE.has("sort") && SOURCE.get("sort") != null)
+                _sort = SOURCE.getString("sort");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sort;
     }
 
@@ -165,6 +247,23 @@ public class SavedList implements Parcelable {
 
         OrderEnum(String value) {
             this.value = value;
+        }
+
+        public static OrderEnum fromString(String value) {
+            OrderEnum[] values = values();
+            for (OrderEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static OrderEnum[] fromJsonArray(JsonArray jsonArray) {
+            OrderEnum[] list = new OrderEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -194,7 +293,7 @@ public class SavedList implements Parcelable {
 
     public static SavedList fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(SavedList.class, obj);
+            return new SavedList(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

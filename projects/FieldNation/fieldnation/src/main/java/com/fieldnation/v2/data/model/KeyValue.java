@@ -21,9 +21,14 @@ public class KeyValue implements Parcelable {
     private static final String TAG = "KeyValue";
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public KeyValue() {
+        SOURCE = new JsonObject();
+    }
+
+    public KeyValue(JsonObject obj) {
+        SOURCE = obj;
     }
 
     /*-*****************************-*/
@@ -47,7 +52,7 @@ public class KeyValue implements Parcelable {
 
     public static KeyValue fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(KeyValue.class, obj);
+            return new KeyValue(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

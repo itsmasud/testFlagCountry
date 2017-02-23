@@ -54,9 +54,14 @@ public class Signature implements Parcelable {
     private String _worklog;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Signature() {
+        SOURCE = new JsonObject();
+    }
+
+    public Signature(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -69,6 +74,18 @@ public class Signature implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -88,6 +105,17 @@ public class Signature implements Parcelable {
     }
 
     public String getClosingNotes() {
+        try {
+            if (_closingNotes != null)
+                return _closingNotes;
+
+            if (SOURCE.has("closing_notes") && SOURCE.get("closing_notes") != null)
+                _closingNotes = SOURCE.getString("closing_notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _closingNotes;
     }
 
@@ -103,6 +131,17 @@ public class Signature implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -118,6 +157,17 @@ public class Signature implements Parcelable {
     }
 
     public String getData() {
+        try {
+            if (_data != null)
+                return _data;
+
+            if (SOURCE.has("data") && SOURCE.get("data") != null)
+                _data = SOURCE.getString("data");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _data;
     }
 
@@ -133,6 +183,17 @@ public class Signature implements Parcelable {
     }
 
     public String getFormat() {
+        try {
+            if (_format != null)
+                return _format;
+
+            if (SOURCE.has("format") && SOURCE.get("format") != null)
+                _format = SOURCE.getString("format");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _format;
     }
 
@@ -148,6 +209,17 @@ public class Signature implements Parcelable {
     }
 
     public String getHash() {
+        try {
+            if (_hash != null)
+                return _hash;
+
+            if (SOURCE.has("hash") && SOURCE.get("hash") != null)
+                _hash = SOURCE.getString("hash");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hash;
     }
 
@@ -163,6 +235,17 @@ public class Signature implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -178,6 +261,17 @@ public class Signature implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -193,6 +287,17 @@ public class Signature implements Parcelable {
     }
 
     public Task getTask() {
+        try {
+            if (_task != null)
+                return _task;
+
+            if (SOURCE.has("task") && SOURCE.get("task") != null)
+                _task = Task.fromJson(SOURCE.getJsonObject("task"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _task;
     }
 
@@ -208,6 +313,17 @@ public class Signature implements Parcelable {
     }
 
     public TimeZone getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -223,6 +339,17 @@ public class Signature implements Parcelable {
     }
 
     public String getWorklog() {
+        try {
+            if (_worklog != null)
+                return _worklog;
+
+            if (SOURCE.has("worklog") && SOURCE.get("worklog") != null)
+                _worklog = SOURCE.getString("worklog");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _worklog;
     }
 
@@ -243,6 +370,23 @@ public class Signature implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -272,7 +416,7 @@ public class Signature implements Parcelable {
 
     public static Signature fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Signature.class, obj);
+            return new Signature(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

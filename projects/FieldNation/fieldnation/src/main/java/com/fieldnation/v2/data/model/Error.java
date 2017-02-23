@@ -33,9 +33,14 @@ public class Error implements Parcelable {
     private ErrorTrace[] _trace;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Error() {
+        SOURCE = new JsonObject();
+    }
+
+    public Error(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCode(Integer code) throws ParseException {
@@ -44,6 +49,17 @@ public class Error implements Parcelable {
     }
 
     public Integer getCode() {
+        try {
+            if (_code != null)
+                return _code;
+
+            if (SOURCE.has("code") && SOURCE.get("code") != null)
+                _code = SOURCE.getInt("code");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _code;
     }
 
@@ -59,6 +75,17 @@ public class Error implements Parcelable {
     }
 
     public String getFields() {
+        try {
+            if (_fields != null)
+                return _fields;
+
+            if (SOURCE.has("fields") && SOURCE.get("fields") != null)
+                _fields = SOURCE.getString("fields");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _fields;
     }
 
@@ -74,6 +101,17 @@ public class Error implements Parcelable {
     }
 
     public String getMessage() {
+        try {
+            if (_message != null)
+                return _message;
+
+            if (SOURCE.has("message") && SOURCE.get("message") != null)
+                _message = SOURCE.getString("message");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _message;
     }
 
@@ -89,6 +127,18 @@ public class Error implements Parcelable {
     }
 
     public ErrorTrace[] getTrace() {
+        try {
+            if (_trace != null)
+                return _trace;
+
+            if (SOURCE.has("trace") && SOURCE.get("trace") != null) {
+                _trace = ErrorTrace.fromJsonArray(SOURCE.getJsonArray("trace"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _trace;
     }
 
@@ -119,7 +169,7 @@ public class Error implements Parcelable {
 
     public static Error fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Error.class, obj);
+            return new Error(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

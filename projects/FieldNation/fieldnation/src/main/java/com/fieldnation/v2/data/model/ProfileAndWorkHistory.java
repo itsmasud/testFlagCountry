@@ -24,9 +24,14 @@ public class ProfileAndWorkHistory implements Parcelable {
     private ProfileAndWorkHistoryRating _rating;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ProfileAndWorkHistory() {
+        SOURCE = new JsonObject();
+    }
+
+    public ProfileAndWorkHistory(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setRating(ProfileAndWorkHistoryRating rating) throws ParseException {
@@ -35,6 +40,17 @@ public class ProfileAndWorkHistory implements Parcelable {
     }
 
     public ProfileAndWorkHistoryRating getRating() {
+        try {
+            if (_rating != null)
+                return _rating;
+
+            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+                _rating = ProfileAndWorkHistoryRating.fromJson(SOURCE.getJsonObject("rating"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _rating;
     }
 
@@ -65,7 +81,7 @@ public class ProfileAndWorkHistory implements Parcelable {
 
     public static ProfileAndWorkHistory fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ProfileAndWorkHistory.class, obj);
+            return new ProfileAndWorkHistory(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

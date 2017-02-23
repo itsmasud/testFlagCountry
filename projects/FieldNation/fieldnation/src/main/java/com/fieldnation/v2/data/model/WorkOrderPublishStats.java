@@ -30,9 +30,14 @@ public class WorkOrderPublishStats implements Parcelable {
     private Integer _routes;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public WorkOrderPublishStats() {
+        SOURCE = new JsonObject();
+    }
+
+    public WorkOrderPublishStats(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCounterOffers(Integer counterOffers) throws ParseException {
@@ -41,6 +46,17 @@ public class WorkOrderPublishStats implements Parcelable {
     }
 
     public Integer getCounterOffers() {
+        try {
+            if (_counterOffers != null)
+                return _counterOffers;
+
+            if (SOURCE.has("counter_offers") && SOURCE.get("counter_offers") != null)
+                _counterOffers = SOURCE.getInt("counter_offers");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _counterOffers;
     }
 
@@ -56,6 +72,17 @@ public class WorkOrderPublishStats implements Parcelable {
     }
 
     public Integer getRequests() {
+        try {
+            if (_requests != null)
+                return _requests;
+
+            if (SOURCE.has("requests") && SOURCE.get("requests") != null)
+                _requests = SOURCE.getInt("requests");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _requests;
     }
 
@@ -71,6 +98,17 @@ public class WorkOrderPublishStats implements Parcelable {
     }
 
     public Integer getRoutes() {
+        try {
+            if (_routes != null)
+                return _routes;
+
+            if (SOURCE.has("routes") && SOURCE.get("routes") != null)
+                _routes = SOURCE.getInt("routes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _routes;
     }
 
@@ -101,7 +139,7 @@ public class WorkOrderPublishStats implements Parcelable {
 
     public static WorkOrderPublishStats fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(WorkOrderPublishStats.class, obj);
+            return new WorkOrderPublishStats(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

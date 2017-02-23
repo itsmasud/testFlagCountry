@@ -68,7 +68,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/custom-fields",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "addCustomField"))
                     .useAuth(true)
                     .request(builder)
@@ -78,10 +78,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddCustomField() {
-        return register("TOPIC_ID_WEB_API_V2/custom-fields");
     }
 
     /**
@@ -105,7 +101,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/custom-fields",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "getCustomFields"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -118,10 +114,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetCustomFields() {
-        return register("TOPIC_ID_WEB_API_V2/custom-fields");
     }
 
     /**
@@ -145,7 +137,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "removeCustomField"))
                     .useAuth(true)
                     .request(builder)
@@ -155,10 +147,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveCustomField(Integer customFieldId) {
-        return register("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId);
     }
 
     /**
@@ -186,7 +174,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "updateCustomField"))
                     .useAuth(true)
                     .request(builder)
@@ -196,10 +184,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateCustomField(Integer customFieldId) {
-        return register("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId);
     }
 
     /**
@@ -224,7 +208,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/" + visibility,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
                     .useAuth(true)
                     .request(builder)
@@ -234,10 +218,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateCustomFieldVisibility(Integer customFieldId, String visibility) {
-        return register("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/" + visibility);
     }
 
     /**
@@ -263,7 +243,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
                                     CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
                     .useAuth(true)
                     .request(builder)
@@ -273,10 +253,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateCustomFieldVisibility(Integer customFieldId, Integer clientId, String visibility) {
-        return register("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
     }
 
     /**
@@ -302,8 +278,8 @@ public class CustomFieldsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility,
-                                    CustomFieldsWebApi.class, "updateCustomFieldVisibilityByProject"))
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
+                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -312,10 +288,6 @@ public class CustomFieldsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateCustomFieldVisibilityByProject(Integer customFieldId, Integer projectId, String visibility) {
-        return register("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
     }
 
 

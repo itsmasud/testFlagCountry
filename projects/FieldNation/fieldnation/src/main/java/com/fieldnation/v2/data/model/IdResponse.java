@@ -24,9 +24,14 @@ public class IdResponse implements Parcelable {
     private Integer _id;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public IdResponse() {
+        SOURCE = new JsonObject();
+    }
+
+    public IdResponse(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -35,6 +40,17 @@ public class IdResponse implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -65,7 +81,7 @@ public class IdResponse implements Parcelable {
 
     public static IdResponse fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(IdResponse.class, obj);
+            return new IdResponse(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

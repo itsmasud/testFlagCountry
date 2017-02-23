@@ -39,9 +39,14 @@ public class Route implements Parcelable {
     private User _user;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Route() {
+        SOURCE = new JsonObject();
+    }
+
+    public Route(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCounter(Boolean counter) throws ParseException {
@@ -50,6 +55,17 @@ public class Route implements Parcelable {
     }
 
     public Boolean getCounter() {
+        try {
+            if (_counter != null)
+                return _counter;
+
+            if (SOURCE.has("counter") && SOURCE.get("counter") != null)
+                _counter = SOURCE.getBoolean("counter");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _counter;
     }
 
@@ -65,6 +81,17 @@ public class Route implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -80,6 +107,17 @@ public class Route implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -95,6 +133,17 @@ public class Route implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -110,6 +159,17 @@ public class Route implements Parcelable {
     }
 
     public Schedule getSchedule() {
+        try {
+            if (_schedule != null)
+                return _schedule;
+
+            if (SOURCE.has("schedule") && SOURCE.get("schedule") != null)
+                _schedule = Schedule.fromJson(SOURCE.getJsonObject("schedule"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _schedule;
     }
 
@@ -125,6 +185,17 @@ public class Route implements Parcelable {
     }
 
     public User getUser() {
+        try {
+            if (_user != null)
+                return _user;
+
+            if (SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _user;
     }
 
@@ -155,7 +226,7 @@ public class Route implements Parcelable {
 
     public static Route fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Route.class, obj);
+            return new Route(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

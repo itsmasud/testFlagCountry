@@ -9,18 +9,28 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CounterOfferInfo;
-import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.ExpenseCounterOfferView;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Michael Carver on 6/5/2015.
  */
-public class CounterOfferSummaryView extends LinearLayout {
+public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "CounterOfferSummaryView";
 
     // UI
@@ -32,7 +42,7 @@ public class CounterOfferSummaryView extends LinearLayout {
     private Button _counterOfferButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
 
     public CounterOfferSummaryView(Context context) {
@@ -66,8 +76,9 @@ public class CounterOfferSummaryView extends LinearLayout {
         _counterOfferButton.setOnClickListener(_counterOffer_onClick);
     }
 
-    public void setData(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
@@ -76,25 +87,28 @@ public class CounterOfferSummaryView extends LinearLayout {
     }
 
     private void populateUi() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_payLayout == null)
             return;
 
-        CounterOfferInfo co = _workorder.getCounterOfferInfo();
+        Requests requests = _workOrder.getRequests();
 
         setVisibility(GONE);
 
-        if (co == null) {
+        if (requests == null)
             return;
-        }
 
-        if (co.getPay() == null) {
+        if (requests.getOpenRequest() == null)
+            return;
+
+
+        if (requests.getOpenRequest().getPay() == null) {
             _payLayout.setVisibility(GONE);
         } else {
-            Pay pay = co.getPay();
-            String[] paytext = pay.toDisplayStringLong();
+            final Pay pay = requests.getOpenRequest().getPay();
+            String[] paytext = toDisplayStringLong(pay);
             String data = "";
 
             if (paytext[0] != null) {
@@ -114,17 +128,17 @@ public class CounterOfferSummaryView extends LinearLayout {
             }
         }
 
-        if (co.getSchedule() == null) {
+        if (requests.getOpenRequest().getSchedule() == null) {
             _scheduleLayout.setVisibility(GONE);
         } else {
-            Schedule schedule = co.getSchedule();
-            _scheduleTextView.setText(schedule.getDisplayString(false));
+            Schedule schedule = requests.getOpenRequest().getSchedule();
+            _scheduleTextView.setText(getDisplayString(schedule));
             _scheduleLayout.setVisibility(VISIBLE);
             setVisibility(VISIBLE);
         }
 
         // expense
-        Expense[] expenses = co.getExpense();
+        final Expense[] expenses = requests.getOpenRequest().getExpenses();
         if (expenses == null || expenses.length == 0) {
             _expenseLayout.setVisibility(GONE);
         } else {
@@ -137,6 +151,83 @@ public class CounterOfferSummaryView extends LinearLayout {
             }
         }
     }
+
+
+    public String getDisplayString(Schedule schedule) {
+
+        if (schedule.getServiceWindow().getMode().equals(ScheduleServiceWindow.ModeEnum.EXACT)) {
+            try {
+                String dayDate;
+                String time = "";
+
+                Calendar cal = schedule.getServiceWindow().getStart().getCalendar();
+                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                time = DateUtils.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+
+                return "Exactly on " + dayDate + " @ " + time;
+
+            } catch (ParseException e) {
+                Log.v(TAG, e);
+            }
+        } else {
+            try {
+                Calendar cal = schedule.getServiceWindow().getStart().getCalendar();
+                String dayDate;
+                String time = "";
+
+                dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
+                time = DateUtils.formatTime(cal, false);
+
+                String msg = "Between " + dayDate + " @ " + time + "\nand";
+
+                Calendar cal2 = schedule.getServiceWindow().getEnd().getCalendar();
+
+                // same day
+                if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
+                    time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                    msg += time;
+
+                } else {
+                    dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + DateUtils.formatDateLong(cal2);
+                    time = DateUtils.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
+                    msg += dayDate + " @ " + time;
+                }
+
+                return msg;
+
+            } catch (ParseException e) {
+                Log.v(TAG, e);
+            }
+        }
+
+        return null;
+    }
+
+
+    public String[] toDisplayStringLong(Pay pay) {
+        String line1 = null;
+        String line2 = null;
+
+        switch (pay.getType()) {
+            case FIXED:
+                line1 = misc.toCurrency(pay.getBase().getAmount()) + " Fixed";
+                break;
+            case HOURLY:
+                line1 = misc.toCurrency(pay.getBase().getAmount()) + " per hr up to " + pay.getBase().getUnits() + " hours.";
+                break;
+            case BLENDED:
+                line1 = misc.toCurrency(pay.getBase().getAmount()) + " for the first " + pay.getBase().getUnits() + " hours.";
+                line2 = "Then " + misc.toCurrency(pay.getAdditional().getAmount()) + " per hr up to " + pay.getAdditional().getUnits() + " hours.";
+                break;
+            case DEVICE:
+                line1 = misc.toCurrency(pay.getBase().getAmount()) + " per device up to " + pay.getBase().getUnits() + " devices.";
+                break;
+        }
+
+        return new String[]{line1, line2};
+    }
+
+
 
     private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
         @Override

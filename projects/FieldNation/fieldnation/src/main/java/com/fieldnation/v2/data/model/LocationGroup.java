@@ -27,9 +27,14 @@ public class LocationGroup implements Parcelable {
     private String _name;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public LocationGroup() {
+        SOURCE = new JsonObject();
+    }
+
+    public LocationGroup(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -38,6 +43,17 @@ public class LocationGroup implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -53,6 +69,17 @@ public class LocationGroup implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -83,7 +110,7 @@ public class LocationGroup implements Parcelable {
 
     public static LocationGroup fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(LocationGroup.class, obj);
+            return new LocationGroup(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -34,9 +34,14 @@ public class ScheduleServiceWindow implements Parcelable {
     private Date _start;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ScheduleServiceWindow() {
+        SOURCE = new JsonObject();
+    }
+
+    public ScheduleServiceWindow(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setEnd(Date end) throws ParseException {
@@ -45,6 +50,17 @@ public class ScheduleServiceWindow implements Parcelable {
     }
 
     public Date getEnd() {
+        try {
+            if (_end != null)
+                return _end;
+
+            if (SOURCE.has("end") && SOURCE.get("end") != null)
+                _end = Date.fromJson(SOURCE.getJsonObject("end"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _end;
     }
 
@@ -60,6 +76,17 @@ public class ScheduleServiceWindow implements Parcelable {
     }
 
     public ModeEnum getMode() {
+        try {
+            if (_mode != null)
+                return _mode;
+
+            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+                _mode = ModeEnum.fromString(SOURCE.getString("mode"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mode;
     }
 
@@ -75,6 +102,17 @@ public class ScheduleServiceWindow implements Parcelable {
     }
 
     public Date getStart() {
+        try {
+            if (_start != null)
+                return _start;
+
+            if (SOURCE.has("start") && SOURCE.get("start") != null)
+                _start = Date.fromJson(SOURCE.getJsonObject("start"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _start;
     }
 
@@ -99,6 +137,23 @@ public class ScheduleServiceWindow implements Parcelable {
 
         ModeEnum(String value) {
             this.value = value;
+        }
+
+        public static ModeEnum fromString(String value) {
+            ModeEnum[] values = values();
+            for (ModeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ModeEnum[] fromJsonArray(JsonArray jsonArray) {
+            ModeEnum[] list = new ModeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -128,7 +183,7 @@ public class ScheduleServiceWindow implements Parcelable {
 
     public static ScheduleServiceWindow fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ScheduleServiceWindow.class, obj);
+            return new ScheduleServiceWindow(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

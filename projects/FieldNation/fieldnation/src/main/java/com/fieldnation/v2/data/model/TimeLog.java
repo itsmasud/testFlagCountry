@@ -63,9 +63,14 @@ public class TimeLog implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TimeLog() {
+        SOURCE = new JsonObject();
+    }
+
+    public TimeLog(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -78,6 +83,18 @@ public class TimeLog implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -97,6 +114,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Double getDevices() {
+        try {
+            if (_devices != null)
+                return _devices;
+
+            if (SOURCE.has("devices") && SOURCE.get("devices") != null)
+                _devices = SOURCE.getDouble("devices");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _devices;
     }
 
@@ -112,6 +140,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Double getHours() {
+        try {
+            if (_hours != null)
+                return _hours;
+
+            if (SOURCE.has("hours") && SOURCE.get("hours") != null)
+                _hours = SOURCE.getDouble("hours");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hours;
     }
 
@@ -127,6 +166,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -142,6 +192,17 @@ public class TimeLog implements Parcelable {
     }
 
     public CheckInOut getIn() {
+        try {
+            if (_in != null)
+                return _in;
+
+            if (SOURCE.has("in") && SOURCE.get("in") != null)
+                _in = CheckInOut.fromJson(SOURCE.getJsonObject("in"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _in;
     }
 
@@ -157,6 +218,17 @@ public class TimeLog implements Parcelable {
     }
 
     public User getLoggedBy() {
+        try {
+            if (_loggedBy != null)
+                return _loggedBy;
+
+            if (SOURCE.has("logged_by") && SOURCE.get("logged_by") != null)
+                _loggedBy = User.fromJson(SOURCE.getJsonObject("logged_by"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _loggedBy;
     }
 
@@ -172,6 +244,17 @@ public class TimeLog implements Parcelable {
     }
 
     public OnMyWay getOnMyWay() {
+        try {
+            if (_onMyWay != null)
+                return _onMyWay;
+
+            if (SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
+                _onMyWay = OnMyWay.fromJson(SOURCE.getJsonObject("on_my_way"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _onMyWay;
     }
 
@@ -187,6 +270,17 @@ public class TimeLog implements Parcelable {
     }
 
     public CheckInOut getOut() {
+        try {
+            if (_out != null)
+                return _out;
+
+            if (SOURCE.has("out") && SOURCE.get("out") != null)
+                _out = CheckInOut.fromJson(SOURCE.getJsonObject("out"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _out;
     }
 
@@ -202,6 +296,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Boolean getShouldVerify() {
+        try {
+            if (_shouldVerify != null)
+                return _shouldVerify;
+
+            if (SOURCE.has("should_verify") && SOURCE.get("should_verify") != null)
+                _shouldVerify = SOURCE.getBoolean("should_verify");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _shouldVerify;
     }
 
@@ -217,6 +322,17 @@ public class TimeLog implements Parcelable {
     }
 
     public StatusEnum getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -232,6 +348,17 @@ public class TimeLog implements Parcelable {
     }
 
     public TimeZone getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -247,6 +374,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Boolean getVerified() {
+        try {
+            if (_verified != null)
+                return _verified;
+
+            if (SOURCE.has("verified") && SOURCE.get("verified") != null)
+                _verified = SOURCE.getBoolean("verified");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _verified;
     }
 
@@ -262,6 +400,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Boolean getWasLate() {
+        try {
+            if (_wasLate != null)
+                return _wasLate;
+
+            if (SOURCE.has("was_late") && SOURCE.get("was_late") != null)
+                _wasLate = SOURCE.getBoolean("was_late");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _wasLate;
     }
 
@@ -277,6 +426,17 @@ public class TimeLog implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -301,6 +461,23 @@ public class TimeLog implements Parcelable {
             this.value = value;
         }
 
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -317,6 +494,23 @@ public class TimeLog implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -346,7 +540,7 @@ public class TimeLog implements Parcelable {
 
     public static TimeLog fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TimeLog.class, obj);
+            return new TimeLog(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

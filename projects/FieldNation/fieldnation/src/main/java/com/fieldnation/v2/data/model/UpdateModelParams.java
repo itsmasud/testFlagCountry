@@ -27,9 +27,14 @@ public class UpdateModelParams implements Parcelable {
     private EventUpdateScheduleByWorkOrder _updateScheduleByWorkOrder;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UpdateModelParams() {
+        SOURCE = new JsonObject();
+    }
+
+    public UpdateModelParams(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setModel(UpdateModelParamsModel model) throws ParseException {
@@ -38,6 +43,17 @@ public class UpdateModelParams implements Parcelable {
     }
 
     public UpdateModelParamsModel getModel() {
+        try {
+            if (_model != null)
+                return _model;
+
+            if (SOURCE.has("model") && SOURCE.get("model") != null)
+                _model = UpdateModelParamsModel.fromJson(SOURCE.getJsonObject("model"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _model;
     }
 
@@ -53,6 +69,17 @@ public class UpdateModelParams implements Parcelable {
     }
 
     public EventUpdateScheduleByWorkOrder getUpdateScheduleByWorkOrder() {
+        try {
+            if (_updateScheduleByWorkOrder != null)
+                return _updateScheduleByWorkOrder;
+
+            if (SOURCE.has("updateScheduleByWorkOrder") && SOURCE.get("updateScheduleByWorkOrder") != null)
+                _updateScheduleByWorkOrder = EventUpdateScheduleByWorkOrder.fromJson(SOURCE.getJsonObject("updateScheduleByWorkOrder"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _updateScheduleByWorkOrder;
     }
 
@@ -83,7 +110,7 @@ public class UpdateModelParams implements Parcelable {
 
     public static UpdateModelParams fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateModelParams.class, obj);
+            return new UpdateModelParams(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

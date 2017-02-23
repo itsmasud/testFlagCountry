@@ -7,18 +7,15 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Bonus;
-import com.fieldnation.data.workorder.ExpectedPayment;
-import com.fieldnation.data.workorder.Penalty;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class ExpectedPaymentView extends LinearLayout {
+public class ExpectedPaymentView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ExpectedPaymentView";
 
     // UI
@@ -36,7 +33,7 @@ public class ExpectedPaymentView extends LinearLayout {
     private TextView _payStatusTextView;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -76,12 +73,12 @@ public class ExpectedPaymentView extends LinearLayout {
         populateUi();
     }
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
@@ -91,76 +88,100 @@ public class ExpectedPaymentView extends LinearLayout {
         if (_payStatusTextView == null)
             return;
 
-        if (_workorder == null) {
+        if (_workOrder == null) {
             setVisibility(View.GONE);
             return;
         }
 
         setVisibility(View.VISIBLE);
 
-        ExpectedPayment expectedPayment = _workorder.getExpectedPayment();
+        Pay pay = _workOrder.getPay();
 
-        if (expectedPayment == null) {
+        if (pay == null) {
             this.setVisibility(GONE);
             return;
-        } else if (_workorder.getPay() == null || _workorder.getPay().hidePay()) {
+        } else if (_workOrder.getPay() == null /* TODO || _workOrder.getPay().hidePay()*/) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
 
-        WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-        if (status == WorkorderStatus.AVAILABLE) {
-            this.setVisibility(GONE);
+        if (_workOrder.getStatus().getId() == 2) {
+            setVisibility(GONE);
             return;
         }
 
-        _laborTextView.setText(misc.toCurrency(expectedPayment.getLaborEarned()));
-        _expensesTextView.setText(misc.toCurrency(expectedPayment.getExpensesApproved()));
-        _discountsTextView.setText(misc.toCurrency(expectedPayment.getDiscounts()));
-        _expectedTotalTextView.setText(misc.toCurrency(expectedPayment.getExpectedTotal()));
-        _feeTextView.setText(misc.toCurrency(expectedPayment.getExpectedServiceFee()));
-        _totalTextView.setText(misc.toCurrency(expectedPayment.getExpectedAmount()));
-        _payStatusTextView.setText(misc.capitalize(expectedPayment.getPaymentStatus()));
 
-        if (expectedPayment.getFnFeePercentage() != null) {
-            _feePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), expectedPayment.getFnFeePercentage()));
-        } else {
-            _feePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), 10.0));
-        }
+        // Labor
+        _laborTextView.setText(misc.toCurrency(pay.getLaborSum()));
 
-        if ((int) (double) (expectedPayment.getExpectedInsuranceFee() * 100) == 0) {
-            _insuraceFeeTextView.setVisibility(GONE);
-            _insurancePercentTextView.setVisibility(GONE);
-        } else {
-            Profile profile = App.get().getProfile();
-            _insuraceFeeTextView.setVisibility(VISIBLE);
-            _insurancePercentTextView.setVisibility(VISIBLE);
-            _insuraceFeeTextView.setText(misc.toCurrency(expectedPayment.getExpectedInsuranceFee()));
-            try {
-                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
-            } catch (Exception ex) {
-                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), 1.3F));
+        // Expenses approved
+        _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
+
+        // Discounts
+        _discountsTextView.setText(misc.toCurrency(pay.getDiscounts().getSum().getAll()));
+
+        // Bonus
+        PayModifier[] bonusList = pay.getBonuses().getResults();
+        double bonuses = 0.0;
+        if (bonusList != null) {
+            for (PayModifier info : bonusList) {
+                bonuses += info.getAmount();
             }
         }
+        _bonusTextView.setText(misc.toCurrency(bonuses));
 
-        Penalty[] penaltyList = expectedPayment.getPenalties();
+        // Penalty
+        PayModifier[] penaltyList = pay.getPenalties().getResults();
         double penalties = 0.0;
         if (penaltyList != null) {
-            for (Penalty info : penaltyList) {
+            for (PayModifier info : penaltyList) {
                 penalties += info.getAmount();
             }
         }
         _penaltyTextView.setText(misc.toCurrency(penalties));
 
-        Bonus[] bonusList = expectedPayment.getBonuses();
-        double bonuses = 0.0;
-        if (bonusList != null) {
-            for (Bonus info : bonusList) {
-                bonuses += info.getAmount();
+
+        // Total
+        _expectedTotalTextView.setText(misc.toCurrency(pay.getTotal()));
+        Double sum = pay.getTotal();
+
+        // Insurance and Field Nation fees
+        _feePercentTextView.setVisibility(GONE);
+        _feeTextView.setVisibility(GONE);
+        _insurancePercentTextView.setVisibility(GONE);
+        _insuraceFeeTextView.setVisibility(GONE);
+        PayModifier[] fees = pay.getFees();
+        for (PayModifier fee : fees) {
+            if (fee.getName().equals("provider")) {
+                _feeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _feePercentTextView.setText(String.format(
+                        getContext().getString(R.string.fieldnation_expected_fee_percentage),
+                        (float) (fee.getModifier() * 100)));
+
+                _feeTextView.setVisibility(VISIBLE);
+                _feePercentTextView.setVisibility(VISIBLE);
+                sum -= fee.getModifier() * pay.getTotal();
+            } else if (fee.getName().equals("insurance")) {
+                _insuraceFeeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _insurancePercentTextView.setText(String.format(
+                        getContext().getString(R.string.fieldnation_expected_insurance_percentage),
+                        (float) (fee.getModifier() * 100)));
+
+                _insuraceFeeTextView.setVisibility(VISIBLE);
+                _insurancePercentTextView.setVisibility(VISIBLE);
+
+                sum -= fee.getModifier() * pay.getTotal();
             }
         }
-        _bonusTextView.setText(misc.toCurrency(bonuses));
+
+        _totalTextView.setText(misc.toCurrency(sum));
+        if (pay.getPayment().getCharged()) {
+            _payStatusTextView.setText("Paid");
+        } else {
+            _payStatusTextView.setText("Unpaid");
+
+        }
     }
 }

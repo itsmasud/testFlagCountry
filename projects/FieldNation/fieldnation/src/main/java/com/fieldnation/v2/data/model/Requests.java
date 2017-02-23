@@ -5,13 +5,14 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -21,7 +22,7 @@ public class Requests implements Parcelable {
     private static final String TAG = "Requests";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
@@ -30,26 +31,51 @@ public class Requests implements Parcelable {
     private Request _openRequest;
 
     @Json(name = "results")
-    private TimeLog[] _results;
+    private Request[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Requests() {
+        SOURCE = new JsonObject();
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public Requests(JsonObject obj) {
+        SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
-    public Requests actions(ActionsEnum actions) throws ParseException {
+    public Requests actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -59,6 +85,17 @@ public class Requests implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -74,6 +111,17 @@ public class Requests implements Parcelable {
     }
 
     public Request getOpenRequest() {
+        try {
+            if (_openRequest != null)
+                return _openRequest;
+
+            if (SOURCE.has("open_request") && SOURCE.get("open_request") != null)
+                _openRequest = Request.fromJson(SOURCE.getJsonObject("open_request"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _openRequest;
     }
 
@@ -83,18 +131,30 @@ public class Requests implements Parcelable {
         return this;
     }
 
-    public void setResults(TimeLog[] results) throws ParseException {
+    public void setResults(Request[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", TimeLog.toJsonArray(results));
+        SOURCE.put("results", Request.toJsonArray(results));
     }
 
-    public TimeLog[] getResults() {
+    public Request[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Request.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
-    public Requests results(TimeLog[] results) throws ParseException {
+    public Requests results(Request[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", TimeLog.toJsonArray(results), true);
+        SOURCE.put("results", Request.toJsonArray(results), true);
         return this;
     }
 
@@ -111,6 +171,23 @@ public class Requests implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -140,7 +217,7 @@ public class Requests implements Parcelable {
 
     public static Requests fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Requests.class, obj);
+            return new Requests(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -180,5 +257,30 @@ public class Requests implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public Request getCounterOffer() {
+        if (getResults() == null || getResults().length == 0)
+            return null;
+
+        for (Request request : getResults()) {
+            if (request.getActive() && request.getCounter())
+                return request;
+        }
+
+        return null;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
     }
 }

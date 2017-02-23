@@ -30,9 +30,14 @@ public class UserUpcomingSchedule implements Parcelable {
     private String _to;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserUpcomingSchedule() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserUpcomingSchedule(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setDate(String date) throws ParseException {
@@ -41,6 +46,17 @@ public class UserUpcomingSchedule implements Parcelable {
     }
 
     public String getDate() {
+        try {
+            if (_date != null)
+                return _date;
+
+            if (SOURCE.has("date") && SOURCE.get("date") != null)
+                _date = SOURCE.getString("date");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _date;
     }
 
@@ -56,6 +72,17 @@ public class UserUpcomingSchedule implements Parcelable {
     }
 
     public String getFrom() {
+        try {
+            if (_from != null)
+                return _from;
+
+            if (SOURCE.has("from") && SOURCE.get("from") != null)
+                _from = SOURCE.getString("from");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _from;
     }
 
@@ -71,6 +98,17 @@ public class UserUpcomingSchedule implements Parcelable {
     }
 
     public String getTo() {
+        try {
+            if (_to != null)
+                return _to;
+
+            if (SOURCE.has("to") && SOURCE.get("to") != null)
+                _to = SOURCE.getString("to");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _to;
     }
 
@@ -101,7 +139,7 @@ public class UserUpcomingSchedule implements Parcelable {
 
     public static UserUpcomingSchedule fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserUpcomingSchedule.class, obj);
+            return new UserUpcomingSchedule(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -30,9 +30,14 @@ public class MessageProblem implements Parcelable {
     private MessageProblemType _type;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public MessageProblem() {
+        SOURCE = new JsonObject();
+    }
+
+    public MessageProblem(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setFlagId(Integer flagId) throws ParseException {
@@ -41,6 +46,17 @@ public class MessageProblem implements Parcelable {
     }
 
     public Integer getFlagId() {
+        try {
+            if (_flagId != null)
+                return _flagId;
+
+            if (SOURCE.has("flag_id") && SOURCE.get("flag_id") != null)
+                _flagId = SOURCE.getInt("flag_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _flagId;
     }
 
@@ -56,6 +72,17 @@ public class MessageProblem implements Parcelable {
     }
 
     public Boolean getResolved() {
+        try {
+            if (_resolved != null)
+                return _resolved;
+
+            if (SOURCE.has("resolved") && SOURCE.get("resolved") != null)
+                _resolved = SOURCE.getBoolean("resolved");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _resolved;
     }
 
@@ -71,6 +98,17 @@ public class MessageProblem implements Parcelable {
     }
 
     public MessageProblemType getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = MessageProblemType.fromJson(SOURCE.getJsonObject("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -101,7 +139,7 @@ public class MessageProblem implements Parcelable {
 
     public static MessageProblem fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(MessageProblem.class, obj);
+            return new MessageProblem(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -30,9 +30,14 @@ public class CountryState implements Parcelable {
     private CountryStateValues[] _values;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CountryState() {
+        SOURCE = new JsonObject();
+    }
+
+    public CountryState(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setLabel(String label) throws ParseException {
@@ -41,6 +46,17 @@ public class CountryState implements Parcelable {
     }
 
     public String getLabel() {
+        try {
+            if (_label != null)
+                return _label;
+
+            if (SOURCE.has("label") && SOURCE.get("label") != null)
+                _label = SOURCE.getString("label");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _label;
     }
 
@@ -56,6 +72,17 @@ public class CountryState implements Parcelable {
     }
 
     public Boolean getRequired() {
+        try {
+            if (_required != null)
+                return _required;
+
+            if (SOURCE.has("required") && SOURCE.get("required") != null)
+                _required = SOURCE.getBoolean("required");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _required;
     }
 
@@ -71,6 +98,18 @@ public class CountryState implements Parcelable {
     }
 
     public CountryStateValues[] getValues() {
+        try {
+            if (_values != null)
+                return _values;
+
+            if (SOURCE.has("values") && SOURCE.get("values") != null) {
+                _values = CountryStateValues.fromJsonArray(SOURCE.getJsonArray("values"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _values;
     }
 
@@ -101,7 +140,7 @@ public class CountryState implements Parcelable {
 
     public static CountryState fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CountryState.class, obj);
+            return new CountryState(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

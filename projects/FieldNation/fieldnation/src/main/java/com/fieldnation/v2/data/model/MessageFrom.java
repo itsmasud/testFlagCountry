@@ -39,9 +39,14 @@ public class MessageFrom implements Parcelable {
     private String _thumbnail;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public MessageFrom() {
+        SOURCE = new JsonObject();
+    }
+
+    public MessageFrom(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setHideWoManager(Boolean hideWoManager) throws ParseException {
@@ -50,6 +55,17 @@ public class MessageFrom implements Parcelable {
     }
 
     public Boolean getHideWoManager() {
+        try {
+            if (_hideWoManager != null)
+                return _hideWoManager;
+
+            if (SOURCE.has("hideWoManager") && SOURCE.get("hideWoManager") != null)
+                _hideWoManager = SOURCE.getBoolean("hideWoManager");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hideWoManager;
     }
 
@@ -65,6 +81,17 @@ public class MessageFrom implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -80,6 +107,17 @@ public class MessageFrom implements Parcelable {
     }
 
     public String getMsgLink() {
+        try {
+            if (_msgLink != null)
+                return _msgLink;
+
+            if (SOURCE.has("msgLink") && SOURCE.get("msgLink") != null)
+                _msgLink = SOURCE.getString("msgLink");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _msgLink;
     }
 
@@ -95,6 +133,17 @@ public class MessageFrom implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -110,6 +159,17 @@ public class MessageFrom implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -125,6 +185,17 @@ public class MessageFrom implements Parcelable {
     }
 
     public String getThumbnail() {
+        try {
+            if (_thumbnail != null)
+                return _thumbnail;
+
+            if (SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
+                _thumbnail = SOURCE.getString("thumbnail");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _thumbnail;
     }
 
@@ -155,7 +226,7 @@ public class MessageFrom implements Parcelable {
 
     public static MessageFrom fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(MessageFrom.class, obj);
+            return new MessageFrom(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

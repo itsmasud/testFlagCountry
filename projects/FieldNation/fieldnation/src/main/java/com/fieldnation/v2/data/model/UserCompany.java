@@ -36,9 +36,14 @@ public class UserCompany implements Parcelable {
     private Company[] _vendors;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserCompany() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserCompany(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setFeatures(String[] features) throws ParseException {
@@ -51,6 +56,19 @@ public class UserCompany implements Parcelable {
     }
 
     public String[] getFeatures() {
+        try {
+            if (_features != null)
+                return _features;
+
+            if (SOURCE.has("features") && SOURCE.get("features") != null) {
+                JsonArray ja = SOURCE.getJsonArray("features");
+                _features = ja.toArray(new String[ja.size()]);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _features;
     }
 
@@ -70,6 +88,17 @@ public class UserCompany implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -85,6 +114,17 @@ public class UserCompany implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -100,6 +140,17 @@ public class UserCompany implements Parcelable {
     }
 
     public Integer getTechnicians() {
+        try {
+            if (_technicians != null)
+                return _technicians;
+
+            if (SOURCE.has("technicians") && SOURCE.get("technicians") != null)
+                _technicians = SOURCE.getInt("technicians");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _technicians;
     }
 
@@ -115,6 +166,18 @@ public class UserCompany implements Parcelable {
     }
 
     public Company[] getVendors() {
+        try {
+            if (_vendors != null)
+                return _vendors;
+
+            if (SOURCE.has("vendors") && SOURCE.get("vendors") != null) {
+                _vendors = Company.fromJsonArray(SOURCE.getJsonArray("vendors"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _vendors;
     }
 
@@ -145,7 +208,7 @@ public class UserCompany implements Parcelable {
 
     public static UserCompany fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserCompany.class, obj);
+            return new UserCompany(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -33,9 +33,14 @@ public class BundleWorkOrders implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public BundleWorkOrders() {
+        SOURCE = new JsonObject();
+    }
+
+    public BundleWorkOrders(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setBundleId(Integer bundleId) throws ParseException {
@@ -44,6 +49,17 @@ public class BundleWorkOrders implements Parcelable {
     }
 
     public Integer getBundleId() {
+        try {
+            if (_bundleId != null)
+                return _bundleId;
+
+            if (SOURCE.has("bundle_id") && SOURCE.get("bundle_id") != null)
+                _bundleId = SOURCE.getInt("bundle_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _bundleId;
     }
 
@@ -59,6 +75,18 @@ public class BundleWorkOrders implements Parcelable {
     }
 
     public WorkOrder[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = WorkOrder.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -74,6 +102,17 @@ public class BundleWorkOrders implements Parcelable {
     }
 
     public Integer getTotal() {
+        try {
+            if (_total != null)
+                return _total;
+
+            if (SOURCE.has("total") && SOURCE.get("total") != null)
+                _total = SOURCE.getInt("total");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _total;
     }
 
@@ -89,6 +128,17 @@ public class BundleWorkOrders implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -119,7 +169,7 @@ public class BundleWorkOrders implements Parcelable {
 
     public static BundleWorkOrders fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(BundleWorkOrders.class, obj);
+            return new BundleWorkOrders(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

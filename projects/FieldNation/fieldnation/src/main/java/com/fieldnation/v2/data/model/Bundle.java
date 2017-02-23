@@ -30,9 +30,14 @@ public class Bundle implements Parcelable {
     private WorkOrder[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Bundle() {
+        SOURCE = new JsonObject();
+    }
+
+    public Bundle(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -41,6 +46,17 @@ public class Bundle implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -56,6 +72,17 @@ public class Bundle implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -71,6 +98,18 @@ public class Bundle implements Parcelable {
     }
 
     public WorkOrder[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = WorkOrder.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -101,7 +140,7 @@ public class Bundle implements Parcelable {
 
     public static Bundle fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Bundle.class, obj);
+            return new Bundle(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -7,14 +7,17 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Request;
 
 /**
  * Created by mc on 11/7/16.
  */
 
 public class WithdrawRequestDialog extends TwoButtonDialog {
+    private static final String TAG = "WithdrawRequestDialog";
 
     public WithdrawRequestDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -25,17 +28,27 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
         Parcelable extraData = getExtraData();
 
         if (extraData != null && extraData instanceof Bundle) {
-            Long workOrderId = ((Bundle) extraData).getLong("workOrderId");
-            WorkorderClient.actionWithdrawRequest(App.get(), workOrderId);
+            Bundle bundle = (Bundle) extraData;
+            int workOrderId = bundle.getInt("workOrderId");
+            int requestId = bundle.getInt("requestId");
+
+            try {
+                Request request = new Request();
+                request.id(requestId);
+                WorkordersWebApi.removeRequest(App.get(), workOrderId, request);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             _onWithdrawDispatcher.dispatch(getUid(), workOrderId);
         }
         return true;
     }
 
 
-    public static void show(Context context, String uid, long workOrderId) {
+    public static void show(Context context, String uid, int workOrderId, int requestId) {
         Bundle extraData = new Bundle();
-        extraData.putLong("workOrderId", workOrderId);
+        extraData.putInt("workOrderId", workOrderId);
+        extraData.putInt("requestId", requestId);
 
         show(context, uid, WithdrawRequestDialog.class, R.string.dialog_withdraw_title, R.string.dialog_withdraw_body,
                 R.string.btn_yes, R.string.btn_no, true, extraData);

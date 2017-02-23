@@ -36,9 +36,14 @@ public class CustomFieldCategory implements Parcelable {
     private String _role;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CustomFieldCategory() {
+        SOURCE = new JsonObject();
+    }
+
+    public CustomFieldCategory(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -47,6 +52,17 @@ public class CustomFieldCategory implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -62,6 +78,17 @@ public class CustomFieldCategory implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -77,6 +104,17 @@ public class CustomFieldCategory implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -92,6 +130,18 @@ public class CustomFieldCategory implements Parcelable {
     }
 
     public CustomField[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = CustomField.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -107,6 +157,17 @@ public class CustomFieldCategory implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -137,7 +198,7 @@ public class CustomFieldCategory implements Parcelable {
 
     public static CustomFieldCategory fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CustomFieldCategory.class, obj);
+            return new CustomFieldCategory(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

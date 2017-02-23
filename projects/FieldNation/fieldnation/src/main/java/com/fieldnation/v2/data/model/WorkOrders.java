@@ -33,9 +33,14 @@ public class WorkOrders implements Parcelable {
     private Double _userId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public WorkOrders() {
+        SOURCE = new JsonObject();
+    }
+
+    public WorkOrders(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -44,6 +49,17 @@ public class WorkOrders implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -59,6 +75,17 @@ public class WorkOrders implements Parcelable {
     }
 
     public Boolean getProviderFirstTowFilter() {
+        try {
+            if (_providerFirstTowFilter != null)
+                return _providerFirstTowFilter;
+
+            if (SOURCE.has("provider_first_tow_filter") && SOURCE.get("provider_first_tow_filter") != null)
+                _providerFirstTowFilter = SOURCE.getBoolean("provider_first_tow_filter");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _providerFirstTowFilter;
     }
 
@@ -74,6 +101,18 @@ public class WorkOrders implements Parcelable {
     }
 
     public WorkOrder[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = WorkOrder.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -89,6 +128,17 @@ public class WorkOrders implements Parcelable {
     }
 
     public Double getUserId() {
+        try {
+            if (_userId != null)
+                return _userId;
+
+            if (SOURCE.has("user_id") && SOURCE.get("user_id") != null)
+                _userId = SOURCE.getDouble("user_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _userId;
     }
 
@@ -119,7 +169,7 @@ public class WorkOrders implements Parcelable {
 
     public static WorkOrders fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(WorkOrders.class, obj);
+            return new WorkOrders(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

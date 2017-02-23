@@ -27,9 +27,14 @@ public class ScheduleEtaStatus implements Parcelable {
     private Date _updated;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ScheduleEtaStatus() {
+        SOURCE = new JsonObject();
+    }
+
+    public ScheduleEtaStatus(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setName(NameEnum name) throws ParseException {
@@ -38,6 +43,17 @@ public class ScheduleEtaStatus implements Parcelable {
     }
 
     public NameEnum getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = NameEnum.fromString(SOURCE.getString("name"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -53,6 +69,17 @@ public class ScheduleEtaStatus implements Parcelable {
     }
 
     public Date getUpdated() {
+        try {
+            if (_updated != null)
+                return _updated;
+
+            if (SOURCE.has("updated") && SOURCE.get("updated") != null)
+                _updated = Date.fromJson(SOURCE.getJsonObject("updated"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _updated;
     }
 
@@ -79,6 +106,23 @@ public class ScheduleEtaStatus implements Parcelable {
 
         NameEnum(String value) {
             this.value = value;
+        }
+
+        public static NameEnum fromString(String value) {
+            NameEnum[] values = values();
+            for (NameEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static NameEnum[] fromJsonArray(JsonArray jsonArray) {
+            NameEnum[] list = new NameEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -108,7 +152,7 @@ public class ScheduleEtaStatus implements Parcelable {
 
     public static ScheduleEtaStatus fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ScheduleEtaStatus.class, obj);
+            return new ScheduleEtaStatus(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

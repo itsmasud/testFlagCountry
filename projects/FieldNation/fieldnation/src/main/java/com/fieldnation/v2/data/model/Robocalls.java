@@ -24,9 +24,14 @@ public class Robocalls implements Parcelable {
     private Robocall[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Robocalls() {
+        SOURCE = new JsonObject();
+    }
+
+    public Robocalls(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setResults(Robocall[] results) throws ParseException {
@@ -35,6 +40,18 @@ public class Robocalls implements Parcelable {
     }
 
     public Robocall[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Robocall.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -65,7 +82,7 @@ public class Robocalls implements Parcelable {
 
     public static Robocalls fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Robocalls.class, obj);
+            return new Robocalls(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -27,9 +27,14 @@ public class EmailTemplate implements Parcelable {
     private String _label;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public EmailTemplate() {
+        SOURCE = new JsonObject();
+    }
+
+    public EmailTemplate(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -38,6 +43,17 @@ public class EmailTemplate implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -53,6 +69,17 @@ public class EmailTemplate implements Parcelable {
     }
 
     public String getLabel() {
+        try {
+            if (_label != null)
+                return _label;
+
+            if (SOURCE.has("label") && SOURCE.get("label") != null)
+                _label = SOURCE.getString("label");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _label;
     }
 
@@ -83,7 +110,7 @@ public class EmailTemplate implements Parcelable {
 
     public static EmailTemplate fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(EmailTemplate.class, obj);
+            return new EmailTemplate(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -51,9 +51,14 @@ public class ListEnvelope implements Parcelable {
     private ViewEnum _view;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ListEnvelope() {
+        SOURCE = new JsonObject();
+    }
+
+    public ListEnvelope(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAvailableColumns(AvailableColumn[] availableColumns) throws ParseException {
@@ -62,6 +67,18 @@ public class ListEnvelope implements Parcelable {
     }
 
     public AvailableColumn[] getAvailableColumns() {
+        try {
+            if (_availableColumns != null)
+                return _availableColumns;
+
+            if (SOURCE.has("available_columns") && SOURCE.get("available_columns") != null) {
+                _availableColumns = AvailableColumn.fromJsonArray(SOURCE.getJsonArray("available_columns"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _availableColumns;
     }
 
@@ -77,6 +94,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public String getColumns() {
+        try {
+            if (_columns != null)
+                return _columns;
+
+            if (SOURCE.has("columns") && SOURCE.get("columns") != null)
+                _columns = SOURCE.getString("columns");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _columns;
     }
 
@@ -92,6 +120,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public String getList() {
+        try {
+            if (_list != null)
+                return _list;
+
+            if (SOURCE.has("list") && SOURCE.get("list") != null)
+                _list = SOURCE.getString("list");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _list;
     }
 
@@ -107,6 +146,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public OrderEnum getOrder() {
+        try {
+            if (_order != null)
+                return _order;
+
+            if (SOURCE.has("order") && SOURCE.get("order") != null)
+                _order = OrderEnum.fromString(SOURCE.getString("order"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _order;
     }
 
@@ -122,6 +172,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public Integer getPage() {
+        try {
+            if (_page != null)
+                return _page;
+
+            if (SOURCE.has("page") && SOURCE.get("page") != null)
+                _page = SOURCE.getInt("page");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _page;
     }
 
@@ -137,6 +198,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public Integer getPages() {
+        try {
+            if (_pages != null)
+                return _pages;
+
+            if (SOURCE.has("pages") && SOURCE.get("pages") != null)
+                _pages = SOURCE.getInt("pages");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _pages;
     }
 
@@ -152,6 +224,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public Integer getPerPage() {
+        try {
+            if (_perPage != null)
+                return _perPage;
+
+            if (SOURCE.has("per_page") && SOURCE.get("per_page") != null)
+                _perPage = SOURCE.getInt("per_page");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _perPage;
     }
 
@@ -167,6 +250,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public String getSort() {
+        try {
+            if (_sort != null)
+                return _sort;
+
+            if (SOURCE.has("sort") && SOURCE.get("sort") != null)
+                _sort = SOURCE.getString("sort");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sort;
     }
 
@@ -182,6 +276,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public Integer getTotal() {
+        try {
+            if (_total != null)
+                return _total;
+
+            if (SOURCE.has("total") && SOURCE.get("total") != null)
+                _total = SOURCE.getInt("total");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _total;
     }
 
@@ -197,6 +302,17 @@ public class ListEnvelope implements Parcelable {
     }
 
     public ViewEnum getView() {
+        try {
+            if (_view != null)
+                return _view;
+
+            if (SOURCE.has("view") && SOURCE.get("view") != null)
+                _view = ViewEnum.fromString(SOURCE.getString("view"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _view;
     }
 
@@ -227,6 +343,23 @@ public class ListEnvelope implements Parcelable {
             this.value = value;
         }
 
+        public static ViewEnum fromString(String value) {
+            ViewEnum[] values = values();
+            for (ViewEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ViewEnum[] fromJsonArray(JsonArray jsonArray) {
+            ViewEnum[] list = new ViewEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -245,6 +378,23 @@ public class ListEnvelope implements Parcelable {
 
         OrderEnum(String value) {
             this.value = value;
+        }
+
+        public static OrderEnum fromString(String value) {
+            OrderEnum[] values = values();
+            for (OrderEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static OrderEnum[] fromJsonArray(JsonArray jsonArray) {
+            OrderEnum[] list = new OrderEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -274,7 +424,7 @@ public class ListEnvelope implements Parcelable {
 
     public static ListEnvelope fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ListEnvelope.class, obj);
+            return new ListEnvelope(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

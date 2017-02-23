@@ -21,9 +21,14 @@ public class AaaaPlaceholder implements Parcelable {
     private static final String TAG = "AaaaPlaceholder";
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public AaaaPlaceholder() {
+        SOURCE = new JsonObject();
+    }
+
+    public AaaaPlaceholder(JsonObject obj) {
+        SOURCE = obj;
     }
 
     /*-*****************************-*/
@@ -47,7 +52,7 @@ public class AaaaPlaceholder implements Parcelable {
 
     public static AaaaPlaceholder fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(AaaaPlaceholder.class, obj);
+            return new AaaaPlaceholder(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

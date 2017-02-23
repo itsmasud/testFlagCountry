@@ -9,7 +9,8 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
-import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ShipmentRowView extends RelativeLayout {
     private static final String TAG = "ShipmentRowView";
@@ -21,8 +22,8 @@ public class ShipmentRowView extends RelativeLayout {
     private TextView _directionTextView;
 
     // Data
-    private Workorder _workorder;
-    private ShipmentTracking _shipment;
+    private WorkOrder _workOrder;
+    private Shipment _shipment;
     private Listener _listener;
     private boolean _taskMode = false;
 
@@ -68,9 +69,9 @@ public class ShipmentRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Workorder workorder, ShipmentTracking shipment) {
+    public void setData(WorkOrder workOrder, Shipment shipment) {
         _shipment = shipment;
-        _workorder = workorder;
+        _workOrder = workOrder;
 
         populateUi();
     }
@@ -82,24 +83,27 @@ public class ShipmentRowView extends RelativeLayout {
         if (_trackingIdTextView == null)
             return;
 
-        if (_shipment.getTrackingId() != null) {
+        if (_shipment.getCarrier() != null && _shipment.getCarrier().getTracking() != null) {
             _trackingIdTextView.setVisibility(VISIBLE);
-            _trackingIdTextView.setText(_shipment.getTrackingId());
-        }else {
+            _trackingIdTextView.setText(_shipment.getCarrier().getTracking());
+        } else {
             _trackingIdTextView.setVisibility(GONE);
         }
 
-        String carrier = _shipment.getCarrier();
-        if (carrier == null) {
-            carrier = _shipment.getCarrierOther();
+        String carrier;
+        if (_shipment.getCarrier() != null && (carrier = _shipment.getCarrier().getName()) != null) {
+            _carrierTextView.setText(carrier);
         }
-        _carrierTextView.setText(carrier);
 
         _descTextView.setText(_shipment.getName());
-        boolean toSite = _shipment.getDirection().equals("to_site");
-        _directionTextView.setText(toSite ? "To Site" : "From Site");
+        boolean toSite;
+        if (_shipment.getDirection() != null && (toSite = _shipment.getDirection().equals("to_site")))
+            _directionTextView.setText(toSite ? "To Site" : "From Site");
+            // TODO _shipment.getDirection() is null and need to sort out if there is any problem in application side
+        else _directionTextView.setText("Place holder");
 
-        setEnabled(_workorder.canChangeShipments());
+        // TODO
+//        setEnabled(_workOrder.canChangeShipments());
     }
 
     /*-*********************************-*/
@@ -108,10 +112,11 @@ public class ShipmentRowView extends RelativeLayout {
     private final View.OnLongClickListener _delete_onClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (_listener != null) {
-                _listener.onDelete(_shipment);
-                return true;
-            }
+            // TODO action is not defined in swagger.yaml. See comment in PA-613
+//            if (_listener != null) {
+//                _listener.onDelete(_shipment);
+//                return true;
+//            }
             return false;
         }
     };
@@ -119,15 +124,16 @@ public class ShipmentRowView extends RelativeLayout {
     private final View.OnClickListener _assign_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onEdit(_shipment);
-            }
+            // TODO action is not defined in swagger.yaml. See comment in PA-613
+//            if (_listener != null) {
+//                _listener.onEdit(_shipment);
+//            }
         }
     };
 
+    // TODO: need to remove ShipmentTracking when action will be defined in swagger.yaml
     public interface Listener {
         void onDelete(ShipmentTracking shipment);
-
         void onEdit(ShipmentTracking shipment);
     }
 }

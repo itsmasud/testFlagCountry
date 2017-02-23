@@ -413,7 +413,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         @Override
         public void onConnected() {
             Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
-            _workOrderApi.subGetWorkOrder(_workOrderId);
             _workOrderApi.subWorkordersWebApi();
             getData();
         }
@@ -433,8 +432,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
         @Override
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("getWorkOrder") || !success)
+            if (methodName.startsWith("get") || !success)
                 return;
+
+            Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false);
         }

@@ -201,7 +201,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
             stopwatch = new Stopwatch(true);
             result = HttpJson.run(_service, request, _http_progress);
             stopwatch.pause();
-/*
             try {
                 Log.v(TAG, "ResponseCode: " + result.getResponseCode());
                 Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
@@ -212,7 +211,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-*/
         } catch (Exception ex) {
             exception = ex;
             Log.v(TAG, ex);

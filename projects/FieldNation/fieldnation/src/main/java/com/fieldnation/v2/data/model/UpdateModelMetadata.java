@@ -27,9 +27,14 @@ public class UpdateModelMetadata implements Parcelable {
     private UpdateModelMetadataUniversalContext _universalContext;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UpdateModelMetadata() {
+        SOURCE = new JsonObject();
+    }
+
+    public UpdateModelMetadata(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setData(UpdateModelMetadataData data) throws ParseException {
@@ -38,6 +43,17 @@ public class UpdateModelMetadata implements Parcelable {
     }
 
     public UpdateModelMetadataData getData() {
+        try {
+            if (_data != null)
+                return _data;
+
+            if (SOURCE.has("data") && SOURCE.get("data") != null)
+                _data = UpdateModelMetadataData.fromJson(SOURCE.getJsonObject("data"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _data;
     }
 
@@ -53,6 +69,17 @@ public class UpdateModelMetadata implements Parcelable {
     }
 
     public UpdateModelMetadataUniversalContext getUniversalContext() {
+        try {
+            if (_universalContext != null)
+                return _universalContext;
+
+            if (SOURCE.has("universal_context") && SOURCE.get("universal_context") != null)
+                _universalContext = UpdateModelMetadataUniversalContext.fromJson(SOURCE.getJsonObject("universal_context"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _universalContext;
     }
 
@@ -83,7 +110,7 @@ public class UpdateModelMetadata implements Parcelable {
 
     public static UpdateModelMetadata fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateModelMetadata.class, obj);
+            return new UpdateModelMetadata(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

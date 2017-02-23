@@ -21,9 +21,14 @@ public class UpdateModelParamsModel implements Parcelable {
     private static final String TAG = "UpdateModelParamsModel";
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UpdateModelParamsModel() {
+        SOURCE = new JsonObject();
+    }
+
+    public UpdateModelParamsModel(JsonObject obj) {
+        SOURCE = obj;
     }
 
     /*-*****************************-*/
@@ -47,7 +52,7 @@ public class UpdateModelParamsModel implements Parcelable {
 
     public static UpdateModelParamsModel fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateModelParamsModel.class, obj);
+            return new UpdateModelParamsModel(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

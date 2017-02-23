@@ -68,7 +68,7 @@ public class BonusesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/bonuses",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi",
                                     BonusesWebApi.class, "addBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -78,10 +78,6 @@ public class BonusesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddBonus() {
-        return register("TOPIC_ID_WEB_API_V2/bonuses");
     }
 
     /**
@@ -105,7 +101,7 @@ public class BonusesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi",
                                     BonusesWebApi.class, "removeBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -115,10 +111,6 @@ public class BonusesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveBonus(Integer bonusId) {
-        return register("TOPIC_ID_WEB_API_V2/BonusesWebApi/" + bonusId);
     }
 
     /**
@@ -146,7 +138,7 @@ public class BonusesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi/" + bonusId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi",
                                     BonusesWebApi.class, "updateBonus"))
                     .useAuth(true)
                     .request(builder)
@@ -156,10 +148,6 @@ public class BonusesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateBonus(Integer bonusId) {
-        return register("TOPIC_ID_WEB_API_V2/BonusesWebApi/" + bonusId);
     }
 
 

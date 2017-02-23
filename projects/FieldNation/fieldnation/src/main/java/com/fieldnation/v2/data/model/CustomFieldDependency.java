@@ -30,9 +30,14 @@ public class CustomFieldDependency implements Parcelable {
     private String _value;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CustomFieldDependency() {
+        SOURCE = new JsonObject();
+    }
+
+    public CustomFieldDependency(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -41,6 +46,17 @@ public class CustomFieldDependency implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -56,6 +72,17 @@ public class CustomFieldDependency implements Parcelable {
     }
 
     public OperatorEnum getOperator() {
+        try {
+            if (_operator != null)
+                return _operator;
+
+            if (SOURCE.has("operator") && SOURCE.get("operator") != null)
+                _operator = OperatorEnum.fromString(SOURCE.getString("operator"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _operator;
     }
 
@@ -71,6 +98,17 @@ public class CustomFieldDependency implements Parcelable {
     }
 
     public String getValue() {
+        try {
+            if (_value != null)
+                return _value;
+
+            if (SOURCE.has("value") && SOURCE.get("value") != null)
+                _value = SOURCE.getString("value");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _value;
     }
 
@@ -101,6 +139,23 @@ public class CustomFieldDependency implements Parcelable {
             this.value = value;
         }
 
+        public static OperatorEnum fromString(String value) {
+            OperatorEnum[] values = values();
+            for (OperatorEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static OperatorEnum[] fromJsonArray(JsonArray jsonArray) {
+            OperatorEnum[] list = new OperatorEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -128,7 +183,7 @@ public class CustomFieldDependency implements Parcelable {
 
     public static CustomFieldDependency fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CustomFieldDependency.class, obj);
+            return new CustomFieldDependency(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -51,9 +51,14 @@ public class Schedule implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Schedule() {
+        SOURCE = new JsonObject();
+    }
+
+    public Schedule(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -66,6 +71,18 @@ public class Schedule implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -85,6 +102,17 @@ public class Schedule implements Parcelable {
     }
 
     public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _correlationId;
     }
 
@@ -100,6 +128,17 @@ public class Schedule implements Parcelable {
     }
 
     public ScheduleEta getEta() {
+        try {
+            if (_eta != null)
+                return _eta;
+
+            if (SOURCE.has("eta") && SOURCE.get("eta") != null)
+                _eta = ScheduleEta.fromJson(SOURCE.getJsonObject("eta"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _eta;
     }
 
@@ -115,6 +154,17 @@ public class Schedule implements Parcelable {
     }
 
     public Boolean getNoRefresh() {
+        try {
+            if (_noRefresh != null)
+                return _noRefresh;
+
+            if (SOURCE.has("no_refresh") && SOURCE.get("no_refresh") != null)
+                _noRefresh = SOURCE.getBoolean("no_refresh");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _noRefresh;
     }
 
@@ -130,6 +180,17 @@ public class Schedule implements Parcelable {
     }
 
     public OnMyWay getOnMyWay() {
+        try {
+            if (_onMyWay != null)
+                return _onMyWay;
+
+            if (SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
+                _onMyWay = OnMyWay.fromJson(SOURCE.getJsonObject("on_my_way"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _onMyWay;
     }
 
@@ -145,6 +206,17 @@ public class Schedule implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -160,6 +232,17 @@ public class Schedule implements Parcelable {
     }
 
     public ScheduleServiceWindow getServiceWindow() {
+        try {
+            if (_serviceWindow != null)
+                return _serviceWindow;
+
+            if (SOURCE.has("service_window") && SOURCE.get("service_window") != null)
+                _serviceWindow = ScheduleServiceWindow.fromJson(SOURCE.getJsonObject("service_window"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _serviceWindow;
     }
 
@@ -175,6 +258,17 @@ public class Schedule implements Parcelable {
     }
 
     public Integer getStatusId() {
+        try {
+            if (_statusId != null)
+                return _statusId;
+
+            if (SOURCE.has("status_id") && SOURCE.get("status_id") != null)
+                _statusId = SOURCE.getInt("status_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusId;
     }
 
@@ -190,6 +284,17 @@ public class Schedule implements Parcelable {
     }
 
     public TimeZone getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -205,6 +310,17 @@ public class Schedule implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -225,6 +341,23 @@ public class Schedule implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -254,7 +387,7 @@ public class Schedule implements Parcelable {
 
     public static Schedule fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Schedule.class, obj);
+            return new Schedule(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -39,9 +39,14 @@ public class UpdateModelMetadataData implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UpdateModelMetadataData() {
+        SOURCE = new JsonObject();
+    }
+
+    public UpdateModelMetadataData(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCompanyId(Integer companyId) throws ParseException {
@@ -50,6 +55,17 @@ public class UpdateModelMetadataData implements Parcelable {
     }
 
     public Integer getCompanyId() {
+        try {
+            if (_companyId != null)
+                return _companyId;
+
+            if (SOURCE.has("company_id") && SOURCE.get("company_id") != null)
+                _companyId = SOURCE.getInt("company_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _companyId;
     }
 
@@ -65,6 +81,17 @@ public class UpdateModelMetadataData implements Parcelable {
     }
 
     public Integer getGroupId() {
+        try {
+            if (_groupId != null)
+                return _groupId;
+
+            if (SOURCE.has("group_id") && SOURCE.get("group_id") != null)
+                _groupId = SOURCE.getInt("group_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _groupId;
     }
 
@@ -80,6 +107,17 @@ public class UpdateModelMetadataData implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -95,6 +133,17 @@ public class UpdateModelMetadataData implements Parcelable {
     }
 
     public String getRoute() {
+        try {
+            if (_route != null)
+                return _route;
+
+            if (SOURCE.has("route") && SOURCE.get("route") != null)
+                _route = SOURCE.getString("route");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _route;
     }
 
@@ -110,6 +159,17 @@ public class UpdateModelMetadataData implements Parcelable {
     }
 
     public Integer getUserId() {
+        try {
+            if (_userId != null)
+                return _userId;
+
+            if (SOURCE.has("user_id") && SOURCE.get("user_id") != null)
+                _userId = SOURCE.getInt("user_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _userId;
     }
 
@@ -125,6 +185,17 @@ public class UpdateModelMetadataData implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -155,7 +226,7 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public static UpdateModelMetadataData fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateModelMetadataData.class, obj);
+            return new UpdateModelMetadataData(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

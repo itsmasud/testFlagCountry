@@ -27,9 +27,14 @@ public class Pays implements Parcelable {
     private Pay[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Pays() {
+        SOURCE = new JsonObject();
+    }
+
+    public Pays(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -38,6 +43,17 @@ public class Pays implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -53,6 +69,18 @@ public class Pays implements Parcelable {
     }
 
     public Pay[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Pay.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -83,7 +111,7 @@ public class Pays implements Parcelable {
 
     public static Pays fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Pays.class, obj);
+            return new Pays(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

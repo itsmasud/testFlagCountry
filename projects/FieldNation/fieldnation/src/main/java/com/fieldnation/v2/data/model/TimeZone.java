@@ -33,9 +33,14 @@ public class TimeZone implements Parcelable {
     private String _short;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TimeZone() {
+        SOURCE = new JsonObject();
+    }
+
+    public TimeZone(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -44,6 +49,17 @@ public class TimeZone implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -59,6 +75,17 @@ public class TimeZone implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -74,6 +101,17 @@ public class TimeZone implements Parcelable {
     }
 
     public Double getOffset() {
+        try {
+            if (_offset != null)
+                return _offset;
+
+            if (SOURCE.has("offset") && SOURCE.get("offset") != null)
+                _offset = SOURCE.getDouble("offset");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _offset;
     }
 
@@ -89,6 +127,17 @@ public class TimeZone implements Parcelable {
     }
 
     public String getShort() {
+        try {
+            if (_short != null)
+                return _short;
+
+            if (SOURCE.has("short") && SOURCE.get("short") != null)
+                _short = SOURCE.getString("short");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _short;
     }
 
@@ -119,7 +168,7 @@ public class TimeZone implements Parcelable {
 
     public static TimeZone fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TimeZone.class, obj);
+            return new TimeZone(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

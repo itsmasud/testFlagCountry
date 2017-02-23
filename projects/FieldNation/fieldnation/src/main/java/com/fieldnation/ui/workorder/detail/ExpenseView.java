@@ -3,12 +3,15 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.ExpenseCategories;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ExpenseView extends LinearLayout {
@@ -22,7 +25,7 @@ public class ExpenseView extends LinearLayout {
     // Data
     private WorkOrder _workOrder;
     private Expense _expense = null;
-    //TODO private ExpenseCategory[] _categories;
+    private ExpenseCategory[] _categories;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -47,23 +50,23 @@ public class ExpenseView extends LinearLayout {
         _categoryTextView = (TextView) findViewById(R.id.category_textview);
         _costTextView = (TextView) findViewById(R.id.cost_textview);
 
-//TODO        ExpenseCategories categories = new ExpenseCategories(getContext());
-//        categories.setListener(_categoriesListener);
+        ExpenseCategories categories = new ExpenseCategories(getContext());
+        categories.setListener(_categoriesListener);
     }
 
     /*-*********************************-*/
     /*-				Event				-*/
     /*-*********************************-*/
 
-/*
+
     private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
-//TODO            _categories = categories;
+            _categories = categories;
             refresh();
         }
     };
-*/
+
 
     /*-*************************************-*/
     /*-				Mutators				-*/
@@ -82,23 +85,21 @@ public class ExpenseView extends LinearLayout {
         if (_expense == null)
             return;
 
-/*
-TODO        if (_categories == null)
+        if (_categories == null)
             return;
 
         _descriptionTextView.setText(_expense.getDescription());
         // TODO need to map the ID to a real string
         _categoryTextView.setVisibility(View.GONE);
-        if (_categories != null && _expense.getCategoryId() != null) {
+        if (_categories != null && _expense.getId() != null) {
             for (ExpenseCategory _category : _categories) {
-                if (_category.getId().equals(_expense.getCategoryId())) {
+                if (_category.getId().equals(_expense.getId())) {
                     _categoryTextView.setText(_category.getName());
                     _categoryTextView.setVisibility(View.VISIBLE);
                     break;
                 }
             }
         }
-*/
         // TODO, need to get quantity and price per item numbers
         _costTextView.setText(misc.toCurrency(_expense.getAmount()));
 

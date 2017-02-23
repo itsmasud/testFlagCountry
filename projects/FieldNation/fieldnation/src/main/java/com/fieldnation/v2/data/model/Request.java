@@ -5,13 +5,15 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -21,7 +23,7 @@ public class Request implements Parcelable {
     private static final String TAG = "Request";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "active")
     private Boolean _active;
@@ -63,23 +65,48 @@ public class Request implements Parcelable {
     private WorkOrder _workOrder;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Request() {
+        SOURCE = new JsonObject();
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public Request(JsonObject obj) {
+        SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
-    public Request actions(ActionsEnum actions) throws ParseException {
+    public Request actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -89,6 +116,17 @@ public class Request implements Parcelable {
     }
 
     public Boolean getActive() {
+        try {
+            if (_active != null)
+                return _active;
+
+            if (SOURCE.has("active") && SOURCE.get("active") != null)
+                _active = SOURCE.getBoolean("active");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _active;
     }
 
@@ -104,6 +142,17 @@ public class Request implements Parcelable {
     }
 
     public Boolean getCounter() {
+        try {
+            if (_counter != null)
+                return _counter;
+
+            if (SOURCE.has("counter") && SOURCE.get("counter") != null)
+                _counter = SOURCE.getBoolean("counter");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _counter;
     }
 
@@ -119,6 +168,17 @@ public class Request implements Parcelable {
     }
 
     public String getCounterNotes() {
+        try {
+            if (_counterNotes != null)
+                return _counterNotes;
+
+            if (SOURCE.has("counter_notes") && SOURCE.get("counter_notes") != null)
+                _counterNotes = SOURCE.getString("counter_notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _counterNotes;
     }
 
@@ -134,6 +194,17 @@ public class Request implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -149,6 +220,18 @@ public class Request implements Parcelable {
     }
 
     public Expense[] getExpenses() {
+        try {
+            if (_expenses != null)
+                return _expenses;
+
+            if (SOURCE.has("expenses") && SOURCE.get("expenses") != null) {
+                _expenses = Expense.fromJsonArray(SOURCE.getJsonArray("expenses"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _expenses;
     }
 
@@ -164,6 +247,17 @@ public class Request implements Parcelable {
     }
 
     public Date getExpires() {
+        try {
+            if (_expires != null)
+                return _expires;
+
+            if (SOURCE.has("expires") && SOURCE.get("expires") != null)
+                _expires = Date.fromJson(SOURCE.getJsonObject("expires"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _expires;
     }
 
@@ -179,6 +273,17 @@ public class Request implements Parcelable {
     }
 
     public Double getHourEstimate() {
+        try {
+            if (_hourEstimate != null)
+                return _hourEstimate;
+
+            if (SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
+                _hourEstimate = SOURCE.getDouble("hour_estimate");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hourEstimate;
     }
 
@@ -194,6 +299,17 @@ public class Request implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -209,6 +325,17 @@ public class Request implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -224,6 +351,17 @@ public class Request implements Parcelable {
     }
 
     public Pay getPay() {
+        try {
+            if (_pay != null)
+                return _pay;
+
+            if (SOURCE.has("pay") && SOURCE.get("pay") != null)
+                _pay = Pay.fromJson(SOURCE.getJsonObject("pay"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _pay;
     }
 
@@ -239,6 +377,17 @@ public class Request implements Parcelable {
     }
 
     public Schedule getSchedule() {
+        try {
+            if (_schedule != null)
+                return _schedule;
+
+            if (SOURCE.has("schedule") && SOURCE.get("schedule") != null)
+                _schedule = Schedule.fromJson(SOURCE.getJsonObject("schedule"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _schedule;
     }
 
@@ -254,6 +403,17 @@ public class Request implements Parcelable {
     }
 
     public User getUser() {
+        try {
+            if (_user != null)
+                return _user;
+
+            if (SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _user;
     }
 
@@ -269,6 +429,17 @@ public class Request implements Parcelable {
     }
 
     public WorkOrder getWorkOrder() {
+        try {
+            if (_workOrder != null)
+                return _workOrder;
+
+            if (SOURCE.has("work_order") && SOURCE.get("work_order") != null)
+                _workOrder = WorkOrder.fromJson(SOURCE.getJsonObject("work_order"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrder;
     }
 
@@ -282,13 +453,30 @@ public class Request implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "delete")
-        DELETE("delete");
+        @Json(name = "remove")
+        REMOVE("remove");
 
         private String value;
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -318,7 +506,7 @@ public class Request implements Parcelable {
 
     public static Request fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Request.class, obj);
+            return new Request(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -358,5 +546,20 @@ public class Request implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+
+        return _actionsSet;
     }
 }

@@ -31,6 +31,8 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.TimeLogs;
@@ -354,24 +356,12 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateButtons() {
-        WorkOrder.ActionsEnum[] actions = _workOrder.getSortedActions();
-
         _primaryButton.setVisibility(GONE);
-
-        for (Button button : _secondaryButtons) {
-            button.setVisibility(GONE);
-        }
-
-        if (actions == null || actions.length == 0) {
-            return;
-        }
-
         populatePrimaryButton(_primaryButton);
 
         for (Button button : _secondaryButtons) {
             button.setVisibility(GONE);
         }
-
         populateSecondaryButtons();
     }
 
@@ -458,13 +448,16 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setText(R.string.btn_accept);
 
             // request
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.REQUEST)) {
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_request_onClick);
             button.setText(R.string.btn_request);
 
             // withdraw
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.WITHDRAW_REQUEST)) {
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getOpenRequest() != null
+                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_withdraw_onClick);
             button.setText(R.string.btn_withdraw);
@@ -491,7 +484,9 @@ public class WorkOrderCard extends RelativeLayout {
         Button button = _secondaryButtons[buttonId];
 
         // decline
-        if (workOrderActions.contains(WorkOrder.ActionsEnum.REQUEST)) {
+        if (_workOrder.getRequests() != null
+                && (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)
+                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_circle_x_solid);
             button.setOnClickListener(_decline_onClick);
@@ -538,7 +533,8 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // map
-        if (_workOrder.getLocation() != null && _workOrder.getLocation().getCoordinates() != null) {
+        if (_workOrder.getLocation() != null
+                && _workOrder.getLocation().getCoordinates() != null) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_map_location_solid);
             button.setOnClickListener(_map_onClick);
@@ -761,7 +757,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getWorkOrderId());
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getWorkOrderId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getWorkOrderId(), _workOrder.getRequests().getOpenRequest().getId());
         }
     };
 

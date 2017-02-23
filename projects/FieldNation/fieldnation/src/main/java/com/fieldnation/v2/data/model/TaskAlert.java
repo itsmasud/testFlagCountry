@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -30,9 +28,14 @@ public class TaskAlert implements Parcelable {
     private String _sent;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TaskAlert() {
+        SOURCE = new JsonObject();
+    }
+
+    public TaskAlert(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setEmail(String email) throws ParseException {
@@ -41,6 +44,17 @@ public class TaskAlert implements Parcelable {
     }
 
     public String getEmail() {
+        try {
+            if (_email != null)
+                return _email;
+
+            if (SOURCE.has("email") && SOURCE.get("email") != null)
+                _email = SOURCE.getString("email");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _email;
     }
 
@@ -56,6 +70,17 @@ public class TaskAlert implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -71,6 +96,17 @@ public class TaskAlert implements Parcelable {
     }
 
     public String getSent() {
+        try {
+            if (_sent != null)
+                return _sent;
+
+            if (SOURCE.has("sent") && SOURCE.get("sent") != null)
+                _sent = SOURCE.getString("sent");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sent;
     }
 
@@ -101,7 +137,7 @@ public class TaskAlert implements Parcelable {
 
     public static TaskAlert fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TaskAlert.class, obj);
+            return new TaskAlert(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

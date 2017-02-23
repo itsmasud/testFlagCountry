@@ -11,8 +11,9 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class ClosingNotesView extends LinearLayout {
+public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ClosingNotesView";
 
     // UI
@@ -46,18 +47,26 @@ public class ClosingNotesView extends LinearLayout {
 
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_notes_onClick);
+
+        setVisibility(View.GONE);
     }
 
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        refresh();
+        populateUi();
     }
 
-    private void refresh() {
+    private void populateUi() {
+        if (_workOrder == null) {
+            setVisibility(View.GONE);
+            return;
+        }
+
         if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
             _notesTextView.setText(_workOrder.getClosingNotes());
             _notesTextView.setVisibility(VISIBLE);

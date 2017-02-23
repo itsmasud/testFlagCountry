@@ -24,9 +24,14 @@ public class CompanyRating implements Parcelable {
     private CompanyRatingRating _rating;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CompanyRating() {
+        SOURCE = new JsonObject();
+    }
+
+    public CompanyRating(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setRating(CompanyRatingRating rating) throws ParseException {
@@ -35,6 +40,17 @@ public class CompanyRating implements Parcelable {
     }
 
     public CompanyRatingRating getRating() {
+        try {
+            if (_rating != null)
+                return _rating;
+
+            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+                _rating = CompanyRatingRating.fromJson(SOURCE.getJsonObject("rating"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _rating;
     }
 
@@ -65,7 +81,7 @@ public class CompanyRating implements Parcelable {
 
     public static CompanyRating fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CompanyRating.class, obj);
+            return new CompanyRating(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -48,9 +48,14 @@ public class PayModifier implements Parcelable {
     private String _name;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayModifier() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayModifier(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -63,6 +68,18 @@ public class PayModifier implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -82,6 +99,17 @@ public class PayModifier implements Parcelable {
     }
 
     public Double getAmount() {
+        try {
+            if (_amount != null)
+                return _amount;
+
+            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+                _amount = SOURCE.getDouble("amount");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _amount;
     }
 
@@ -97,6 +125,17 @@ public class PayModifier implements Parcelable {
     }
 
     public CalculationEnum getCalculation() {
+        try {
+            if (_calculation != null)
+                return _calculation;
+
+            if (SOURCE.has("calculation") && SOURCE.get("calculation") != null)
+                _calculation = CalculationEnum.fromString(SOURCE.getString("calculation"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _calculation;
     }
 
@@ -112,6 +151,17 @@ public class PayModifier implements Parcelable {
     }
 
     public Boolean getCharged() {
+        try {
+            if (_charged != null)
+                return _charged;
+
+            if (SOURCE.has("charged") && SOURCE.get("charged") != null)
+                _charged = SOURCE.getBoolean("charged");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _charged;
     }
 
@@ -127,6 +177,17 @@ public class PayModifier implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -142,6 +203,17 @@ public class PayModifier implements Parcelable {
     }
 
     public Boolean getHours24Applicable() {
+        try {
+            if (_hours24Applicable != null)
+                return _hours24Applicable;
+
+            if (SOURCE.has("hours24_applicable") && SOURCE.get("hours24_applicable") != null)
+                _hours24Applicable = SOURCE.getBoolean("hours24_applicable");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hours24Applicable;
     }
 
@@ -157,6 +229,17 @@ public class PayModifier implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -172,6 +255,17 @@ public class PayModifier implements Parcelable {
     }
 
     public Double getModifier() {
+        try {
+            if (_modifier != null)
+                return _modifier;
+
+            if (SOURCE.has("modifier") && SOURCE.get("modifier") != null)
+                _modifier = SOURCE.getDouble("modifier");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _modifier;
     }
 
@@ -187,6 +281,17 @@ public class PayModifier implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -211,6 +316,23 @@ public class PayModifier implements Parcelable {
             this.value = value;
         }
 
+        public static CalculationEnum fromString(String value) {
+            CalculationEnum[] values = values();
+            for (CalculationEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static CalculationEnum[] fromJsonArray(JsonArray jsonArray) {
+            CalculationEnum[] list = new CalculationEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -227,6 +349,23 @@ public class PayModifier implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -256,7 +395,7 @@ public class PayModifier implements Parcelable {
 
     public static PayModifier fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayModifier.class, obj);
+            return new PayModifier(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

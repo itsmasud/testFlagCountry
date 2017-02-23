@@ -42,9 +42,14 @@ public class CheckInOut implements Parcelable {
     private Boolean _verified;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CheckInOut() {
+        SOURCE = new JsonObject();
+    }
+
+    public CheckInOut(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActor(User actor) throws ParseException {
@@ -53,6 +58,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public User getActor() {
+        try {
+            if (_actor != null)
+                return _actor;
+
+            if (SOURCE.has("actor") && SOURCE.get("actor") != null)
+                _actor = User.fromJson(SOURCE.getJsonObject("actor"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actor;
     }
 
@@ -68,6 +84,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public Coords getCoords() {
+        try {
+            if (_coords != null)
+                return _coords;
+
+            if (SOURCE.has("coords") && SOURCE.get("coords") != null)
+                _coords = Coords.fromJson(SOURCE.getJsonObject("coords"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _coords;
     }
 
@@ -83,6 +110,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -98,6 +136,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public Double getDistance() {
+        try {
+            if (_distance != null)
+                return _distance;
+
+            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+                _distance = SOURCE.getDouble("distance");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _distance;
     }
 
@@ -113,6 +162,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public Double getDistanceFromCheckIn() {
+        try {
+            if (_distanceFromCheckIn != null)
+                return _distanceFromCheckIn;
+
+            if (SOURCE.has("distance_from_check_in") && SOURCE.get("distance_from_check_in") != null)
+                _distanceFromCheckIn = SOURCE.getDouble("distance_from_check_in");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _distanceFromCheckIn;
     }
 
@@ -128,6 +188,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public CheckInOutTimeLog getTimeLog() {
+        try {
+            if (_timeLog != null)
+                return _timeLog;
+
+            if (SOURCE.has("time_log") && SOURCE.get("time_log") != null)
+                _timeLog = CheckInOutTimeLog.fromJson(SOURCE.getJsonObject("time_log"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeLog;
     }
 
@@ -143,6 +214,17 @@ public class CheckInOut implements Parcelable {
     }
 
     public Boolean getVerified() {
+        try {
+            if (_verified != null)
+                return _verified;
+
+            if (SOURCE.has("verified") && SOURCE.get("verified") != null)
+                _verified = SOURCE.getBoolean("verified");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _verified;
     }
 
@@ -173,7 +255,7 @@ public class CheckInOut implements Parcelable {
 
     public static CheckInOut fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CheckInOut.class, obj);
+            return new CheckInOut(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

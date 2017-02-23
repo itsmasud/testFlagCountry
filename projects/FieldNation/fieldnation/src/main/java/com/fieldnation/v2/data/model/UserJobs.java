@@ -27,9 +27,14 @@ public class UserJobs implements Parcelable {
     private Integer _marketplace;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserJobs() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserJobs(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCompany(Integer company) throws ParseException {
@@ -38,6 +43,17 @@ public class UserJobs implements Parcelable {
     }
 
     public Integer getCompany() {
+        try {
+            if (_company != null)
+                return _company;
+
+            if (SOURCE.has("company") && SOURCE.get("company") != null)
+                _company = SOURCE.getInt("company");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _company;
     }
 
@@ -53,6 +69,17 @@ public class UserJobs implements Parcelable {
     }
 
     public Integer getMarketplace() {
+        try {
+            if (_marketplace != null)
+                return _marketplace;
+
+            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = SOURCE.getInt("marketplace");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _marketplace;
     }
 
@@ -83,7 +110,7 @@ public class UserJobs implements Parcelable {
 
     public static UserJobs fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserJobs.class, obj);
+            return new UserJobs(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

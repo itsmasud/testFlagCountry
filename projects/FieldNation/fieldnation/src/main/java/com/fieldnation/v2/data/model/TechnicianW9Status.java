@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -26,9 +27,14 @@ public class TechnicianW9Status implements Parcelable {
     private Integer _technicianW9StatusId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TechnicianW9Status() {
+        SOURCE = new JsonObject();
+    }
+
+    public TechnicianW9Status(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setStatusName(String statusName) throws ParseException {
@@ -37,6 +43,17 @@ public class TechnicianW9Status implements Parcelable {
     }
 
     public String getStatusName() {
+        try {
+            if (_statusName != null)
+                return _statusName;
+
+            if (SOURCE.has("status_name") && SOURCE.get("status_name") != null)
+                _statusName = SOURCE.getString("status_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusName;
     }
 
@@ -52,6 +69,17 @@ public class TechnicianW9Status implements Parcelable {
     }
 
     public Integer getTechnicianW9StatusId() {
+        try {
+            if (_technicianW9StatusId != null)
+                return _technicianW9StatusId;
+
+            if (SOURCE.has("technician_w9_status_id") && SOURCE.get("technician_w9_status_id") != null)
+                _technicianW9StatusId = SOURCE.getInt("technician_w9_status_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _technicianW9StatusId;
     }
 
@@ -82,7 +110,7 @@ public class TechnicianW9Status implements Parcelable {
 
     public static TechnicianW9Status fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TechnicianW9Status.class, obj);
+            return new TechnicianW9Status(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

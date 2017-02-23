@@ -21,7 +21,7 @@ public class SelectionRule implements Parcelable {
     private static final String TAG = "SelectionRule";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "id")
     private Integer _id;
@@ -42,23 +42,48 @@ public class SelectionRule implements Parcelable {
     private SelectionRuleSum _sum;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public SelectionRule() {
+        SOURCE = new JsonObject();
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public SelectionRule(JsonObject obj) {
+        SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
-    public SelectionRule actions(ActionsEnum actions) throws ParseException {
+    public SelectionRule actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -68,6 +93,17 @@ public class SelectionRule implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -83,6 +119,17 @@ public class SelectionRule implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -98,6 +145,17 @@ public class SelectionRule implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -113,6 +171,18 @@ public class SelectionRule implements Parcelable {
     }
 
     public SelectionRuleCriteria[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = SelectionRuleCriteria.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -128,6 +198,17 @@ public class SelectionRule implements Parcelable {
     }
 
     public StatusEnum getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -143,6 +224,17 @@ public class SelectionRule implements Parcelable {
     }
 
     public SelectionRuleSum getSum() {
+        try {
+            if (_sum != null)
+                return _sum;
+
+            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+                _sum = SelectionRuleSum.fromJson(SOURCE.getJsonObject("sum"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sum;
     }
 
@@ -155,22 +247,6 @@ public class SelectionRule implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
-    public enum ActionsEnum {
-        @Json(name = "delete")
-        DELETE("delete");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     public enum StatusEnum {
         @Json(name = "match")
         MATCH("match"),
@@ -183,6 +259,56 @@ public class SelectionRule implements Parcelable {
 
         StatusEnum(String value) {
             this.value = value;
+        }
+
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -212,7 +338,7 @@ public class SelectionRule implements Parcelable {
 
     public static SelectionRule fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(SelectionRule.class, obj);
+            return new SelectionRule(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -27,9 +27,14 @@ public class CustomFields implements Parcelable {
     private CustomFieldCategory[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CustomFields() {
+        SOURCE = new JsonObject();
+    }
+
+    public CustomFields(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -38,6 +43,17 @@ public class CustomFields implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -53,6 +69,18 @@ public class CustomFields implements Parcelable {
     }
 
     public CustomFieldCategory[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = CustomFieldCategory.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -83,7 +111,7 @@ public class CustomFields implements Parcelable {
 
     public static CustomFields fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CustomFields.class, obj);
+            return new CustomFields(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

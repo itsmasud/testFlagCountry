@@ -16,11 +16,12 @@ import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
  * Created by Michael Carver on 6/5/2015.
  */
-public class ExpenseListLayout extends RelativeLayout {
+public class ExpenseListLayout extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "ExpenseListLayout";
 
     // UI
@@ -60,6 +61,7 @@ public class ExpenseListLayout extends RelativeLayout {
         _addButton.setOnClickListener(_add_onClick);
     }
 
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
 

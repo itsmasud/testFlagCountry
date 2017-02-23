@@ -13,17 +13,19 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.KeyedDispatcher;
-import com.fieldnation.ui.dialog.ScheduleCoView;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,7 +48,6 @@ public class CounterOfferDialog extends SimpleDialog {
     private static final String STATE_COUNTER_SCHEDULE = "STATE_COUNTER_SCHEDULE";
     private static final String STATE_COUNTER_REASON = "STATE_COUNTER_REASON";
     private static final String STATE_EXPIRES = "STATE_EXPIRES";
-    private static final String STATE_EXPIRATION_IN_SECOND = "STATE_EXPIRATION_IN_SECOND";
     private static final String STATE_TAC = "STATE_TAC";
 
     // Ui
@@ -67,10 +68,7 @@ public class CounterOfferDialog extends SimpleDialog {
     private Pay _counterPay;
     private Schedule _counterSchedule;
     private String _counterReason;
-    private boolean _expires = false;
-    //    private String _expirationDate;
-    private int _expiresAfterInSecond = -1;
-    private int _expireDuration = -1;
+    private long _expires = 0;
 
     // Data
     private boolean _tacAccpet;
@@ -92,22 +90,22 @@ public class CounterOfferDialog extends SimpleDialog {
 
         TabHost.TabSpec tab1 = _tabHost.newTabSpec("start");
         tab1.setIndicator("Pay");
-        tab1.setContent(R.id.scrollview1);
+        tab1.setContent(R.id.payment_view);
         _tabHost.addTab(tab1);
 
         TabHost.TabSpec tab2 = _tabHost.newTabSpec("mid1");
         tab2.setIndicator("Schedule");
-        tab2.setContent(R.id.scrollview2);
+        tab2.setContent(R.id.schedule_view);
         _tabHost.addTab(tab2);
 
         TabHost.TabSpec tab3 = _tabHost.newTabSpec("mid2");
         tab3.setIndicator("Expense");
-        tab3.setContent(R.id.scrollview3);
+        tab3.setContent(R.id.expenses_view);
         _tabHost.addTab(tab3);
 
         TabHost.TabSpec tab4 = _tabHost.newTabSpec("end");
         tab4.setIndicator("Reason");
-        tab4.setContent(R.id.scrollview4);
+        tab4.setContent(R.id.reasons_view);
         _tabHost.addTab(tab4);
 
         _tabHost.setOnTabChangedListener(_tab_changeListener);
@@ -127,7 +125,6 @@ public class CounterOfferDialog extends SimpleDialog {
 
         return v;
     }
-
 
     @Override
     public void onStart() {
@@ -150,22 +147,6 @@ public class CounterOfferDialog extends SimpleDialog {
         Log.v(TAG, "onResume");
         super.onResume();
 
-/*
-TODO        Dialog d = getDialog();
-        if (d == null)
-            return;
-
-        Window window = d.getWindow();
-
-        Display display = window.getWindowManager().getDefaultDisplay();
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 7) / 10);
-        } else {
-            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
-        }
-*/
-
         populateUi();
     }
 
@@ -176,42 +157,37 @@ TODO        Dialog d = getDialog();
         Log.v(TAG, "show");
         _workOrder = payload.getParcelable("workOrder");
 
-/*
-TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
+        Request coRequest = null;
+
+        if (_workOrder.getRequests() != null)
+            coRequest = _workOrder.getRequests().getCounterOffer();
 
         _counterPay = null;
         _counterSchedule = null;
         _counterReason = null;
-        _expires = false;
-//        _expirationDate = null;
+        _expires = 0;
 
-        if (info != null) {
-            if (info.getPay() != null) {
-                _counterPay = info.getPay();
+        if (coRequest != null) {
+            if (coRequest.getPay() != null) {
+                _counterPay = coRequest.getPay();
             }
-            if (info.getSchedule() != null) {
-                _counterSchedule = info.getSchedule();
+            if (coRequest.getSchedule() != null) {
+                _counterSchedule = coRequest.getSchedule();
             }
 
-            if (info.getExpense() != null && info.getExpense().length > 0) {
-                Expense[] exp = info.getExpense();
-
+            if (coRequest.getExpenses() != null && coRequest.getExpenses().length > 0) {
                 _expenses.clear();
+                Expense[] exp = coRequest.getExpenses();
                 Collections.addAll(_expenses, exp);
             }
 
-            _counterReason = info.getExplanation();
-            _expires = info.getExpires();
-            if (_expires) {
-//                try {
-//                    _expirationDate = info.getExpiresAfter();
-                _expiresAfterInSecond = info.getExpiresAfterInSecond();
-//                } catch (Exception ex) {
-//                    Log.v(TAG, ex);
-//                }
+            _counterReason = coRequest.getCounterNotes();
+            try {
+                _expires = coRequest.getExpires().getUtcLong();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
-*/
     }
 
     @Override
@@ -239,10 +215,7 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
                 _counterReason = savedState.getString(STATE_COUNTER_REASON);
 
             if (savedState.containsKey(STATE_EXPIRES))
-                _expires = savedState.getBoolean(STATE_EXPIRES);
-
-            if (savedState.containsKey(STATE_EXPIRATION_IN_SECOND))
-                _expiresAfterInSecond = savedState.getInt(STATE_EXPIRATION_IN_SECOND);
+                _expires = savedState.getLong(STATE_EXPIRES);
 
             if (savedState.containsKey(STATE_TAC))
                 _tacAccpet = savedState.getBoolean(STATE_TAC);
@@ -261,7 +234,7 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
     @Override
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
-        outState.putBoolean(STATE_EXPIRES, _expires);
+        outState.putLong(STATE_EXPIRES, _expires);
         outState.putBoolean(STATE_TAC, _tacAccpet);
 
         if (_workOrder != null)
@@ -284,9 +257,7 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
             outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
 
         if (_reasonView != null) {
-            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
             outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
-            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
         }
     }
 
@@ -316,7 +287,7 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 
         _expenseView.setData(_workOrder, _expenses);
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
+        _reasonView.setCounterOffer(_counterReason, _expires);
     }
 
     private void setTabPos(int pos) {
@@ -327,19 +298,16 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
                 public void run() {
                     _tabScrollView.fullScroll(View.FOCUS_LEFT);
                     _tabHost.setCurrentTab(0);
-
                 }
             });
         } else if (pos > 0 && pos < 4) {
             _tabHost.setCurrentTab(pos);
-
         } else {
             _tabScrollView.post(new Runnable() {
                 @Override
                 public void run() {
                     _tabScrollView.fullScroll(View.FOCUS_RIGHT);
                     _tabHost.setCurrentTab(4);
-
                 }
             });
         }
@@ -361,9 +329,8 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
         }
 
         @Override
-        public void onExpirationChange(boolean expires, int second) {
+        public void onExpirationChange(long expires) {
             _expires = expires;
-            _expireDuration = second;
         }
     };
 
@@ -381,14 +348,16 @@ TODO        CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 
         @Override
         public void reset() {
-/*
-TODO             CounterOfferInfo info = _workOrder.getCounterOfferInfo();
+            Request co = null;
+
+            if (_workOrder.getRequests() != null)
+                co = _workOrder.getRequests().getCounterOffer();
+
             _expenses.clear();
-            if (info != null && info.getExpense() != null && info.getExpense().length > 0) {
-                Expense[] exp = info.getExpense();
+            if (co != null && co.getExpenses() != null && co.getExpenses().length > 0) {
+                Expense[] exp = co.getExpenses();
                 Collections.addAll(_expenses, exp);
             }
-*/
             populateUi();
         }
 
@@ -506,9 +475,9 @@ TODO             CounterOfferInfo info = _workOrder.getCounterOfferInfo();
 //                        }
 //                    }
 
-                Log.e(TAG, "_expireDuration: " + _expireDuration);
+                Log.e(TAG, "_expireDuration: " + _expires);
 
-                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
+                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
                 _tacAccpet = false;
                 dismiss(true);
             }
@@ -522,18 +491,25 @@ TODO             CounterOfferInfo info = _workOrder.getCounterOfferInfo();
         }
     };
 
+    public static void show(Context context, String uid, WorkOrder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable("workOrder", workOrder);
+
+        Controller.show(context, uid, CounterOfferDialog.class, params);
+    }
+
     /*-**********************-*/
     /*-         Ok           -*/
     /*-**********************-*/
     public interface OnOkListener {
-        void onOk(WorkOrder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
+        void onOk(WorkOrder workorder, String reason, long expires, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
     private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
         @Override
         public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((WorkOrder) parameters[0], (String) parameters[1], (Boolean) parameters[2],
-                    (Integer) parameters[3], (Pay) parameters[4], (Schedule) parameters[5], (Expense[]) parameters[6]
+            listener.onOk((WorkOrder) parameters[0], (String) parameters[1], (Long) parameters[2],
+                    (Pay) parameters[3], (Schedule) parameters[4], (Expense[]) parameters[5]
             );
         }
     };

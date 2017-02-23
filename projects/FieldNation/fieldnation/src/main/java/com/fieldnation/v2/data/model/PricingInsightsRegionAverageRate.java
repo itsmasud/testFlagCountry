@@ -30,9 +30,14 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
     private Double _thirdQuartile;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PricingInsightsRegionAverageRate() {
+        SOURCE = new JsonObject();
+    }
+
+    public PricingInsightsRegionAverageRate(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setFirstQuartile(Double firstQuartile) throws ParseException {
@@ -41,6 +46,17 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
     }
 
     public Double getFirstQuartile() {
+        try {
+            if (_firstQuartile != null)
+                return _firstQuartile;
+
+            if (SOURCE.has("first_quartile") && SOURCE.get("first_quartile") != null)
+                _firstQuartile = SOURCE.getDouble("first_quartile");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _firstQuartile;
     }
 
@@ -56,6 +72,17 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
     }
 
     public Double getMedian() {
+        try {
+            if (_median != null)
+                return _median;
+
+            if (SOURCE.has("median") && SOURCE.get("median") != null)
+                _median = SOURCE.getDouble("median");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _median;
     }
 
@@ -71,6 +98,17 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
     }
 
     public Double getThirdQuartile() {
+        try {
+            if (_thirdQuartile != null)
+                return _thirdQuartile;
+
+            if (SOURCE.has("third_quartile") && SOURCE.get("third_quartile") != null)
+                _thirdQuartile = SOURCE.getDouble("third_quartile");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _thirdQuartile;
     }
 
@@ -101,7 +139,7 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
 
     public static PricingInsightsRegionAverageRate fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PricingInsightsRegionAverageRate.class, obj);
+            return new PricingInsightsRegionAverageRate(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

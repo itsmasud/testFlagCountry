@@ -39,9 +39,14 @@ public class ScheduleEta implements Parcelable {
     private User _user;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ScheduleEta() {
+        SOURCE = new JsonObject();
+    }
+
+    public ScheduleEta(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setEnd(Date end) throws ParseException {
@@ -50,6 +55,17 @@ public class ScheduleEta implements Parcelable {
     }
 
     public Date getEnd() {
+        try {
+            if (_end != null)
+                return _end;
+
+            if (SOURCE.has("end") && SOURCE.get("end") != null)
+                _end = Date.fromJson(SOURCE.getJsonObject("end"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _end;
     }
 
@@ -65,6 +81,17 @@ public class ScheduleEta implements Parcelable {
     }
 
     public Double getHourEstimate() {
+        try {
+            if (_hourEstimate != null)
+                return _hourEstimate;
+
+            if (SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
+                _hourEstimate = SOURCE.getDouble("hour_estimate");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hourEstimate;
     }
 
@@ -80,6 +107,17 @@ public class ScheduleEta implements Parcelable {
     }
 
     public Boolean getMode() {
+        try {
+            if (_mode != null)
+                return _mode;
+
+            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+                _mode = SOURCE.getBoolean("mode");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _mode;
     }
 
@@ -95,6 +133,17 @@ public class ScheduleEta implements Parcelable {
     }
 
     public Date getStart() {
+        try {
+            if (_start != null)
+                return _start;
+
+            if (SOURCE.has("start") && SOURCE.get("start") != null)
+                _start = Date.fromJson(SOURCE.getJsonObject("start"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _start;
     }
 
@@ -110,6 +159,17 @@ public class ScheduleEta implements Parcelable {
     }
 
     public ScheduleEtaStatus getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = ScheduleEtaStatus.fromJson(SOURCE.getJsonObject("status"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -125,6 +185,17 @@ public class ScheduleEta implements Parcelable {
     }
 
     public User getUser() {
+        try {
+            if (_user != null)
+                return _user;
+
+            if (SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _user;
     }
 
@@ -155,7 +226,7 @@ public class ScheduleEta implements Parcelable {
 
     public static ScheduleEta fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ScheduleEta.class, obj);
+            return new ScheduleEta(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

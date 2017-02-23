@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.fieldnation.FileHelper;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
@@ -26,6 +25,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
 import java.io.File;
 import java.util.LinkedList;

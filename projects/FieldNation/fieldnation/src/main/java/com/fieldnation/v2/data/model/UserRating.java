@@ -27,9 +27,14 @@ public class UserRating implements Parcelable {
     private Rating _myCompany;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserRating() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserRating(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMarketplace(Rating marketplace) throws ParseException {
@@ -38,6 +43,17 @@ public class UserRating implements Parcelable {
     }
 
     public Rating getMarketplace() {
+        try {
+            if (_marketplace != null)
+                return _marketplace;
+
+            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = Rating.fromJson(SOURCE.getJsonObject("marketplace"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _marketplace;
     }
 
@@ -53,6 +69,17 @@ public class UserRating implements Parcelable {
     }
 
     public Rating getMyCompany() {
+        try {
+            if (_myCompany != null)
+                return _myCompany;
+
+            if (SOURCE.has("my_company") && SOURCE.get("my_company") != null)
+                _myCompany = Rating.fromJson(SOURCE.getJsonObject("my_company"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _myCompany;
     }
 
@@ -83,7 +110,7 @@ public class UserRating implements Parcelable {
 
     public static UserRating fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserRating.class, obj);
+            return new UserRating(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
