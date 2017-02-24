@@ -11,8 +11,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -161,27 +159,26 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         public void onClick(View v) {
             boolean showdevices = false;
             try {
-                    showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
+                showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
             } catch (Exception ex) {
             }
 
-                if (_listener != null
-                        && _workOrder.getTimeLogs() != null
-                        && _workOrder.getTimeLogs().getActionsSet() != null
-                        && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)){
-                        _listener.addWorklog(showdevices);
-                }
+            if (_listener != null
+                    && _workOrder.getTimeLogs() != null
+                    && _workOrder.getTimeLogs().getActionsSet() != null
+                    && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
+                _listener.addWorklog(showdevices);
             }
-        };
-
-
-        public interface Listener {
-            void addWorklog(boolean showdevice);
-
-            void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount);
-
-            void deleteWorklog(WorkOrder workOrder, TimeLog timeLog);
-
         }
+    };
+
+
+    public interface Listener {
+        void addWorklog(boolean showdevice);
+
+        void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount);
+
+        void deleteWorklog(WorkOrder workOrder, TimeLog timeLog);
+
     }
 }
