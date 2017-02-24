@@ -157,12 +157,12 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
     private final OnLongClickListener _discount_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            PayModifier payModifier =  ((DiscountView) v).getDiscount();
+            PayModifier payModifier = ((DiscountView) v).getDiscount();
             if (_listener != null
-                    && payModifier !=null
+                    && payModifier != null
                     && payModifier.getActionsSet() != null
                     && payModifier.getActionsSet().contains(PayModifier.ActionsEnum.REMOVE)) {
-                _listener.discountLongClick(((DiscountView) v).getDiscount());
+                _listener.discountLongClick(payModifier);
                 return true;
             }
             return false;
