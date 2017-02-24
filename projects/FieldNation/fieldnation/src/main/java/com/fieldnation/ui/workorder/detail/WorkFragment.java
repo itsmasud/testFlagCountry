@@ -1049,7 +1049,7 @@ TODO            if (_workorder.getPaymentId() != null) {
     };
 
 
-    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+  private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);

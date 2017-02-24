@@ -75,7 +75,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         ppulateUi();
     }
 
-
     public void ppulateUi() {
         if (_workOrder == null)
             return;
@@ -157,8 +156,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         }
     };
 
-
-
     private final View.OnClickListener _addLog_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -172,18 +169,19 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
                         && _workOrder.getTimeLogs() != null
                         && _workOrder.getTimeLogs().getActionsSet() != null
                         && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)){
-                    _listener.addWorklog(showdevices);
+                        _listener.addWorklog(showdevices);
+                }
             }
-        }
-    };
+        };
 
 
-    public interface Listener {
-        void addWorklog(boolean showdevice);
+        public interface Listener {
+            void addWorklog(boolean showdevice);
 
             void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount);
 
             void deleteWorklog(WorkOrder workOrder, TimeLog timeLog);
 
+        }
     }
 }

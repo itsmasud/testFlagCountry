@@ -590,12 +590,11 @@ public class TimeLog implements Parcelable {
     /*-*****************************-*/
     private Set<ActionsEnum> _actionsSet = null;
 
-    public Set<TimeLog.ActionsEnum> getActionsSet() {
+    public Set<ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }
-
 }
