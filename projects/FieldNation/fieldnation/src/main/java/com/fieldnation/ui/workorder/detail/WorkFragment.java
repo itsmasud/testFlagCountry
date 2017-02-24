@@ -66,15 +66,19 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
+import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
@@ -100,6 +104,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG + ".locationDialogCheckIn";
@@ -151,8 +156,6 @@ public class WorkFragment extends WorkorderFragment {
     // Dialogs
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
-    private DiscountDialog _discountDialog;
-    private ExpenseDialog _expenseDialog;
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsScrollingDialog _termsScrollingDialog;
@@ -261,8 +264,8 @@ public class WorkFragment extends WorkorderFragment {
 // TODO        _renderers.add(_taskList);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
-// TODO        _timeLogged.setListener(_timeLoggedView_listener);
-// TODO        _renderers.add(_timeLogged);
+         _timeLogged.setListener(_timeLoggedView_listener);
+         _renderers.add(_timeLogged);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
@@ -386,7 +389,6 @@ TODO        if (_currentTask != null)
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
@@ -394,7 +396,6 @@ TODO        if (_currentTask != null)
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog.setListener(_declineDialog_listener);
-        _discountDialog.setListener(_discountDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
@@ -406,10 +407,11 @@ TODO        if (_currentTask != null)
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
+        DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
-//TODO        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -449,10 +451,11 @@ TODO        if (_currentTask != null)
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
+        DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
-//TODO        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
@@ -1047,8 +1050,8 @@ TODO            if (_workorder.getPaymentId() != null) {
         }
     };
 
-/*
- TODO private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+
+  private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
@@ -1056,15 +1059,15 @@ TODO            if (_workorder.getPaymentId() != null) {
         }
 
         @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+        public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
+            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
         }
 
         @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            final long workorderID = workorder.getWorkorderId();
-            final long loggedHoursID = loggedWork.getLoggedHoursId();
+        public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
+            final long workorderID = workOrder.getWorkOrderId();
+            final long timeLogId = timeLog.getId();
 
             _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
                     getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
@@ -1073,7 +1076,7 @@ TODO            if (_workorder.getPaymentId() != null) {
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
                             WorkorderClient.deleteTimeLog(App.get(), workorderID,
-                                    loggedHoursID);
+                                    timeLogId);
                             setLoading(true);
 
                         }
@@ -1089,7 +1092,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             _yesNoDialog.show();
         }
     };
-*/
+
 
 /*
 TODO    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
@@ -1431,24 +1434,23 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            _discountDialog.show(getString(R.string.dialog_add_discount_title));
+            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getString(R.string.dialog_add_discount_title));
         }
 
         @Override
-        public void discountOnClick(Discount discount) {
+        public void discountOnClick(PayModifier discount) {
             // TODO discountOnClick
         }
 
         @Override
-        public void discountLongClick(final Discount discount) {
+        public void discountLongClick(final PayModifier discount) {
             _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
                     getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkorderClient.deleteDiscount(App.get(),
-                                    _workOrder.getWorkOrderId(), discount.getDiscountId());
+                            WorkordersWebApi.removeDiscount(App.get(), _workOrder.getWorkOrderId(), discount.getId());
                         }
 
                         @Override
@@ -1497,16 +1499,15 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         }
     };
 
-    private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
+    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
-        public void onPrimary() {
+        public void onButtonClick() {
+            _gpsLocationService.stopLocationUpdates();
             setLoading(false);
         }
-    };
 
-    private final OneButtonDialog.OnCanceledListener _locationLoadingDialog_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
-        public void onCanceled() {
+        public void onCancel() {
             setLoading(false);
         }
     };
@@ -1638,17 +1639,20 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         }
     };
 
-    private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
+
+    private final DiscountDialog.OnOkListener _discountDialog_onOk = new DiscountDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkorderClient.createDiscount(App.get(), _workOrder.getWorkOrderId(),
-                    description, amount);
+            try {
+                PayModifier discount = new PayModifier();
+                discount.setAmount(amount);
+                discount.setDescription(description);
+                WorkordersWebApi.addDiscount(App.get(), _workOrder.getWorkOrderId(), discount);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 
@@ -1673,8 +1677,8 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         }
     };
 
-/*
-TODO    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
+
+    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
@@ -1683,7 +1687,7 @@ TODO    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new Expen
             setLoading(true);
         }
     };
-*/
+
 
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override

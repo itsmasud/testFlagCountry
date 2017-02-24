@@ -254,9 +254,9 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
                 @Override
                 public void next(int i) throws Exception {
                     LoggedWork work = _logs[i];
-                    TimeLogRowView v = new TimeLogRowView(SignatureDisplayActivity.this);
-                    v.setData(_workorder, work);
-                    _timeLinearLayout.addView(v);
+//TODO                    TimeLogRowView v = new TimeLogRowView(SignatureDisplayActivity.this);
+//                    v.setData(_workorder, work);
+//                    _timeLinearLayout.addView(v);
                 }
             };
             _timeLinearLayout.postDelayed(r, new Random().nextInt(1000));

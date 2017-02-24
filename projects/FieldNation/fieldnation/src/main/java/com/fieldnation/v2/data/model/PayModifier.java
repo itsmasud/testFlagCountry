@@ -436,4 +436,19 @@ public class PayModifier implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    private Set<PayModifier.ActionsEnum> _actionsSet = null;
+
+    public Set<PayModifier.ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+
+        return _actionsSet;
+    }
 }

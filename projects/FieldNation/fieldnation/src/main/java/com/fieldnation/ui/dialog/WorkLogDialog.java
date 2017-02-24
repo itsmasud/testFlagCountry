@@ -19,6 +19,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.TimeLog;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -28,7 +29,7 @@ public class WorkLogDialog extends DialogFragmentBase {
 
     // State
     private static final String STATE_TITLE = "STATE_TITLE";
-    private static final String STATE_LOGGEDWORK = "STATE_LOGGED_WORK";
+    private static final String STATE_TIMELOG = "STATE_LOGGED_WORK";
     private static final String STATE_DEVICES_COUNT = "STATE_DEVICES_COUNT";
     private static final String STATE_START_DATE = "STATE_START_DATE";
     private static final String STATE_END_DATE = "STATE_END_DATE";
@@ -45,7 +46,7 @@ public class WorkLogDialog extends DialogFragmentBase {
 
     // Data State
     private String _title;
-    private LoggedWork _loggedWork;
+    private TimeLog _timeLog;
     private boolean _showDevicesCount = false;
 
     // Data
@@ -77,8 +78,8 @@ public class WorkLogDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_DEVICES_COUNT))
                 _showDevicesCount = savedInstanceState.getBoolean(STATE_DEVICES_COUNT);
 
-            if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
-                _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
+            if (savedInstanceState.containsKey(STATE_TIMELOG))
+                _timeLog = savedInstanceState.getParcelable(STATE_TIMELOG);
 
             if (savedInstanceState.containsKey(STATE_START_DATE))
                 _startButton.setText(savedInstanceState.getString(STATE_START_DATE));
@@ -98,8 +99,8 @@ public class WorkLogDialog extends DialogFragmentBase {
         if (_title != null)
             outState.putString(STATE_TITLE, _title);
 
-        if (_loggedWork != null)
-            outState.putParcelable(STATE_LOGGEDWORK, _loggedWork);
+        if (_timeLog != null)
+            outState.putParcelable(STATE_TIMELOG, _timeLog);
 
         if (_startButton != null && !misc.isEmptyOrNull(_startButton.getText().toString()))
             outState.putString(STATE_START_DATE, _startButton.getText().toString());
@@ -150,10 +151,10 @@ public class WorkLogDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(CharSequence title, LoggedWork loggedWork, boolean showDeviceCount) {
+    public void show(CharSequence title, TimeLog timeLog, boolean showDeviceCount) {
         _startIsSet = false;
         _endIsSet = false;
-        _loggedWork = loggedWork;
+        _timeLog = timeLog;
         _showDevicesCount = showDeviceCount;
         _title = (String) title;
 
@@ -170,27 +171,25 @@ public class WorkLogDialog extends DialogFragmentBase {
             _devicesLayout.setVisibility(View.GONE);
         }
 
-        if (_loggedWork == null)
+        if (_timeLog == null)
             return;
 
         try {
-            String startDate = _loggedWork.getStartDate();
-            _startCalendar = ISO8601.toCalendar(startDate);
+            _startCalendar = _timeLog.getIn().getCreated().getCalendar();
             _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
         } catch (ParseException ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            String endDate = _loggedWork.getEndDate();
-            _endCalendar = ISO8601.toCalendar(endDate);
+            _endCalendar = _timeLog.getOut().getCreated().getCalendar();
             _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            _devicesEditText.setText(_loggedWork.getNoOfDevices().toString());
+            _devicesEditText.setText(_timeLog.getDevices().toString());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -259,11 +258,11 @@ public class WorkLogDialog extends DialogFragmentBase {
             }
 
             if ((_startIsSet && _endIsSet)
-                    || (_loggedWork != null && (_startIsSet || _endIsSet))
-                    || (_loggedWork != null && _showDevicesCount && deviceCount != _loggedWork.getNoOfDevices())) {
+                    || (_timeLog != null && (_startIsSet || _endIsSet))
+                    || (_timeLog != null && _showDevicesCount && deviceCount != _timeLog.getDevices())) {
                 WorkLogDialog.this.dismiss();
                 if (_listener != null) {
-                    _listener.onOk(_loggedWork, _startCalendar, _endCalendar, deviceCount);
+                    _listener.onOk(_timeLog, _startCalendar, _endCalendar, deviceCount);
                 }
             }
         }
@@ -278,7 +277,7 @@ public class WorkLogDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount);
+        void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount);
 
         void onCancel();
     }

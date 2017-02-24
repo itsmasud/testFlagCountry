@@ -45,7 +45,7 @@ public class ScheduleView extends LinearLayout {
 
         _workLogLinearLayout = (LinearLayout) findViewById(R.id.worklog_linearlayout);
         _addButton = (Button) findViewById(R.id.add_button);
-        _addButton.setOnClickListener(_add_onClick);
+//TODO        _addButton.setOnClickListener(_add_onClick);
     }
 
     public void setListener(Listener listener) {
@@ -62,47 +62,47 @@ public class ScheduleView extends LinearLayout {
 
         _workLogLinearLayout.removeAllViews();
 
-        if (loggedWork != null) {
-            for (LoggedWork aLoggedWork : loggedWork) {
-                TimeLogRowView v = new TimeLogRowView(getContext());
-                _workLogLinearLayout.addView(v);
-                v.setListener(_scheduleDetailView_listener);
-                v.setData(_workorder, aLoggedWork);
-            }
-        }
+//TODO       if (loggedWork != null) {
+//            for (LoggedWork aLoggedWork : loggedWork) {
+//                TimeLogRowView v = new TimeLogRowView(getContext());
+//                _workLogLinearLayout.addView(v);
+//                v.setListener(_scheduleDetailView_listener);
+//                v.setData(_workorder, aLoggedWork);
+//            }
+//        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
-        @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            if (_listener != null)
-                _listener.editWorklog(workorder, loggedWork, showDeviceCount);
-        }
-
-        @Override
-        public void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork) {
-            if (_listener != null)
-                _listener.deleteWorklog(workorder, loggedWork);
-        }
-    };
-
-    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            boolean showdevices = false;
-            try {
-                showdevices = _workorder.getPay().isPerDeviceRate();
-            } catch (Exception ex) {
-
-            }
-
-            if (_listener != null)
-                _listener.onAddWorklog(_workorder, showdevices);
-        }
-    };
+//TODO    private final TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
+//        @Override
+//        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+//            if (_listener != null)
+//                _listener.editWorklog(workorder, loggedWork, showDeviceCount);
+//        }
+//
+//        @Override
+//        public void deleteWorklog(TimeLogRowView view, Workorder workOrder, LoggedWork loggedWork) {
+//            if (_listener != null)
+//                _listener.deleteWorklog(workOrder, loggedWork);
+//        }
+//    };
+//
+//    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            boolean showdevices = false;
+//            try {
+//                showdevices = _workorder.getPay().isPerDeviceRate();
+//            } catch (Exception ex) {
+//
+//            }
+//
+//            if (_listener != null)
+//                _listener.onAddWorklog(_workorder, showdevices);
+//        }
+//    };
 
 //    private WorkLogDialog.Listener _worklogdialog_onOk = new WorkLogDialog.Listener() {
 //        @Override
