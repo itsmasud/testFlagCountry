@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fngps.SimpleGps;
@@ -49,7 +48,6 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
-import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
@@ -264,8 +262,8 @@ public class WorkFragment extends WorkorderFragment {
 // TODO        _renderers.add(_taskList);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
-         _timeLogged.setListener(_timeLoggedView_listener);
-         _renderers.add(_timeLogged);
+        _timeLogged.setListener(_timeLoggedView_listener);
+        _renderers.add(_timeLogged);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
@@ -1051,7 +1049,7 @@ TODO            if (_workorder.getPaymentId() != null) {
     };
 
 
-  private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
@@ -1499,15 +1497,16 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         }
     };
 
-    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+    private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
-        public void onButtonClick() {
-            _gpsLocationService.stopLocationUpdates();
+        public void onPrimary() {
             setLoading(false);
         }
+    };
 
+    private final OneButtonDialog.OnCanceledListener _locationLoadingDialog_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
-        public void onCancel() {
+        public void onCanceled() {
             setLoading(false);
         }
     };

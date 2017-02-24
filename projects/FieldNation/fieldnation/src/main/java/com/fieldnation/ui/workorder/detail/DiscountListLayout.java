@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Discount;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+
+import java.util.Random;
 
 /**
  * Created by Michael Carver on 6/5/2015.
