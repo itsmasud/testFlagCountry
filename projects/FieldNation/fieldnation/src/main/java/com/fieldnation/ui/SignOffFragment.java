@@ -205,10 +205,10 @@ public class SignOffFragment extends FragmentBase {
                         return;
                     }
 
-                    LoggedWork work = _logs[i];
-                    TimeLogRowView v = new TimeLogRowView(getActivity());
-                    v.setData(_workorder, work);
-                    _timeLinearLayout.addView(v);
+//TOTO                    LoggedWork work = _logs[i];
+//                    TimeLogRowView v = new TimeLogRowView(getActivity());
+//                    v.setData(_workorder, work);
+//                    _timeLinearLayout.addView(v);
                 }
 
                 @Override
