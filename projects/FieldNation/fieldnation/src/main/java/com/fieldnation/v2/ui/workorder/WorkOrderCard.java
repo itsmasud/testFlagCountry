@@ -385,19 +385,6 @@ public class WorkOrderCard extends RelativeLayout {
 
         if (false) {
 
-            // check_out
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
-                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
-            button.setVisibility(VISIBLE);
-            button.setOnClickListener(_checkOut_onClick);
-            button.setText(R.string.btn_check_out);
-
-            // check_in
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
-            button.setVisibility(VISIBLE);
-            button.setOnClickListener(_checkIn_onClick);
-            button.setText(R.string.btn_check_in);
-
             // set eta
         } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
             button.setVisibility(VISIBLE);
@@ -419,6 +406,19 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
 //            button.setText(R.string.btn_acknowledge_hold);
+
+            // check_out
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
+                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkOut_onClick);
+            button.setText(R.string.btn_check_out);
+
+            // check_in
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkIn_onClick);
+            button.setText(R.string.btn_check_in);
 
             // mark incomplete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
