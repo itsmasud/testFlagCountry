@@ -24,7 +24,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
@@ -1439,20 +1438,19 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         }
 
         @Override
-        public void discountOnClick(Discount discount) {
+        public void discountOnClick(PayModifier discount) {
             // TODO discountOnClick
         }
 
         @Override
-        public void discountLongClick(final Discount discount) {
+        public void discountLongClick(final PayModifier discount) {
             _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
                     getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkorderClient.deleteDiscount(App.get(),
-                                    _workOrder.getWorkOrderId(), discount.getDiscountId());
+                            WorkordersWebApi.removeDiscount(App.get(), _workOrder.getWorkOrderId(), discount.getId());
                         }
 
                         @Override
