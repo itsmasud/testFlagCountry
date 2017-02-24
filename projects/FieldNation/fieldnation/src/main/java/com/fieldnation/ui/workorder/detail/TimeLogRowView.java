@@ -8,11 +8,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -28,8 +29,8 @@ public class TimeLogRowView extends RelativeLayout {
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
-    private LoggedWork _loggedWork;
+    private WorkOrder _workOrder;
+    private TimeLog _timeLog;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -71,23 +72,24 @@ public class TimeLogRowView extends RelativeLayout {
         _listener = listener;
     }
 
-    public void setData(Workorder workorder, LoggedWork loggedWork) {
-        _loggedWork = loggedWork;
-        _workorder = workorder;
+    public void setData(WorkOrder workOrder, TimeLog timeLog) {
+        _timeLog = timeLog;
+        _workOrder = workOrder;
         populateUi();
     }
 
     private void populateUi() {
-        if (_loggedWork == null)
+        if (_timeLog == null)
             return;
         if (_devicesTextView == null)
             return;
 
         try {
-            Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
+            Calendar cal = _timeLog.getIn().getCreated().getCalendar();
             Calendar ecal = null;
-            if (_loggedWork.getEndDate() != null) {
-                ecal = ISO8601.toCalendar(_loggedWork.getEndDate());
+            if (_timeLog.getOut() != null
+                    && _timeLog.getOut().getCreated() != null) {
+                ecal = _timeLog.getOut().getCreated().getCalendar();
             }
             if (ecal != null && !DateUtils.isSameDay(cal, ecal)) {
                 _dateTextView.setText(DateUtils.formatDate(cal) + " - " + DateUtils.formatDate(ecal));
@@ -99,12 +101,14 @@ public class TimeLogRowView extends RelativeLayout {
         }
 
         try {
-            Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
+            Calendar cal = _timeLog.getIn().getCreated().getCalendar();
 
             String date = DateUtils.formatTime(cal, false);
 
-            if (_loggedWork.getEndDate() != null) {
-                cal = ISO8601.toCalendar(_loggedWork.getEndDate());
+            if (_timeLog.getOut() != null
+                    && _timeLog.getOut().getCreated() != null
+                    && _timeLog.getOut().getCreated().getCalendar() != null) {
+                cal = _timeLog.getOut().getCreated().getCalendar();
 
                 date += " - " + DateUtils.formatTime(cal, false);
             } else {
@@ -113,9 +117,9 @@ public class TimeLogRowView extends RelativeLayout {
 
             _timeTextView.setText(date);
 
-            if (_loggedWork.getHours() != null) {
+            if (_timeLog.getHours() != null) {
                 _hoursTextView.setVisibility(VISIBLE);
-                _hoursTextView.setText(String.format("%.2f", _loggedWork.getHours()) + " hours");
+                _hoursTextView.setText(String.format("%.2f", _timeLog.getHours()) + " hours");
             } else {
                 _hoursTextView.setVisibility(GONE);
             }
@@ -123,14 +127,14 @@ public class TimeLogRowView extends RelativeLayout {
             Log.v(TAG, ex);
         }
 
-        if (_workorder.getPay() != null && _workorder.getPay().isPerDeviceRate()) {
+        if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)) {
             _devicesTextView.setVisibility(VISIBLE);
-            _devicesTextView.setText(_loggedWork.getNoOfDevices() + " devices");
+            _devicesTextView.setText(_timeLog.getDevices() + " devices");
         } else {
             _devicesTextView.setVisibility(GONE);
         }
 
-        if (_workorder.canModifyTimeLog()) {
+        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.EDIT)) {
             setClickable(true);
             setLongClickable(true);
         } else {
@@ -148,20 +152,22 @@ public class TimeLogRowView extends RelativeLayout {
         public void onClick(View v) {
             boolean showdevices = false;
             try {
-                showdevices = _workorder.getPay().isPerDeviceRate();
+                showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
             } catch (Exception ex) {
             }
 
             if (_listener != null)
-                _listener.editWorklog(_workorder, _loggedWork, showdevices);
+                _listener.editTimeLog(_workOrder, _timeLog, showdevices);
         }
     };
 
     private final OnLongClickListener _delete_onClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (_listener != null) {
-                _listener.deleteWorklog(TimeLogRowView.this, _workorder, _loggedWork);
+            if (_listener != null
+                    && _timeLog.getActionsSet() != null
+                    && _timeLog.getActionsSet().contains(TimeLog.ActionsEnum.REMOVE)) {
+                _listener.deleteTimeLog(TimeLogRowView.this, _workOrder, _timeLog);
                 return true;
             }
             return false;
@@ -169,8 +175,8 @@ public class TimeLogRowView extends RelativeLayout {
     };
 
     public interface Listener {
-        void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+        void editTimeLog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount);
 
-        void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork);
+        void deleteTimeLog(TimeLogRowView view, WorkOrder workOrder, TimeLog timeLog);
     }
 }

@@ -70,6 +70,7 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
@@ -260,8 +261,8 @@ public class WorkFragment extends WorkorderFragment {
 // TODO        _renderers.add(_taskList);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
-// TODO        _timeLogged.setListener(_timeLoggedView_listener);
-// TODO        _renderers.add(_timeLogged);
+         _timeLogged.setListener(_timeLoggedView_listener);
+         _renderers.add(_timeLogged);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
@@ -1050,8 +1051,8 @@ TODO            if (_workorder.getPaymentId() != null) {
         }
     };
 
-/*
- TODO private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+
+  private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
@@ -1059,15 +1060,15 @@ TODO            if (_workorder.getPaymentId() != null) {
         }
 
         @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+        public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
+            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
         }
 
         @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            final long workorderID = workorder.getWorkorderId();
-            final long loggedHoursID = loggedWork.getLoggedHoursId();
+        public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
+            final long workorderID = workOrder.getWorkOrderId();
+            final long timeLogId = timeLog.getId();
 
             _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
                     getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
@@ -1076,7 +1077,7 @@ TODO            if (_workorder.getPaymentId() != null) {
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
                             WorkorderClient.deleteTimeLog(App.get(), workorderID,
-                                    loggedHoursID);
+                                    timeLogId);
                             setLoading(true);
 
                         }
@@ -1092,7 +1093,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             _yesNoDialog.show();
         }
     };
-*/
+
 
 /*
 TODO    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
