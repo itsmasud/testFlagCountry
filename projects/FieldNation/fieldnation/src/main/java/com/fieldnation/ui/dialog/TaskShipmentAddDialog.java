@@ -16,6 +16,7 @@ import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
+import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 
 public class TaskShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.TaskShipmentAddDialog";
