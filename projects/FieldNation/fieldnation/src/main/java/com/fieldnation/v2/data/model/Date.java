@@ -161,12 +161,12 @@ public class Date implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
     public Date(Calendar calendar) throws ParseException {
-        super();
+        this();
         utc(DateUtils.v2CalToUtc(calendar));
     }
 
     public Date(long utcMilliseconds) throws ParseException {
-        super();
+        this();
         utc(DateUtils.v2LongToUtc(utcMilliseconds));
     }
 

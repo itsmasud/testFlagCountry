@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -155,8 +153,9 @@ public class ExpenseCategory implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    public ExpenseCategory(int id, String name) {
-        _id = id;
-        _name = name;
+    public ExpenseCategory(int id, String name) throws ParseException {
+        this();
+        setId(id);
+        setName(name);
     }
 }

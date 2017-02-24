@@ -75,7 +75,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         ppulateUi();
     }
 
-
     public void ppulateUi() {
         if (_workOrder == null)
             return;
@@ -157,16 +156,14 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         }
     };
 
-
-
-        private final View.OnClickListener _addLog_onClick = new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                boolean showdevices = false;
-                try {
+    private final View.OnClickListener _addLog_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            boolean showdevices = false;
+            try {
                     showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
-                } catch (Exception ex) {
-                }
+            } catch (Exception ex) {
+            }
 
                 if (_listener != null
                         && _workOrder.getTimeLogs() != null
@@ -187,3 +184,4 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
 
         }
     }
+}

@@ -366,16 +366,9 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populatePrimaryButton(Button button) {
-        Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
-        workOrderActions.addAll(Arrays.asList(_workOrder.getActions()));
-
-        Set<Schedule.ActionsEnum> scheduleActions = new HashSet<>();
-        scheduleActions.addAll(Arrays.asList(_workOrder.getSchedule().getActions()));
-
-        Set<TimeLogs.ActionsEnum> timeLogsActions = new HashSet<>();
-        if (_workOrder.getTimeLogs() != null && _workOrder.getTimeLogs().getActions() != null) {
-            timeLogsActions.addAll(Arrays.asList(_workOrder.getTimeLogs().getActions()));
-        }
+        Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
+        Set<Schedule.ActionsEnum> scheduleActions = _workOrder.getSchedule().getActionsSet();
+        Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
 
         // Order of operations
         // check_out
@@ -391,19 +384,6 @@ public class WorkOrderCard extends RelativeLayout {
         // withdraw
 
         if (false) {
-
-            // check_out
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
-                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
-            button.setVisibility(VISIBLE);
-            button.setOnClickListener(_checkOut_onClick);
-            button.setText(R.string.btn_check_out);
-
-            // check_in
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
-            button.setVisibility(VISIBLE);
-            button.setOnClickListener(_checkIn_onClick);
-            button.setText(R.string.btn_check_in);
 
             // set eta
         } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
@@ -426,6 +406,19 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
 //            button.setText(R.string.btn_acknowledge_hold);
+
+            // check_out
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
+                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkOut_onClick);
+            button.setText(R.string.btn_check_out);
+
+            // check_in
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkIn_onClick);
+            button.setText(R.string.btn_check_in);
 
             // mark incomplete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {

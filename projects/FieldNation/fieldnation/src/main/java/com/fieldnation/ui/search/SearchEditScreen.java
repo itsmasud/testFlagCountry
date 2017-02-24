@@ -151,14 +151,14 @@ public class SearchEditScreen extends RelativeLayout {
             case 1: // here
                 _simpleGps.updateListener(new SimpleGps.Listener() {
                     @Override
-                    public void onLocation(Location location) {
+                    public void onLocation(SimpleGps simpleGps, Location location) {
                         _savedSearchParams.location(location.getLatitude(), location.getLongitude());
                         _simpleGps.stop();
                         SavedSearchClient.save(_savedSearchParams);
                     }
 
                     @Override
-                    public void onFail() {
+                    public void onFail(SimpleGps simpleGps) {
                         ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
                     }
                 }).start(getContext());

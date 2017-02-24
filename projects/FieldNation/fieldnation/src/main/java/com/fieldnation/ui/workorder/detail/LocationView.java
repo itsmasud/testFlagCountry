@@ -508,7 +508,7 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
 
     private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(android.location.Location location) {
+        public void onLocation(SimpleGps simpleGps, android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
             lookupMap();
@@ -516,7 +516,7 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
