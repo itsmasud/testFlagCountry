@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -36,11 +38,15 @@ import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UploadSlotDialog;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -49,7 +55,11 @@ import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
+import java.text.ParseException;
+import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "DeliverableFragment";
@@ -233,8 +243,9 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(WorkOrder workorder) {
-        _workOrder = workorder;
+    public void setWorkorder(WorkOrder workOrder) {
+        Log.e(TAG, "setWorkorder");
+        _workOrder = workOrder;
         populateUi();
     }
 
@@ -271,23 +282,32 @@ public class DeliverableFragment extends WorkorderFragment {
 //        }
 
         Stopwatch stopwatch = new Stopwatch(true);
-/* TODO
-        final Document[] docs = _workorder.getDocuments();
+
+        final AttachmentFolder[] slots = _workOrder.getAttachments().getResults();
+
+        AttachmentFolder reviewSlot = null;
+        for (AttachmentFolder ob : slots) {
+            if (ob.getType().equals(AttachmentFolder.TypeEnum.DOCUMENT)) {
+                reviewSlot = ob;
+            }
+        }
+
+        final Attachment[] docs = reviewSlot.getResults();
         if (docs != null && docs.length > 0) {
             if (_reviewList.getChildCount() != docs.length) {
                 if (_reviewRunnable != null)
                     _reviewRunnable.cancel();
 
                 _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
-                    private final Document[] _docs = docs;
+                    private final Attachment[] _docs = docs;
                     private final List<DocumentView> _views = new LinkedList<>();
 
                     @Override
                     public void next(int i) throws Exception {
                         DocumentView v = new DocumentView(getActivity());
-                        Document doc = _docs[i];
+                        Attachment doc = _docs[i];
                         v.setListener(_document_listener);
-                        v.setData(_workorder, doc);
+                        v.setData(_workOrder, doc);
                         _views.add(v);
                     }
 
@@ -310,7 +330,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         stopwatch.start();
 
-        final UploadSlot[] slots = _workorder.getUploadSlots();
+/* TODO        final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
 
@@ -318,7 +338,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _filesRunnable.cancel();
 
             _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
-                private final UploadSlot[] _slots = slots;
+                private final AttachmentFolder[] _slots = slots;
 
                 @Override
                 public void next(int i) throws Exception {
@@ -330,8 +350,8 @@ public class DeliverableFragment extends WorkorderFragment {
                         v = new UploadSlotView(getActivity());
                         _filesLayout.addView(v);
                     }
-                    UploadSlot slot = _slots[i];
-                    v.setData(_workorder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
+                    AttachmentFolder slot = _slots[i];
+                    v.setData(_workOrder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
                 }
             };
             _filesLayout.postDelayed(_filesRunnable, 100);
@@ -697,4 +717,5 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     };
+
 }

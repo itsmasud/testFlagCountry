@@ -5,13 +5,14 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -28,6 +29,9 @@ public class AttachmentFolder implements Parcelable {
 
     @Json(name = "name")
     private String _name;
+
+    @Json(name = "results")
+    private Attachment[] _results;
 
     @Json(name = "task")
     private Task _task;
@@ -130,6 +134,33 @@ public class AttachmentFolder implements Parcelable {
     public AttachmentFolder name(String name) throws ParseException {
         _name = name;
         SOURCE.put("name", name);
+        return this;
+    }
+
+    public void setResults(Attachment[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Attachment.toJsonArray(results));
+    }
+
+    public Attachment[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Attachment.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _results;
+    }
+
+    public AttachmentFolder results(Attachment[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Attachment.toJsonArray(results), true);
         return this;
     }
 
@@ -319,5 +350,18 @@ public class AttachmentFolder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    private Set<AttachmentFolder.ActionsEnum> _actionsSet = null;
+
+    public Set<AttachmentFolder.ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
     }
 }
