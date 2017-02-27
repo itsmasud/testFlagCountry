@@ -24,12 +24,17 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.WorkOrder;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
+
+import java.io.File;
 
 public class ShipmentAddDialog extends SimpleDialog {
     private static final String TAG = "ShipmentAddDialog";
@@ -57,13 +62,16 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     // Data
     private String _title = null;
-    //    private long _taskId = -1;
+    private WorkOrder _workOrder;
     private boolean _clear = false;
     private int _carrierPosition = -1;
     private int _directionPosition = -1;
     private String _shipmentDescription;
     private Task _task;
     private ActivityResultClient _activityResultClient;
+
+    // Barcode stuff
+    private String _scannedImagePath;
 
     // Modes
     private static final int CARRIER_FEDEX = 0;
@@ -164,6 +172,8 @@ public class ShipmentAddDialog extends SimpleDialog {
             _task = payload.getParcelable("task");
         if (payload.containsKey("description"))
             _shipmentDescription = payload.getString("description");
+
+        _workOrder = payload.getParcelable("workOrder");
 
         super.show(payload, animate);
     }
@@ -267,11 +277,6 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     }
 
-    private void setSelectedCarrier(final int carrierId) {
-        _carrierPosition = carrierId;
-        populateUi();
-    }
-
     private HintSpinner getCarrierSpinner() {
         if (_carrierSpinner != null && _carrierSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
@@ -300,10 +305,6 @@ public class ShipmentAddDialog extends SimpleDialog {
             _directionSpinner.setAdapter(adapter);
         }
         return _directionSpinner;
-    }
-
-    private void setTrackingId(String trackingId) {
-        _trackingIdEditText.setText(trackingId);
     }
 
     /*-*********************************-*/
@@ -405,6 +406,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
             if (_task != null && _task.getId() != 0) {
                 if (_carrierPosition == CARRIER_OTHER) {
+                    uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
                             "Other",
@@ -413,6 +415,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                             _directionPosition == 0,
                             _task.getId());
                 } else {
+                    uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
                             _carriers[_carrierPosition].toString(),
@@ -424,6 +427,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
             } else {
                 if (_carrierPosition == CARRIER_OTHER) {
+                    uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
                             "Other",
@@ -432,6 +436,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                             _directionPosition == 0,
                             0);
                 } else {
+                    uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
                             _carriers[_carrierPosition].toString(),
@@ -445,6 +450,31 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
+    private void uploadBarcodeImage() {
+        if (misc.isEmptyOrNull(_scannedImagePath))
+            return;
+
+        if (_workOrder.getAttachments() == null)
+            return;
+
+        if (_workOrder.getAttachments().getResults() == null || _workOrder.getAttachments().getResults().length == 0)
+            return;
+
+        AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+        AttachmentFolder miscFolder = null;
+        for (AttachmentFolder folder : folders) {
+            if (folder.getType() == AttachmentFolder.TypeEnum.SLOT && folder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
+                miscFolder = folder;
+                break;
+            }
+        }
+        if (miscFolder != null) {
+            String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
+            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(), miscFolder.getId(), fileName, _scannedImagePath);
+        }
+
+    }
+
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -456,7 +486,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     private final View.OnClickListener _scan_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onScanDispatcher.dispatch(getUid());
             IntentIntegrator integrator = new IntentIntegrator((Activity) v.getContext());
             integrator.setPrompt(App.get().getString(R.string.dialog_scan_barcode_title));
             integrator.setCameraId(0);
@@ -466,8 +495,9 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, String title, String description, Task task) {
+    public static void show(Context context, String uid, WorkOrder workOrder, String title, String description, Task task) {
         Bundle params = new Bundle();
+        params.putParcelable("workOrder", workOrder);
         params.putString("title", title);
         params.putString("description", description);
         params.putParcelable("task", task);
@@ -476,7 +506,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     }
 
     private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
-
         @Override
         public void onConnected() {
             _activityResultClient.subOnActivityResult();
@@ -503,9 +532,10 @@ public class ShipmentAddDialog extends SimpleDialog {
                     Log.e(TAG, "onActivityResult: no image path");
                 } else {
                     Log.v(TAG, "onActivityResult");
-//                    _scannedImagePath = result.getBarcodeImagePath();
-//                    _shipmentAddDialog.setTrackingId(content);
-//                    _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
+                    _scannedImagePath = result.getBarcodeImagePath();
+                    _trackingIdEditText.setText(content);
+                    _carrierPosition = misc.getCarrierId(content);
+                    populateUi();
                 }
             }
         }
@@ -562,31 +592,5 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     public static void removeAllOnCancelListener(String uid) {
         _onCancelDispatcher.removeAll(uid);
-    }
-
-    /*-************************-*/
-    /*-         Scan           -*/
-    /*-************************-*/
-    public interface OnScanListener {
-        void onScan();
-    }
-
-    private static KeyedDispatcher<OnScanListener> _onScanDispatcher = new KeyedDispatcher<OnScanListener>() {
-        @Override
-        public void onDispatch(OnScanListener listener, Object... parameters) {
-            listener.onScan();
-        }
-    };
-
-    public static void addOnScanListener(String uid, OnScanListener onScanListener) {
-        _onScanDispatcher.add(uid, onScanListener);
-    }
-
-    public static void removeOnScanListener(String uid, OnScanListener onScanListener) {
-        _onScanDispatcher.remove(uid, onScanListener);
-    }
-
-    public static void removeAllOnScanListener(String uid) {
-        _onScanDispatcher.removeAll(uid);
     }
 }
