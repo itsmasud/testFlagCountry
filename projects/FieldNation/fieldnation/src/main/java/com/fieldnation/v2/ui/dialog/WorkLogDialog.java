@@ -193,21 +193,18 @@ public class WorkLogDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-// TODO V2 api is not working to add timelog. See in PA-614
-// TODO need to build timelog object so that we can remove all the device count related checks
-//            int deviceCount = -1;
-//            try {
-//                deviceCount = Integer.parseInt(_devicesEditText.getText().toString());
-//            } catch (Exception ex) {
-//            }
-//
-//            if ((_startIsSet && _endIsSet)
-//                    || (_timeLog != null && (_startIsSet || _endIsSet))
-//                    || (_timeLog != null && _showDevicesCount && deviceCount != _timeLog.getDevices())) {
-//                dismiss(true);
-//                _onOkDispatcher.dispatch(getUid(), _startCalendar, _endCalendar, deviceCount);
-//            }
+            int deviceCount = -1;
+            try {
+                deviceCount = Integer.parseInt(_devicesEditText.getText().toString());
+            } catch (Exception ex) {
+            }
 
+            if ((_startIsSet && _endIsSet)
+                    || (_timeLog != null && (_startIsSet || _endIsSet))
+                    || (_timeLog != null && _showDevicesCount && deviceCount != _timeLog.getDevices())) {
+                dismiss(true);
+                _onOkDispatcher.dispatch(getUid(), _timeLog, _startCalendar, _endCalendar, deviceCount);
+            }
         }
     };
 
@@ -218,7 +215,6 @@ public class WorkLogDialog extends SimpleDialog {
             _onCancelDispatcher.dispatch(getUid());
         }
     };
-
 
     public static void show(Context context, String uid, String title, TimeLog timeLog, boolean showDeviceCount) {
         Bundle params = new Bundle();
@@ -238,8 +234,6 @@ public class WorkLogDialog extends SimpleDialog {
     private static KeyedDispatcher<WorkLogDialog.OnOkListener> _onOkDispatcher = new KeyedDispatcher<WorkLogDialog.OnOkListener>() {
         @Override
         public void onDispatch(WorkLogDialog.OnOkListener listener, Object... parameters) {
-            // TODO V2 api is not working to add timelog. See in PA-614
-            // TODO need to send the parameter creating timelog object
             listener.onOk((TimeLog) parameters[0], (Calendar) parameters[1], (Calendar) parameters[2], (Integer) parameters[3]);
         }
     };
