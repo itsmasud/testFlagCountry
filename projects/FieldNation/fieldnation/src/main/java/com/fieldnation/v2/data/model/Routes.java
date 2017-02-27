@@ -12,54 +12,49 @@ import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
  */
 
-public class AttachmentFolders implements Parcelable {
-    private static final String TAG = "AttachmentFolders";
+public class Routes implements Parcelable {
+    private static final String TAG = "Routes";
 
     @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    private ActionsEnum _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
+    @Json(name = "open_route")
+    private Route _openRoute;
+
     @Json(name = "results")
-    private AttachmentFolder[] _results;
+    private Route[] _results;
 
     @Source
     private JsonObject SOURCE;
 
-    public AttachmentFolders() {
+    public Routes() {
         SOURCE = new JsonObject();
     }
 
-    public AttachmentFolders(JsonObject obj) {
+    public Routes(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setActions(ActionsEnum[] actions) throws ParseException {
+    public void setActions(ActionsEnum actions) throws ParseException {
         _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja);
+        SOURCE.put("actions", actions.toString());
     }
 
-    public ActionsEnum[] getActions() {
+    public ActionsEnum getActions() {
         try {
             if (_actions != null)
                 return _actions;
 
-            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
-                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
-            }
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null)
+                _actions = ActionsEnum.fromString(SOURCE.getString("actions"));
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -68,13 +63,9 @@ public class AttachmentFolders implements Parcelable {
         return _actions;
     }
 
-    public AttachmentFolders actions(ActionsEnum[] actions) throws ParseException {
+    public Routes actions(ActionsEnum actions) throws ParseException {
         _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja, true);
+        SOURCE.put("actions", actions.toString());
         return this;
     }
 
@@ -98,24 +89,50 @@ public class AttachmentFolders implements Parcelable {
         return _metadata;
     }
 
-    public AttachmentFolders metadata(ListEnvelope metadata) throws ParseException {
+    public Routes metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(AttachmentFolder[] results) throws ParseException {
-        _results = results;
-        SOURCE.put("results", AttachmentFolder.toJsonArray(results));
+    public void setOpenRoute(Route openRoute) throws ParseException {
+        _openRoute = openRoute;
+        SOURCE.put("open_route", openRoute.getJson());
     }
 
-    public AttachmentFolder[] getResults() {
+    public Route getOpenRoute() {
+        try {
+            if (_openRoute != null)
+                return _openRoute;
+
+            if (SOURCE.has("open_route") && SOURCE.get("open_route") != null)
+                _openRoute = Route.fromJson(SOURCE.getJsonObject("open_route"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _openRoute;
+    }
+
+    public Routes openRoute(Route openRoute) throws ParseException {
+        _openRoute = openRoute;
+        SOURCE.put("open_route", openRoute.getJson());
+        return this;
+    }
+
+    public void setResults(Route[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Route.toJsonArray(results));
+    }
+
+    public Route[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
             if (SOURCE.has("results") && SOURCE.get("results") != null) {
-                _results = AttachmentFolder.fromJsonArray(SOURCE.getJsonArray("results"));
+                _results = Route.fromJsonArray(SOURCE.getJsonArray("results"));
             }
 
         } catch (Exception ex) {
@@ -125,9 +142,9 @@ public class AttachmentFolders implements Parcelable {
         return _results;
     }
 
-    public AttachmentFolders results(AttachmentFolder[] results) throws ParseException {
+    public Routes results(Route[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", AttachmentFolder.toJsonArray(results), true);
+        SOURCE.put("results", Route.toJsonArray(results), true);
         return this;
     }
 
@@ -135,10 +152,8 @@ public class AttachmentFolders implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "add_slot")
-        ADD_SLOT("add_slot"),
-        @Json(name = "download")
-        DOWNLOAD("download");
+        @Json(name = "add")
+        ADD("add");
 
         private String value;
 
@@ -172,25 +187,25 @@ public class AttachmentFolders implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(AttachmentFolders[] array) {
+    public static JsonArray toJsonArray(Routes[] array) {
         JsonArray list = new JsonArray();
-        for (AttachmentFolders item : array) {
+        for (Routes item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static AttachmentFolders[] fromJsonArray(JsonArray array) {
-        AttachmentFolders[] list = new AttachmentFolders[array.size()];
+    public static Routes[] fromJsonArray(JsonArray array) {
+        Routes[] list = new Routes[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static AttachmentFolders fromJson(JsonObject obj) {
+    public static Routes fromJson(JsonObject obj) {
         try {
-            return new AttachmentFolders(obj);
+            return new Routes(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -204,12 +219,12 @@ public class AttachmentFolders implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<AttachmentFolders> CREATOR = new Parcelable.Creator<AttachmentFolders>() {
+    public static final Parcelable.Creator<Routes> CREATOR = new Parcelable.Creator<Routes>() {
 
         @Override
-        public AttachmentFolders createFromParcel(Parcel source) {
+        public Routes createFromParcel(Parcel source) {
             try {
-                return AttachmentFolders.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Routes.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -217,8 +232,8 @@ public class AttachmentFolders implements Parcelable {
         }
 
         @Override
-        public AttachmentFolders[] newArray(int size) {
-            return new AttachmentFolders[size];
+        public Routes[] newArray(int size) {
+            return new Routes[size];
         }
     };
 
@@ -230,18 +245,5 @@ public class AttachmentFolders implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
-    }
-
-    /*-*****************************-*/
-    /*-         Human Code          -*/
-    /*-*****************************-*/
-    private Set<AttachmentFolders.ActionsEnum> _actionsSet = null;
-
-    public Set<AttachmentFolders.ActionsEnum> getActionsSet() {
-        if (_actionsSet == null) {
-            _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(getActions()));
-        }
-        return _actionsSet;
     }
 }

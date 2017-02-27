@@ -218,8 +218,8 @@ public class Assignee implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "ready_to_go")
-        READY_TO_GO("ready_to_go");
+        @Json(name = "unknown")
+        UNKNOWN("unknown");
 
         private String value;
 

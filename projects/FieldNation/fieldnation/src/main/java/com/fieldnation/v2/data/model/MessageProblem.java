@@ -20,6 +20,12 @@ import java.text.ParseException;
 public class MessageProblem implements Parcelable {
     private static final String TAG = "MessageProblem";
 
+    @Json(name = "can_resolve")
+    private Boolean _canResolve;
+
+    @Json(name = "escalate_to_performance")
+    private Boolean _escalateToPerformance;
+
     @Json(name = "flag_id")
     private Integer _flagId;
 
@@ -38,6 +44,58 @@ public class MessageProblem implements Parcelable {
 
     public MessageProblem(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setCanResolve(Boolean canResolve) throws ParseException {
+        _canResolve = canResolve;
+        SOURCE.put("can_resolve", canResolve);
+    }
+
+    public Boolean getCanResolve() {
+        try {
+            if (_canResolve != null)
+                return _canResolve;
+
+            if (SOURCE.has("can_resolve") && SOURCE.get("can_resolve") != null)
+                _canResolve = SOURCE.getBoolean("can_resolve");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _canResolve;
+    }
+
+    public MessageProblem canResolve(Boolean canResolve) throws ParseException {
+        _canResolve = canResolve;
+        SOURCE.put("can_resolve", canResolve);
+        return this;
+    }
+
+    public void setEscalateToPerformance(Boolean escalateToPerformance) throws ParseException {
+        _escalateToPerformance = escalateToPerformance;
+        SOURCE.put("escalate_to_performance", escalateToPerformance);
+    }
+
+    public Boolean getEscalateToPerformance() {
+        try {
+            if (_escalateToPerformance != null)
+                return _escalateToPerformance;
+
+            if (SOURCE.has("escalate_to_performance") && SOURCE.get("escalate_to_performance") != null)
+                _escalateToPerformance = SOURCE.getBoolean("escalate_to_performance");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _escalateToPerformance;
+    }
+
+    public MessageProblem escalateToPerformance(Boolean escalateToPerformance) throws ParseException {
+        _escalateToPerformance = escalateToPerformance;
+        SOURCE.put("escalate_to_performance", escalateToPerformance);
+        return this;
     }
 
     public void setFlagId(Integer flagId) throws ParseException {

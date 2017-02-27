@@ -52,7 +52,6 @@ import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
@@ -60,6 +59,7 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -86,10 +86,12 @@ import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
+import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.io.File;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -118,7 +120,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_TASK_SHIPMENT_ADD = TAG + ".taskShipmentAddDialog";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
-
+    private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
     private static final String STATE_TASKS = "WorkFragment:STATE_TASKS";
@@ -157,7 +159,6 @@ public class WorkFragment extends WorkorderFragment {
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
     private TermsScrollingDialog _termsScrollingDialog;
-    private WorkLogDialog _worklogDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
@@ -254,8 +255,8 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView.setOnOverScrollListener(_refreshView);
 
         _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
-// TODO        _shipments.setListener(_shipments_listener);
-// TODO        _renderers.add(_shipments);
+        _shipments.setListener(_shipments_listener);
+        _renderers.add(_shipments);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
 // TODO        _taskList.setTaskListViewListener(_taskListView_listener);
@@ -389,12 +390,10 @@ TODO        if (_currentTask != null)
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog.setListener(_declineDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
-// TODO        _worklogDialog.setListener(_worklogDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
@@ -415,6 +414,7 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+        WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
         OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -463,6 +463,7 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+        WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
         OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -1042,13 +1043,13 @@ TODO            if (_workorder.getPaymentId() != null) {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
         }
 
         @Override
         public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
         }
 
         @Override
@@ -1254,17 +1255,17 @@ TODO    private final CustomFieldRowView.Listener _customFields_listener = new C
     };
 */
 
-/*
-TODO    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+
+    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), null);
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
-        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
-            if ((long) shipment.getUserId() != (long) App.getProfileId()) {
+        public void onDelete(WorkOrder workOrder, final Shipment shipment) {
+            if ((long) shipment.getUser().getId() != (long) App.getProfileId()) {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
                 return;
             }
@@ -1275,7 +1276,7 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workOrder.getWorkOrderId(), shipment.getWorkorderShipmentId());
+                                    _workOrder.getWorkOrderId(), shipment.getId());
                         }
 
                         @Override
@@ -1290,13 +1291,12 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
         }
 
         @Override
-        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
+        public void onAssign(WorkOrder workOrder, Shipment shipment) {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
             // TODO present a picker of the tasks that this can be assigned too
         }
     };
-*/
 
     private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
@@ -1840,37 +1840,31 @@ TODO            if (_tempFile != null) {
         }
     };
 
-/*
-TODO    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
+
+    private final WorkLogDialog.OnOkListener _worklogDialog_listener = new WorkLogDialog.OnOkListener() {
         @Override
-        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
-            if (loggedWork == null) {
+        public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
+            TimeLog newTimeLog = new TimeLog();
+            try {
+                newTimeLog.in(new CheckInOut().created(new Date(start)));
+                newTimeLog.out(new CheckInOut().created(new Date(end)));
+                if (deviceCount > 0)
+                    newTimeLog.devices((double) deviceCount);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                if (deviceCount <= 0) {
-                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), newTimeLog);
+
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                if (deviceCount <= 0) {
-                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), newTimeLog);
             }
             setLoading(true);
         }
-
-        @Override
-        public void onCancel() {
-        }
     };
-*/
+
 
     /*-*****************************-*/
     /*-				Web				-*/

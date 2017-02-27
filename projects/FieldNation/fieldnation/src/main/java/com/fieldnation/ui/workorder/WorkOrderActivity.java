@@ -275,40 +275,17 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             return;
 
         setTitle("WO: " + _workOrder.getWorkOrderId());
+        if (_workOrder.getMessages() != null
+                && _workOrder.getMessages().getMetadata() != null
+                && _workOrder.getMessages().getMetadata().getTotal() != null) {
+            _tabview.setMessagesCount(_workOrder.getMessages().getMetadata().getTotal());
+        } else {
+            _tabview.setMessagesCount(0);
+        }
 
-        // TODO need to figure this out
-//        if (_workOrder.getAlertCount() != null) {
-//            _tabview.setAlertsCount(_workorder.getAlertCount());
-//        } else {
-        _tabview.setAlertsCount(0);
-//        }
-
-//        if (_workorder.getMessageCount() != null) {
-//            _tabview.setMessagesCount(_workorder.getMessageCount());
-//        } else {
-        _tabview.setMessagesCount(0);
-//        }
-
-//        for (int i = 0; i < _fragments.length; i++) {
-//            _fragments[i].setWorkorder(_workorder);
-//        }
-
-        _fragments[_currentFragment].setWorkorder(_workOrder);
-
-
-//        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
-//            //_tabview.hideTab(TAB_TASKS);
-//            _hidingTasks = true;
-//        } else {
-//            //_tabview.showTab(TAB_TASKS);
-//            _hidingTasks = false;
-//        }
-
-        // if (_workorder.getStatus().getWorkorderStatus() ==
-        // WorkorderStatus.INPROGRESS) {
-        // _viewPager.setCurrentItem(TAB_TASKS, false);
-        // }
-        // setLoading(false);
+        for (int i = 0; i < _fragments.length; i++) {
+            _fragments[i].setWorkorder(_workOrder);
+        }
     }
 
     private void setLoading(boolean loading) {

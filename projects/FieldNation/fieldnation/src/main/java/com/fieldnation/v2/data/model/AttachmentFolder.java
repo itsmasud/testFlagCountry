@@ -30,6 +30,9 @@ public class AttachmentFolder implements Parcelable {
     @Json(name = "name")
     private String _name;
 
+    @Json(name = "results")
+    private Attachment[] _results;
+
     @Json(name = "task")
     private Task _task;
 
@@ -131,6 +134,33 @@ public class AttachmentFolder implements Parcelable {
     public AttachmentFolder name(String name) throws ParseException {
         _name = name;
         SOURCE.put("name", name);
+        return this;
+    }
+
+    public void setResults(Attachment[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Attachment.toJsonArray(results));
+    }
+
+    public Attachment[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Attachment.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _results;
+    }
+
+    public AttachmentFolder results(Attachment[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Attachment.toJsonArray(results), true);
         return this;
     }
 
@@ -325,14 +355,13 @@ public class AttachmentFolder implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    private Set<ActionsEnum> _actionsSet = null;
+    private Set<AttachmentFolder.ActionsEnum> _actionsSet = null;
 
-    public Set<ActionsEnum> getActionsSet() {
+    public Set<AttachmentFolder.ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }
-
 }

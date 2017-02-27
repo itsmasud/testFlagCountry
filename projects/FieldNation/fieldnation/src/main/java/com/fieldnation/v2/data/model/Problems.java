@@ -20,14 +20,20 @@ import java.text.ParseException;
 public class Problems implements Parcelable {
     private static final String TAG = "Problems";
 
-    @Json(name = "next")
-    private ProblemsNext[] _next;
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
-    @Json(name = "problem_id")
-    private Integer _problemId;
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
 
-    @Json(name = "reason")
-    private String _reason;
+    @Json(name = "results")
+    private Problem[] _results;
+
+    @Json(name = "sum")
+    private ProblemsSum _sum;
+
+    @Json(name = "types")
+    private ProblemType[] _types;
 
     @Source
     private JsonObject SOURCE;
@@ -40,83 +46,181 @@ public class Problems implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setNext(ProblemsNext[] next) throws ParseException {
-        _next = next;
-        SOURCE.put("next", ProblemsNext.toJsonArray(next));
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ProblemsNext[] getNext() {
+    public ActionsEnum[] getActions() {
         try {
-            if (_next != null)
-                return _next;
+            if (_actions != null)
+                return _actions;
 
-            if (SOURCE.has("next") && SOURCE.get("next") != null) {
-                _next = ProblemsNext.fromJsonArray(SOURCE.getJsonArray("next"));
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
             }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _next;
+        return _actions;
     }
 
-    public Problems next(ProblemsNext[] next) throws ParseException {
-        _next = next;
-        SOURCE.put("next", ProblemsNext.toJsonArray(next), true);
+    public Problems actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
-    public void setProblemId(Integer problemId) throws ParseException {
-        _problemId = problemId;
-        SOURCE.put("problem_id", problemId);
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
+        _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
-    public Integer getProblemId() {
+    public ListEnvelope getMetadata() {
         try {
-            if (_problemId != null)
-                return _problemId;
+            if (_metadata != null)
+                return _metadata;
 
-            if (SOURCE.has("problem_id") && SOURCE.get("problem_id") != null)
-                _problemId = SOURCE.getInt("problem_id");
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _problemId;
+        return _metadata;
     }
 
-    public Problems problemId(Integer problemId) throws ParseException {
-        _problemId = problemId;
-        SOURCE.put("problem_id", problemId);
+    public Problems metadata(ListEnvelope metadata) throws ParseException {
+        _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setReason(String reason) throws ParseException {
-        _reason = reason;
-        SOURCE.put("reason", reason);
+    public void setResults(Problem[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Problem.toJsonArray(results));
     }
 
-    public String getReason() {
+    public Problem[] getResults() {
         try {
-            if (_reason != null)
-                return _reason;
+            if (_results != null)
+                return _results;
 
-            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
-                _reason = SOURCE.getString("reason");
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Problem.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _reason;
+        return _results;
     }
 
-    public Problems reason(String reason) throws ParseException {
-        _reason = reason;
-        SOURCE.put("reason", reason);
+    public Problems results(Problem[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Problem.toJsonArray(results), true);
         return this;
+    }
+
+    public void setSum(ProblemsSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
+    }
+
+    public ProblemsSum getSum() {
+        try {
+            if (_sum != null)
+                return _sum;
+
+            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+                _sum = ProblemsSum.fromJson(SOURCE.getJsonObject("sum"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _sum;
+    }
+
+    public Problems sum(ProblemsSum sum) throws ParseException {
+        _sum = sum;
+        SOURCE.put("sum", sum.getJson());
+        return this;
+    }
+
+    public void setTypes(ProblemType[] types) throws ParseException {
+        _types = types;
+        SOURCE.put("types", ProblemType.toJsonArray(types));
+    }
+
+    public ProblemType[] getTypes() {
+        try {
+            if (_types != null)
+                return _types;
+
+            if (SOURCE.has("types") && SOURCE.get("types") != null) {
+                _types = ProblemType.fromJsonArray(SOURCE.getJsonArray("types"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _types;
+    }
+
+    public Problems types(ProblemType[] types) throws ParseException {
+        _types = types;
+        SOURCE.put("types", ProblemType.toJsonArray(types), true);
+        return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "add")
+        ADD("add");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/

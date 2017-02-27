@@ -1,12 +1,10 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -14,25 +12,20 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.LoggedWork;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.dialog.DatePickerDialog;
+import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.TimeLog;
 
 import java.text.ParseException;
 import java.util.Calendar;
 
-public class WorkLogDialog extends DialogFragmentBase {
+public class WorkLogDialog extends SimpleDialog {
     private static final String TAG = "WorkLogDialog";
-
-    // State
-    private static final String STATE_TITLE = "STATE_TITLE";
-    private static final String STATE_TIMELOG = "STATE_LOGGED_WORK";
-    private static final String STATE_DEVICES_COUNT = "STATE_DEVICES_COUNT";
-    private static final String STATE_START_DATE = "STATE_START_DATE";
-    private static final String STATE_END_DATE = "STATE_END_DATE";
 
     // UI
     private Button _startButton;
@@ -50,91 +43,36 @@ public class WorkLogDialog extends DialogFragmentBase {
     private boolean _showDevicesCount = false;
 
     // Data
-    private Listener _listener;
     private Calendar _startCalendar;
     private Calendar _endCalendar;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
 
+    public WorkLogDialog(Context context, ViewGroup container) {
+        super(context, container);
+    }
+
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    public static WorkLogDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, WorkLogDialog.class);
-    }
+
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TITLE))
-                _title = savedInstanceState.getString(STATE_TITLE);
-
-            if (savedInstanceState.containsKey(STATE_DEVICES_COUNT))
-                _showDevicesCount = savedInstanceState.getBoolean(STATE_DEVICES_COUNT);
-
-            if (savedInstanceState.containsKey(STATE_TIMELOG))
-                _timeLog = savedInstanceState.getParcelable(STATE_TIMELOG);
-
-            if (savedInstanceState.containsKey(STATE_START_DATE))
-                _startButton.setText(savedInstanceState.getString(STATE_START_DATE));
-
-            if (savedInstanceState.containsKey(STATE_END_DATE))
-                _endButton.setText(savedInstanceState.getString(STATE_END_DATE));
-        }
-        super.onViewStateRestored(savedInstanceState);
-
-        populateUi();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(STATE_DEVICES_COUNT, _showDevicesCount);
-
-        if (_title != null)
-            outState.putString(STATE_TITLE, _title);
-
-        if (_timeLog != null)
-            outState.putParcelable(STATE_TIMELOG, _timeLog);
-
-        if (_startButton != null && !misc.isEmptyOrNull(_startButton.getText().toString()))
-            outState.putString(STATE_START_DATE, _startButton.getText().toString());
-
-        if (_endButton != null && !misc.isEmptyOrNull(_endButton.getText().toString()))
-            outState.putString(STATE_END_DATE, _endButton.getText().toString());
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_add_worklog, container, false);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.dialog_v2_add_worklog, container, false);
 
         _startButton = (Button) v.findViewById(R.id.start_spinner);
-        _startButton.setOnClickListener(_start_onClick);
-
         _endButton = (Button) v.findViewById(R.id.end_spinner);
-        _endButton.setOnClickListener(_end_onClick);
 
         _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
         _devicesEditText = (EditText) v.findViewById(R.id.devices_edittext);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_ok_onClick);
-
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
 
         final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+        _datePicker = new DatePickerDialog(v.getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(v.getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         _startCalendar = Calendar.getInstance();
         _endCalendar = Calendar.getInstance();
@@ -143,22 +81,26 @@ public class WorkLogDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void init() {
-        populateUi();
+    public void onStart() {
+        super.onStart();
+        _startButton.setOnClickListener(_start_onClick);
+        _endButton.setOnClickListener(_end_onClick);
+        _okButton.setOnClickListener(_ok_onClick);
+        _cancelButton.setOnClickListener(_cancel_onClick);
+
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
+    @Override
+    public void show(Bundle payload, boolean animate) {
+        super.show(payload, animate);
+        _title = payload.getString("title");
+        _timeLog = payload.getParcelable("timeLog");
+        _showDevicesCount = payload.getBoolean("showDeviceCount");
 
-    public void show(CharSequence title, TimeLog timeLog, boolean showDeviceCount) {
         _startIsSet = false;
         _endIsSet = false;
-        _timeLog = timeLog;
-        _showDevicesCount = showDeviceCount;
-        _title = (String) title;
 
-        super.show();
+        populateUi();
     }
 
     private void populateUi() {
@@ -260,25 +202,78 @@ public class WorkLogDialog extends DialogFragmentBase {
             if ((_startIsSet && _endIsSet)
                     || (_timeLog != null && (_startIsSet || _endIsSet))
                     || (_timeLog != null && _showDevicesCount && deviceCount != _timeLog.getDevices())) {
-                WorkLogDialog.this.dismiss();
-                if (_listener != null) {
-                    _listener.onOk(_timeLog, _startCalendar, _endCalendar, deviceCount);
-                }
+                dismiss(true);
+                _onOkDispatcher.dispatch(getUid(), _timeLog, _startCalendar, _endCalendar, deviceCount);
             }
         }
     };
+
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
-            if (_listener != null)
-                _listener.onCancel();
+            dismiss(true);
+            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
-    public interface Listener {
-        void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount);
+    public static void show(Context context, String uid, String title, TimeLog timeLog, boolean showDeviceCount) {
+        Bundle params = new Bundle();
+        params.putString("title", title);
+        params.putParcelable("timeLog", timeLog);
+        params.putBoolean("showDeviceCount", showDeviceCount);
+        Controller.show(context, uid, WorkLogDialog.class, params);
+    }
 
+    /*-**********************-*/
+    /*-         Ok           -*/
+    /*-**********************-*/
+    public interface OnOkListener {
+        void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount);
+    }
+
+    private static KeyedDispatcher<WorkLogDialog.OnOkListener> _onOkDispatcher = new KeyedDispatcher<WorkLogDialog.OnOkListener>() {
+        @Override
+        public void onDispatch(WorkLogDialog.OnOkListener listener, Object... parameters) {
+            listener.onOk((TimeLog) parameters[0], (Calendar) parameters[1], (Calendar) parameters[2], (Integer) parameters[3]);
+        }
+    };
+
+    public static void addOnOkListener(String uid, WorkLogDialog.OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, WorkLogDialog.OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-**************************-*/
+    /*-         Cancel           -*/
+    /*-**************************-*/
+    public interface OnCancelListener {
         void onCancel();
     }
+
+    private static KeyedDispatcher<WorkLogDialog.OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<WorkLogDialog.OnCancelListener>() {
+        @Override
+        public void onDispatch(WorkLogDialog.OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, WorkLogDialog.OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, WorkLogDialog.OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
+
 }
