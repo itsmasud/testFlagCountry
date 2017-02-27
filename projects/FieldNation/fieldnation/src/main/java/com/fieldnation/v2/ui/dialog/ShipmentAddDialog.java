@@ -29,6 +29,7 @@ import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.model.Task;
 import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class ShipmentAddDialog extends SimpleDialog {
     private static final String TAG = "ShipmentAddDialog";
@@ -233,19 +234,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     public void onStop() {
         super.onStop();
     }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "onActivityResult");
-        if (requestCode == RESULT_CODE_BARCODE_SCAN) {
-            if (resultCode == Activity.RESULT_OK) {
-                Log.v(TAG, "requestCode");
-                _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
 
     private void populateUi() {
         if (_cancelButton == null)
@@ -501,6 +489,25 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            Log.v(TAG, "onActivityResult");
+
+            IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+            if (result != null) {
+                Log.e(TAG, "onActivityResult: result not null");
+
+                _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
+                String content = result.getContents();
+
+                if (content == null) {
+                    Log.e(TAG, "onActivityResult: no image path");
+                } else {
+                    Log.v(TAG, "onActivityResult");
+//                    _scannedImagePath = result.getBarcodeImagePath();
+//                    _shipmentAddDialog.setTrackingId(content);
+//                    _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
+                }
+            }
         }
     };
 
