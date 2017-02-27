@@ -100,7 +100,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         if (requests == null)
             return;
 
-        if (requests.getOpenRequest() == null)
+        if (requests.getOpenRequest() == null || !requests.getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
             return;
 
 
@@ -226,7 +226,6 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
         return new String[]{line1, line2};
     }
-
 
 
     private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
