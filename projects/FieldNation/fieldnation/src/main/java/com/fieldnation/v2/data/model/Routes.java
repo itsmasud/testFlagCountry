@@ -17,49 +17,44 @@ import java.text.ParseException;
  * Created by dmgen from swagger.
  */
 
-public class Contacts implements Parcelable {
-    private static final String TAG = "Contacts";
+public class Routes implements Parcelable {
+    private static final String TAG = "Routes";
 
     @Json(name = "actions")
-    private ActionsEnum[] _actions;
-
-    @Json(name = "correlation_id")
-    private String _correlationId;
+    private ActionsEnum _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
+    @Json(name = "open_route")
+    private Route _openRoute;
+
     @Json(name = "results")
-    private Contact[] _results;
+    private Route[] _results;
 
     @Source
     private JsonObject SOURCE;
 
-    public Contacts() {
+    public Routes() {
         SOURCE = new JsonObject();
     }
 
-    public Contacts(JsonObject obj) {
+    public Routes(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setActions(ActionsEnum[] actions) throws ParseException {
+    public void setActions(ActionsEnum actions) throws ParseException {
         _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja);
+        SOURCE.put("actions", actions.toString());
     }
 
-    public ActionsEnum[] getActions() {
+    public ActionsEnum getActions() {
         try {
             if (_actions != null)
                 return _actions;
 
-            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
-                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
-            }
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null)
+                _actions = ActionsEnum.fromString(SOURCE.getString("actions"));
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -68,39 +63,9 @@ public class Contacts implements Parcelable {
         return _actions;
     }
 
-    public Contacts actions(ActionsEnum[] actions) throws ParseException {
+    public Routes actions(ActionsEnum actions) throws ParseException {
         _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja, true);
-        return this;
-    }
-
-    public void setCorrelationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
-    }
-
-    public String getCorrelationId() {
-        try {
-            if (_correlationId != null)
-                return _correlationId;
-
-            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
-                _correlationId = SOURCE.getString("correlation_id");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _correlationId;
-    }
-
-    public Contacts correlationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
+        SOURCE.put("actions", actions.toString());
         return this;
     }
 
@@ -124,24 +89,50 @@ public class Contacts implements Parcelable {
         return _metadata;
     }
 
-    public Contacts metadata(ListEnvelope metadata) throws ParseException {
+    public Routes metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Contact[] results) throws ParseException {
-        _results = results;
-        SOURCE.put("results", Contact.toJsonArray(results));
+    public void setOpenRoute(Route openRoute) throws ParseException {
+        _openRoute = openRoute;
+        SOURCE.put("open_route", openRoute.getJson());
     }
 
-    public Contact[] getResults() {
+    public Route getOpenRoute() {
+        try {
+            if (_openRoute != null)
+                return _openRoute;
+
+            if (SOURCE.has("open_route") && SOURCE.get("open_route") != null)
+                _openRoute = Route.fromJson(SOURCE.getJsonObject("open_route"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _openRoute;
+    }
+
+    public Routes openRoute(Route openRoute) throws ParseException {
+        _openRoute = openRoute;
+        SOURCE.put("open_route", openRoute.getJson());
+        return this;
+    }
+
+    public void setResults(Route[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Route.toJsonArray(results));
+    }
+
+    public Route[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
             if (SOURCE.has("results") && SOURCE.get("results") != null) {
-                _results = Contact.fromJsonArray(SOURCE.getJsonArray("results"));
+                _results = Route.fromJsonArray(SOURCE.getJsonArray("results"));
             }
 
         } catch (Exception ex) {
@@ -151,9 +142,9 @@ public class Contacts implements Parcelable {
         return _results;
     }
 
-    public Contacts results(Contact[] results) throws ParseException {
+    public Routes results(Route[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Contact.toJsonArray(results), true);
+        SOURCE.put("results", Route.toJsonArray(results), true);
         return this;
     }
 
@@ -161,8 +152,8 @@ public class Contacts implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "edit")
-        EDIT("edit");
+        @Json(name = "add")
+        ADD("add");
 
         private String value;
 
@@ -196,25 +187,25 @@ public class Contacts implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Contacts[] array) {
+    public static JsonArray toJsonArray(Routes[] array) {
         JsonArray list = new JsonArray();
-        for (Contacts item : array) {
+        for (Routes item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Contacts[] fromJsonArray(JsonArray array) {
-        Contacts[] list = new Contacts[array.size()];
+    public static Routes[] fromJsonArray(JsonArray array) {
+        Routes[] list = new Routes[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Contacts fromJson(JsonObject obj) {
+    public static Routes fromJson(JsonObject obj) {
         try {
-            return new Contacts(obj);
+            return new Routes(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -228,12 +219,12 @@ public class Contacts implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Contacts> CREATOR = new Parcelable.Creator<Contacts>() {
+    public static final Parcelable.Creator<Routes> CREATOR = new Parcelable.Creator<Routes>() {
 
         @Override
-        public Contacts createFromParcel(Parcel source) {
+        public Routes createFromParcel(Parcel source) {
             try {
-                return Contacts.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Routes.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -241,8 +232,8 @@ public class Contacts implements Parcelable {
         }
 
         @Override
-        public Contacts[] newArray(int size) {
-            return new Contacts[size];
+        public Routes[] newArray(int size) {
+            return new Routes[size];
         }
     };
 

@@ -56,6 +56,9 @@ public class Task implements Parcelable {
     @Json(name = "custom_field")
     private CustomField _customField;
 
+    @Json(name = "description")
+    private String _description;
+
     @Json(name = "email")
     private String _email;
 
@@ -423,6 +426,32 @@ public class Task implements Parcelable {
     public Task customField(CustomField customField) throws ParseException {
         _customField = customField;
         SOURCE.put("custom_field", customField.getJson());
+        return this;
+    }
+
+    public void setDescription(String description) throws ParseException {
+        _description = description;
+        SOURCE.put("description", description);
+    }
+
+    public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _description;
+    }
+
+    public Task description(String description) throws ParseException {
+        _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 

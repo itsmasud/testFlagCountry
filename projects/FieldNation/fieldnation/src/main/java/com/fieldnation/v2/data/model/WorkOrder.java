@@ -99,6 +99,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "role")
     private String _role;
 
+    @Json(name = "routes")
+    private Routes _routes;
+
     @Json(name = "schedule")
     private Schedule _schedule;
 
@@ -839,6 +842,32 @@ public class WorkOrder implements Parcelable {
     public WorkOrder role(String role) throws ParseException {
         _role = role;
         SOURCE.put("role", role);
+        return this;
+    }
+
+    public void setRoutes(Routes routes) throws ParseException {
+        _routes = routes;
+        SOURCE.put("routes", routes.getJson());
+    }
+
+    public Routes getRoutes() {
+        try {
+            if (_routes != null)
+                return _routes;
+
+            if (SOURCE.has("routes") && SOURCE.get("routes") != null)
+                _routes = Routes.fromJson(SOURCE.getJsonObject("routes"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _routes;
+    }
+
+    public WorkOrder routes(Routes routes) throws ParseException {
+        _routes = routes;
+        SOURCE.put("routes", routes.getJson());
         return this;
     }
 
