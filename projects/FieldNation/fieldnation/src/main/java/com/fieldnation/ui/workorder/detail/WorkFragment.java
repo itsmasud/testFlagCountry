@@ -54,7 +54,6 @@ import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
@@ -66,6 +65,7 @@ import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
@@ -83,7 +83,9 @@ import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
+import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -226,8 +228,8 @@ public class WorkFragment extends WorkorderFragment {
         _renderers.add(_scheduleView);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
-// TODO        _payView.setListener(_paymentView_listener);
-//TODO        _renderers.add(_payView);
+        _payView.setListener(_paymentView_listener);
+        _renderers.add(_payView);
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
@@ -1358,31 +1360,31 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
     };
 */
 
-/*
-TODO    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
+    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
-        public void onCounterOffer(Workorder workorder) {
-            _counterOfferDialog.show(_workorder);
+        public void onCounterOffer(WorkOrder workOrder) {
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, workOrder);
         }
 
         @Override
-        public void onRequestNewPay(Workorder workorder) {
+        public void onRequestNewPay(WorkOrder workOrder) {
             // TODO add analytics
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-            if (workorder.getIncreaseRequestInfo() != null && workorder.getIncreaseRequestInfo().getPay() != null) {
-                _payDialog.show(workorder.getIncreaseRequestInfo().getPay(), true);
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getIncreases() != null
+                    && _workOrder.getPay().getIncreases().getLastIncrease() != null) {
+                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {
-                _payDialog.show(workorder.getPay(), true);
+                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);
             }
-
         }
 
         @Override
-        public void onShowTerms(Workorder workorder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title),getString(R.string.dialog_terms_body));
+        public void onShowTerms(WorkOrder workOrder) {
+            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
     };
-*/
+
 
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
@@ -1753,9 +1755,12 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
     private final PayDialog.OnCompleteListener _payDialog_onComplete = new PayDialog.OnCompleteListener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
-            // TODO analytics
-// TODO            WorkorderClient.actionChangePay(App.get(), _workOrder.getWorkOrderId(), pay, explanation);
-
+            try {
+                WorkordersWebApi.addIncrease(App.get(), _workOrder.getWorkOrderId(),
+                        new PayIncrease().pay(pay).description(explanation));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             populateUi();
         }
     };
@@ -1944,7 +1949,7 @@ TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_liste
     };
 
 
-    private final WorkLogDialog.OnOkListener  _worklogDialog_listener = new WorkLogDialog.OnOkListener () {
+    private final WorkLogDialog.OnOkListener _worklogDialog_listener = new WorkLogDialog.OnOkListener() {
 
         @Override
         public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
