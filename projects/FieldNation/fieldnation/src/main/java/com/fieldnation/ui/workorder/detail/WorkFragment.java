@@ -54,7 +54,7 @@ import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
@@ -90,6 +90,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -116,7 +117,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
-
+    private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
     private static final String STATE_TASKS = "WorkFragment:STATE_TASKS";
@@ -157,7 +158,6 @@ public class WorkFragment extends WorkorderFragment {
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsScrollingDialog _termsScrollingDialog;
-    private WorkLogDialog _worklogDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
@@ -391,7 +391,6 @@ TODO        if (_currentTask != null)
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog.setListener(_declineDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
@@ -415,6 +414,7 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+        WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
         OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -459,6 +459,7 @@ TODO        if (_currentTask != null)
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+        WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
         OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -1053,13 +1054,13 @@ TODO            if (_workorder.getPaymentId() != null) {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
         }
 
         @Override
         public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
         }
 
         @Override
@@ -1942,37 +1943,37 @@ TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_liste
         }
     };
 
-/*
-TODO    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
-        @Override
-        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
-            if (loggedWork == null) {
-                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                if (deviceCount <= 0) {
-                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
-            } else {
-                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                if (deviceCount <= 0) {
-                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
-            }
-            setLoading(true);
-        }
+
+    private final WorkLogDialog.OnOkListener  _worklogDialog_listener = new WorkLogDialog.OnOkListener () {
 
         @Override
-        public void onCancel() {
+        public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
+// TODO V2 API is not working adding timelog
+//            if (timeLog == null) {
+//                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+//                if (deviceCount <= 0) {
+//                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
+//                            start.getTimeInMillis(), end.getTimeInMillis());
+//                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog);
+//                } else {
+//                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
+//                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
+//                }
+//            } else {
+//                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+//                if (deviceCount <= 0) {
+//                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
+//                            timeLog.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
+//                } else {
+//                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
+//                            timeLog.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
+//                }
+//            }
+//            setLoading(true);
         }
+
     };
-*/
+
 
     /*-*****************************-*/
     /*-				Web				-*/
