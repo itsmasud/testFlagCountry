@@ -5,11 +5,10 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 
@@ -903,4 +902,59 @@ public class Pay implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public String[] toDisplayStringLong() {
+        String line1 = null;
+        String line2 = null;
+
+        TypeEnum type = getType();
+
+        // Todo, need to localize this
+        try {
+            switch (type) {
+                case FIXED:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " Fixed";
+                    break;
+                case HOURLY:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " per hr up to " + getBase().getUnits() + " hours.";
+                    break;
+                case BLENDED:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " for the first " + getBase().getUnits() + " hours.";
+                    line2 = "Then " + misc.toCurrency(getAdditional().getAmount()) + " per hr up to " + getAdditional().getUnits() + " hours.";
+                    break;
+                case DEVICE:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " per device up to " + getBase().getUnits() + " devices.";
+                    break;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return new String[]{line1, line2};
+    }
+
+    public String toDisplayStringShort() {
+        TypeEnum type = getType();
+
+        try {
+            // Todo, localize this
+            switch (type) {
+                case BLENDED:
+                    return misc.toCurrency(getBase().getAmount());
+                case DEVICE:
+                    return misc.toCurrency(getBase().getAmount());
+                case FIXED:
+                    return misc.toCurrency(getBase().getAmount());
+                case HOURLY:
+                    return misc.toCurrency(getBase().getAmount());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
 }

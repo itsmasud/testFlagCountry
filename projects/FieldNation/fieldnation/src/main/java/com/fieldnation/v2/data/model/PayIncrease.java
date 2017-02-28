@@ -315,6 +315,8 @@ public class PayIncrease implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "accept")
         ACCEPT("accept"),
+        @Json(name = "delete")
+        DELETE("delete"),
         @Json(name = "edit")
         EDIT("edit");
 

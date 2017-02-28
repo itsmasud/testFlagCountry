@@ -10,9 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class PaymentView extends LinearLayout {
+public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ui.workorder.detail.PaymentView";
 
     // UI
@@ -66,6 +71,7 @@ public class PaymentView extends LinearLayout {
         _listener = listener;
     }
 
+    @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         refresh();
@@ -83,18 +89,16 @@ public class PaymentView extends LinearLayout {
         if (_actionButton == null)
             return;
 
-/*
-TODO        if (_workorder.getIncreaseRequestInfo() != null) {
+        if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
             getRequestNewPayTile().setVisibility(VISIBLE);
-            getRequestNewPayTile().setData(_workorder);
-        } else if (_requestNewPayTile != null) {
-*/
-        getRequestNewPayTile().setVisibility(GONE);
-//        }
+            getRequestNewPayTile().setData(_workOrder);
 
-/*
-TODO        Pay pay = _workOrder.getPay();
-        if (pay != null && !pay.hidePay()) {
+        } else {
+            getRequestNewPayTile().setVisibility(GONE);
+        }
+
+        Pay pay = _workOrder.getPay();
+        if (pay != null  /* TODO && !pay.hidePay() */) {
             _termsTextView.setVisibility(VISIBLE);
             String[] paytext = pay.toDisplayStringLong();
             String data = "";
@@ -115,31 +119,38 @@ TODO        Pay pay = _workOrder.getPay();
             _payTextView.setText(data);
             setVisibility(View.VISIBLE);
         } else {
-*/
-        _payTextView.setVisibility(GONE);
-        _termsTextView.setVisibility(GONE);
-        setVisibility(View.GONE);
-        return;
-//        }
+            _payTextView.setVisibility(GONE);
+            _termsTextView.setVisibility(GONE);
+            setVisibility(View.GONE);
+            return;
+        }
 
-/*
-TODO        _actionButton.setVisibility(VISIBLE);
+        _actionButton.setVisibility(VISIBLE);
         _actionButton.setEnabled(true);
 
-        if (_workOrder.getAllowCounterOffers() && _workOrder.getRe _workorder.getCounterOfferInfo() == null) {
+        // can counter offer
+        if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
             _actionButton.setText(R.string.btn_counter_offer);
-        } else if (_workorder.canRequestPayIncrease()) {
+
+            // can request pay increase
+        } else if (_workOrder.getPay() != null
+                && _workOrder.getPay().getIncreases() != null
+                && _workOrder.getPay().getIncreases().getActionsSet() != null
+                && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
             _actionButton.setText(R.string.btn_request_new_pay);
-        } else if (!_workorder.canCounterOffer() &&
-                (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
-                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED
-                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE)) {
+
+            // counter offers disabled and in the marketplace
+        } else if (!(_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+                && (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)) {
             _actionButton.setEnabled(false);
             _actionButton.setText(R.string.btn_counter_disabled);
         } else {
             _actionButton.setVisibility(GONE);
         }
-*/
     }
 
     /*-*********************************-*/
@@ -148,31 +159,20 @@ TODO        _actionButton.setVisibility(VISIBLE);
     private final View.OnClickListener _action_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-/*
-TODO            if (_workOrder.canCounterOffer() && _workOrder.getCounterOfferInfo() == null) {
-                Tracker.event(App.get(),
-                        new Event.Builder()
-                                .category(EventCategory.WORK_ORDER)
-                                .action(EventAction.COUNTER_OFFER)
-                                .property(EventProperty.WORK_ORDER_ID)
-                                .label(_workorder.getWorkorderId() + "")
-                                .addContext(new SpUIContext.Builder()
-                                        .page(ScreenName.workOrderDetailsWork().name)
-                                        .elementAction(ElementAction.CLICK)
-                                        .elementType(ElementType.BUTTON)
-                                        .elementIdentity(ElementIdentity.COUNTER_OFFER)
-                                        .build())
-                                .addContext(new SpWorkOrderContext.Builder()
-                                        .workOrderId(_workorder.getWorkorderId())
-                                        .build())
-                                .build());
-                if (_listener != null)
+            if (_listener != null) {
+                if (_workOrder.getRequests() != null
+                        && _workOrder.getRequests().getActionsSet() != null
+                        && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)
+                        && _workOrder.getRequests() != null
+                        && _workOrder.getRequests().getCounterOffer() == null) {
                     _listener.onCounterOffer(_workOrder);
-            } else if (_workOrder.canRequestPayIncrease()) {
-                if (_listener != null)
+                } else if (_workOrder.getPay() != null
+                        && _workOrder.getPay().getIncreases() != null
+                        && _workOrder.getPay().getIncreases().getActionsSet() != null
+                        && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
                     _listener.onRequestNewPay(_workOrder);
+                }
             }
-*/
         }
     };
 
@@ -187,13 +187,14 @@ TODO            if (_workOrder.canCounterOffer() && _workOrder.getCounterOfferIn
     private final View.OnClickListener _requestNewPay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-/*
-TODO            if (_workOrder.canRequestPayIncrease()) {
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getIncreases() != null
+                    && _workOrder.getPay().getIncreases().getActionsSet() != null
+                    && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
                 if (_listener != null) {
                     _listener.onRequestNewPay(_workOrder);
                 }
             }
-*/
         }
     };
 
