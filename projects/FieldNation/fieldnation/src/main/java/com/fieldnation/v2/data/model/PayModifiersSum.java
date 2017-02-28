@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -20,13 +19,13 @@ public class PayModifiersSum implements Parcelable {
     private static final String TAG = "PayModifiersSum";
 
     @Json(name = "all")
-    private Double _all = 0.0;
+    private Double _all;
 
     @Json(name = "charged")
-    private Double _charged = 0.0;
+    private Double _charged;
 
     @Json(name = "uncharged")
-    private Double _uncharged = 0.0;
+    private Double _uncharged;
 
     @Source
     private JsonObject SOURCE;
