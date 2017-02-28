@@ -50,8 +50,6 @@ public class TaskShipmentAddDialog extends SimpleDialog {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _addButton = (Button) v.findViewById(R.id.add_button);
 
-        populateUi();
-
         return v;
     }
 
