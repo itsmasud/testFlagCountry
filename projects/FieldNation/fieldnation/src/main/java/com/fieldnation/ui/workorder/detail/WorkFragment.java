@@ -1684,12 +1684,18 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            WorkorderClient.createExpense(App.get(), _workOrder.getWorkOrderId(), description,
-                    amount, category);
+            try {
+                Expense expense = new Expense();
+                expense.description(description);
+                expense.amount(amount);
+                expense.category(category);
+                WorkordersWebApi.addExpense(App.get(), _workOrder.getWorkOrderId(), expense);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
     };
-
 
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
