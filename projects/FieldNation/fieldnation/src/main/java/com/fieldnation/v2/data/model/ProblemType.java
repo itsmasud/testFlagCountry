@@ -23,6 +23,9 @@ public class ProblemType implements Parcelable {
     @Json(name = "children")
     private ProblemType[] _children;
 
+    @Json(name = "has_other")
+    private Boolean _hasOther;
+
     @Json(name = "id")
     private Integer _id;
 
@@ -31,9 +34,6 @@ public class ProblemType implements Parcelable {
 
     @Json(name = "other")
     private String _other;
-
-    @Json(name = "selectable")
-    private Boolean _selectable;
 
     @Source
     private JsonObject SOURCE;
@@ -70,6 +70,32 @@ public class ProblemType implements Parcelable {
     public ProblemType children(ProblemType[] children) throws ParseException {
         _children = children;
         SOURCE.put("children", ProblemType.toJsonArray(children), true);
+        return this;
+    }
+
+    public void setHasOther(Boolean hasOther) throws ParseException {
+        _hasOther = hasOther;
+        SOURCE.put("has_other", hasOther);
+    }
+
+    public Boolean getHasOther() {
+        try {
+            if (_hasOther != null)
+                return _hasOther;
+
+            if (SOURCE.has("has_other") && SOURCE.get("has_other") != null)
+                _hasOther = SOURCE.getBoolean("has_other");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _hasOther;
+    }
+
+    public ProblemType hasOther(Boolean hasOther) throws ParseException {
+        _hasOther = hasOther;
+        SOURCE.put("has_other", hasOther);
         return this;
     }
 
@@ -148,32 +174,6 @@ public class ProblemType implements Parcelable {
     public ProblemType other(String other) throws ParseException {
         _other = other;
         SOURCE.put("other", other);
-        return this;
-    }
-
-    public void setSelectable(Boolean selectable) throws ParseException {
-        _selectable = selectable;
-        SOURCE.put("selectable", selectable);
-    }
-
-    public Boolean getSelectable() {
-        try {
-            if (_selectable != null)
-                return _selectable;
-
-            if (SOURCE.has("selectable") && SOURCE.get("selectable") != null)
-                _selectable = SOURCE.getBoolean("selectable");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _selectable;
-    }
-
-    public ProblemType selectable(Boolean selectable) throws ParseException {
-        _selectable = selectable;
-        SOURCE.put("selectable", selectable);
         return this;
     }
 
