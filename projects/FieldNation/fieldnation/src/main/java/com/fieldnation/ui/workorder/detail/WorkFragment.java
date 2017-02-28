@@ -69,6 +69,7 @@ import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -1807,13 +1808,25 @@ TODO            if (_tempFile != null) {
 
     private final ShipmentAddDialog.OnOkListener _shipmentAddDialog_onOk = new ShipmentAddDialog.OnOkListener() {
         @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
+        public void onOk(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
 
-            if (taskId > 0) {
-                WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite, carrier, carrierName, trackingId, taskId);
-            } else {
-                WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite, carrier, carrierName, trackingId);
+            try {
+                ShipmentCarrier shipmentCarrier = new ShipmentCarrier();
+                shipmentCarrier.name(carrier);
+                if (carrier == ShipmentCarrier.NameEnum.OTHER)
+                    shipmentCarrier.other(carrierName);
+                shipmentCarrier.tracking(trackingId);
+
+                Shipment shipment = new Shipment();
+                shipment.carrier(shipmentCarrier);
+                shipment.name(description);
+                shipment.direction(direction);
+
+                WorkordersWebApi.addShipment(App.get(), _workOrder.getWorkOrderId(), shipment);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             setLoading(true);
         }

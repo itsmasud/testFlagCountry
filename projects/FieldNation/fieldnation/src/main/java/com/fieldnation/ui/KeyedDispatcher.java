@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Set;
  */
 
 public abstract class KeyedDispatcher<T> {
+    private static final String TAG = "KeyedDispatcher";
     private Hashtable<String, Set<T>> LISTENERS = new Hashtable<>();
 
     private Set<T> getSet(String key) {
@@ -59,6 +61,7 @@ public abstract class KeyedDispatcher<T> {
                 try {
                     onDispatch(listener, parameters);
                 } catch (Exception ex) {
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -67,7 +70,7 @@ public abstract class KeyedDispatcher<T> {
     public void dispatch(String key, Object... parameters) {
         if (misc.isEmptyOrNull(key))
             return;
-        
+
         if (!LISTENERS.containsKey(key))
             return;
 
@@ -76,6 +79,7 @@ public abstract class KeyedDispatcher<T> {
             try {
                 onDispatch(listener, parameters);
             } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     }

@@ -8,7 +8,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -90,9 +92,9 @@ public class ShipmentRowView extends RelativeLayout {
             _trackingIdTextView.setVisibility(GONE);
         }
 
-        String carrier;
+        ShipmentCarrier.NameEnum carrier;
         if (_shipment.getCarrier() != null && (carrier = _shipment.getCarrier().getName()) != null) {
-            _carrierTextView.setText(carrier);
+            _carrierTextView.setText(misc.capitalize(carrier.toString()));
         }
 
         _descTextView.setText(_shipment.getName());

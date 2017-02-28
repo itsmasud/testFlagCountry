@@ -29,6 +29,8 @@ import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -40,9 +42,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     private static final String TAG = "ShipmentAddDialog";
 
     // State
-    private static final String STATE_TASK = "STATE_TASK";
-    private static final String STATE_TITLE = "STATE_TITLE";
-    private static final String STATE_SHIPMENT_DESCRIPTION = "STATE_SHIPMENT_DESCRIPTION";
     private static final String STATE_CARRIER_SELECTION = "STATE_CARRIER_SELECTION";
     private static final String STATE_DIRECTION_SELECTION = "STATE_DIRECTION_SELECTION";
 
@@ -63,7 +62,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     // Data
     private String _title = null;
     private WorkOrder _workOrder;
-    private boolean _clear = false;
     private int _carrierPosition = -1;
     private int _directionPosition = -1;
     private String _shipmentDescription;
@@ -93,34 +91,15 @@ public class ShipmentAddDialog extends SimpleDialog {
         View v = inflater.inflate(R.layout.dialog_v2_add_shipment, container, false);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-
         _trackingIdEditText = (EditText) v.findViewById(R.id.trackingid_edittext);
-        _trackingIdEditText.setOnEditorActionListener(_onEditor);
-
         _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
-        _scanButton.setOnClickListener(_scan_onClick);
-
         _carrierSpinner = (HintSpinner) v.findViewById(R.id.carrier_spinner);
-        _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
-
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
-        _carrierEditText.setOnEditorActionListener(_onEditor);
-
         _carrierLayout = (TextInputLayout) v.findViewById(R.id.carrier_layout);
-
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-        _descriptionEditText.setOnEditorActionListener(_onEditor);
-
         _directionSpinner = (HintSpinner) v.findViewById(R.id.direction_spinner);
-        _directionSpinner.setOnItemSelectedListener(_direction_selected);
-
         _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_okButton_onClick);
-
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
-
-        _carriers = context.getResources().getTextArray(R.array.carrier_list);
 
         return v;
     }
@@ -128,6 +107,8 @@ public class ShipmentAddDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
+        _carriers = App.get().getResources().getTextArray(R.array.carrier_list);
+
         _trackingIdEditText.setOnEditorActionListener(_onEditor);
         _scanButton.setOnClickListener(_scan_onClick);
         _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
@@ -136,6 +117,11 @@ public class ShipmentAddDialog extends SimpleDialog {
         _directionSpinner.setOnItemSelectedListener(_direction_selected);
         _okButton.setOnClickListener(_okButton_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
+
+        getCarrierSpinner().setHint(App.get().getString(R.string.dialog_shipment_career_spinner_default_text));
+        getCarrierSpinner().clearSelection();
+        getDirectionSpinner().setHint(App.get().getString(R.string.dialog_shipment_direction_spinner_default_text));
+        getDirectionSpinner().clearSelection();
     }
 
     @Override
@@ -147,19 +133,6 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         if (_title != null) {
             _titleTextView.setText(_title);
-        }
-
-        if (_clear) {
-            _clear = false;
-            getCarrierSpinner().setHint(App.get().getString(R.string.dialog_shipment_career_spinner_default_text));
-            getCarrierSpinner().clearSelection();
-            getDirectionSpinner().setHint(App.get().getString(R.string.dialog_shipment_direction_spinner_default_text));
-            getDirectionSpinner().clearSelection();
-            _directionPosition = -1;
-            _carrierPosition = -1;
-            _carrierEditText.setText("");
-            _descriptionEditText.setText("");
-            _trackingIdEditText.setText("");
         }
 
         populateUi();
@@ -178,22 +151,10 @@ public class ShipmentAddDialog extends SimpleDialog {
         super.show(payload, animate);
     }
 
-
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
         if (savedState != null) {
-            if (savedState.containsKey(STATE_TASK))
-                _task = savedState.getParcelable(STATE_TASK);
-
-            if (savedState.containsKey(STATE_SHIPMENT_DESCRIPTION))
-                _shipmentDescription = savedState.getParcelable(STATE_SHIPMENT_DESCRIPTION);
-
-            if (savedState.containsKey(STATE_TITLE)) {
-                _title = savedState.getString(STATE_TITLE);
-                _titleTextView.setText(_title);
-            }
-
             if (savedState.containsKey(STATE_CARRIER_SELECTION)) {
                 _carrierPosition = savedState.getInt(STATE_CARRIER_SELECTION);
                 getCarrierSpinner().setSelection(_carrierPosition);
@@ -215,15 +176,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     public void onSaveDialogState(Bundle outState) {
         super.onSaveDialogState(outState);
 
-        if (_titleTextView != null && !misc.isEmptyOrNull(_titleTextView.getText().toString()))
-            outState.putString(STATE_TITLE, _titleTextView.getText().toString());
-
-        if (_task != null)
-            outState.putParcelable(STATE_TASK, _task);
-
-        if (_shipmentDescription != null)
-            outState.putString(STATE_SHIPMENT_DESCRIPTION, _shipmentDescription);
-
         if (_carrierPosition != -1)
             outState.putInt(STATE_CARRIER_SELECTION, _carrierPosition);
 
@@ -236,13 +188,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (_activityResultClient != null && _activityResultClient.isConnected()) {
             _activityResultClient.disconnect(App.get());
         }
-
         super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
     }
 
     private void populateUi() {
@@ -250,7 +196,6 @@ public class ShipmentAddDialog extends SimpleDialog {
             return;
 
         switchCarrierTextEdit();
-
         getCarrierSpinner();
 
         if (_shipmentDescription != null) {
@@ -409,19 +354,19 @@ public class ShipmentAddDialog extends SimpleDialog {
                     uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
-                            "Other",
+                            ShipmentCarrier.NameEnum.OTHER,
                             _carrierEditText.getText().toString(),
                             _descriptionEditText.getText().toString(),
-                            _directionPosition == 0,
+                            _directionPosition == 0 ? Shipment.DirectionEnum.TO_SITE : Shipment.DirectionEnum.FROM_SITE,
                             _task.getId());
                 } else {
                     uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
-                            _carriers[_carrierPosition].toString(),
+                            ShipmentCarrier.NameEnum.values()[_carrierPosition],
                             null,
                             _descriptionEditText.getText().toString(),
-                            _directionPosition == 0,
+                            _directionPosition == 0 ? Shipment.DirectionEnum.TO_SITE : Shipment.DirectionEnum.FROM_SITE,
                             _task.getId());
                 }
 
@@ -430,19 +375,19 @@ public class ShipmentAddDialog extends SimpleDialog {
                     uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
-                            "Other",
+                            ShipmentCarrier.NameEnum.OTHER,
                             _carrierEditText.getText().toString(),
                             _descriptionEditText.getText().toString(),
-                            _directionPosition == 0,
+                            _directionPosition == 0 ? Shipment.DirectionEnum.TO_SITE : Shipment.DirectionEnum.FROM_SITE,
                             0);
                 } else {
                     uploadBarcodeImage();
                     _onOkDispatcher.dispatch(getUid(),
                             _trackingIdEditText.getText().toString(),
-                            _carriers[_carrierPosition].toString(),
+                            ShipmentCarrier.NameEnum.values()[_carrierPosition],
                             null,
                             _descriptionEditText.getText().toString(),
-                            _directionPosition == 0,
+                            _directionPosition == 0 ? Shipment.DirectionEnum.TO_SITE : Shipment.DirectionEnum.FROM_SITE,
                             0);
                 }
             }
@@ -545,14 +490,14 @@ public class ShipmentAddDialog extends SimpleDialog {
     /*-         Ok           -*/
     /*-**********************-*/
     public interface OnOkListener {
-        void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
+        void onOk(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum directionEnum, int taskId);
     }
 
     private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
         @Override
         public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((String) parameters[0], (String) parameters[1], (String) parameters[2],
-                    (String) parameters[3], (Boolean) parameters[4], (Long) parameters[5]);
+            listener.onOk((String) parameters[0], (ShipmentCarrier.NameEnum) parameters[1], (String) parameters[2],
+                    (String) parameters[3], (Shipment.DirectionEnum) parameters[4], (Integer) parameters[5]);
         }
     };
 

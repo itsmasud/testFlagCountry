@@ -58,10 +58,10 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
 
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        refresh();
+        populateUi();
     }
 
-    private void refresh() {
+    private void populateUi() {
         final Shipment[] shipments = _workOrder.getShipments().getResults();
 
         if (_workOrder.getShipments() != null
@@ -71,6 +71,8 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
             _addButton.setVisibility(View.GONE);
         }
 
+        setVisibility(View.VISIBLE);
+
         if (shipments == null || shipments.length == 0) {
             _shipmentsLayout.setVisibility(GONE);
             _noShipmentsTextView.setVisibility(VISIBLE);
@@ -79,8 +81,6 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
             _shipmentsLayout.setVisibility(VISIBLE);
             _noShipmentsTextView.setVisibility(GONE);
         }
-
-        setVisibility(View.VISIBLE);
 
         if (_shipmentsLayout.getChildCount() > shipments.length) {
             _shipmentsLayout.removeViews(shipments.length - 1, _shipmentsLayout.getChildCount() - shipments.length);
