@@ -86,14 +86,6 @@ public class ExpenseDialog extends SimpleDialog {
         _categorySpinner.setOnItemSelectedListener(_spinner_selected);
         _okButton.setOnClickListener(_okButton_onClick);
         _cancelButton.setOnClickListener(_cancelButton_onClick);
-
-        new ExpenseCategories(App.get()).setListener(new ExpenseCategories.Listener() {
-            @Override
-            public void onHaveCategories(ExpenseCategory[] categories) {
-                setCategories(categories);
-            }
-        });
-
     }
 
     @Override
