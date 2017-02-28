@@ -75,16 +75,25 @@ public class ExpenseDialog extends SimpleDialog {
     public void show(Bundle payload, boolean animate) {
         _showCategories = payload.getBoolean("showCategories");
         super.show(payload, animate);
+
+        populateUi();
     }
 
     @Override
     public void onStart() {
+        super.onStart();
         _amountEditText.setOnEditorActionListener(_oneditor_listener);
         _categorySpinner.setOnItemSelectedListener(_spinner_selected);
         _okButton.setOnClickListener(_okButton_onClick);
         _cancelButton.setOnClickListener(_cancelButton_onClick);
 
-        super.onStart();
+        new ExpenseCategories(App.get()).setListener(new ExpenseCategories.Listener() {
+            @Override
+            public void onHaveCategories(ExpenseCategory[] categories) {
+                setCategories(categories);
+            }
+        });
+
     }
 
     @Override
@@ -267,9 +276,9 @@ public class ExpenseDialog extends SimpleDialog {
         _onOkDispatcher.removeAll(uid);
     }
 
-    /*-**********************-*/
+    /*-**************************-*/
     /*-         Cancel           -*/
-    /*-**********************-*/
+    /*-**************************-*/
     public interface OnCancelListener {
         void onCancel();
     }

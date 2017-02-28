@@ -158,4 +158,9 @@ public class ExpenseCategory implements Parcelable {
         setId(id);
         setName(name);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
