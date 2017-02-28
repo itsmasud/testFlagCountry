@@ -118,15 +118,6 @@ public class ExpenseDialog extends SimpleDialog {
         } else {
             _categoryLayout.setVisibility(View.GONE);
         }
-
-        if (_descriptionEditText != null)
-            _descriptionEditText.setText("");
-
-        if (_amountEditText != null)
-            _amountEditText.setText("");
-
-        if (_categorySpinner != null)
-            _categorySpinner.clearSelection();
     }
 
     private void setCategories(ExpenseCategory[] categories) {
