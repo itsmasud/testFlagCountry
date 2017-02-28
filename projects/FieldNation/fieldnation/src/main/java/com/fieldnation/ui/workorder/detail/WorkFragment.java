@@ -61,6 +61,7 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -398,7 +399,6 @@ TODO        if (_currentTask != null)
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
-// TODO        _worklogDialog.setListener(_worklogDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
@@ -1950,33 +1950,27 @@ TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_liste
 
 
     private final WorkLogDialog.OnOkListener _worklogDialog_listener = new WorkLogDialog.OnOkListener() {
-
         @Override
         public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
-// TODO V2 API is not working adding timelog
-//            if (timeLog == null) {
-//                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-//                if (deviceCount <= 0) {
-//                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-//                            start.getTimeInMillis(), end.getTimeInMillis());
-//                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog);
-//                } else {
-//                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-//                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-//                }
-//            } else {
-//                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-//                if (deviceCount <= 0) {
-//                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-//                            timeLog.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
-//                } else {
-//                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-//                            timeLog.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-//                }
-//            }
-//            setLoading(true);
-        }
+            TimeLog newTimeLog = new TimeLog();
+            try {
+                newTimeLog.in(new CheckInOut().created(new Date(start)));
+                newTimeLog.out(new CheckInOut().created(new Date(end)));
+                if (deviceCount > 0)
+                    newTimeLog.devices((double) deviceCount);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (timeLog == null) {
+                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), newTimeLog);
 
+            } else {
+                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), newTimeLog);
+            }
+            setLoading(true);
+        }
     };
 
 
