@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -125,8 +124,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
             if (workOrders == null || workOrders.getResults() != null || workOrders.getResults().length == 0) {
                 return;
             }
-
-
 /*
 TODO            for (WorkOrder wo : workOrders.getResults()) {
                 Action[] actions = wo.getPrimaryActions();
@@ -140,14 +137,6 @@ TODO            for (WorkOrder wo : workOrders.getResults()) {
                 }
             }
 */
-        }
-    };
-
-    private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            App.get().setNeedsConfirmation(false);
-            NavActivity.startNew(App.get());
         }
     };
 
