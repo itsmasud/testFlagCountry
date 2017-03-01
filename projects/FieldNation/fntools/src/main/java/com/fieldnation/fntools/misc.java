@@ -89,7 +89,7 @@ public class misc {
     }
 
     public static String toCurrency(double money) {
-        return _currencyFormat.format(money);
+        return _currencyFormat.format(Math.round(money * 100.0) / 100.0);
     }
 
     public static String toShortCurrency(double money) {
