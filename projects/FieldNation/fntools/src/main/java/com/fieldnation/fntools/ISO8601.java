@@ -24,7 +24,6 @@ public final class ISO8601 {
         return _sdf;
     }
 
-
     public static String fromUTC(long utcMilliseconds) {
         final Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(utcMilliseconds);

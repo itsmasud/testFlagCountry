@@ -70,19 +70,19 @@ public class WorkLogDialog extends SimpleDialog {
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
 
-        final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(v.getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _timePicker = new TimePickerDialog(v.getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-
-        _startCalendar = Calendar.getInstance();
-        _endCalendar = Calendar.getInstance();
-
         return v;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        final Calendar c = Calendar.getInstance();
+        _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+
+        _startCalendar = Calendar.getInstance();
+        _endCalendar = Calendar.getInstance();
+
         _startButton.setOnClickListener(_start_onClick);
         _endButton.setOnClickListener(_end_onClick);
         _okButton.setOnClickListener(_ok_onClick);
