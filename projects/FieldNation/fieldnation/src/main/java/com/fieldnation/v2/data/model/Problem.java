@@ -26,11 +26,11 @@ public class Problem implements Parcelable {
     @Json(name = "comments")
     private String _comments;
 
-    @Json(name = "contact")
-    private ContactEnum _contact;
-
     @Json(name = "created")
     private Date _created;
+
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "message")
     private ProblemMessage _message;
@@ -40,9 +40,6 @@ public class Problem implements Parcelable {
 
     @Json(name = "type")
     private ProblemType _type;
-
-    @Json(name = "watchers")
-    private Integer[] _watchers;
 
     @Source
     private JsonObject SOURCE;
@@ -107,32 +104,6 @@ public class Problem implements Parcelable {
         return this;
     }
 
-    public void setContact(ContactEnum contact) throws ParseException {
-        _contact = contact;
-        SOURCE.put("contact", contact.toString());
-    }
-
-    public ContactEnum getContact() {
-        try {
-            if (_contact != null)
-                return _contact;
-
-            if (SOURCE.has("contact") && SOURCE.get("contact") != null)
-                _contact = ContactEnum.fromString(SOURCE.getString("contact"));
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _contact;
-    }
-
-    public Problem contact(ContactEnum contact) throws ParseException {
-        _contact = contact;
-        SOURCE.put("contact", contact.toString());
-        return this;
-    }
-
     public void setCreated(Date created) throws ParseException {
         _created = created;
         SOURCE.put("created", created.getJson());
@@ -156,6 +127,32 @@ public class Problem implements Parcelable {
     public Problem created(Date created) throws ParseException {
         _created = created;
         SOURCE.put("created", created.getJson());
+        return this;
+    }
+
+    public void setId(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+    }
+
+    public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _id;
+    }
+
+    public Problem id(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
@@ -235,84 +232,6 @@ public class Problem implements Parcelable {
         _type = type;
         SOURCE.put("type", type.getJson());
         return this;
-    }
-
-    public void setWatchers(Integer[] watchers) throws ParseException {
-        _watchers = watchers;
-        JsonArray ja = new JsonArray();
-        for (Integer item : watchers) {
-            ja.add(item);
-        }
-        SOURCE.put("watchers", ja);
-    }
-
-    public Integer[] getWatchers() {
-        try {
-            if (_watchers != null)
-                return _watchers;
-
-            if (SOURCE.has("watchers") && SOURCE.get("watchers") != null) {
-                JsonArray ja = SOURCE.getJsonArray("watchers");
-                _watchers = ja.toArray(new Integer[ja.size()]);
-            }
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _watchers;
-    }
-
-    public Problem watchers(Integer[] watchers) throws ParseException {
-        _watchers = watchers;
-        JsonArray ja = new JsonArray();
-        for (Integer item : watchers) {
-            ja.add(item);
-        }
-        SOURCE.put("watchers", ja, true);
-        return this;
-    }
-
-    /*-******************************-*/
-    /*-             Enums            -*/
-    /*-******************************-*/
-    public enum ContactEnum {
-        @Json(name = "all")
-        ALL("all"),
-        @Json(name = "buyer")
-        BUYER("buyer"),
-        @Json(name = "provider")
-        PROVIDER("provider"),
-        @Json(name = "support")
-        SUPPORT("support");
-
-        private String value;
-
-        ContactEnum(String value) {
-            this.value = value;
-        }
-
-        public static ContactEnum fromString(String value) {
-            ContactEnum[] values = values();
-            for (ContactEnum v : values) {
-                if (v.value.equals(value))
-                    return v;
-            }
-            return null;
-        }
-
-        public static ContactEnum[] fromJsonArray(JsonArray jsonArray) {
-            ContactEnum[] list = new ContactEnum[jsonArray.size()];
-            for (int i = 0; i < list.length; i++) {
-                list[i] = fromString(jsonArray.getString(i));
-            }
-            return list;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
     }
 
     /*-*****************************-*/

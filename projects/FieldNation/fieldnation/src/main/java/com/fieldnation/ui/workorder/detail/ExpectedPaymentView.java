@@ -123,24 +123,10 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _discountsTextView.setText(misc.toCurrency(pay.getDiscounts().getSum().getAll()));
 
         // Bonus
-        PayModifier[] bonusList = pay.getBonuses().getResults();
-        double bonuses = 0.0;
-        if (bonusList != null) {
-            for (PayModifier info : bonusList) {
-                bonuses += info.getAmount();
-            }
-        }
-        _bonusTextView.setText(misc.toCurrency(bonuses));
+        _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
 
         // Penalty
-        PayModifier[] penaltyList = pay.getPenalties().getResults();
-        double penalties = 0.0;
-        if (penaltyList != null) {
-            for (PayModifier info : penaltyList) {
-                penalties += info.getAmount();
-            }
-        }
-        _penaltyTextView.setText(misc.toCurrency(penalties));
+        _penaltyTextView.setText(misc.toCurrency(pay.getPenalties().getSum().getCharged()));
 
 
         // Total
@@ -162,7 +148,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
                 _feeTextView.setVisibility(VISIBLE);
                 _feePercentTextView.setVisibility(VISIBLE);
-                sum -= fee.getModifier() * pay.getTotal();
+                sum -= Math.round(fee.getModifier() * pay.getTotal() * 100.0) / 100.0;
             } else if (fee.getName().equals("insurance")) {
                 _insuranceFeeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
                 _insurancePercentTextView.setText(String.format(
@@ -172,7 +158,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
                 _insuranceFeeTextView.setVisibility(VISIBLE);
                 _insurancePercentTextView.setVisibility(VISIBLE);
 
-                sum -= fee.getModifier() * pay.getTotal();
+                sum -= Math.round(fee.getModifier() * pay.getTotal() * 100.0) / 100.0;
             }
         }
 

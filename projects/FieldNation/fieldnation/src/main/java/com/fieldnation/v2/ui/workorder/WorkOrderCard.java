@@ -387,7 +387,8 @@ public class WorkOrderCard extends RelativeLayout {
         if (false) {
 
             // set eta
-        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
+        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
+                && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_eta_onClick);
             button.setText(R.string.btn_set_eta);

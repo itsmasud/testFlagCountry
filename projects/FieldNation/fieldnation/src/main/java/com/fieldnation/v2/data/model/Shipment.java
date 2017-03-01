@@ -305,16 +305,16 @@ public class Shipment implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum StatusEnum {
-        @Json(name = "arrived")
-        ARRIVED("arrived"),
-        @Json(name = "en_route")
-        EN_ROUTE("en_route"),
-        @Json(name = "error")
-        ERROR("error"),
-        @Json(name = "lost")
-        LOST("lost"),
-        @Json(name = "new")
-        NEW("new");
+        @Json(name = "Arrived")
+        ARRIVED("Arrived"),
+        @Json(name = "En Route")
+        EN_ROUTE("En Route"),
+        @Json(name = "Error")
+        ERROR("Error"),
+        @Json(name = "Lost")
+        LOST("Lost"),
+        @Json(name = "New")
+        NEW("New");
 
         private String value;
 
@@ -346,10 +346,10 @@ public class Shipment implements Parcelable {
     }
 
     public enum DirectionEnum {
-        @Json(name = "from_site")
-        FROM_SITE("from_site"),
-        @Json(name = "to_site")
-        TO_SITE("to_site");
+        @Json(name = "from site")
+        FROM_SITE("from site"),
+        @Json(name = "to site")
+        TO_SITE("to site");
 
         private String value;
 

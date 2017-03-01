@@ -32,7 +32,6 @@ public class ReasonCoView extends RelativeLayout {
     private String _reason;
     private long _expires;
     private boolean _tacAccepted = false;
-    private boolean _reset = false;
     private int _currentPosition = 1;
     private int[] _durations;
 
@@ -90,7 +89,6 @@ public class ReasonCoView extends RelativeLayout {
     }
 
     public void setCounterOffer(String reason, long expires) {
-        _reset = true;
         _reason = reason;
         _expires = expires;
 
@@ -124,11 +122,7 @@ public class ReasonCoView extends RelativeLayout {
 
         // expiration stuff
         _expiresCheckBox.setChecked(_expires > 0);
-
-        if (_reset) {
-            _reset = false;
-            _tacCheckBox.setChecked(false);
-        }
+        _expireDurationSpinner.setEnabled(_expires > 0);
     }
 
     /*-*********************************-*/
@@ -140,6 +134,7 @@ public class ReasonCoView extends RelativeLayout {
             if (_expiresCheckBox.isChecked() && _listener != null) {
                 _listener.onExpirationChange(System.currentTimeMillis() + _durations[_currentPosition] * 1000);
             }
+            _expireDurationSpinner.setEnabled(_expiresCheckBox.isChecked());
         }
     };
 

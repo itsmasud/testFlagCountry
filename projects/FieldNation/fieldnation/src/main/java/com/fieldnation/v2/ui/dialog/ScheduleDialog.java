@@ -439,9 +439,9 @@ public class ScheduleDialog extends SimpleDialog {
         _onCompleteDispatcher.removeAll(uid);
     }
 
-    /*-****************************-*/
+    /*-**************************-*/
     /*-         Cancel           -*/
-    /*-****************************-*/
+    /*-**************************-*/
     public interface OnCancelListener {
         void onCancel();
     }

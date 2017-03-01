@@ -21,7 +21,7 @@ public class ProblemResolution implements Parcelable {
     private static final String TAG = "ProblemResolution";
 
     @Json(name = "allowed_resolvers")
-    private AllowedResolversEnum _allowedResolvers;
+    private AllowedResolversEnum[] _allowedResolvers;
 
     @Json(name = "at")
     private Date _at;
@@ -43,18 +43,23 @@ public class ProblemResolution implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setAllowedResolvers(AllowedResolversEnum allowedResolvers) throws ParseException {
+    public void setAllowedResolvers(AllowedResolversEnum[] allowedResolvers) throws ParseException {
         _allowedResolvers = allowedResolvers;
-        SOURCE.put("allowed_resolvers", allowedResolvers.toString());
+        JsonArray ja = new JsonArray();
+        for (AllowedResolversEnum item : allowedResolvers) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("allowed_resolvers", ja);
     }
 
-    public AllowedResolversEnum getAllowedResolvers() {
+    public AllowedResolversEnum[] getAllowedResolvers() {
         try {
             if (_allowedResolvers != null)
                 return _allowedResolvers;
 
-            if (SOURCE.has("allowed_resolvers") && SOURCE.get("allowed_resolvers") != null)
-                _allowedResolvers = AllowedResolversEnum.fromString(SOURCE.getString("allowed_resolvers"));
+            if (SOURCE.has("allowed_resolvers") && SOURCE.get("allowed_resolvers") != null) {
+                _allowedResolvers = AllowedResolversEnum.fromJsonArray(SOURCE.getJsonArray("allowed_resolvers"));
+            }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -63,9 +68,13 @@ public class ProblemResolution implements Parcelable {
         return _allowedResolvers;
     }
 
-    public ProblemResolution allowedResolvers(AllowedResolversEnum allowedResolvers) throws ParseException {
+    public ProblemResolution allowedResolvers(AllowedResolversEnum[] allowedResolvers) throws ParseException {
         _allowedResolvers = allowedResolvers;
-        SOURCE.put("allowed_resolvers", allowedResolvers.toString());
+        JsonArray ja = new JsonArray();
+        for (AllowedResolversEnum item : allowedResolvers) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("allowed_resolvers", ja, true);
         return this;
     }
 
@@ -150,45 +159,6 @@ public class ProblemResolution implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
-    public enum AllowedResolversEnum {
-        @Json(name = "all")
-        ALL("all"),
-        @Json(name = "buyer")
-        BUYER("buyer"),
-        @Json(name = "provider")
-        PROVIDER("provider"),
-        @Json(name = "support")
-        SUPPORT("support");
-
-        private String value;
-
-        AllowedResolversEnum(String value) {
-            this.value = value;
-        }
-
-        public static AllowedResolversEnum fromString(String value) {
-            AllowedResolversEnum[] values = values();
-            for (AllowedResolversEnum v : values) {
-                if (v.value.equals(value))
-                    return v;
-            }
-            return null;
-        }
-
-        public static AllowedResolversEnum[] fromJsonArray(JsonArray jsonArray) {
-            AllowedResolversEnum[] list = new AllowedResolversEnum[jsonArray.size()];
-            for (int i = 0; i < list.length; i++) {
-                list[i] = fromString(jsonArray.getString(i));
-            }
-            return list;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     public enum StatusEnum {
         @Json(name = "open")
         OPEN("open"),
@@ -212,6 +182,43 @@ public class ProblemResolution implements Parcelable {
 
         public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
             StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum AllowedResolversEnum {
+        @Json(name = "assigned_provider")
+        ASSIGNED_PROVIDER("assigned_provider"),
+        @Json(name = "buyer")
+        BUYER("buyer"),
+        @Json(name = "support")
+        SUPPORT("support");
+
+        private String value;
+
+        AllowedResolversEnum(String value) {
+            this.value = value;
+        }
+
+        public static AllowedResolversEnum fromString(String value) {
+            AllowedResolversEnum[] values = values();
+            for (AllowedResolversEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static AllowedResolversEnum[] fromJsonArray(JsonArray jsonArray) {
+            AllowedResolversEnum[] list = new AllowedResolversEnum[jsonArray.size()];
             for (int i = 0; i < list.length; i++) {
                 list[i] = fromString(jsonArray.getString(i));
             }
