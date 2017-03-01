@@ -75,7 +75,6 @@ public class ExpenseDialog extends SimpleDialog {
     public void show(Bundle payload, boolean animate) {
         _showCategories = payload.getBoolean("showCategories");
         super.show(payload, animate);
-
         populateUi();
     }
 
