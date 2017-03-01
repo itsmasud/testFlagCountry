@@ -5,13 +5,14 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -608,5 +609,28 @@ public class CustomField implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
+    }
+
+    private Set<FlagsEnum> _flagsSet = null;
+
+    public Set<FlagsEnum> getFlagsSet() {
+        if (_flagsSet == null) {
+            _flagsSet = new HashSet<>();
+            _flagsSet.addAll(Arrays.asList(getFlags()));
+        }
+        return _flagsSet;
     }
 }
