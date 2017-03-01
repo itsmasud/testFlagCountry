@@ -45,7 +45,6 @@ public class ClosingNotesDialog extends SimpleDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_closing_notes, container, false);
 
         _editText = (EditText) v.findViewById(R.id.notes_edittext);
@@ -53,14 +52,6 @@ public class ClosingNotesDialog extends SimpleDialog {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
 
         return v;
-    }
-
-    @Override
-    public void show(Bundle payload, boolean animate) {
-        super.show(payload, animate);
-
-        _notes = payload.getString("notes");
-        _workOrderId = payload.getInt("workOrderId");
     }
 
     @Override
@@ -72,20 +63,19 @@ public class ClosingNotesDialog extends SimpleDialog {
     }
 
     @Override
-    public void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
+    public void show(Bundle payload, boolean animate) {
+        super.show(payload, animate);
+
+        _notes = payload.getString("notes");
+        _workOrderId = payload.getInt("workOrderId");
 
         if (!misc.isEmptyOrNull(_notes))
             _editText.setText(_notes);
-        else
-            _editText.setText("");
     }
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
-
         if (savedState.containsKey("notes")) {
             _notes = savedState.getString("notes");
             _editText.setText(_notes);
@@ -94,7 +84,6 @@ public class ClosingNotesDialog extends SimpleDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
         if (_editText != null && !misc.isEmptyOrNull(_editText.getText().toString())) {
             _notes = _editText.getText().toString();
             outState.putString(STATE_NOTES, _notes);
