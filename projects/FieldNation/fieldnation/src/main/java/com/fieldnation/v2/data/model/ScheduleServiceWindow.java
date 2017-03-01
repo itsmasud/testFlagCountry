@@ -364,7 +364,7 @@ public class ScheduleServiceWindow implements Parcelable {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + DateUtils.formatDateLong(cal);
                     time = DateUtils.formatTime(cal, false);
 
-                    String msg = "Between " + dayDate + " @ " + time + "\nand";
+                    String msg = "Between\n" + dayDate + " @ " + time + "\nand ";
 
                     Calendar cal2 = getEnd().getCalendar();
 

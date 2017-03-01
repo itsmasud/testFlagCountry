@@ -145,6 +145,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         } else if (!(_workOrder.getRequests() != null
                 && _workOrder.getRequests().getActionsSet() != null
                 && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+                && _workOrder.getRequests().getCounterOffer() == null
                 && (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)) {
             _actionButton.setEnabled(false);
             _actionButton.setText(R.string.btn_counter_disabled);
