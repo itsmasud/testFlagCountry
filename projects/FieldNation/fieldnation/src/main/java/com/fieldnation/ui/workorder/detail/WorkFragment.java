@@ -50,8 +50,6 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
-import com.fieldnation.ui.dialog.ShipmentAddDialog;
-import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
@@ -70,6 +68,9 @@ import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
@@ -84,12 +85,12 @@ import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
+import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.text.ParseException;
@@ -118,6 +119,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
+    private static final String DIALOG_SHIPMENT_ADD = TAG + ".shipmentAddDialog";
+    private static final String DIALOG_TASK_SHIPMENT_ADD = TAG + ".taskShipmentAddDialog";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
@@ -158,8 +161,6 @@ public class WorkFragment extends WorkorderFragment {
     // Dialogs
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
-    private ShipmentAddDialog _shipmentAddDialog;
-    private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsScrollingDialog _termsScrollingDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
@@ -257,8 +258,8 @@ public class WorkFragment extends WorkorderFragment {
         _scrollView.setOnOverScrollListener(_refreshView);
 
         _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
-// TODO        _shipments.setListener(_shipments_listener);
-// TODO        _renderers.add(_shipments);
+        _shipments.setListener(_shipments_listener);
+        _renderers.add(_shipments);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
 // TODO        _taskList.setTaskListViewListener(_taskListView_listener);
@@ -390,15 +391,12 @@ TODO        if (_currentTask != null)
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog.setListener(_declineDialog_listener);
 // TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
-        _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
@@ -412,6 +410,9 @@ TODO        if (_currentTask != null)
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
+        TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
+        TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
@@ -430,6 +431,7 @@ TODO        if (_currentTask != null)
         LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+
 
         _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workorderApi.connect(App.get());
@@ -457,6 +459,9 @@ TODO        if (_currentTask != null)
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
+        TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
+        TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
@@ -761,21 +766,6 @@ TODO     private void setTasks(List<Task> tasks) {
                 }
             });
             return;
-        }
-
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
-        if (result != null) {
-            Log.e(TAG, "onActivityResult: result not null");
-            String content = result.getContents();
-
-            if (content == null) {
-                Log.e(TAG, "onActivityResult: no image path");
-            } else {
-                _scannedImagePath = result.getBarcodeImagePath();
-                _shipmentAddDialog.setTrackingId(content);
-                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
-            }
         }
 
         try {
@@ -1268,17 +1258,17 @@ TODO    private final CustomFieldRowView.Listener _customFields_listener = new C
     };
 */
 
-/*
-TODO    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+
+    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), null);
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
-        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
-            if ((long) shipment.getUserId() != (long) App.getProfileId()) {
+        public void onDelete(WorkOrder workOrder, final Shipment shipment) {
+            if ((long) shipment.getUser().getId() != (long) App.getProfileId()) {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
                 return;
             }
@@ -1289,7 +1279,7 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workOrder.getWorkOrderId(), shipment.getWorkorderShipmentId());
+                                    _workOrder.getWorkOrderId(), shipment.getId());
                         }
 
                         @Override
@@ -1304,13 +1294,12 @@ TODO    private final ShipmentListView.Listener _shipments_listener = new Shipme
         }
 
         @Override
-        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
+        public void onAssign(WorkOrder workOrder, Shipment shipment) {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
             // TODO present a picker of the tasks that this can be assigned too
         }
     };
-*/
 
     private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
@@ -1817,128 +1806,49 @@ TODO            if (_tempFile != null) {
         }
     };
 
-    private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
+    private final ShipmentAddDialog.OnOkListener _shipmentAddDialog_onOk = new ShipmentAddDialog.OnOkListener() {
         @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-/*
-TODO            if (_scannedImagePath != null) {
-                final UploadSlot[] slots = _workorder.getUploadSlots();
-                if (slots == null) return;
-                for (UploadSlot uploadSlot : slots) {
-                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(),
-                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
-                        _scannedImagePath = null;
-                    }
-                }
-            }
-*/
-
-            WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite,
-                    carrier, carrierName, trackingId);
+        public void onOk(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            setLoading(true);
-        }
 
-        @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description,
-                         boolean shipToSite, long taskId) {
-            Log.v(TAG, "ShipmentAddDialog#onOk");
+            try {
+                ShipmentCarrier shipmentCarrier = new ShipmentCarrier();
+                shipmentCarrier.name(carrier);
+                if (carrier == ShipmentCarrier.NameEnum.OTHER)
+                    shipmentCarrier.other(carrierName);
+                shipmentCarrier.tracking(trackingId);
 
-/*
-TODO            if (_scannedImagePath != null) {
-                final UploadSlot[] slots = _workorder.getUploadSlots();
-                if (slots == null) return;
-                for (UploadSlot uploadSlot : slots) {
-                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(),
-                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
-                        _scannedImagePath = null;
-                    }
-                }
+                Shipment shipment = new Shipment();
+                shipment.carrier(shipmentCarrier);
+                shipment.name(description);
+                shipment.direction(direction);
+
+                WorkordersWebApi.addShipment(App.get(), _workOrder.getWorkOrderId(), shipment);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-*/
-
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite,
-                    carrier, carrierName, trackingId, taskId);
             setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onScan() {
-            IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
         }
     };
 
-/*
-TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+    private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
         @Override
-        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
+        public void onAddShipment(WorkOrder workorder, Shipment shipment, Task task) {
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workorder,
+                    getString(R.string.dialog_shipment_title),
+                    shipment == null ? "" : shipment.getName(), task);
+        }
+    };
+
+    private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
+        @Override
+        public void onDelete(WorkOrder workorder, Shipment shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
+            WorkorderClient.deleteShipment(App.get(), workorder.getWorkOrderId(), shipment.getId());
             setLoading(true);
         }
-
-        @Override
-        public void onAssign(Workorder workorder, int shipmentId, long taskId) {
-            WorkorderClient.actionCompleteShipmentTask(App.get(), workorder.getWorkorderId(), shipmentId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
-                    shipToSite, carrier, carrierName, trackingId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
-                    shipToSite, carrier, carrierName, trackingId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onScan() {
-            IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
-        }
-
-        @Override
-        public void onAddShipment(ShipmentTracking shipment, Task task) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), task);
-        }
-
-        @Override
-        public void onAddShipment(Task task) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
-        }
-
     };
-*/
 
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
