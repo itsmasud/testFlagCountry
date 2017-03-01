@@ -80,7 +80,7 @@ public abstract class SimpleDialog implements Dialog {
     public void onStart() {
         _clickBarrier.setOnClickListener(_this_onClick);
         _clickBarrier.setClickable(true);
-        _container.setClickable(true);
+        _container.setClickable(false);
     }
 
     @Override
