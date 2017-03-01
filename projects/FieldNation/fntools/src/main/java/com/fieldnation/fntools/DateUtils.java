@@ -12,6 +12,10 @@ public class DateUtils {
     private static final SimpleDateFormat V2_DATE_FORMAT_PARSE = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss z");
     private static final SimpleDateFormat V2_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
 
+    static {
+        V2_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
     public static Calendar v2UtcToCalendar(String utc) throws ParseException {
         Calendar c = Calendar.getInstance();
         c.setTime(V2_DATE_FORMAT_PARSE.parse(utc + " UTC"));

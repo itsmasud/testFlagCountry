@@ -121,7 +121,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         if (false) {
 
             // set eta
-        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
+        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
+                && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
