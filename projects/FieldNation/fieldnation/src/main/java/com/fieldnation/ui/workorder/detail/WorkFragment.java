@@ -53,7 +53,6 @@ import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
@@ -82,6 +81,7 @@ import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
+import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
@@ -1733,7 +1733,7 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         @Override
         public void onContinueClick() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getWorkOrderId());
-            WorkorderClient.actionComplete(App.get(), _workOrder.getWorkOrderId());
+            WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getWorkOrderId());
             setLoading(true);
         }
     };
