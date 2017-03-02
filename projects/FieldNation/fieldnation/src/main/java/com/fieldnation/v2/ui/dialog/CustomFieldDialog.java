@@ -12,11 +12,11 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
@@ -40,7 +40,6 @@ public class CustomFieldDialog extends SimpleDialog {
     private TextView _titleTextView;
     private EditText _textEditText;
     private Button _dateTimeButton;
-    private LinearLayout _spinnerLayout;
     private HintSpinner _spinner;
     private TextView _tipTextView;
     private Button _okButton;
@@ -72,12 +71,11 @@ public class CustomFieldDialog extends SimpleDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_custom_field, container);
+        View v = inflater.inflate(R.layout.dialog_custom_field, container, false);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
         _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
-        _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
         _spinner = (HintSpinner) v.findViewById(R.id.spinner);
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -262,7 +260,7 @@ public class CustomFieldDialog extends SimpleDialog {
 
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
-        _spinnerLayout.setVisibility(View.GONE);
+        _spinner.setVisibility(View.GONE);
         _tipTextView.setVisibility(View.GONE);
 
         if (!misc.isEmptyOrNull(_customField.getTip())) {
@@ -351,7 +349,7 @@ public class CustomFieldDialog extends SimpleDialog {
                 _textEditText.setInputType(InputType.TYPE_CLASS_PHONE);
                 break;
             case PREDEFINED:
-                _spinnerLayout.setVisibility(View.VISIBLE);
+                _spinner.setVisibility(View.VISIBLE);
                 _textEditText.setVisibility(View.GONE);
                 _okButton.setEnabled(true);
                 if (_customField.getOptions() != null) {
@@ -503,6 +501,13 @@ public class CustomFieldDialog extends SimpleDialog {
                 _okButton.setEnabled(false);
         }
     };
+
+    public static void show(Context context, String uid, CustomField customField) {
+        Bundle params = new Bundle();
+        params.putParcelable("customField", customField);
+
+        Controller.show(context, uid, CustomFieldDialog.class, params);
+    }
 
     /*-**********************-*/
     /*-         Ok           -*/
