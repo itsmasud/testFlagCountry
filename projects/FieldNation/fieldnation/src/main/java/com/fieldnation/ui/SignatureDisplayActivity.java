@@ -4,30 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Signature;
-import com.fieldnation.data.workorder.Task;
-import com.fieldnation.data.workorder.TaskType;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.workorder.detail.TimeLogRowView;
-
-import java.util.Random;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by michael.carver on 12/9/2014.
@@ -67,11 +56,8 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
 
     // Data
     private Signature _signature;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private long _signatureId = -1;
-
-    // Service
-    private WorkorderClient _workorderClient;
 
     @Override
     public int getLayoutResource() {
@@ -104,66 +90,24 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            new AsyncTaskEx<Bundle, Object, Object[]>() {
-                @Override
-                protected Object[] doInBackground(Bundle... params) {
-                    Bundle extras = params[0];
-                    Long signatureId = _signatureId;
-                    Workorder workorder = _workorder;
+            if (extras.containsKey(INTENT_PARAM_SIGNATURE))
+                _signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
 
-                    extras.setClassLoader(JsonObject.class.getClassLoader());
+            if (extras.containsKey(INTENT_PARAM_WORKORDER))
+                _workOrder = extras.getParcelable(INTENT_PARAM_WORKORDER);
 
-                    if (extras.containsKey(INTENT_PARAM_SIGNATURE))
-                        signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
-
-                    if (extras.containsKey(INTENT_PARAM_WORKORDER))
-                        workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
-
-                    return new Object[]{signatureId, workorder};
-                }
-
-                @Override
-                protected void onPostExecute(Object[] objects) {
-                    super.onPostExecute(objects);
-                    _signatureId = (Long) objects[0];
-                    _workorder = (Workorder) objects[1];
-                    getData();
-                }
-            }.executeEx(extras);
-
+            populateUi();
         } else if (savedInstanceState != null) {
-            new AsyncTaskEx<Bundle, Object, Object[]>() {
-                @Override
-                protected Object[] doInBackground(Bundle... params) {
-                    Bundle savedInstanceState = params[0];
+            if (savedInstanceState.containsKey(STATE_SIGNATURE))
+                _signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
 
-                    Signature signature = _signature;
-                    Workorder workorder = _workorder;
-                    Long signatureId = _signatureId;
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
 
-                    savedInstanceState.setClassLoader(JsonObject.class.getClassLoader());
+            if (savedInstanceState.containsKey(STATE_SIGNATURE_ID))
+                _signatureId = savedInstanceState.getLong(STATE_SIGNATURE_ID);
 
-                    if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                        signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
-
-                    if (savedInstanceState.containsKey(STATE_WORKORDER))
-                        workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-                    if (savedInstanceState.containsKey(STATE_SIGNATURE_ID))
-                        signatureId = savedInstanceState.getLong(STATE_SIGNATURE_ID);
-
-                    return new Object[]{signature, workorder, signatureId};
-                }
-
-                @Override
-                protected void onPostExecute(Object[] objects) {
-                    super.onPostExecute(objects);
-                    _signature = (Signature) objects[0];
-                    _workorder = (Workorder) objects[1];
-                    _signatureId = (Long) objects[2];
-                    populateUi();
-                }
-            }.executeEx(savedInstanceState);
+            populateUi();
         } else {
             finish();
         }
@@ -184,8 +128,8 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         if (_signature != null)
             outState.putParcelable(STATE_SIGNATURE, _signature);
 
-        if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_workOrder != null)
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         outState.putLong(STATE_SIGNATURE_ID, _signatureId);
 
@@ -197,50 +141,46 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         populateUi();
     }
 
-    @Override
-    protected void onStop() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-        super.onStop();
-    }
-
     private void populateUi() {
-        if (_signature == null)
-            return;
-
         if (_doneButton == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        if (_signature.getSignatureFormat().equals("svg")) {
-            _signatureView.setSignatureSvg(_signature.getSignature(), true);
-        } else {
-            _signatureView.setSignatureJson(_signature.getSignature(), true);
+        if (_workOrder.getSignatures() == null
+                || _workOrder.getSignatures().getResults() == null
+                || _workOrder.getSignatures().getResults().length == 0)
+            return;
+
+        for (Signature signature : _workOrder.getSignatures().getResults()) {
+            if (signature.getId() == _signatureId) {
+                _signature = signature;
+                break;
+            }
         }
 
-        _nameTextView.setText(_signature.getPrintName());
+        if (_signature.getFormat().equals("svg")) {
+            _signatureView.setSignatureSvg(_signature.getData(), true);
+        } else {
+            _signatureView.setSignatureJson(_signature.getData(), true);
+        }
 
-        _titleTextView.setText(_workorder.getTitle());
-        if (_workorder.getFullWorkDescription() != null) {
-            _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
+        _nameTextView.setText(_signature.getName());
+
+        _titleTextView.setText(_workOrder.getTitle());
+        if (_workOrder.getDescription() != null) {
+            _descriptionTextView.setText(misc.htmlify(_workOrder.getDescription().getHtml()));
             _descriptionTextView.setLinksClickable(false);
             _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.fn_dark_text));
         }
 
+/* TODO
         final LoggedWork[] logs = _signature.getWorklog();
         if (logs != null && logs.length > 0) {
             _timeLinearLayout.setVisibility(View.VISIBLE);
@@ -255,18 +195,20 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
                 public void next(int i) throws Exception {
                     LoggedWork work = _logs[i];
 //TODO                    TimeLogRowView v = new TimeLogRowView(SignatureDisplayActivity.this);
-//                    v.setData(_workorder, work);
+//                    v.setData(_workOrder, work);
 //                    _timeLinearLayout.addView(v);
                 }
             };
             _timeLinearLayout.postDelayed(r, new Random().nextInt(1000));
         } else {
-            _timeLinearLayout.setVisibility(View.GONE);
-            _timeTextView.setVisibility(View.GONE);
-            _timeDivider.setVisibility(View.GONE);
-        }
+*/
+        _timeLinearLayout.setVisibility(View.GONE);
+        _timeTextView.setVisibility(View.GONE);
+        _timeDivider.setVisibility(View.GONE);
+//        }
 
-        Task[] tasks = _workorder.getTasks();
+
+        Task[] tasks = _workOrder.getTasks().getResults();
         if (tasks != null && tasks.length > 0) {
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);
@@ -274,14 +216,7 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
 
             _tasksLinearLayout.removeAllViews();
             for (Task task : tasks) {
-                String display = "";
-                if (task.getTypeId() != null) {
-                    TaskType type = task.getTaskType();
-                    display = type.getDisplay(this);
-                } else {
-                    display = task.getType();
-                }
-
+                String display = task.getLabel();
                 TaskRowSimpleView v = new TaskRowSimpleView(this);
                 if (misc.isEmptyOrNull(task.getDescription())) {
                     v.setText(display);
@@ -291,6 +226,7 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
                 _tasksLinearLayout.addView(v);
             }
         } else {
+
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);
             _tasksLinearLayout.setVisibility(View.GONE);
@@ -310,33 +246,6 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
 
     }
 
-    private void getData() {
-        if (_workorder == null)
-            return;
-
-        if (_workorderClient == null)
-            return;
-
-        if (_workorderClient.isConnected()) {
-            _workorderClient.subGetSignature(_workorder.getWorkorderId(), _signatureId, false);
-        }
-
-        WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
-    }
-
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            getData();
-        }
-
-        @Override
-        public void onGetSignature(Signature signature, boolean failed) {
-            _signature = signature;
-            populateUi();
-        }
-    };
-
     /*-*************************************-*/
     /*-                 Events              -*/
     /*-*************************************-*/
@@ -347,11 +256,11 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         }
     };
 
-    public static void startIntent(Context context, long signatureId, Workorder workorder) {
+    public static void startIntent(Context context, long signatureId, WorkOrder workOrder) {
         Intent intent = new Intent(context, SignatureDisplayActivity.class);
         intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-        intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
-        intent.setExtrasClassLoader(Workorder.class.getClassLoader());
+        intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
+        intent.setExtrasClassLoader(WorkOrder.class.getClassLoader());
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }

@@ -46,6 +46,7 @@ import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
+import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
@@ -1320,7 +1321,7 @@ TODO    private final CustomFieldRowView.Listener _customFields_listener = new C
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-// TODO            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
+            SignatureDisplayActivity.startIntent(getActivity(), signature.getId(), _workOrder);
             setLoading(true);
         }
 
