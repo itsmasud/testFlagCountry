@@ -130,6 +130,7 @@ public class CustomFieldDialog extends SimpleDialog {
         populateUi();
     }
 
+/*
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
@@ -265,6 +266,7 @@ public class CustomFieldDialog extends SimpleDialog {
         }
 //        Log.e(TAG, "_customFieldTextData: " + _customFieldTextData);
     }
+*/
 
     @Override
     public void dismiss(boolean animate) {
@@ -281,10 +283,9 @@ public class CustomFieldDialog extends SimpleDialog {
                 || _tipTextView == null || _customField == null)
             return;
 
-        _titleTextView.setText(_customField.getLabel());
+        _titleTextView.setText(_customField.getName());
 
-        CustomField.FieldType type = _customField.getFieldType();
-
+        CustomField.TypeEnum type = _customField.getType();
 
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
