@@ -18,7 +18,8 @@ import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.List;
 
 public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "TimeLoggedView";
@@ -32,6 +33,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     // Data
     private Listener _listener;
     private WorkOrder _workOrder;
+    private ForLoopRunnable _forLoop;
 
     public TimeLogListView(Context context) {
         super(context);
@@ -102,32 +104,34 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
             _noTimeTextView.setVisibility(View.GONE);
         }
 
-
-        if (logs == null || logs.length == 0) {
-            _logList.removeAllViews();
-        } else if (_logList.getChildCount() > logs.length) {
-            _logList.removeViews(logs.length - 1, _logList.getChildCount() - logs.length);
+        if (_forLoop != null) {
+            _forLoop.cancel();
+            _forLoop = null;
         }
 
         if (logs != null && logs.length > 0) {
-            ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
+            _forLoop = new ForLoopRunnable(logs.length, new Handler()) {
                 private final TimeLog[] _logs = logs;
+                private List<View> _views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
-                    TimeLogRowView v = null;
-                    if (i < _logList.getChildCount()) {
-                        v = (TimeLogRowView) _logList.getChildAt(i);
-                    } else {
-                        v = new TimeLogRowView(getContext());
-                        _logList.addView(v);
-                    }
+                    TimeLogRowView v = new TimeLogRowView(getContext());
+                    _views.add(v);
                     TimeLog log = _logs[i];
                     v.setListener(_scheduleDetailView_listener);
                     v.setData(_workOrder, log);
                 }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _logList.removeAllViews();
+                    for (View v : _views) {
+                        _logList.addView(v);
+                    }
+                }
             };
-            postDelayed(r, new Random().nextInt(1000));
+            postDelayed(_forLoop, 100);
         }
     }
 

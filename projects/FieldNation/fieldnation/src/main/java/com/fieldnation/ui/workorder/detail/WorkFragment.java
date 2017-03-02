@@ -1046,13 +1046,13 @@ TODO            if (_workorder.getPaymentId() != null) {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, showdevice);
         }
 
         @Override
         public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, getString(R.string.dialog_delete_add_worklog_title), timeLog, showDeviceCount);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, timeLog, showDeviceCount);
         }
 
         @Override
@@ -1066,10 +1066,8 @@ TODO            if (_workorder.getPaymentId() != null) {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkorderClient.deleteTimeLog(App.get(), workorderID,
-                                    timeLogId);
+                            WorkordersWebApi.removeTimeLog(App.get(), _workOrder.getWorkOrderId(), (int) timeLogId);
                             setLoading(true);
-
                         }
 
                         @Override
