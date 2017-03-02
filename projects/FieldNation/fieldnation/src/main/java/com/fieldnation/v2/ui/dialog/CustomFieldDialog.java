@@ -23,6 +23,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.CustomField;
@@ -34,16 +35,6 @@ import java.util.Calendar;
  */
 public class CustomFieldDialog extends SimpleDialog {
     private static final String TAG = "CustomFieldDialog";
-
-    // State
-    private static final String STATE_CUSTOM_FIELD = "CustomFieldDialog:STATE_CUSTOM_FIELD";
-    private static final String STATE_CUSTOM_FIELD_DATE = "CustomFieldDialog:STATE_CUSTOM_FIELD_DATE";
-    private static final String STATE_CUSTOM_FIELD_DATETIME = "CustomFieldDialog:STATE_CUSTOM_FIELD_DATETIME";
-    private static final String STATE_CUSTOM_FIELD_TIME = "CustomFieldDialog:STATE_CUSTOM_FIELD_TIME";
-    private static final String STATE_CUSTOM_FIELD_TEXT = "CustomFieldDialog:STATE_CUSTOM_FIELD_TEXT";
-    private static final String STATE_CUSTOM_FIELD_NUMBER = "CustomFieldDialog:STATE_CUSTOM_FIELD_NUMBER";
-    private static final String STATE_CUSTOM_FIELD_PHONE_NUMBER = "CustomFieldDialog:STATE_CUSTOM_FIELD_PHONE_NUMBER";
-    private static final String STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED = "CustomFieldDialog:STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED";
 
     // UI
     private TextView _titleTextView;
@@ -61,7 +52,6 @@ public class CustomFieldDialog extends SimpleDialog {
 
     // Data
     private CustomField _customField;
-    private Listener _listener;
     private Calendar _pickerCal;
     private Calendar _expirationDate;
     private int _itemSelectedPosition = -1;
@@ -71,7 +61,6 @@ public class CustomFieldDialog extends SimpleDialog {
     private String _customFieldTextData;
     private String _customFieldNumberData;
     private String _customFieldPhoneNumberData;
-    private boolean _clear = false;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -107,18 +96,6 @@ public class CustomFieldDialog extends SimpleDialog {
         _okButton.setOnClickListener(_ok_onClick);
         _okButton.setEnabled(false);
         _cancelButton.setOnClickListener(_cancel_onClick);
-    }
-
-    @Override
-    public void onResume() {
-        Log.e(TAG, "onResume");
-        super.onResume();
-
-        if (_clear) {
-            _spinner.clearSelection();
-        }
-
-        populateUi();
     }
 
     @Override
@@ -163,7 +140,7 @@ public class CustomFieldDialog extends SimpleDialog {
                 _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
             }
 
-            CustomField.FieldType type = _customField.getFieldType();
+            CustomField.FieldType type = _customField.getType();
             switch (type) {
                 case DATE:
                     if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATE)) {
@@ -220,7 +197,7 @@ public class CustomFieldDialog extends SimpleDialog {
         if (_customField != null)
             outState.putParcelable(STATE_CUSTOM_FIELD, _customField);
 
-        CustomField.FieldType type = _customField.getFieldType();
+        CustomField.FieldType type = _customField.getType();
         switch (type) {
             case DATE:
                 if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
@@ -274,10 +251,6 @@ public class CustomFieldDialog extends SimpleDialog {
         super.dismiss(animate);
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
     private void populateUi() {
         if (_textEditText == null || _dateTimeButton == null || _spinner == null
                 || _tipTextView == null || _customField == null)
@@ -294,14 +267,16 @@ public class CustomFieldDialog extends SimpleDialog {
 
         if (!misc.isEmptyOrNull(_customField.getTip())) {
             _tipTextView.setVisibility(View.VISIBLE);
-            if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-                _tipTextView.setText(_customField.getTip() + " (" + _customField.getCustomFieldFormat() + ")");
-            } else {
-                _tipTextView.setText(_customField.getTip());
-            }
-        } else if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-            _tipTextView.setVisibility(View.VISIBLE);
-            _tipTextView.setText(_customField.getCustomFieldFormat());
+//            if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
+//                _tipTextView.setText(_customField.getTip() + " (" + _customField.getCustomFieldFormat() + ")");
+//            } else {
+            _tipTextView.setText(_customField.getTip());
+//            }
+//        } else if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
+//            _tipTextView.setVisibility(View.VISIBLE);
+//            _tipTextView.setText(_customField.getCustomFieldFormat());
+        } else {
+            _tipTextView.setVisibility(View.GONE);
         }
 
         _textEditText.setVisibility(View.VISIBLE);
@@ -316,7 +291,7 @@ public class CustomFieldDialog extends SimpleDialog {
                     _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
                 }
                 break;
-            case DATETIME:
+            case DATE_TIME:
                 if (!misc.isEmptyOrNull(_customFieldDateTimeData)) {
                     _textEditText.setText(_customFieldDateTimeData, TextView.BufferType.EDITABLE);
                 } else if (!misc.isEmptyOrNull(_customField.getValue())) {
@@ -337,7 +312,7 @@ public class CustomFieldDialog extends SimpleDialog {
                     _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
                 }
                 break;
-            case NUMBER:
+            case NUMERIC:
                 if (!misc.isEmptyOrNull(_customFieldNumberData)) {
                     _textEditText.setText(_customFieldNumberData, TextView.BufferType.EDITABLE);
                 } else if (!misc.isEmptyOrNull(_customField.getValue())) {
@@ -358,7 +333,7 @@ public class CustomFieldDialog extends SimpleDialog {
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
                 break;
-            case DATETIME:
+            case DATE_TIME:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
                 break;
@@ -369,26 +344,26 @@ public class CustomFieldDialog extends SimpleDialog {
             case TEXT:
                 _textEditText.setInputType(InputType.TYPE_CLASS_TEXT);
                 break;
-            case NUMBER:
+            case NUMERIC:
                 _textEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
                 break;
             case PHONE:
                 _textEditText.setInputType(InputType.TYPE_CLASS_PHONE);
                 break;
-            case LIST:
+            case PREDEFINED:
                 _spinnerLayout.setVisibility(View.VISIBLE);
                 _textEditText.setVisibility(View.GONE);
                 _okButton.setEnabled(true);
-                if (_customField.getPredefinedValues() != null) {
+                if (_customField.getOptions() != null) {
                     Log.v(TAG, "PredefinedValues");
-                    for (int i = 0; i < _customField.getPredefinedValues().length; i++) {
-                        if (_customField.getPredefinedValues()[i] == null)
-                            _customField.getPredefinedValues()[i] = "";
+                    for (int i = 0; i < _customField.getOptions().length; i++) {
+                        if (_customField.getOptions()[i] == null)
+                            _customField.getOptions()[i] = "";
                     }
 
                     HintArrayAdapter adapter = HintArrayAdapter.createFromArray(
-                            getActivity(),
-                            _customField.getPredefinedValues(),
+                            getView().getContext(),
+                            _customField.getOptions(),
                             R.layout.view_spinner_item);
 
                     adapter.setDropDownViewResource(
@@ -397,7 +372,7 @@ public class CustomFieldDialog extends SimpleDialog {
                     _spinner.setAdapter(adapter);
                     if (!misc.isEmptyOrNull(_customField.getValue())) {
                         String val = _customField.getValue();
-                        String[] values = _customField.getPredefinedValues();
+                        String[] values = _customField.getOptions();
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
@@ -415,21 +390,23 @@ public class CustomFieldDialog extends SimpleDialog {
 
         _pickerCal = Calendar.getInstance();
         final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-    }
+        _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 
+        _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY),
+                c.get(Calendar.MINUTE), false);
+    }
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             _pickerCal.set(year, monthOfYear, dayOfMonth);
             _expirationDate = (Calendar) _pickerCal.clone();
-            switch (_customField.getFieldType()) {
+            switch (_customField.getType()) {
                 case DATE:
                     _textEditText.setText(DateUtils.formatDateForCF(_expirationDate));
                     break;
-                case DATETIME:
+                case DATE_TIME:
                     _timePicker.setTag(_datePicker.getTag());
                     _timePicker.show();
                     break;
@@ -445,8 +422,8 @@ public class CustomFieldDialog extends SimpleDialog {
 
             _expirationDate = (Calendar) _pickerCal.clone();
 
-            switch (_customField.getFieldType()) {
-                case DATETIME:
+            switch (_customField.getType()) {
+                case DATE_TIME:
                     _textEditText.setText(DateUtils.formatDateTimeForCF(_expirationDate));
                     break;
                 case TIME:
@@ -459,8 +436,8 @@ public class CustomFieldDialog extends SimpleDialog {
     private final View.OnClickListener _dateTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            switch (_customField.getFieldType()) {
-                case DATETIME:
+            switch (_customField.getType()) {
+                case DATE_TIME:
                     _datePicker.show();
                     break;
                 case DATE:
@@ -476,13 +453,13 @@ public class CustomFieldDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
-            switch (_customField.getFieldType()) {
-                case LIST:
-                    _listener.onOk(_customField, (String) _spinner.getAdapter().getItem(_itemSelectedPosition));
+            dismiss(true);
+            switch (_customField.getType()) {
+                case PREDEFINED:
+                    _onOkDispatcher.dispatch(getUid(), _customField, (String) _spinner.getAdapter().getItem(_itemSelectedPosition));
                     break;
                 default:
-                    _listener.onOk(_customField, _textEditText.getText().toString());
+                    _onOkDispatcher.dispatch(getUid(), _customField, _textEditText.getText().toString());
             }
         }
     };
@@ -490,7 +467,7 @@ public class CustomFieldDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
+            dismiss(true);
         }
     };
 
@@ -527,7 +504,29 @@ public class CustomFieldDialog extends SimpleDialog {
         }
     };
 
-    public interface Listener {
+    /*-**********************-*/
+    /*-         Ok           -*/
+    /*-**********************-*/
+    public interface OnOkListener {
         void onOk(CustomField field, String value);
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
+        @Override
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk((CustomField) parameters[0], (String) parameters[1]);
+        }
+    };
+
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
     }
 }
