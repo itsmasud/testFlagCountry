@@ -59,6 +59,7 @@ import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CheckInOut;
+import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -272,8 +273,8 @@ public class WorkFragment extends WorkorderFragment {
         _renderers.add(_closingNotes);
 
         _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
-// TODO        _customFields.setListener(_customFields_listener);
-// TODO        _renderers.add(_customFields);
+        _customFields.setListener(_customFields_listener);
+        _renderers.add(_customFields);
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
 // TODO        _signatureView.setListener(_signaturelist_listener);
@@ -1245,15 +1246,12 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
     };
 */
 
-/*
-TODO    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
+    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
         public void onClick(CustomFieldRowView view, CustomField field) {
-            _customFieldDialog.show(field);
+// TODO            _customFieldDialog.show(field);
         }
     };
-*/
-
 
     private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
