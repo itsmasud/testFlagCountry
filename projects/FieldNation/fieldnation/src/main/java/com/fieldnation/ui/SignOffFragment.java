@@ -226,7 +226,7 @@ public class SignOffFragment extends FragmentBase {
                     String display = "";
                     if (task.getType() != null) {
                         TaskType type = task.getType();
-                        display = type.getTitle();
+                        display = type.getName();
                     }
 
                     TaskRowSimpleView v = new TaskRowSimpleView(getActivity());
