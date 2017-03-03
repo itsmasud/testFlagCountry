@@ -486,10 +486,10 @@ public class TimeLog implements Parcelable {
     }
 
     public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete"),
         @Json(name = "edit")
         EDIT("edit"),
-        @Json(name = "remove")
-        REMOVE("remove"),
         @Json(name = "verify")
         VERIFY("verify");
 
@@ -588,9 +588,10 @@ public class TimeLog implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    private Set<ActionsEnum> _actionsSet = null;
 
-    public Set<ActionsEnum> getActionsSet() {
+    private Set<TimeLog.ActionsEnum> _actionsSet = null;
+
+    public Set<TimeLog.ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
