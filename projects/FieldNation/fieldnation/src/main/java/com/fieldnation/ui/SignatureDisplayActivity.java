@@ -133,6 +133,7 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     /*-*************************************-*/
     public static void startIntent(Context context, long signatureId, WorkOrder workOrder) {
         Intent intent = new Intent(context, SignatureDisplayActivity.class);
+        intent.setAction("DUMMY");
         intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
         intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
         intent.setExtrasClassLoader(WorkOrder.class.getClassLoader());
