@@ -46,6 +46,7 @@ import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
+import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
@@ -1317,7 +1318,7 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-// TODO            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
+            SignatureDisplayActivity.startIntent(getActivity(), signature.getId(), _workOrder);
             setLoading(true);
         }
 
