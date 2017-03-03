@@ -60,10 +60,23 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
 
         _paramList = (LinearLayout) findViewById(R.id.param_list);
 
+        populateUi();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+    }
 
-        populateUi();
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
+        
+        super.onDetachedFromWindow();
     }
 
     private void populateUi() {

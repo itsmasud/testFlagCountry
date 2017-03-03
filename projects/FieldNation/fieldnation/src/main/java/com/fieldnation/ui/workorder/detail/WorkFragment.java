@@ -453,9 +453,6 @@ TODO        if (_currentTask != null)
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
 
-        if (_workorderApi != null && _workorderApi.isConnected())
-            _workorderApi.disconnect(App.get());
-
         super.onDetach();
     }
 

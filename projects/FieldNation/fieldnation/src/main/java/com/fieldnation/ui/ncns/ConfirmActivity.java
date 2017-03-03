@@ -52,7 +52,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
         // TODO fill out _savedList;
         try {
-            _savedList = new SavedList().id("workorders_assignments");
+            _savedList = new SavedList().id("workorders_tomorrow");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
