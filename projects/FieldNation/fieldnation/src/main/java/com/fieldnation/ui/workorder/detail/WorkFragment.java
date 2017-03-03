@@ -1311,7 +1311,7 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
     private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-// TODO            SignOffActivity.startSignOff(getActivity(), _workOrder);
+            SignOffActivity.startSignOff(getActivity(), _workOrder);
             setLoading(true);
         }
 

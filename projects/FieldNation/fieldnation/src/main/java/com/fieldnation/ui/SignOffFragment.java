@@ -13,16 +13,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Task;
-import com.fieldnation.data.workorder.TaskType;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.detail.TimeLogRowView;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TaskType;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.Random;
 
@@ -59,7 +58,7 @@ public class SignOffFragment extends FragmentBase {
     private LoadingView _loadingView;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
     private boolean _waitTasks = false;
     private boolean _waitLogs = false;
@@ -77,28 +76,16 @@ public class SignOffFragment extends FragmentBase {
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                new AsyncTaskEx<Bundle, Object, Workorder>() {
-                    @Override
-                    protected Workorder doInBackground(Bundle... params) {
-                        return params[0].getParcelable(STATE_WORKORDER);
-                    }
-
-                    @Override
-                    protected void onPostExecute(Workorder workorder) {
-                        super.onPostExecute(workorder);
-                        _workorder = workorder;
-                    }
-                }.executeEx(savedInstanceState);
+                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
         }
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Stopwatch stopwatch = new Stopwatch();
-        if (_workorder != null) {
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_workOrder != null) {
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
         }
 
         super.onSaveInstanceState(outState);
@@ -153,21 +140,11 @@ public class SignOffFragment extends FragmentBase {
 
         Bundle bundle = getArguments();
         if (bundle != null) {
-            new AsyncTaskEx<Bundle, Object, Workorder>() {
-                @Override
-                protected Workorder doInBackground(Bundle... params) {
-                    return params[0].getParcelable(SignOffActivity.INTENT_PARAM_WORKORDER);
-                }
-
-                @Override
-                protected void onPostExecute(Workorder workorder) {
-                    super.onPostExecute(workorder);
-                    _workorder = workorder;
-                    populateUi();
-                }
-            }.executeEx(bundle);
+            _workOrder = bundle.getParcelable(SignOffActivity.INTENT_PARAM_WORKORDER);
         }
         Log.v(TAG, "onResume time " + stopwatch.finish());
+
+        populateUi();
     }
 
     public void setListener(Listener listener) {
@@ -178,37 +155,36 @@ public class SignOffFragment extends FragmentBase {
         if (_signOffButton == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         Stopwatch stopwatch = new Stopwatch(true);
 
-        _titleTextView.setText(_workorder.getTitle());
-        if (_workorder.getFullWorkDescription() != null)
-            _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
+        _titleTextView.setText(_workOrder.getTitle());
+        if (_workOrder.getDescription() != null)
+            _descriptionTextView.setText(misc.htmlify(_workOrder.getDescription().getHtml()));
         //_descriptionTextView.setLinksClickable(false);
 
-        final LoggedWork[] logs = _workorder.getLoggedWork();
-        if (logs != null && logs.length > 0) {
+        final TimeLog[] timeLogs = _workOrder.getTimeLogs().getResults();
+        if (timeLogs != null && timeLogs.length > 0) {
             _waitLogs = true;
             _timeLinearLayout.setVisibility(View.VISIBLE);
             _timeTextView.setVisibility(View.VISIBLE);
             _timeDivider.setVisibility(View.VISIBLE);
 
             _timeLinearLayout.removeAllViews();
-            ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
-                private final LoggedWork[] _logs = logs;
+            ForLoopRunnable r = new ForLoopRunnable(timeLogs.length, new Handler()) {
+                private final TimeLog[] _logs = timeLogs;
 
                 @Override
                 public void next(int i) {
                     if (getActivity() == null) {
                         return;
                     }
-
-//TOTO                    LoggedWork work = _logs[i];
-//                    TimeLogRowView v = new TimeLogRowView(getActivity());
-//                    v.setData(_workorder, work);
-//                    _timeLinearLayout.addView(v);
+                    TimeLog work = _logs[i];
+                    TimeLogRowView v = new TimeLogRowView(getActivity());
+                    v.setData(_workOrder, work);
+                    _timeLinearLayout.addView(v);
                 }
 
                 @Override
@@ -220,7 +196,7 @@ public class SignOffFragment extends FragmentBase {
                     _waitLogs = false;
                 }
             };
-            _container.postDelayed(r, new Random().nextInt(1000));
+            _container.postDelayed(r, 100);
 
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
@@ -228,7 +204,7 @@ public class SignOffFragment extends FragmentBase {
             _timeDivider.setVisibility(View.GONE);
         }
 
-        final Task[] tasks = _workorder.getTasks();
+        final Task[] tasks = _workOrder.getTasks().getResults();
         if (tasks != null && tasks.length > 0) {
             _waitTasks = true;
             _tasksDivider.setVisibility(View.VISIBLE);
@@ -248,11 +224,9 @@ public class SignOffFragment extends FragmentBase {
                     Task task = _tasks[i];
 
                     String display = "";
-                    if (task.getTypeId() != null) {
-                        TaskType type = task.getTaskType();
-                        display = type.getDisplay(getActivity());
-                    } else {
-                        display = task.getType();
+                    if (task.getType() != null) {
+                        TaskType type = task.getType();
+                        display = type.getTitle();
                     }
 
                     TaskRowSimpleView v = new TaskRowSimpleView(getActivity());
@@ -282,11 +256,11 @@ public class SignOffFragment extends FragmentBase {
             setLoading(false);
         }
 
-        if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
+        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
             _closingNotesTextView.setVisibility(View.VISIBLE);
             _closingNotesDivider.setVisibility(View.VISIBLE);
 
-            _closingNotesTextView.setText(_workorder.getClosingNotes());
+            _closingNotesTextView.setText(_workOrder.getClosingNotes());
 
         } else {
             _closingNotesTextView.setVisibility(View.GONE);
