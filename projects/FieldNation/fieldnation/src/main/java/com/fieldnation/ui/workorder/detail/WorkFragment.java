@@ -1574,7 +1574,13 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
     private final CustomFieldDialog.OnOkListener _customfieldDialog_onOk = new CustomFieldDialog.OnOkListener() {
         @Override
         public void onOk(CustomField field, String value) {
-            WorkorderClient.actionCustomField(App.get(), _workOrder.getWorkOrderId(), field.getId(), value);
+            try {
+                CustomField cf = new CustomField();
+                cf.setValue(value);
+                WorkordersWebApi.updateCustomField(App.get(), _workOrder.getWorkOrderId(), field.getId(), cf);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
     };
