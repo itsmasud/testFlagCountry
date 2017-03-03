@@ -21,7 +21,6 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
-import com.fieldnation.ui.workorder.detail.NotificationFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Error;
@@ -41,7 +40,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;
     public static final int TAB_DELIVERABLES = 2;
-    public static final int TAB_NOTIFICATIONS = 3;
 
     // SavedInstance fields
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
@@ -183,10 +181,10 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     private void buildFragments(Bundle savedInstanceState) {
         _viewPager = (ViewPager) findViewById(R.id.content_viewpager);
-        _viewPager.setOffscreenPageLimit(4);
+        _viewPager.setOffscreenPageLimit(3);
 
         if (_fragments == null) {
-            _fragments = new WorkorderFragment[4];
+            _fragments = new WorkorderFragment[3];
 
             if (savedInstanceState != null) {
                 List<Fragment> fragments = getSupportFragmentManager().getFragments();
@@ -211,12 +209,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                             _fragments[2].setPageRequestListener(_pageRequestListener);
                             _fragments[2].setLoadingListener(_workorderFrag_loadingListener);
                         }
-
-                        if (frag instanceof NotificationFragment) {
-                            _fragments[3] = (WorkorderFragment) frag;
-                            _fragments[3].setPageRequestListener(_pageRequestListener);
-                            _fragments[3].setLoadingListener(_workorderFrag_loadingListener);
-                        }
                     }
                 }
             }
@@ -227,8 +219,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 _fragments[1] = new MessageFragment();
             if (_fragments[2] == null)
                 _fragments[2] = new DeliverableFragment();
-            if (_fragments[3] == null)
-                _fragments[3] = new NotificationFragment();
 
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);
