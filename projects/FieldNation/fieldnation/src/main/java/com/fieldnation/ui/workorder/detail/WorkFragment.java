@@ -1403,8 +1403,7 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-                            WorkorderClient.deleteExpense(App.get(),
-                                    _workOrder.getWorkOrderId(), expense.getId());
+                            WorkordersWebApi.deleteExpense(App.get(), _workOrder.getWorkOrderId(), expense.getId());
                         }
 
                         @Override
