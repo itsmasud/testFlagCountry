@@ -29,9 +29,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
 
-    private MenuItem _doneMenu;
-    private MenuItem _remindMeMenu;
-
     // Data
     private SavedList _savedList;
 
@@ -54,6 +51,11 @@ public class ConfirmActivity extends AuthSimpleActivity {
         setTitle("Tomorrow's Work");
 
         // TODO fill out _savedList;
+        try {
+            _savedList = new SavedList().id("workorders_assignments");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     @Override
@@ -92,10 +94,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.confirm, menu);
-
-        _remindMeMenu = menu.findItem(R.id.remindme_menuitem);
-        _doneMenu = menu.findItem(R.id.done_menuitem);
-
         return true;
     }
 
@@ -120,8 +118,9 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
         @Override
         public void OnWorkOrderListReceived(WorkOrders workOrders) {
-
-            if (workOrders == null || workOrders.getResults() != null || workOrders.getResults().length == 0) {
+            if (workOrders == null
+                    || workOrders.getResults() != null
+                    || workOrders.getResults().length == 0) {
                 return;
             }
 /*
