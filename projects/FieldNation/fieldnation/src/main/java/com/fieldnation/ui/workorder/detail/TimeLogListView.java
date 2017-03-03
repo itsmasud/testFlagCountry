@@ -119,7 +119,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
                     TimeLogRowView v = new TimeLogRowView(getContext());
                     _views.add(v);
                     TimeLog log = _logs[i];
-                    v.setListener(_scheduleDetailView_listener);
+                    v.setListener(_timeLog_listener);
                     v.setData(_workOrder, log);
                 }
 
@@ -138,7 +138,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
+    private final TimeLogRowView.Listener _timeLog_listener = new TimeLogRowView.Listener() {
         @Override
         public void editTimeLog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             if (_listener != null
@@ -152,7 +152,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         public void deleteTimeLog(final TimeLogRowView view, final WorkOrder workOrder, final TimeLog timeLog) {
             if (_listener != null
                     && timeLog.getActionsSet() != null
-                    && timeLog.getActionsSet().contains(TimeLog.ActionsEnum.REMOVE)) {
+                    && timeLog.getActionsSet().contains(TimeLog.ActionsEnum.DELETE)) {
                 _listener.deleteWorklog(workOrder, timeLog);
             }
         }

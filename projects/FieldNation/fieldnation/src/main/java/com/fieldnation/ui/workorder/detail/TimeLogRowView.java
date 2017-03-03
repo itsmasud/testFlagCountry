@@ -133,14 +133,6 @@ public class TimeLogRowView extends RelativeLayout {
         } else {
             _devicesTextView.setVisibility(GONE);
         }
-
-        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.EDIT)) {
-            setClickable(true);
-            setLongClickable(true);
-        } else {
-            setClickable(false);
-            setLongClickable(false);
-        }
     }
 
     /*-******************************-*/
@@ -166,7 +158,7 @@ public class TimeLogRowView extends RelativeLayout {
         public boolean onLongClick(View v) {
             if (_listener != null
                     && _timeLog.getActionsSet() != null
-                    && _timeLog.getActionsSet().contains(TimeLog.ActionsEnum.REMOVE)) {
+                    && _timeLog.getActionsSet().contains(TimeLog.ActionsEnum.DELETE)) {
                 _listener.deleteTimeLog(TimeLogRowView.this, _workOrder, _timeLog);
                 return true;
             }
