@@ -1021,7 +1021,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                     null, _workOrder.getWorkOrderId());
 
-// TODO            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
         }
     };
 
