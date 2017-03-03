@@ -10,13 +10,15 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Expenses;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 6/5/2015.
@@ -32,6 +34,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
     // Data
     private Listener _listener;
     private WorkOrder _workOrder;
+    private ForLoopRunnable _forLoop;
 
     public ExpenseListLayout(Context context) {
         super(context);
@@ -108,29 +111,34 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
 
-        if (_listView.getChildCount() > list.length) {
-            _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
+        if (_forLoop != null) {
+            _forLoop.cancel();
+            _forLoop = null;
         }
 
-        ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
+        _forLoop = new ForLoopRunnable(list.length, new Handler()) {
             private final Expense[] _list = list;
+            private List<View> _views = new LinkedList<>();
 
             @Override
             public void next(int i) throws Exception {
-                ExpenseView v = null;
-                if (i < _listView.getChildCount()) {
-                    v = (ExpenseView) _listView.getChildAt(i);
-                } else {
-                    v = new ExpenseView(getContext());
-                    _listView.addView(v);
-                }
+                ExpenseView v = new ExpenseView(getContext());
+                _views.add(v);
                 Expense expense = _list[i];
                 v.setData(_workOrder, expense);
                 v.setOnClickListener(_expense_onClick);
                 v.setOnLongClickListener(_expense_onLongClick);
             }
+
+            @Override
+            public void finish(int count) throws Exception {
+                _listView.removeAllViews();
+                for (View v : _views) {
+                    _listView.addView(v);
+                }
+            }
         };
-        postDelayed(r, App.secureRandom.nextInt(1000));
+        postDelayed(_forLoop, 100);
     }
 
     /*-*********************************-*/

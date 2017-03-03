@@ -11,16 +11,19 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Signature;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Signatures;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by michael.carver on 12/5/2014.
  */
-public class SignatureListView extends RelativeLayout {
+public class SignatureListView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "SignatureListView";
 
     // Ui
@@ -29,8 +32,9 @@ public class SignatureListView extends RelativeLayout {
     private TextView _noDataTextView;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
+    private ForLoopRunnable _forLoop;
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -66,8 +70,9 @@ public class SignatureListView extends RelativeLayout {
         populateUI();
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
 
         populateUI();
     }
@@ -82,11 +87,16 @@ public class SignatureListView extends RelativeLayout {
             return;
         }
 
-        if (_workorder == null) {
+        if (_workOrder == null) {
             return;
         }
 
-        if (!_workorder.canAcceptSignature()) {
+        if (_workOrder.getSignatures() == null
+                || _workOrder.getSignatures().getResults() == null
+                || _workOrder.getSignatures().getResults().length == 0)
+            return;
+
+        if (!_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD)) {
             _addButton.setVisibility(GONE);
         } else {
             _addButton.setVisibility(VISIBLE);
@@ -94,7 +104,7 @@ public class SignatureListView extends RelativeLayout {
 
         setVisibility(View.VISIBLE);
 
-        final Signature[] list = _workorder.getSignatureList();
+        final Signature[] list = _workOrder.getSignatures().getResults();
 
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(View.VISIBLE);
@@ -105,29 +115,34 @@ public class SignatureListView extends RelativeLayout {
         _noDataTextView.setVisibility(View.GONE);
         _listView.setVisibility(VISIBLE);
 
-        if (_listView.getChildCount() > list.length) {
-            _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
+        if (_forLoop != null) {
+            _forLoop.cancel();
+            _forLoop = null;
         }
 
-        ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
+        _forLoop = new ForLoopRunnable(list.length, new Handler()) {
             private final Signature[] _list = list;
+            private List<View> views = new LinkedList<>();
 
             @Override
             public void next(int i) throws Exception {
-                SignatureCardView v = null;
-                if (i < _listView.getChildCount()) {
-                    v = (SignatureCardView) _listView.getChildAt(i);
-                } else {
-                    v = new SignatureCardView(getContext());
-                    _listView.addView(v);
-                }
+                SignatureCardView v = new SignatureCardView(getContext());
+                views.add(v);
                 Signature sig = _list[i];
                 v.setSignature(sig);
                 v.setOnClickListener(_signature_onClick);
                 v.setOnLongClickListener(_signature_onLongClick);
             }
+
+            @Override
+            public void finish(int count) throws Exception {
+                _listView.removeAllViews();
+                for (View v : views) {
+                    _listView.addView(v);
+                }
+            }
         };
-        postDelayed(r, new Random().nextInt(1000));
+        postDelayed(_forLoop, 100);
     }
 
 

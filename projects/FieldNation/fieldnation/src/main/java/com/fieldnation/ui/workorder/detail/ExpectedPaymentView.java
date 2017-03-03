@@ -163,7 +163,9 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         }
 
         _totalTextView.setText(misc.toCurrency(sum));
-        if (pay.getPayment().getCharged()) {
+        if (_workOrder.getStatus().getId() == 5) {
+            _payStatusTextView.setText("Approved");
+        } else if (pay.getPayment().getCharged()) {
             _payStatusTextView.setText("Paid");
         } else {
             _payStatusTextView.setText("Unpaid");

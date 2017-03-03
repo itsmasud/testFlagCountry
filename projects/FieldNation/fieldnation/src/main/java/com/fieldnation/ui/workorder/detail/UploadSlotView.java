@@ -13,16 +13,18 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadSlot;
-import com.fieldnation.data.workorder.UploadedDocument;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.WorkOrder;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -38,8 +40,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private ProgressBar _loadingProgressBar;
 
     // Data
-    private Workorder _workorder;
-    private UploadSlot _slot;
+    private WorkOrder _workOrder;
+    private AttachmentFolder _slot;
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
     private UploadedDocumentView.Listener _docListener;
@@ -89,8 +91,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         super.onDetachedFromWindow();
     }
 
-    public void setData(Workorder workorder, long profileId, UploadSlot slot, UploadedDocumentView.Listener listener) {
-        _workorder = workorder;
+    public void setData(WorkOrder workOrder, long profileId, AttachmentFolder slot, UploadedDocumentView.Listener listener) {
+        _workOrder = workOrder;
         _slot = slot;
         _docListener = listener;
         _profileId = profileId;
@@ -111,13 +113,13 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     }
 
     private void populateDocs() {
-        final List<Object> files = new LinkedList<>();
+        final List<Object> files = new LinkedList();
 
         Collections.addAll(files, _uploadingFiles.toArray());
 
-        UploadedDocument[] d = _slot.getUploadedDocuments();
+        Attachment[] d = _slot.getResults();
         if (d != null && d.length > 0) {
-            Arrays.sort(d, new UploadedDocument.DateTimeComparator());
+            Arrays.sort(d, new DateTimeComparator());
             Collections.addAll(files, d);
         }
 
@@ -132,7 +134,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             }
             _docsRunnable = new ForLoopRunnable(files.size(), new Handler(), 50) {
                 private final List<Object> _docs = files;
-                private final List<UploadedDocumentView> _views = new LinkedList<>();
+                private final List<UploadedDocumentView> _views = new LinkedList();
                 private final String[] uploadingFileNames = _uploadingFiles.toArray(new String[_uploadingFiles.size()]);
 
                 @Override
@@ -144,10 +146,10 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                         v = new UploadedDocumentView(getContext());
                         //_docsList.addView(v);
                     }
-                    if (_docs.get(i) instanceof UploadedDocument) {
-                        UploadedDocument doc = (UploadedDocument) _docs.get(i);
+                    if (_docs.get(i) instanceof Attachment) {
+                        Attachment doc = (Attachment) _docs.get(i);
                         v.setListener(_docListener);
-                        v.setData(_workorder, _profileId, doc);
+                        v.setData(_workOrder, _profileId, doc);
                     } else {
                         v.setUploading(uploadingFileNames[i]);
                         v.setListener(null);
@@ -187,10 +189,10 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         if (_titleTextView == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        _titleTextView.setText(_slot.getSlotName().toUpperCase());
+        _titleTextView.setText(_slot.getName().toUpperCase());
 
         populateDocs();
     }
@@ -199,7 +201,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     /*-			Events			-*/
     /*-*************************-*/
     private void subscribe() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_slot == null)
@@ -208,9 +210,9 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         if (!_workorderClient.isConnected())
             return;
 
-        Log.v(TAG, "subscribe, " + _workorder.getWorkorderId() + ", " + _slot.getSlotId());
-        _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _slot.getSlotId());
-        _workorderClient.subDeliverableProgress(_workorder.getWorkorderId(), _slot.getSlotId());
+        Log.v(TAG, "subscribe, " + _workOrder.getWorkOrderId() + ", " + _slot.getId());
+        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _slot.getId());
+        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _slot.getId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -223,7 +225,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         @Override
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
             Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed + ")");
-            if (slotId == _slot.getSlotId()) {
+            if (slotId == _slot.getId()) {
                 if (failed || isComplete) {
                     _uploadingFiles.remove(filename);
                     _uploadingProgress.remove(filename);
@@ -246,4 +248,24 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             populateUi();
         }
     };
+
+    private static class DateTimeComparator implements Comparator<Attachment> {
+        @Override
+        public int compare(Attachment lhs, Attachment rhs) {
+            try {
+                long l = lhs.getCreated().getUtcLong();
+                long r = rhs.getCreated().getUtcLong();
+
+                if (l > r)
+                    return -1;
+                else if (l < r)
+                    return 1;
+                else
+                    return 0;
+            } catch (ParseException e) {
+                Log.v("UploadSlotView", e);
+            }
+            return 0;
+        }
+    }
 }

@@ -180,6 +180,18 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightWhiteButton.setText(R.string.btn_check_out);
             setVisibility(View.VISIBLE);
 
+            // Mark complete
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_report_a_problem);
+            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_markComplete_onClick);
+            _rightWhiteButton.setText(R.string.btn_complete);
+            setVisibility(View.VISIBLE);
+
             // check_in
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
             inflate();
@@ -255,16 +267,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             }
             setVisibility(View.VISIBLE);
 
-//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-//            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
-
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setOnClickListener(_complete_onClick);
-//            _rightWhiteButton.setText(R.string.btn_complete);
-//            setVisibility(View.VISIBLE);
 
 //              View payments
 //            inflate();

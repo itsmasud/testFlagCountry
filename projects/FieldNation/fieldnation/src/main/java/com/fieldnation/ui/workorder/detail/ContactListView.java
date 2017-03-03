@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
@@ -68,7 +69,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
         if (_listLayout == null)
             return;
 
-        _listLayout.removeAllViews();
+        final List<View> views = new LinkedList<>();
 
         boolean addedContact = false;
         final List<Contact> contactList = new LinkedList<>();
@@ -82,7 +83,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
                 ContactTileView tileView = new ContactTileView(getContext());
                 tileView.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                 addedContact = true;
-                _listLayout.addView(tileView);
+                views.add(tileView);
             }
         }
 
@@ -93,30 +94,33 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
             if (_contactsRunnable != null)
                 _contactsRunnable.cancel();
 
-            if (_listLayout != null) {
-                addedContact = true;
-                _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
-                    private final List<ContactTileView> _views = new LinkedList<>();
-                    Contact contact = null;
+            addedContact = true;
+            _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
+                Contact contact = null;
 
-                    @Override
-                    public void next(int i) throws Exception {
-                        ContactTileView v = new ContactTileView(getContext());
-                        if (contactList.get(i) instanceof Contact) {
-                            contact = contactList.get(i);
-                            v.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
-                        }
-                        _views.add(v);
+                @Override
+                public void next(int i) throws Exception {
+                    ContactTileView v = new ContactTileView(getContext());
+                    if (contactList.get(i) instanceof Contact) {
+                        contact = contactList.get(i);
+                        v.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                     }
+                    views.add(v);
+                }
 
-                    @Override
-                    public void finish(int count) throws Exception {
-                        for (ContactTileView v : _views) {
-                            _listLayout.addView(v);
-                        }
+                @Override
+                public void finish(int count) throws Exception {
+                    _listLayout.removeAllViews();
+                    for (View v : views) {
+                        _listLayout.addView(v);
                     }
-                };
-                post(_contactsRunnable);
+                }
+            };
+            postDelayed(_contactsRunnable, 100);
+        } else {
+            _listLayout.removeAllViews();
+            for (View v : views) {
+                _listLayout.addView(v);
             }
         }
         if (addedContact) {
