@@ -244,7 +244,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void setWorkorder(WorkOrder workOrder) {
-        Log.e(TAG, "setWorkorder");
         _workOrder = workOrder;
         populateUi();
     }
@@ -330,7 +329,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         stopwatch.start();
 
-/* TODO        final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
 
@@ -358,7 +356,7 @@ public class DeliverableFragment extends WorkorderFragment {
         } else {
             _filesLayout.removeAllViews();
         }
-*/
+
         Log.v(TAG, "upload docs time " + stopwatch.finish());
 
         setLoading(false);
@@ -502,16 +500,15 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
-        public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-/* TODO
+        public void onDelete(UploadedDocumentView v, Attachment document) {
+
             final int documentId = document.getId();
             _yesNoDialog.setData(getString(R.string.delete_file),
                     getString(R.string.dialog_delete_message), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteDeliverable(App.get(), _workorder.getWorkorderId(),
-                                    documentId);
+                            WorkorderClient.deleteDeliverable(App.get(), _workOrder.getWorkOrderId(), documentId);
                             setLoading(true);
                         }
 
@@ -524,7 +521,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         }
                     });
             _yesNoDialog.show();
-*/
+
         }
 
         @Override
