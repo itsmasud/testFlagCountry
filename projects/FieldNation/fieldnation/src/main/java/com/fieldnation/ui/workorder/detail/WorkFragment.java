@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -131,9 +130,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
-    private static final String STATE_TASKS = "WorkFragment:STATE_TASKS";
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
-    private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
     private static final String STATE_TEMP_FILE = "WorkFragment:STATE_TEMP_FILE";
@@ -289,27 +286,8 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
-            if (savedInstanceState.containsKey(STATE_TASKS)) {
-                Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
-/*
-TODO                _tasks = new LinkedList<>();
-                for (Parcelable task : tasks) {
-                    _tasks.add((Task) task);
-                }
-                _taskList.setData(_workorder, _tasks);
-*/
-            }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
 // TODO                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
-            }
-            if (savedInstanceState.containsKey(STATE_SIGNATURES)) {
-                Parcelable[] sigs = savedInstanceState.getParcelableArray(STATE_SIGNATURES);
-/*
-TODO                _signatures = new LinkedList<>();
-                for (Parcelable sig : sigs) {
-                    _signatures.add((Signature) sig);
-                }
-*/
             }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
@@ -327,22 +305,6 @@ TODO                _signatures = new LinkedList<>();
         if (_workOrder != null) {
             outState.putParcelable(STATE_WORKORDER, _workOrder);
         }
-/*
-TODO         if (_tasks != null && _tasks.size() > 0) {
-            Task[] tasks = new Task[_tasks.size()];
-            for (int i = 0; i < _tasks.size(); i++) {
-                tasks[i] = _tasks.get(i);
-            }
-            outState.putParcelableArray(STATE_TASKS, tasks);
-        }
-        if (_signatures != null && _signatures.size() > 0) {
-            Signature[] sigs = new Signature[_signatures.size()];
-            for (int i = 0; i < _signatures.size(); i++) {
-                sigs[i] = _signatures.get(i);
-            }
-            outState.putParcelableArray(STATE_SIGNATURES, sigs);
-        }
-*/
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
