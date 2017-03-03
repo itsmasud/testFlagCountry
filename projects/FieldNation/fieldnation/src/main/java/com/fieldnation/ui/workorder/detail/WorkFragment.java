@@ -45,6 +45,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
@@ -69,6 +70,7 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -280,8 +282,8 @@ public class WorkFragment extends WorkorderFragment {
         _renderers.add(_customFields);
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
-// TODO        _signatureView.setListener(_signaturelist_listener);
-// TODO        _renderers.add(_signatureView);
+        _signatureView.setListener(_signatureList_listener);
+        _renderers.add(_signatureView);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -1306,17 +1308,16 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
         }
     };
 
-/*
-TODO    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+    private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workOrder);
+// TODO            SignOffActivity.startSignOff(getActivity(), _workOrder);
             setLoading(true);
         }
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
+// TODO            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
             setLoading(true);
         }
 
@@ -1328,8 +1329,7 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-                            WorkorderClient.deleteSignature(App.get(),
-                                    _workOrder.getWorkOrderId(), signature.getSignatureId());
+                            WorkordersWebApi.deleteSignature(App.get(), _workOrder.getWorkOrderId(), signature.getId());
                         }
 
                         @Override
@@ -1344,7 +1344,7 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
             return true;
         }
     };
-*/
+
 
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
