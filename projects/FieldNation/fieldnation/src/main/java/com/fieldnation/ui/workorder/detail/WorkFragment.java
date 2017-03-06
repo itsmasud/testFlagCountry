@@ -853,7 +853,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
         }
     };
 
