@@ -107,7 +107,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             setVisibility(VISIBLE);
         }
 
-        if (_workOrder.getStatus().getId() == 2) {
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
             setVisibility(GONE);
             return;
         }
@@ -164,12 +164,11 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
         _totalTextView.setText(misc.toCurrency(sum));
         if (_workOrder.getStatus().getId() == 5) {
-            _payStatusTextView.setText("Approved");
+            _payStatusTextView.setText("Pending");
         } else if (pay.getPayment().getCharged()) {
             _payStatusTextView.setText("Paid");
         } else {
             _payStatusTextView.setText("Unpaid");
-
         }
     }
 }
