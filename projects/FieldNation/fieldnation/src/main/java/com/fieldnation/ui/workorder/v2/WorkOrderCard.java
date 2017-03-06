@@ -32,7 +32,6 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.dialog.v2.DeclineDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
@@ -40,6 +39,7 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
+import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 
@@ -649,7 +649,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
-            DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getId(), _workOrder.getOrg().getId());
+            DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getId().intValue(), _workOrder.getOrg().getId().intValue());
         }
     };
 
