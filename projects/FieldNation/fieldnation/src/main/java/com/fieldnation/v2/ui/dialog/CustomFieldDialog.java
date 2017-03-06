@@ -54,12 +54,6 @@ public class CustomFieldDialog extends SimpleDialog {
     private Calendar _pickerCal;
     private Calendar _expirationDate;
     private int _itemSelectedPosition = -1;
-    private String _customFieldDateData;
-    private String _customFieldDateTimeData;
-    private String _customFieldTimeData;
-    private String _customFieldTextData;
-    private String _customFieldNumberData;
-    private String _customFieldPhoneNumberData;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -130,16 +124,12 @@ public class CustomFieldDialog extends SimpleDialog {
 
         _textEditText.setVisibility(View.VISIBLE);
         _textEditText.getEditableText().clear();
-        //_textEditText.setText("", TextView.BufferType.EDITABLE);
 
         switch (type) {
             case DATE:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
-                if (!misc.isEmptyOrNull(_customFieldDateData))
-                    _textEditText.setText(_customFieldDateData, TextView.BufferType.EDITABLE);
-                else if (!misc.isEmptyOrNull(_customField.getValue()))
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
 
                 if (tip == null)
                     _tipTextView.setText("mm/dd/yyyy");
@@ -150,10 +140,7 @@ public class CustomFieldDialog extends SimpleDialog {
             case DATE_TIME:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
-                if (!misc.isEmptyOrNull(_customFieldDateTimeData))
-                    _textEditText.setText(_customFieldDateTimeData, TextView.BufferType.EDITABLE);
-                else if (!misc.isEmptyOrNull(_customField.getValue()))
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
 
                 if (tip == null)
                     _tipTextView.setText("mm/dd/yyyy h:mm am/pm");
@@ -164,10 +151,7 @@ public class CustomFieldDialog extends SimpleDialog {
             case TIME:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
-                if (!misc.isEmptyOrNull(_customFieldTimeData))
-                    _textEditText.setText(_customFieldTimeData, TextView.BufferType.EDITABLE);
-                else if (!misc.isEmptyOrNull(_customField.getValue()))
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
 
                 if (tip == null)
                     _tipTextView.setText("h:mm am/pm");
@@ -177,10 +161,7 @@ public class CustomFieldDialog extends SimpleDialog {
 
             case TEXT:
                 _textEditText.setInputType(InputType.TYPE_CLASS_TEXT);
-                if (!misc.isEmptyOrNull(_customFieldTextData))
-                    _textEditText.setText(_customFieldTextData, TextView.BufferType.EDITABLE);
-                else if (!misc.isEmptyOrNull(_customField.getValue()))
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
 
                 if (tip == null)
                     _tipTextView.setText("any text");
@@ -190,10 +171,7 @@ public class CustomFieldDialog extends SimpleDialog {
 
             case NUMERIC:
                 _textEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
-                if (!misc.isEmptyOrNull(_customFieldNumberData))
-                    _textEditText.setText(_customFieldNumberData, TextView.BufferType.EDITABLE);
-                else if (!misc.isEmptyOrNull(_customField.getValue()))
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
 
                 if (tip == null)
                     _tipTextView.setText("a number");
@@ -203,10 +181,7 @@ public class CustomFieldDialog extends SimpleDialog {
 
             case PHONE:
                 _textEditText.setInputType(InputType.TYPE_CLASS_PHONE);
-                if (!misc.isEmptyOrNull(_customFieldPhoneNumberData))
-                    _textEditText.setText(_customFieldPhoneNumberData, TextView.BufferType.EDITABLE);
-                else if (!misc.isEmptyOrNull(_customField.getValue()))
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
 
                 if (tip == null)
                     _tipTextView.setText("xxx-xxx-xxxx");
