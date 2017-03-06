@@ -7,10 +7,11 @@ import android.widget.BaseAdapter;
 
 import com.fieldnation.App;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Message;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.Messages;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -42,8 +43,8 @@ public class MessagesAdapter extends BaseAdapter {
         @Override
         public int compare(Message lhs, Message rhs) {
             try {
-                long lhsUtc = ISO8601.toUtc(lhs.getMsgCreateDate());
-                long rhsUtc = ISO8601.toUtc(rhs.getMsgCreateDate());
+                long lhsUtc = lhs.getCreated().getUtcLong();
+                long rhsUtc = rhs.getCreated().getUtcLong();
 
                 if (lhsUtc < rhsUtc)
                     return -1;
@@ -59,10 +60,10 @@ public class MessagesAdapter extends BaseAdapter {
         }
     };
 
-    public void setMessages(List<Message> messages) {
+    public void setMessages(Messages messages) {
         if (messages != null) {
-            Collections.sort(messages, _messageComparator);
-            _messages = messages;
+            _messages = Arrays.asList(messages.getResults());
+            Collections.sort(_messages, _messageComparator);
             notifyDataSetChanged();
         }
     }
@@ -95,8 +96,8 @@ public class MessagesAdapter extends BaseAdapter {
 
         Log.v(TAG, "getView(" + position + ") / " + _messages.size());
         Message message = _messages.get(position);
-        if (message.getFromUser().getUserId() != null
-                && message.getFromUser().getUserId().equals(profile.getUserId())) {
+        if (message.getFrom().getId() != null
+                && message.getFrom().getId().equals(profile.getUserId().intValue())) {
             MessageSentView v = null;
 
             if (convertView == null) {

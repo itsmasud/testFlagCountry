@@ -50,6 +50,9 @@ public class Message implements Parcelable {
     @Json(name = "role")
     private String _role;
 
+    @Json(name = "sharedText")
+    private String _sharedText;
+
     @Json(name = "to")
     private MessageTo _to;
 
@@ -333,6 +336,32 @@ public class Message implements Parcelable {
         return this;
     }
 
+    public void setSharedText(String sharedText) throws ParseException {
+        _sharedText = sharedText;
+        SOURCE.put("sharedText", sharedText);
+    }
+
+    public String getSharedText() {
+        try {
+            if (_sharedText != null)
+                return _sharedText;
+
+            if (SOURCE.has("sharedText") && SOURCE.get("sharedText") != null)
+                _sharedText = SOURCE.getString("sharedText");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _sharedText;
+    }
+
+    public Message sharedText(String sharedText) throws ParseException {
+        _sharedText = sharedText;
+        SOURCE.put("sharedText", sharedText);
+        return this;
+    }
+
     public void setTo(MessageTo to) throws ParseException {
         _to = to;
         SOURCE.put("to", to.getJson());
@@ -363,8 +392,10 @@ public class Message implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "create")
+        CREATE("create"),
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 

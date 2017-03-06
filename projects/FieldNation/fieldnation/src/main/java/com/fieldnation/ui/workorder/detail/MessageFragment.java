@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Message;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -19,10 +18,9 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.data.model.WorkOrder;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class MessageFragment extends WorkorderFragment {
     private static final String TAG = "MessageFragment";
@@ -36,9 +34,8 @@ public class MessageFragment extends WorkorderFragment {
     // Data
     private WorkOrder _workorder;
     private WorkordersWebApi _workOrderApi;
-    private List<Message> _messages = new LinkedList<>();
+    private Messages _messages;
     private MessagesAdapter _adapter;
-    private boolean _isSubbed = false;
     private boolean _isMarkedRead = false;
 
     /*-*************************************-*/
@@ -66,7 +63,6 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        _isSubbed = false;
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
     }
@@ -77,7 +73,6 @@ public class MessageFragment extends WorkorderFragment {
             _workOrderApi.disconnect(App.get());
             _workOrderApi = null;
         }
-        _isSubbed = false;
         super.onDetach();
     }
 
@@ -103,7 +98,7 @@ public class MessageFragment extends WorkorderFragment {
 //        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
         if (_workorder != null) {
             _refreshView.startRefreshing();
-// TODO            WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);
+            WorkordersWebApi.getMessages(App.get(), _workorder.getWorkOrderId(), false);
         }
     }
 
@@ -111,7 +106,6 @@ public class MessageFragment extends WorkorderFragment {
     public void setWorkorder(WorkOrder workorder) {
         _workorder = workorder;
         populateUi();
-        subscribeData();
         getMessages();
     }
 
@@ -120,8 +114,7 @@ public class MessageFragment extends WorkorderFragment {
             return;
 
         Log.v(TAG, "getMessages");
-
-// TODO        WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);
+        WorkordersWebApi.getMessages(App.get(), _workorder.getWorkOrderId(), false);
     }
 
     private void populateUi() {
@@ -150,7 +143,9 @@ public class MessageFragment extends WorkorderFragment {
     private void rebuildList() {
         // debug testing
         Log.v(TAG, "rebuildList");
-        if (_messages == null || _messages.size() == 0) {
+        if (_messages == null
+                || _messages.getMetadata() == null
+                || _messages.getMetadata().getTotal() == null) {
             _emptyMessageViewStub.setVisibility(View.VISIBLE);
         } else {
             _emptyMessageViewStub.setVisibility(View.GONE);
@@ -161,8 +156,8 @@ public class MessageFragment extends WorkorderFragment {
             Log.v(TAG, "rebuildList: inside ELSE getAdapter() == null");
 
             getAdapter().setMessages(_messages);
-            if (_messages != null && _messages.size() > 0)
-                _listview.setSelection(_messages.size() - 1);
+            if (getAdapter().getCount() > 0)
+                _listview.setSelection(getAdapter().getCount() - 1);
         }
 
         _refreshView.refreshComplete();
@@ -217,38 +212,21 @@ public class MessageFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private void subscribeData() {
-        if (_workorder == null)
-            return;
-
-        if (_workOrderApi == null)
-            return;
-
-        if (!_workOrderApi.isConnected())
-            return;
-
-        if (_isSubbed)
-            return;
-
-// TODO        _workorderClient.subListMessages(_workorder.getWorkorderId(), false);
-        _isSubbed = true;
-    }
 
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            subscribeData();
+            _workOrderApi.subWorkordersWebApi();
         }
 
-/* TODO
         @Override
-        public void onMessageList(long workorderId, List<Message> messages, boolean failed) {
-            if (failed || messages == null)
+        public void onGetMessages(Messages messages, boolean success, Error error) {
+            if (!success || error != null)
                 return;
 
             _messages = messages;
+            
             rebuildList();
         }
-*/
     };
 }

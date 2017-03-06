@@ -23,17 +23,20 @@ public class Messages implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
-    @Json(name = "problem_reported")
-    private Boolean _problemReported;
-
     @Json(name = "results")
-    private Message _results;
+    private Message[] _results;
 
     @Json(name = "sum")
     private Integer _sum;
+
+    @Json(name = "unread")
+    private Integer _unread;
 
     @Source
     private JsonObject SOURCE;
@@ -81,6 +84,32 @@ public class Messages implements Parcelable {
         return this;
     }
 
+    public void setCorrelationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
+    }
+
+    public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _correlationId;
+    }
+
+    public Messages correlationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
+        return this;
+    }
+
     public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
@@ -107,44 +136,19 @@ public class Messages implements Parcelable {
         return this;
     }
 
-    public void setProblemReported(Boolean problemReported) throws ParseException {
-        _problemReported = problemReported;
-        SOURCE.put("problem_reported", problemReported);
-    }
-
-    public Boolean getProblemReported() {
-        try {
-            if (_problemReported != null)
-                return _problemReported;
-
-            if (SOURCE.has("problem_reported") && SOURCE.get("problem_reported") != null)
-                _problemReported = SOURCE.getBoolean("problem_reported");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _problemReported;
-    }
-
-    public Messages problemReported(Boolean problemReported) throws ParseException {
-        _problemReported = problemReported;
-        SOURCE.put("problem_reported", problemReported);
-        return this;
-    }
-
-    public void setResults(Message results) throws ParseException {
+    public void setResults(Message[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", results.getJson());
+        SOURCE.put("results", Message.toJsonArray(results));
     }
 
-    public Message getResults() {
+    public Message[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
-            if (SOURCE.has("results") && SOURCE.get("results") != null)
-                _results = Message.fromJson(SOURCE.getJsonObject("results"));
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Message.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -153,9 +157,9 @@ public class Messages implements Parcelable {
         return _results;
     }
 
-    public Messages results(Message results) throws ParseException {
+    public Messages results(Message[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", results.getJson());
+        SOURCE.put("results", Message.toJsonArray(results), true);
         return this;
     }
 
@@ -182,6 +186,32 @@ public class Messages implements Parcelable {
     public Messages sum(Integer sum) throws ParseException {
         _sum = sum;
         SOURCE.put("sum", sum);
+        return this;
+    }
+
+    public void setUnread(Integer unread) throws ParseException {
+        _unread = unread;
+        SOURCE.put("unread", unread);
+    }
+
+    public Integer getUnread() {
+        try {
+            if (_unread != null)
+                return _unread;
+
+            if (SOURCE.has("unread") && SOURCE.get("unread") != null)
+                _unread = SOURCE.getInt("unread");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _unread;
+    }
+
+    public Messages unread(Integer unread) throws ParseException {
+        _unread = unread;
+        SOURCE.put("unread", unread);
         return this;
     }
 
