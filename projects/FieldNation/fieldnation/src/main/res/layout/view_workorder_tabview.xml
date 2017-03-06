@@ -77,26 +77,6 @@
 
         <View style="@style/WorkorderTabView_Sep_Vert" />
 
-        <!-- alerts -->
-
-        <RelativeLayout
-            android:id="@+id/alert_layout"
-            style="@style/WorkorderTabView_TabContainer" >
-
-            <ImageView
-                android:id="@+id/alert_imageview"
-                style="@style/WorkorderTabView_Tab"
-                android:background="@drawable/ic_workorder_tab_alert_button" />
-
-            <TextView
-                android:id="@+id/alert_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:paddingTop="6dp"
-                android:textColor="@color/workorder_tab_textcolor"
-                android:visibility="gone" />
-        </RelativeLayout>
     </LinearLayout>
 
     <View style="@style/DividerFull" />
