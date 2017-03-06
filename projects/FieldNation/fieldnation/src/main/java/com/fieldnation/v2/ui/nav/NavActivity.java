@@ -117,6 +117,9 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
+        
         super.onPause();
     }
 

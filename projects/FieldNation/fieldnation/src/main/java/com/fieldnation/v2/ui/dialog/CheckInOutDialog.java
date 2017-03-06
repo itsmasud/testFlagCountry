@@ -145,6 +145,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
         _spinner.setOnItemSelectedListener(_spinner_selected);
+
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
     }
 
     @Override
@@ -164,9 +167,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         } else {
             _deviceNumberLayout.setVisibility(View.GONE);
         }
-
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
 
         super.show(params, animate);
 

@@ -27,6 +27,7 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
@@ -621,7 +622,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onRequested(int workOrderId) {
             if (_workOrder.getWorkOrderId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
         }
     };
 
@@ -637,7 +638,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onAccepted(int workOrderId) {
             if (_workOrder.getWorkOrderId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
         }
     };
 
@@ -814,7 +815,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //ConfirmActivity.startNew(App.get());
+            ConfirmActivity.startNew(App.get());
         }
     };
 

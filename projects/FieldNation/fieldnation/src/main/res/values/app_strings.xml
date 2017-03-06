@@ -624,7 +624,6 @@
     <string name="thank_you">Thank You!</string>
     <string name="thanks_for_the_heads_up">Thanks for the heads up. Buyer has been notified.</string>
     <string name="there_is_a_problem">There\'s a problem</string>
-    <string name="this_work_order_has_no_notification_at_this_time">No Notification History</string>
     <string name="time_late">%1$s late</string>
     <string name="time_logged">Time Logged</string>
     <string name="time_to_approval">Time to approval</string>

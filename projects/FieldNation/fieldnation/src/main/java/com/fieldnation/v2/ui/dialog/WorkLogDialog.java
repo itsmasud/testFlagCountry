@@ -38,7 +38,6 @@ public class WorkLogDialog extends SimpleDialog {
     private TimePickerDialog _timePicker;
 
     // Data State
-    private String _title;
     private TimeLog _timeLog;
     private boolean _showDevicesCount = false;
 
@@ -48,14 +47,12 @@ public class WorkLogDialog extends SimpleDialog {
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
 
-    public WorkLogDialog(Context context, ViewGroup container) {
-        super(context, container);
-    }
-
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
+    public WorkLogDialog(Context context, ViewGroup container) {
+        super(context, container);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
@@ -87,20 +84,37 @@ public class WorkLogDialog extends SimpleDialog {
         _endButton.setOnClickListener(_end_onClick);
         _okButton.setOnClickListener(_ok_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
-
     }
 
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
-        _title = payload.getString("title");
         _timeLog = payload.getParcelable("timeLog");
         _showDevicesCount = payload.getBoolean("showDeviceCount");
 
-        _startIsSet = false;
-        _endIsSet = false;
+        populateUi();
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        _startIsSet = savedState.getBoolean("startIsSet");
+        _endIsSet = savedState.getBoolean("endIsSet");
+        _startCalendar.setTimeInMillis(savedState.getLong("startTime"));
+        _endCalendar.setTimeInMillis(savedState.getLong("endTime"));
+
+        super.onRestoreDialogState(savedState);
 
         populateUi();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        super.onSaveDialogState(outState);
+
+        outState.putBoolean("startIsSet", _startIsSet);
+        outState.putBoolean("endIsSet", _endIsSet);
+        outState.putLong("startTime", _startCalendar.getTimeInMillis());
+        outState.putLong("endTime", _endCalendar.getTimeInMillis());
     }
 
     private void populateUi() {
@@ -113,25 +127,33 @@ public class WorkLogDialog extends SimpleDialog {
             _devicesLayout.setVisibility(View.GONE);
         }
 
-        if (_timeLog == null)
-            return;
-
         try {
-            _startCalendar = _timeLog.getIn().getCreated().getCalendar();
-            _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
+            if (!_startIsSet && _timeLog != null && _timeLog.getIn() != null && _timeLog.getIn().getCreated() != null) {
+                _startCalendar = _timeLog.getIn().getCreated().getCalendar();
+                _startIsSet = true;
+            }
+
+            if (_startIsSet)
+                _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
         } catch (ParseException ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            _endCalendar = _timeLog.getOut().getCreated().getCalendar();
-            _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
+            if (!_endIsSet && _timeLog != null && _timeLog.getOut() != null && _timeLog.getOut().getCreated() != null) {
+                _endCalendar = _timeLog.getOut().getCreated().getCalendar();
+                _endIsSet = true;
+            }
+
+            if (_endIsSet)
+                _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            _devicesEditText.setText(_timeLog.getDevices().toString());
+            if (_timeLog != null && _timeLog.getDevices() != null)
+                _devicesEditText.setText(_timeLog.getDevices().toString());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -216,9 +238,8 @@ public class WorkLogDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, String title, TimeLog timeLog, boolean showDeviceCount) {
+    public static void show(Context context, String uid, TimeLog timeLog, boolean showDeviceCount) {
         Bundle params = new Bundle();
-        params.putString("title", title);
         params.putParcelable("timeLog", timeLog);
         params.putBoolean("showDeviceCount", showDeviceCount);
         Controller.show(context, uid, WorkLogDialog.class, params);

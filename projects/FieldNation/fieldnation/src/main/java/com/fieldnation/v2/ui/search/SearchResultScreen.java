@@ -78,9 +78,6 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
         post(new Runnable() {
             @Override
             public void run() {
@@ -113,7 +110,16 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
     };
 
     @Override
+    protected void onAttachedToWindow() {
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
+        super.onAttachedToWindow();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
 
