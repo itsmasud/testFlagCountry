@@ -106,8 +106,11 @@ public class CustomFieldDialog extends SimpleDialog {
     }
 
     private void populateUi() {
-        if (_textEditText == null || _dateTimeButton == null || _spinner == null
-                || _tipTextView == null || _customField == null)
+        if (_textEditText == null
+                || _dateTimeButton == null
+                || _spinner == null
+                || _tipTextView == null
+                || _customField == null)
             return;
 
         _titleTextView.setText(_customField.getName());
