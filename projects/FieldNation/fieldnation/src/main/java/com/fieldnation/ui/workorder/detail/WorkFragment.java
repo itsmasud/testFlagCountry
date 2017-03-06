@@ -37,7 +37,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -47,7 +46,6 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
@@ -80,6 +78,7 @@ import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
+import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
@@ -111,6 +110,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
+    private static final String DIALOG_DECLINE = TAG + ".declineDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
@@ -162,7 +162,6 @@ public class WorkFragment extends WorkorderFragment {
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Dialogs
-    private DeclineDialog _declineDialog;
     private TermsScrollingDialog _termsScrollingDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
@@ -355,12 +354,10 @@ TODO        if (_currentTask != null)
     public void onAttach(Activity activity) {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
-        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-        _declineDialog.setListener(_declineDialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
@@ -370,6 +367,7 @@ TODO        if (_currentTask != null)
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
+        DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
@@ -420,6 +418,7 @@ TODO        if (_currentTask != null)
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
+        DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
@@ -908,7 +907,12 @@ TODO            if (_workorder.getPaymentId() != null) {
         public void onNotInterested() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getWorkOrderId());
 
-            _declineDialog.show();
+            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null) {
+                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
+                        _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
+            } else {
+                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
+            }
         }
 
         @Override
@@ -1545,50 +1549,12 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
         }
     };
 
-    private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
+    private final DeclineDialog.OnDeclinedListener _declineDialog_onDecline = new DeclineDialog.OnDeclinedListener() {
         @Override
-        public void onOk() {
+        public void onDeclined(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), -1, null);
-        }
-
-        @Override
-        public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), -1, null);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-
-            if (blockBuyer) {
-                ProfileClient.actionBlockCompany(App.get(),
-                        App.get().getProfile().getUserId(),
-                        _workOrder.getCompany().getId(),
-                        blockingReasonId, blockingExplanation);
-            }
-        }
-
-        @Override
-        public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), declineReasonId, declineExplanation);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-            if (blockBuyer) {
-                ProfileClient.actionBlockCompany(App.get(),
-                        App.get().getProfile().getUserId(),
-                        _workOrder.getCompany().getId(), blockingReasonId, blockingExplanation);
-            }
-
-            getActivity().finish();
-        }
-
-        @Override
-        public void onOk(int declineReasonId, String declineExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), declineReasonId, declineExplanation);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
-
 
     private final DiscountDialog.OnOkListener _discountDialog_onOk = new DiscountDialog.OnOkListener() {
         @Override
