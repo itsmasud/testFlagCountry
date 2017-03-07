@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
@@ -94,13 +95,26 @@ public class ShipmentRowView extends RelativeLayout {
 
         ShipmentCarrier.NameEnum carrier;
         if (_shipment.getCarrier() != null && (carrier = _shipment.getCarrier().getName()) != null) {
-            _carrierTextView.setText(misc.capitalize(carrier.toString()));
+            switch (carrier) {
+                case USPS:
+                    _carrierTextView.setText(carrier.toString().toUpperCase());
+                    break;
+                case UPS:
+                    _carrierTextView.setText(carrier.toString().toUpperCase());
+                    break;
+                case FEDEX:
+                    _carrierTextView.setText(misc.capitalize(carrier.toString()));
+                case OTHER:
+                    _carrierTextView.setText(misc.capitalize(carrier.toString()));
+            }
         }
 
         _descTextView.setText(_shipment.getName());
-        boolean toSite;
-        if (_shipment.getDirection() != null && (toSite = _shipment.getDirection() == Shipment.DirectionEnum.TO_SITE))
-            _directionTextView.setText(toSite ? "To Site" : "From Site");
+        if (_shipment.getDirection() != null && _shipment.getDirection() == Shipment.DirectionEnum.TO_SITE) {
+            _directionTextView.setText("To Site");
+        } else {
+            _directionTextView.setText("From Site");
+        }
 
         setEnabled(_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD));
     }

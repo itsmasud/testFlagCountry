@@ -96,29 +96,6 @@ public class Shipment implements Parcelable {
         return this;
     }
 
-    public void setActions(ActionsEnum[] actions) throws ParseException {
-        _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja);
-    }
-
-    public ActionsEnum[] getActions() {
-        return _actions;
-    }
-
-    public Shipment actions(ActionsEnum[] actions) throws ParseException {
-        _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja, true);
-        return this;
-    }
-
     public void setCarrier(ShipmentCarrier carrier) throws ParseException {
         _carrier = carrier;
         SOURCE.put("carrier", carrier.getJson());
@@ -441,24 +418,6 @@ public class Shipment implements Parcelable {
         }
     }
 
-    public enum ActionsEnum {
-        @Json(name = "delete")
-        DELETE("delete"),
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -525,13 +484,12 @@ public class Shipment implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
     private Set<Shipment.ActionsEnum> _actionsSet = null;
 
     public Set<Shipment.ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(_actions));
+            _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }
