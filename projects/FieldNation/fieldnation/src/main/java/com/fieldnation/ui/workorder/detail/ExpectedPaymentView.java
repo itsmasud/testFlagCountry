@@ -107,7 +107,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             setVisibility(VISIBLE);
         }
 
-        if (_workOrder.getStatus().getId() == 2) {
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
             setVisibility(GONE);
             return;
         }
@@ -128,9 +128,9 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         // Penalty
         _penaltyTextView.setText(misc.toCurrency(pay.getPenalties().getSum().getCharged()));
 
-
         // Total
         _expectedTotalTextView.setText(misc.toCurrency(pay.getTotal()));
+
         Double sum = pay.getTotal();
 
         // Insurance and Field Nation fees
