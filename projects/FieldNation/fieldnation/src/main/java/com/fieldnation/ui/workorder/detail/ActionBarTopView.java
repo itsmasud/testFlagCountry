@@ -156,7 +156,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 //            _rightWhiteButton.setText(R.string.btn_on_my_way);
 //            setVisibility(View.VISIBLE);
 
-            // ack hold/
+            // ack hold
 //            inflate();
 //            _leftWhiteButton.setVisibility(VISIBLE);
 //            _leftWhiteButton.setText(R.string.btn_report_a_problem);
