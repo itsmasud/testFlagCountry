@@ -17,8 +17,6 @@ public class WorkorderTabView extends RelativeLayout {
     //    private RelativeLayout _tasksLayout;
     private TextView _messagesTextView;
     private RelativeLayout _messagesLayout;
-    private TextView _alertTextView;
-    private RelativeLayout _alertLayout;
     private RelativeLayout _attachmentsLayout;
 
     // Data
@@ -63,26 +61,20 @@ public class WorkorderTabView extends RelativeLayout {
         _messagesLayout = (RelativeLayout) findViewById(R.id.messages_layout);
         _messagesLayout.setOnClickListener(_messagesLayout_onClick);
 
-        _alertTextView = (TextView) findViewById(R.id.alert_textview);
-        _alertLayout = (RelativeLayout) findViewById(R.id.alert_layout);
-        _alertLayout.setOnClickListener(_alertLayout_onClick);
-
         _attachmentsLayout = (RelativeLayout) findViewById(R.id.attachments_layout);
         _attachmentsLayout.setOnClickListener(_attachmentsLayout_onClick);
 
-        _buttons = new View[4];
+        _buttons = new View[3];
         _buttons[0] = _detailLayout;
 //        _buttons[1] = _tasksLayout;
         _buttons[1] = _messagesLayout;
         _buttons[2] = _attachmentsLayout;
-        _buttons[3] = _alertLayout;
 
         _layouts = new RelativeLayout[5];
         _layouts[0] = _detailLayout;
 //        _layouts[1] = _tasksLayout;
         _layouts[1] = _messagesLayout;
         _layouts[2] = _attachmentsLayout;
-        _layouts[3] = _alertLayout;
 
         setSelected(0);
     }
@@ -117,15 +109,6 @@ public class WorkorderTabView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _alertLayout_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            setSelected(3);
-            if (_listener != null)
-                _listener.onChange(3);
-        }
-    };
-
     /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
@@ -142,15 +125,6 @@ public class WorkorderTabView extends RelativeLayout {
         } else {
             _messagesTextView.setVisibility(VISIBLE);
             _messagesTextView.setText(count + "");
-        }
-    }
-
-    public void setAlertsCount(int count) {
-        if (count == 0) {
-            _alertTextView.setVisibility(GONE);
-        } else {
-            _alertTextView.setVisibility(VISIBLE);
-            _alertTextView.setText(count + "");
         }
     }
 

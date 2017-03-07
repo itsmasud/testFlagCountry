@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -33,9 +31,14 @@ public class Shipments implements Parcelable {
     private Shipment[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Shipments() {
+        SOURCE = new JsonObject();
+    }
+
+    public Shipments(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -48,6 +51,18 @@ public class Shipments implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -67,6 +82,17 @@ public class Shipments implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -82,6 +108,18 @@ public class Shipments implements Parcelable {
     }
 
     public Shipment[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Shipment.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -102,6 +140,23 @@ public class Shipments implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -131,7 +186,7 @@ public class Shipments implements Parcelable {
 
     public static Shipments fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Shipments.class, obj);
+            return new Shipments(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -176,15 +231,13 @@ public class Shipments implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    private Set<ActionsEnum> _actionsSet = null;
+    private Set<Shipments.ActionsEnum> _actionsSet = null;
 
     public Set<Shipments.ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(_actions));
+            _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }
-
 }

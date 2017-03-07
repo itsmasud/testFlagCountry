@@ -5,11 +5,10 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 
@@ -66,7 +65,7 @@ public class Pay implements Parcelable {
     private Double _numberOfDevices;
 
     @Json(name = "payment")
-    private PayModifiers _payment;
+    private PayModifier _payment;
 
     @Json(name = "penalties")
     private PayModifiers _penalties;
@@ -96,9 +95,14 @@ public class Pay implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Pay() {
+        SOURCE = new JsonObject();
+    }
+
+    public Pay(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -111,6 +115,18 @@ public class Pay implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -130,6 +146,17 @@ public class Pay implements Parcelable {
     }
 
     public PayAdditional getAdditional() {
+        try {
+            if (_additional != null)
+                return _additional;
+
+            if (SOURCE.has("additional") && SOURCE.get("additional") != null)
+                _additional = PayAdditional.fromJson(SOURCE.getJsonObject("additional"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _additional;
     }
 
@@ -145,6 +172,17 @@ public class Pay implements Parcelable {
     }
 
     public PayBase getBase() {
+        try {
+            if (_base != null)
+                return _base;
+
+            if (SOURCE.has("base") && SOURCE.get("base") != null)
+                _base = PayBase.fromJson(SOURCE.getJsonObject("base"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _base;
     }
 
@@ -160,6 +198,17 @@ public class Pay implements Parcelable {
     }
 
     public PayModifiers getBonuses() {
+        try {
+            if (_bonuses != null)
+                return _bonuses;
+
+            if (SOURCE.has("bonuses") && SOURCE.get("bonuses") != null)
+                _bonuses = PayModifiers.fromJson(SOURCE.getJsonObject("bonuses"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _bonuses;
     }
 
@@ -175,6 +224,17 @@ public class Pay implements Parcelable {
     }
 
     public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _correlationId;
     }
 
@@ -190,6 +250,17 @@ public class Pay implements Parcelable {
     }
 
     public PayModifiers getDiscounts() {
+        try {
+            if (_discounts != null)
+                return _discounts;
+
+            if (SOURCE.has("discounts") && SOURCE.get("discounts") != null)
+                _discounts = PayModifiers.fromJson(SOURCE.getJsonObject("discounts"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _discounts;
     }
 
@@ -205,6 +276,17 @@ public class Pay implements Parcelable {
     }
 
     public Date getEstimatedPaymentDate() {
+        try {
+            if (_estimatedPaymentDate != null)
+                return _estimatedPaymentDate;
+
+            if (SOURCE.has("estimated_payment_date") && SOURCE.get("estimated_payment_date") != null)
+                _estimatedPaymentDate = Date.fromJson(SOURCE.getJsonObject("estimated_payment_date"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _estimatedPaymentDate;
     }
 
@@ -220,6 +302,17 @@ public class Pay implements Parcelable {
     }
 
     public Expenses getExpenses() {
+        try {
+            if (_expenses != null)
+                return _expenses;
+
+            if (SOURCE.has("expenses") && SOURCE.get("expenses") != null)
+                _expenses = Expenses.fromJson(SOURCE.getJsonObject("expenses"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _expenses;
     }
 
@@ -235,6 +328,18 @@ public class Pay implements Parcelable {
     }
 
     public PayModifier[] getFees() {
+        try {
+            if (_fees != null)
+                return _fees;
+
+            if (SOURCE.has("fees") && SOURCE.get("fees") != null) {
+                _fees = PayModifier.fromJsonArray(SOURCE.getJsonArray("fees"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _fees;
     }
 
@@ -250,6 +355,17 @@ public class Pay implements Parcelable {
     }
 
     public PayFinance getFinance() {
+        try {
+            if (_finance != null)
+                return _finance;
+
+            if (SOURCE.has("finance") && SOURCE.get("finance") != null)
+                _finance = PayFinance.fromJson(SOURCE.getJsonObject("finance"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _finance;
     }
 
@@ -265,6 +381,17 @@ public class Pay implements Parcelable {
     }
 
     public PayModifiers getHold() {
+        try {
+            if (_hold != null)
+                return _hold;
+
+            if (SOURCE.has("hold") && SOURCE.get("hold") != null)
+                _hold = PayModifiers.fromJson(SOURCE.getJsonObject("hold"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hold;
     }
 
@@ -280,6 +407,17 @@ public class Pay implements Parcelable {
     }
 
     public PayIncreases getIncreases() {
+        try {
+            if (_increases != null)
+                return _increases;
+
+            if (SOURCE.has("increases") && SOURCE.get("increases") != null)
+                _increases = PayIncreases.fromJson(SOURCE.getJsonObject("increases"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _increases;
     }
 
@@ -295,6 +433,17 @@ public class Pay implements Parcelable {
     }
 
     public Double getLaborSum() {
+        try {
+            if (_laborSum != null)
+                return _laborSum;
+
+            if (SOURCE.has("labor_sum") && SOURCE.get("labor_sum") != null)
+                _laborSum = SOURCE.getDouble("labor_sum");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _laborSum;
     }
 
@@ -310,6 +459,17 @@ public class Pay implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -325,6 +485,17 @@ public class Pay implements Parcelable {
     }
 
     public Double getNumberOfDevices() {
+        try {
+            if (_numberOfDevices != null)
+                return _numberOfDevices;
+
+            if (SOURCE.has("number_of_devices") && SOURCE.get("number_of_devices") != null)
+                _numberOfDevices = SOURCE.getDouble("number_of_devices");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _numberOfDevices;
     }
 
@@ -334,16 +505,27 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setPayment(PayModifiers payment) throws ParseException {
+    public void setPayment(PayModifier payment) throws ParseException {
         _payment = payment;
         SOURCE.put("payment", payment.getJson());
     }
 
-    public PayModifiers getPayment() {
+    public PayModifier getPayment() {
+        try {
+            if (_payment != null)
+                return _payment;
+
+            if (SOURCE.has("payment") && SOURCE.get("payment") != null)
+                _payment = PayModifier.fromJson(SOURCE.getJsonObject("payment"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _payment;
     }
 
-    public Pay payment(PayModifiers payment) throws ParseException {
+    public Pay payment(PayModifier payment) throws ParseException {
         _payment = payment;
         SOURCE.put("payment", payment.getJson());
         return this;
@@ -355,6 +537,17 @@ public class Pay implements Parcelable {
     }
 
     public PayModifiers getPenalties() {
+        try {
+            if (_penalties != null)
+                return _penalties;
+
+            if (SOURCE.has("penalties") && SOURCE.get("penalties") != null)
+                _penalties = PayModifiers.fromJson(SOURCE.getJsonObject("penalties"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _penalties;
     }
 
@@ -370,6 +563,17 @@ public class Pay implements Parcelable {
     }
 
     public PricingInsights getPricingInsights() {
+        try {
+            if (_pricingInsights != null)
+                return _pricingInsights;
+
+            if (SOURCE.has("pricing_insights") && SOURCE.get("pricing_insights") != null)
+                _pricingInsights = PricingInsights.fromJson(SOURCE.getJsonObject("pricing_insights"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _pricingInsights;
     }
 
@@ -385,6 +589,17 @@ public class Pay implements Parcelable {
     }
 
     public PayRange getRange() {
+        try {
+            if (_range != null)
+                return _range;
+
+            if (SOURCE.has("range") && SOURCE.get("range") != null)
+                _range = PayRange.fromJson(SOURCE.getJsonObject("range"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _range;
     }
 
@@ -400,6 +615,17 @@ public class Pay implements Parcelable {
     }
 
     public Double getReportedHours() {
+        try {
+            if (_reportedHours != null)
+                return _reportedHours;
+
+            if (SOURCE.has("reported_hours") && SOURCE.get("reported_hours") != null)
+                _reportedHours = SOURCE.getDouble("reported_hours");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _reportedHours;
     }
 
@@ -415,6 +641,17 @@ public class Pay implements Parcelable {
     }
 
     public String getRole() {
+        try {
+            if (_role != null)
+                return _role;
+
+            if (SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _role;
     }
 
@@ -430,6 +667,17 @@ public class Pay implements Parcelable {
     }
 
     public Integer getStatusId() {
+        try {
+            if (_statusId != null)
+                return _statusId;
+
+            if (SOURCE.has("status_id") && SOURCE.get("status_id") != null)
+                _statusId = SOURCE.getInt("status_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusId;
     }
 
@@ -445,6 +693,17 @@ public class Pay implements Parcelable {
     }
 
     public Double getTotal() {
+        try {
+            if (_total != null)
+                return _total;
+
+            if (SOURCE.has("total") && SOURCE.get("total") != null)
+                _total = SOURCE.getDouble("total");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _total;
     }
 
@@ -460,6 +719,17 @@ public class Pay implements Parcelable {
     }
 
     public TypeEnum getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = TypeEnum.fromString(SOURCE.getString("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -475,6 +745,17 @@ public class Pay implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -503,6 +784,23 @@ public class Pay implements Parcelable {
             this.value = value;
         }
 
+        public static TypeEnum fromString(String value) {
+            TypeEnum[] values = values();
+            for (TypeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static TypeEnum[] fromJsonArray(JsonArray jsonArray) {
+            TypeEnum[] list = new TypeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -517,6 +815,23 @@ public class Pay implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -546,7 +861,7 @@ public class Pay implements Parcelable {
 
     public static Pay fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Pay.class, obj);
+            return new Pay(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -587,4 +902,59 @@ public class Pay implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public String[] toDisplayStringLong() {
+        String line1 = null;
+        String line2 = null;
+
+        TypeEnum type = getType();
+
+        // Todo, need to localize this
+        try {
+            switch (type) {
+                case FIXED:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " Fixed";
+                    break;
+                case HOURLY:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " per hr up to " + getBase().getUnits() + " hours.";
+                    break;
+                case BLENDED:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " for the first " + getBase().getUnits() + " hours.";
+                    line2 = "Then " + misc.toCurrency(getAdditional().getAmount()) + " per hr up to " + getAdditional().getUnits() + " hours.";
+                    break;
+                case DEVICE:
+                    line1 = misc.toCurrency(getBase().getAmount()) + " per device up to " + getBase().getUnits() + " devices.";
+                    break;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return new String[]{line1, line2};
+    }
+
+    public String toDisplayStringShort() {
+        TypeEnum type = getType();
+
+        try {
+            // Todo, localize this
+            switch (type) {
+                case BLENDED:
+                    return misc.toCurrency(getBase().getAmount());
+                case DEVICE:
+                    return misc.toCurrency(getBase().getAmount());
+                case FIXED:
+                    return misc.toCurrency(getBase().getAmount());
+                case HOURLY:
+                    return misc.toCurrency(getBase().getAmount());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
 }

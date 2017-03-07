@@ -36,9 +36,14 @@ public class CreditCard implements Parcelable {
     private TypeEnum _type;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CreditCard() {
+        SOURCE = new JsonObject();
+    }
+
+    public CreditCard(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCardNumber(String cardNumber) throws ParseException {
@@ -47,6 +52,17 @@ public class CreditCard implements Parcelable {
     }
 
     public String getCardNumber() {
+        try {
+            if (_cardNumber != null)
+                return _cardNumber;
+
+            if (SOURCE.has("card_number") && SOURCE.get("card_number") != null)
+                _cardNumber = SOURCE.getString("card_number");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _cardNumber;
     }
 
@@ -62,6 +78,17 @@ public class CreditCard implements Parcelable {
     }
 
     public String getCardholderName() {
+        try {
+            if (_cardholderName != null)
+                return _cardholderName;
+
+            if (SOURCE.has("cardholder_name") && SOURCE.get("cardholder_name") != null)
+                _cardholderName = SOURCE.getString("cardholder_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _cardholderName;
     }
 
@@ -77,6 +104,17 @@ public class CreditCard implements Parcelable {
     }
 
     public String getCvv() {
+        try {
+            if (_cvv != null)
+                return _cvv;
+
+            if (SOURCE.has("cvv") && SOURCE.get("cvv") != null)
+                _cvv = SOURCE.getString("cvv");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _cvv;
     }
 
@@ -92,6 +130,17 @@ public class CreditCard implements Parcelable {
     }
 
     public String getExpDate() {
+        try {
+            if (_expDate != null)
+                return _expDate;
+
+            if (SOURCE.has("exp_date") && SOURCE.get("exp_date") != null)
+                _expDate = SOURCE.getString("exp_date");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _expDate;
     }
 
@@ -107,6 +156,17 @@ public class CreditCard implements Parcelable {
     }
 
     public TypeEnum getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = TypeEnum.fromString(SOURCE.getString("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -139,6 +199,23 @@ public class CreditCard implements Parcelable {
             this.value = value;
         }
 
+        public static TypeEnum fromString(String value) {
+            TypeEnum[] values = values();
+            for (TypeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static TypeEnum[] fromJsonArray(JsonArray jsonArray) {
+            TypeEnum[] list = new TypeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -166,7 +243,7 @@ public class CreditCard implements Parcelable {
 
     public static CreditCard fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CreditCard.class, obj);
+            return new CreditCard(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

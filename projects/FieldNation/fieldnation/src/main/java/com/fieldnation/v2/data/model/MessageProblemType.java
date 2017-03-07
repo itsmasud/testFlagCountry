@@ -27,9 +27,14 @@ public class MessageProblemType implements Parcelable {
     private Integer _id;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public MessageProblemType() {
+        SOURCE = new JsonObject();
+    }
+
+    public MessageProblemType(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setDescription(String description) throws ParseException {
@@ -38,6 +43,17 @@ public class MessageProblemType implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -53,6 +69,17 @@ public class MessageProblemType implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -83,7 +110,7 @@ public class MessageProblemType implements Parcelable {
 
     public static MessageProblemType fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(MessageProblemType.class, obj);
+            return new MessageProblemType(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -5,13 +5,14 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -54,9 +55,14 @@ public class TimeLogs implements Parcelable {
     private TimeZone _timeZone;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TimeLogs() {
+        SOURCE = new JsonObject();
+    }
+
+    public TimeLogs(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -69,6 +75,18 @@ public class TimeLogs implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -88,6 +106,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public Date getConfirmed() {
+        try {
+            if (_confirmed != null)
+                return _confirmed;
+
+            if (SOURCE.has("confirmed") && SOURCE.get("confirmed") != null)
+                _confirmed = Date.fromJson(SOURCE.getJsonObject("confirmed"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _confirmed;
     }
 
@@ -103,6 +132,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _correlationId;
     }
 
@@ -118,6 +158,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public Double getHours() {
+        try {
+            if (_hours != null)
+                return _hours;
+
+            if (SOURCE.has("hours") && SOURCE.get("hours") != null)
+                _hours = SOURCE.getDouble("hours");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _hours;
     }
 
@@ -133,6 +184,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -148,6 +210,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public OnMyWay getOnmyway() {
+        try {
+            if (_onmyway != null)
+                return _onmyway;
+
+            if (SOURCE.has("onmyway") && SOURCE.get("onmyway") != null)
+                _onmyway = OnMyWay.fromJson(SOURCE.getJsonObject("onmyway"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _onmyway;
     }
 
@@ -163,6 +236,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public TimeLog getOpenTimeLog() {
+        try {
+            if (_openTimeLog != null)
+                return _openTimeLog;
+
+            if (SOURCE.has("open_time_log") && SOURCE.get("open_time_log") != null)
+                _openTimeLog = TimeLog.fromJson(SOURCE.getJsonObject("open_time_log"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _openTimeLog;
     }
 
@@ -178,6 +262,18 @@ public class TimeLogs implements Parcelable {
     }
 
     public TimeLog[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = TimeLog.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -193,6 +289,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public Boolean getShouldVerify() {
+        try {
+            if (_shouldVerify != null)
+                return _shouldVerify;
+
+            if (SOURCE.has("should_verify") && SOURCE.get("should_verify") != null)
+                _shouldVerify = SOURCE.getBoolean("should_verify");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _shouldVerify;
     }
 
@@ -208,6 +315,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public String getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = SOURCE.getString("status");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -223,6 +341,17 @@ public class TimeLogs implements Parcelable {
     }
 
     public TimeZone getTimeZone() {
+        try {
+            if (_timeZone != null)
+                return _timeZone;
+
+            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _timeZone;
     }
 
@@ -245,6 +374,23 @@ public class TimeLogs implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -274,7 +420,7 @@ public class TimeLogs implements Parcelable {
 
     public static TimeLogs fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TimeLogs.class, obj);
+            return new TimeLogs(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -314,5 +460,18 @@ public class TimeLogs implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
     }
 }

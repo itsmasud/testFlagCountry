@@ -27,9 +27,14 @@ public class CountryAddress1 implements Parcelable {
     private Boolean _required;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CountryAddress1() {
+        SOURCE = new JsonObject();
+    }
+
+    public CountryAddress1(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setLabel(String label) throws ParseException {
@@ -38,6 +43,17 @@ public class CountryAddress1 implements Parcelable {
     }
 
     public String getLabel() {
+        try {
+            if (_label != null)
+                return _label;
+
+            if (SOURCE.has("label") && SOURCE.get("label") != null)
+                _label = SOURCE.getString("label");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _label;
     }
 
@@ -53,6 +69,17 @@ public class CountryAddress1 implements Parcelable {
     }
 
     public Boolean getRequired() {
+        try {
+            if (_required != null)
+                return _required;
+
+            if (SOURCE.has("required") && SOURCE.get("required") != null)
+                _required = SOURCE.getBoolean("required");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _required;
     }
 
@@ -83,7 +110,7 @@ public class CountryAddress1 implements Parcelable {
 
     public static CountryAddress1 fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CountryAddress1.class, obj);
+            return new CountryAddress1(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

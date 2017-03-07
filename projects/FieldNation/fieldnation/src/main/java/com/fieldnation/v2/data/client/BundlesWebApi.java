@@ -66,7 +66,7 @@ public class BundlesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BundlesWebApi/" + bundleId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/BundlesWebApi",
                                     BundlesWebApi.class, "getBundleWorkOrders"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -79,10 +79,6 @@ public class BundlesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetBundleWorkOrders(Integer bundleId) {
-        return register("TOPIC_ID_WEB_API_V2/BundlesWebApi/" + bundleId);
     }
 
 

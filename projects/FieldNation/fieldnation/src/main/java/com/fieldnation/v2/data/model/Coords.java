@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -39,9 +37,14 @@ public class Coords implements Parcelable {
     private Boolean _success;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Coords() {
+        SOURCE = new JsonObject();
+    }
+
+    public Coords(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setDistance(Double distance) throws ParseException {
@@ -50,6 +53,17 @@ public class Coords implements Parcelable {
     }
 
     public Double getDistance() {
+        try {
+            if (_distance != null)
+                return _distance;
+
+            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+                _distance = SOURCE.getDouble("distance");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _distance;
     }
 
@@ -65,6 +79,17 @@ public class Coords implements Parcelable {
     }
 
     public Boolean getExact() {
+        try {
+            if (_exact != null)
+                return _exact;
+
+            if (SOURCE.has("exact") && SOURCE.get("exact") != null)
+                _exact = SOURCE.getBoolean("exact");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _exact;
     }
 
@@ -80,6 +105,17 @@ public class Coords implements Parcelable {
     }
 
     public Double getLatitude() {
+        try {
+            if (_latitude != null)
+                return _latitude;
+
+            if (SOURCE.has("latitude") && SOURCE.get("latitude") != null)
+                _latitude = SOURCE.getDouble("latitude");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _latitude;
     }
 
@@ -95,6 +131,17 @@ public class Coords implements Parcelable {
     }
 
     public Double getLongitude() {
+        try {
+            if (_longitude != null)
+                return _longitude;
+
+            if (SOURCE.has("longitude") && SOURCE.get("longitude") != null)
+                _longitude = SOURCE.getDouble("longitude");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _longitude;
     }
 
@@ -110,6 +157,17 @@ public class Coords implements Parcelable {
     }
 
     public String getSearch() {
+        try {
+            if (_search != null)
+                return _search;
+
+            if (SOURCE.has("search") && SOURCE.get("search") != null)
+                _search = SOURCE.getString("search");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _search;
     }
 
@@ -125,6 +183,17 @@ public class Coords implements Parcelable {
     }
 
     public Boolean getSuccess() {
+        try {
+            if (_success != null)
+                return _success;
+
+            if (SOURCE.has("success") && SOURCE.get("success") != null)
+                _success = SOURCE.getBoolean("success");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _success;
     }
 
@@ -155,7 +224,7 @@ public class Coords implements Parcelable {
 
     public static Coords fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Coords.class, obj);
+            return new Coords(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -200,13 +269,13 @@ public class Coords implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    public Coords(double latitude, double longitude) {
-        super();
-        _latitude = latitude;
-        _longitude = longitude;
+    public Coords(double latitude, double longitude) throws ParseException {
+        this();
+        setLatitude(latitude);
+        setLongitude(longitude);
     }
 
-    public Coords(android.location.Location location) {
+    public Coords(android.location.Location location) throws ParseException {
         this(location.getLatitude(), location.getLongitude());
     }
 }

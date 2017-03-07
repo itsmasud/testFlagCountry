@@ -86,6 +86,10 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         TopicService.dispatchEvent(context, TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode, payload, Sticky.TEMP);
     }
 
+    public boolean subOnActivityResult() {
+        return register(TOPIC_ID_ON_ACTIVITY_RESULT);
+    }
+
     /**
      * Subscribes to an activity result
      *
@@ -98,6 +102,10 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
     public void clearOnActivityResult(int requestCode) {
         clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
+    }
+
+    public void clearOnActivityResult() {
+        clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT);
     }
 
     /*-**********************************-*/

@@ -64,7 +64,7 @@ public class PenaltiesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/penalties",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/PenaltiesWebApi",
                                     PenaltiesWebApi.class, "addPenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -74,10 +74,6 @@ public class PenaltiesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddPenalty() {
-        return register("TOPIC_ID_WEB_API_V2/penalties");
     }
 
     /**
@@ -101,7 +97,7 @@ public class PenaltiesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/PenaltiesWebApi/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/PenaltiesWebApi",
                                     PenaltiesWebApi.class, "removePenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -111,10 +107,6 @@ public class PenaltiesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemovePenalty(Integer penaltyId) {
-        return register("TOPIC_ID_WEB_API_V2/PenaltiesWebApi/" + penaltyId);
     }
 
     /**
@@ -142,7 +134,7 @@ public class PenaltiesWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/PenaltiesWebApi/" + penaltyId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/PenaltiesWebApi",
                                     PenaltiesWebApi.class, "updatePenalty"))
                     .useAuth(true)
                     .request(builder)
@@ -152,10 +144,6 @@ public class PenaltiesWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdatePenalty(String penaltyId) {
-        return register("TOPIC_ID_WEB_API_V2/PenaltiesWebApi/" + penaltyId);
     }
 
 

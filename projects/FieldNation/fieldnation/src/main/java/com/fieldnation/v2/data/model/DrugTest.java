@@ -30,9 +30,14 @@ public class DrugTest implements Parcelable {
     private String _name;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public DrugTest() {
+        SOURCE = new JsonObject();
+    }
+
+    public DrugTest(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setExpires(String expires) throws ParseException {
@@ -41,6 +46,17 @@ public class DrugTest implements Parcelable {
     }
 
     public String getExpires() {
+        try {
+            if (_expires != null)
+                return _expires;
+
+            if (SOURCE.has("expires") && SOURCE.get("expires") != null)
+                _expires = SOURCE.getString("expires");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _expires;
     }
 
@@ -56,6 +72,17 @@ public class DrugTest implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -71,6 +98,17 @@ public class DrugTest implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -101,7 +139,7 @@ public class DrugTest implements Parcelable {
 
     public static DrugTest fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(DrugTest.class, obj);
+            return new DrugTest(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -27,6 +27,7 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
@@ -366,16 +367,9 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populatePrimaryButton(Button button) {
-        Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
-        workOrderActions.addAll(Arrays.asList(_workOrder.getActions()));
-
-        Set<Schedule.ActionsEnum> scheduleActions = new HashSet<>();
-        scheduleActions.addAll(Arrays.asList(_workOrder.getSchedule().getActions()));
-
-        Set<TimeLogs.ActionsEnum> timeLogsActions = new HashSet<>();
-        if (_workOrder.getTimeLogs() != null && _workOrder.getTimeLogs().getActions() != null) {
-            timeLogsActions.addAll(Arrays.asList(_workOrder.getTimeLogs().getActions()));
-        }
+        Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
+        Set<Schedule.ActionsEnum> scheduleActions = _workOrder.getSchedule().getActionsSet();
+        Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
 
         // Order of operations
         // check_out
@@ -392,21 +386,9 @@ public class WorkOrderCard extends RelativeLayout {
 
         if (false) {
 
-            // check_out
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
-                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
-            button.setVisibility(VISIBLE);
-            button.setOnClickListener(_checkOut_onClick);
-            button.setText(R.string.btn_check_out);
-
-            // check_in
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
-            button.setVisibility(VISIBLE);
-            button.setOnClickListener(_checkIn_onClick);
-            button.setText(R.string.btn_check_in);
-
             // set eta
-        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)) {
+        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
+                && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_eta_onClick);
             button.setText(R.string.btn_set_eta);
@@ -426,6 +408,19 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setVisibility(VISIBLE);
 //            button.setOnClickListener(_ackHold_onClick);
 //            button.setText(R.string.btn_acknowledge_hold);
+
+            // check_out
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
+                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkOut_onClick);
+            button.setText(R.string.btn_check_out);
+
+            // check_in
+        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_checkIn_onClick);
+            button.setText(R.string.btn_check_in);
 
             // mark incomplete
         } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
@@ -627,7 +622,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onRequested(int workOrderId) {
             if (_workOrder.getWorkOrderId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
         }
     };
 
@@ -643,7 +638,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onAccepted(int workOrderId) {
             if (_workOrder.getWorkOrderId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
         }
     };
 
@@ -820,7 +815,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //ConfirmActivity.startNew(App.get());
+            ConfirmActivity.startNew(App.get());
         }
     };
 

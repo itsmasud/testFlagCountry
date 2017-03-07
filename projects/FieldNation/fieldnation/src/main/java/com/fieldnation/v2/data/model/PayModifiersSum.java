@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -30,9 +28,14 @@ public class PayModifiersSum implements Parcelable {
     private Double _uncharged;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayModifiersSum() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayModifiersSum(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAll(Double all) throws ParseException {
@@ -41,6 +44,17 @@ public class PayModifiersSum implements Parcelable {
     }
 
     public Double getAll() {
+        try {
+            if (_all != null)
+                return _all;
+
+            if (SOURCE.has("all") && SOURCE.get("all") != null)
+                _all = SOURCE.getDouble("all");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _all;
     }
 
@@ -56,6 +70,17 @@ public class PayModifiersSum implements Parcelable {
     }
 
     public Double getCharged() {
+        try {
+            if (_charged != null)
+                return _charged;
+
+            if (SOURCE.has("charged") && SOURCE.get("charged") != null)
+                _charged = SOURCE.getDouble("charged");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _charged;
     }
 
@@ -71,6 +96,17 @@ public class PayModifiersSum implements Parcelable {
     }
 
     public Double getUncharged() {
+        try {
+            if (_uncharged != null)
+                return _uncharged;
+
+            if (SOURCE.has("uncharged") && SOURCE.get("uncharged") != null)
+                _uncharged = SOURCE.getDouble("uncharged");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _uncharged;
     }
 
@@ -101,7 +137,7 @@ public class PayModifiersSum implements Parcelable {
 
     public static PayModifiersSum fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayModifiersSum.class, obj);
+            return new PayModifiersSum(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

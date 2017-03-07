@@ -33,9 +33,14 @@ public class UserPreferredGroups implements Parcelable {
     private String _notes;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UserPreferredGroups() {
+        SOURCE = new JsonObject();
+    }
+
+    public UserPreferredGroups(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCreated(Date created) throws ParseException {
@@ -44,6 +49,17 @@ public class UserPreferredGroups implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -59,6 +75,17 @@ public class UserPreferredGroups implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -74,6 +101,17 @@ public class UserPreferredGroups implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -89,6 +127,17 @@ public class UserPreferredGroups implements Parcelable {
     }
 
     public String getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _notes;
     }
 
@@ -119,7 +168,7 @@ public class UserPreferredGroups implements Parcelable {
 
     public static UserPreferredGroups fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UserPreferredGroups.class, obj);
+            return new UserPreferredGroups(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -126,22 +126,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         return v;
     }
 
-    private void setLoading(boolean loading) {
-        if (loading) {
-            _toolbar.setEnabled(false);
-            _refreshView.startRefreshing();
-            _startDateButton.setEnabled(false);
-            _startTimeButton.setEnabled(false);
-            _spinner.setEnabled(false);
-        } else {
-            _toolbar.setEnabled(true);
-            _refreshView.refreshComplete();
-            _startDateButton.setEnabled(true);
-            _startTimeButton.setEnabled(true);
-            _spinner.setEnabled(true);
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -161,14 +145,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
         _spinner.setOnItemSelectedListener(_spinner_selected);
-    }
 
-    @Override
-    public void onPause() {
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
-
-        super.onPause();
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
     }
 
     @Override
@@ -189,26 +168,9 @@ public class CheckInOutDialog extends FullScreenDialog {
             _deviceNumberLayout.setVisibility(View.GONE);
         }
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
         super.show(params, animate);
 
         populateUi();
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        if (_expiringDurationMilliseconds != INVALID_NUMBER)
-            outState.putLong(STATE_EXPIRATION_DURATION, _expiringDurationMilliseconds);
-
-        if (_durationMilliseconds != INVALID_NUMBER)
-            outState.putLong(STATE_DURATION, _durationMilliseconds);
-
-        if (_startCalendar != null)
-            outState.putSerializable(PARAM_CALENDAR, _startCalendar);
-
-        super.onSaveDialogState(outState);
     }
 
     @Override
@@ -226,6 +188,44 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         // UI
         populateUi();
+    }
+
+    @Override
+    public void onPause() {
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
+
+        super.onPause();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_expiringDurationMilliseconds != INVALID_NUMBER)
+            outState.putLong(STATE_EXPIRATION_DURATION, _expiringDurationMilliseconds);
+
+        if (_durationMilliseconds != INVALID_NUMBER)
+            outState.putLong(STATE_DURATION, _durationMilliseconds);
+
+        if (_startCalendar != null)
+            outState.putSerializable(PARAM_CALENDAR, _startCalendar);
+
+        super.onSaveDialogState(outState);
+    }
+
+    private void setLoading(boolean loading) {
+        if (loading) {
+            _toolbar.setEnabled(false);
+            _refreshView.startRefreshing();
+            _startDateButton.setEnabled(false);
+            _startTimeButton.setEnabled(false);
+            _spinner.setEnabled(false);
+        } else {
+            _toolbar.setEnabled(true);
+            _refreshView.refreshComplete();
+            _startDateButton.setEnabled(true);
+            _startTimeButton.setEnabled(true);
+            _spinner.setEnabled(true);
+        }
     }
 
     /*-********************************************-*/
@@ -336,7 +336,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-
             try {
                 setLoading(true);
                 if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
@@ -412,11 +411,18 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         @Override
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {
                     dismiss(true);
+                }
+            }
+
+            if (!success) {
+                if (methodName.equals("addTimeLog")) {
+                    ToastClient.toast(App.get(), "Check In Failed, Please Try Again Later", Toast.LENGTH_SHORT);
+                } else if (methodName.equals("updateTimeLog")) {
+                    ToastClient.toast(App.get(), "Check Out Failed, Please Try Again Later", Toast.LENGTH_SHORT);
                 }
             }
         }

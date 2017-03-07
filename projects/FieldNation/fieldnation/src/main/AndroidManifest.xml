@@ -323,7 +323,7 @@
             android:process=":frontside" />
 
         <service
-            android:name=".service.tracker.UploadTracker"
+            android:name=".service.tracker.UploadTrackerService"
             android:exported="false"
             android:process=":frontside" />
 

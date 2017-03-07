@@ -48,9 +48,14 @@ public class LocationCoordinates implements Parcelable {
     private String _zip;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public LocationCoordinates() {
+        SOURCE = new JsonObject();
+    }
+
+    public LocationCoordinates(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCity(String city) throws ParseException {
@@ -59,6 +64,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public String getCity() {
+        try {
+            if (_city != null)
+                return _city;
+
+            if (SOURCE.has("city") && SOURCE.get("city") != null)
+                _city = SOURCE.getString("city");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _city;
     }
 
@@ -74,6 +90,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public String getCountry() {
+        try {
+            if (_country != null)
+                return _country;
+
+            if (SOURCE.has("country") && SOURCE.get("country") != null)
+                _country = SOURCE.getString("country");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _country;
     }
 
@@ -89,6 +116,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public Boolean getExact() {
+        try {
+            if (_exact != null)
+                return _exact;
+
+            if (SOURCE.has("exact") && SOURCE.get("exact") != null)
+                _exact = SOURCE.getBoolean("exact");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _exact;
     }
 
@@ -104,6 +142,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -119,6 +168,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public Double getLatitude() {
+        try {
+            if (_latitude != null)
+                return _latitude;
+
+            if (SOURCE.has("latitude") && SOURCE.get("latitude") != null)
+                _latitude = SOURCE.getDouble("latitude");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _latitude;
     }
 
@@ -134,6 +194,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public Double getLongitude() {
+        try {
+            if (_longitude != null)
+                return _longitude;
+
+            if (SOURCE.has("longitude") && SOURCE.get("longitude") != null)
+                _longitude = SOURCE.getDouble("longitude");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _longitude;
     }
 
@@ -149,6 +220,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public String getState() {
+        try {
+            if (_state != null)
+                return _state;
+
+            if (SOURCE.has("state") && SOURCE.get("state") != null)
+                _state = SOURCE.getString("state");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _state;
     }
 
@@ -164,6 +246,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public String getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = SOURCE.getString("type");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -179,6 +272,17 @@ public class LocationCoordinates implements Parcelable {
     }
 
     public String getZip() {
+        try {
+            if (_zip != null)
+                return _zip;
+
+            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+                _zip = SOURCE.getString("zip");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _zip;
     }
 
@@ -209,7 +313,7 @@ public class LocationCoordinates implements Parcelable {
 
     public static LocationCoordinates fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(LocationCoordinates.class, obj);
+            return new LocationCoordinates(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

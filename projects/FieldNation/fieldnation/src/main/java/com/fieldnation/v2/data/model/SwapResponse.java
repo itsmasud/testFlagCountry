@@ -24,9 +24,14 @@ public class SwapResponse implements Parcelable {
     private Boolean _success;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public SwapResponse() {
+        SOURCE = new JsonObject();
+    }
+
+    public SwapResponse(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setSuccess(Boolean success) throws ParseException {
@@ -35,6 +40,17 @@ public class SwapResponse implements Parcelable {
     }
 
     public Boolean getSuccess() {
+        try {
+            if (_success != null)
+                return _success;
+
+            if (SOURCE.has("success") && SOURCE.get("success") != null)
+                _success = SOURCE.getBoolean("success");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _success;
     }
 
@@ -65,7 +81,7 @@ public class SwapResponse implements Parcelable {
 
     public static SwapResponse fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(SwapResponse.class, obj);
+            return new SwapResponse(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

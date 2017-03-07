@@ -78,9 +78,6 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
         post(new Runnable() {
             @Override
             public void run() {
@@ -96,7 +93,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(Location location) {
+        public void onLocation(SimpleGps simpleGps, Location location) {
             _location = location;
 /*
 TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
@@ -107,13 +104,22 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
 
     @Override
+    protected void onAttachedToWindow() {
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
+        super.onAttachedToWindow();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
 
@@ -169,7 +175,6 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
     private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            _workOrderClient.subGetWorkOrders();
             _workOrderClient.subWorkordersWebApi();
         }
 
@@ -211,7 +216,7 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
         public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
 
-            if (methodName.equals("getWorkOrderLists") || methodName.equals("getWorkOrders"))
+            if (methodName.startsWith("get"))
                 return;
 
             _adapter.refreshAll();

@@ -27,9 +27,14 @@ public class AvailableColumn implements Parcelable {
     private AvailableColumnItems[] _items;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public AvailableColumn() {
+        SOURCE = new JsonObject();
+    }
+
+    public AvailableColumn(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setGroup(String group) throws ParseException {
@@ -38,6 +43,17 @@ public class AvailableColumn implements Parcelable {
     }
 
     public String getGroup() {
+        try {
+            if (_group != null)
+                return _group;
+
+            if (SOURCE.has("group") && SOURCE.get("group") != null)
+                _group = SOURCE.getString("group");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _group;
     }
 
@@ -53,6 +69,18 @@ public class AvailableColumn implements Parcelable {
     }
 
     public AvailableColumnItems[] getItems() {
+        try {
+            if (_items != null)
+                return _items;
+
+            if (SOURCE.has("items") && SOURCE.get("items") != null) {
+                _items = AvailableColumnItems.fromJsonArray(SOURCE.getJsonArray("items"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _items;
     }
 
@@ -83,7 +111,7 @@ public class AvailableColumn implements Parcelable {
 
     public static AvailableColumn fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(AvailableColumn.class, obj);
+            return new AvailableColumn(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

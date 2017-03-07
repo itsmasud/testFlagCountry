@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
@@ -41,9 +42,14 @@ public class ErrorTrace implements Parcelable {
     private String _type;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ErrorTrace() {
+        SOURCE = new JsonObject();
+    }
+
+    public ErrorTrace(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setArgs(ErrorTraceArgs[] args) throws ParseException {
@@ -52,6 +58,18 @@ public class ErrorTrace implements Parcelable {
     }
 
     public ErrorTraceArgs[] getArgs() {
+        try {
+            if (_args != null)
+                return _args;
+
+            if (SOURCE.has("args") && SOURCE.get("args") != null) {
+                _args = ErrorTraceArgs.fromJsonArray(SOURCE.getJsonArray("args"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _args;
     }
 
@@ -67,6 +85,17 @@ public class ErrorTrace implements Parcelable {
     }
 
     public String getClazz() {
+        try {
+            if (_class != null)
+                return _class;
+
+            if (SOURCE.has("class") && SOURCE.get("class") != null)
+                _class = SOURCE.getString("class");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _class;
     }
 
@@ -82,6 +111,17 @@ public class ErrorTrace implements Parcelable {
     }
 
     public String getFile() {
+        try {
+            if (_file != null)
+                return _file;
+
+            if (SOURCE.has("file") && SOURCE.get("file") != null)
+                _file = SOURCE.getString("file");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _file;
     }
 
@@ -97,6 +137,17 @@ public class ErrorTrace implements Parcelable {
     }
 
     public String getFunction() {
+        try {
+            if (_function != null)
+                return _function;
+
+            if (SOURCE.has("function") && SOURCE.get("function") != null)
+                _function = SOURCE.getString("function");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _function;
     }
 
@@ -112,6 +163,17 @@ public class ErrorTrace implements Parcelable {
     }
 
     public Integer getLine() {
+        try {
+            if (_line != null)
+                return _line;
+
+            if (SOURCE.has("line") && SOURCE.get("line") != null)
+                _line = SOURCE.getInt("line");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _line;
     }
 
@@ -127,6 +189,17 @@ public class ErrorTrace implements Parcelable {
     }
 
     public ErrorTraceObject getObject() {
+        try {
+            if (_object != null)
+                return _object;
+
+            if (SOURCE.has("object") && SOURCE.get("object") != null)
+                _object = ErrorTraceObject.fromJson(SOURCE.getJsonObject("object"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _object;
     }
 
@@ -142,6 +215,17 @@ public class ErrorTrace implements Parcelable {
     }
 
     public String getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = SOURCE.getString("type");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -172,7 +256,7 @@ public class ErrorTrace implements Parcelable {
 
     public static ErrorTrace fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ErrorTrace.class, obj);
+            return new ErrorTrace(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

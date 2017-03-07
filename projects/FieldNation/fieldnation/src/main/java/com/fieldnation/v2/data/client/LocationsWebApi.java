@@ -70,7 +70,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/attributes/" + attribute,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "addAttribute"))
                     .useAuth(true)
                     .request(builder)
@@ -80,10 +80,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddAttribute(Integer locationId, Integer attribute) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/attributes/" + attribute);
     }
 
     /**
@@ -110,7 +106,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/locations",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "addLocations"))
                     .useAuth(true)
                     .request(builder)
@@ -120,10 +116,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddLocations() {
-        return register("TOPIC_ID_WEB_API_V2/locations");
     }
 
     /**
@@ -151,7 +143,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/notes",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "addNotes"))
                     .useAuth(true)
                     .request(builder)
@@ -161,10 +153,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subAddNotes(Integer locationId) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/notes");
     }
 
     /**
@@ -188,7 +176,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/locations/countries",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "getCountries"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -201,10 +189,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetCountries() {
-        return register("TOPIC_ID_WEB_API_V2/locations/countries");
     }
 
     /**
@@ -228,7 +212,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/locations",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "getLocations"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -241,10 +225,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetLocations() {
-        return register("TOPIC_ID_WEB_API_V2/locations");
     }
 
     /**
@@ -269,7 +249,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/providers",
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "getProviders"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
@@ -282,10 +262,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subGetProviders(Integer locationId) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/providers");
     }
 
     /**
@@ -310,7 +286,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/attributes/" + attribute,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "removeAttribute"))
                     .useAuth(true)
                     .request(builder)
@@ -320,10 +296,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveAttribute(Integer locationId, Integer attribute) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/attributes/" + attribute);
     }
 
     /**
@@ -347,7 +319,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "removeLocation"))
                     .useAuth(true)
                     .request(builder)
@@ -357,10 +329,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveLocation(Integer locationId) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId);
     }
 
     /**
@@ -385,7 +353,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/notes/" + noteId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "removeNote"))
                     .useAuth(true)
                     .request(builder)
@@ -395,10 +363,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subRemoveNote(Integer locationId, Integer noteId) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/notes/" + noteId);
     }
 
     /**
@@ -422,7 +386,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "updateLocation"))
                     .useAuth(true)
                     .request(builder)
@@ -432,10 +396,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateLocation(Integer locationId) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId);
     }
 
     /**
@@ -464,7 +424,7 @@ public class LocationsWebApi extends TopicClient {
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/notes/" + noteId,
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
                                     LocationsWebApi.class, "updateNote"))
                     .useAuth(true)
                     .request(builder)
@@ -474,10 +434,6 @@ public class LocationsWebApi extends TopicClient {
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
-    }
-
-    public boolean subUpdateNote(Integer locationId, Integer noteId) {
-        return register("TOPIC_ID_WEB_API_V2/LocationsWebApi/" + locationId + "/notes/" + noteId);
     }
 
 

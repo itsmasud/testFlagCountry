@@ -27,9 +27,14 @@ public class Qualifications implements Parcelable {
     private SelectionRule _selectionRule;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Qualifications() {
+        SOURCE = new JsonObject();
+    }
+
+    public Qualifications(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -42,6 +47,18 @@ public class Qualifications implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -61,6 +78,17 @@ public class Qualifications implements Parcelable {
     }
 
     public SelectionRule getSelectionRule() {
+        try {
+            if (_selectionRule != null)
+                return _selectionRule;
+
+            if (SOURCE.has("selection_rule") && SOURCE.get("selection_rule") != null)
+                _selectionRule = SelectionRule.fromJson(SOURCE.getJsonObject("selection_rule"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _selectionRule;
     }
 
@@ -81,6 +109,23 @@ public class Qualifications implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -110,7 +155,7 @@ public class Qualifications implements Parcelable {
 
     public static Qualifications fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Qualifications.class, obj);
+            return new Qualifications(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

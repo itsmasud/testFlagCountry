@@ -329,13 +329,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
     }
 
     private void onStartUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        Log.v(TAG, "onStartUploadDeliverable");
         long workorderId = params.getLong("workorderId");
         long slotId = params.getLong("slotId");
         String filename = params.getString("filename");
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
-        UploadTrackerClient.uploadStarted(context, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
     }
     /*-**************************************-*/
     /*-             onProgress               -*/
@@ -866,11 +867,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
             WorkorderClient.get(context, workorderId, false);
-            UploadTrackerClient.uploadSuccess(context, PARAM_ACTION_UPLOAD_DELIVERABLE);
+            UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            UploadTrackerClient.uploadFailed(context, workorderId);
+            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), (int) workorderId);
+            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
+            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
 
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);

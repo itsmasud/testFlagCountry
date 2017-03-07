@@ -27,9 +27,14 @@ public class ErrorTraceArgs implements Parcelable {
     private Integer _statusCode;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ErrorTraceArgs() {
+        SOURCE = new JsonObject();
+    }
+
+    public ErrorTraceArgs(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMessage(String message) throws ParseException {
@@ -38,6 +43,17 @@ public class ErrorTraceArgs implements Parcelable {
     }
 
     public String getMessage() {
+        try {
+            if (_message != null)
+                return _message;
+
+            if (SOURCE.has("message") && SOURCE.get("message") != null)
+                _message = SOURCE.getString("message");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _message;
     }
 
@@ -53,6 +69,17 @@ public class ErrorTraceArgs implements Parcelable {
     }
 
     public Integer getStatusCode() {
+        try {
+            if (_statusCode != null)
+                return _statusCode;
+
+            if (SOURCE.has("status_code") && SOURCE.get("status_code") != null)
+                _statusCode = SOURCE.getInt("status_code");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusCode;
     }
 
@@ -83,7 +110,7 @@ public class ErrorTraceArgs implements Parcelable {
 
     public static ErrorTraceArgs fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ErrorTraceArgs.class, obj);
+            return new ErrorTraceArgs(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

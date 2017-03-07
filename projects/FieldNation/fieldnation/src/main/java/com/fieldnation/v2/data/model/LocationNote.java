@@ -36,9 +36,14 @@ public class LocationNote implements Parcelable {
     private Integer _userId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public LocationNote() {
+        SOURCE = new JsonObject();
+    }
+
+    public LocationNote(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCreated(String created) throws ParseException {
@@ -47,6 +52,17 @@ public class LocationNote implements Parcelable {
     }
 
     public String getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = SOURCE.getString("created");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -62,6 +78,17 @@ public class LocationNote implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -77,6 +104,17 @@ public class LocationNote implements Parcelable {
     }
 
     public Boolean getPrivate() {
+        try {
+            if (_private != null)
+                return _private;
+
+            if (SOURCE.has("private") && SOURCE.get("private") != null)
+                _private = SOURCE.getBoolean("private");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _private;
     }
 
@@ -92,6 +130,17 @@ public class LocationNote implements Parcelable {
     }
 
     public String getText() {
+        try {
+            if (_text != null)
+                return _text;
+
+            if (SOURCE.has("text") && SOURCE.get("text") != null)
+                _text = SOURCE.getString("text");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _text;
     }
 
@@ -107,6 +156,17 @@ public class LocationNote implements Parcelable {
     }
 
     public Integer getUserId() {
+        try {
+            if (_userId != null)
+                return _userId;
+
+            if (SOURCE.has("user_id") && SOURCE.get("user_id") != null)
+                _userId = SOURCE.getInt("user_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _userId;
     }
 
@@ -137,7 +197,7 @@ public class LocationNote implements Parcelable {
 
     public static LocationNote fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(LocationNote.class, obj);
+            return new LocationNote(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

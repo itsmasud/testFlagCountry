@@ -91,12 +91,6 @@ public class ScheduleDialog extends SimpleDialog {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _okButton = (Button) v.findViewById(R.id.ok_button);
 
-        final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(context, _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _timePicker = new TimePickerDialog(context, _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-
-        _startCal = Calendar.getInstance();
-        _endCal = Calendar.getInstance();
 
         return v;
     }
@@ -104,6 +98,12 @@ public class ScheduleDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
+        final Calendar c = Calendar.getInstance();
+        _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+
+        _startCal = Calendar.getInstance();
+        _endCal = Calendar.getInstance();
 
         _typeSpinner.setOnItemSelectedListener(_type_selected);
         _startDateButton.setOnClickListener(_startDateButton_onClick);
@@ -439,9 +439,9 @@ public class ScheduleDialog extends SimpleDialog {
         _onCompleteDispatcher.removeAll(uid);
     }
 
-    /*-****************************-*/
+    /*-**************************-*/
     /*-         Cancel           -*/
-    /*-****************************-*/
+    /*-**************************-*/
     public interface OnCancelListener {
         void onCancel();
     }

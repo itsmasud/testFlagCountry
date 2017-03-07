@@ -12,9 +12,6 @@ import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -33,9 +30,14 @@ public class PayIncreasesSum implements Parcelable {
     private Double _uncharged;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayIncreasesSum() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayIncreasesSum(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setAll(Double all) throws ParseException {
@@ -44,6 +46,17 @@ public class PayIncreasesSum implements Parcelable {
     }
 
     public Double getAll() {
+        try {
+            if (_all != null)
+                return _all;
+
+            if (SOURCE.has("all") && SOURCE.get("all") != null)
+                _all = SOURCE.getDouble("all");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _all;
     }
 
@@ -59,6 +72,17 @@ public class PayIncreasesSum implements Parcelable {
     }
 
     public Double getCharged() {
+        try {
+            if (_charged != null)
+                return _charged;
+
+            if (SOURCE.has("charged") && SOURCE.get("charged") != null)
+                _charged = SOURCE.getDouble("charged");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _charged;
     }
 
@@ -74,6 +98,17 @@ public class PayIncreasesSum implements Parcelable {
     }
 
     public Double getUncharged() {
+        try {
+            if (_uncharged != null)
+                return _uncharged;
+
+            if (SOURCE.has("uncharged") && SOURCE.get("uncharged") != null)
+                _uncharged = SOURCE.getDouble("uncharged");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _uncharged;
     }
 
@@ -104,7 +139,7 @@ public class PayIncreasesSum implements Parcelable {
 
     public static PayIncreasesSum fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayIncreasesSum.class, obj);
+            return new PayIncreasesSum(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -118,7 +153,7 @@ public class PayIncreasesSum implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Creator<PayIncreasesSum> CREATOR = new Creator<PayIncreasesSum>() {
+    public static final Parcelable.Creator<PayIncreasesSum> CREATOR = new Parcelable.Creator<PayIncreasesSum>() {
 
         @Override
         public PayIncreasesSum createFromParcel(Parcel source) {

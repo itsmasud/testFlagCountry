@@ -20,6 +20,12 @@ import java.text.ParseException;
 public class MessageProblem implements Parcelable {
     private static final String TAG = "MessageProblem";
 
+    @Json(name = "can_resolve")
+    private Boolean _canResolve;
+
+    @Json(name = "escalate_to_performance")
+    private Boolean _escalateToPerformance;
+
     @Json(name = "flag_id")
     private Integer _flagId;
 
@@ -30,9 +36,66 @@ public class MessageProblem implements Parcelable {
     private MessageProblemType _type;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public MessageProblem() {
+        SOURCE = new JsonObject();
+    }
+
+    public MessageProblem(JsonObject obj) {
+        SOURCE = obj;
+    }
+
+    public void setCanResolve(Boolean canResolve) throws ParseException {
+        _canResolve = canResolve;
+        SOURCE.put("can_resolve", canResolve);
+    }
+
+    public Boolean getCanResolve() {
+        try {
+            if (_canResolve != null)
+                return _canResolve;
+
+            if (SOURCE.has("can_resolve") && SOURCE.get("can_resolve") != null)
+                _canResolve = SOURCE.getBoolean("can_resolve");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _canResolve;
+    }
+
+    public MessageProblem canResolve(Boolean canResolve) throws ParseException {
+        _canResolve = canResolve;
+        SOURCE.put("can_resolve", canResolve);
+        return this;
+    }
+
+    public void setEscalateToPerformance(Boolean escalateToPerformance) throws ParseException {
+        _escalateToPerformance = escalateToPerformance;
+        SOURCE.put("escalate_to_performance", escalateToPerformance);
+    }
+
+    public Boolean getEscalateToPerformance() {
+        try {
+            if (_escalateToPerformance != null)
+                return _escalateToPerformance;
+
+            if (SOURCE.has("escalate_to_performance") && SOURCE.get("escalate_to_performance") != null)
+                _escalateToPerformance = SOURCE.getBoolean("escalate_to_performance");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _escalateToPerformance;
+    }
+
+    public MessageProblem escalateToPerformance(Boolean escalateToPerformance) throws ParseException {
+        _escalateToPerformance = escalateToPerformance;
+        SOURCE.put("escalate_to_performance", escalateToPerformance);
+        return this;
     }
 
     public void setFlagId(Integer flagId) throws ParseException {
@@ -41,6 +104,17 @@ public class MessageProblem implements Parcelable {
     }
 
     public Integer getFlagId() {
+        try {
+            if (_flagId != null)
+                return _flagId;
+
+            if (SOURCE.has("flag_id") && SOURCE.get("flag_id") != null)
+                _flagId = SOURCE.getInt("flag_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _flagId;
     }
 
@@ -56,6 +130,17 @@ public class MessageProblem implements Parcelable {
     }
 
     public Boolean getResolved() {
+        try {
+            if (_resolved != null)
+                return _resolved;
+
+            if (SOURCE.has("resolved") && SOURCE.get("resolved") != null)
+                _resolved = SOURCE.getBoolean("resolved");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _resolved;
     }
 
@@ -71,6 +156,17 @@ public class MessageProblem implements Parcelable {
     }
 
     public MessageProblemType getType() {
+        try {
+            if (_type != null)
+                return _type;
+
+            if (SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = MessageProblemType.fromJson(SOURCE.getJsonObject("type"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _type;
     }
 
@@ -101,7 +197,7 @@ public class MessageProblem implements Parcelable {
 
     public static MessageProblem fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(MessageProblem.class, obj);
+            return new MessageProblem(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

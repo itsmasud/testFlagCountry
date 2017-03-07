@@ -16,7 +16,8 @@ interface WebTransactionConstants {
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_QUEUE_TIME = "PARAM_QUEUE_TIME";
     String PARAM_WIFI_REQUIRED = "PARAM_WIFI_REQUIRED";
-    String PARAM_TRACK = "PARAM_TRACK";
+    String PARAM_TRACK = "isTracked";
+    String PARAM_TRACK_ENUM = "trackEnum";
     String PARAM_TIMING_KEY = "timingKey";
 
     String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";

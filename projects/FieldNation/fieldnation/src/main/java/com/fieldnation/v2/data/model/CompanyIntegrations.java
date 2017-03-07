@@ -27,9 +27,14 @@ public class CompanyIntegrations implements Parcelable {
     private CompanyIntegration[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public CompanyIntegrations() {
+        SOURCE = new JsonObject();
+    }
+
+    public CompanyIntegrations(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setEnvelope(ListEnvelope envelope) throws ParseException {
@@ -38,6 +43,17 @@ public class CompanyIntegrations implements Parcelable {
     }
 
     public ListEnvelope getEnvelope() {
+        try {
+            if (_envelope != null)
+                return _envelope;
+
+            if (SOURCE.has("envelope") && SOURCE.get("envelope") != null)
+                _envelope = ListEnvelope.fromJson(SOURCE.getJsonObject("envelope"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _envelope;
     }
 
@@ -53,6 +69,18 @@ public class CompanyIntegrations implements Parcelable {
     }
 
     public CompanyIntegration[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = CompanyIntegration.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -83,7 +111,7 @@ public class CompanyIntegrations implements Parcelable {
 
     public static CompanyIntegrations fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(CompanyIntegrations.class, obj);
+            return new CompanyIntegrations(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

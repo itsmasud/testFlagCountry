@@ -27,9 +27,14 @@ public class LocationProviders implements Parcelable {
     private User[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public LocationProviders() {
+        SOURCE = new JsonObject();
+    }
+
+    public LocationProviders(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setLocationId(Integer locationId) throws ParseException {
@@ -38,6 +43,17 @@ public class LocationProviders implements Parcelable {
     }
 
     public Integer getLocationId() {
+        try {
+            if (_locationId != null)
+                return _locationId;
+
+            if (SOURCE.has("location_id") && SOURCE.get("location_id") != null)
+                _locationId = SOURCE.getInt("location_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _locationId;
     }
 
@@ -53,6 +69,18 @@ public class LocationProviders implements Parcelable {
     }
 
     public User[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = User.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -83,7 +111,7 @@ public class LocationProviders implements Parcelable {
 
     public static LocationProviders fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(LocationProviders.class, obj);
+            return new LocationProviders(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

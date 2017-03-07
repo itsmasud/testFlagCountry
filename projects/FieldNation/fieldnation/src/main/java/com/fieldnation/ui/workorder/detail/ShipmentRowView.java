@@ -8,8 +8,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ShipmentTracking;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ShipmentRowView extends RelativeLayout {
@@ -90,20 +92,17 @@ public class ShipmentRowView extends RelativeLayout {
             _trackingIdTextView.setVisibility(GONE);
         }
 
-        String carrier;
+        ShipmentCarrier.NameEnum carrier;
         if (_shipment.getCarrier() != null && (carrier = _shipment.getCarrier().getName()) != null) {
-            _carrierTextView.setText(carrier);
+            _carrierTextView.setText(misc.capitalize(carrier.toString()));
         }
 
         _descTextView.setText(_shipment.getName());
         boolean toSite;
-        if (_shipment.getDirection() != null && (toSite = _shipment.getDirection().equals("to_site")))
+        if (_shipment.getDirection() != null && (toSite = _shipment.getDirection() == Shipment.DirectionEnum.TO_SITE))
             _directionTextView.setText(toSite ? "To Site" : "From Site");
-            // TODO _shipment.getDirection() is null and need to sort out if there is any problem in application side
-        else _directionTextView.setText("Place holder");
 
-        // TODO
-//        setEnabled(_workOrder.canChangeShipments());
+        setEnabled(_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD));
     }
 
     /*-*********************************-*/
@@ -123,16 +122,15 @@ public class ShipmentRowView extends RelativeLayout {
     private final View.OnClickListener _assign_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO action is not defined in swagger.yaml. See comment in PA-613
-//            if (_listener != null) {
-//                _listener.onEdit(_shipment);
-//            }
+            if (_listener != null) {
+                _listener.onEdit(_shipment);
+            }
         }
     };
 
-    // TODO: need to remove ShipmentTracking when action will be defined in swagger.yaml
     public interface Listener {
         void onDelete(Shipment shipment);
-        void onEdit(ShipmentTracking shipment);
+
+        void onEdit(Shipment shipment);
     }
 }

@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;
@@ -61,11 +60,11 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        refresh();
+        populateUi();
     }
 
 
-    private void refresh() {
+    private void populateUi() {
         final Shipment[] shipments = _workOrder.getShipments().getResults();
 
         if (_workOrder.getShipments() != null
@@ -79,6 +78,7 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.GONE);
             return;
         }
+
         setVisibility(View.VISIBLE);
 
         if (shipments == null || shipments.length == 0) {
@@ -119,7 +119,6 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             if (_listener != null
                     && _workOrder.getShipments() != null
                     && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
@@ -133,29 +132,29 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
     private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
         public void onDelete(Shipment shipment) {
-
-            if (_listener != null && shipment.getActionsSet().contains(Shipment.ActionsEnum.DELETE)) {
+            if (_listener != null
+                    && _workOrder.getShipments() != null
+                    && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.DELETE)) {
                 _listener.onDelete(_workOrder, shipment);
             }
 
         }
 
         @Override
-        public void onEdit(ShipmentTracking shipment) {
-            // TODO need to show an edit dialog
-//            if (_listener != null && _workOrder.canChangeShipments()) {
-//                _listener.onAssign(_workOrder, shipment);
-//            }
+        public void onEdit(Shipment shipment) {
+            if (_listener != null
+                    && _workOrder.getShipments() != null
+                    && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+                _listener.onAssign(_workOrder, shipment);
+            }
         }
     };
 
     public interface Listener {
         void addShipment();
 
-        void onDelete(WorkOrder workOrder, Shipment shipmentId);
+        void onDelete(WorkOrder workOrder, Shipment shipment);
 
-        void onAssign(WorkOrder workOrder, Shipment shipmentId);
+        void onAssign(WorkOrder workOrder, Shipment shipment);
     }
-
-
 }

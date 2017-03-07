@@ -45,9 +45,14 @@ public class AvailableColumnItems implements Parcelable {
     private String _sortDir;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public AvailableColumnItems() {
+        SOURCE = new JsonObject();
+    }
+
+    public AvailableColumnItems(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCanSort(Boolean canSort) throws ParseException {
@@ -56,6 +61,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public Boolean getCanSort() {
+        try {
+            if (_canSort != null)
+                return _canSort;
+
+            if (SOURCE.has("can_sort") && SOURCE.get("can_sort") != null)
+                _canSort = SOURCE.getBoolean("can_sort");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _canSort;
     }
 
@@ -71,6 +87,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public String getGroup() {
+        try {
+            if (_group != null)
+                return _group;
+
+            if (SOURCE.has("group") && SOURCE.get("group") != null)
+                _group = SOURCE.getString("group");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _group;
     }
 
@@ -86,6 +113,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public String getIcon() {
+        try {
+            if (_icon != null)
+                return _icon;
+
+            if (SOURCE.has("icon") && SOURCE.get("icon") != null)
+                _icon = SOURCE.getString("icon");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _icon;
     }
 
@@ -101,6 +139,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public String getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getString("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -116,6 +165,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public String getLabel() {
+        try {
+            if (_label != null)
+                return _label;
+
+            if (SOURCE.has("label") && SOURCE.get("label") != null)
+                _label = SOURCE.getString("label");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _label;
     }
 
@@ -131,6 +191,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public Integer getOrder() {
+        try {
+            if (_order != null)
+                return _order;
+
+            if (SOURCE.has("order") && SOURCE.get("order") != null)
+                _order = SOURCE.getInt("order");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _order;
     }
 
@@ -146,6 +217,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public Boolean getSelected() {
+        try {
+            if (_selected != null)
+                return _selected;
+
+            if (SOURCE.has("selected") && SOURCE.get("selected") != null)
+                _selected = SOURCE.getBoolean("selected");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _selected;
     }
 
@@ -161,6 +243,17 @@ public class AvailableColumnItems implements Parcelable {
     }
 
     public String getSortDir() {
+        try {
+            if (_sortDir != null)
+                return _sortDir;
+
+            if (SOURCE.has("sort_dir") && SOURCE.get("sort_dir") != null)
+                _sortDir = SOURCE.getString("sort_dir");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sortDir;
     }
 
@@ -191,7 +284,7 @@ public class AvailableColumnItems implements Parcelable {
 
     public static AvailableColumnItems fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(AvailableColumnItems.class, obj);
+            return new AvailableColumnItems(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

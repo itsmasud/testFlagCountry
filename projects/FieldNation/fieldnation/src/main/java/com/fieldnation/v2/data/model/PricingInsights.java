@@ -24,9 +24,14 @@ public class PricingInsights implements Parcelable {
     private PricingInsightsRegion _region;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PricingInsights() {
+        SOURCE = new JsonObject();
+    }
+
+    public PricingInsights(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setRegion(PricingInsightsRegion region) throws ParseException {
@@ -35,6 +40,17 @@ public class PricingInsights implements Parcelable {
     }
 
     public PricingInsightsRegion getRegion() {
+        try {
+            if (_region != null)
+                return _region;
+
+            if (SOURCE.has("region") && SOURCE.get("region") != null)
+                _region = PricingInsightsRegion.fromJson(SOURCE.getJsonObject("region"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _region;
     }
 
@@ -65,7 +81,7 @@ public class PricingInsights implements Parcelable {
 
     public static PricingInsights fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PricingInsights.class, obj);
+            return new PricingInsights(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

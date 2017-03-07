@@ -48,9 +48,14 @@ public class Manager implements Parcelable {
     private Integer _reviewPeriodDays;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Manager() {
+        SOURCE = new JsonObject();
+    }
+
+    public Manager(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setApprovalDays(Integer approvalDays) throws ParseException {
@@ -59,6 +64,17 @@ public class Manager implements Parcelable {
     }
 
     public Integer getApprovalDays() {
+        try {
+            if (_approvalDays != null)
+                return _approvalDays;
+
+            if (SOURCE.has("approval_days") && SOURCE.get("approval_days") != null)
+                _approvalDays = SOURCE.getInt("approval_days");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _approvalDays;
     }
 
@@ -74,6 +90,17 @@ public class Manager implements Parcelable {
     }
 
     public String getEmail() {
+        try {
+            if (_email != null)
+                return _email;
+
+            if (SOURCE.has("email") && SOURCE.get("email") != null)
+                _email = SOURCE.getString("email");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _email;
     }
 
@@ -89,6 +116,17 @@ public class Manager implements Parcelable {
     }
 
     public String getFirstName() {
+        try {
+            if (_firstName != null)
+                return _firstName;
+
+            if (SOURCE.has("first_name") && SOURCE.get("first_name") != null)
+                _firstName = SOURCE.getString("first_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _firstName;
     }
 
@@ -104,6 +142,17 @@ public class Manager implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -119,6 +168,17 @@ public class Manager implements Parcelable {
     }
 
     public String getLastName() {
+        try {
+            if (_lastName != null)
+                return _lastName;
+
+            if (SOURCE.has("last_name") && SOURCE.get("last_name") != null)
+                _lastName = SOURCE.getString("last_name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _lastName;
     }
 
@@ -134,6 +194,17 @@ public class Manager implements Parcelable {
     }
 
     public String getPhone() {
+        try {
+            if (_phone != null)
+                return _phone;
+
+            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+                _phone = SOURCE.getString("phone");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _phone;
     }
 
@@ -149,6 +220,17 @@ public class Manager implements Parcelable {
     }
 
     public Double getRating() {
+        try {
+            if (_rating != null)
+                return _rating;
+
+            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+                _rating = SOURCE.getDouble("rating");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _rating;
     }
 
@@ -164,6 +246,17 @@ public class Manager implements Parcelable {
     }
 
     public Double getRatings() {
+        try {
+            if (_ratings != null)
+                return _ratings;
+
+            if (SOURCE.has("ratings") && SOURCE.get("ratings") != null)
+                _ratings = SOURCE.getDouble("ratings");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _ratings;
     }
 
@@ -179,6 +272,17 @@ public class Manager implements Parcelable {
     }
 
     public Integer getReviewPeriodDays() {
+        try {
+            if (_reviewPeriodDays != null)
+                return _reviewPeriodDays;
+
+            if (SOURCE.has("review_period_days") && SOURCE.get("review_period_days") != null)
+                _reviewPeriodDays = SOURCE.getInt("review_period_days");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _reviewPeriodDays;
     }
 
@@ -209,7 +313,7 @@ public class Manager implements Parcelable {
 
     public static Manager fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Manager.class, obj);
+            return new Manager(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

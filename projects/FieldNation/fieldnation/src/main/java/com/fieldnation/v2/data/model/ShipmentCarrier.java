@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -27,7 +25,7 @@ public class ShipmentCarrier implements Parcelable {
     private Date _arrived;
 
     @Json(name = "name")
-    private String _name;
+    private NameEnum _name;
 
     @Json(name = "other")
     private String _other;
@@ -36,9 +34,14 @@ public class ShipmentCarrier implements Parcelable {
     private String _tracking;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ShipmentCarrier() {
+        SOURCE = new JsonObject();
+    }
+
+    public ShipmentCarrier(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setArrival(Date arrival) throws ParseException {
@@ -47,6 +50,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public Date getArrival() {
+        try {
+            if (_arrival != null)
+                return _arrival;
+
+            if (SOURCE.has("arrival") && SOURCE.get("arrival") != null)
+                _arrival = Date.fromJson(SOURCE.getJsonObject("arrival"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _arrival;
     }
 
@@ -62,6 +76,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public Date getArrived() {
+        try {
+            if (_arrived != null)
+                return _arrived;
+
+            if (SOURCE.has("arrived") && SOURCE.get("arrived") != null)
+                _arrived = Date.fromJson(SOURCE.getJsonObject("arrived"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _arrived;
     }
 
@@ -71,18 +96,29 @@ public class ShipmentCarrier implements Parcelable {
         return this;
     }
 
-    public void setName(String name) throws ParseException {
+    public void setName(NameEnum name) throws ParseException {
         _name = name;
-        SOURCE.put("name", name);
+        SOURCE.put("name", name.toString());
     }
 
-    public String getName() {
+    public NameEnum getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = NameEnum.fromString(SOURCE.getString("name"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
-    public ShipmentCarrier name(String name) throws ParseException {
+    public ShipmentCarrier name(NameEnum name) throws ParseException {
         _name = name;
-        SOURCE.put("name", name);
+        SOURCE.put("name", name.toString());
         return this;
     }
 
@@ -92,6 +128,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public String getOther() {
+        try {
+            if (_other != null)
+                return _other;
+
+            if (SOURCE.has("other") && SOURCE.get("other") != null)
+                _other = SOURCE.getString("other");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _other;
     }
 
@@ -107,6 +154,17 @@ public class ShipmentCarrier implements Parcelable {
     }
 
     public String getTracking() {
+        try {
+            if (_tracking != null)
+                return _tracking;
+
+            if (SOURCE.has("tracking") && SOURCE.get("tracking") != null)
+                _tracking = SOURCE.getString("tracking");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _tracking;
     }
 
@@ -114,6 +172,48 @@ public class ShipmentCarrier implements Parcelable {
         _tracking = tracking;
         SOURCE.put("tracking", tracking);
         return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum NameEnum {
+        @Json(name = "fedex")
+        FEDEX("fedex"),
+        @Json(name = "ups")
+        UPS("ups"),
+        @Json(name = "usps")
+        USPS("usps"),
+        @Json(name = "other")
+        OTHER("other");
+
+        private String value;
+
+        NameEnum(String value) {
+            this.value = value;
+        }
+
+        public static NameEnum fromString(String value) {
+            NameEnum[] values = values();
+            for (NameEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static NameEnum[] fromJsonArray(JsonArray jsonArray) {
+            NameEnum[] list = new NameEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/
@@ -137,7 +237,7 @@ public class ShipmentCarrier implements Parcelable {
 
     public static ShipmentCarrier fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ShipmentCarrier.class, obj);
+            return new ShipmentCarrier(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -10,7 +10,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -24,14 +23,13 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
@@ -39,56 +37,66 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
+import com.fieldnation.ui.SignatureCardView;
+import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.CustomFieldDialog;
-import com.fieldnation.ui.dialog.DeclineDialog;
-import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
-import com.fieldnation.ui.dialog.ShipmentAddDialog;
-import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.CheckInOut;
+import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
+import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
+import com.fieldnation.v2.ui.dialog.DeclineDialog;
+import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.LocationDialog;
+import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
+import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
+import com.fieldnation.v2.ui.dialog.TermsDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
+import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -96,29 +104,36 @@ public class WorkFragment extends WorkorderFragment {
     private static final String TAG = "WorkFragment";
 
     // Dialog tags
-    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
-    private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
-    private static final String DIALOG_ETA = TAG + ".etaDialog";
-    private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
-    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
-    private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
-    private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
-    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
-    private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
+    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
+    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
+    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
+    private static final String DIALOG_DECLINE = TAG + ".declineDialog";
+    private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
+    private static final String DIALOG_ETA = TAG + ".etaDialog";
+    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG + ".locationDialogCheckIn";
     private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG + ".locationDialogCheckOut";
-    private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
+    private static final String DIALOG_LOCATION_LOADING = TAG + ".locationLoadingDialog";
+    private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
+    private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
+    private static final String DIALOG_PAY = TAG + ".payDialog";
+    private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
+    private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
+    private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
+    private static final String DIALOG_SHIPMENT_ADD = TAG + ".shipmentAddDialog";
+    private static final String DIALOG_TASK_SHIPMENT_ADD = TAG + ".taskShipmentAddDialog";
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
+    private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
+    private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
-    private static final String STATE_TASKS = "WorkFragment:STATE_TASKS";
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
-    private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
     private static final String STATE_TEMP_FILE = "WorkFragment:STATE_TEMP_FILE";
@@ -149,15 +164,7 @@ public class WorkFragment extends WorkorderFragment {
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Dialogs
-    private CustomFieldDialog _customFieldDialog;
-    private DeclineDialog _declineDialog;
-    private DiscountDialog _discountDialog;
-    private ExpenseDialog _expenseDialog;
-    private ShipmentAddDialog _shipmentAddDialog;
-    private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsScrollingDialog _termsScrollingDialog;
-    private WorkLogDialog _worklogDialog;
-    private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
@@ -168,10 +175,11 @@ public class WorkFragment extends WorkorderFragment {
     private WorkordersWebApi _workorderApi;
     private File _tempFile;
     private Uri _tempUri;
-    private GpsLocationService _gpsLocationService;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
+    private Location _currentLocation;
+    private boolean _locationFailed = false;
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -206,7 +214,7 @@ public class WorkFragment extends WorkorderFragment {
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
-//        _renderers.add(_topBar);
+        _renderers.add(_topBar);
 
         _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
@@ -225,12 +233,12 @@ public class WorkFragment extends WorkorderFragment {
         _renderers.add(_scheduleView);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
-// TODO        _payView.setListener(_paymentView_listener);
-//TODO        _renderers.add(_payView);
+        _payView.setListener(_paymentView_listener);
+        _renderers.add(_payView);
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
-//TODO        _renderers.add(_coSummaryView);
+        _renderers.add(_coSummaryView);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
@@ -261,46 +269,27 @@ public class WorkFragment extends WorkorderFragment {
 // TODO        _renderers.add(_taskList);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
-// TODO        _timeLogged.setListener(_timeLoggedView_listener);
-// TODO        _renderers.add(_timeLogged);
+        _timeLogged.setListener(_timeLoggedView_listener);
+        _renderers.add(_timeLogged);
 
         _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
         _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
-// TODO        _customFields.setListener(_customFields_listener);
-// TODO        _renderers.add(_customFields);
+        _customFields.setListener(_customFields_listener);
+        _renderers.add(_customFields);
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
-// TODO        _signatureView.setListener(_signaturelist_listener);
-// TODO        _renderers.add(_signatureView);
+        _signatureView.setListener(_signatureList_listener);
+        _renderers.add(_signatureView);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
-            if (savedInstanceState.containsKey(STATE_TASKS)) {
-                Parcelable[] tasks = savedInstanceState.getParcelableArray(STATE_TASKS);
-/*
-TODO                _tasks = new LinkedList<>();
-                for (Parcelable task : tasks) {
-                    _tasks.add((Task) task);
-                }
-                _taskList.setData(_workorder, _tasks);
-*/
-            }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
 // TODO                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
-            }
-            if (savedInstanceState.containsKey(STATE_SIGNATURES)) {
-                Parcelable[] sigs = savedInstanceState.getParcelableArray(STATE_SIGNATURES);
-/*
-TODO                _signatures = new LinkedList<>();
-                for (Parcelable sig : sigs) {
-                    _signatures.add((Signature) sig);
-                }
-*/
             }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
@@ -318,22 +307,6 @@ TODO                _signatures = new LinkedList<>();
         if (_workOrder != null) {
             outState.putParcelable(STATE_WORKORDER, _workOrder);
         }
-/*
-TODO         if (_tasks != null && _tasks.size() > 0) {
-            Task[] tasks = new Task[_tasks.size()];
-            for (int i = 0; i < _tasks.size(); i++) {
-                tasks[i] = _tasks.get(i);
-            }
-            outState.putParcelableArray(STATE_TASKS, tasks);
-        }
-        if (_signatures != null && _signatures.size() > 0) {
-            Signature[] sigs = new Signature[_signatures.size()];
-            for (int i = 0; i < _signatures.size(); i++) {
-                sigs[i] = _signatures.get(i);
-            }
-            outState.putParcelableArray(STATE_SIGNATURES, sigs);
-        }
-*/
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
@@ -383,29 +356,11 @@ TODO        if (_currentTask != null)
     public void onAttach(Activity activity) {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
-        _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
-        _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
-        _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
-        _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-
-        _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
-                getString(R.string.dialog_location_loading_body),
-                getString(R.string.dialog_location_loading_button),
-                _locationLoadingDialog_listener);
-
-        _declineDialog.setListener(_declineDialog_listener);
-        _discountDialog.setListener(_discountDialog_listener);
-// TODO        _customFieldDialog.setListener(_customFieldDialog_listener);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
-        _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
-// TODO        _worklogDialog.setListener(_worklogDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
@@ -413,15 +368,25 @@ TODO        if (_currentTask != null)
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
+        CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
+        DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
+        DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
-//TODO        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        ShipmentAddDialog.addOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
+        TaskShipmentAddDialog.addOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
+        TaskShipmentAddDialog.addOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+        WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
+
+        OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
+        OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
 
         LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
         LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
@@ -439,8 +404,6 @@ TODO        if (_currentTask != null)
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
 
-        _gpsLocationService = new GpsLocationService(getActivity());
-
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
         }
@@ -455,15 +418,25 @@ TODO        if (_currentTask != null)
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
+        CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
+        DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
+        DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
         EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
-//TODO        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
+        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        ShipmentAddDialog.removeOnOkListener(DIALOG_SHIPMENT_ADD, _shipmentAddDialog_onOk);
+        TaskShipmentAddDialog.removeOnAddShipmentListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onAdd);
+        TaskShipmentAddDialog.removeOnDeleteListener(DIALOG_TASK_SHIPMENT_ADD, _taskShipmentAddDialog_onDelete);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
+        WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
+
+        OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
+        OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
 
         LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
         LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
@@ -481,18 +454,19 @@ TODO        if (_currentTask != null)
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
 
-        if (_workorderApi != null && _workorderApi.isConnected())
-            _workorderApi.disconnect(App.get());
-
         super.onDetach();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
     }
 
     @Override
     public void onPause() {
         Log.v(TAG, "onPause");
-        if (_gpsLocationService != null && _gpsLocationService.isRunning()) {
-            _gpsLocationService.stopLocationUpdates();
-        }
         super.onPause();
     }
 
@@ -529,13 +503,9 @@ TODO     private void setTasks(List<Task> tasks) {
 
         setLoading(true);
 
-        ForLoopRunnable runnable = new ForLoopRunnable(_renderers.size(), new Handler(), 100) {
-            @Override
-            public void next(int i) throws Exception {
-                _renderers.get(i).setWorkOrder(_workOrder);
-            }
-        };
-        getView().post(runnable);
+        for (WorkOrderRenderer renderer : _renderers) {
+            renderer.setWorkOrder(_workOrder);
+        }
 
         setLoading(false);
 
@@ -546,7 +516,6 @@ TODO     private void setTasks(List<Task> tasks) {
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
-            //Log.v(TAG, "_bundleWarningTextView time: " + watch.finish());
         }
 
         if (getArguments() != null) {
@@ -593,32 +562,27 @@ TODO     private void setTasks(List<Task> tasks) {
     /*-*********************************************-*/
     /*-				Check In Process				-*/
     /*-*********************************************-*/
-    private void startCheckin() {
-        // everything is awsome. checkin
-/*
-TODO        _gpsLocationService.setListener(_gps_checkInListener);
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
-        } else if (_gpsLocationService.hasLocation()) {
-            doCheckin();
-        } else if (_gpsLocationService.isRunning()) {
-            _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
-            _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
-        } else {
-            // location is disabled, or failed. ask for them to be enabled
-            Log.v(TAG, "Should not be here");
+    private final Runnable _startCheckIn = new Runnable() {
+        @Override
+        public void run() {
+            if (_currentLocation == null && !_locationFailed) {
+                OneButtonDialog.show(App.get(), DIALOG_LOCATION_LOADING,
+                        R.string.dialog_location_loading_title, R.string.dialog_location_loading_body,
+                        R.string.dialog_location_loading_button, true);
+            } else if (_currentLocation != null) {
+                doCheckin();
+            } else if (_locationFailed) {
+
+            }
+            setLoading(true);
         }
-*/
-//        setLoading(true);
-    }
+    };
+
 
     private void doCheckin() {
 //        setLoading(true);
-        _gpsLocationService.setListener(null);
-        if (_gpsLocationService.hasLocation()) {
-            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+        if (_currentLocation != null) {
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
 
@@ -655,40 +619,27 @@ TODO        _gpsLocationService.setListener(_gps_checkInListener);
         }
     };
 
-    private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
-        @Override
-        public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkInListener.onLocation");
-            startCheckin();
-            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-                _locationLoadingDialog.dismiss();
-            }
-        }
-    };
-
     /*-*********************************************-*/
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
-
-    private void startCheckOut() {
-/*
-TODO        _gpsLocationService.setListener(_gps_checkOutListener);
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
-        } else if (_gpsLocationService.hasLocation()) {
-            doCheckOut();
-        } else if (_gpsLocationService.isRunning()) {
-            _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
-            _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
-        } else {
-            // location is disabled, or failed. ask for them to be enabled
-            Log.v(TAG, "Should not be here");
+    private final Runnable _startCheckOut = new Runnable() {
+        @Override
+        public void run() {
+            if (_currentLocation == null && !_locationFailed) {
+                // waiting for response
+                OneButtonDialog.show(App.get(), DIALOG_LOCATION_LOADING,
+                        R.string.dialog_location_loading_title, R.string.dialog_location_loading_body,
+                        R.string.dialog_location_loading_button, true);
+                _gpsRunnable = _startCheckOut;
+            } else if (_currentLocation != null) {
+                // have location
+                doCheckOut();
+            } else if (_locationFailed) {
+                // location failed
+            }
+            setLoading(true);
         }
-*/
-//        setLoading(true);
-    }
+    };
 
     private void doCheckOut() {
 //        setLoading(true);
@@ -698,12 +649,11 @@ TODO        _gpsLocationService.setListener(_gps_checkOutListener);
             _deviceCount = pay.getRange().getMax().intValue();
         }
 
-        _gpsLocationService.setListener(null);
-        if (_gpsLocationService.hasLocation()) {
+        if (_currentLocation != null) {
             if (_deviceCount > -1) {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         } else {
             if (_deviceCount > -1) {
@@ -744,20 +694,30 @@ TODO        _gpsLocationService.setListener(_gps_checkOutListener);
         }
     };
 
-    private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
-        @Override
-        public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkOutListener.onLocation");
-            startCheckOut();
-            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-                _locationLoadingDialog.dismiss();
-            }
-        }
-    };
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private Runnable _gpsRunnable = null;
+
+    private final SimpleGps.Listener _simpleGps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(SimpleGps simpleGps, Location location) {
+            simpleGps.stop();
+            _currentLocation = location;
+            _locationFailed = false;
+            if (_gpsRunnable != null) _gpsRunnable.run();
+            Controller.dismiss(App.get(), DIALOG_LOCATION_LOADING);
+        }
+
+        @Override
+        public void onFail(SimpleGps simpleGps) {
+            _locationFailed = true;
+            simpleGps.stop();
+            if (_gpsRunnable != null) _gpsRunnable.run();
+            Controller.dismiss(App.get(), DIALOG_LOCATION_LOADING);
+        }
+    };
+
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
@@ -770,21 +730,6 @@ TODO        _gpsLocationService.setListener(_gps_checkOutListener);
                 }
             });
             return;
-        }
-
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
-        if (result != null) {
-            Log.e(TAG, "onActivityResult: result not null");
-            String content = result.getContents();
-
-            if (content == null) {
-                Log.e(TAG, "onActivityResult: no image path");
-            } else {
-                _scannedImagePath = result.getBarcodeImagePath();
-                _shipmentAddDialog.setTrackingId(content);
-                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
-            }
         }
 
         try {
@@ -850,9 +795,9 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 }
 */
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
-                startCheckin();
+                _startCheckIn.run();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-                startCheckOut();
+                _startCheckOut.run();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -872,7 +817,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
         }
     };
 
@@ -882,7 +827,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
                     null, _workOrder.getWorkOrderId());
 
-            startCheckOut();
+            _startCheckOut.run();
         }
 
         @Override
@@ -890,7 +835,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
                     null, _workOrder.getWorkOrderId());
 
-            startCheckin();
+            _startCheckIn.run();
         }
 
         @Override
@@ -898,7 +843,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
                     null, _workOrder.getWorkOrderId());
 
-            startCheckin();
+            _startCheckIn.run();
         }
 
         @Override
@@ -941,9 +886,8 @@ TODO            if (_workorder.getPaymentId() != null) {
         public void onMyWay() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
 
-            if (_gpsLocationService != null && _gpsLocationService.hasLocation() && _gpsLocationService.getLocation() != null) {
-                Location location = _gpsLocationService.getLocation();
-                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), location.getLatitude(), location.getLongitude());
+            if (_currentLocation != null) {
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), _currentLocation.getLatitude(), _currentLocation.getLongitude());
             } else {
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), null, null);
             }
@@ -956,10 +900,20 @@ TODO            if (_workorder.getPaymentId() != null) {
         }
 
         @Override
+        public void onEta() {
+
+        }
+
+        @Override
         public void onNotInterested() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getWorkOrderId());
 
-            _declineDialog.show();
+            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null) {
+                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
+                        _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
+            } else {
+                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
+            }
         }
 
         @Override
@@ -1032,7 +986,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                     null, _workOrder.getWorkOrderId());
 
-// TODO            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
         }
     };
 
@@ -1056,24 +1010,24 @@ TODO            if (_workorder.getPaymentId() != null) {
         }
     };
 
-/*
- TODO private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+
+    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, null, showdevice);
         }
 
         @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+        public void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
+            WorkLogDialog.show(App.get(), DIALOG_WORKLOG, timeLog, showDeviceCount);
         }
 
         @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            final long workorderID = workorder.getWorkorderId();
-            final long loggedHoursID = loggedWork.getLoggedHoursId();
+        public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
+            final long workorderID = workOrder.getWorkOrderId();
+            final long timeLogId = timeLog.getId();
 
             _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
                     getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
@@ -1081,10 +1035,8 @@ TODO            if (_workorder.getPaymentId() != null) {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkorderClient.deleteTimeLog(App.get(), workorderID,
-                                    loggedHoursID);
+                            WorkordersWebApi.removeTimeLog(App.get(), _workOrder.getWorkOrderId(), (int) timeLogId);
                             setLoading(true);
-
                         }
 
                         @Override
@@ -1098,7 +1050,7 @@ TODO            if (_workorder.getPaymentId() != null) {
             _yesNoDialog.show();
         }
     };
-*/
+
 
 /*
 TODO    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
@@ -1264,26 +1216,18 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
     };
 */
 
-/*
-TODO    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
+    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
         public void onClick(CustomFieldRowView view, CustomField field) {
-            _customFieldDialog.show(field);
+            CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, field);
         }
     };
-*/
-
 
     private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), null);
-        }
-
-        @Override
-        public void onAssign(WorkOrder workOrder, Shipment shipment) {
-
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_shipment_title), null, null);
         }
 
         @Override
@@ -1312,15 +1256,14 @@ TODO    private final CustomFieldRowView.Listener _customFields_listener = new C
                     });
             _yesNoDialog.show();
         }
-//
-//        @Override
-//        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
-//            // TODO STUB .onAssign()
-//            Log.v(TAG, "STUB .onAssign()");
-//            // TODO present a picker of the tasks that this can be assigned too
-//        }
-    };
 
+        @Override
+        public void onAssign(WorkOrder workOrder, Shipment shipment) {
+            // TODO STUB .onAssign()
+            Log.v(TAG, "STUB .onAssign()");
+            // TODO present a picker of the tasks that this can be assigned too
+        }
+    };
 
     private final ClosingNotesView.Listener _closingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
@@ -1330,8 +1273,7 @@ TODO    private final CustomFieldRowView.Listener _customFields_listener = new C
         }
     };
 
-/*
-TODO    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+    private final SignatureListView.Listener _signatureList_listener = new SignatureListView.Listener() {
         @Override
         public void addSignature() {
             SignOffActivity.startSignOff(getActivity(), _workOrder);
@@ -1340,7 +1282,7 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
 
         @Override
         public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
+            SignatureDisplayActivity.startIntent(getActivity(), signature.getId(), _workOrder);
             setLoading(true);
         }
 
@@ -1352,8 +1294,7 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-                            WorkorderClient.deleteSignature(App.get(),
-                                    _workOrder.getWorkOrderId(), signature.getSignatureId());
+                            WorkordersWebApi.deleteSignature(App.get(), _workOrder.getWorkOrderId(), signature.getId());
                         }
 
                         @Override
@@ -1368,33 +1309,33 @@ TODO    private final SignatureListView.Listener _signaturelist_listener = new S
             return true;
         }
     };
-*/
 
-/*
-TODO    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
+
+    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
-        public void onCounterOffer(Workorder workorder) {
-            _counterOfferDialog.show(_workorder);
+        public void onCounterOffer(WorkOrder workOrder) {
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, workOrder);
         }
 
         @Override
-        public void onRequestNewPay(Workorder workorder) {
+        public void onRequestNewPay(WorkOrder workOrder) {
             // TODO add analytics
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-            if (workorder.getIncreaseRequestInfo() != null && workorder.getIncreaseRequestInfo().getPay() != null) {
-                _payDialog.show(workorder.getIncreaseRequestInfo().getPay(), true);
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getIncreases() != null
+                    && _workOrder.getPay().getIncreases().getLastIncrease() != null) {
+                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {
-                _payDialog.show(workorder.getPay(), true);
+                PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);
             }
-
         }
 
         @Override
-        public void onShowTerms(Workorder workorder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title),getString(R.string.dialog_terms_body));
+        public void onShowTerms(WorkOrder workOrder) {
+            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
     };
-*/
+
 
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
@@ -1424,8 +1365,7 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-                            WorkorderClient.deleteExpense(App.get(),
-                                    _workOrder.getWorkOrderId(), expense.getId());
+                            WorkordersWebApi.deleteExpense(App.get(), _workOrder.getWorkOrderId(), expense.getId());
                         }
 
                         @Override
@@ -1445,24 +1385,23 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         @Override
         public void addDiscount() {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            _discountDialog.show(getString(R.string.dialog_add_discount_title));
+            DiscountDialog.show(App.get(), DIALOG_DISCOUNT, getString(R.string.dialog_add_discount_title));
         }
 
         @Override
-        public void discountOnClick(Discount discount) {
+        public void discountOnClick(PayModifier discount) {
             // TODO discountOnClick
         }
 
         @Override
-        public void discountLongClick(final Discount discount) {
+        public void discountLongClick(final PayModifier discount) {
             _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
                     getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkorderClient.deleteDiscount(App.get(),
-                                    _workOrder.getWorkOrderId(), discount.getDiscountId());
+                            WorkordersWebApi.removeDiscount(App.get(), _workOrder.getWorkOrderId(), discount.getId());
                         }
 
                         @Override
@@ -1511,15 +1450,16 @@ TODO    private final PaymentView.Listener _paymentView_listener = new PaymentVi
         }
     };
 
-    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+    private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
-        public void onButtonClick() {
-            _gpsLocationService.stopLocationUpdates();
+        public void onPrimary() {
             setLoading(false);
         }
+    };
 
+    private final OneButtonDialog.OnCanceledListener _locationLoadingDialog_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
-        public void onCancel() {
+        public void onCanceled() {
             setLoading(false);
         }
     };
@@ -1596,72 +1536,40 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
         }
     };
 
-/*
-TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
+    private final CustomFieldDialog.OnOkListener _customfieldDialog_onOk = new CustomFieldDialog.OnOkListener() {
         @Override
         public void onOk(CustomField field, String value) {
-            WorkorderClient.actionCustomField(App.get(), _workOrder.getWorkOrderId(),
-                    field.getCustomLabelId(), value);
+            try {
+                CustomField cf = new CustomField();
+                cf.setValue(value);
+                WorkordersWebApi.updateCustomField(App.get(), _workOrder.getWorkOrderId(), field.getId(), cf);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
     };
-*/
 
-    private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
+    private final DeclineDialog.OnDeclinedListener _declineDialog_onDecline = new DeclineDialog.OnDeclinedListener() {
         @Override
-        public void onOk() {
+        public void onDeclined(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), -1, null);
-        }
-
-        @Override
-        public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), -1, null);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-
-            if (blockBuyer) {
-                ProfileClient.actionBlockCompany(App.get(),
-                        App.get().getProfile().getUserId(),
-                        _workOrder.getCompany().getId(),
-                        blockingReasonId, blockingExplanation);
-            }
-        }
-
-        @Override
-        public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), declineReasonId, declineExplanation);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-            if (blockBuyer) {
-                ProfileClient.actionBlockCompany(App.get(),
-                        App.get().getProfile().getUserId(),
-                        _workOrder.getCompany().getId(), blockingReasonId, blockingExplanation);
-            }
-
-            getActivity().finish();
-        }
-
-        @Override
-        public void onOk(int declineReasonId, String declineExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workOrder.getWorkOrderId(), declineReasonId, declineExplanation);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 
-    private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
+    private final DiscountDialog.OnOkListener _discountDialog_onOk = new DiscountDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            WorkorderClient.createDiscount(App.get(), _workOrder.getWorkOrderId(),
-                    description, amount);
+            try {
+                PayModifier discount = new PayModifier();
+                discount.setAmount(amount);
+                discount.setDescription(description);
+                WorkordersWebApi.addDiscount(App.get(), _workOrder.getWorkOrderId(), discount);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 
@@ -1686,17 +1594,23 @@ TODO    private final CustomFieldDialog.Listener _customFieldDialog_listener = n
         }
     };
 
-/*
-TODO    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
+
+    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            WorkorderClient.createExpense(App.get(), _workOrder.getWorkOrderId(), description,
-                    amount, category);
+            try {
+                Expense expense = new Expense();
+                expense.description(description);
+                expense.amount(amount);
+                expense.category(category);
+                WorkordersWebApi.addExpense(App.get(), _workOrder.getWorkOrderId(), expense);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
     };
-*/
 
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
         @Override
@@ -1745,7 +1659,7 @@ TODO    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new Expen
         @Override
         public void onContinueClick() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getWorkOrderId());
-            WorkorderClient.actionComplete(App.get(), _workOrder.getWorkOrderId());
+            WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getWorkOrderId());
             setLoading(true);
         }
     };
@@ -1762,9 +1676,12 @@ TODO    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new Expen
     private final PayDialog.OnCompleteListener _payDialog_onComplete = new PayDialog.OnCompleteListener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
-            // TODO analytics
-// TODO            WorkorderClient.actionChangePay(App.get(), _workOrder.getWorkOrderId(), pay, explanation);
-
+            try {
+                WorkordersWebApi.addIncrease(App.get(), _workOrder.getWorkOrderId(),
+                        new PayIncrease().pay(pay).description(explanation));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             populateUi();
         }
     };
@@ -1821,128 +1738,49 @@ TODO            if (_tempFile != null) {
         }
     };
 
-    private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
+    private final ShipmentAddDialog.OnOkListener _shipmentAddDialog_onOk = new ShipmentAddDialog.OnOkListener() {
         @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-/*
-TODO            if (_scannedImagePath != null) {
-                final UploadSlot[] slots = _workorder.getUploadSlots();
-                if (slots == null) return;
-                for (UploadSlot uploadSlot : slots) {
-                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(),
-                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
-                        _scannedImagePath = null;
-                    }
-                }
-            }
-*/
-
-            WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite,
-                    carrier, carrierName, trackingId);
+        public void onOk(String trackingId, ShipmentCarrier.NameEnum carrier, String carrierName, String description, Shipment.DirectionEnum direction, int taskId) {
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            setLoading(true);
-        }
 
-        @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description,
-                         boolean shipToSite, long taskId) {
-            Log.v(TAG, "ShipmentAddDialog#onOk");
+            try {
+                ShipmentCarrier shipmentCarrier = new ShipmentCarrier();
+                shipmentCarrier.name(carrier);
+                if (carrier == ShipmentCarrier.NameEnum.OTHER)
+                    shipmentCarrier.other(carrierName);
+                shipmentCarrier.tracking(trackingId);
 
-/*
-TODO            if (_scannedImagePath != null) {
-                final UploadSlot[] slots = _workorder.getUploadSlots();
-                if (slots == null) return;
-                for (UploadSlot uploadSlot : slots) {
-                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(),
-                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
-                        _scannedImagePath = null;
-                    }
-                }
+                Shipment shipment = new Shipment();
+                shipment.carrier(shipmentCarrier);
+                shipment.name(description);
+                shipment.direction(direction);
+
+                WorkordersWebApi.addShipment(App.get(), _workOrder.getWorkOrderId(), shipment);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-*/
-
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.createShipment(App.get(), _workOrder.getWorkOrderId(), description, shipToSite,
-                    carrier, carrierName, trackingId, taskId);
             setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onScan() {
-            IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
         }
     };
 
-/*
-TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+    private final TaskShipmentAddDialog.OnAddShipmentListener _taskShipmentAddDialog_onAdd = new TaskShipmentAddDialog.OnAddShipmentListener() {
         @Override
-        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
+        public void onAddShipment(WorkOrder workorder, Shipment shipment, Task task) {
+            ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, workorder,
+                    getString(R.string.dialog_shipment_title),
+                    shipment == null ? "" : shipment.getName(), task);
+        }
+    };
+
+    private final TaskShipmentAddDialog.OnDeleteListener _taskShipmentAddDialog_onDelete = new TaskShipmentAddDialog.OnDeleteListener() {
+        @Override
+        public void onDelete(WorkOrder workorder, Shipment shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
+            WorkorderClient.deleteShipment(App.get(), workorder.getWorkOrderId(), shipment.getId());
             setLoading(true);
         }
-
-        @Override
-        public void onAssign(Workorder workorder, int shipmentId, long taskId) {
-            WorkorderClient.actionCompleteShipmentTask(App.get(), workorder.getWorkorderId(), shipmentId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
-                    shipToSite, carrier, carrierName, trackingId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
-                    shipToSite, carrier, carrierName, trackingId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onScan() {
-            IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
-        }
-
-        @Override
-        public void onAddShipment(ShipmentTracking shipment, Task task) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), task);
-        }
-
-        @Override
-        public void onAddShipment(Task task) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
-        }
-
     };
-*/
 
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
@@ -1952,37 +1790,31 @@ TODO    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_liste
         }
     };
 
-/*
-TODO    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
+
+    private final WorkLogDialog.OnOkListener _worklogDialog_listener = new WorkLogDialog.OnOkListener() {
         @Override
-        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
-            if (loggedWork == null) {
+        public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
+            TimeLog newTimeLog = new TimeLog();
+            try {
+                newTimeLog.in(new CheckInOut().created(new Date(start)));
+                newTimeLog.out(new CheckInOut().created(new Date(end)));
+                if (deviceCount > 0)
+                    newTimeLog.devices((double) deviceCount);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                if (deviceCount <= 0) {
-                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.addTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), newTimeLog);
+
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                if (deviceCount <= 0) {
-                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.updateTimeLog(App.get(), _workOrder.getWorkOrderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), newTimeLog);
             }
             setLoading(true);
         }
-
-        @Override
-        public void onCancel() {
-        }
     };
-*/
+
 
     /*-*****************************-*/
     /*-				Web				-*/

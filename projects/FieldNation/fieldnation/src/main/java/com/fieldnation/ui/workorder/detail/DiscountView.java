@@ -7,8 +7,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.PayModifier;
 
 public class DiscountView extends RelativeLayout {
     private static final String TAG = "ui.workorder.detail.DiscountView";
@@ -18,7 +18,7 @@ public class DiscountView extends RelativeLayout {
     private TextView _amountTextView;
 
     // Data
-    private Discount _discount;
+    private PayModifier _discount;
 
     public DiscountView(Context context) {
         this(context, null, -1);
@@ -39,13 +39,13 @@ public class DiscountView extends RelativeLayout {
         _amountTextView = (TextView) findViewById(R.id.amount_textview);
     }
 
-    public void setDiscount(Discount discount) {
+    public void setDiscount(PayModifier discount) {
         _discount = discount;
-        _titleTextView.setText(discount.getDescription());
+        _titleTextView.setText(discount.getName());
         _amountTextView.setText(misc.toCurrency(discount.getAmount()));
     }
 
-    public Discount getDiscount() {
+    public PayModifier getDiscount() {
         return _discount;
     }
 }

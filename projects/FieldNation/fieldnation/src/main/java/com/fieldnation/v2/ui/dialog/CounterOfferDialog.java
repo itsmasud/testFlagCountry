@@ -108,12 +108,6 @@ public class CounterOfferDialog extends SimpleDialog {
         tab4.setContent(R.id.reasons_view);
         _tabHost.addTab(tab4);
 
-        _tabHost.setOnTabChangedListener(_tab_changeListener);
-
-        for (int i = 0; i < 4; i++) {
-            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(true);
-        }
-
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _backButton = (Button) v.findViewById(R.id.back_button);
         _backButton.setVisibility(View.GONE);
@@ -136,6 +130,12 @@ public class CounterOfferDialog extends SimpleDialog {
         _scheduleView.setListener(_scheduleView_listener);
         _expenseView.setListener(_expenseView_listener);
         _reasonView.setListener(_reason_listener);
+
+        _tabHost.setOnTabChangedListener(_tab_changeListener);
+
+        for (int i = 0; i < 4; i++) {
+            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(true);
+        }
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
         ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
@@ -188,15 +188,14 @@ public class CounterOfferDialog extends SimpleDialog {
                 Log.v(TAG, ex);
             }
         }
+
+        populateUi();
     }
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         Log.v(TAG, "onCreate");
         if (savedState != null) {
-            if (savedState.containsKey(STATE_WORKORDER))
-                _workOrder = savedState.getParcelable(STATE_WORKORDER);
-
             if (savedState.containsKey(STATE_COUNTER_PAY))
                 _counterPay = savedState.getParcelable(STATE_COUNTER_PAY);
 
@@ -220,6 +219,7 @@ public class CounterOfferDialog extends SimpleDialog {
             if (savedState.containsKey(STATE_TAC))
                 _tacAccpet = savedState.getBoolean(STATE_TAC);
         }
+        populateUi();
     }
 
     @Override
@@ -236,9 +236,6 @@ public class CounterOfferDialog extends SimpleDialog {
         Log.v(TAG, "onSaveDialogState");
         outState.putLong(STATE_EXPIRES, _expires);
         outState.putBoolean(STATE_TAC, _tacAccpet);
-
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         if (_counterPay != null)
             outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
@@ -373,8 +370,7 @@ public class CounterOfferDialog extends SimpleDialog {
             try {
                 _expenses.add(new Expense()
                         .description(description)
-                        .amount(amount)
-                        .category(category));
+                        .amount(amount));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

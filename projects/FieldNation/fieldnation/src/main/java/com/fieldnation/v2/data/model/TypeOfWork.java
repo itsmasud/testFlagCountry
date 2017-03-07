@@ -30,9 +30,14 @@ public class TypeOfWork implements Parcelable {
     private String _name;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TypeOfWork() {
+        SOURCE = new JsonObject();
+    }
+
+    public TypeOfWork(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -41,6 +46,17 @@ public class TypeOfWork implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -56,6 +72,17 @@ public class TypeOfWork implements Parcelable {
     }
 
     public String getIndustry() {
+        try {
+            if (_industry != null)
+                return _industry;
+
+            if (SOURCE.has("industry") && SOURCE.get("industry") != null)
+                _industry = SOURCE.getString("industry");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _industry;
     }
 
@@ -71,6 +98,17 @@ public class TypeOfWork implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -101,7 +139,7 @@ public class TypeOfWork implements Parcelable {
 
     public static TypeOfWork fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TypeOfWork.class, obj);
+            return new TypeOfWork(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

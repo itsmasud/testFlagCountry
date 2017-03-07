@@ -20,6 +20,9 @@ import java.text.ParseException;
 public class Company implements Parcelable {
     private static final String TAG = "Company";
 
+    @Json(name = "about")
+    private String _about;
+
     @Json(name = "blocked")
     private Boolean _blocked;
 
@@ -29,16 +32,59 @@ public class Company implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "jobs")
+    private CompanyJobs _jobs;
+
+    @Json(name = "location")
+    private Location _location;
+
     @Json(name = "name")
     private String _name;
+
+    @Json(name = "photo")
+    private String _photo;
+
+    @Json(name = "provider_count")
+    private Integer _providerCount;
 
     @Json(name = "rating")
     private Rating _rating;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Company() {
+        SOURCE = new JsonObject();
+    }
+
+    public Company(JsonObject obj) {
+        SOURCE = obj;
+    }
+
+    public void setAbout(String about) throws ParseException {
+        _about = about;
+        SOURCE.put("about", about);
+    }
+
+    public String getAbout() {
+        try {
+            if (_about != null)
+                return _about;
+
+            if (SOURCE.has("about") && SOURCE.get("about") != null)
+                _about = SOURCE.getString("about");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _about;
+    }
+
+    public Company about(String about) throws ParseException {
+        _about = about;
+        SOURCE.put("about", about);
+        return this;
     }
 
     public void setBlocked(Boolean blocked) throws ParseException {
@@ -47,6 +93,17 @@ public class Company implements Parcelable {
     }
 
     public Boolean getBlocked() {
+        try {
+            if (_blocked != null)
+                return _blocked;
+
+            if (SOURCE.has("blocked") && SOURCE.get("blocked") != null)
+                _blocked = SOURCE.getBoolean("blocked");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _blocked;
     }
 
@@ -66,6 +123,19 @@ public class Company implements Parcelable {
     }
 
     public String[] getFeatures() {
+        try {
+            if (_features != null)
+                return _features;
+
+            if (SOURCE.has("features") && SOURCE.get("features") != null) {
+                JsonArray ja = SOURCE.getJsonArray("features");
+                _features = ja.toArray(new String[ja.size()]);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _features;
     }
 
@@ -85,6 +155,17 @@ public class Company implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -94,12 +175,75 @@ public class Company implements Parcelable {
         return this;
     }
 
+    public void setJobs(CompanyJobs jobs) throws ParseException {
+        _jobs = jobs;
+        SOURCE.put("jobs", jobs.getJson());
+    }
+
+    public CompanyJobs getJobs() {
+        try {
+            if (_jobs != null)
+                return _jobs;
+
+            if (SOURCE.has("jobs") && SOURCE.get("jobs") != null)
+                _jobs = CompanyJobs.fromJson(SOURCE.getJsonObject("jobs"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _jobs;
+    }
+
+    public Company jobs(CompanyJobs jobs) throws ParseException {
+        _jobs = jobs;
+        SOURCE.put("jobs", jobs.getJson());
+        return this;
+    }
+
+    public void setLocation(Location location) throws ParseException {
+        _location = location;
+        SOURCE.put("location", location.getJson());
+    }
+
+    public Location getLocation() {
+        try {
+            if (_location != null)
+                return _location;
+
+            if (SOURCE.has("location") && SOURCE.get("location") != null)
+                _location = Location.fromJson(SOURCE.getJsonObject("location"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _location;
+    }
+
+    public Company location(Location location) throws ParseException {
+        _location = location;
+        SOURCE.put("location", location.getJson());
+        return this;
+    }
+
     public void setName(String name) throws ParseException {
         _name = name;
         SOURCE.put("name", name);
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -109,12 +253,75 @@ public class Company implements Parcelable {
         return this;
     }
 
+    public void setPhoto(String photo) throws ParseException {
+        _photo = photo;
+        SOURCE.put("photo", photo);
+    }
+
+    public String getPhoto() {
+        try {
+            if (_photo != null)
+                return _photo;
+
+            if (SOURCE.has("photo") && SOURCE.get("photo") != null)
+                _photo = SOURCE.getString("photo");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _photo;
+    }
+
+    public Company photo(String photo) throws ParseException {
+        _photo = photo;
+        SOURCE.put("photo", photo);
+        return this;
+    }
+
+    public void setProviderCount(Integer providerCount) throws ParseException {
+        _providerCount = providerCount;
+        SOURCE.put("provider_count", providerCount);
+    }
+
+    public Integer getProviderCount() {
+        try {
+            if (_providerCount != null)
+                return _providerCount;
+
+            if (SOURCE.has("provider_count") && SOURCE.get("provider_count") != null)
+                _providerCount = SOURCE.getInt("provider_count");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _providerCount;
+    }
+
+    public Company providerCount(Integer providerCount) throws ParseException {
+        _providerCount = providerCount;
+        SOURCE.put("provider_count", providerCount);
+        return this;
+    }
+
     public void setRating(Rating rating) throws ParseException {
         _rating = rating;
         SOURCE.put("rating", rating.getJson());
     }
 
     public Rating getRating() {
+        try {
+            if (_rating != null)
+                return _rating;
+
+            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+                _rating = Rating.fromJson(SOURCE.getJsonObject("rating"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _rating;
     }
 
@@ -145,7 +352,7 @@ public class Company implements Parcelable {
 
     public static Company fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Company.class, obj);
+            return new Company(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

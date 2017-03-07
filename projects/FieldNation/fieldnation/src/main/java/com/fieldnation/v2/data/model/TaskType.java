@@ -26,13 +26,18 @@ public class TaskType implements Parcelable {
     @Json(name = "key")
     private String _key;
 
-    @Json(name = "title")
-    private String _title;
+    @Json(name = "name")
+    private String _name;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public TaskType() {
+        SOURCE = new JsonObject();
+    }
+
+    public TaskType(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -41,6 +46,17 @@ public class TaskType implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -56,6 +72,17 @@ public class TaskType implements Parcelable {
     }
 
     public String getKey() {
+        try {
+            if (_key != null)
+                return _key;
+
+            if (SOURCE.has("key") && SOURCE.get("key") != null)
+                _key = SOURCE.getString("key");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _key;
     }
 
@@ -65,18 +92,29 @@ public class TaskType implements Parcelable {
         return this;
     }
 
-    public void setTitle(String title) throws ParseException {
-        _title = title;
-        SOURCE.put("title", title);
+    public void setName(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
     }
 
-    public String getTitle() {
-        return _title;
+    public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _name;
     }
 
-    public TaskType title(String title) throws ParseException {
-        _title = title;
-        SOURCE.put("title", title);
+    public TaskType name(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
@@ -101,7 +139,7 @@ public class TaskType implements Parcelable {
 
     public static TaskType fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(TaskType.class, obj);
+            return new TaskType(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

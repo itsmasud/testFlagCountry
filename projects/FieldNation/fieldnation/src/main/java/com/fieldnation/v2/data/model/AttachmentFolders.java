@@ -12,6 +12,9 @@ import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -30,9 +33,14 @@ public class AttachmentFolders implements Parcelable {
     private AttachmentFolder[] _results;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public AttachmentFolders() {
+        SOURCE = new JsonObject();
+    }
+
+    public AttachmentFolders(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -45,6 +53,18 @@ public class AttachmentFolders implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -64,6 +84,17 @@ public class AttachmentFolders implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -79,6 +110,18 @@ public class AttachmentFolders implements Parcelable {
     }
 
     public AttachmentFolder[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = AttachmentFolder.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -92,13 +135,32 @@ public class AttachmentFolders implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "add_slot")
+        ADD_SLOT("add_slot"),
+        @Json(name = "download")
+        DOWNLOAD("download");
 
         private String value;
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -128,7 +190,7 @@ public class AttachmentFolders implements Parcelable {
 
     public static AttachmentFolders fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(AttachmentFolders.class, obj);
+            return new AttachmentFolders(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -168,5 +230,18 @@ public class AttachmentFolders implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    private Set<AttachmentFolders.ActionsEnum> _actionsSet = null;
+
+    public Set<AttachmentFolders.ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
     }
 }

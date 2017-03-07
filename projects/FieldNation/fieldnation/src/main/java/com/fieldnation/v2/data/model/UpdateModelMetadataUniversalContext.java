@@ -24,9 +24,14 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
     private String _correlationId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public UpdateModelMetadataUniversalContext() {
+        SOURCE = new JsonObject();
+    }
+
+    public UpdateModelMetadataUniversalContext(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCorrelationId(String correlationId) throws ParseException {
@@ -35,6 +40,17 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
     }
 
     public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _correlationId;
     }
 
@@ -65,7 +81,7 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
 
     public static UpdateModelMetadataUniversalContext fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateModelMetadataUniversalContext.class, obj);
+            return new UpdateModelMetadataUniversalContext(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

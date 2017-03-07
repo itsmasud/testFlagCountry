@@ -36,9 +36,14 @@ public class EtaWithLocation implements Parcelable {
     private Integer _workOrderId;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public EtaWithLocation() {
+        SOURCE = new JsonObject();
+    }
+
+    public EtaWithLocation(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setBundle(Bundle bundle) throws ParseException {
@@ -47,6 +52,17 @@ public class EtaWithLocation implements Parcelable {
     }
 
     public Bundle getBundle() {
+        try {
+            if (_bundle != null)
+                return _bundle;
+
+            if (SOURCE.has("bundle") && SOURCE.get("bundle") != null)
+                _bundle = Bundle.fromJson(SOURCE.getJsonObject("bundle"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _bundle;
     }
 
@@ -62,6 +78,17 @@ public class EtaWithLocation implements Parcelable {
     }
 
     public Location getLocation() {
+        try {
+            if (_location != null)
+                return _location;
+
+            if (SOURCE.has("location") && SOURCE.get("location") != null)
+                _location = Location.fromJson(SOURCE.getJsonObject("location"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _location;
     }
 
@@ -77,6 +104,17 @@ public class EtaWithLocation implements Parcelable {
     }
 
     public Schedule getSchedule() {
+        try {
+            if (_schedule != null)
+                return _schedule;
+
+            if (SOURCE.has("schedule") && SOURCE.get("schedule") != null)
+                _schedule = Schedule.fromJson(SOURCE.getJsonObject("schedule"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _schedule;
     }
 
@@ -92,6 +130,17 @@ public class EtaWithLocation implements Parcelable {
     }
 
     public String getTitle() {
+        try {
+            if (_title != null)
+                return _title;
+
+            if (SOURCE.has("title") && SOURCE.get("title") != null)
+                _title = SOURCE.getString("title");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _title;
     }
 
@@ -107,6 +156,17 @@ public class EtaWithLocation implements Parcelable {
     }
 
     public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId != null)
+                return _workOrderId;
+
+            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _workOrderId;
     }
 
@@ -137,7 +197,7 @@ public class EtaWithLocation implements Parcelable {
 
     public static EtaWithLocation fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(EtaWithLocation.class, obj);
+            return new EtaWithLocation(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

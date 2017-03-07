@@ -27,9 +27,14 @@ public class PayRange implements Parcelable {
     private Double _min;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayRange() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayRange(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setMax(Double max) throws ParseException {
@@ -38,6 +43,17 @@ public class PayRange implements Parcelable {
     }
 
     public Double getMax() {
+        try {
+            if (_max != null)
+                return _max;
+
+            if (SOURCE.has("max") && SOURCE.get("max") != null)
+                _max = SOURCE.getDouble("max");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _max;
     }
 
@@ -53,6 +69,17 @@ public class PayRange implements Parcelable {
     }
 
     public Double getMin() {
+        try {
+            if (_min != null)
+                return _min;
+
+            if (SOURCE.has("min") && SOURCE.get("min") != null)
+                _min = SOURCE.getDouble("min");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _min;
     }
 
@@ -83,7 +110,7 @@ public class PayRange implements Parcelable {
 
     public static PayRange fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayRange.class, obj);
+            return new PayRange(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

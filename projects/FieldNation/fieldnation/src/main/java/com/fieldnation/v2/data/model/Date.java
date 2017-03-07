@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -21,17 +20,23 @@ import java.util.Calendar;
 public class Date implements Parcelable {
     private static final String TAG = "Date";
 
-    /*
-        @Json(name = "local") // Don't use if you can, this should be in local time zone
-        private Local _local;
-    */
+/*
+    @Json(name = "local") // Don't use if you can, this should be in local time zone
+    private Local _local;
+*/
+
     @Json(name = "utc") // 2017-01-30 00:00:00
     private String _utc;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Date() {
+        SOURCE = new JsonObject();
+    }
+
+    public Date(JsonObject obj) {
+        SOURCE = obj;
     }
 
 /*
@@ -41,6 +46,17 @@ public class Date implements Parcelable {
     }
 
     public Local getLocal() {
+        try {
+        if (_local != null)
+            return _local;
+
+        if (SOURCE.has("local") && SOURCE.get("local") != null)
+            _local = Local.fromJson(SOURCE.getJsonObject("local"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _local;
     }
 
@@ -57,6 +73,17 @@ public class Date implements Parcelable {
     }
 
     public String getUtc() {
+        try {
+            if (_utc != null)
+                return _utc;
+
+            if (SOURCE.has("utc") && SOURCE.get("utc") != null)
+                _utc = SOURCE.getString("utc");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _utc;
     }
 
@@ -87,7 +114,7 @@ public class Date implements Parcelable {
 
     public static Date fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Date.class, obj);
+            return new Date(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -134,20 +161,20 @@ public class Date implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
     public Date(Calendar calendar) throws ParseException {
-        super();
+        this();
         utc(DateUtils.v2CalToUtc(calendar));
     }
 
     public Date(long utcMilliseconds) throws ParseException {
-        super();
+        this();
         utc(DateUtils.v2LongToUtc(utcMilliseconds));
     }
 
     public Calendar getCalendar() throws ParseException {
-        return DateUtils.v2UtcToCalendar(_utc);
+        return DateUtils.v2UtcToCalendar(getUtc());
     }
 
     public long getUtcLong() throws ParseException {
-        return DateUtils.v2UtcToLong(_utc);
+        return DateUtils.v2UtcToLong(getUtc());
     }
 }

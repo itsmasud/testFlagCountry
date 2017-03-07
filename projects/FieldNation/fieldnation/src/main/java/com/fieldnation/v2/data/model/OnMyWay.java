@@ -45,9 +45,14 @@ public class OnMyWay implements Parcelable {
     private String _substatus;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public OnMyWay() {
+        SOURCE = new JsonObject();
+    }
+
+    public OnMyWay(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActive(Boolean active) throws ParseException {
@@ -56,6 +61,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public Boolean getActive() {
+        try {
+            if (_active != null)
+                return _active;
+
+            if (SOURCE.has("active") && SOURCE.get("active") != null)
+                _active = SOURCE.getBoolean("active");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _active;
     }
 
@@ -71,6 +87,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public Coords getCoords() {
+        try {
+            if (_coords != null)
+                return _coords;
+
+            if (SOURCE.has("coords") && SOURCE.get("coords") != null)
+                _coords = Coords.fromJson(SOURCE.getJsonObject("coords"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _coords;
     }
 
@@ -86,6 +113,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -101,6 +139,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public Double getDistance() {
+        try {
+            if (_distance != null)
+                return _distance;
+
+            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+                _distance = SOURCE.getDouble("distance");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _distance;
     }
 
@@ -116,6 +165,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public Integer getDriveTime() {
+        try {
+            if (_driveTime != null)
+                return _driveTime;
+
+            if (SOURCE.has("drive_time") && SOURCE.get("drive_time") != null)
+                _driveTime = SOURCE.getInt("drive_time");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _driveTime;
     }
 
@@ -131,6 +191,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public Integer getEstimatedDelay() {
+        try {
+            if (_estimatedDelay != null)
+                return _estimatedDelay;
+
+            if (SOURCE.has("estimated_delay") && SOURCE.get("estimated_delay") != null)
+                _estimatedDelay = SOURCE.getInt("estimated_delay");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _estimatedDelay;
     }
 
@@ -146,6 +217,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public String getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = SOURCE.getString("status");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -161,6 +243,17 @@ public class OnMyWay implements Parcelable {
     }
 
     public String getSubstatus() {
+        try {
+            if (_substatus != null)
+                return _substatus;
+
+            if (SOURCE.has("substatus") && SOURCE.get("substatus") != null)
+                _substatus = SOURCE.getString("substatus");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _substatus;
     }
 
@@ -191,7 +284,7 @@ public class OnMyWay implements Parcelable {
 
     public static OnMyWay fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(OnMyWay.class, obj);
+            return new OnMyWay(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

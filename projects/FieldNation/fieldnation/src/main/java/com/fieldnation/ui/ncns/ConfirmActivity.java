@@ -4,42 +4,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
-import android.widget.Button;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.v2.ListEnvelope;
-import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.data.v2.WorkOrder;
-import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.search.SearchResultScreen;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.nav.NavActivity;
-
-import java.util.List;
+import com.fieldnation.v2.ui.search.SearchResultScreen;
 
 /**
  * Created by Michael on 10/3/2016.
  */
 
 public class ConfirmActivity extends AuthSimpleActivity {
-    private static final String TAG = "NavActivity";
-
-    private static final String STATE_CURRENT_SEARCH = "STATE_CURRENT_SEARCH";
+    private static final String TAG = "ConfirmActivity";
 
     // Ui
     private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
-    private Button _doneButton;
 
     // Data
-    private SavedSearchParams _currentSearch = null;
+    private SavedList _savedList;
 
     @Override
     public int getLayoutResource() {
@@ -54,43 +45,24 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
 
-        _doneButton = (Button) findViewById(R.id.done_button);
-        _doneButton.setOnClickListener(_doneButton_onClick);
-
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
-        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
-            _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
+        setTitle("Tomorrow's Work");
+
+        // TODO fill out _savedList;
+        try {
+            _savedList = new SavedList().id("workorders_tomorrow");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
-
-        if (_currentSearch == null) {
-            _currentSearch = new SavedSearchParams(0)
-                    .type(WorkOrderListType.CONFIRM_TOMORROW.getType())
-                    .status(WorkOrderListType.CONFIRM_TOMORROW.getStatuses())
-                    .title("Confirm Tomorrow's Work");
-        }
-
-        setTitle("Please confirm tomorrow's work orders");
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        if (_currentSearch != null)
-            outState.putParcelable(STATE_CURRENT_SEARCH, _currentSearch);
-        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.v(TAG, "onRestoreInstanceState");
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
-                _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
-                _recyclerView.startSearch(_currentSearch);
-                ConfirmActivity.this.setTitle(misc.capitalize(_currentSearch.title));
-            }
+            _recyclerView.startSearch(_savedList);
         }
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -102,7 +74,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _recyclerView.startSearch(_currentSearch);
+        _recyclerView.startSearch(_savedList);
     }
 
     @Override
@@ -120,21 +92,39 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.confirm, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.remindme_menuitem:
+                break;
+            case R.id.done_menuitem:
+                App.get().setNeedsConfirmation(false);
+                NavActivity.startNew(App.get());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onBackPressed() {
         // do nothing, you're stuck here.... muhahahah
     }
 
     private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
         @Override
-        public void OnWorkOrderListReceived(ListEnvelope envelope, List<WorkOrder> workOrders) {
-            _doneButton.setVisibility(View.VISIBLE);
-
-            if (envelope == null || envelope.getTotal() == 0) {
-                _doneButton.setVisibility(View.VISIBLE);
+        public void OnWorkOrderListReceived(WorkOrders workOrders) {
+            if (workOrders == null
+                    || workOrders.getResults() != null
+                    || workOrders.getResults().length == 0) {
                 return;
             }
-
-            for (WorkOrder wo : workOrders) {
+/*
+TODO            for (WorkOrder wo : workOrders.getResults()) {
                 Action[] actions = wo.getPrimaryActions();
                 if (actions != null) {
                     for (Action a : actions) {
@@ -145,14 +135,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
                     }
                 }
             }
-        }
-    };
-
-    private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            App.get().setNeedsConfirmation(false);
-            NavActivity.startNew(App.get());
+*/
         }
     };
 

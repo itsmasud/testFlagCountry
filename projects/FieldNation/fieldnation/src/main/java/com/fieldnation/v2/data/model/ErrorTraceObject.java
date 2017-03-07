@@ -21,9 +21,14 @@ public class ErrorTraceObject implements Parcelable {
     private static final String TAG = "ErrorTraceObject";
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public ErrorTraceObject() {
+        SOURCE = new JsonObject();
+    }
+
+    public ErrorTraceObject(JsonObject obj) {
+        SOURCE = obj;
     }
 
     /*-*****************************-*/
@@ -47,7 +52,7 @@ public class ErrorTraceObject implements Parcelable {
 
     public static ErrorTraceObject fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(ErrorTraceObject.class, obj);
+            return new ErrorTraceObject(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

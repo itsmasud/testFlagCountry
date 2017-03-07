@@ -30,9 +30,14 @@ public class LocationAttribute implements Parcelable {
     private String _value;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public LocationAttribute() {
+        SOURCE = new JsonObject();
+    }
+
+    public LocationAttribute(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setKey(String key) throws ParseException {
@@ -41,6 +46,17 @@ public class LocationAttribute implements Parcelable {
     }
 
     public String getKey() {
+        try {
+            if (_key != null)
+                return _key;
+
+            if (SOURCE.has("key") && SOURCE.get("key") != null)
+                _key = SOURCE.getString("key");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _key;
     }
 
@@ -56,6 +72,17 @@ public class LocationAttribute implements Parcelable {
     }
 
     public Boolean getPrivate() {
+        try {
+            if (_private != null)
+                return _private;
+
+            if (SOURCE.has("private") && SOURCE.get("private") != null)
+                _private = SOURCE.getBoolean("private");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _private;
     }
 
@@ -71,6 +98,17 @@ public class LocationAttribute implements Parcelable {
     }
 
     public String getValue() {
+        try {
+            if (_value != null)
+                return _value;
+
+            if (SOURCE.has("value") && SOURCE.get("value") != null)
+                _value = SOURCE.getString("value");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _value;
     }
 
@@ -101,7 +139,7 @@ public class LocationAttribute implements Parcelable {
 
     public static LocationAttribute fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(LocationAttribute.class, obj);
+            return new LocationAttribute(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

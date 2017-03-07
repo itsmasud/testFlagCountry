@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -35,9 +34,14 @@ public class Expenses implements Parcelable {
     private ExpensesSum _sum;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Expenses() {
+        SOURCE = new JsonObject();
+    }
+
+    public Expenses(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -50,6 +54,18 @@ public class Expenses implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -69,6 +85,17 @@ public class Expenses implements Parcelable {
     }
 
     public ListEnvelope getMetadata() {
+        try {
+            if (_metadata != null)
+                return _metadata;
+
+            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _metadata;
     }
 
@@ -84,6 +111,18 @@ public class Expenses implements Parcelable {
     }
 
     public Expense[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Expense.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _results;
     }
 
@@ -99,6 +138,17 @@ public class Expenses implements Parcelable {
     }
 
     public ExpensesSum getSum() {
+        try {
+            if (_sum != null)
+                return _sum;
+
+            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+                _sum = ExpensesSum.fromJson(SOURCE.getJsonObject("sum"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _sum;
     }
 
@@ -119,6 +169,23 @@ public class Expenses implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -148,7 +215,7 @@ public class Expenses implements Parcelable {
 
     public static Expenses fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Expenses.class, obj);
+            return new Expenses(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -193,13 +260,12 @@ public class Expenses implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(_actions));
+            _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }

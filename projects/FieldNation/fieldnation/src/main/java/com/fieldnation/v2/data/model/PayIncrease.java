@@ -45,9 +45,14 @@ public class PayIncrease implements Parcelable {
     private String _statusDescription;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public PayIncrease() {
+        SOURCE = new JsonObject();
+    }
+
+    public PayIncrease(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -60,6 +65,18 @@ public class PayIncrease implements Parcelable {
     }
 
     public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _actions;
     }
 
@@ -79,6 +96,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public User getAuthor() {
+        try {
+            if (_author != null)
+                return _author;
+
+            if (SOURCE.has("author") && SOURCE.get("author") != null)
+                _author = User.fromJson(SOURCE.getJsonObject("author"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _author;
     }
 
@@ -94,6 +122,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public Date getCreated() {
+        try {
+            if (_created != null)
+                return _created;
+
+            if (SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _created;
     }
 
@@ -109,6 +148,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -124,6 +174,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -139,6 +200,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public Pay getPay() {
+        try {
+            if (_pay != null)
+                return _pay;
+
+            if (SOURCE.has("pay") && SOURCE.get("pay") != null)
+                _pay = Pay.fromJson(SOURCE.getJsonObject("pay"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _pay;
     }
 
@@ -154,6 +226,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public StatusEnum getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -169,6 +252,17 @@ public class PayIncrease implements Parcelable {
     }
 
     public String getStatusDescription() {
+        try {
+            if (_statusDescription != null)
+                return _statusDescription;
+
+            if (SOURCE.has("status_description") && SOURCE.get("status_description") != null)
+                _statusDescription = SOURCE.getString("status_description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _statusDescription;
     }
 
@@ -195,6 +289,23 @@ public class PayIncrease implements Parcelable {
             this.value = value;
         }
 
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -204,6 +315,8 @@ public class PayIncrease implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "accept")
         ACCEPT("accept"),
+        @Json(name = "delete")
+        DELETE("delete"),
         @Json(name = "edit")
         EDIT("edit");
 
@@ -211,6 +324,23 @@ public class PayIncrease implements Parcelable {
 
         ActionsEnum(String value) {
             this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -240,7 +370,7 @@ public class PayIncrease implements Parcelable {
 
     public static PayIncrease fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(PayIncrease.class, obj);
+            return new PayIncrease(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

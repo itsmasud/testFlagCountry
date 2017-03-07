@@ -16,6 +16,7 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -851,6 +852,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .setWifiRequired(App.get().onlyUploadWithWifi())
                     .setTrack(true)
+                    .setTrackType(TrackerEnum.DELIVERABLES)
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);

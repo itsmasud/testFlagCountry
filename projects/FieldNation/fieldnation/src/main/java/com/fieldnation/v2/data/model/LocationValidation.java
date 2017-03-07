@@ -27,9 +27,14 @@ public class LocationValidation implements Parcelable {
     private String[] _messages;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public LocationValidation() {
+        SOURCE = new JsonObject();
+    }
+
+    public LocationValidation(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setIsValid(Boolean isValid) throws ParseException {
@@ -38,6 +43,17 @@ public class LocationValidation implements Parcelable {
     }
 
     public Boolean getIsValid() {
+        try {
+            if (_isValid != null)
+                return _isValid;
+
+            if (SOURCE.has("is_valid") && SOURCE.get("is_valid") != null)
+                _isValid = SOURCE.getBoolean("is_valid");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _isValid;
     }
 
@@ -57,6 +73,19 @@ public class LocationValidation implements Parcelable {
     }
 
     public String[] getMessages() {
+        try {
+            if (_messages != null)
+                return _messages;
+
+            if (SOURCE.has("messages") && SOURCE.get("messages") != null) {
+                JsonArray ja = SOURCE.getJsonArray("messages");
+                _messages = ja.toArray(new String[ja.size()]);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _messages;
     }
 
@@ -91,7 +120,7 @@ public class LocationValidation implements Parcelable {
 
     public static LocationValidation fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(LocationValidation.class, obj);
+            return new LocationValidation(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

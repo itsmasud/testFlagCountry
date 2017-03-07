@@ -63,9 +63,14 @@ public class Status implements Parcelable {
     private String _subStatus;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public Status() {
+        SOURCE = new JsonObject();
+    }
+
+    public Status(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCode(String code) throws ParseException {
@@ -74,6 +79,17 @@ public class Status implements Parcelable {
     }
 
     public String getCode() {
+        try {
+            if (_code != null)
+                return _code;
+
+            if (SOURCE.has("code") && SOURCE.get("code") != null)
+                _code = SOURCE.getString("code");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _code;
     }
 
@@ -89,6 +105,17 @@ public class Status implements Parcelable {
     }
 
     public String getCorrelationId() {
+        try {
+            if (_correlationId != null)
+                return _correlationId;
+
+            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _correlationId;
     }
 
@@ -104,6 +131,17 @@ public class Status implements Parcelable {
     }
 
     public Integer getDelay() {
+        try {
+            if (_delay != null)
+                return _delay;
+
+            if (SOURCE.has("delay") && SOURCE.get("delay") != null)
+                _delay = SOURCE.getInt("delay");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _delay;
     }
 
@@ -119,6 +157,17 @@ public class Status implements Parcelable {
     }
 
     public String getDisplay() {
+        try {
+            if (_display != null)
+                return _display;
+
+            if (SOURCE.has("display") && SOURCE.get("display") != null)
+                _display = SOURCE.getString("display");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _display;
     }
 
@@ -134,6 +183,17 @@ public class Status implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -149,6 +209,17 @@ public class Status implements Parcelable {
     }
 
     public Boolean getIsRouted() {
+        try {
+            if (_isRouted != null)
+                return _isRouted;
+
+            if (SOURCE.has("is_routed") && SOURCE.get("is_routed") != null)
+                _isRouted = SOURCE.getBoolean("is_routed");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _isRouted;
     }
 
@@ -164,6 +235,17 @@ public class Status implements Parcelable {
     }
 
     public String getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -179,6 +261,17 @@ public class Status implements Parcelable {
     }
 
     public Boolean getNcns() {
+        try {
+            if (_ncns != null)
+                return _ncns;
+
+            if (SOURCE.has("ncns") && SOURCE.get("ncns") != null)
+                _ncns = SOURCE.getBoolean("ncns");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _ncns;
     }
 
@@ -194,6 +287,17 @@ public class Status implements Parcelable {
     }
 
     public Boolean getProblemReported() {
+        try {
+            if (_problemReported != null)
+                return _problemReported;
+
+            if (SOURCE.has("problem_reported") && SOURCE.get("problem_reported") != null)
+                _problemReported = SOURCE.getBoolean("problem_reported");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _problemReported;
     }
 
@@ -209,6 +313,17 @@ public class Status implements Parcelable {
     }
 
     public String getSubStatus() {
+        try {
+            if (_subStatus != null)
+                return _subStatus;
+
+            if (SOURCE.has("sub_status") && SOURCE.get("sub_status") != null)
+                _subStatus = SOURCE.getString("sub_status");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _subStatus;
     }
 
@@ -239,7 +354,7 @@ public class Status implements Parcelable {
 
     public static Status fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(Status.class, obj);
+            return new Status(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

@@ -57,9 +57,14 @@ public class SelectionRuleCriteria implements Parcelable {
     private Integer _weight;
 
     @Source
-    private JsonObject SOURCE = new JsonObject();
+    private JsonObject SOURCE;
 
     public SelectionRuleCriteria() {
+        SOURCE = new JsonObject();
+    }
+
+    public SelectionRuleCriteria(JsonObject obj) {
+        SOURCE = obj;
     }
 
     public void setCustomField(CustomField customField) throws ParseException {
@@ -68,6 +73,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public CustomField getCustomField() {
+        try {
+            if (_customField != null)
+                return _customField;
+
+            if (SOURCE.has("custom_field") && SOURCE.get("custom_field") != null)
+                _customField = CustomField.fromJson(SOURCE.getJsonObject("custom_field"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _customField;
     }
 
@@ -83,6 +99,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public String getDescription() {
+        try {
+            if (_description != null)
+                return _description;
+
+            if (SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _description;
     }
 
@@ -98,6 +125,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public String getExtra() {
+        try {
+            if (_extra != null)
+                return _extra;
+
+            if (SOURCE.has("extra") && SOURCE.get("extra") != null)
+                _extra = SOURCE.getString("extra");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _extra;
     }
 
@@ -113,6 +151,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public Integer getId() {
+        try {
+            if (_id != null)
+                return _id;
+
+            if (SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _id;
     }
 
@@ -128,6 +177,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public NameEnum getName() {
+        try {
+            if (_name != null)
+                return _name;
+
+            if (SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = NameEnum.fromString(SOURCE.getString("name"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _name;
     }
 
@@ -143,6 +203,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public OperationEnum getOperation() {
+        try {
+            if (_operation != null)
+                return _operation;
+
+            if (SOURCE.has("operation") && SOURCE.get("operation") != null)
+                _operation = OperationEnum.fromString(SOURCE.getString("operation"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _operation;
     }
 
@@ -158,6 +229,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public Integer getOrder() {
+        try {
+            if (_order != null)
+                return _order;
+
+            if (SOURCE.has("order") && SOURCE.get("order") != null)
+                _order = SOURCE.getInt("order");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _order;
     }
 
@@ -173,6 +255,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public Boolean getRequired() {
+        try {
+            if (_required != null)
+                return _required;
+
+            if (SOURCE.has("required") && SOURCE.get("required") != null)
+                _required = SOURCE.getBoolean("required");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _required;
     }
 
@@ -188,6 +281,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public String getService() {
+        try {
+            if (_service != null)
+                return _service;
+
+            if (SOURCE.has("service") && SOURCE.get("service") != null)
+                _service = SOURCE.getString("service");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _service;
     }
 
@@ -203,6 +307,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public StatusEnum getStatus() {
+        try {
+            if (_status != null)
+                return _status;
+
+            if (SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _status;
     }
 
@@ -218,6 +333,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public String getValue() {
+        try {
+            if (_value != null)
+                return _value;
+
+            if (SOURCE.has("value") && SOURCE.get("value") != null)
+                _value = SOURCE.getString("value");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _value;
     }
 
@@ -233,6 +359,17 @@ public class SelectionRuleCriteria implements Parcelable {
     }
 
     public Integer getWeight() {
+        try {
+            if (_weight != null)
+                return _weight;
+
+            if (SOURCE.has("weight") && SOURCE.get("weight") != null)
+                _weight = SOURCE.getInt("weight");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
         return _weight;
     }
 
@@ -295,6 +432,23 @@ public class SelectionRuleCriteria implements Parcelable {
             this.value = value;
         }
 
+        public static NameEnum fromString(String value) {
+            NameEnum[] values = values();
+            for (NameEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static NameEnum[] fromJsonArray(JsonArray jsonArray) {
+            NameEnum[] list = new NameEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
         @Override
         public String toString() {
             return String.valueOf(value);
@@ -313,6 +467,23 @@ public class SelectionRuleCriteria implements Parcelable {
 
         StatusEnum(String value) {
             this.value = value;
+        }
+
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -335,6 +506,23 @@ public class SelectionRuleCriteria implements Parcelable {
 
         OperationEnum(String value) {
             this.value = value;
+        }
+
+        public static OperationEnum fromString(String value) {
+            OperationEnum[] values = values();
+            for (OperationEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static OperationEnum[] fromJsonArray(JsonArray jsonArray) {
+            OperationEnum[] list = new OperationEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
         }
 
         @Override
@@ -364,7 +552,7 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public static SelectionRuleCriteria fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(SelectionRuleCriteria.class, obj);
+            return new SelectionRuleCriteria(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;

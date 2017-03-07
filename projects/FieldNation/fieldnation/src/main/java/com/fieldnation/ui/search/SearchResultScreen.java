@@ -99,7 +99,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(Location location) {
+        public void onLocation(SimpleGps simpleGps, Location location) {
             _location = location;
             if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
                 _searchParams.location(_location.getLatitude(), _location.getLongitude());
@@ -108,7 +108,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
