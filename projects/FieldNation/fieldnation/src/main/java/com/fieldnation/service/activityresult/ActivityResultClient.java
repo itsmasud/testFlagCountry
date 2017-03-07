@@ -104,6 +104,10 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
     }
 
+    public void clearOnActivityResult() {
+        clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT);
+    }
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/

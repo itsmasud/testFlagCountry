@@ -72,17 +72,14 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        ppulateUi();
+        poulateUi();
     }
 
-    public void ppulateUi() {
+    public void poulateUi() {
         if (_workOrder == null)
             return;
 
         final TimeLog[] logs = _workOrder.getTimeLogs().getResults();
-
-        if (logs == null)
-            return;
 
         if (_workOrder.getTimeLogs() != null
                 && _workOrder.getTimeLogs().getActionsSet() != null
@@ -112,7 +109,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         if (logs != null && logs.length > 0) {
             _forLoop = new ForLoopRunnable(logs.length, new Handler()) {
                 private final TimeLog[] _logs = logs;
-                private List<View> _views = new LinkedList<>();
+                private List<View> _views = new LinkedList();
 
                 @Override
                 public void next(int i) throws Exception {
@@ -132,6 +129,8 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
                 }
             };
             postDelayed(_forLoop, 100);
+        }else {
+            _logList.removeAllViews();
         }
     }
 

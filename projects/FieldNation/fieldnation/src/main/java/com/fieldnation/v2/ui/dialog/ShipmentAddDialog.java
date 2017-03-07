@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -215,7 +216,6 @@ public class ShipmentAddDialog extends SimpleDialog {
             case CARRIER_FEDEX:
             case CARRIER_UPS:
             case CARRIER_USPS:
-                getCarrierSpinner().setSelection(_carrierPosition);
             default:
                 _carrierLayout.setVisibility(View.GONE);
                 break;
@@ -457,29 +457,41 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
 
         @Override
+        public void onEvent(String topicId, Parcelable payload) {
+            Log.v(TAG, topicId);
+            super.onEvent(topicId, payload);
+        }
+
+        @Override
         public ActivityResultClient getClient() {
             return _activityResultClient;
         }
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            _activityResultClient.clearOnActivityResult();
             Log.v(TAG, "onActivityResult");
 
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
             if (result != null) {
                 Log.e(TAG, "onActivityResult: result not null");
+                try {
+                    _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
+                    String content = result.getContents();
 
-                _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
-                String content = result.getContents();
-
-                if (content == null) {
-                    Log.e(TAG, "onActivityResult: no image path");
-                } else {
-                    Log.v(TAG, "onActivityResult");
-                    _scannedImagePath = result.getBarcodeImagePath();
-                    _trackingIdEditText.setText(content);
-                    _carrierPosition = misc.getCarrierId(content);
+                    if (content == null) {
+                        Log.e(TAG, "onActivityResult: no image path");
+                    } else {
+                        Log.v(TAG, "onActivityResult");
+                        _scannedImagePath = result.getBarcodeImagePath();
+                        _trackingIdEditText.setText(content);
+                        _carrierPosition = misc.getCarrierId(content);
+                        getCarrierSpinner().setSelection(_carrierPosition);
+                        populateUi();
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
                     populateUi();
                 }
             }

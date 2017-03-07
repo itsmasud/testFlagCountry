@@ -54,12 +54,6 @@ public class CustomFieldDialog extends SimpleDialog {
     private Calendar _pickerCal;
     private Calendar _expirationDate;
     private int _itemSelectedPosition = -1;
-    private String _customFieldDateData;
-    private String _customFieldDateTimeData;
-    private String _customFieldTimeData;
-    private String _customFieldTextData;
-    private String _customFieldNumberData;
-    private String _customFieldPhoneNumberData;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -105,144 +99,6 @@ public class CustomFieldDialog extends SimpleDialog {
         populateUi();
     }
 
-/*
-    @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        super.onRestoreDialogState(savedState);
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD))
-                _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATE))
-                _customFieldDateData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATE);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATETIME))
-                _customFieldDateTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATETIME);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TIME))
-                _customFieldTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TIME);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TEXT))
-                _customFieldTextData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TEXT);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_NUMBER))
-                _customFieldNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_NUMBER);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_PHONE_NUMBER))
-                _customFieldPhoneNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_PHONE_NUMBER);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED))
-                _itemSelectedPosition = savedInstanceState.getInt(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED);
-
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD)) {
-                _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
-            }
-
-            CustomField.FieldType type = _customField.getType();
-            switch (type) {
-                case DATE:
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATE)) {
-                        _customFieldDateData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATE);
-                        _textEditText.setText(_customFieldDateData);
-                    }
-                    break;
-                case DATETIME:
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATETIME)) {
-                        _customFieldDateTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATETIME);
-                        _textEditText.setText(_customFieldDateTimeData);
-                    }
-                    break;
-                case TIME:
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TIME)) {
-                        _customFieldTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TIME);
-                        _textEditText.setText(_customFieldTimeData);
-                    }
-                    break;
-                case TEXT:
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TEXT)) {
-                        _customFieldTextData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TEXT);
-                        _textEditText.setText(_customFieldTextData);
-                    }
-                    break;
-                case NUMBER:
-                    Log.e(TAG, "onViewStateRestored: case NUMBER");
-
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_NUMBER)) {
-                        _customFieldNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_NUMBER);
-                        _textEditText.setText(_customFieldNumberData);
-                    }
-                    break;
-                case PHONE:
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_PHONE_NUMBER)) {
-                        _customFieldTextData = savedInstanceState.getString(STATE_CUSTOM_FIELD_PHONE_NUMBER);
-                        _textEditText.setText(_customFieldPhoneNumberData);
-                    }
-                    break;
-
-                case LIST:
-                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED)) {
-                        _itemSelectedPosition = savedInstanceState.getInt(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED);
-                    }
-                    break;
-            }
-        }
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        super.onSaveDialogState(outState);
-
-        if (_customField != null)
-            outState.putParcelable(STATE_CUSTOM_FIELD, _customField);
-
-        CustomField.FieldType type = _customField.getType();
-        switch (type) {
-            case DATE:
-                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                    _customFieldDateData = _textEditText.getText().toString();
-                    outState.putString(STATE_CUSTOM_FIELD_DATE, _customFieldDateData);
-                }
-                break;
-            case DATETIME:
-                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                    _customFieldDateTimeData = _textEditText.getText().toString();
-                    outState.putString(STATE_CUSTOM_FIELD_DATETIME, _customFieldDateTimeData);
-                }
-                break;
-            case TIME:
-                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                    _customFieldTimeData = _textEditText.getText().toString();
-                    outState.putString(STATE_CUSTOM_FIELD_TIME, _customFieldTimeData);
-                }
-                break;
-            case TEXT:
-                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                    _customFieldTextData = _textEditText.getText().toString();
-                    outState.putString(STATE_CUSTOM_FIELD_TEXT, _customFieldTextData);
-                }
-                break;
-            case NUMBER:
-                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                    _customFieldNumberData = _textEditText.getText().toString();
-                    outState.putString(STATE_CUSTOM_FIELD_NUMBER, _customFieldNumberData);
-                }
-                break;
-            case PHONE:
-                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                    _customFieldPhoneNumberData = _textEditText.getText().toString();
-                    outState.putString(STATE_CUSTOM_FIELD_PHONE_NUMBER, _customFieldPhoneNumberData);
-                }
-                break;
-            case LIST:
-                if (_itemSelectedPosition != -1) {
-                    outState.putInt(STATE_CUSTOM_FIELD_LIST_ITEM_SELECTED, _itemSelectedPosition);
-                }
-                break;
-        }
-//        Log.e(TAG, "_customFieldTextData: " + _customFieldTextData);
-    }
-*/
-
     @Override
     public void dismiss(boolean animate) {
         misc.hideKeyboard(_cancelButton);
@@ -250,8 +106,11 @@ public class CustomFieldDialog extends SimpleDialog {
     }
 
     private void populateUi() {
-        if (_textEditText == null || _dateTimeButton == null || _spinner == null
-                || _tipTextView == null || _customField == null)
+        if (_textEditText == null
+                || _dateTimeButton == null
+                || _spinner == null
+                || _tipTextView == null
+                || _customField == null)
             return;
 
         _titleTextView.setText(_customField.getName());
@@ -261,93 +120,78 @@ public class CustomFieldDialog extends SimpleDialog {
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
         _spinner.setVisibility(View.GONE);
-        _tipTextView.setVisibility(View.GONE);
+        _tipTextView.setVisibility(View.VISIBLE);
 
-        if (!misc.isEmptyOrNull(_customField.getTip())) {
-            _tipTextView.setVisibility(View.VISIBLE);
-//            if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-//                _tipTextView.setText(_customField.getTip() + " (" + _customField.getCustomFieldFormat() + ")");
-//            } else {
-            _tipTextView.setText(_customField.getTip());
-//            }
-//        } else if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-//            _tipTextView.setVisibility(View.VISIBLE);
-//            _tipTextView.setText(_customField.getCustomFieldFormat());
-        } else {
-            _tipTextView.setVisibility(View.GONE);
-        }
+        String tip = _customField.getTip();
+        if (misc.isEmptyOrNull(tip)) tip = null;
 
         _textEditText.setVisibility(View.VISIBLE);
         _textEditText.getEditableText().clear();
-        //_textEditText.setText("", TextView.BufferType.EDITABLE);
-
-        switch (type) {
-            case DATE:
-                if (!misc.isEmptyOrNull(_customFieldDateData)) {
-                    _textEditText.setText(_customFieldDateData, TextView.BufferType.EDITABLE);
-                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
-                break;
-            case DATE_TIME:
-                if (!misc.isEmptyOrNull(_customFieldDateTimeData)) {
-                    _textEditText.setText(_customFieldDateTimeData, TextView.BufferType.EDITABLE);
-                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
-                break;
-            case TIME:
-                if (!misc.isEmptyOrNull(_customFieldTimeData)) {
-                    _textEditText.setText(_customFieldTimeData, TextView.BufferType.EDITABLE);
-                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
-                break;
-            case TEXT:
-                if (!misc.isEmptyOrNull(_customFieldTextData)) {
-                    _textEditText.setText(_customFieldTextData, TextView.BufferType.EDITABLE);
-                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
-                break;
-            case NUMERIC:
-                if (!misc.isEmptyOrNull(_customFieldNumberData)) {
-                    _textEditText.setText(_customFieldNumberData, TextView.BufferType.EDITABLE);
-                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
-                break;
-            case PHONE:
-                if (!misc.isEmptyOrNull(_customFieldPhoneNumberData)) {
-                    _textEditText.setText(_customFieldPhoneNumberData, TextView.BufferType.EDITABLE);
-                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
-                break;
-        }
 
         switch (type) {
             case DATE:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+                if (tip == null)
+                    _tipTextView.setText("mm/dd/yyyy");
+                else
+                    _tipTextView.setText(tip + " (mm/dd/yyyy)");
                 break;
+
             case DATE_TIME:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+                if (tip == null)
+                    _tipTextView.setText("mm/dd/yyyy h:mm am/pm");
+                else
+                    _tipTextView.setText(tip + " (mm/dd/yyyy h:mm am/pm)");
                 break;
+
             case TIME:
                 _dateTimeButton.setVisibility(View.VISIBLE);
                 _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+                if (tip == null)
+                    _tipTextView.setText("h:mm am/pm");
+                else
+                    _tipTextView.setText(tip + " (h:mm am/pm)");
                 break;
+
             case TEXT:
                 _textEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+                if (tip == null)
+                    _tipTextView.setText("any text");
+                else
+                    _tipTextView.setText(tip + " (any text)");
                 break;
+
             case NUMERIC:
                 _textEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+                if (tip == null)
+                    _tipTextView.setText("a number");
+                else
+                    _tipTextView.setText(tip + " (a number)");
                 break;
+
             case PHONE:
                 _textEditText.setInputType(InputType.TYPE_CLASS_PHONE);
+                _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+                if (tip == null)
+                    _tipTextView.setText("xxx-xxx-xxxx");
+                else
+                    _tipTextView.setText(tip + " (xxx-xxx-xxxx)");
                 break;
+
             case PREDEFINED:
                 _spinner.setVisibility(View.VISIBLE);
                 _textEditText.setVisibility(View.GONE);
@@ -381,18 +225,14 @@ public class CustomFieldDialog extends SimpleDialog {
                     }
                     if (_itemSelectedPosition != -1)
                         _spinner.setSelection(_itemSelectedPosition);
-
                 }
                 break;
         }
 
         _pickerCal = Calendar.getInstance();
         final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR),
-                c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-
-        _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY),
-                c.get(Calendar.MINUTE), false);
+        _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
