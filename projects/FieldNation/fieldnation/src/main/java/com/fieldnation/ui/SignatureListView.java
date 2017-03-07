@@ -94,6 +94,9 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
         if (_workOrder.getSignatures() == null)
             return;
 
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)
+            return;
+
         if (!_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD)) {
             _addButton.setVisibility(GONE);
         } else {
