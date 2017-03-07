@@ -651,7 +651,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param json        JSON payload
      */
-    public static void addMessage(Context context, String workOrderId, Message json) {
+    public static void addMessage(Context context, Integer workOrderId, Message json) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages");
 
@@ -689,7 +689,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param json        JSON payload
      * @param async       Async (Optional)
      */
-    public static void addMessage(Context context, String workOrderId, Message json, Boolean async) {
+    public static void addMessage(Context context, Integer workOrderId, Message json, Boolean async) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages?async=" + async);
 

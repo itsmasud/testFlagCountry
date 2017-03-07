@@ -1,6 +1,7 @@
 package com.fieldnation.v2.ui;
 
 import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
 
 import com.fieldnation.fnlog.Log;
 
@@ -16,18 +17,11 @@ import java.util.Set;
 public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<ViewHolder> {
     private static final String TAG = "PagingAdapter";
 
-    private static final Object RATEME = new Object();
-    private static final Object HEADER = new Object();
-    private static final Object EMPTY = new Object();
-
     private List<List<DataModel>> _pages = new LinkedList<>();
     private Set<Integer> _loadingPages = new HashSet<>();
     private List<Object> _displayList = new LinkedList<>();
 
     private Class<DataModel> _objectType;
-    //    private RateMeView _rateMeView = null;
-//    private int _rateMePosition = 5;
-//    private boolean _showRateMe = false;
     private boolean _lastPage = false;
 
 
@@ -35,6 +29,10 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
         super();
         _objectType = clazz;
         requestPage(1, false);
+    }
+
+    public Class<DataModel> getDataModelType() {
+        return _objectType;
     }
 
     public void clear() {
@@ -107,19 +105,19 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
         rebuildList();
     }
 
-    private void rebuildList() {
+    final protected void rebuildList() {
         // Build the real list
         _displayList.clear();
-        if (useHeader())
-            _displayList.add(HEADER);
         int location = 0;
         try {
             if (_pages.size() == 0 || _pages.get(1).size() == 0) {
-                _displayList.add(EMPTY);
+                _displayList.add(getEmptyPlaceHolder());
             } else {
                 for (List<DataModel> page : _pages) {
                     if (page != null) {
                         for (DataModel t : page) {
+                            if (shouldInjectPlaceHolder(location))
+                                _displayList.add(getInjectedPlaceHolder(location));
                             location++;
                             _displayList.add(t);
                         }
@@ -154,5 +152,9 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
 
     public abstract void requestPage(int page, boolean allowCache);
 
-    public abstract boolean useHeader();
+    public abstract boolean shouldInjectPlaceHolder(int position);
+
+    public abstract Object getInjectedPlaceHolder(int position);
+
+    public abstract Object getEmptyPlaceHolder();
 }

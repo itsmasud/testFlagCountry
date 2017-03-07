@@ -25,7 +25,7 @@ import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
-import com.fieldnation.v2.ui.worecycler.PagingAdapter;
+import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 import com.fieldnation.v2.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.v2.ui.workorder.WorkOrderCard;
 
@@ -77,6 +77,7 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderList.setOnOverScrollListener(_refreshView);
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
+        _adapter.setRateMeAllowed(true);
 
         post(new Runnable() {
             @Override
@@ -224,7 +225,7 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
         }
     };
 
-    private final PagingAdapter<WorkOrder> _adapter = new PagingAdapter<WorkOrder>(WorkOrder.class) {
+    private final WoPagingAdapter _adapter = new WoPagingAdapter() {
         @Override
         public void requestPage(int page, boolean allowCache) {
             getPage(page);
@@ -253,7 +254,6 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
 TODO            if (_searchParams != null)
                 return _searchParams.canEdit;
 */
-
             return false;
         }
 
@@ -268,6 +268,7 @@ TODO            if (_searchParams != null)
             ((HeaderView) holder.itemView).setSavedList(_savedList);
         }
 
+
         @Override
         public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
@@ -276,7 +277,7 @@ TODO            if (_searchParams != null)
 
         @Override
         public void onBindEmptyViewHolder(BaseHolder holder) {
-            // Nothing to do.
+            // nothing
         }
     };
 
