@@ -125,7 +125,7 @@ public class SearchEditText extends RelativeLayout {
                             Long.parseLong(_searchTermEditText.getText().toString()));
                 } catch (Exception ex) {
                 }
-                doWorkorderLookup();
+                doWorkOrderLookup();
                 return true;
             }
             return false;
@@ -156,11 +156,11 @@ public class SearchEditText extends RelativeLayout {
                         Long.parseLong(_searchTermEditText.getText().toString()));
             } catch (Exception ex) {
             }
-            doWorkorderLookup();
+            doWorkOrderLookup();
         }
     };
 
-    private void doWorkorderLookup() {
+    private void doWorkOrderLookup() {
         try {
             _progressBar.setVisibility(VISIBLE);
             _lastLookup = Integer.parseInt(_searchTermEditText.getText().toString());
