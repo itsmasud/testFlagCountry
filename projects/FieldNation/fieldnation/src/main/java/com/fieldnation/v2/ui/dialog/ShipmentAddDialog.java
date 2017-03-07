@@ -476,18 +476,22 @@ public class ShipmentAddDialog extends SimpleDialog {
 
             if (result != null) {
                 Log.e(TAG, "onActivityResult: result not null");
+                try {
+                    _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
+                    String content = result.getContents();
 
-                _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
-                String content = result.getContents();
-
-                if (content == null) {
-                    Log.e(TAG, "onActivityResult: no image path");
-                } else {
-                    Log.v(TAG, "onActivityResult");
-                    _scannedImagePath = result.getBarcodeImagePath();
-                    _trackingIdEditText.setText(content);
-                    _carrierPosition = misc.getCarrierId(content);
-                    getCarrierSpinner().setSelection(_carrierPosition);
+                    if (content == null) {
+                        Log.e(TAG, "onActivityResult: no image path");
+                    } else {
+                        Log.v(TAG, "onActivityResult");
+                        _scannedImagePath = result.getBarcodeImagePath();
+                        _trackingIdEditText.setText(content);
+                        _carrierPosition = misc.getCarrierId(content);
+                        getCarrierSpinner().setSelection(_carrierPosition);
+                        populateUi();
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
                     populateUi();
                 }
             }
