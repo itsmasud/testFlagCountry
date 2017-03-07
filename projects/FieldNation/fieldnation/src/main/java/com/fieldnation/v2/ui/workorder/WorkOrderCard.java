@@ -28,6 +28,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.ncns.ConfirmActivity;
+import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
@@ -431,7 +432,9 @@ public class WorkOrderCard extends RelativeLayout {
             // view_bundle
         } else if (_workOrder.getBundle() != null
                 && _workOrder.getBundle().getId() != null
-                && _workOrder.getBundle().getId() > 0) {
+                && _workOrder.getBundle().getId() > 0
+                && (_workOrder.getStatus().getId() == 2
+                || _workOrder.getStatus().getId() == 3)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
             button.setText(getResources().getString(R.string.btn_view_bundle_num,
@@ -456,6 +459,16 @@ public class WorkOrderCard extends RelativeLayout {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_withdraw_onClick);
             button.setText(R.string.btn_withdraw);
+
+        } else if (_workOrder.getStatus().getId() == 6) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_viewPayment_onClick);
+            button.setText(R.string.btn_view_payment);
+
+        } else if (_workOrder.getStatus().getId() == 7) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_viewPayment_onClick);
+            button.setText(R.string.btn_fees);
 
 //        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
 //            button.setVisibility(VISIBLE);
@@ -538,6 +551,15 @@ public class WorkOrderCard extends RelativeLayout {
             button = _secondaryButtons[buttonId];
         }
     }
+
+    private final OnClickListener _viewPayment_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
+                    WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getWorkOrderId());
+            PaymentListActivity.startNew(App.get());
+        }
+    };
 
     private final OnClickListener _incomplete_onClick = new OnClickListener() {
         @Override

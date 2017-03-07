@@ -219,7 +219,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // view_bundle
         } else if (_workOrder.getBundle() != null
                 && _workOrder.getBundle().getId() != null
-                && _workOrder.getBundle().getId() > 0) {
+                && _workOrder.getBundle().getId() > 0
+                && (_workOrder.getStatus().getId() == 2
+                || _workOrder.getStatus().getId() == 3)) {
             inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
@@ -266,7 +268,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 _rightWhiteButton.setOnClickListener(_viewCounter_onClick);
             }
             setVisibility(View.VISIBLE);
-
 
         } else if (_workOrder.getStatus().getId() == 6) {
 //              View payments
