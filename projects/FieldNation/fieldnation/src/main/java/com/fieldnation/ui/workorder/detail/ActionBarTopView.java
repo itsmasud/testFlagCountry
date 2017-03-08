@@ -120,6 +120,21 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
         if (false) {
 
+            // ack hold
+        } else if (_workOrder.isOnHold() && !_workOrder.areHoldsAcknowledged()) {
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_report_a_problem);
+            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
+            _rightWhiteButton.setText(R.string.btn_acknowledge_hold);
+            setVisibility(View.VISIBLE);
+
+            // is on hold
+        } else if (_workOrder.isOnHold()) {
+
             // set eta
         } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
                 && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
@@ -154,17 +169,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 //            _rightWhiteButton.setVisibility(VISIBLE);
 //            _rightWhiteButton.setOnClickListener(_onMyWay_onClick);
 //            _rightWhiteButton.setText(R.string.btn_on_my_way);
-//            setVisibility(View.VISIBLE);
-
-            // ack hold
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-//            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
-
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setOnClickListener(_ackHold_onClick);
-//            _rightWhiteButton.setText(R.string.btn_acknowledge_hold);
 //            setVisibility(View.VISIBLE);
 
             // check_out
