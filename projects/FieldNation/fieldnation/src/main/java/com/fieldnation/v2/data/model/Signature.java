@@ -363,8 +363,8 @@ public class Signature implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "remove")
+        REMOVE("remove");
 
         private String value;
 
