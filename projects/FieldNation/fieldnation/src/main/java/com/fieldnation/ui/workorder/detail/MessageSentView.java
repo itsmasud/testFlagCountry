@@ -9,9 +9,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Message;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Message;
 
 public class MessageSentView extends RelativeLayout {
     private static final String TAG = "MessageSentView";
@@ -61,7 +61,7 @@ public class MessageSentView extends RelativeLayout {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        if (_message.isRead()) {
+        if (_message.getRead()) {
             _statusTextView.setText("Delivered");
         } else {
             _statusTextView.setText("Not read");

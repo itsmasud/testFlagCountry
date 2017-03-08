@@ -12,13 +12,12 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Message;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.ProfilePicView;
+import com.fieldnation.v2.data.model.Message;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
@@ -91,18 +90,18 @@ public class MessageRcvdView extends RelativeLayout {
         }
 
         try {
-            _timeTextView.setText(DateUtils.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
+            _timeTextView.setText(DateUtils.formatMessageTime(_message.getCreated().getCalendar()));
         } catch (ParseException e) {
             Log.v(TAG, e);
         }
 
-        _picView.setAlertOn(!_message.isRead());
+        _picView.setAlertOn(!_message.getRead());
 
-        _usernameTextView.setText(_message.getFromUser().getFirstName());
+        _usernameTextView.setText(_message.getFrom().getName());
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _message.getFromUser().getPhotoUrl();
+            String url = _message.getFrom().getThumbnail();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(getContext(), url, true, false);
                 _photos.subGet(url, true, false);
