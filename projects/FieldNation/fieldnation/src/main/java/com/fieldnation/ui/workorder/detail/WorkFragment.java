@@ -60,6 +60,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
@@ -171,7 +172,6 @@ public class WorkFragment extends WorkorderFragment {
     // Data
     private WorkordersWebApi _workOrderApi;
     private FileCacheClient _fileCacheClient;
-    private WorkordersWebApi _workorderApi;
     private File _tempFile;
     private Uri _tempUri;
     private WorkOrder _workOrder;
@@ -397,8 +397,8 @@ TODO        if (_currentTask != null)
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
-        _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workorderApi.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
@@ -447,8 +447,8 @@ TODO        if (_currentTask != null)
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
-        if (_workorderApi != null && _workorderApi.isConnected())
-            _workorderApi.disconnect(App.get());
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
 
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
@@ -478,7 +478,6 @@ TODO        if (_currentTask != null)
     public void setWorkorder(WorkOrder workOrder) {
         Log.v(TAG, "setWorkorder");
         _workOrder = workOrder;
-        subscribeData();
         requestTasks();
         populateUi();
     }
@@ -1809,21 +1808,6 @@ TODO            if (_tempFile != null) {
     /*-				Web				-*/
     /*-*****************************-*/
 
-    private void subscribeData() {
-/*
-TODO        if (_workorder == null)
-            return;
-
-        if (_workorderClient == null)
-            return;
-
-        if (!_workorderClient.isConnected())
-            return;
-
-        _workorderClient.subListTasks(_workOrder.getWorkOrderId(), false);
-*/
-    }
-
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
@@ -1840,15 +1824,18 @@ TODO        if (_workorder == null)
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            subscribeData();
+            _workOrderApi.subWorkordersWebApi();
         }
 
-/*
         @Override
-TODO        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
-            setTasks(tasks);
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+
+            if (methodName.contains("TimeLog") && !success) {
+                Log.v(TAG, "onWorkordersWebApi");
+
+                ToastClient.toast(App.get(), "Error: " + ((Error) failObject).getMessage(), Toast.LENGTH_LONG);
+            }
         }
-*/
     };
 }
 
