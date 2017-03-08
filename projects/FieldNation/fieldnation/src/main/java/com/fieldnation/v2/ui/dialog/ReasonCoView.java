@@ -122,8 +122,11 @@ public class ReasonCoView extends RelativeLayout {
         public void onClick(View v) {
             Log.v(TAG, "_expires_onClick");
 
-            if (_expiresCheckBox.isChecked() && _listener != null) {
-                _listener.onExpirationChange(System.currentTimeMillis() + _durations[_currentPosition] * 1000);
+            if (_listener != null) {
+                if (_expiresCheckBox.isChecked())
+                    _listener.onExpirationChange(System.currentTimeMillis() + _durations[_currentPosition] * 1000);
+                else
+                    _listener.onExpirationChange(0);
             }
         }
     };
@@ -137,8 +140,11 @@ public class ReasonCoView extends RelativeLayout {
                 _currentPosition = position;
 
                 _expiresCheckBox.setChecked(true);
-                if (_expiresCheckBox.isChecked() && _listener != null) {
-                    _listener.onExpirationChange(System.currentTimeMillis() + (_durations[_currentPosition] * 1000));
+                if (_listener != null) {
+                    if (_expiresCheckBox.isChecked())
+                        _listener.onExpirationChange(System.currentTimeMillis() + (_durations[_currentPosition] * 1000));
+                    else
+                        _listener.onExpirationChange(0);
                 }
             }
         }
@@ -147,8 +153,11 @@ public class ReasonCoView extends RelativeLayout {
         public void onNothingSelected(AdapterView<?> parent) {
             Log.v(TAG, "_expireSpinner_selected.onNothingSelected");
             _currentPosition = 1;
-            if (_expiresCheckBox.isChecked() && _listener != null) {
-                _listener.onExpirationChange(System.currentTimeMillis() + (_durations[_currentPosition] * 1000));
+            if (_listener != null) {
+                if (_expiresCheckBox.isChecked())
+                    _listener.onExpirationChange(System.currentTimeMillis() + (_durations[_currentPosition] * 1000));
+                else
+                    _listener.onExpirationChange(0);
             }
         }
     };

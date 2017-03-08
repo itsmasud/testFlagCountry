@@ -52,6 +52,7 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -864,13 +865,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onViewPayment() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getWorkOrderId());
-/*
-TODO            if (_workorder.getPaymentId() != null) {
-                PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
-            } else {
-                PaymentListActivity.startNew(App.get());
-            }
-*/
+            PaymentListActivity.startNew(App.get());
         }
 
         @Override
