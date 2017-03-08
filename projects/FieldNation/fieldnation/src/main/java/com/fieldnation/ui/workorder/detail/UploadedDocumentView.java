@@ -129,10 +129,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         _doc = deliverable;
         _profileId = profileId;
         _workOrder = workOrder;
-
-
-        Log.e(TAG, "Attachment actions: " + _doc.getActionsSet());
-
         populateUi();
     }
 

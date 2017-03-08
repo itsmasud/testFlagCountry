@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layoutCardView"
     style="?attr/cardContainerStyle"
-    android:padding="16dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/icon_view"
@@ -20,22 +20,25 @@
     <TextView
         android:id="@+id/name_textview"
         style="@style/Text_Body_1"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/icon_view"
-        android:layout_above="@+id/date_textview"
-        android:layout_alignTop="@id/icon_view"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/icon_view"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
         android:text="Signee Name" />
 
     <TextView
         android:id="@+id/date_textview"
         style="@style/Text_Caption"
-        android:layout_alignBottom="@id/icon_view"
-        android:layout_toRightOf="@+id/icon_view"
-        android:layout_marginLeft="8dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/name_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/icon_view"
         android:text="January 10, 2014" />
 
 </RelativeLayout>

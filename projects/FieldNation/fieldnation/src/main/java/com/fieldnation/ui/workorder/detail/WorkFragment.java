@@ -52,6 +52,7 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -59,6 +60,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
@@ -108,7 +110,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DECLINE = TAG + ".declineDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
@@ -119,7 +120,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_LOCATION_LOADING = TAG + ".locationLoadingDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
-    private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
@@ -128,6 +128,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
+    private static final String DIALOG_PAY = TAG + ".payDialog";
+    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -170,7 +172,6 @@ public class WorkFragment extends WorkorderFragment {
     // Data
     private WorkordersWebApi _workOrderApi;
     private FileCacheClient _fileCacheClient;
-    private WorkordersWebApi _workorderApi;
     private File _tempFile;
     private Uri _tempUri;
     private WorkOrder _workOrder;
@@ -396,9 +397,8 @@ TODO        if (_currentTask != null)
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
-
-        _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workorderApi.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
@@ -447,8 +447,8 @@ TODO        if (_currentTask != null)
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
-        if (_workorderApi != null && _workorderApi.isConnected())
-            _workorderApi.disconnect(App.get());
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
 
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
@@ -478,7 +478,6 @@ TODO        if (_currentTask != null)
     public void setWorkorder(WorkOrder workOrder) {
         Log.v(TAG, "setWorkorder");
         _workOrder = workOrder;
-        subscribeData();
         requestTasks();
         populateUi();
     }
@@ -865,13 +864,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onViewPayment() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getWorkOrderId());
-/*
-TODO            if (_workorder.getPaymentId() != null) {
-                PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
-            } else {
-                PaymentListActivity.startNew(App.get());
-            }
-*/
+            PaymentListActivity.startNew(App.get());
         }
 
         @Override
@@ -1231,18 +1224,14 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
 
         @Override
         public void onDelete(WorkOrder workOrder, final Shipment shipment) {
-            if ((long) shipment.getUser().getId() != (long) App.getProfileId()) {
-                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
-                return;
-            }
-
             _yesNoDialog.setData(getString(R.string.dialog_delete_shipment_title),
                     getString(R.string.dialog_delete_shipment_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteShipment(App.get(),
-                                    _workOrder.getWorkOrderId(), shipment.getId());
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+                            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getWorkOrderId(), shipment.getId());
+                            setLoading(true);
                         }
 
                         @Override
@@ -1819,21 +1808,6 @@ TODO            if (_tempFile != null) {
     /*-				Web				-*/
     /*-*****************************-*/
 
-    private void subscribeData() {
-/*
-TODO        if (_workorder == null)
-            return;
-
-        if (_workorderClient == null)
-            return;
-
-        if (!_workorderClient.isConnected())
-            return;
-
-        _workorderClient.subListTasks(_workOrder.getWorkOrderId(), false);
-*/
-    }
-
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
@@ -1850,15 +1824,18 @@ TODO        if (_workorder == null)
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            subscribeData();
+            _workOrderApi.subWorkordersWebApi();
         }
 
-/*
         @Override
-TODO        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
-            setTasks(tasks);
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+
+            if (methodName.contains("TimeLog") && !success) {
+                Log.v(TAG, "onWorkordersWebApi");
+                ToastClient.toast(App.get(), "Error: " + ((Error) failObject).getMessage(), Toast.LENGTH_LONG);
+                setLoading(false);
+            }
         }
-*/
     };
 }
 

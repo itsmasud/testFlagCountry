@@ -156,7 +156,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 //            _rightWhiteButton.setText(R.string.btn_on_my_way);
 //            setVisibility(View.VISIBLE);
 
-            // ack hold/
+            // ack hold
 //            inflate();
 //            _leftWhiteButton.setVisibility(VISIBLE);
 //            _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -219,7 +219,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // view_bundle
         } else if (_workOrder.getBundle() != null
                 && _workOrder.getBundle().getId() != null
-                && _workOrder.getBundle().getId() > 0) {
+                && _workOrder.getBundle().getId() > 0
+                && (_workOrder.getStatus().getId() == 2
+                || _workOrder.getStatus().getId() == 3)) {
             inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
@@ -267,28 +269,29 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             }
             setVisibility(View.VISIBLE);
 
-
+        } else if (_workOrder.getStatus().getId() == 6) {
 //              View payments
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-//            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_report_a_problem);
+            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setText(R.string.btn_payments);
-//            _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
-//            setVisibility(View.VISIBLE);
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setText(R.string.btn_payments);
+            _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
+            setVisibility(View.VISIBLE);
 
+        } else if (_workOrder.getStatus().getId() == 7) {
 //              View fees
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-//            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_report_a_problem);
+            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setText(R.string.btn_fees);
-//            _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
-//            setVisibility(View.VISIBLE);
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setText(R.string.btn_fees);
+            _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
+            setVisibility(View.VISIBLE);
 
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)
                 && workOrderActions.contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {

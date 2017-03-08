@@ -72,10 +72,10 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        poulateUi();
+        ppulateUi();
     }
 
-    public void poulateUi() {
+    public void ppulateUi() {
         if (_workOrder == null)
             return;
 
@@ -97,7 +97,9 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
 
         if (logs == null || logs.length == 0) {
             _noTimeTextView.setVisibility(View.VISIBLE);
+            _logList.removeAllViews();
         } else {
+            _logList.setVisibility(VISIBLE);
             _noTimeTextView.setVisibility(View.GONE);
         }
 
@@ -129,8 +131,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
                 }
             };
             postDelayed(_forLoop, 100);
-        }else {
-            _logList.removeAllViews();
         }
     }
 
