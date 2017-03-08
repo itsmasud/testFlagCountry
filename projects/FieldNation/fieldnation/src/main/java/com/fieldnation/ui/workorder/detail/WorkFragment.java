@@ -1832,8 +1832,8 @@ TODO            if (_tempFile != null) {
 
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
-
                 ToastClient.toast(App.get(), "Error: " + ((Error) failObject).getMessage(), Toast.LENGTH_LONG);
+                setLoading(false);
             }
         }
     };
