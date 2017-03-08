@@ -62,6 +62,9 @@ public class Task implements Parcelable {
     @Json(name = "email")
     private String _email;
 
+    @Json(name = "folder_id")
+    private Integer _folderId;
+
     @Json(name = "group")
     private TaskGroup _group;
 
@@ -481,6 +484,32 @@ public class Task implements Parcelable {
         return this;
     }
 
+    public void setFolderId(Integer folderId) throws ParseException {
+        _folderId = folderId;
+        SOURCE.put("folder_id", folderId);
+    }
+
+    public Integer getFolderId() {
+        try {
+            if (_folderId != null)
+                return _folderId;
+
+            if (SOURCE.has("folder_id") && SOURCE.get("folder_id") != null)
+                _folderId = SOURCE.getInt("folder_id");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _folderId;
+    }
+
+    public Task folderId(Integer folderId) throws ParseException {
+        _folderId = folderId;
+        SOURCE.put("folder_id", folderId);
+        return this;
+    }
+
     public void setGroup(TaskGroup group) throws ParseException {
         _group = group;
         SOURCE.put("group", group.getJson());
@@ -771,8 +800,24 @@ public class Task implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "check_in")
+        CHECK_IN("check_in"),
+        @Json(name = "check_out")
+        CHECK_OUT("check_out"),
+        @Json(name = "closing_notes")
+        CLOSING_NOTES("closing_notes"),
+        @Json(name = "complete")
+        COMPLETE("complete"),
+        @Json(name = "create_shipment")
+        CREATE_SHIPMENT("create_shipment"),
+        @Json(name = "eta")
+        ETA("eta"),
+        @Json(name = "incomplete")
+        INCOMPLETE("incomplete"),
+        @Json(name = "signature")
+        SIGNATURE("signature"),
+        @Json(name = "upload")
+        UPLOAD("upload");
 
         private String value;
 

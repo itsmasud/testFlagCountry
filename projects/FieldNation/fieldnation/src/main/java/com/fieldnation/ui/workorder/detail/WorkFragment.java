@@ -850,6 +850,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
                     WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
 
+            //WorkordersWebApi.updateHolds(App.get(),_workOrder.getWorkOrderId());
             WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
             setLoading(true);
         }
