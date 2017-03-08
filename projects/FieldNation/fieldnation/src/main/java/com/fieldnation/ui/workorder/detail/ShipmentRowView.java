@@ -104,8 +104,10 @@ public class ShipmentRowView extends RelativeLayout {
                     break;
                 case FEDEX:
                     _carrierTextView.setText(misc.capitalize(carrier.toString()));
+                    break;
                 case OTHER:
                     _carrierTextView.setText(misc.capitalize(carrier.toString()));
+                    break;
             }
         }
 
