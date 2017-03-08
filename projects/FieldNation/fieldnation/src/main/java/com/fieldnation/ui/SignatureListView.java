@@ -143,9 +143,8 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
                 }
             }
         };
-        postDelayed(_forLoop, 100);
+        post(_forLoop);
     }
-
 
     /*-*********************************-*/
     /*-             Events              -*/
@@ -171,8 +170,13 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
         @Override
         public boolean onLongClick(View v) {
             SignatureCardView view = (SignatureCardView) v;
-            if (_listener != null)
+            Signature signature = view.getSignature();
+            if (_listener != null
+                    && signature != null
+                    && signature.getActionsSet() != null
+                    && signature.getActionsSet().contains(Signature.ActionsEnum.REMOVE))
                 return _listener.signatureOnLongClick(view, view.getSignature());
+
             return false;
         }
     };

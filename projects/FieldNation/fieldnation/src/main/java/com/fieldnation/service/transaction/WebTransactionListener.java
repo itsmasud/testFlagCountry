@@ -106,7 +106,7 @@ public abstract class WebTransactionListener {
                 return Result.DELETE;
 
                 // usually means code is being updated on the server
-            } else if (httpResult.getResponseCode() == 502) {
+            } else if (httpResult.getResponseCode() == 502 || httpResult.getResponseCode() == 503) {
                 Log.v(TAG, "2");
                 return Result.RETRY;
 
