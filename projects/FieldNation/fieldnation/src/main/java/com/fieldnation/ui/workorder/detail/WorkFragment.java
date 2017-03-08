@@ -63,6 +63,7 @@ import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
+import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
@@ -849,8 +850,15 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
                     WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
 
-            //WorkordersWebApi.updateHolds(App.get(),_workOrder.getWorkOrderId());
-            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
+            try {
+                Hold unAck = _workOrder.getUnAcknowledgedHolds();
+                Hold param = new Hold();
+                param.acknowledged(true);
+                param.id(unAck.getId());
+                WorkordersWebApi.updateHold(App.get(), _workOrder.getWorkOrderId(), unAck.getId(), param);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
         }
 
