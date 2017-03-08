@@ -109,7 +109,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
-    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
     private static final String DIALOG_CUSTOM_FIELD = TAG + ".customFieldDialog";
     private static final String DIALOG_DECLINE = TAG + ".declineDialog";
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
@@ -120,7 +119,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_LOCATION_LOADING = TAG + ".locationLoadingDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
-    private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
@@ -129,6 +127,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_TERMS = TAG + ".termsDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
+    private static final String DIALOG_PAY = TAG + ".payDialog";
+    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -396,7 +396,6 @@ TODO        if (_currentTask != null)
         LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
-
 
         _workorderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workorderApi.connect(App.get());
@@ -1226,18 +1225,14 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
 
         @Override
         public void onDelete(WorkOrder workOrder, final Shipment shipment) {
-            if ((long) shipment.getUser().getId() != (long) App.getProfileId()) {
-                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
-                return;
-            }
-
             _yesNoDialog.setData(getString(R.string.dialog_delete_shipment_title),
                     getString(R.string.dialog_delete_shipment_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteShipment(App.get(),
-                                    _workOrder.getWorkOrderId(), shipment.getId());
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+                            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getWorkOrderId(), shipment.getId());
+                            setLoading(true);
                         }
 
                         @Override
