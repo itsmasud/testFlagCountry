@@ -76,7 +76,7 @@ public class ActionView extends RelativeLayout {
     }
 
     public void setWorkorder(Workorder workorder) {
-        Log.v(TAG, "Method Stub: setWorkorder()");
+        Log.v(TAG, "Method Stub: setWorkOrder()");
 
         _workorder = workorder;
 

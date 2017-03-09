@@ -274,7 +274,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
 
         for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].setWorkorder(_workOrder);
+            _fragments[i].setWorkOrder(_workOrder);
         }
     }
 

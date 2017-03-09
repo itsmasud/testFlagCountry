@@ -23,12 +23,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -44,19 +42,16 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UploadSlotDialog;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.ui.dialog.AppPickerDialog;
-import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.AppPickerIntent;
+import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.text.ParseException;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,6 +97,24 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-				LifeCycle				-*/
     /*-*************************************-*/
     @Override
+    public void onAttach(Activity activity) {
+        Log.v(TAG, "onAttach");
+        super.onAttach(activity);
+
+        _docClient = new DocumentClient(_documentClient_listener);
+        _docClient.connect(App.get());
+
+        _photoClient = new PhotoClient(_photoClient_listener);
+        _photoClient.connect(App.get());
+
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
+
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         if (savedInstanceState != null) {
@@ -138,8 +151,27 @@ public class DeliverableFragment extends WorkorderFragment {
         _actionButton.setOnClickListener(_actionButton_onClick);
 
         checkMedia();
-
         populateUi();
+    }
+
+    @Override
+    public void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
+
+        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
+        _photoUploadDialog.setListener(_photoUploadDialog_listener);
+
+        AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
+    }
+
+    @Override
+    public void onPause() {
+        AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
+        super.onPause();
     }
 
     @Override
@@ -152,24 +184,6 @@ public class DeliverableFragment extends WorkorderFragment {
             outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
 
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-
-        _docClient = new DocumentClient(_documentClient_listener);
-        _docClient.connect(App.get());
-
-        _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(App.get());
-
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
-
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
     }
 
     @Override
@@ -190,19 +204,10 @@ public class DeliverableFragment extends WorkorderFragment {
         super.onDetach();
     }
 
-    @Override
-    public void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
-
-        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
-        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-
-        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-        _photoUploadDialog.setListener(_photoUploadDialog_listener);
-
-        AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
-    }
+    /*-*******************************************************************************-*/
+    /*-*******************************************************************************-*/
+    /*-*******************************************************************************-*/
+    /*-*******************************************************************************-*/
 
     private void startAppPickerDialog() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -224,26 +229,17 @@ public class DeliverableFragment extends WorkorderFragment {
 
     }
 
-    @Override
-    public void onPause() {
-        AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
-
-        super.onPause();
-    }
-
     private boolean checkMedia() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     @Override
     public void update() {
-//        getData();
         checkMedia();
-//        executeDelayedAction();
     }
 
     @Override
-    public void setWorkorder(WorkOrder workOrder) {
+    public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
     }
@@ -261,7 +257,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private void populateUi() {
         misc.hideKeyboard(getView());
-
         if (_actionButton == null)
             return;
 
@@ -274,16 +269,15 @@ public class DeliverableFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
-// TODO        if (_workOrder.canChangeDeliverables()) {
-//            _actionButton.setVisibility(View.VISIBLE);
-//        } else {
-//            _actionButton.setVisibility(View.GONE);
-//        }
+        if (_workOrder.getAttachments() == null) {
+            _noDocsTextView.setVisibility(View.VISIBLE);
+            setLoading(false);
+            return;
+        }
 
         Stopwatch stopwatch = new Stopwatch(true);
 
         final AttachmentFolder[] slots = _workOrder.getAttachments().getResults();
-
         AttachmentFolder reviewSlot = null;
         for (AttachmentFolder ob : slots) {
             if (ob.getType().equals(AttachmentFolder.TypeEnum.DOCUMENT)) {
@@ -291,35 +285,40 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
 
-        final Attachment[] docs = reviewSlot.getResults();
-        if (docs != null && docs.length > 0) {
-            if (_reviewList.getChildCount() != docs.length) {
-                if (_reviewRunnable != null)
-                    _reviewRunnable.cancel();
+        if (reviewSlot != null) {
+            final Attachment[] docs = reviewSlot.getResults();
+            if (docs != null && docs.length > 0) {
+                if (_reviewList.getChildCount() != docs.length) {
+                    if (_reviewRunnable != null)
+                        _reviewRunnable.cancel();
 
-                _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
-                    private final Attachment[] _docs = docs;
-                    private final List<DocumentView> _views = new LinkedList<>();
+                    _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
+                        private final Attachment[] _docs = docs;
+                        private final List<DocumentView> _views = new LinkedList<>();
 
-                    @Override
-                    public void next(int i) throws Exception {
-                        DocumentView v = new DocumentView(getActivity());
-                        Attachment doc = _docs[i];
-                        v.setListener(_document_listener);
-                        v.setData(_workOrder, doc);
-                        _views.add(v);
-                    }
-
-                    @Override
-                    public void finish(int count) throws Exception {
-                        _reviewList.removeAllViews();
-                        for (DocumentView v : _views) {
-                            _reviewList.addView(v);
+                        @Override
+                        public void next(int i) throws Exception {
+                            DocumentView v = new DocumentView(getActivity());
+                            Attachment doc = _docs[i];
+                            v.setListener(_document_listener);
+                            v.setData(_workOrder, doc);
+                            _views.add(v);
                         }
-                    }
-                };
-                _reviewList.postDelayed(_reviewRunnable, 100);
-                _noDocsTextView.setVisibility(View.GONE);
+
+                        @Override
+                        public void finish(int count) throws Exception {
+                            _reviewList.removeAllViews();
+                            for (DocumentView v : _views) {
+                                _reviewList.addView(v);
+                            }
+                        }
+                    };
+                    _reviewList.postDelayed(_reviewRunnable, 100);
+                    _noDocsTextView.setVisibility(View.GONE);
+                }
+            } else {
+                _reviewList.removeAllViews();
+                _noDocsTextView.setVisibility(View.VISIBLE);
             }
         } else {
             _reviewList.removeAllViews();
@@ -337,24 +336,35 @@ public class DeliverableFragment extends WorkorderFragment {
 
             _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
                 private final AttachmentFolder[] _slots = slots;
+                private List<View> views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
-                    UploadSlotView v = null;
+                    if (_slots[i].getType() == AttachmentFolder.TypeEnum.SLOT) {
+                        UploadSlotView v = new UploadSlotView(getActivity());
+                        AttachmentFolder slot = _slots[i];
+                        v.setData(_workOrder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
+                        views.add(v);
+                    }
+                }
 
-                    if (_filesLayout.getChildCount() > i) {
-                        v = (UploadSlotView) _filesLayout.getChildAt(i);
-                    } else {
-                        v = new UploadSlotView(getActivity());
+                @Override
+                public void finish(int count) throws Exception {
+                    _filesLayout.removeAllViews();
+                    for (View v : views) {
                         _filesLayout.addView(v);
                     }
-                    AttachmentFolder slot = _slots[i];
-                    v.setData(_workOrder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
                 }
             };
             _filesLayout.postDelayed(_filesRunnable, 100);
         } else {
             _filesLayout.removeAllViews();
+        }
+
+        _actionButton.setVisibility(View.GONE);
+        for (AttachmentFolder f : slots) {
+            if (f.getType() == AttachmentFolder.TypeEnum.SLOT)
+                _actionButton.setVisibility(View.VISIBLE);
         }
 
         Log.v(TAG, "upload docs time " + stopwatch.finish());
@@ -555,7 +565,6 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-
     // step 1, user clicks on a upload - done elseware?
     // step 2, user selects an app to load the file with
     private final AppPickerDialog.OnOkListener _appPicker_onOk = new AppPickerDialog.OnOkListener() {
@@ -577,7 +586,6 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     };
-
 
     /*-*****************************-*/
     /*-				Web				-*/
@@ -714,5 +722,4 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     };
-
 }
