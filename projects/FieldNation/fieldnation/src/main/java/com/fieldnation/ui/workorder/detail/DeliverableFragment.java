@@ -487,45 +487,18 @@ public class DeliverableFragment extends WorkorderFragment {
             if (slots.size() > 1) {
                 AttachmentFolderDialog.show(App.get(), DIALOG_UPLOAD_SLOTS,
                         slots.toArray(new AttachmentFolder[slots.size()]));
-            }
-
-/* TODO
-            Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
-
-            if (_workorder.getUploadSlots().length > 1) {
-                _uploadSlotDialog.setUploadSlots(_workorder.getUploadSlots());
-                _uploadSlotDialog.setListener(new UploadSlotDialog.Listener() {
-                    @Override
-                    public void onItemClick(int position) {
-                        UploadSlot slot = _workorder.getUploadSlots()[position];
-                        if (checkMedia()) {
-                            // start of the upload process
-                            _uploadingSlotId = slot.getSlotId();
-                            startAppPickerDialog();
-                        } else if (getActivity() != null) {
-                            Toast.makeText(
-                                    App.get(),
-                                    getString(R.string.toast_external_storage_needed),
-                                    Toast.LENGTH_LONG).show();
-                        }
-                        _uploadSlotDialog.dismiss();
-                    }
-                });
-                _uploadSlotDialog.show();
-            } else {
-                UploadSlot slot = _workorder.getUploadSlots()[0];
+            } else if (slots.size() == 1) {
+                AttachmentFolder folder = slots.get(0);
                 if (checkMedia()) {
                     // start of the upload process
-                    _uploadingSlotId = slot.getSlotId();
+                    _uploadingSlotId = folder.getId();
                     startAppPickerDialog();
-                } else if (getActivity() != null) {
-                    Toast.makeText(
-                            App.get(),
+                } else {
+                    ToastClient.toast(App.get(),
                             getString(R.string.toast_external_storage_needed),
-                            Toast.LENGTH_LONG).show();
+                            Toast.LENGTH_LONG);
                 }
             }
-*/
         }
     };
 
