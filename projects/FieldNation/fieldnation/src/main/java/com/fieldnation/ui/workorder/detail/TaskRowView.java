@@ -10,15 +10,14 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.data.workorder.Task;
-import com.fieldnation.data.workorder.TaskType;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TaskType;
+import com.fieldnation.v2.data.model.TaskTypes;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -32,10 +31,12 @@ public class TaskRowView extends RelativeLayout {
     private ProgressBar _progressBar;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private WorkorderClient _workorderClient;
     private Task _task;
     private Listener _listener = null;
+    private TaskType[] _taskTypes;
+
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -65,6 +66,8 @@ public class TaskRowView extends RelativeLayout {
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _progressBar = (ProgressBar) findViewById(R.id.progress_view);
 
+        new TaskTypes(getContext()).setListener(_taskTypeListener);
+
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
@@ -85,11 +88,11 @@ public class TaskRowView extends RelativeLayout {
         _listener = listener;
     }
 
-    public void setData(Workorder workorder, Task task) {
+    public void setData(WorkOrder workOrder, Task task) {
         _task = task;
-        _workorder = workorder;
+        _workOrder = workOrder;
 
-        if (_task.getSlotId() != null) {
+        if (_task.getFolderId() != null) {
             subscribeUpload();
         }
 
@@ -115,26 +118,38 @@ public class TaskRowView extends RelativeLayout {
         if (_iconView == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        setEnabled(_workorder.canModifyTasks());
+        if (_task == null)
+            return;
 
-        if (_workorder.canModifyTasks()) {
+        if (_taskTypes == null)
+            return;
+
+        setEnabled(hasAction());
+
+        if (hasAction()) {
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
         } else {
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         }
 
+        TaskType taskType = null;
 
-        TaskType type = _task.getTaskType();
+        for (TaskType ob : _taskTypes) {
+            if (ob.getId().equals(_task.getType().getId())) {
+                taskType = ob;
+                break;
+            }
+        }
 
         if (_uploadingFiles.size() > 0) {
 
             if (_uploadingFiles.size() == 1) {
-                _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading: " + _uploadingFiles.iterator().next());
+                _descriptionTextView.setText(taskType.getName() + "\nUploading: " + _uploadingFiles.iterator().next());
             } else if (_uploadingFiles.size() > 1) {
-                _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading " + _uploadingFiles.size() + " files");
+                _descriptionTextView.setText(taskType.getName() + "\nUploading " + _uploadingFiles.size() + " files");
             }
 
             int progress = 0;
@@ -158,34 +173,50 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
-        } else if (misc.isEmptyOrNull(_task.getDescription())) {
+        }
+
+        // TODO:  CustomField object is missing. Please see the comment in PA-623
+        else if (_task.getCustomField() != null) {
             _progressBar.setVisibility(GONE);
 
             boolean isDescriptionSet = false;
+            if (_task.getCustomField() != null
+                    && _task.getCustomField().getName() != null) {
+                // do not remove the casting here!
+                _descriptionTextView.setText(taskType.getName() + ": " + _task.getCustomField().getName());
+                isDescriptionSet = true;
+            }
 
-            if (_workorder.getCustomFields() != null) {
-                for (CustomField cf : _workorder.getCustomFields()) {
-                    // do not remove the casting here!
-                    if (_task.getCustomField() != null && (long) cf.getCustomLabelId() == (long) _task.getCustomField()) {
-                        _descriptionTextView.setText(type.getDisplay(getContext()) + ": " + cf.getLabel());
-                        isDescriptionSet = true;
-                        break;
-                    }
-                }
-            }
             if (!isDescriptionSet) {
-                _descriptionTextView.setText(type.getDisplay(getContext()));
+                _descriptionTextView.setText(taskType.getName());
             }
+
         } else {
             _progressBar.setVisibility(GONE);
-            _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
+            String description = (taskType.getId() == 1 || taskType.getId() == 2 || taskType.getId() == 3 || taskType.getId() == 4) ? taskType.getName() : taskType.getName() + "\n" + _task.getLabel();
+            _descriptionTextView.setText(description);
         }
         updateCheckBox();
     }
 
+    private boolean hasAction() {
+        if (_task == null && _task.getActionsSet() == null) return false;
+
+        return ( _task.getActionsSet().contains(Task.ActionsEnum.CHECK_IN)
+                || _task.getActionsSet().contains(Task.ActionsEnum.CHECK_OUT)
+                || _task.getActionsSet().contains(Task.ActionsEnum.CLOSING_NOTES)
+                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
+                || _task.getActionsSet().contains(Task.ActionsEnum.CREATE_SHIPMENT)
+                || _task.getActionsSet().contains(Task.ActionsEnum.ETA)
+                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE)
+                || _task.getActionsSet().contains(Task.ActionsEnum.SIGNATURE)
+                || _task.getActionsSet().contains(Task.ActionsEnum.UPLOAD));
+    }
+
+
     private void updateCheckBox() {
-        if (_workorder.canModifyTasks()) {
-            // set enabled
+        if (hasAction()) {
+            //TODO _task.getCompleted() is not coming from API response. Please see the comment in PA-623
             if (_task.getCompleted()) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
                 _iconView.setText(R.string.icon_task_done);
@@ -208,10 +239,10 @@ public class TaskRowView extends RelativeLayout {
     /*-             Events              -*/
     /*-*********************************-*/
     private void subscribeUpload() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        if (_task == null || _task.getSlotId() == null)
+        if (_task == null || _task.getFolderId() == null)
             return;
 
         if (_workorderClient == null)
@@ -220,8 +251,8 @@ public class TaskRowView extends RelativeLayout {
         if (!_workorderClient.isConnected())
             return;
 
-        _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _task.getSlotId());
-        _workorderClient.subDeliverableProgress(_workorder.getWorkorderId(), _task.getSlotId());
+        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _task.getFolderId());
+        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _task.getFolderId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -249,13 +280,9 @@ public class TaskRowView extends RelativeLayout {
         @Override
         public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
             Double percent = pos * 1.0 / size;
-
             Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
-
             int prog = (int) (pos * 100 / size);
-
             _uploadingProgress.put(filename, prog);
-
             populateUi();
         }
     };
@@ -265,9 +292,18 @@ public class TaskRowView extends RelativeLayout {
         public void onClick(View v) {
             updateCheckBox();
 
-            if (_listener != null) {
+            if (_listener != null && hasAction()) {
                 _listener.onTaskClick(_task);
             }
+        }
+    };
+
+    private final TaskTypes.Listener _taskTypeListener = new TaskTypes.Listener() {
+        @Override
+        public void onHaveTypes(TaskType[] taskTypes) {
+            _taskTypes = taskTypes;
+            populateUi();
+
         }
     };
 
