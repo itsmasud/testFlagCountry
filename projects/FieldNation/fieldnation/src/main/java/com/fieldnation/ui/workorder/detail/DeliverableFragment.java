@@ -41,7 +41,6 @@ import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
@@ -49,6 +48,7 @@ import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
+import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -61,6 +61,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // Dialog
     private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
+    private static final String DIALOG_UPLOAD_SLOTS = TAG + ".attachmentFolderDialog";
 
     // State
     private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
@@ -76,7 +77,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // Dialog
     private TwoButtonDialog _yesNoDialog;
-    private UploadSlotDialog _uploadSlotDialog;
     private PhotoUploadDialog _photoUploadDialog;
 
     // Data
@@ -112,6 +112,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
+
+        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
     }
 
     @Override
@@ -159,7 +161,6 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onResume");
         super.onResume();
 
-        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
@@ -200,6 +201,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
+
+        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
 
         super.onDetach();
     }
@@ -458,9 +461,33 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final AttachmentFolderDialog.OnFolderSelectedListener _attachmentFolderDialog_onSelected = new AttachmentFolderDialog.OnFolderSelectedListener() {
+        @Override
+        public void onFolderSelected(AttachmentFolder folder) {
+            if (checkMedia()) {
+                // start of the upload process
+                _uploadingSlotId = folder.getId();
+                startAppPickerDialog();
+            } else {
+                ToastClient.toast(App.get(),
+                        getString(R.string.toast_external_storage_needed),
+                        Toast.LENGTH_LONG);
+            }
+        }
+    };
     private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+
+            List<AttachmentFolder> slots = new LinkedList<>();
+            for (AttachmentFolder folder : folders) {
+                if (folder.getType() == AttachmentFolder.TypeEnum.SLOT)
+                    slots.add(folder);
+            }
+
+            AttachmentFolderDialog.show(App.get(), "", slots.toArray(new AttachmentFolder[slots.size()]));
+
 /* TODO
             Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
 
