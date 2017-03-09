@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
@@ -13,6 +14,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,8 +59,10 @@ import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -179,6 +183,7 @@ public class WorkFragment extends WorkorderFragment {
     private String _scannedImagePath;
     private Location _currentLocation;
     private boolean _locationFailed = false;
+    private Task _currentTask;
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -264,8 +269,8 @@ public class WorkFragment extends WorkorderFragment {
         _renderers.add(_shipments);
 
         _taskList = (TaskListView) view.findViewById(R.id.scope_view);
-// TODO        _taskList.setTaskListViewListener(_taskListView_listener);
-// TODO        _renderers.add(_taskList);
+        _taskList.setTaskListViewListener(_taskListView_listener);
+        _renderers.add(_taskList);
 
         _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
@@ -288,7 +293,7 @@ public class WorkFragment extends WorkorderFragment {
                 _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
-// TODO                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
+                _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
@@ -309,10 +314,10 @@ public class WorkFragment extends WorkorderFragment {
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
-/*
-TODO        if (_currentTask != null)
+
+        if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-*/
+
 
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
@@ -1020,9 +1025,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void deleteWorklog(WorkOrder workOrder, TimeLog timeLog) {
-            final long workorderID = workOrder.getWorkOrderId();
             final long timeLogId = timeLog.getId();
-
             _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
                     getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
@@ -1046,16 +1049,15 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     };
 
 
-/*
-TODO    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onCheckin(Task task) {
-            startCheckin();
+            _startCheckIn.run();
         }
 
         @Override
         public void onCheckout(Task task) {
-            startCheckOut();
+            _startCheckOut.run();
         }
 
         @Override
@@ -1066,66 +1068,56 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
         @Override
         public void onConfirmAssignment(Task task) {
             EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
-                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+                    _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
         public void onCustomField(Task task) {
-            for (CustomField cf : _workorder.getCustomFields()) {
-                // do not remove the casting here!
-                if ((long) cf.getCustomLabelId() == (long) task.getCustomField()) {
-                    _customFieldDialog.show(cf);
-                    break;
-                }
-            }
+            // TODO task.getCustomField() is null. Please see the comment of PA-623
+            CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, task.getCustomField());
         }
 
         @Override
         public void onDownload(Task task) {
-            Integer _identifier = task.getIdentifier();
-            Log.v(TAG, "_identifier: " + _identifier);
-            Document[] docs = _workorder.getDocuments();
-            if (docs != null && docs.length > 0) {
-                for (Document doc : docs) {
-                    if (doc != null && doc.getDocumentId() != null && doc.getDocumentId().equals(_identifier)) {
-                        Log.v(TAG, "docid: " + doc.getDocumentId());
-                        // task completed here
-                        if (!task.getCompleted()) {
-                            WorkorderClient.actionCompleteTask(App.get(),
-                                    _workOrder.getWorkOrderId(), task.getTaskId());
-                        }
+            Attachment doc = task.getAttachment();
 
-                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFilePath(),
-                                doc.getFileName(), doc.getFileType());
-                        break;
+            if (doc != null) {
+                if (doc != null && doc.getId() != null) {
+                    Log.v(TAG, "docid: " + doc.getId());
+                    // task completed here
+                    if (!task.getCompleted()) {
+                        WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
                     }
+// TODO: file link is not coming as part of File object. See comment in PA-623
+//                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
+//                                doc.getFile().getName(), doc.getFile().getMime());
                 }
             }
         }
 
         @Override
         public void onEmail(Task task) {
-            String email = task.getEmailAddress();
+            String email = task.getEmail();
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:" + email));
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
             if (!task.getCompleted()) {
-                WorkorderClient.actionCompleteTask(App.get(),
-                        _workOrder.getWorkOrderId(), task.getTaskId());
+                WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             }
             setLoading(true);
         }
 
         @Override
         public void onPhone(Task task) {
+
             if (!task.getCompleted()) {
                 WorkorderClient.actionCompleteTask(App.get(),
-                        _workOrder.getWorkOrderId(), task.getTaskId());
+                        _workOrder.getWorkOrderId(), task.getId());
                 setLoading(true);
             }
             try {
-                if (task.getPhoneNumber() != null) {
+                if (task.getPhone() != null) {
                     // Todo, need to figure out if there is a phone number here
 //                    Spannable test = new SpannableString(task.getPhoneNumber());
 //                    Linkify.addLinks(test, Linkify.PHONE_NUMBERS);
@@ -1144,9 +1136,9 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
 //                        setLoading(true);
 //                    }
 
-                    if (!TextUtils.isEmpty(task.getPhoneNumber()) && android.util.Patterns.PHONE.matcher(task.getPhoneNumber()).matches()) {
+                    if (!TextUtils.isEmpty(task.getPhone()) && android.util.Patterns.PHONE.matcher(task.getPhone()).matches()) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                        String phNum = "tel:" + task.getPhoneNumber();
+                        String phNum = "tel:" + task.getPhone();
                         callIntent.setData(Uri.parse(phNum));
                         startActivity(callIntent);
                         setLoading(true);
@@ -1172,18 +1164,18 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
 
         @Override
         public void onShipment(Task task) {
-            ShipmentTracking[] shipments = _workorder.getShipmentTracking();
+            Shipment[] shipments = _workOrder.getShipments().getResults();
             if (shipments == null) {
-                _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
+                ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
             } else {
-                _taskShipmentAddDialog.show(getString(R.string.dialog_task_shipment_title), _workorder, task);
+                TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
             }
         }
 
         @Override
         public void onSignature(Task task) {
             _currentTask = task;
-            SignOffActivity.startSignOff(getActivity(), _workorder, task.getTaskId());
+            SignOffActivity.startSignOff(getActivity(), _workOrder, task.getId());
             setLoading(true);
         }
 
@@ -1203,12 +1195,11 @@ TODO    private final TaskListView.Listener _taskListView_listener = new TaskLis
         public void onUniqueTask(Task task) {
             if (task.getCompleted())
                 return;
-            WorkorderClient.actionCompleteTask(App.get(),
-                    _workOrder.getWorkOrderId(), task.getTaskId());
+            WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             setLoading(true);
         }
     };
-*/
+
 
     private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override

@@ -12,15 +12,16 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.workorder.Task;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class TaskListView extends RelativeLayout {
+public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "TaskListView";
 
     // UI
@@ -34,7 +35,7 @@ public class TaskListView extends RelativeLayout {
     // Data
     private List<Task> _tasks;
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public TaskListView(Context context) {
         super(context);
@@ -69,12 +70,14 @@ public class TaskListView extends RelativeLayout {
         _listener = l;
     }
 
-    public void setData(Workorder workorder, List<Task> tasks) {
-        _tasks = tasks;
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
+        _tasks = Arrays.asList(workOrder.getTasks().getResults());
 
         populateUi();
     }
+
 
     private void populateUi() {
         if (_tasks == null)
@@ -89,7 +92,7 @@ public class TaskListView extends RelativeLayout {
             setVisibility(View.VISIBLE);
         }
 
-        boolean nocategories = misc.isEmptyOrNull(_tasks.get(0).getStage()) || "any".equals(_tasks.get(0).getStage());
+        boolean nocategories = _tasks.get(0).getGroup() == null || "any".equals(_tasks.get(0).getGroup().getId());
 
         if (nocategories) {
             _onSiteList.removeAllViews();
@@ -114,10 +117,8 @@ public class TaskListView extends RelativeLayout {
                     }
 
                     Task task = _tasks.get(i);
-                    row.setData(_workorder, task);
-                    if (_workorder.canModifyTasks()) {
-                        row.setOnTaskClickListener(_task_onClick);
-                    }
+                    row.setData(_workOrder, task);
+                    row.setOnTaskClickListener(_task_onClick);
                 }
             };
             postDelayed(r, new Random().nextInt(1000));
@@ -132,7 +133,7 @@ public class TaskListView extends RelativeLayout {
                     Task task = _tasks.get(i);
                     TaskRowView row = null;
 
-                    if ("prep".equals(task.getStage())) {
+                    if ("prep".equals(task.getGroup().getId())) {
                         if (pre < _preVisistList.getChildCount()) {
                             row = (TaskRowView) _preVisistList.getChildAt(pre);
                         } else {
@@ -141,7 +142,7 @@ public class TaskListView extends RelativeLayout {
                             _preVisistTextView.setVisibility(View.VISIBLE);
                         }
                         pre++;
-                    } else if ("onsite".equals(task.getStage())) {
+                    } else if ("onsite".equals(task.getGroup().getId())) {
                         if (ons < _onSiteList.getChildCount()) {
                             row = (TaskRowView) _onSiteList.getChildAt(ons);
                         } else {
@@ -150,7 +151,7 @@ public class TaskListView extends RelativeLayout {
                             _onSiteLayout.setVisibility(View.VISIBLE);
                         }
                         ons++;
-                    } else if ("post".equals(task.getStage())) {
+                    } else if ("post".equals(task.getGroup().getId())) {
                         if (post < _postVisitList.getChildCount()) {
                             row = (TaskRowView) _postVisitList.getChildAt(post);
                         } else {
@@ -162,11 +163,8 @@ public class TaskListView extends RelativeLayout {
                     }
 
                     if (row != null) {
-                        row.setData(_workorder, task);
-                        //if work order completed or canceled then hide/disable any controls actions
-                        if (_workorder.canModifyTasks()) {
-                            row.setOnTaskClickListener(_task_onClick);
-                        }
+                        row.setData(_workOrder, task);
+                        row.setOnTaskClickListener(_task_onClick);
                     } else {
                         // TODO this should never happen!
                     }
@@ -196,45 +194,46 @@ public class TaskListView extends RelativeLayout {
         @Override
         public void onTaskClick(Task task) {
             if (_listener != null) {
-                WorkOrderTracker.onTaskEvent(App.get(), task.getTaskType(), _workorder.getWorkorderId());
-                switch (task.getTaskType()) {
-                    case CONFIRM_ASSIGNMENT:
+                WorkOrderTracker.onTaskEvent(App.get(), task.getType(), _workOrder.getWorkOrderId());
+                switch (task.getType().getId()) {
+
+                    case 1:
                         _listener.onConfirmAssignment(task);
                         break;
-                    case CLOSE_OUT_NOTES:
+                    case 2:
                         _listener.onCloseOutNotes(task);
                         break;
-                    case CHECKIN:
+                    case 3:
                         _listener.onCheckin(task);
                         break;
-                    case CHECKOUT:
+                    case 4:
                         _listener.onCheckout(task);
                         break;
-                    case UPLOAD_FILE:
+                    case 5:
                         _listener.onUploadFile(task);
                         break;
-                    case UPLOAD_PICTURE:
+                    case 6:
                         _listener.onUploadPicture(task);
                         break;
-                    case CUSTOM_FIELD:
+                    case 7:
                         _listener.onCustomField(task);
                         break;
-                    case PHONE:
+                    case 8:
                         _listener.onPhone(task);
                         break;
-                    case EMAIL:
+                    case 9:
                         _listener.onEmail(task);
                         break;
-                    case UNIQUE_TASK:
+                    case 10:
                         _listener.onUniqueTask(task);
                         break;
-                    case SIGNATURE:
+                    case 11:
                         _listener.onSignature(task);
                         break;
-                    case SHIPMENT_TRACKING:
+                    case 12:
                         _listener.onShipment(task);
                         break;
-                    case DOWNLOAD:
+                    case 13:
                         _listener.onDownload(task);
                         break;
                 }

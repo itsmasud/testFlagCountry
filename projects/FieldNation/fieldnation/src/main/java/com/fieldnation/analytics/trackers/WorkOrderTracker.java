@@ -7,9 +7,9 @@ import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
+import com.fieldnation.v2.data.model.TaskType;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -215,32 +215,32 @@ public class WorkOrderTracker {
         }
 
         public static Identity fromTaskType(TaskType taskType) {
-            switch (taskType) {
-                case CONFIRM_ASSIGNMENT:
+            switch (taskType.getId()) {
+                case 1:
                     return CONFIRM_TASK;
-                case CLOSE_OUT_NOTES:
+                case 2:
                     return CLOSING_NOTE_TASK;
-                case CHECKIN:
+                case 3:
                     return CHECK_IN_TASK;
-                case CHECKOUT:
+                case 4:
                     return CHECK_OUT_TASK;
-                case UPLOAD_FILE:
+                case 5:
                     return UPLOAD_DOCUMENT_TASK;
-                case UPLOAD_PICTURE:
+                case 6:
                     return UPLOAD_PICTURE_TASK;
-                case CUSTOM_FIELD:
+                case 7:
                     return CUSTOM_FIELD_TASK;
-                case PHONE:
+                case 8:
                     return CALL_NUMBER_TASK;
-                case EMAIL:
+                case 9:
                     return SEND_EMAIL_TASK;
-                case UNIQUE_TASK:
+                case 10:
                     return UNIQUE_TASK;
-                case SIGNATURE:
+                case 11:
                     return COLLECT_SIGNATURE_TASK;
-                case SHIPMENT_TRACKING:
+                case 12:
                     return COLLECT_SHIPMENT_TASK;
-                case DOWNLOAD:
+                case 13:
                     return DOWNLOAD_FILE_TASK;
             }
             return null;
@@ -530,11 +530,11 @@ public class WorkOrderTracker {
         navigationEvent(context, Tab.DETAILS, modalType.getIdentity());
     }
 
-    public static void onTaskEvent(Context context, TaskType taskType, Long workOrderId) {
+    public static void onTaskEvent(Context context, TaskType taskType, Integer workOrderId) {
         Identity identity = Identity.fromTaskType(taskType);
 
         if (identity != null) {
-            if (taskType == TaskType.UNIQUE_TASK && workOrderId != null) {
+            if (taskType.getId() == 10 && workOrderId != null) {
                 onEvent(context, identity, Action.UNIQUE_TASK, workOrderId);
             } else {
                 navigationEvent(context, Tab.DETAILS, identity);
@@ -622,9 +622,10 @@ public class WorkOrderTracker {
             onDescriptionModalEvent(context, mt);
         }
 
-        for (TaskType tt : TaskType.values()) {
-            onTaskEvent(context, tt, 1L);
-        }
+        // TODO
+//        for (TaskType tt : TaskType.values()) {
+//            onTaskEvent(context, tt, 1L);
+//        }
 
         directionsEvent(context);
 

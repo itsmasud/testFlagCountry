@@ -1,8 +1,10 @@
 package com.fieldnation.v2.data.model;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -180,4 +182,21 @@ public class TaskType implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public TaskType(int id, String title) throws ParseException {
+        this();
+        setId(id);
+        setName(title);
+    }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
+
 }
