@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.TileTextView;
 import com.fieldnation.v2.data.model.AttachmentFolder;
@@ -91,13 +92,18 @@ public class AttachmentFolderDialog extends SimpleDialog {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    _onFolderSelectedDispatcher.dispatch(getUid(), folders[position]);
-                    dismiss(true);
+                    onItemClick(position);
                 }
             });
             return v;
         }
     };
+
+    private void onItemClick(int position) {
+        Log.v(TAG, "onItemClick");
+        _onFolderSelectedDispatcher.dispatch(getUid(), folders[position]);
+        dismiss(true);
+    }
 
     public static void show(Context context, String uid, AttachmentFolder[] folders) {
         Bundle params = new Bundle();
@@ -121,10 +127,12 @@ public class AttachmentFolderDialog extends SimpleDialog {
     };
 
     public static void addOnFolderSelectedListener(String uid, OnFolderSelectedListener onFolderSelectedListener) {
+        Log.v(TAG, "addOnFolderSelectedListener");
         _onFolderSelectedDispatcher.add(uid, onFolderSelectedListener);
     }
 
     public static void removeOnFolderSelectedListener(String uid, OnFolderSelectedListener onFolderSelectedListener) {
+        Log.v(TAG, "removeOnFolderSelectedListener");
         _onFolderSelectedDispatcher.remove(uid, onFolderSelectedListener);
     }
 

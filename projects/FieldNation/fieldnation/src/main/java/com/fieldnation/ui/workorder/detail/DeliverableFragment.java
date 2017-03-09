@@ -112,8 +112,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
-
-        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
     }
 
     @Override
@@ -167,11 +165,14 @@ public class DeliverableFragment extends WorkorderFragment {
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
+        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
     }
 
     @Override
     public void onPause() {
         AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
+        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
+
         super.onPause();
     }
 
@@ -201,9 +202,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
-
-        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-
         super.onDetach();
     }
 
@@ -486,7 +484,10 @@ public class DeliverableFragment extends WorkorderFragment {
                     slots.add(folder);
             }
 
-            AttachmentFolderDialog.show(App.get(), "", slots.toArray(new AttachmentFolder[slots.size()]));
+            if (slots.size() > 1) {
+                AttachmentFolderDialog.show(App.get(), DIALOG_UPLOAD_SLOTS,
+                        slots.toArray(new AttachmentFolder[slots.size()]));
+            }
 
 /* TODO
             Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
