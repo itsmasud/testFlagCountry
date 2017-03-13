@@ -3,27 +3,16 @@
     android:id="@+id/tile_content"
     style="?attr/tileStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
 
-    <FrameLayout
-        android:id="@+id/tile_container"
+    <TextView
+        android:id="@+id/textview"
+        style="?attr/buttonFlatStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp">
-
-        <TextView
-            android:id="@+id/textview"
-            style="?attr/buttonFlatStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="false"
-            android:text="@string/placeholder_phrase" />
-    </FrameLayout>
-
-    <View
-        style="@style/DividerFull"
-        android:layout_below="@+id/tile_container" />
+        android:text="@string/placeholder_phrase" />
 
 </RelativeLayout>
