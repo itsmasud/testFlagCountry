@@ -37,6 +37,7 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
@@ -411,8 +412,8 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setText(R.string.btn_acknowledge_hold);
 
             // check_out
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
-                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+        } else if (_workOrder.getTimeLogs().getOpenTimeLog() != null
+                && _workOrder.getTimeLogs().getOpenTimeLog().getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_checkOut_onClick);
             button.setText(R.string.btn_check_out);
