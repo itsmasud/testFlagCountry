@@ -15,8 +15,6 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskType;
-import com.fieldnation.v2.data.model.TaskTypes;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.HashSet;
@@ -35,8 +33,6 @@ public class TaskRowView extends RelativeLayout {
     private WorkorderClient _workorderClient;
     private Task _task;
     private Listener _listener = null;
-    private TaskType[] _taskTypes;
-
 
     private final HashSet<String> _uploadingFiles = new HashSet<>();
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
@@ -65,8 +61,6 @@ public class TaskRowView extends RelativeLayout {
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _progressBar = (ProgressBar) findViewById(R.id.progress_view);
-
-        new TaskTypes(getContext()).setListener(_taskTypeListener);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
@@ -124,9 +118,6 @@ public class TaskRowView extends RelativeLayout {
         if (_task == null)
             return;
 
-        if (_taskTypes == null)
-            return;
-
         setEnabled(hasAction());
 
         if (hasAction()) {
@@ -135,21 +126,12 @@ public class TaskRowView extends RelativeLayout {
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         }
 
-        TaskType taskType = null;
-
-        for (TaskType ob : _taskTypes) {
-            if (ob.getId().equals(_task.getType().getId())) {
-                taskType = ob;
-                break;
-            }
-        }
-
         if (_uploadingFiles.size() > 0) {
 
             if (_uploadingFiles.size() == 1) {
-                _descriptionTextView.setText(taskType.getName() + "\nUploading: " + _uploadingFiles.iterator().next());
+                _descriptionTextView.setText(_task.getType().getName() + "\nUploading: " + _uploadingFiles.iterator().next());
             } else if (_uploadingFiles.size() > 1) {
-                _descriptionTextView.setText(taskType.getName() + "\nUploading " + _uploadingFiles.size() + " files");
+                _descriptionTextView.setText(_task.getType().getName() + "\nUploading " + _uploadingFiles.size() + " files");
             }
 
             int progress = 0;
@@ -183,17 +165,19 @@ public class TaskRowView extends RelativeLayout {
             if (_task.getCustomField() != null
                     && _task.getCustomField().getName() != null) {
                 // do not remove the casting here!
-                _descriptionTextView.setText(taskType.getName() + ": " + _task.getCustomField().getName());
+                _descriptionTextView.setText(_task.getType().getName() + ": " + _task.getCustomField().getName());
                 isDescriptionSet = true;
             }
 
             if (!isDescriptionSet) {
-                _descriptionTextView.setText(taskType.getName());
+                _descriptionTextView.setText(_task.getType().getName());
             }
 
         } else {
             _progressBar.setVisibility(GONE);
-            String description = (taskType.getId() == 1 || taskType.getId() == 2 || taskType.getId() == 3 || taskType.getId() == 4) ? taskType.getName() : taskType.getName() + "\n" + _task.getLabel();
+            String description = (_task.getType().getId() == 1 || _task.getType().getId() == 2
+                    || _task.getType().getId() == 3 || _task.getType().getId() == 4)
+                    ? _task.getType().getName() : _task.getType().getName() + "\n" + _task.getLabel();
             _descriptionTextView.setText(description);
         }
         updateCheckBox();
@@ -202,7 +186,7 @@ public class TaskRowView extends RelativeLayout {
     private boolean hasAction() {
         if (_task == null && _task.getActionsSet() == null) return false;
 
-        return ( _task.getActionsSet().contains(Task.ActionsEnum.CHECK_IN)
+        return (_task.getActionsSet().contains(Task.ActionsEnum.CHECK_IN)
                 || _task.getActionsSet().contains(Task.ActionsEnum.CHECK_OUT)
                 || _task.getActionsSet().contains(Task.ActionsEnum.CLOSING_NOTES)
                 || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
@@ -213,11 +197,9 @@ public class TaskRowView extends RelativeLayout {
                 || _task.getActionsSet().contains(Task.ActionsEnum.UPLOAD));
     }
 
-
     private void updateCheckBox() {
         if (hasAction()) {
-            //TODO _task.getCompleted() is not coming from API response. Please see the comment in PA-623
-            if (_task.getCompleted()) {
+            if (_task.getCompleted().isValid()) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
                 _iconView.setText(R.string.icon_task_done);
             } else {
@@ -225,7 +207,7 @@ public class TaskRowView extends RelativeLayout {
                 _iconView.setText(R.string.icon_task);
             }
         } else {
-            if (_task.getCompleted()) {
+            if (_task.getCompleted().isValid()) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
                 _iconView.setText(R.string.icon_task_done);
             } else {
@@ -298,17 +280,7 @@ public class TaskRowView extends RelativeLayout {
         }
     };
 
-    private final TaskTypes.Listener _taskTypeListener = new TaskTypes.Listener() {
-        @Override
-        public void onHaveTypes(TaskType[] taskTypes) {
-            _taskTypes = taskTypes;
-            populateUi();
-
-        }
-    };
-
     public interface Listener {
         void onTaskClick(Task task);
     }
-
 }

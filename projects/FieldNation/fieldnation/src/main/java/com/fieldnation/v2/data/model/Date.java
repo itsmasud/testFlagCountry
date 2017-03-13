@@ -9,6 +9,7 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -176,5 +177,9 @@ public class Date implements Parcelable {
 
     public long getUtcLong() throws ParseException {
         return DateUtils.v2UtcToLong(getUtc());
+    }
+
+    public boolean isValid() {
+        return !misc.isEmptyOrNull(getUtc());
     }
 }

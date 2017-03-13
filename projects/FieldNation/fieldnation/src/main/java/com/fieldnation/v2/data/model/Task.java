@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -49,7 +47,7 @@ public class Task implements Parcelable {
     private String _closingNotes;
 
     @Json(name = "completed")
-    private Boolean _completed;
+    private Date _completed;
 
     @Json(name = "confirmed")
     private Boolean _confirmed;
@@ -62,6 +60,9 @@ public class Task implements Parcelable {
 
     @Json(name = "description")
     private String _description;
+
+    @Json(name = "document")
+    private TaskDocument _document;
 
     @Json(name = "email")
     private String _email;
@@ -332,18 +333,18 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setCompleted(Boolean completed) throws ParseException {
+    public void setCompleted(Date completed) throws ParseException {
         _completed = completed;
-        SOURCE.put("completed", completed);
+        SOURCE.put("completed", completed.getJson());
     }
 
-    public Boolean getCompleted() {
+    public Date getCompleted() {
         try {
             if (_completed != null)
                 return _completed;
 
             if (SOURCE.has("completed") && SOURCE.get("completed") != null)
-                _completed = SOURCE.getBoolean("completed");
+                _completed = Date.fromJson(SOURCE.getJsonObject("completed"));
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -352,9 +353,9 @@ public class Task implements Parcelable {
         return _completed;
     }
 
-    public Task completed(Boolean completed) throws ParseException {
+    public Task completed(Date completed) throws ParseException {
         _completed = completed;
-        SOURCE.put("completed", completed);
+        SOURCE.put("completed", completed.getJson());
         return this;
     }
 
@@ -459,6 +460,32 @@ public class Task implements Parcelable {
     public Task description(String description) throws ParseException {
         _description = description;
         SOURCE.put("description", description);
+        return this;
+    }
+
+    public void setDocument(TaskDocument document) throws ParseException {
+        _document = document;
+        SOURCE.put("document", document.getJson());
+    }
+
+    public TaskDocument getDocument() {
+        try {
+            if (_document != null)
+                return _document;
+
+            if (SOURCE.has("document") && SOURCE.get("document") != null)
+                _document = TaskDocument.fromJson(SOURCE.getJsonObject("document"));
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _document;
+    }
+
+    public Task document(TaskDocument document) throws ParseException {
+        _document = document;
+        SOURCE.put("document", document.getJson());
         return this;
     }
 
