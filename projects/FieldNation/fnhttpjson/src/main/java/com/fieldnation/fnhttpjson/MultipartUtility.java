@@ -70,6 +70,22 @@ public class MultipartUtility {
         writer.flush();
     }
 
+    /**
+     * Adds a form field to the request
+     *
+     * @param name        field name
+     * @param value       field value
+     * @param contentType The content type of the value
+     */
+    public void addFormField(String name, String value, String contentType) {
+        writer.append("--").append(boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(name).append("\"").append(LINE_FEED);
+        writer.append("Content-Type: ").append(contentType).append("; charset=").append(charset).append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.append(value).append(LINE_FEED);
+        writer.flush();
+    }
+
     public void addFilePart(String fieldName, String filename, InputStream inputStream, final int length, final HttpJson.ProgressListener listener) throws IOException {
         Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + length + ","
                 + FileUtils.guessContentTypeFromName(filename) + ")");

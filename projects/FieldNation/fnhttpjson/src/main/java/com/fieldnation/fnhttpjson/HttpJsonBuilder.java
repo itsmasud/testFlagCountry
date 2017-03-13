@@ -127,9 +127,17 @@ public class HttpJsonBuilder {
     }
 
     public HttpJsonBuilder multipartField(String key, Object value) throws ParseException {
+        return multipartField(key, value, "text/plain");
+    }
+
+    public HttpJsonBuilder multipartField(String key, Object value, String contentType) throws ParseException {
         getMultiPartField();
-        if (!misc.isEmptyOrNull(key) && value != null)
-            multiPartFields.put(key, value);
+        if (!misc.isEmptyOrNull(key) && value != null) {
+            JsonObject f = new JsonObject();
+            f.put("value", value);
+            f.put("contentType", contentType);
+            multiPartFields.put(key, f);
+        }
         return this;
     }
 

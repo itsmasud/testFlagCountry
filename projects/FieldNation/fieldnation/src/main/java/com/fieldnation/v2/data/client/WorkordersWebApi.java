@@ -204,7 +204,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachment  Folder
      * @param file        File
      */
-    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -212,7 +212,7 @@ public class WorkordersWebApi extends TopicClient {
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment)
+                    .multipartField("attachment", attachment, "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
