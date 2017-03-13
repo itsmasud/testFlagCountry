@@ -615,7 +615,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getWorkOrderId());
-            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {

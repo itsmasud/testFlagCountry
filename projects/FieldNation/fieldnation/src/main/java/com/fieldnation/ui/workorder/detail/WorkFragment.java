@@ -62,7 +62,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
@@ -648,7 +647,7 @@ TODO     private void setTasks(List<Task> tasks) {
 //        setLoading(true);
 
         Pay pay = _workOrder.getPay();
-        if (pay != null && pay.getType().equals("device")) {
+        if (pay != null && pay.getType() == Pay.TypeEnum.DEVICE) {
             _deviceCount = pay.getRange().getMax().intValue();
         }
 
