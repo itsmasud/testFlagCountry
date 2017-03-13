@@ -183,6 +183,7 @@ public class TaskRowView extends RelativeLayout {
         updateCheckBox();
     }
 
+    // TODO re-write, ic action == complete, then key on type.key to figure out actual action to take
     private boolean hasAction() {
         if (_task == null && _task.getActionsSet() == null) return false;
 
