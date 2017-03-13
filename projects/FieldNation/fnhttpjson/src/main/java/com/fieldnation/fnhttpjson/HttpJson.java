@@ -2,7 +2,6 @@ package com.fieldnation.fnhttpjson;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.Environment;
 
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -119,7 +118,8 @@ public class HttpJson {
                 Iterator<String> e = fields.keys();
                 while (e.hasNext()) {
                     String key = e.next();
-                    util.addFormField(key, fields.getString(key));
+                    JsonObject f = fields.getJsonObject(key);
+                    util.addFormField(key, f.getString("value"), f.getString("contentType"));
                 }
             }
             if (request.has(HttpJsonBuilder.PARAM_WEB_MULTIPART_FILES)) {

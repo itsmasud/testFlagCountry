@@ -15,12 +15,10 @@
             android:orientation="vertical">
 
             <!-- top action bar -->
-
             <LinearLayout
                 android:id="@+id/review_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
                 android:orientation="vertical">
 
                 <TextView
@@ -38,7 +36,6 @@
                     android:id="@+id/review_list"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
                     android:orientation="vertical" />
 
                 <TextView
@@ -61,7 +58,6 @@
                 android:id="@+id/files_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
                 android:orientation="vertical" />
         </LinearLayout>
     </com.fieldnation.ui.OverScrollView>
@@ -81,6 +77,11 @@
         android:layout_marginBottom="16dp"
         android:layout_marginRight="16dp"
         android:gravity="center"
+        android:padding="0dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
         android:text="+"
         android:textSize="32sp"
         android:visibility="gone" />

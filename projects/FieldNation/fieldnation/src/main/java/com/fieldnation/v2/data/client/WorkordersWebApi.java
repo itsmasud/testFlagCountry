@@ -4,12 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
@@ -201,7 +204,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachment  Folder
      * @param file        File
      */
-    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, String attachment, java.io.File file) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -209,7 +212,7 @@ public class WorkordersWebApi extends TopicClient {
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment)
+                    .multipartField("attachment", attachment, "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
@@ -7806,6 +7809,9 @@ public class WorkordersWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                if (failObject != null && failObject instanceof Error) {
+                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                }
                 listener.onWorkordersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "acceptIncrease":

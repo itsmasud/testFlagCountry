@@ -12,7 +12,7 @@ public abstract class WorkorderFragment extends Fragment {
 
     public abstract void update();
 
-    public abstract void setWorkorder(WorkOrder workorder);
+    public abstract void setWorkOrder(WorkOrder workorder);
 
     public void setPageRequestListener(PageRequestListener listener) {
         pageRequestListener = listener;

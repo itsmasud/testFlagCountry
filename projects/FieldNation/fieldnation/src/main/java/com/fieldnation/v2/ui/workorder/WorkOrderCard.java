@@ -37,6 +37,7 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
@@ -411,8 +412,8 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setText(R.string.btn_acknowledge_hold);
 
             // check_out
-        } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.EDIT)
-                && _workOrder.getTimeLogs().getOpenTimeLog() != null) {
+        } else if (_workOrder.getTimeLogs().getOpenTimeLog() != null
+                && _workOrder.getTimeLogs().getOpenTimeLog().getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_checkOut_onClick);
             button.setText(R.string.btn_check_out);
@@ -614,7 +615,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getWorkOrderId());
-            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {

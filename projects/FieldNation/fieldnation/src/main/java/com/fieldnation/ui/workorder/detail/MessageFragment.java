@@ -92,7 +92,7 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(WorkOrder workorder) {
+    public void setWorkOrder(WorkOrder workorder) {
         _workorder = workorder;
         populateUi();
         getMessages();

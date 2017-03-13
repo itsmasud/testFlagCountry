@@ -100,7 +100,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         if (requests == null)
             return;
 
-        if (requests.getOpenRequest() == null || !requests.getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+        if (requests.getOpenRequest() == null)
             return;
 
 
@@ -203,7 +203,6 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         return null;
     }
 
-
     public String[] toDisplayStringLong(Pay pay) {
         String line1 = null;
         String line2 = null;
@@ -227,7 +226,6 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         return new String[]{line1, line2};
     }
 
-
     private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -239,5 +237,4 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
     public interface Listener {
         void onCounterOffer();
     }
-
 }
