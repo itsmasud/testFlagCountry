@@ -28,32 +28,26 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
-import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
-import com.fieldnation.v2.ui.AppPickerIntent;
-import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -67,6 +61,7 @@ public class DeliverableFragment extends WorkorderFragment {
     // Dialog
     private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
     private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
+    private static final String DIALOG_UPLOAD_SLOTS = TAG + ".attachmentFolderDialog";
 
     // State
     private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
@@ -82,7 +77,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // Dialog
     private TwoButtonDialog _yesNoDialog;
-    private PhotoUploadDialog _photoUploadDialog;
 
     // Data
     private int _uploadingSlotId = -1;
@@ -92,7 +86,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private DocumentClient _docClient;
     private PhotoClient _photoClient;
     private ActivityResultClient _activityResultClient;
-    private FileCacheClient _fileCacheClient;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -114,9 +107,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
-
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
     }
 
     @Override
@@ -166,9 +156,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
-        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-        _photoUploadDialog.setListener(_photoUploadDialog_listener);
-
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
         PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_okListener);
@@ -212,9 +199,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_okListener);
         PhotoUploadDialog.removeOnImageClickListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_imageClickListener);
-
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
         super.onDetach();
     }
 
@@ -714,24 +698,4 @@ TODO            if (_tempFile != null) {
         }
     };
 
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
-        @Override
-        public void onConnected() {
-            _fileCacheClient.subDeliverableCache();
-        }
-
-        @Override
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
-            Log.v(TAG, "onDeliverableCacheEnd");
-
-            _tempUri = uri;
-//            _tempFile = null;
-
-            if (_tempFile != null) {
-                _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
-            } else {
-                _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
-            }
-        }
-    };
 }
