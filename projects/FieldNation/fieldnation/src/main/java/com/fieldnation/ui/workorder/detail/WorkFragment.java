@@ -49,7 +49,7 @@ import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.ui.dialog.PhotoUploadDialog;
+import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
@@ -100,6 +100,7 @@ import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -133,6 +134,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -170,11 +172,9 @@ public class WorkFragment extends WorkorderFragment {
     private TermsScrollingDialog _termsScrollingDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
-    private PhotoUploadDialog _photoUploadDialog;
 
     // Data
     private WorkordersWebApi _workOrderApi;
-    private FileCacheClient _fileCacheClient;
     private File _tempFile;
     private Uri _tempUri;
     private WorkOrder _workOrder;
@@ -362,9 +362,7 @@ public class WorkFragment extends WorkorderFragment {
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
-        _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
@@ -387,6 +385,8 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
+        PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_okListener);
+        PhotoUploadDialog.addOnImageClickListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_imageClickListener);
 
         OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -403,9 +403,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
-
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -437,6 +434,9 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
+        PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_okListener);
+        PhotoUploadDialog.removeOnImageClickListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_imageClickListener);
+
 
         OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -453,9 +453,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_workOrderApi != null && _workOrderApi.isConnected())
             _workOrderApi.disconnect(App.get());
-
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -482,17 +479,8 @@ public class WorkFragment extends WorkorderFragment {
     public void setWorkOrder(WorkOrder workOrder) {
         Log.v(TAG, "setWorkOrder");
         _workOrder = workOrder;
-        requestTasks();
         populateUi();
     }
-
-/*
-TODO     private void setTasks(List<Task> tasks) {
-        _tasks = tasks;
-        _taskList.setData(_workorder, tasks);
-        setLoading(false);
-    }
-*/
 
     private void populateUi() {
         misc.hideKeyboard(getView());
@@ -538,16 +526,6 @@ TODO     private void setTasks(List<Task> tasks) {
         Log.v(TAG, "getData.startRefreshing");
         setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
-    }
-
-    private void requestTasks() {
-        if (_workOrder == null)
-            return;
-
-        if (getActivity() == null)
-            return;
-
-// TODO        WorkorderClient.listTasks(App.get(), _workOrder.getWorkOrderId(), false);
     }
 
     @Override
@@ -742,15 +720,12 @@ TODO     private void setTasks(List<Task> tasks) {
                     || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
                     && resultCode == Activity.RESULT_OK) {
 
-                _fileCacheClient.subDeliverableCache();
-
                 setLoading(true);
 
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
                     _tempUri = null;
-                    _photoUploadDialog.show(_workOrder.getWorkOrderId(), _tempFile.getName());
-                    _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), _tempFile.getName(), _tempFile.toString());
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();
@@ -763,8 +738,7 @@ TODO     private void setTasks(List<Task> tasks) {
                             if (count == 1) {
                                 _tempUri = data.getData();
                                 _tempFile = null;
-                                _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                                FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
+                                PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), data.getData());
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
@@ -777,15 +751,13 @@ TODO     private void setTasks(List<Task> tasks) {
                             Log.v(TAG, "Single local/ non-local file upload");
                             _tempUri = data.getData();
                             _tempFile = null;
-                            _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
+                            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
-                        _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
+                        PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
                     }
                 }
 
@@ -1663,21 +1635,24 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
         }
     };
 
-    private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
-        @Override
-        public void onOk(long workOrderId, String filename, String photoDescription) {
-            Log.e(TAG, "uploading an image using camera");
-/*
-TODO            if (_tempFile != null) {
-                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
-                        filename, _tempFile.getAbsolutePath(), photoDescription);
-            } else if (_tempUri != null) {
-                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
-                        filename, _tempUri, photoDescription);
-            }
-*/
-        }
 
+    private final PhotoUploadDialog.OnOkListener _photoUploadDialog_okListener = new PhotoUploadDialog.OnOkListener() {
+        @Override
+        public void onOk(int workOrderId, String filename, String photoDescription) {
+            Log.e(TAG, "uploading an image using camera");
+// TODO
+//            if (_tempFile != null) {
+//                WorkordersWebApi.addAttachment(App.get(), workOrderId, _currentTask.getId(), filename, _tempFile, true);
+//            } else if (_tempUri != null) {
+//                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getId(),
+//                        filename, _tempUri, photoDescription);
+//            }
+
+        }
+    };
+
+
+    private final PhotoUploadDialog.OnImageClickListener _photoUploadDialog_imageClickListener = new PhotoUploadDialog.OnImageClickListener() {
         @Override
         public void onImageClick() {
             Intent intent;
@@ -1699,6 +1674,7 @@ TODO            if (_tempFile != null) {
             }
         }
     };
+
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
@@ -1796,19 +1772,6 @@ TODO            if (_tempFile != null) {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
-        @Override
-        public void onConnected() {
-        }
-
-        @Override
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
-            _tempUri = uri;
-            _tempFile = null;
-            _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
-        }
-    };
 
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
