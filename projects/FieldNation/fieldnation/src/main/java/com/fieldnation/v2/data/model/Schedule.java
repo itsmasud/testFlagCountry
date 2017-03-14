@@ -442,4 +442,8 @@ public class Schedule implements Parcelable {
         }
         return _actionsSet;
     }
+
+    public boolean isSet(){
+        return getServiceWindow() != null && getServiceWindow().isSet();
+    }
 }

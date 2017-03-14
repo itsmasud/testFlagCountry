@@ -53,12 +53,8 @@ public class RatingCompanyMine implements Parcelable {
 
     public Integer getAverageDaysToApproval() {
         try {
-            if (_averageDaysToApproval != null)
-                return _averageDaysToApproval;
-
-            if (SOURCE.has("average_days_to_approval") && SOURCE.get("average_days_to_approval") != null)
+            if (_averageDaysToApproval == null && SOURCE.has("average_days_to_approval") && SOURCE.get("average_days_to_approval") != null)
                 _averageDaysToApproval = SOURCE.getInt("average_days_to_approval");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -79,12 +75,8 @@ public class RatingCompanyMine implements Parcelable {
 
     public Integer getClearExpectations() {
         try {
-            if (_clearExpectations != null)
-                return _clearExpectations;
-
-            if (SOURCE.has("clear_expectations") && SOURCE.get("clear_expectations") != null)
+            if (_clearExpectations == null && SOURCE.has("clear_expectations") && SOURCE.get("clear_expectations") != null)
                 _clearExpectations = SOURCE.getInt("clear_expectations");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -105,12 +97,8 @@ public class RatingCompanyMine implements Parcelable {
 
     public Integer getRespectRating() {
         try {
-            if (_respectRating != null)
-                return _respectRating;
-
-            if (SOURCE.has("respect_rating") && SOURCE.get("respect_rating") != null)
+            if (_respectRating == null && SOURCE.has("respect_rating") && SOURCE.get("respect_rating") != null)
                 _respectRating = SOURCE.getInt("respect_rating");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +119,8 @@ public class RatingCompanyMine implements Parcelable {
 
     public Double getStars() {
         try {
-            if (_stars != null)
-                return _stars;
-
-            if (SOURCE.has("stars") && SOURCE.get("stars") != null)
+            if (_stars == null && SOURCE.has("stars") && SOURCE.get("stars") != null)
                 _stars = SOURCE.getDouble("stars");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,12 +141,8 @@ public class RatingCompanyMine implements Parcelable {
 
     public Integer getTotalRatings() {
         try {
-            if (_totalRatings != null)
-                return _totalRatings;
-
-            if (SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
+            if (_totalRatings == null && SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
                 _totalRatings = SOURCE.getInt("total_ratings");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -237,5 +217,13 @@ public class RatingCompanyMine implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

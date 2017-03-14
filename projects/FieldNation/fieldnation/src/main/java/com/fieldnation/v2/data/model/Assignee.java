@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -91,12 +89,8 @@ public class Assignee implements Parcelable {
 
     public String getCorrelationId() {
         try {
-            if (_correlationId != null)
-                return _correlationId;
-
-            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
                 _correlationId = SOURCE.getString("correlation_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -117,12 +111,8 @@ public class Assignee implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -143,12 +133,8 @@ public class Assignee implements Parcelable {
 
     public Integer getStatusId() {
         try {
-            if (_statusId != null)
-                return _statusId;
-
-            if (SOURCE.has("status_id") && SOURCE.get("status_id") != null)
+            if (_statusId == null && SOURCE.has("status_id") && SOURCE.get("status_id") != null)
                 _statusId = SOURCE.getInt("status_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -169,17 +155,16 @@ public class Assignee implements Parcelable {
 
     public User getUser() {
         try {
-            if (_user != null)
-                return _user;
-
-            if (SOURCE.has("user") && SOURCE.get("user") != null)
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
                 _user = User.fromJson(SOURCE.getJsonObject("user"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _user;
+        if (_user != null && _user.isSet())
+            return _user;
+
+        return null;
     }
 
     public Assignee user(User user) throws ParseException {
@@ -195,12 +180,8 @@ public class Assignee implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -312,4 +293,13 @@ public class Assignee implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getUser() != null && getUser().isSet();
+    }
+
 }

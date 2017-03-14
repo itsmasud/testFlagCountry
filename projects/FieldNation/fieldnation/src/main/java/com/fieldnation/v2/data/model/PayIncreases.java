@@ -298,4 +298,8 @@ public class PayIncreases implements Parcelable {
 
         return lastIncrease;
     }
+
+    public boolean isSet() {
+        return true;
+    }
 }
