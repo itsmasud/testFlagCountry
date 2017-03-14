@@ -792,7 +792,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId().intValue(), false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId().intValue(), false, false);
         }
     };
 

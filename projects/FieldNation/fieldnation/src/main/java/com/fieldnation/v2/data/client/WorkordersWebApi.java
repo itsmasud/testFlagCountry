@@ -12,6 +12,7 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
@@ -2116,7 +2117,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getAssignee(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getAssignee(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee");
 
@@ -2140,7 +2141,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2153,7 +2154,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getAttachments(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getAttachments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments");
 
@@ -2177,7 +2178,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2191,7 +2192,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param bonusId      Bonus ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean isBackground) {
+    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
@@ -2215,7 +2216,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2230,7 +2231,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param bonus        Bonus (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean isBackground) {
+    public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
@@ -2257,7 +2258,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2270,7 +2271,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work Order ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getBonuses(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getBonuses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses");
 
@@ -2294,7 +2295,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2307,7 +2308,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getContacts(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getContacts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts");
 
@@ -2331,7 +2332,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2345,7 +2346,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param customFieldId Custom field id
      * @param isBackground  indicates that this call is low priority
      */
-    public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean isBackground) {
+    public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
 
@@ -2369,7 +2370,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2382,7 +2383,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getCustomFields(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getCustomFields(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields");
 
@@ -2406,7 +2407,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2419,7 +2420,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getDiscounts(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getDiscounts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts");
 
@@ -2443,7 +2444,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2456,7 +2457,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getExpenses(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getExpenses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses");
 
@@ -2480,7 +2481,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2495,7 +2496,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachmentId File id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean isBackground) {
+    public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
 
@@ -2519,7 +2520,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2533,7 +2534,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param folderId     Folder id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean isBackground) {
+    public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -2557,7 +2558,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2570,7 +2571,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getHolds(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getHolds(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds");
 
@@ -2594,7 +2595,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2608,7 +2609,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param increaseId   ID of work order increase
      * @param isBackground indicates that this call is low priority
      */
-    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean isBackground) {
+    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
 
@@ -2632,7 +2633,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2647,7 +2648,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param async        Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean isBackground) {
+    public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
 
@@ -2672,7 +2673,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2685,7 +2686,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getIncreases(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getIncreases(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases");
 
@@ -2709,7 +2710,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2722,7 +2723,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getLocation(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getLocation(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location");
 
@@ -2746,7 +2747,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2759,7 +2760,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getMessages(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getMessages(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages");
 
@@ -2783,7 +2784,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2796,7 +2797,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of Work Order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getMilestones(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getMilestones(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones");
 
@@ -2820,7 +2821,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2833,7 +2834,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPay(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getPay(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay");
 
@@ -2857,7 +2858,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2870,7 +2871,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work Order ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPenalties(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getPenalties(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties");
 
@@ -2894,7 +2895,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2908,7 +2909,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param penaltyId    Penalty ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean isBackground) {
+    public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
@@ -2932,7 +2933,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2946,7 +2947,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param problemId    ID of problem
      * @param isBackground indicates that this call is low priority
      */
-    public static void getProblem(Context context, Integer workOrderId, Integer problemId, boolean isBackground) {
+    public static void getProblem(Context context, Integer workOrderId, Integer problemId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId);
 
@@ -2970,7 +2971,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -2983,7 +2984,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getProblems(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getProblems(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems");
 
@@ -3007,7 +3008,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3020,7 +3021,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getProviders(Context context, String workOrderId, boolean isBackground) {
+    public static void getProviders(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers");
 
@@ -3044,7 +3045,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3058,7 +3059,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param getProvidersOptions Additional optional parameters
      * @param isBackground        indicates that this call is low priority
      */
-    public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean isBackground) {
+    public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
                     + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
@@ -3089,7 +3090,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3103,7 +3104,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param requestId    ID of work order request/counter offer
      * @param isBackground indicates that this call is low priority
      */
-    public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean isBackground) {
+    public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
 
@@ -3127,7 +3128,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3142,7 +3143,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param async        Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
-    public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean isBackground) {
+    public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
 
@@ -3167,7 +3168,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3180,7 +3181,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getRequests(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getRequests(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests");
 
@@ -3204,7 +3205,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3217,7 +3218,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  array of work order ids
      * @param isBackground indicates that this call is low priority
      */
-    public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean isBackground) {
+    public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId);
 
@@ -3242,7 +3243,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3255,7 +3256,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSchedule(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getSchedule(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule");
 
@@ -3279,7 +3280,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3292,7 +3293,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getShipments(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getShipments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments");
 
@@ -3316,7 +3317,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3330,7 +3331,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param signatureId  ID of signature
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean isBackground) {
+    public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
 
@@ -3354,7 +3355,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3367,7 +3368,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSignatures(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getSignatures(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures");
 
@@ -3391,7 +3392,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3404,7 +3405,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getStatus(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getStatus(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status");
 
@@ -3428,7 +3429,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3442,7 +3443,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param taskId       Task id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean isBackground) {
+    public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
 
@@ -3466,7 +3467,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3479,7 +3480,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  Work order id
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTasks(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getTasks(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks");
 
@@ -3503,7 +3504,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3516,7 +3517,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTimeLogs(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getTimeLogs(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs");
 
@@ -3540,7 +3541,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3553,7 +3554,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getWorkOrder(Context context, Integer workOrderId, boolean isBackground) {
+    public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
 
@@ -3577,7 +3578,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3589,7 +3590,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param isBackground indicates that this call is low priority
      */
-    public static void getWorkOrderLists(Context context, boolean isBackground) {
+    public static void getWorkOrderLists(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/lists");
 
@@ -3613,7 +3614,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3625,7 +3626,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param isBackground indicates that this call is low priority
      */
-    public static void getWorkOrders(Context context, boolean isBackground) {
+    public static void getWorkOrders(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders");
 
@@ -3649,7 +3650,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -3662,7 +3663,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param getWorkOrdersOptions Additional optional parameters
      * @param isBackground         indicates that this call is low priority
      */
-    public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean isBackground) {
+    public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
                     + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
@@ -3789,7 +3790,7 @@ public class WorkordersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }

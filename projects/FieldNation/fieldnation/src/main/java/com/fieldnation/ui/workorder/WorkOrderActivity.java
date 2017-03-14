@@ -284,12 +284,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
     }
 
-    public void getData() {
-        Log.v(TAG, "getData");
-        setLoading(true);
-        WorkordersWebApi.getWorkOrder(this, _workOrderId, false);
-    }
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -381,7 +375,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         public void onConnected() {
             Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
             _workOrderApi.subWorkordersWebApi();
-            getData();
+            setLoading(true);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         @Override
@@ -404,7 +399,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
             Log.v(TAG, "onWorkordersWebApi " + methodName);
 
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 

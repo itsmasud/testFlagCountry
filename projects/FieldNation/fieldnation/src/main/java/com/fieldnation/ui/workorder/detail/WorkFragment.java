@@ -537,7 +537,7 @@ TODO     private void setTasks(List<Task> tasks) {
 
         Log.v(TAG, "getData.startRefreshing");
         setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false, false);
     }
 
     private void requestTasks() {
@@ -1446,7 +1446,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getWorkOrderId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
             setLoading(true);
         }
     };
