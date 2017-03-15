@@ -57,6 +57,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "description")
     private RichText _description;
 
+    @Json(name = "eta")
+    private ETA _eta;
+
     @Json(name = "holds")
     private Hold[] _holds;
 
@@ -450,6 +453,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder description(RichText description) throws ParseException {
         _description = description;
         SOURCE.put("description", description.getJson());
+        return this;
+    }
+
+    public void setEta(ETA eta) throws ParseException {
+        _eta = eta;
+        SOURCE.put("eta", eta.getJson());
+    }
+
+    public ETA getEta() {
+        try {
+            if (_eta == null && SOURCE.has("eta") && SOURCE.get("eta") != null)
+                _eta = ETA.fromJson(SOURCE.getJsonObject("eta"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_eta != null && _eta.isSet())
+            return _eta;
+
+        return null;
+    }
+
+    public WorkOrder eta(ETA eta) throws ParseException {
+        _eta = eta;
+        SOURCE.put("eta", eta.getJson());
         return this;
     }
 

@@ -342,6 +342,11 @@ public class AttachmentFolder implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -350,9 +355,5 @@ public class AttachmentFolder implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
-    }
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
     }
 }
