@@ -127,8 +127,11 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
                 _payLayout.setVisibility(VISIBLE);
             }
         }
-
-        if (requests.getOpenRequest().getSchedule() == null) {
+// TODO: probably this is a bad way of check if schedule is available or not
+        if (requests.getOpenRequest().getSchedule() == null
+                || requests.getOpenRequest().getSchedule().getServiceWindow() == null
+                || requests.getOpenRequest().getSchedule().getServiceWindow().getStart() == null
+                || misc.isEmptyOrNull(requests.getOpenRequest().getSchedule().getServiceWindow().getStart().getUtc())) {
             _scheduleLayout.setVisibility(GONE);
         } else {
             Schedule schedule = requests.getOpenRequest().getSchedule();
@@ -155,7 +158,10 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
     public String getDisplayString(Schedule schedule) {
 
-        if (schedule.getServiceWindow().getMode().equals(ScheduleServiceWindow.ModeEnum.EXACT)) {
+        if (schedule != null
+                && schedule.getServiceWindow() != null
+                && schedule.getServiceWindow().getMode() != null
+                && schedule.getServiceWindow().getMode().equals(ScheduleServiceWindow.ModeEnum.EXACT)) {
             try {
                 String dayDate;
                 String time = "";
@@ -171,6 +177,17 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
             }
         } else {
             try {
+
+                if (schedule == null)
+                    Log.e(TAG, "schedule is null ");
+                if (schedule.getServiceWindow() == null)
+                    Log.e(TAG, "getServiceWindow is null ");
+
+                if (schedule.getServiceWindow().getStart() == null)
+                    Log.e(TAG, "getServiceWindow().getStart() is null ");
+                else
+                    Log.e(TAG, "getServiceWindow().getStart().getUtc(): " + schedule.getServiceWindow().getStart().getUtc());
+
                 Calendar cal = schedule.getServiceWindow().getStart().getCalendar();
                 String dayDate;
                 String time = "";
