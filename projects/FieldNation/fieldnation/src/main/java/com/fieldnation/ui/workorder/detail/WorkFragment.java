@@ -526,7 +526,7 @@ TODO     private void setTasks(List<Task> tasks) {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -538,7 +538,7 @@ TODO     private void setTasks(List<Task> tasks) {
 
         Log.v(TAG, "getData.startRefreshing");
         setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
     }
 
     private void requestTasks() {
@@ -930,7 +930,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -944,8 +944,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
-                        _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
@@ -974,8 +973,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workOrder.getWorkOrderId());
 
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
-                    _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -1073,8 +1071,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void onConfirmAssignment(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
-                    _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -1455,7 +1452,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getWorkOrderId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
             setLoading(true);
         }
     };

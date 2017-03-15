@@ -11,8 +11,8 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.ScheduleEta;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
@@ -114,9 +114,11 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 return;
             }
 
-            if (schedule.getEta() != null && schedule.getEta().getUser() != null && schedule.getEta().getUser().getId() > 0) {
+            if (_workOrder.getEta() != null && _workOrder.getEta().getUser() != null
+                    && _workOrder.getEta().getUser().getId() > 0) {
+
                 Log.v(TAG, "ETA!!");
-                ScheduleEta eta = schedule.getEta();
+                ETA eta = _workOrder.getEta();
                 Calendar sCal = eta.getStart().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
@@ -182,8 +184,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(),
-                    _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_EDIT);
         }
     };
 }

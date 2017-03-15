@@ -40,6 +40,7 @@ import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -70,8 +71,7 @@ public class EtaDialog extends FullScreenDialog {
     public static final String PARAM_DIALOG_TYPE_CONFIRM = "confirm";
     public static final String PARAM_DIALOG_TYPE_ETA = "eta";
     public static final String PARAM_DIALOG_TYPE_EDIT = "edit";
-    public static final String PARAM_WORK_ORDER_ID = "workOrderId";
-    public static final String PARAM_SCHEDULE = "schedule";
+    public static final String PARAM_WORKORDER = "workOrder";
 
     private final static int MIN_JOB_DURATION = 900000;
     //    private final static int MIN_EXPIRING_DURATION = 900000;
@@ -104,8 +104,7 @@ public class EtaDialog extends FullScreenDialog {
 
     // Passed data
     private String _dialogType;
-    private Schedule _schedule;
-    private int _workOrderId;
+    private WorkOrder _workOrder;
 
     // User data
     private Calendar _etaStart;
@@ -210,17 +209,17 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
-        _schedule = params.getParcelable(PARAM_SCHEDULE);
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
-        _workOrderId = params.getInt(PARAM_WORK_ORDER_ID);
+        _workOrder = params.getParcelable(PARAM_WORKORDER);
 
         try {
-            if (_schedule.getEta() != null && _schedule.getEta().getStart() != null) {
-                _etaStart = _schedule.getEta().getStart().getCalendar();
-            } else {
-                _etaStart = _schedule.getServiceWindow().getStart().getCalendar();
+            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+                _etaStart = _workOrder.getEta().getStart().getCalendar();
+            } else if (_workOrder.getSchedule() != null
+                    && _workOrder.getSchedule().getServiceWindow() != null
+                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+                _etaStart = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -279,7 +278,7 @@ public class EtaDialog extends FullScreenDialog {
             return;
 
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-            _toolbar.setTitle("Request " + _workOrderId);
+            _toolbar.setTitle("Request " + _workOrder.getWorkOrderId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
             _expirationLayout.setVisibility(View.VISIBLE);
@@ -294,7 +293,7 @@ public class EtaDialog extends FullScreenDialog {
             _termsWarningTextView.setVisibility(View.VISIBLE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-            _toolbar.setTitle("Confirm " + _workOrderId);
+            _toolbar.setTitle("Confirm " + _workOrder.getWorkOrderId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -305,7 +304,7 @@ public class EtaDialog extends FullScreenDialog {
             _termsWarningTextView.setVisibility(View.GONE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ETA)) {
-            _toolbar.setTitle("Set ETA " + _workOrderId);
+            _toolbar.setTitle("Set ETA " + _workOrder.getWorkOrderId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -327,7 +326,7 @@ public class EtaDialog extends FullScreenDialog {
             _termsWarningTextView.setVisibility(View.GONE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
-            _toolbar.setTitle("Accept " + _workOrderId);
+            _toolbar.setTitle("Accept " + _workOrder.getWorkOrderId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -351,7 +350,7 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
         _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
 
-        if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
+        if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             _etaStartDateButton.setEnabled(false);
             _etaStartTimeButton.setEnabled(false);
         } else {
@@ -370,8 +369,8 @@ public class EtaDialog extends FullScreenDialog {
 //                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
 //                    }
 //                }
-                if (_schedule.getEta() != null && _schedule.getEta().getHourEstimate() != null) {
-                    _durationMilliseconds = (long) (_schedule.getEta().getHourEstimate() * 60 * 60 * 1000);
+                if (_workOrder.getEta() != null && _workOrder.getEta().getHourEstimate() != null) {
+                    _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
                 }
             }
         } catch (Exception e) {
@@ -386,12 +385,12 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private boolean isValidEta(final Calendar arrival) {
-        if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
+        if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
             return true;
-        } else if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-            return isWithinBusinessHours(arrival, _schedule);
-        } else if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-            return isWithinRange(arrival, _schedule);
+        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
+            return isWithinBusinessHours(arrival, _workOrder.getSchedule());
+        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+            return isWithinRange(arrival, _workOrder.getSchedule());
         }
         return true;
     }
@@ -467,14 +466,14 @@ public class EtaDialog extends FullScreenDialog {
 
 
     private boolean isLastDaySelected(final Calendar eta) {
-        if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT)
+        if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT)
             return false;
 
         try {
             // is business or range
-            if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+            if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
                 //Calendar scal = _schedule.getServiceWindow().getStart().getCalendar();
-                Calendar ecal = _schedule.getServiceWindow().getEnd().getCalendar();
+                Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
 
                 // if the last day selected
                 return eta.get(Calendar.DAY_OF_MONTH) == ecal.get(Calendar.DAY_OF_MONTH);
@@ -509,9 +508,9 @@ public class EtaDialog extends FullScreenDialog {
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(App.get().getResources().getStringArray(R.array.schedule_capital_case_am_pm_array));
 
-            if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-                Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
-                Calendar eCal = _schedule.getServiceWindow().getEnd().getCalendar();
+            if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
+                Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                Calendar eCal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
 
                 SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
@@ -532,9 +531,9 @@ public class EtaDialog extends FullScreenDialog {
 
                 return dateTimeString;
 
-            } else if (_schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-                Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
-                Calendar eCal = _schedule.getServiceWindow().getEnd().getCalendar();
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+                Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                Calendar eCal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
@@ -546,7 +545,7 @@ public class EtaDialog extends FullScreenDialog {
                 return dateTimeString;
 
             } else { //if (schedule.getType() == Schedule.Type.EXACT) {
-                Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
+                Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
@@ -604,7 +603,7 @@ public class EtaDialog extends FullScreenDialog {
             } else {
                 // the time field might need to be cleared.
                 try {
-                    test = _schedule.getServiceWindow().getStart().getCalendar();
+                    test = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
                     test.set(year, monthOfYear, dayOfMonth);
                     if (isValidEta(test)) {
                         ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
@@ -612,7 +611,7 @@ public class EtaDialog extends FullScreenDialog {
                         populateUi();
                         _etaStartTimeButton.setText("");
                     } else {
-                        test = _schedule.getServiceWindow().getEnd().getCalendar();
+                        test = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                         test.set(year, monthOfYear, dayOfMonth);
                         if (isValidEta(test)) {
                             ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
@@ -673,7 +672,7 @@ public class EtaDialog extends FullScreenDialog {
                 return;
             }
 
-            if (_schedule.getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
+            if (_workOrder.getSchedule().getServiceWindow().getMode() != ScheduleServiceWindow.ModeEnum.EXACT) {
                 _durationMilliseconds = milliseconds;
                 populateUi();
             } else {
@@ -748,13 +747,13 @@ public class EtaDialog extends FullScreenDialog {
             try {
                 switch (_dialogType) {
                     case PARAM_DIALOG_TYPE_REQUEST:
-                        _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
+                        _onRequestedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
                             WorkorderClient.actionRequest(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     _expiresCheckBox.isChecked() ? _expiringDurationSeconds : INVALID_NUMBER,
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
@@ -762,7 +761,7 @@ public class EtaDialog extends FullScreenDialog {
                         } else {
                             WorkorderClient.actionRequest(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     _expiresCheckBox.isChecked() ? _expiringDurationSeconds : INVALID_NUMBER,
                                     null, null,
                                     _noteEditText.getText().toString().trim());
@@ -770,40 +769,40 @@ public class EtaDialog extends FullScreenDialog {
                         dismiss(true);
                         break;
                     case PARAM_DIALOG_TYPE_CONFIRM:
-                        _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
+                        _onConfirmedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
                             WorkorderClient.actionConfirm(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
                         } else {
                             WorkorderClient.actionConfirm(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     null, null,
                                     _noteEditText.getText().toString().trim());
                         }
                         dismiss(true);
                         break;
                     case PARAM_DIALOG_TYPE_ETA:
-                        _onEtaDispatcher.dispatch(getUid(), _workOrderId);
+                        _onEtaDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
                             WorkorderClient.actionConfirm(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
                         } else {
                             WorkorderClient.actionConfirm(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     null, null,
                                     _noteEditText.getText().toString().trim());
                         }
@@ -813,13 +812,13 @@ public class EtaDialog extends FullScreenDialog {
                     case PARAM_DIALOG_TYPE_ACCEPT:
                     case PARAM_DIALOG_TYPE_EDIT:
                         if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT))
-                            _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+                            _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
                             WorkorderClient.actionAcceptAssignment(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim(),
@@ -827,7 +826,7 @@ public class EtaDialog extends FullScreenDialog {
                         } else {
                             WorkorderClient.actionAcceptAssignment(
                                     App.get(),
-                                    _workOrderId,
+                                    _workOrder.getWorkOrderId(),
                                     null, null,
                                     _noteEditText.getText().toString().trim(),
                                     _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
@@ -842,10 +841,9 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, Schedule schedule, String dialogType) {
+    public static void show(Context context, String uid, WorkOrder workOrder, String dialogType) {
         Bundle params = new Bundle();
-        params.putParcelable(PARAM_SCHEDULE, schedule);
-        params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putParcelable(PARAM_WORKORDER, workOrder);
         params.putString(PARAM_DIALOG_TYPE, dialogType);
         Controller.show(context, uid, EtaDialog.class, params);
     }

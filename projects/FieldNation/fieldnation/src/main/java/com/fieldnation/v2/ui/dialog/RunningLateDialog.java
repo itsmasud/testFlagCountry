@@ -105,17 +105,17 @@ public class RunningLateDialog extends SimpleDialog {
 
         Calendar cal = null;
         try {
-            if (_workOrder.getSchedule() != null) {
-                if (_workOrder.getSchedule().getEta() != null && _workOrder.getSchedule().getEta().getStart() != null) {
-                    cal = _workOrder.getSchedule().getEta().getStart().getCalendar();
-                } else {
-                    cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                }
-                _bodyTextView.setText(
-                        _workOrder.getTitle()
-                                + " is scheduled to begin at "
-                                + DateUtils.formatTime2(cal) + ".");
+            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+                cal = _workOrder.getEta().getStart().getCalendar();
+            } else if (_workOrder.getSchedule() != null
+                    && _workOrder.getSchedule().getServiceWindow() != null
+                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+                cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
+            _bodyTextView.setText(
+                    _workOrder.getTitle()
+                            + " is scheduled to begin at "
+                            + DateUtils.formatTime2(cal) + ".");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -75,7 +75,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     protected void onDetachedFromWindow() {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
-        
+
         super.onDetachedFromWindow();
     }
 
@@ -195,7 +195,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         @Override
         public void onConnected() {
             _workOrderClient.subWorkordersWebApi();
-            WorkordersWebApi.getWorkOrderLists(App.get(), false);
+            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
         }
 
         @Override

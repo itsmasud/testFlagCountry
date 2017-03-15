@@ -12,6 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Schedule;
@@ -137,8 +138,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         } else if (_workOrder.isOnHold()) {
 
             // set eta
-        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
-                && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);

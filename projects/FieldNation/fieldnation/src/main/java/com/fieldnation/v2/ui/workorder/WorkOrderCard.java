@@ -32,6 +32,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
@@ -208,10 +209,10 @@ public class WorkOrderCard extends RelativeLayout {
         _date2TextView.setVisibility(GONE);
 
         if (_workOrder.getSchedule() != null) {
-            if (_workOrder.getSchedule().getEta() != null && _workOrder.getSchedule().getEta().getStart() != null) {
+            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
                 // estimated
                 try {
-                    Calendar cal = _workOrder.getSchedule().getEta().getStart().getCalendar();
+                    Calendar cal = _workOrder.getEta().getStart().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
                     _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
@@ -389,8 +390,8 @@ public class WorkOrderCard extends RelativeLayout {
         if (false) {
 
             // set eta
-        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
-                && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_eta_onClick);
             button.setText(R.string.btn_set_eta);
@@ -637,7 +638,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
         }
     };
 
@@ -653,7 +654,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
         }
     };
 
@@ -677,7 +678,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ETA, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder.getWorkOrderId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ETA);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ETA);
         }
     };
 
