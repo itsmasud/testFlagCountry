@@ -626,7 +626,7 @@ public class WorkFragment extends WorkorderFragment {
 
         Pay pay = _workOrder.getPay();
         if (pay != null && pay.getType() == Pay.TypeEnum.DEVICE) {
-            _deviceCount = pay.getRange().getMax().intValue();
+            _deviceCount = pay.getBase().getUnits().intValue();
         }
 
         if (_currentLocation != null) {
