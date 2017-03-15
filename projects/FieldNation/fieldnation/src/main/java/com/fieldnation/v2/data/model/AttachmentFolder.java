@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -92,12 +95,8 @@ public class AttachmentFolder implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -118,12 +117,8 @@ public class AttachmentFolder implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -171,17 +166,16 @@ public class AttachmentFolder implements Parcelable {
 
     public Task getTask() {
         try {
-            if (_task != null)
-                return _task;
-
-            if (SOURCE.has("task") && SOURCE.get("task") != null)
+            if (_task == null && SOURCE.has("task") && SOURCE.get("task") != null)
                 _task = Task.fromJson(SOURCE.getJsonObject("task"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _task;
+        if (_task != null && _task.isSet())
+            return _task;
+
+        return null;
     }
 
     public AttachmentFolder task(Task task) throws ParseException {
@@ -197,12 +191,8 @@ public class AttachmentFolder implements Parcelable {
 
     public TypeEnum getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = TypeEnum.fromString(SOURCE.getString("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -355,9 +345,14 @@ public class AttachmentFolder implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    private Set<AttachmentFolder.ActionsEnum> _actionsSet = null;
 
-    public Set<AttachmentFolder.ActionsEnum> getActionsSet() {
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));

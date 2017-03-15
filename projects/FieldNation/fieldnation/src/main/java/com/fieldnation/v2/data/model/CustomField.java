@@ -107,12 +107,8 @@ public class CustomField implements Parcelable {
 
     public String getCategory() {
         try {
-            if (_category != null)
-                return _category;
-
-            if (SOURCE.has("category") && SOURCE.get("category") != null)
+            if (_category == null && SOURCE.has("category") && SOURCE.get("category") != null)
                 _category = SOURCE.getString("category");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -133,17 +129,16 @@ public class CustomField implements Parcelable {
 
     public CustomFieldDependency getDependency() {
         try {
-            if (_dependency != null)
-                return _dependency;
-
-            if (SOURCE.has("dependency") && SOURCE.get("dependency") != null)
+            if (_dependency == null && SOURCE.has("dependency") && SOURCE.get("dependency") != null)
                 _dependency = CustomFieldDependency.fromJson(SOURCE.getJsonObject("dependency"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _dependency;
+        if (_dependency != null && _dependency.isSet())
+            return _dependency;
+
+        return null;
     }
 
     public CustomField dependency(CustomFieldDependency dependency) throws ParseException {
@@ -194,12 +189,8 @@ public class CustomField implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -220,12 +211,8 @@ public class CustomField implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -282,12 +269,8 @@ public class CustomField implements Parcelable {
 
     public RoleEnum getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = RoleEnum.fromString(SOURCE.getString("role"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -308,12 +291,8 @@ public class CustomField implements Parcelable {
 
     public String getTip() {
         try {
-            if (_tip != null)
-                return _tip;
-
-            if (SOURCE.has("tip") && SOURCE.get("tip") != null)
+            if (_tip == null && SOURCE.has("tip") && SOURCE.get("tip") != null)
                 _tip = SOURCE.getString("tip");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -334,12 +313,8 @@ public class CustomField implements Parcelable {
 
     public TypeEnum getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = TypeEnum.fromString(SOURCE.getString("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -360,12 +335,8 @@ public class CustomField implements Parcelable {
 
     public String getValue() {
         try {
-            if (_value != null)
-                return _value;
-
-            if (SOURCE.has("value") && SOURCE.get("value") != null)
+            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
                 _value = SOURCE.getString("value");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -614,6 +585,11 @@ public class CustomField implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {

@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -50,12 +48,8 @@ public class PayFinance implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,12 +70,8 @@ public class PayFinance implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,12 +92,8 @@ public class PayFinance implements Parcelable {
 
     public Double getLimit() {
         try {
-            if (_limit != null)
-                return _limit;
-
-            if (SOURCE.has("limit") && SOURCE.get("limit") != null)
+            if (_limit == null && SOURCE.has("limit") && SOURCE.get("limit") != null)
                 _limit = SOURCE.getDouble("limit");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -128,12 +114,8 @@ public class PayFinance implements Parcelable {
 
     public String getTerms() {
         try {
-            if (_terms != null)
-                return _terms;
-
-            if (SOURCE.has("terms") && SOURCE.get("terms") != null)
+            if (_terms == null && SOURCE.has("terms") && SOURCE.get("terms") != null)
                 _terms = SOURCE.getString("terms");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,5 +190,13 @@ public class PayFinance implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

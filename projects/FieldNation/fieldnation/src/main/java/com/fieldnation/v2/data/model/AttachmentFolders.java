@@ -10,6 +10,7 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -85,17 +86,16 @@ public class AttachmentFolders implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _metadata;
+        if (_metadata != null && _metadata.isSet())
+            return _metadata;
+
+        return null;
     }
 
     public AttachmentFolders metadata(ListEnvelope metadata) throws ParseException {
@@ -235,9 +235,14 @@ public class AttachmentFolders implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    private Set<AttachmentFolders.ActionsEnum> _actionsSet = null;
 
-    public Set<AttachmentFolders.ActionsEnum> getActionsSet() {
+    public boolean isSet() {
+        return true;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));

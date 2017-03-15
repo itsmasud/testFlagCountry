@@ -5,11 +5,10 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 
@@ -56,12 +55,8 @@ public class Contact implements Parcelable {
 
     public String getEmail() {
         try {
-            if (_email != null)
-                return _email;
-
-            if (SOURCE.has("email") && SOURCE.get("email") != null)
+            if (_email == null && SOURCE.has("email") && SOURCE.get("email") != null)
                 _email = SOURCE.getString("email");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -82,12 +77,8 @@ public class Contact implements Parcelable {
 
     public String getExt() {
         try {
-            if (_ext != null)
-                return _ext;
-
-            if (SOURCE.has("ext") && SOURCE.get("ext") != null)
+            if (_ext == null && SOURCE.has("ext") && SOURCE.get("ext") != null)
                 _ext = SOURCE.getString("ext");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -108,12 +99,8 @@ public class Contact implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -134,12 +121,8 @@ public class Contact implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -160,12 +143,8 @@ public class Contact implements Parcelable {
 
     public String getPhone() {
         try {
-            if (_phone != null)
-                return _phone;
-
-            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+            if (_phone == null && SOURCE.has("phone") && SOURCE.get("phone") != null)
                 _phone = SOURCE.getString("phone");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -186,12 +165,8 @@ public class Contact implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -266,5 +241,12 @@ public class Contact implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getName()) && !misc.isEmptyOrNull(getPhone());
     }
 }

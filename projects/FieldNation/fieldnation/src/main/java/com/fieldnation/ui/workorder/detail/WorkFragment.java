@@ -649,7 +649,7 @@ TODO     private void setTasks(List<Task> tasks) {
 
         Pay pay = _workOrder.getPay();
         if (pay != null && pay.getType() == Pay.TypeEnum.DEVICE) {
-            _deviceCount = pay.getRange().getMax().intValue();
+            _deviceCount = pay.getBase().getUnits().intValue();
         }
 
         if (_currentLocation != null) {
@@ -1091,7 +1091,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 if (doc != null && doc.getId() != null) {
                     Log.v(TAG, "docid: " + doc.getId());
                     // task completed here
-                    if (!task.getCompleted().isValid()) {
+                    if (!task.getCompleted().isSet()) {
                         WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
                     }
 // TODO: file link is not coming as part of File object. See comment in PA-623
@@ -1108,7 +1108,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             intent.setData(Uri.parse("mailto:" + email));
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
-            if (!task.getCompleted().isValid()) {
+            if (!task.getCompleted().isSet()) {
                 WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             }
             setLoading(true);
@@ -1117,7 +1117,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onPhone(Task task) {
 
-            if (!task.getCompleted().isValid()) {
+            if (!task.getCompleted().isSet()) {
                 WorkorderClient.actionCompleteTask(App.get(),
                         _workOrder.getWorkOrderId(), task.getId());
                 setLoading(true);
@@ -1199,7 +1199,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void onUniqueTask(Task task) {
-            if (task.getCompleted().isValid())
+            if (task.getCompleted().isSet())
                 return;
             WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             setLoading(true);

@@ -116,12 +116,8 @@ public class Request implements Parcelable {
 
     public Boolean getActive() {
         try {
-            if (_active != null)
-                return _active;
-
-            if (SOURCE.has("active") && SOURCE.get("active") != null)
+            if (_active == null && SOURCE.has("active") && SOURCE.get("active") != null)
                 _active = SOURCE.getBoolean("active");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -142,12 +138,8 @@ public class Request implements Parcelable {
 
     public Boolean getCounter() {
         try {
-            if (_counter != null)
-                return _counter;
-
-            if (SOURCE.has("counter") && SOURCE.get("counter") != null)
+            if (_counter == null && SOURCE.has("counter") && SOURCE.get("counter") != null)
                 _counter = SOURCE.getBoolean("counter");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -168,12 +160,8 @@ public class Request implements Parcelable {
 
     public String getCounterNotes() {
         try {
-            if (_counterNotes != null)
-                return _counterNotes;
-
-            if (SOURCE.has("counter_notes") && SOURCE.get("counter_notes") != null)
+            if (_counterNotes == null && SOURCE.has("counter_notes") && SOURCE.get("counter_notes") != null)
                 _counterNotes = SOURCE.getString("counter_notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -194,17 +182,16 @@ public class Request implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public Request created(Date created) throws ParseException {
@@ -247,17 +234,16 @@ public class Request implements Parcelable {
 
     public Date getExpires() {
         try {
-            if (_expires != null)
-                return _expires;
-
-            if (SOURCE.has("expires") && SOURCE.get("expires") != null)
+            if (_expires == null && SOURCE.has("expires") && SOURCE.get("expires") != null)
                 _expires = Date.fromJson(SOURCE.getJsonObject("expires"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _expires;
+        if (_expires != null && _expires.isSet())
+            return _expires;
+
+        return null;
     }
 
     public Request expires(Date expires) throws ParseException {
@@ -273,12 +259,8 @@ public class Request implements Parcelable {
 
     public Double getHourEstimate() {
         try {
-            if (_hourEstimate != null)
-                return _hourEstimate;
-
-            if (SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
+            if (_hourEstimate == null && SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
                 _hourEstimate = SOURCE.getDouble("hour_estimate");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -299,12 +281,8 @@ public class Request implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -325,12 +303,8 @@ public class Request implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -351,17 +325,16 @@ public class Request implements Parcelable {
 
     public Pay getPay() {
         try {
-            if (_pay != null)
-                return _pay;
-
-            if (SOURCE.has("pay") && SOURCE.get("pay") != null)
+            if (_pay == null && SOURCE.has("pay") && SOURCE.get("pay") != null)
                 _pay = Pay.fromJson(SOURCE.getJsonObject("pay"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _pay;
+        if (_pay != null && _pay.isSet())
+            return _pay;
+
+        return null;
     }
 
     public Request pay(Pay pay) throws ParseException {
@@ -377,17 +350,16 @@ public class Request implements Parcelable {
 
     public Schedule getSchedule() {
         try {
-            if (_schedule != null)
-                return _schedule;
-
-            if (SOURCE.has("schedule") && SOURCE.get("schedule") != null)
+            if (_schedule == null && SOURCE.has("schedule") && SOURCE.get("schedule") != null)
                 _schedule = Schedule.fromJson(SOURCE.getJsonObject("schedule"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _schedule;
+        if (_schedule != null && _schedule.isSet())
+            return _schedule;
+
+        return null;
     }
 
     public Request schedule(Schedule schedule) throws ParseException {
@@ -403,17 +375,16 @@ public class Request implements Parcelable {
 
     public User getUser() {
         try {
-            if (_user != null)
-                return _user;
-
-            if (SOURCE.has("user") && SOURCE.get("user") != null)
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
                 _user = User.fromJson(SOURCE.getJsonObject("user"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _user;
+        if (_user != null && _user.isSet())
+            return _user;
+
+        return null;
     }
 
     public Request user(User user) throws ParseException {
@@ -429,17 +400,16 @@ public class Request implements Parcelable {
 
     public WorkOrder getWorkOrder() {
         try {
-            if (_workOrder != null)
-                return _workOrder;
-
-            if (SOURCE.has("work_order") && SOURCE.get("work_order") != null)
+            if (_workOrder == null && SOURCE.has("work_order") && SOURCE.get("work_order") != null)
                 _workOrder = WorkOrder.fromJson(SOURCE.getJsonObject("work_order"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _workOrder;
+        if (_workOrder != null && _workOrder.isSet())
+            return _workOrder;
+
+        return null;
     }
 
     public Request workOrder(WorkOrder workOrder) throws ParseException {
@@ -558,5 +528,9 @@ public class Request implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
+    }
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

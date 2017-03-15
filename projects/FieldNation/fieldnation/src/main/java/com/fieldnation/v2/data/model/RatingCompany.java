@@ -50,12 +50,8 @@ public class RatingCompany implements Parcelable {
 
     public Boolean getBlocked() {
         try {
-            if (_blocked != null)
-                return _blocked;
-
-            if (SOURCE.has("blocked") && SOURCE.get("blocked") != null)
+            if (_blocked == null && SOURCE.has("blocked") && SOURCE.get("blocked") != null)
                 _blocked = SOURCE.getBoolean("blocked");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,17 +72,16 @@ public class RatingCompany implements Parcelable {
 
     public RatingCompanyMarketplace getMarketplace() {
         try {
-            if (_marketplace != null)
-                return _marketplace;
-
-            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
                 _marketplace = RatingCompanyMarketplace.fromJson(SOURCE.getJsonObject("marketplace"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _marketplace;
+        if (_marketplace != null && _marketplace.isSet())
+            return _marketplace;
+
+        return null;
     }
 
     public RatingCompany marketplace(RatingCompanyMarketplace marketplace) throws ParseException {
@@ -102,17 +97,16 @@ public class RatingCompany implements Parcelable {
 
     public RatingCompanyMine getMine() {
         try {
-            if (_mine != null)
-                return _mine;
-
-            if (SOURCE.has("mine") && SOURCE.get("mine") != null)
+            if (_mine == null && SOURCE.has("mine") && SOURCE.get("mine") != null)
                 _mine = RatingCompanyMine.fromJson(SOURCE.getJsonObject("mine"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _mine;
+        if (_mine != null && _mine.isSet())
+            return _mine;
+
+        return null;
     }
 
     public RatingCompany mine(RatingCompanyMine mine) throws ParseException {
@@ -128,12 +122,8 @@ public class RatingCompany implements Parcelable {
 
     public Integer getWorkCompleted() {
         try {
-            if (_workCompleted != null)
-                return _workCompleted;
-
-            if (SOURCE.has("work_completed") && SOURCE.get("work_completed") != null)
+            if (_workCompleted == null && SOURCE.has("work_completed") && SOURCE.get("work_completed") != null)
                 _workCompleted = SOURCE.getInt("work_completed");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,5 +198,13 @@ public class RatingCompany implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

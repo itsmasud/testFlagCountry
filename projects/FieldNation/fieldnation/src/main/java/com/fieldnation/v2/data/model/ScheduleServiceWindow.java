@@ -389,4 +389,10 @@ public class ScheduleServiceWindow implements Parcelable {
         return null;
     }
 
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public boolean isSet() {
+        return getMode() != null && getStart() != null && getStart().isSet();
+    }
 }

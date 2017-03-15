@@ -47,12 +47,8 @@ public class CustomFieldDependency implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +69,8 @@ public class CustomFieldDependency implements Parcelable {
 
     public OperatorEnum getOperator() {
         try {
-            if (_operator != null)
-                return _operator;
-
-            if (SOURCE.has("operator") && SOURCE.get("operator") != null)
+            if (_operator == null && SOURCE.has("operator") && SOURCE.get("operator") != null)
                 _operator = OperatorEnum.fromString(SOURCE.getString("operator"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +91,8 @@ public class CustomFieldDependency implements Parcelable {
 
     public String getValue() {
         try {
-            if (_value != null)
-                return _value;
-
-            if (SOURCE.has("value") && SOURCE.get("value") != null)
+            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
                 _value = SOURCE.getString("value");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -223,5 +211,13 @@ public class CustomFieldDependency implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

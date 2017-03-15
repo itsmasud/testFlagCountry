@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -17,7 +20,6 @@ import java.util.Set;
 /**
  * Created by dmgen from swagger.
  */
-
 
 public class Task implements Parcelable {
     private static final String TAG = "Task";
@@ -183,17 +185,16 @@ public class Task implements Parcelable {
 
     public Attachment getAttachment() {
         try {
-            if (_attachment != null)
-                return _attachment;
-
-            if (SOURCE.has("attachment") && SOURCE.get("attachment") != null)
+            if (_attachment == null && SOURCE.has("attachment") && SOURCE.get("attachment") != null)
                 _attachment = Attachment.fromJson(SOURCE.getJsonObject("attachment"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _attachment;
+        if (_attachment != null && _attachment.isSet())
+            return _attachment;
+
+        return null;
     }
 
     public Task attachment(Attachment attachment) throws ParseException {
@@ -236,17 +237,16 @@ public class Task implements Parcelable {
 
     public User getAuthor() {
         try {
-            if (_author != null)
-                return _author;
-
-            if (SOURCE.has("author") && SOURCE.get("author") != null)
+            if (_author == null && SOURCE.has("author") && SOURCE.get("author") != null)
                 _author = User.fromJson(SOURCE.getJsonObject("author"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _author;
+        if (_author != null && _author.isSet())
+            return _author;
+
+        return null;
     }
 
     public Task author(User author) throws ParseException {
@@ -262,17 +262,16 @@ public class Task implements Parcelable {
 
     public CheckInOut getCheckIn() {
         try {
-            if (_checkIn != null)
-                return _checkIn;
-
-            if (SOURCE.has("check_in") && SOURCE.get("check_in") != null)
+            if (_checkIn == null && SOURCE.has("check_in") && SOURCE.get("check_in") != null)
                 _checkIn = CheckInOut.fromJson(SOURCE.getJsonObject("check_in"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _checkIn;
+        if (_checkIn != null && _checkIn.isSet())
+            return _checkIn;
+
+        return null;
     }
 
     public Task checkIn(CheckInOut checkIn) throws ParseException {
@@ -288,17 +287,16 @@ public class Task implements Parcelable {
 
     public CheckInOut getCheckOut() {
         try {
-            if (_checkOut != null)
-                return _checkOut;
-
-            if (SOURCE.has("check_out") && SOURCE.get("check_out") != null)
+            if (_checkOut == null && SOURCE.has("check_out") && SOURCE.get("check_out") != null)
                 _checkOut = CheckInOut.fromJson(SOURCE.getJsonObject("check_out"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _checkOut;
+        if (_checkOut != null && _checkOut.isSet())
+            return _checkOut;
+
+        return null;
     }
 
     public Task checkOut(CheckInOut checkOut) throws ParseException {
@@ -314,12 +312,8 @@ public class Task implements Parcelable {
 
     public String getClosingNotes() {
         try {
-            if (_closingNotes != null)
-                return _closingNotes;
-
-            if (SOURCE.has("closing_notes") && SOURCE.get("closing_notes") != null)
+            if (_closingNotes == null && SOURCE.has("closing_notes") && SOURCE.get("closing_notes") != null)
                 _closingNotes = SOURCE.getString("closing_notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -340,17 +334,16 @@ public class Task implements Parcelable {
 
     public Date getCompleted() {
         try {
-            if (_completed != null)
-                return _completed;
-
-            if (SOURCE.has("completed") && SOURCE.get("completed") != null)
+            if (_completed == null && SOURCE.has("completed") && SOURCE.get("completed") != null)
                 _completed = Date.fromJson(SOURCE.getJsonObject("completed"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _completed;
+        if (_completed != null && _completed.isSet())
+            return _completed;
+
+        return null;
     }
 
     public Task completed(Date completed) throws ParseException {
@@ -366,12 +359,8 @@ public class Task implements Parcelable {
 
     public Boolean getConfirmed() {
         try {
-            if (_confirmed != null)
-                return _confirmed;
-
-            if (SOURCE.has("confirmed") && SOURCE.get("confirmed") != null)
+            if (_confirmed == null && SOURCE.has("confirmed") && SOURCE.get("confirmed") != null)
                 _confirmed = SOURCE.getBoolean("confirmed");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -392,17 +381,16 @@ public class Task implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public Task created(Date created) throws ParseException {
@@ -418,17 +406,16 @@ public class Task implements Parcelable {
 
     public CustomField getCustomField() {
         try {
-            if (_customField != null)
-                return _customField;
-
-            if (SOURCE.has("custom_field") && SOURCE.get("custom_field") != null)
+            if (_customField == null && SOURCE.has("custom_field") && SOURCE.get("custom_field") != null)
                 _customField = CustomField.fromJson(SOURCE.getJsonObject("custom_field"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _customField;
+        if (_customField != null && _customField.isSet())
+            return _customField;
+
+        return null;
     }
 
     public Task customField(CustomField customField) throws ParseException {
@@ -444,12 +431,8 @@ public class Task implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -470,17 +453,16 @@ public class Task implements Parcelable {
 
     public TaskDocument getDocument() {
         try {
-            if (_document != null)
-                return _document;
-
-            if (SOURCE.has("document") && SOURCE.get("document") != null)
+            if (_document == null && SOURCE.has("document") && SOURCE.get("document") != null)
                 _document = TaskDocument.fromJson(SOURCE.getJsonObject("document"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _document;
+        if (_document != null && _document.isSet())
+            return _document;
+
+        return null;
     }
 
     public Task document(TaskDocument document) throws ParseException {
@@ -496,12 +478,8 @@ public class Task implements Parcelable {
 
     public String getEmail() {
         try {
-            if (_email != null)
-                return _email;
-
-            if (SOURCE.has("email") && SOURCE.get("email") != null)
+            if (_email == null && SOURCE.has("email") && SOURCE.get("email") != null)
                 _email = SOURCE.getString("email");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -522,12 +500,8 @@ public class Task implements Parcelable {
 
     public Integer getFolderId() {
         try {
-            if (_folderId != null)
-                return _folderId;
-
-            if (SOURCE.has("folder_id") && SOURCE.get("folder_id") != null)
+            if (_folderId == null && SOURCE.has("folder_id") && SOURCE.get("folder_id") != null)
                 _folderId = SOURCE.getInt("folder_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -548,17 +522,16 @@ public class Task implements Parcelable {
 
     public TaskGroup getGroup() {
         try {
-            if (_group != null)
-                return _group;
-
-            if (SOURCE.has("group") && SOURCE.get("group") != null)
+            if (_group == null && SOURCE.has("group") && SOURCE.get("group") != null)
                 _group = TaskGroup.fromJson(SOURCE.getJsonObject("group"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _group;
+        if (_group != null && _group.isSet())
+            return _group;
+
+        return null;
     }
 
     public Task group(TaskGroup group) throws ParseException {
@@ -574,12 +547,8 @@ public class Task implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -600,12 +569,8 @@ public class Task implements Parcelable {
 
     public String getLabel() {
         try {
-            if (_label != null)
-                return _label;
-
-            if (SOURCE.has("label") && SOURCE.get("label") != null)
+            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
                 _label = SOURCE.getString("label");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -626,17 +591,16 @@ public class Task implements Parcelable {
 
     public OnMyWay getOnMyWay() {
         try {
-            if (_onMyWay != null)
-                return _onMyWay;
-
-            if (SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
+            if (_onMyWay == null && SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
                 _onMyWay = OnMyWay.fromJson(SOURCE.getJsonObject("on_my_way"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _onMyWay;
+        if (_onMyWay != null && _onMyWay.isSet())
+            return _onMyWay;
+
+        return null;
     }
 
     public Task onMyWay(OnMyWay onMyWay) throws ParseException {
@@ -652,12 +616,8 @@ public class Task implements Parcelable {
 
     public String getPhone() {
         try {
-            if (_phone != null)
-                return _phone;
-
-            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+            if (_phone == null && SOURCE.has("phone") && SOURCE.get("phone") != null)
                 _phone = SOURCE.getString("phone");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -678,12 +638,8 @@ public class Task implements Parcelable {
 
     public Boolean getReadyToGo() {
         try {
-            if (_readyToGo != null)
-                return _readyToGo;
-
-            if (SOURCE.has("ready_to_go") && SOURCE.get("ready_to_go") != null)
+            if (_readyToGo == null && SOURCE.has("ready_to_go") && SOURCE.get("ready_to_go") != null)
                 _readyToGo = SOURCE.getBoolean("ready_to_go");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -704,17 +660,16 @@ public class Task implements Parcelable {
 
     public Shipment getShipment() {
         try {
-            if (_shipment != null)
-                return _shipment;
-
-            if (SOURCE.has("shipment") && SOURCE.get("shipment") != null)
+            if (_shipment == null && SOURCE.has("shipment") && SOURCE.get("shipment") != null)
                 _shipment = Shipment.fromJson(SOURCE.getJsonObject("shipment"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _shipment;
+        if (_shipment != null && _shipment.isSet())
+            return _shipment;
+
+        return null;
     }
 
     public Task shipment(Shipment shipment) throws ParseException {
@@ -730,17 +685,16 @@ public class Task implements Parcelable {
 
     public Signature getSignature() {
         try {
-            if (_signature != null)
-                return _signature;
-
-            if (SOURCE.has("signature") && SOURCE.get("signature") != null)
+            if (_signature == null && SOURCE.has("signature") && SOURCE.get("signature") != null)
                 _signature = Signature.fromJson(SOURCE.getJsonObject("signature"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _signature;
+        if (_signature != null && _signature.isSet())
+            return _signature;
+
+        return null;
     }
 
     public Task signature(Signature signature) throws ParseException {
@@ -756,17 +710,16 @@ public class Task implements Parcelable {
 
     public TimeZone getTimeZone() {
         try {
-            if (_timeZone != null)
-                return _timeZone;
-
-            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+            if (_timeZone == null && SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
                 _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _timeZone;
+        if (_timeZone != null && _timeZone.isSet())
+            return _timeZone;
+
+        return null;
     }
 
     public Task timeZone(TimeZone timeZone) throws ParseException {
@@ -782,17 +735,16 @@ public class Task implements Parcelable {
 
     public TaskType getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = TaskType.fromJson(SOURCE.getJsonObject("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _type;
+        if (_type != null && _type.isSet())
+            return _type;
+
+        return null;
     }
 
     public Task type(TaskType type) throws ParseException {
@@ -808,12 +760,8 @@ public class Task implements Parcelable {
 
     public String getValue() {
         try {
-            if (_value != null)
-                return _value;
-
-            if (SOURCE.has("value") && SOURCE.get("value") != null)
+            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
                 _value = SOURCE.getString("value");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -945,9 +893,14 @@ public class Task implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-    private Set<Task.ActionsEnum> _actionsSet = null;
 
-    public Set<Task.ActionsEnum> getActionsSet() {
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));

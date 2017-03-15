@@ -107,12 +107,8 @@ public class Signature implements Parcelable {
 
     public String getClosingNotes() {
         try {
-            if (_closingNotes != null)
-                return _closingNotes;
-
-            if (SOURCE.has("closing_notes") && SOURCE.get("closing_notes") != null)
+            if (_closingNotes == null && SOURCE.has("closing_notes") && SOURCE.get("closing_notes") != null)
                 _closingNotes = SOURCE.getString("closing_notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -133,17 +129,16 @@ public class Signature implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public Signature created(Date created) throws ParseException {
@@ -159,12 +154,8 @@ public class Signature implements Parcelable {
 
     public String getData() {
         try {
-            if (_data != null)
-                return _data;
-
-            if (SOURCE.has("data") && SOURCE.get("data") != null)
+            if (_data == null && SOURCE.has("data") && SOURCE.get("data") != null)
                 _data = SOURCE.getString("data");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -185,12 +176,8 @@ public class Signature implements Parcelable {
 
     public String getFormat() {
         try {
-            if (_format != null)
-                return _format;
-
-            if (SOURCE.has("format") && SOURCE.get("format") != null)
+            if (_format == null && SOURCE.has("format") && SOURCE.get("format") != null)
                 _format = SOURCE.getString("format");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -211,12 +198,8 @@ public class Signature implements Parcelable {
 
     public String getHash() {
         try {
-            if (_hash != null)
-                return _hash;
-
-            if (SOURCE.has("hash") && SOURCE.get("hash") != null)
+            if (_hash == null && SOURCE.has("hash") && SOURCE.get("hash") != null)
                 _hash = SOURCE.getString("hash");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -237,12 +220,8 @@ public class Signature implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -263,12 +242,8 @@ public class Signature implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -289,17 +264,16 @@ public class Signature implements Parcelable {
 
     public Task getTask() {
         try {
-            if (_task != null)
-                return _task;
-
-            if (SOURCE.has("task") && SOURCE.get("task") != null)
+            if (_task == null && SOURCE.has("task") && SOURCE.get("task") != null)
                 _task = Task.fromJson(SOURCE.getJsonObject("task"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _task;
+        if (_task != null && _task.isSet())
+            return _task;
+
+        return null;
     }
 
     public Signature task(Task task) throws ParseException {
@@ -315,17 +289,16 @@ public class Signature implements Parcelable {
 
     public TimeZone getTimeZone() {
         try {
-            if (_timeZone != null)
-                return _timeZone;
-
-            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+            if (_timeZone == null && SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
                 _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _timeZone;
+        if (_timeZone != null && _timeZone.isSet())
+            return _timeZone;
+
+        return null;
     }
 
     public Signature timeZone(TimeZone timeZone) throws ParseException {
@@ -341,12 +314,8 @@ public class Signature implements Parcelable {
 
     public String getWorklog() {
         try {
-            if (_worklog != null)
-                return _worklog;
-
-            if (SOURCE.has("worklog") && SOURCE.get("worklog") != null)
+            if (_worklog == null && SOURCE.has("worklog") && SOURCE.get("worklog") != null)
                 _worklog = SOURCE.getString("worklog");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -462,6 +431,11 @@ public class Signature implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {

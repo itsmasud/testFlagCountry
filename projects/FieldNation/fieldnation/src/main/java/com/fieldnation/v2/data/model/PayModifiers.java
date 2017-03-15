@@ -86,17 +86,16 @@ public class PayModifiers implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _metadata;
+        if (_metadata != null && _metadata.isSet())
+            return _metadata;
+
+        return null;
     }
 
     public PayModifiers metadata(ListEnvelope metadata) throws ParseException {
@@ -139,17 +138,16 @@ public class PayModifiers implements Parcelable {
 
     public PayModifiersSum getSum() {
         try {
-            if (_sum != null)
-                return _sum;
-
-            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+            if (_sum == null && SOURCE.has("sum") && SOURCE.get("sum") != null)
                 _sum = PayModifiersSum.fromJson(SOURCE.getJsonObject("sum"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _sum;
+        if (_sum != null && _sum.isSet())
+            return _sum;
+
+        return null;
     }
 
     public PayModifiers sum(PayModifiersSum sum) throws ParseException {
@@ -271,4 +269,9 @@ public class PayModifiers implements Parcelable {
         }
         return _actionsSet;
     }
+
+    public boolean isSet() {
+        return true;
+    }
+
 }

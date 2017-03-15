@@ -53,17 +53,16 @@ public class TaskDocument implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public TaskDocument created(Date created) throws ParseException {
@@ -79,17 +78,16 @@ public class TaskDocument implements Parcelable {
 
     public TaskDocumentFile getFile() {
         try {
-            if (_file != null)
-                return _file;
-
-            if (SOURCE.has("file") && SOURCE.get("file") != null)
+            if (_file == null && SOURCE.has("file") && SOURCE.get("file") != null)
                 _file = TaskDocumentFile.fromJson(SOURCE.getJsonObject("file"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _file;
+        if (_file != null && _file.isSet())
+            return _file;
+
+        return null;
     }
 
     public TaskDocument file(TaskDocumentFile file) throws ParseException {
@@ -105,12 +103,8 @@ public class TaskDocument implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,17 +125,16 @@ public class TaskDocument implements Parcelable {
 
     public TaskDocumentLink getLink() {
         try {
-            if (_link != null)
-                return _link;
-
-            if (SOURCE.has("link") && SOURCE.get("link") != null)
+            if (_link == null && SOURCE.has("link") && SOURCE.get("link") != null)
                 _link = TaskDocumentLink.fromJson(SOURCE.getJsonObject("link"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _link;
+        if (_link != null && _link.isSet())
+            return _link;
+
+        return null;
     }
 
     public TaskDocument link(TaskDocumentLink link) throws ParseException {
@@ -157,12 +150,8 @@ public class TaskDocument implements Parcelable {
 
     public Integer getRevision() {
         try {
-            if (_revision != null)
-                return _revision;
-
-            if (SOURCE.has("revision") && SOURCE.get("revision") != null)
+            if (_revision == null && SOURCE.has("revision") && SOURCE.get("revision") != null)
                 _revision = SOURCE.getInt("revision");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -237,5 +226,13 @@ public class TaskDocument implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

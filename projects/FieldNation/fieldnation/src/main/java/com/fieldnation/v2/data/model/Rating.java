@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -59,12 +57,8 @@ public class Rating implements Parcelable {
 
     public Double getAssignmentFulfilledPercent() {
         try {
-            if (_assignmentFulfilledPercent != null)
-                return _assignmentFulfilledPercent;
-
-            if (SOURCE.has("assignment_fulfilled_percent") && SOURCE.get("assignment_fulfilled_percent") != null)
+            if (_assignmentFulfilledPercent == null && SOURCE.has("assignment_fulfilled_percent") && SOURCE.get("assignment_fulfilled_percent") != null)
                 _assignmentFulfilledPercent = SOURCE.getDouble("assignment_fulfilled_percent");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -85,17 +79,16 @@ public class Rating implements Parcelable {
 
     public RatingCompany getCompany() {
         try {
-            if (_company != null)
-                return _company;
-
-            if (SOURCE.has("company") && SOURCE.get("company") != null)
+            if (_company == null && SOURCE.has("company") && SOURCE.get("company") != null)
                 _company = RatingCompany.fromJson(SOURCE.getJsonObject("company"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _company;
+        if (_company != null && _company.isSet())
+            return _company;
+
+        return null;
     }
 
     public Rating company(RatingCompany company) throws ParseException {
@@ -111,12 +104,8 @@ public class Rating implements Parcelable {
 
     public Double getFollowInstructionsPercent() {
         try {
-            if (_followInstructionsPercent != null)
-                return _followInstructionsPercent;
-
-            if (SOURCE.has("follow_instructions_percent") && SOURCE.get("follow_instructions_percent") != null)
+            if (_followInstructionsPercent == null && SOURCE.has("follow_instructions_percent") && SOURCE.get("follow_instructions_percent") != null)
                 _followInstructionsPercent = SOURCE.getDouble("follow_instructions_percent");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -137,12 +126,8 @@ public class Rating implements Parcelable {
 
     public Double getOnTimePercent() {
         try {
-            if (_onTimePercent != null)
-                return _onTimePercent;
-
-            if (SOURCE.has("on_time_percent") && SOURCE.get("on_time_percent") != null)
+            if (_onTimePercent == null && SOURCE.has("on_time_percent") && SOURCE.get("on_time_percent") != null)
                 _onTimePercent = SOURCE.getDouble("on_time_percent");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -163,12 +148,8 @@ public class Rating implements Parcelable {
 
     public Double getRightDeliverablesPercent() {
         try {
-            if (_rightDeliverablesPercent != null)
-                return _rightDeliverablesPercent;
-
-            if (SOURCE.has("right_deliverables_percent") && SOURCE.get("right_deliverables_percent") != null)
+            if (_rightDeliverablesPercent == null && SOURCE.has("right_deliverables_percent") && SOURCE.get("right_deliverables_percent") != null)
                 _rightDeliverablesPercent = SOURCE.getDouble("right_deliverables_percent");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -189,12 +170,8 @@ public class Rating implements Parcelable {
 
     public Double getStars() {
         try {
-            if (_stars != null)
-                return _stars;
-
-            if (SOURCE.has("stars") && SOURCE.get("stars") != null)
+            if (_stars == null && SOURCE.has("stars") && SOURCE.get("stars") != null)
                 _stars = SOURCE.getDouble("stars");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -215,12 +192,8 @@ public class Rating implements Parcelable {
 
     public Integer getTotalRatings() {
         try {
-            if (_totalRatings != null)
-                return _totalRatings;
-
-            if (SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
+            if (_totalRatings == null && SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
                 _totalRatings = SOURCE.getInt("total_ratings");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -295,5 +268,13 @@ public class Rating implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }
