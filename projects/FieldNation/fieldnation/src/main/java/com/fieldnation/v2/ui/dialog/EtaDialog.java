@@ -30,16 +30,22 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.User;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.text.DateFormatSymbols;
@@ -65,13 +71,13 @@ public class EtaDialog extends FullScreenDialog {
     private static final String STATE_ETA_CALENDAR = "STATE_ETA_CALENDAR";
 
     // Params
-    public static final String PARAM_DIALOG_TYPE = "type";
-    public static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
-    public static final String PARAM_DIALOG_TYPE_REQUEST = "request";
-    public static final String PARAM_DIALOG_TYPE_CONFIRM = "confirm";
-    public static final String PARAM_DIALOG_TYPE_ETA = "eta";
-    public static final String PARAM_DIALOG_TYPE_EDIT = "edit";
-    public static final String PARAM_WORKORDER = "workOrder";
+    //public static final String PARAM_DIALOG_TYPE = "type";
+    private static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
+    private static final String PARAM_DIALOG_TYPE_REQUEST = "request";
+    //public static final String PARAM_DIALOG_TYPE_CONFIRM = "confirm";
+    private static final String PARAM_DIALOG_TYPE_ADD = "add";
+    private static final String PARAM_DIALOG_TYPE_EDIT = "edit";
+    private static final String PARAM_WORKORDER = "workOrder";
 
     private final static int MIN_JOB_DURATION = 900000;
     //    private final static int MIN_EXPIRING_DURATION = 900000;
@@ -209,8 +215,22 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
-        _dialogType = params.getString(PARAM_DIALOG_TYPE);
         _workOrder = params.getParcelable(PARAM_WORKORDER);
+
+        if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            _dialogType = PARAM_DIALOG_TYPE_REQUEST;
+        } else if (_workOrder.getRoutes() != null
+                && _workOrder.getRoutes().getOpenRoute() != null
+                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+            _dialogType = PARAM_DIALOG_TYPE_ACCEPT;
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
+            _dialogType = PARAM_DIALOG_TYPE_ADD;
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+            _dialogType = PARAM_DIALOG_TYPE_EDIT;
+        }
 
         try {
             if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
@@ -277,6 +297,7 @@ public class EtaDialog extends FullScreenDialog {
         if (misc.isEmptyOrNull(_dialogType))
             return;
 
+        // Wod request work, Woc Request work
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
             _toolbar.setTitle("Request " + _workOrder.getWorkOrderId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
@@ -292,39 +313,7 @@ public class EtaDialog extends FullScreenDialog {
             _termsWarningTextView.setText(spanned);
             _termsWarningTextView.setVisibility(View.VISIBLE);
 
-        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-            _toolbar.setTitle("Confirm " + _workOrder.getWorkOrderId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
-            _expirationLayout.setVisibility(View.GONE);
-
-            _etaSwitch.setChecked(true);
-            _etaSwitchLabel.setVisibility(View.GONE);
-            _etaSwitch.setVisibility(View.GONE);
-            _etaLayout.setVisibility(View.VISIBLE);
-            _termsWarningTextView.setVisibility(View.GONE);
-
-        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ETA)) {
-            _toolbar.setTitle("Set ETA " + _workOrder.getWorkOrderId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
-            _expirationLayout.setVisibility(View.GONE);
-
-            _etaSwitch.setChecked(true);
-            _etaSwitchLabel.setVisibility(View.GONE);
-            _etaSwitch.setVisibility(View.GONE);
-            _etaLayout.setVisibility(View.VISIBLE);
-            _termsWarningTextView.setVisibility(View.GONE);
-
-        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
-            _toolbar.setTitle(R.string.dialog_eta_title);
-            _finishMenu.setTitle(App.get().getString(R.string.btn_save));
-            _expirationLayout.setVisibility(View.GONE);
-
-            _etaSwitch.setChecked(true);
-            _etaSwitch.setVisibility(View.GONE);
-            _etaSwitchLabel.setVisibility(View.GONE);
-            _etaLayout.setVisibility(View.VISIBLE);
-            _termsWarningTextView.setVisibility(View.GONE);
-
+            // Woc accept route, Wod Accept route (onSetEta)
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
             _toolbar.setTitle("Accept " + _workOrder.getWorkOrderId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
@@ -339,6 +328,45 @@ public class EtaDialog extends FullScreenDialog {
             spanned.setSpan(_terms_onClick, 53, 84, spanned.getSpanFlags(_terms_onClick));
             _termsWarningTextView.setText(spanned);
             _termsWarningTextView.setVisibility(View.VISIBLE);
+
+/*
+            // old confirm, work order start, confirm task
+        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
+            _toolbar.setTitle("Confirm " + _workOrder.getWorkOrderId());
+            _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
+            _expirationLayout.setVisibility(View.GONE);
+
+            _etaSwitch.setChecked(true);
+            _etaSwitchLabel.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
+            _termsWarningTextView.setVisibility(View.GONE);
+*/
+
+            // Add eta from WoC
+        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ADD)) {
+            _toolbar.setTitle("Set ETA " + _workOrder.getWorkOrderId());
+            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+            _expirationLayout.setVisibility(View.GONE);
+
+            _etaSwitch.setChecked(true);
+            _etaSwitchLabel.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
+            _termsWarningTextView.setVisibility(View.GONE);
+
+            // from WoD. change the eta
+        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
+            _toolbar.setTitle(R.string.dialog_eta_title);
+            _finishMenu.setTitle(App.get().getString(R.string.btn_save));
+            _expirationLayout.setVisibility(View.GONE);
+
+            _etaSwitch.setChecked(true);
+            _etaSwitch.setVisibility(View.GONE);
+            _etaSwitchLabel.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
+            _termsWarningTextView.setVisibility(View.GONE);
+
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -746,29 +774,44 @@ public class EtaDialog extends FullScreenDialog {
 
             try {
                 switch (_dialogType) {
-                    case PARAM_DIALOG_TYPE_REQUEST:
+                    case PARAM_DIALOG_TYPE_REQUEST: {
                         _onRequestedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
+                        Request request = new Request();
+                        request.setNotes(_noteEditText.getText().toString().trim());
+                        if (_expiresCheckBox.isChecked())
+                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds * 1000));
+
                         if (_etaSwitch.isChecked()) {
-                            String startDate = ISO8601.fromCalendar(_etaStart);
-                            WorkorderClient.actionRequest(
-                                    App.get(),
-                                    _workOrder.getWorkOrderId(),
-                                    _expiresCheckBox.isChecked() ? _expiringDurationSeconds : INVALID_NUMBER,
-                                    startDate,
-                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                    _noteEditText.getText().toString().trim());
-                        } else {
-                            WorkorderClient.actionRequest(
-                                    App.get(),
-                                    _workOrder.getWorkOrderId(),
-                                    _expiresCheckBox.isChecked() ? _expiringDurationSeconds : INVALID_NUMBER,
-                                    null, null,
-                                    _noteEditText.getText().toString().trim());
+                            ETA eta = new ETA();
+                            eta.setStart(new Date(_etaStart));
+                            eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                            eta.setUser(new User().id((int) App.getProfileId()));
+                            request.setEta(eta);
                         }
+                        WorkordersWebApi.request(App.get(), _workOrder.getWorkOrderId(), request);
+
                         dismiss(true);
                         break;
-                    case PARAM_DIALOG_TYPE_CONFIRM:
+                    }
+
+                    case PARAM_DIALOG_TYPE_ACCEPT: {
+                        _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+
+                        Assignee assignee = new Assignee();
+                        assignee.setUser(new User().id((int) App.getProfileId()));
+                        WorkordersWebApi.assignUser(App.get(), _workOrder.getWorkOrderId(), assignee);
+
+                        // TODO this needs to happen after the accept
+                        ETA eta = new ETA();
+                        eta.setStart(new Date(_etaStart));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.setUser(new User().id((int) App.getProfileId()));
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                        break;
+                    }
+/*
+                    case PARAM_DIALOG_TYPE_CONFIRM:{
                         _onConfirmedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
 
                         if (_etaSwitch.isChecked()) {
@@ -788,51 +831,20 @@ public class EtaDialog extends FullScreenDialog {
                         }
                         dismiss(true);
                         break;
-                    case PARAM_DIALOG_TYPE_ETA:
+                        }
+*/
+
+                    case PARAM_DIALOG_TYPE_ADD:  // add eta
+                    case PARAM_DIALOG_TYPE_EDIT: {
                         _onEtaDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
-
-                        if (_etaSwitch.isChecked()) {
-                            String startDate = ISO8601.fromCalendar(_etaStart);
-                            WorkorderClient.actionConfirm(
-                                    App.get(),
-                                    _workOrder.getWorkOrderId(),
-                                    startDate,
-                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                    _noteEditText.getText().toString().trim());
-                        } else {
-                            WorkorderClient.actionConfirm(
-                                    App.get(),
-                                    _workOrder.getWorkOrderId(),
-                                    null, null,
-                                    _noteEditText.getText().toString().trim());
-                        }
-
+                        ETA eta = new ETA();
+                        eta.setStart(new Date(_etaStart));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.setUser(new User().id((int) App.getProfileId()));
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
                         dismiss(true);
                         break;
-                    case PARAM_DIALOG_TYPE_ACCEPT:
-                    case PARAM_DIALOG_TYPE_EDIT:
-                        if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT))
-                            _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
-
-                        if (_etaSwitch.isChecked()) {
-                            String startDate = ISO8601.fromCalendar(_etaStart);
-                            WorkorderClient.actionAcceptAssignment(
-                                    App.get(),
-                                    _workOrder.getWorkOrderId(),
-                                    startDate,
-                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                    _noteEditText.getText().toString().trim(),
-                                    _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
-                        } else {
-                            WorkorderClient.actionAcceptAssignment(
-                                    App.get(),
-                                    _workOrder.getWorkOrderId(),
-                                    null, null,
-                                    _noteEditText.getText().toString().trim(),
-                                    _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
-                        }
-                        dismiss(true);
-                        break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -841,10 +853,9 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder, String dialogType) {
+    public static void show(Context context, String uid, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORKORDER, workOrder);
-        params.putString(PARAM_DIALOG_TYPE, dialogType);
         Controller.show(context, uid, EtaDialog.class, params);
     }
 

@@ -526,7 +526,7 @@ TODO     private void setTasks(List<Task> tasks) {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -930,12 +930,12 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
             }
         }
 
         @Override
-        public void onConfirmAssignment() {
+        public void onAccept() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workOrder.getWorkOrderId());
 
@@ -944,7 +944,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
             }
         }
 
@@ -973,7 +973,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workOrder.getWorkOrderId());
 
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
 
         @Override
@@ -1070,8 +1070,8 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         }
 
         @Override
-        public void onConfirmAssignment(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+        public void onSetEta(Task task) {
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
 
         @Override

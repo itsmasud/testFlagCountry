@@ -36,6 +36,7 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -443,9 +444,12 @@ public class WorkOrderCard extends RelativeLayout {
                     _workOrder.getBundle().getMetadata().getTotal()));
 
             // accept
-//            button.setVisibility(VISIBLE);
-//            button.setOnClickListener(_accept_onClick);
-//            button.setText(R.string.btn_accept);
+        } else if (_workOrder.getRoutes() != null
+                && _workOrder.getRoutes().getOpenRoute() != null
+                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_accept_onClick);
+            button.setText(R.string.btn_accept);
 
             // request
         } else if (_workOrder.getRequests() != null
@@ -638,7 +642,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
     };
 
@@ -654,7 +658,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
     };
 
@@ -678,7 +682,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ETA, null, _workOrder.getWorkOrderId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ETA);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
     };
 
@@ -846,11 +850,9 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ActivityResultClient.startActivity(
-                    App.get(),
+            ActivityResultClient.startActivity(App.get(),
                     WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getWorkOrderId()),
-                    R.anim.activity_slide_in_right,
-                    R.anim.activity_slide_out_left);
+                    R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
         }
     };
 }

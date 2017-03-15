@@ -33,7 +33,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
     private TextView _date1TextView;
     private TextView _type2TextView;
     private TextView _date2TextView;
-    private Button _addButton;
+    private Button _editEtaButton;
 
     // Data
     private WorkOrder _workOrder;
@@ -62,8 +62,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         _date1TextView = (TextView) findViewById(R.id.date1_textview);
         _type2TextView = (TextView) findViewById(R.id.type2_textview);
         _date2TextView = (TextView) findViewById(R.id.date2_textview);
-        _addButton = (Button) findViewById(R.id.add_button);
-        _addButton.setOnClickListener(_add_onClick);
+        _editEtaButton = (Button) findViewById(R.id.add_button);
+        _editEtaButton.setOnClickListener(_editEta_onClick);
 
         setVisibility(View.GONE);
     }
@@ -98,9 +98,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         if (_workOrder.getStatus() != null
                 && _workOrder.getStatus().getId() != null
                 && _workOrder.getStatus().getId() == 3) {
-            _addButton.setVisibility(VISIBLE);
+            _editEtaButton.setVisibility(VISIBLE);
         } else {
-            _addButton.setVisibility(GONE);
+            _editEtaButton.setVisibility(GONE);
         }
 
         Schedule schedule = _workOrder.getSchedule();
@@ -181,10 +181,10 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         }
     }
 
-    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _editEta_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
     };
 }

@@ -198,7 +198,7 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
                 switch (task.getType().getId()) {
 
                     case 1:
-                        _listener.onConfirmAssignment(task);
+                        _listener.onSetEta(task);
                         break;
                     case 2:
                         _listener.onCloseOutNotes(task);
@@ -248,7 +248,7 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
 
         void onCloseOutNotes(Task task);
 
-        void onConfirmAssignment(Task task);
+        void onSetEta(Task task);
 
         void onCustomField(Task task);
 

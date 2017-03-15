@@ -36,6 +36,9 @@ public class Request implements Parcelable {
     @Json(name = "created")
     private Date _created;
 
+    @Json(name = "eta")
+    private ETA _eta;
+
     @Json(name = "expenses")
     private Expense[] _expenses;
 
@@ -197,6 +200,31 @@ public class Request implements Parcelable {
     public Request created(Date created) throws ParseException {
         _created = created;
         SOURCE.put("created", created.getJson());
+        return this;
+    }
+
+    public void setEta(ETA eta) throws ParseException {
+        _eta = eta;
+        SOURCE.put("eta", eta.getJson());
+    }
+
+    public ETA getEta() {
+        try {
+            if (_eta == null && SOURCE.has("eta") && SOURCE.get("eta") != null)
+                _eta = ETA.fromJson(SOURCE.getJsonObject("eta"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_eta != null && _eta.isSet())
+            return _eta;
+
+        return null;
+    }
+
+    public Request eta(ETA eta) throws ParseException {
+        _eta = eta;
+        SOURCE.put("eta", eta.getJson());
         return this;
     }
 
@@ -520,6 +548,11 @@ public class Request implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -528,9 +561,5 @@ public class Request implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
-    }
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
     }
 }
