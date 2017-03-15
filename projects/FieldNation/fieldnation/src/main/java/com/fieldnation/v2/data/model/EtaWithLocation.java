@@ -53,17 +53,16 @@ public class EtaWithLocation implements Parcelable {
 
     public Bundle getBundle() {
         try {
-            if (_bundle != null)
-                return _bundle;
-
-            if (SOURCE.has("bundle") && SOURCE.get("bundle") != null)
+            if (_bundle == null && SOURCE.has("bundle") && SOURCE.get("bundle") != null)
                 _bundle = Bundle.fromJson(SOURCE.getJsonObject("bundle"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _bundle;
+        if (_bundle != null && _bundle.isSet())
+            return _bundle;
+
+        return null;
     }
 
     public EtaWithLocation bundle(Bundle bundle) throws ParseException {
@@ -79,17 +78,16 @@ public class EtaWithLocation implements Parcelable {
 
     public Location getLocation() {
         try {
-            if (_location != null)
-                return _location;
-
-            if (SOURCE.has("location") && SOURCE.get("location") != null)
+            if (_location == null && SOURCE.has("location") && SOURCE.get("location") != null)
                 _location = Location.fromJson(SOURCE.getJsonObject("location"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _location;
+        if (_location != null && _location.isSet())
+            return _location;
+
+        return null;
     }
 
     public EtaWithLocation location(Location location) throws ParseException {
@@ -105,17 +103,16 @@ public class EtaWithLocation implements Parcelable {
 
     public Schedule getSchedule() {
         try {
-            if (_schedule != null)
-                return _schedule;
-
-            if (SOURCE.has("schedule") && SOURCE.get("schedule") != null)
+            if (_schedule == null && SOURCE.has("schedule") && SOURCE.get("schedule") != null)
                 _schedule = Schedule.fromJson(SOURCE.getJsonObject("schedule"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _schedule;
+        if (_schedule != null && _schedule.isSet())
+            return _schedule;
+
+        return null;
     }
 
     public EtaWithLocation schedule(Schedule schedule) throws ParseException {
@@ -131,12 +128,8 @@ public class EtaWithLocation implements Parcelable {
 
     public String getTitle() {
         try {
-            if (_title != null)
-                return _title;
-
-            if (SOURCE.has("title") && SOURCE.get("title") != null)
+            if (_title == null && SOURCE.has("title") && SOURCE.get("title") != null)
                 _title = SOURCE.getString("title");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,12 +150,8 @@ public class EtaWithLocation implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -237,5 +226,13 @@ public class EtaWithLocation implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

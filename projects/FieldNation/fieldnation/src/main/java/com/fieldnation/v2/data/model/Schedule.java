@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -47,6 +50,9 @@ public class Schedule implements Parcelable {
 
     @Json(name = "time_zone")
     private TimeZone _timeZone;
+
+    @Json(name = "today_tomorrow")
+    private TodayTomorrowEnum _todayTomorrow;
 
     @Json(name = "work_order_id")
     private Integer _workOrderId;
@@ -104,12 +110,8 @@ public class Schedule implements Parcelable {
 
     public String getCorrelationId() {
         try {
-            if (_correlationId != null)
-                return _correlationId;
-
-            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
                 _correlationId = SOURCE.getString("correlation_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -156,12 +158,8 @@ public class Schedule implements Parcelable {
 
     public Boolean getNoRefresh() {
         try {
-            if (_noRefresh != null)
-                return _noRefresh;
-
-            if (SOURCE.has("no_refresh") && SOURCE.get("no_refresh") != null)
+            if (_noRefresh == null && SOURCE.has("no_refresh") && SOURCE.get("no_refresh") != null)
                 _noRefresh = SOURCE.getBoolean("no_refresh");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -182,17 +180,16 @@ public class Schedule implements Parcelable {
 
     public OnMyWay getOnMyWay() {
         try {
-            if (_onMyWay != null)
-                return _onMyWay;
-
-            if (SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
+            if (_onMyWay == null && SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
                 _onMyWay = OnMyWay.fromJson(SOURCE.getJsonObject("on_my_way"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _onMyWay;
+        if (_onMyWay != null && _onMyWay.isSet())
+            return _onMyWay;
+
+        return null;
     }
 
     public Schedule onMyWay(OnMyWay onMyWay) throws ParseException {
@@ -208,12 +205,8 @@ public class Schedule implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -234,17 +227,16 @@ public class Schedule implements Parcelable {
 
     public ScheduleServiceWindow getServiceWindow() {
         try {
-            if (_serviceWindow != null)
-                return _serviceWindow;
-
-            if (SOURCE.has("service_window") && SOURCE.get("service_window") != null)
+            if (_serviceWindow == null && SOURCE.has("service_window") && SOURCE.get("service_window") != null)
                 _serviceWindow = ScheduleServiceWindow.fromJson(SOURCE.getJsonObject("service_window"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _serviceWindow;
+        if (_serviceWindow != null && _serviceWindow.isSet())
+            return _serviceWindow;
+
+        return null;
     }
 
     public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) throws ParseException {
@@ -260,12 +252,8 @@ public class Schedule implements Parcelable {
 
     public Integer getStatusId() {
         try {
-            if (_statusId != null)
-                return _statusId;
-
-            if (SOURCE.has("status_id") && SOURCE.get("status_id") != null)
+            if (_statusId == null && SOURCE.has("status_id") && SOURCE.get("status_id") != null)
                 _statusId = SOURCE.getInt("status_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -286,22 +274,43 @@ public class Schedule implements Parcelable {
 
     public TimeZone getTimeZone() {
         try {
-            if (_timeZone != null)
-                return _timeZone;
-
-            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+            if (_timeZone == null && SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
                 _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _timeZone;
+        if (_timeZone != null && _timeZone.isSet())
+            return _timeZone;
+
+        return null;
     }
 
     public Schedule timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
         SOURCE.put("time_zone", timeZone.getJson());
+        return this;
+    }
+
+    public void setTodayTomorrow(TodayTomorrowEnum todayTomorrow) throws ParseException {
+        _todayTomorrow = todayTomorrow;
+        SOURCE.put("today_tomorrow", todayTomorrow.toString());
+    }
+
+    public TodayTomorrowEnum getTodayTomorrow() {
+        try {
+            if (_todayTomorrow == null && SOURCE.has("today_tomorrow") && SOURCE.get("today_tomorrow") != null)
+                _todayTomorrow = TodayTomorrowEnum.fromString(SOURCE.getString("today_tomorrow"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _todayTomorrow;
+    }
+
+    public Schedule todayTomorrow(TodayTomorrowEnum todayTomorrow) throws ParseException {
+        _todayTomorrow = todayTomorrow;
+        SOURCE.put("today_tomorrow", todayTomorrow.toString());
         return this;
     }
 
@@ -312,12 +321,8 @@ public class Schedule implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -334,6 +339,41 @@ public class Schedule implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
+    public enum TodayTomorrowEnum {
+        @Json(name = "Today")
+        TODAY("Today"),
+        @Json(name = "Tomorrow")
+        TOMORROW("Tomorrow");
+
+        private String value;
+
+        TodayTomorrowEnum(String value) {
+            this.value = value;
+        }
+
+        public static TodayTomorrowEnum fromString(String value) {
+            TodayTomorrowEnum[] values = values();
+            for (TodayTomorrowEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static TodayTomorrowEnum[] fromJsonArray(JsonArray jsonArray) {
+            TodayTomorrowEnum[] list = new TodayTomorrowEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     public enum ActionsEnum {
         @Json(name = "eta")
         ETA("eta");
@@ -433,6 +473,11 @@ public class Schedule implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getCorrelationId());
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -441,9 +486,5 @@ public class Schedule implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
-    }
-
-    public boolean isSet(){
-        return getServiceWindow() != null && getServiceWindow().isSet();
     }
 }

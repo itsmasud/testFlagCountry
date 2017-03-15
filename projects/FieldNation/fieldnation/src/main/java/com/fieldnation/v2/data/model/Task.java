@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -17,7 +20,6 @@ import java.util.Set;
 /**
  * Created by dmgen from swagger.
  */
-
 
 public class Task implements Parcelable {
     private static final String TAG = "Task";
@@ -589,9 +591,8 @@ public class Task implements Parcelable {
 
     public OnMyWay getOnMyWay() {
         try {
-            if (_onMyWay == null && SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null) {
+            if (_onMyWay == null && SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
                 _onMyWay = OnMyWay.fromJson(SOURCE.getJsonObject("on_my_way"));
-            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

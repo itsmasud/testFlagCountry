@@ -156,10 +156,14 @@ public class Date implements Parcelable {
         dest.writeParcelable(getJson(), flags);
     }
 
-
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getUtc());
+    }
+
     public Date(Calendar calendar) throws ParseException {
         this();
         utc(DateUtils.v2CalToUtc(calendar));
@@ -176,9 +180,5 @@ public class Date implements Parcelable {
 
     public long getUtcLong() throws ParseException {
         return DateUtils.v2UtcToLong(getUtc());
-    }
-
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getUtc());
     }
 }
