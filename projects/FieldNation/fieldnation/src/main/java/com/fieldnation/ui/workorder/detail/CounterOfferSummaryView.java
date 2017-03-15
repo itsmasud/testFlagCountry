@@ -128,10 +128,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
             }
         }
 // TODO: probably this is a bad way of check if schedule is available or not
-        if (requests.getOpenRequest().getSchedule() == null
-                || requests.getOpenRequest().getSchedule().getServiceWindow() == null
-                || requests.getOpenRequest().getSchedule().getServiceWindow().getStart() == null
-                || misc.isEmptyOrNull(requests.getOpenRequest().getSchedule().getServiceWindow().getStart().getUtc())) {
+        if (requests.getOpenRequest().getSchedule() == null) {
             _scheduleLayout.setVisibility(GONE);
         } else {
             Schedule schedule = requests.getOpenRequest().getSchedule();
@@ -157,11 +154,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
 
     public String getDisplayString(Schedule schedule) {
-
-        if (schedule != null
-                && schedule.getServiceWindow() != null
-                && schedule.getServiceWindow().getMode() != null
-                && schedule.getServiceWindow().getMode().equals(ScheduleServiceWindow.ModeEnum.EXACT)) {
+        if (schedule.getServiceWindow().getMode().equals(ScheduleServiceWindow.ModeEnum.EXACT)) {
             try {
                 String dayDate;
                 String time = "";

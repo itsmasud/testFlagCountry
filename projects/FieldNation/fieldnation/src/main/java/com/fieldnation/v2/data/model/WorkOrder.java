@@ -1245,6 +1245,11 @@ public class WorkOrder implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getWorkOrderId() != null && getWorkOrderId() != 0;
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -1253,9 +1258,5 @@ public class WorkOrder implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
-    }
-
-    public boolean isSet() {
-        return getWorkOrderId() != null && getWorkOrderId() != 0;
     }
 }

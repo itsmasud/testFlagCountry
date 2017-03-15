@@ -62,12 +62,8 @@ public class OnMyWay implements Parcelable {
 
     public Boolean getActive() {
         try {
-            if (_active != null)
-                return _active;
-
-            if (SOURCE.has("active") && SOURCE.get("active") != null)
+            if (_active == null && SOURCE.has("active") && SOURCE.get("active") != null)
                 _active = SOURCE.getBoolean("active");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -88,17 +84,16 @@ public class OnMyWay implements Parcelable {
 
     public Coords getCoords() {
         try {
-            if (_coords != null)
-                return _coords;
-
-            if (SOURCE.has("coords") && SOURCE.get("coords") != null)
+            if (_coords == null && SOURCE.has("coords") && SOURCE.get("coords") != null)
                 _coords = Coords.fromJson(SOURCE.getJsonObject("coords"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _coords;
+        if (_coords != null && _coords.isSet())
+            return _coords;
+
+        return null;
     }
 
     public OnMyWay coords(Coords coords) throws ParseException {
@@ -114,17 +109,16 @@ public class OnMyWay implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public OnMyWay created(Date created) throws ParseException {
@@ -140,12 +134,8 @@ public class OnMyWay implements Parcelable {
 
     public Double getDistance() {
         try {
-            if (_distance != null)
-                return _distance;
-
-            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+            if (_distance == null && SOURCE.has("distance") && SOURCE.get("distance") != null)
                 _distance = SOURCE.getDouble("distance");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -166,12 +156,8 @@ public class OnMyWay implements Parcelable {
 
     public Integer getDriveTime() {
         try {
-            if (_driveTime != null)
-                return _driveTime;
-
-            if (SOURCE.has("drive_time") && SOURCE.get("drive_time") != null)
+            if (_driveTime == null && SOURCE.has("drive_time") && SOURCE.get("drive_time") != null)
                 _driveTime = SOURCE.getInt("drive_time");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -192,12 +178,8 @@ public class OnMyWay implements Parcelable {
 
     public Integer getEstimatedDelay() {
         try {
-            if (_estimatedDelay != null)
-                return _estimatedDelay;
-
-            if (SOURCE.has("estimated_delay") && SOURCE.get("estimated_delay") != null)
+            if (_estimatedDelay == null && SOURCE.has("estimated_delay") && SOURCE.get("estimated_delay") != null)
                 _estimatedDelay = SOURCE.getInt("estimated_delay");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -218,12 +200,8 @@ public class OnMyWay implements Parcelable {
 
     public String getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = SOURCE.getString("status");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -244,12 +222,8 @@ public class OnMyWay implements Parcelable {
 
     public String getSubstatus() {
         try {
-            if (_substatus != null)
-                return _substatus;
-
-            if (SOURCE.has("substatus") && SOURCE.get("substatus") != null)
+            if (_substatus == null && SOURCE.has("substatus") && SOURCE.get("substatus") != null)
                 _substatus = SOURCE.getString("substatus");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -324,5 +298,13 @@ public class OnMyWay implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

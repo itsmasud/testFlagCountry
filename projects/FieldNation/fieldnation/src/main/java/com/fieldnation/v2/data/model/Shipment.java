@@ -103,17 +103,16 @@ public class Shipment implements Parcelable {
 
     public ShipmentCarrier getCarrier() {
         try {
-            if (_carrier != null)
-                return _carrier;
-
-            if (SOURCE.has("carrier") && SOURCE.get("carrier") != null)
+            if (_carrier == null && SOURCE.has("carrier") && SOURCE.get("carrier") != null)
                 _carrier = ShipmentCarrier.fromJson(SOURCE.getJsonObject("carrier"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _carrier;
+        if (_carrier != null && _carrier.isSet())
+            return _carrier;
+
+        return null;
     }
 
     public Shipment carrier(ShipmentCarrier carrier) throws ParseException {
@@ -129,17 +128,16 @@ public class Shipment implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public Shipment created(Date created) throws ParseException {
@@ -155,12 +153,8 @@ public class Shipment implements Parcelable {
 
     public DirectionEnum getDirection() {
         try {
-            if (_direction != null)
-                return _direction;
-
-            if (SOURCE.has("direction") && SOURCE.get("direction") != null)
+            if (_direction == null && SOURCE.has("direction") && SOURCE.get("direction") != null)
                 _direction = DirectionEnum.fromString(SOURCE.getString("direction"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -181,12 +175,8 @@ public class Shipment implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -207,12 +197,8 @@ public class Shipment implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -233,12 +219,8 @@ public class Shipment implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -259,17 +241,16 @@ public class Shipment implements Parcelable {
 
     public ShipmentTask getTask() {
         try {
-            if (_task != null)
-                return _task;
-
-            if (SOURCE.has("task") && SOURCE.get("task") != null)
+            if (_task == null && SOURCE.has("task") && SOURCE.get("task") != null)
                 _task = ShipmentTask.fromJson(SOURCE.getJsonObject("task"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _task;
+        if (_task != null && _task.isSet())
+            return _task;
+
+        return null;
     }
 
     public Shipment task(ShipmentTask task) throws ParseException {
@@ -285,17 +266,16 @@ public class Shipment implements Parcelable {
 
     public User getUser() {
         try {
-            if (_user != null)
-                return _user;
-
-            if (SOURCE.has("user") && SOURCE.get("user") != null)
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
                 _user = User.fromJson(SOURCE.getJsonObject("user"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _user;
+        if (_user != null && _user.isSet())
+            return _user;
+
+        return null;
     }
 
     public Shipment user(User user) throws ParseException {
@@ -484,6 +464,11 @@ public class Shipment implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<Shipment.ActionsEnum> _actionsSet = null;
 
     public Set<Shipment.ActionsEnum> getActionsSet() {
