@@ -1481,33 +1481,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         }
     };
 
-
-/*
-TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            try {
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionAcceptAssignment(App.get(),
-                        _workOrder.getWorkOrderId(), startDate, ISO8601.fromUTC(end), null, false);
-                setLoading(true);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
-        }
-    };
-*/
-
     private final CounterOfferDialog.OnOkListener _counterOfferDialog_onOk = new CounterOfferDialog.OnOkListener() {
         @Override
         public void onOk(WorkOrder workorder, String reason, long expires, Pay pay, Schedule schedule,
