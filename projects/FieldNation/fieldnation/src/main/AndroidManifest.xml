@@ -216,11 +216,6 @@
             android:process=":frontside" />
 
         <activity
-            android:name=".ui.RateBuyerActivity"
-            android:exported="false"
-            android:process=":frontside" />
-
-        <activity
             android:name=".v2.ui.RateBuyerActivity"
             android:exported="false"
             android:process=":frontside" />
