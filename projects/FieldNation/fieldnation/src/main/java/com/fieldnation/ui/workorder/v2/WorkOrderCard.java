@@ -667,6 +667,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             if (_location != null)
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), _location.getLatitude(), _location.getLongitude());
@@ -678,6 +679,7 @@ public class WorkOrderCard extends RelativeLayout {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+*/
         }
     };
 

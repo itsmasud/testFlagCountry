@@ -45,7 +45,7 @@ public class RunningLateDialog extends SimpleDialog {
 
     private static final String PARAM_WORKORDER = "workOrder";
 
-    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "Other"};
+    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "30", "60", "Other"};
 
     // Ui
     private TextView _bodyTextView;

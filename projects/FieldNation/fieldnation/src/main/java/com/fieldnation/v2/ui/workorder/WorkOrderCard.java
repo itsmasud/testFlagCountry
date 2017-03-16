@@ -22,7 +22,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
-import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
@@ -31,7 +30,9 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
@@ -774,15 +775,23 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
-            if (_location != null)
-                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), _location.getLatitude(), _location.getLongitude());
-            else
-                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getWorkOrderId(), null, null);
+            try {
+                ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
+                if (_location != null)
+                    etaStatus.condition(new Condition()
+                            .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
 
+                ETA eta = new ETA();
+                eta.status(etaStatus);
+
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             try {
                 GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     };

@@ -53,7 +53,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
     private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
-    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "Other"};
+    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "30", "60", "Other"};
 
     // Ui
     private TextView _titleTextView;
