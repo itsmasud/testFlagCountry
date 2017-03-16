@@ -406,10 +406,17 @@ public class WorkOrderCard extends RelativeLayout {
             button.setOnClickListener(_eta_onClick);
             button.setText(R.string.btn_set_eta);
 
-            // ready (NCNS confirm)
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.CONFIRM)) {
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.MARK_READY_TO_GO)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_readyToGo_onClick);
+            button.setText(R.string.btn_ready_to_go);
+
+            // confirm
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_confirm_onClick);
             button.setText(R.string.btn_confirm);
 
             // on my way
@@ -427,9 +434,22 @@ public class WorkOrderCard extends RelativeLayout {
             button.setOnClickListener(_checkOut_onClick);
             button.setText(R.string.btn_check_out);
 
+            // mark complete
+//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+//            button.setVisibility(VISIBLE);
+//            button.setOnClickListener(_complete_onClick);
+//            button.setText(R.string.btn_complete);
+
             // check_in
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+                button.setText(R.string.btn_check_in_again);
+                button.setOnClickListener(_checkInAgain_onClick);
+            } else {
+                button.setText(R.string.btn_check_in);
+                button.setOnClickListener(_checkIn_onClick);
+            }
             button.setOnClickListener(_checkIn_onClick);
             button.setText(R.string.btn_check_in);
 
@@ -482,11 +502,6 @@ public class WorkOrderCard extends RelativeLayout {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewPayment_onClick);
             button.setText(R.string.btn_fees);
-
-//        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
-//            button.setVisibility(VISIBLE);
-//            button.setOnClickListener(_complete_onClick);
-//            button.setText(R.string.btn_complete);
         }
     }
 
@@ -604,6 +619,21 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
             WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
+        }
+    };
+
+    private final View.OnClickListener _checkInAgain_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN_AGAIN, null, _workOrder.getWorkOrderId());
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                        _workOrder.getPay().getBase().getUnits().intValue(),
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            } else {
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            }
         }
     };
 
