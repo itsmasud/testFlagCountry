@@ -390,6 +390,15 @@ public class WorkOrderCard extends RelativeLayout {
 
         if (false) {
 
+            // ack hold/
+        } else if (_workOrder.isOnHold() && !_workOrder.areHoldsAcknowledged()) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_ackHold_onClick);
+            button.setText(R.string.btn_acknowledge_hold);
+
+            // is on hold
+        } else if (_workOrder.isOnHold()) {
+
             // set eta
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
@@ -404,14 +413,12 @@ public class WorkOrderCard extends RelativeLayout {
             button.setText(R.string.btn_confirm);
 
             // on my way
-//            button.setVisibility(VISIBLE);
-//            button.setOnClickListener(_onMyWay_onClick);
-//            button.setText(R.string.btn_on_my_way);
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
+            button.setVisibility(VISIBLE);
+            button.setOnClickListener(_onMyWay_onClick);
+            button.setText(R.string.btn_on_my_way);
 
-            // ack hold/
-//            button.setVisibility(VISIBLE);
-//            button.setOnClickListener(_ackHold_onClick);
-//            button.setText(R.string.btn_acknowledge_hold);
 
             // check_out
         } else if (_workOrder.getTimeLogs().getOpenTimeLog() != null
@@ -510,9 +517,15 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // running late
-//        button.setVisibility(VISIBLE);
-//        button.setText(R.string.icon_time_issue_solid);
-//        button.setOnClickListener(_runningLate_onClick);
+        if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
+            button.setVisibility(VISIBLE);
+            button.setText(R.string.icon_time_issue_solid);
+            button.setOnClickListener(_runningLate_onClick);
+            buttonId++;
+            if (buttonId >= _secondaryButtons.length) return;
+            button = _secondaryButtons[buttonId];
+        }
 
         // report a problem
         if (workOrderActions.contains(WorkOrder.ActionsEnum.REPORT_A_PROBLEM)) {

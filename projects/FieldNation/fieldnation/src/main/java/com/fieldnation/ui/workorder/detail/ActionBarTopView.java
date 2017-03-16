@@ -165,8 +165,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+            _leftWhiteButton.setText(R.string.btn_running_late);
+            _leftWhiteButton.setOnClickListener(_runningLate_onClick);
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_confirm_onClick);
@@ -178,8 +178,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // on my way
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+            _leftWhiteButton.setText(R.string.btn_running_late);
+            _leftWhiteButton.setOnClickListener(_runningLate_onClick);
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_onMyWay_onClick);

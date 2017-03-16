@@ -40,6 +40,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
@@ -120,6 +121,7 @@ public class EtaDialog extends FullScreenDialog {
     private int _currentPosition = 1;
     private int[] _durations;
     private boolean _expires;
+    private WorkordersWebApi _workOrderClient;
 
 
     /*-*************************************-*/
@@ -170,6 +172,9 @@ public class EtaDialog extends FullScreenDialog {
         super.onResume();
         Log.v(TAG, "onResume");
 
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
         // Dialog setup, start them off with today
         _etaStartTimePicker = new TimePickerDialog(_expirationLayout.getContext(), _etaStartTime_onSet,
                 _etaStart.get(Calendar.HOUR_OF_DAY),
@@ -208,6 +213,9 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
+
         super.onPause();
         DurationPickerDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationPickerDialog_onOk);
     }
@@ -748,7 +756,6 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -802,12 +809,6 @@ public class EtaDialog extends FullScreenDialog {
                         assignee.setUser(new User().id((int) App.getProfileId()));
                         WorkordersWebApi.assignUser(App.get(), _workOrder.getWorkOrderId(), assignee);
 
-                        // TODO this needs to happen after the accept
-                        ETA eta = new ETA();
-                        eta.setStart(new Date(_etaStart));
-                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
-                        eta.setUser(new User().id((int) App.getProfileId()));
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
                         break;
                     }
 /*
@@ -853,12 +854,35 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
+    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderClient.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onAssignUser(boolean success, Error error) {
+            if (success) {
+                // TODO this might not work
+                try {
+                    ETA eta = new ETA();
+                    eta.setStart(new Date(_etaStart));
+                    eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                    eta.setUser(new User().id((int) App.getProfileId()));
+                    WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                    dismiss(true);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+        }
+    };
+
     public static void show(Context context, String uid, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORKORDER, workOrder);
         Controller.show(context, uid, EtaDialog.class, params);
     }
-
 
     /*-*****************************-*/
     /*-         Requested           -*/
