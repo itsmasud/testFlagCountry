@@ -120,7 +120,6 @@ public class EtaDialog extends FullScreenDialog {
     private boolean _isSwitchOn = true;
     private int _currentPosition = 1;
     private int[] _durations;
-    private boolean _expires;
     private WorkordersWebApi _workOrderClient;
 
 
@@ -748,9 +747,7 @@ public class EtaDialog extends FullScreenDialog {
     private final View.OnClickListener _expires_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _expires = _expiresCheckBox.isChecked();
-
-            if (!_expires) {
+            if (!_expiresCheckBox.isChecked()) {
                 _expiringDurationSeconds = INVALID_NUMBER;
             }
         }

@@ -325,8 +325,13 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             inflate();
             // TODO figure out the check in again logic
             _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setText(R.string.btn_check_in);
-            _leftWhiteButton.setOnClickListener(_checkin_onClick);
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+                _leftWhiteButton.setText(R.string.btn_check_in_again);
+                _leftWhiteButton.setOnClickListener(_checkinAgain_onClick);
+            } else {
+                _leftWhiteButton.setText(R.string.btn_check_in);
+                _leftWhiteButton.setOnClickListener(_checkin_onClick);
+            }
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_closing_onClick);

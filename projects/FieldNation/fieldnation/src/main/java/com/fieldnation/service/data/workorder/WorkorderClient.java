@@ -222,9 +222,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type, null);
     }
 
+/*
     public static void actionRunningLate(Context context, long workorderId, String explanation, Integer delayInSeconds) {
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, ReportProblemType.WILL_BE_LATE, delayInSeconds);
     }
+*/
 
     /*-*********************************-*/
     /*-             Messages            -*/
