@@ -857,7 +857,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                     WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
 
             try {
-                Hold unAck = _workOrder.getUnAcknowledgedHolds();
+                Hold unAck = _workOrder.getUnAcknowledgedHold();
                 Hold param = new Hold();
                 param.acknowledged(true);
                 param.id(unAck.getId());
@@ -983,7 +983,14 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workOrder.getWorkOrderId());
 
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            try {
+                ETA eta = new ETA()
+                        .status(new ETAStatus()
+                                .name(ETAStatus.NameEnum.CONFIRMED));
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
         @Override

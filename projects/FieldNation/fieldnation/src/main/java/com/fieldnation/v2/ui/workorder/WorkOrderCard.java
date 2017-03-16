@@ -24,7 +24,6 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.ncns.ConfirmActivity;
@@ -35,6 +34,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
+import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
@@ -620,7 +620,14 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
-            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getWorkOrderId());
+
+            try {
+                Hold unAckHold = _workOrder.getUnAcknowledgedHold();
+                Hold ackHold = new Hold().id(unAckHold.getId()).acknowledged(true);
+                WorkordersWebApi.updateHold(App.get(), _workOrder.getWorkOrderId(), unAckHold.getId(), ackHold);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 
@@ -722,7 +729,7 @@ public class WorkOrderCard extends RelativeLayout {
             try {
                 ETA eta = new ETA()
                         .status(new ETAStatus()
-                                .name(ETAStatus.NameEnum.READYTOGO));
+                                .name(ETAStatus.NameEnum.CONFIRMED));
 
                 WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
             } catch (Exception ex) {
@@ -787,7 +794,6 @@ public class WorkOrderCard extends RelativeLayout {
             WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
         }
     };
-
 
     private final OnClickListener _readyToGo_onClick = new OnClickListener() {
         @Override

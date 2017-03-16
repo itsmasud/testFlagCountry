@@ -457,9 +457,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     // acknowledge hold
+/*
     public static void actionAcknowledgeHold(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionAcknowledgeHold(context, workorderId);
     }
+*/
 
     // counter offer
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,

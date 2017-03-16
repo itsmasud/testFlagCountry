@@ -1319,7 +1319,7 @@ public class WorkOrder implements Parcelable {
         return true;
     }
 
-    public Hold getUnAcknowledgedHolds() {
+    public Hold getUnAcknowledgedHold() {
         if (getHolds() == null || getHolds().length == 0)
             return null;
 
