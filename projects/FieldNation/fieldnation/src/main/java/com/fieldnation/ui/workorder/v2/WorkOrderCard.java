@@ -37,6 +37,8 @@ import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
@@ -407,12 +409,12 @@ public class WorkOrderCard extends RelativeLayout {
                 break;
             case READY:
                 button.setVisibility(VISIBLE);
-                button.setOnClickListener(_readyToGo_onClick);
+//                button.setOnClickListener(_readyToGo_onClick);
                 button.setText(R.string.btn_confirm);
                 break;
             case READY_TO_GO:
                 button.setVisibility(VISIBLE);
-                button.setOnClickListener(_readyToGo_onClick);
+//                button.setOnClickListener(_readyToGo_onClick);
                 button.setText(R.string.btn_ready);
                 break;
             case REPORT_PROBLEM:
@@ -685,6 +687,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
+/*
     private final View.OnClickListener _readyToGo_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -692,6 +695,7 @@ public class WorkOrderCard extends RelativeLayout {
             WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
         }
     };
+*/
 
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override

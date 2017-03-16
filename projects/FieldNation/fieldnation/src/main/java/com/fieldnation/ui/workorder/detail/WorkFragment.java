@@ -63,6 +63,8 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -965,7 +967,15 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         public void onReadyToGo() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getWorkOrderId());
 
-            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getWorkOrderId());
+            try {
+                ETA eta = new ETA()
+                        .status(new ETAStatus()
+                                .name(ETAStatus.NameEnum.READYTOGO));
+
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
         @Override

@@ -428,9 +428,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+/*
     public static void actionReadyToGo(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionReady(context, workorderId);
     }
+*/
 
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
         WorkorderTransactionBuilder.actionChangePay(context, workorderId, pay, explanation);
@@ -480,9 +482,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionAccept(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
     }
 
+/*
     public static void actionConfirm(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
         WorkorderTransactionBuilder.actionConfirm(context, workorderId, startTimeIso8601, endTimeIso8601, note);
     }
+*/
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionWithdrawRequest(context, workorderId);
