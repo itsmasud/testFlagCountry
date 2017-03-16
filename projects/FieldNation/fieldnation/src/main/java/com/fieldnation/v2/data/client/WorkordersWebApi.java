@@ -33,7 +33,7 @@ import com.fieldnation.v2.data.model.Contacts;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.Eta;
+import com.fieldnation.v2.data.model.EtaMassAccept;
 import com.fieldnation.v2.data.model.EtaWithLocation;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Expenses;
@@ -3943,7 +3943,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param eta JSON Payload
      */
-    public static void MassAcceptWorkOrder(Context context, Eta eta) {
+    public static void MassAcceptWorkOrder(Context context, EtaMassAccept eta) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/mass-accept");
 
@@ -3980,7 +3980,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param eta   JSON Payload
      * @param async Async (Optional)
      */
-    public static void MassAcceptWorkOrder(Context context, Eta eta, Boolean async) {
+    public static void MassAcceptWorkOrder(Context context, EtaMassAccept eta, Boolean async) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/mass-accept?async=" + async);
 
