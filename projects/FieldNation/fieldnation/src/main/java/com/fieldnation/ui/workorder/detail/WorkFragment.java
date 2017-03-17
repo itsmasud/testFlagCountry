@@ -911,7 +911,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void onEta() {
-
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
 
         @Override
