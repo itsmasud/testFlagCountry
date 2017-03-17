@@ -54,12 +54,8 @@ public class Coords implements Parcelable {
 
     public Double getDistance() {
         try {
-            if (_distance != null)
-                return _distance;
-
-            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+            if (_distance == null && SOURCE.has("distance") && SOURCE.get("distance") != null)
                 _distance = SOURCE.getDouble("distance");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -80,12 +76,8 @@ public class Coords implements Parcelable {
 
     public Boolean getExact() {
         try {
-            if (_exact != null)
-                return _exact;
-
-            if (SOURCE.has("exact") && SOURCE.get("exact") != null)
+            if (_exact == null && SOURCE.has("exact") && SOURCE.get("exact") != null)
                 _exact = SOURCE.getBoolean("exact");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -106,12 +98,8 @@ public class Coords implements Parcelable {
 
     public Double getLatitude() {
         try {
-            if (_latitude != null)
-                return _latitude;
-
-            if (SOURCE.has("latitude") && SOURCE.get("latitude") != null)
+            if (_latitude == null && SOURCE.has("latitude") && SOURCE.get("latitude") != null)
                 _latitude = SOURCE.getDouble("latitude");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -132,12 +120,8 @@ public class Coords implements Parcelable {
 
     public Double getLongitude() {
         try {
-            if (_longitude != null)
-                return _longitude;
-
-            if (SOURCE.has("longitude") && SOURCE.get("longitude") != null)
+            if (_longitude == null && SOURCE.has("longitude") && SOURCE.get("longitude") != null)
                 _longitude = SOURCE.getDouble("longitude");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -158,12 +142,8 @@ public class Coords implements Parcelable {
 
     public String getSearch() {
         try {
-            if (_search != null)
-                return _search;
-
-            if (SOURCE.has("search") && SOURCE.get("search") != null)
+            if (_search == null && SOURCE.has("search") && SOURCE.get("search") != null)
                 _search = SOURCE.getString("search");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -184,12 +164,8 @@ public class Coords implements Parcelable {
 
     public Boolean getSuccess() {
         try {
-            if (_success != null)
-                return _success;
-
-            if (SOURCE.has("success") && SOURCE.get("success") != null)
+            if (_success == null && SOURCE.has("success") && SOURCE.get("success") != null)
                 _success = SOURCE.getBoolean("success");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -277,5 +253,9 @@ public class Coords implements Parcelable {
 
     public Coords(android.location.Location location) throws ParseException {
         this(location.getLatitude(), location.getLongitude());
+    }
+
+    public boolean isSet() {
+        return getLatitude() != null && getLongitude() != null && getLatitude() != 0 && getLongitude() != 0;
     }
 }

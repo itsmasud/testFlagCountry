@@ -101,12 +101,8 @@ public class PayModifier implements Parcelable {
 
     public Double getAmount() {
         try {
-            if (_amount != null)
-                return _amount;
-
-            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+            if (_amount == null && SOURCE.has("amount") && SOURCE.get("amount") != null)
                 _amount = SOURCE.getDouble("amount");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -127,12 +123,8 @@ public class PayModifier implements Parcelable {
 
     public CalculationEnum getCalculation() {
         try {
-            if (_calculation != null)
-                return _calculation;
-
-            if (SOURCE.has("calculation") && SOURCE.get("calculation") != null)
+            if (_calculation == null && SOURCE.has("calculation") && SOURCE.get("calculation") != null)
                 _calculation = CalculationEnum.fromString(SOURCE.getString("calculation"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -153,12 +145,8 @@ public class PayModifier implements Parcelable {
 
     public Boolean getCharged() {
         try {
-            if (_charged != null)
-                return _charged;
-
-            if (SOURCE.has("charged") && SOURCE.get("charged") != null)
+            if (_charged == null && SOURCE.has("charged") && SOURCE.get("charged") != null)
                 _charged = SOURCE.getBoolean("charged");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -179,12 +167,8 @@ public class PayModifier implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -205,12 +189,8 @@ public class PayModifier implements Parcelable {
 
     public Boolean getHours24Applicable() {
         try {
-            if (_hours24Applicable != null)
-                return _hours24Applicable;
-
-            if (SOURCE.has("hours24_applicable") && SOURCE.get("hours24_applicable") != null)
+            if (_hours24Applicable == null && SOURCE.has("hours24_applicable") && SOURCE.get("hours24_applicable") != null)
                 _hours24Applicable = SOURCE.getBoolean("hours24_applicable");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -231,12 +211,8 @@ public class PayModifier implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -257,12 +233,8 @@ public class PayModifier implements Parcelable {
 
     public Double getModifier() {
         try {
-            if (_modifier != null)
-                return _modifier;
-
-            if (SOURCE.has("modifier") && SOURCE.get("modifier") != null)
+            if (_modifier == null && SOURCE.has("modifier") && SOURCE.get("modifier") != null)
                 _modifier = SOURCE.getDouble("modifier");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -283,12 +255,8 @@ public class PayModifier implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -438,7 +406,6 @@ public class PayModifier implements Parcelable {
         dest.writeParcelable(getJson(), flags);
     }
 
-
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
@@ -450,5 +417,9 @@ public class PayModifier implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
+    }
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

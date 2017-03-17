@@ -119,7 +119,7 @@ public class NavActivity extends AuthSimpleActivity {
     protected void onPause() {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
-        
+
         super.onPause();
     }
 
@@ -239,7 +239,7 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void onConnected() {
             _workOrderClient.subWorkordersWebApi();
-            WorkordersWebApi.getWorkOrderLists(App.get(), false);
+            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
         }
 
         @Override

@@ -5,11 +5,10 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 
@@ -44,12 +43,8 @@ public class TaskGroup implements Parcelable {
 
     public String getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getString("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +65,8 @@ public class TaskGroup implements Parcelable {
 
     public String getLabel() {
         try {
-            if (_label != null)
-                return _label;
-
-            if (SOURCE.has("label") && SOURCE.get("label") != null)
+            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
                 _label = SOURCE.getString("label");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +141,13 @@ public class TaskGroup implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getId());
     }
 }

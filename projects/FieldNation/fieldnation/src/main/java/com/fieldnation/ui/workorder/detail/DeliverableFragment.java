@@ -498,7 +498,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
         }
     };
 

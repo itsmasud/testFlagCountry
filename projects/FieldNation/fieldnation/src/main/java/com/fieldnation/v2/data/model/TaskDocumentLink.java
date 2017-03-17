@@ -44,12 +44,8 @@ public class TaskDocumentLink implements Parcelable {
 
     public String getExpiration() {
         try {
-            if (_expiration != null)
-                return _expiration;
-
-            if (SOURCE.has("expiration") && SOURCE.get("expiration") != null)
+            if (_expiration == null && SOURCE.has("expiration") && SOURCE.get("expiration") != null)
                 _expiration = SOURCE.getString("expiration");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +66,8 @@ public class TaskDocumentLink implements Parcelable {
 
     public String getHref() {
         try {
-            if (_href != null)
-                return _href;
-
-            if (SOURCE.has("href") && SOURCE.get("href") != null)
+            if (_href == null && SOURCE.has("href") && SOURCE.get("href") != null)
                 _href = SOURCE.getString("href");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +142,13 @@ public class TaskDocumentLink implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

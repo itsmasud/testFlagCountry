@@ -10,15 +10,19 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
  */
 
-public class Eta implements Parcelable {
-    private static final String TAG = "Eta";
+public class EtaMassAccept implements Parcelable {
+    private static final String TAG = "EtaMassAccept";
 
     @Json(name = "bundle_id")
     private Integer _bundleId;
@@ -38,11 +42,11 @@ public class Eta implements Parcelable {
     @Source
     private JsonObject SOURCE;
 
-    public Eta() {
+    public EtaMassAccept() {
         SOURCE = new JsonObject();
     }
 
-    public Eta(JsonObject obj) {
+    public EtaMassAccept(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -53,12 +57,8 @@ public class Eta implements Parcelable {
 
     public Integer getBundleId() {
         try {
-            if (_bundleId != null)
-                return _bundleId;
-
-            if (SOURCE.has("bundle_id") && SOURCE.get("bundle_id") != null)
+            if (_bundleId == null && SOURCE.has("bundle_id") && SOURCE.get("bundle_id") != null)
                 _bundleId = SOURCE.getInt("bundle_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -66,7 +66,7 @@ public class Eta implements Parcelable {
         return _bundleId;
     }
 
-    public Eta bundleId(Integer bundleId) throws ParseException {
+    public EtaMassAccept bundleId(Integer bundleId) throws ParseException {
         _bundleId = bundleId;
         SOURCE.put("bundle_id", bundleId);
         return this;
@@ -79,12 +79,8 @@ public class Eta implements Parcelable {
 
     public Double getHourEstimate() {
         try {
-            if (_hourEstimate != null)
-                return _hourEstimate;
-
-            if (SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
+            if (_hourEstimate == null && SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
                 _hourEstimate = SOURCE.getDouble("hour_estimate");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -92,7 +88,7 @@ public class Eta implements Parcelable {
         return _hourEstimate;
     }
 
-    public Eta hourEstimate(Double hourEstimate) throws ParseException {
+    public EtaMassAccept hourEstimate(Double hourEstimate) throws ParseException {
         _hourEstimate = hourEstimate;
         SOURCE.put("hour_estimate", hourEstimate);
         return this;
@@ -105,12 +101,8 @@ public class Eta implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -118,7 +110,7 @@ public class Eta implements Parcelable {
         return _notes;
     }
 
-    public Eta notes(String notes) throws ParseException {
+    public EtaMassAccept notes(String notes) throws ParseException {
         _notes = notes;
         SOURCE.put("notes", notes);
         return this;
@@ -131,20 +123,19 @@ public class Eta implements Parcelable {
 
     public Date getStart() {
         try {
-            if (_start != null)
-                return _start;
-
-            if (SOURCE.has("start") && SOURCE.get("start") != null)
+            if (_start == null && SOURCE.has("start") && SOURCE.get("start") != null)
                 _start = Date.fromJson(SOURCE.getJsonObject("start"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _start;
+        if (_start != null && _start.isSet())
+            return _start;
+
+        return null;
     }
 
-    public Eta start(Date start) throws ParseException {
+    public EtaMassAccept start(Date start) throws ParseException {
         _start = start;
         SOURCE.put("start", start.getJson());
         return this;
@@ -157,12 +148,8 @@ public class Eta implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -170,7 +157,7 @@ public class Eta implements Parcelable {
         return _workOrderId;
     }
 
-    public Eta workOrderId(Integer workOrderId) throws ParseException {
+    public EtaMassAccept workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
         SOURCE.put("work_order_id", workOrderId);
         return this;
@@ -179,25 +166,25 @@ public class Eta implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Eta[] array) {
+    public static JsonArray toJsonArray(EtaMassAccept[] array) {
         JsonArray list = new JsonArray();
-        for (Eta item : array) {
+        for (EtaMassAccept item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Eta[] fromJsonArray(JsonArray array) {
-        Eta[] list = new Eta[array.size()];
+    public static EtaMassAccept[] fromJsonArray(JsonArray array) {
+        EtaMassAccept[] list = new EtaMassAccept[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Eta fromJson(JsonObject obj) {
+    public static EtaMassAccept fromJson(JsonObject obj) {
         try {
-            return new Eta(obj);
+            return new EtaMassAccept(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -211,12 +198,12 @@ public class Eta implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Eta> CREATOR = new Parcelable.Creator<Eta>() {
+    public static final Parcelable.Creator<EtaMassAccept> CREATOR = new Parcelable.Creator<EtaMassAccept>() {
 
         @Override
-        public Eta createFromParcel(Parcel source) {
+        public EtaMassAccept createFromParcel(Parcel source) {
             try {
-                return Eta.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return EtaMassAccept.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -224,8 +211,8 @@ public class Eta implements Parcelable {
         }
 
         @Override
-        public Eta[] newArray(int size) {
-            return new Eta[size];
+        public EtaMassAccept[] newArray(int size) {
+            return new EtaMassAccept[size];
         }
     };
 
@@ -237,5 +224,13 @@ public class Eta implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

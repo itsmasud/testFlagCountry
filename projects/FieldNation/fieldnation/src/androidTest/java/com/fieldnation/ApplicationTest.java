@@ -35,7 +35,7 @@ public class ApplicationTest extends ApplicationTestCase<App> {
         _client = new WorkordersWebApi(_workordersWebApi_listener);
         _client.connect(App.get());
 
-        WorkordersWebApi.getWorkOrderLists(App.get(), false);
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
         signal.await();
         Log.v(TAG, "break!");

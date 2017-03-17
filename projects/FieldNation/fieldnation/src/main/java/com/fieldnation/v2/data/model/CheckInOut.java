@@ -59,17 +59,16 @@ public class CheckInOut implements Parcelable {
 
     public User getActor() {
         try {
-            if (_actor != null)
-                return _actor;
-
-            if (SOURCE.has("actor") && SOURCE.get("actor") != null)
+            if (_actor == null && SOURCE.has("actor") && SOURCE.get("actor") != null)
                 _actor = User.fromJson(SOURCE.getJsonObject("actor"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _actor;
+        if (_actor != null && _actor.isSet())
+            return _actor;
+
+        return null;
     }
 
     public CheckInOut actor(User actor) throws ParseException {
@@ -85,17 +84,16 @@ public class CheckInOut implements Parcelable {
 
     public Coords getCoords() {
         try {
-            if (_coords != null)
-                return _coords;
-
-            if (SOURCE.has("coords") && SOURCE.get("coords") != null)
+            if (_coords == null && SOURCE.has("coords") && SOURCE.get("coords") != null)
                 _coords = Coords.fromJson(SOURCE.getJsonObject("coords"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _coords;
+        if (_coords != null && _coords.isSet())
+            return _coords;
+
+        return null;
     }
 
     public CheckInOut coords(Coords coords) throws ParseException {
@@ -111,17 +109,16 @@ public class CheckInOut implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public CheckInOut created(Date created) throws ParseException {
@@ -137,12 +134,8 @@ public class CheckInOut implements Parcelable {
 
     public Double getDistance() {
         try {
-            if (_distance != null)
-                return _distance;
-
-            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+            if (_distance == null && SOURCE.has("distance") && SOURCE.get("distance") != null)
                 _distance = SOURCE.getDouble("distance");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -163,12 +156,8 @@ public class CheckInOut implements Parcelable {
 
     public Double getDistanceFromCheckIn() {
         try {
-            if (_distanceFromCheckIn != null)
-                return _distanceFromCheckIn;
-
-            if (SOURCE.has("distance_from_check_in") && SOURCE.get("distance_from_check_in") != null)
+            if (_distanceFromCheckIn == null && SOURCE.has("distance_from_check_in") && SOURCE.get("distance_from_check_in") != null)
                 _distanceFromCheckIn = SOURCE.getDouble("distance_from_check_in");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -189,17 +178,16 @@ public class CheckInOut implements Parcelable {
 
     public CheckInOutTimeLog getTimeLog() {
         try {
-            if (_timeLog != null)
-                return _timeLog;
-
-            if (SOURCE.has("time_log") && SOURCE.get("time_log") != null)
+            if (_timeLog == null && SOURCE.has("time_log") && SOURCE.get("time_log") != null)
                 _timeLog = CheckInOutTimeLog.fromJson(SOURCE.getJsonObject("time_log"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _timeLog;
+        if (_timeLog != null && _timeLog.isSet())
+            return _timeLog;
+
+        return null;
     }
 
     public CheckInOut timeLog(CheckInOutTimeLog timeLog) throws ParseException {
@@ -215,12 +203,8 @@ public class CheckInOut implements Parcelable {
 
     public Boolean getVerified() {
         try {
-            if (_verified != null)
-                return _verified;
-
-            if (SOURCE.has("verified") && SOURCE.get("verified") != null)
+            if (_verified == null && SOURCE.has("verified") && SOURCE.get("verified") != null)
                 _verified = SOURCE.getBoolean("verified");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -295,5 +279,13 @@ public class CheckInOut implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

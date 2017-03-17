@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -44,17 +42,16 @@ public class UserRating implements Parcelable {
 
     public Rating getMarketplace() {
         try {
-            if (_marketplace != null)
-                return _marketplace;
-
-            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
                 _marketplace = Rating.fromJson(SOURCE.getJsonObject("marketplace"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _marketplace;
+        if (_marketplace != null && _marketplace.isSet())
+            return _marketplace;
+
+        return null;
     }
 
     public UserRating marketplace(Rating marketplace) throws ParseException {
@@ -70,17 +67,16 @@ public class UserRating implements Parcelable {
 
     public Rating getMyCompany() {
         try {
-            if (_myCompany != null)
-                return _myCompany;
-
-            if (SOURCE.has("my_company") && SOURCE.get("my_company") != null)
+            if (_myCompany == null && SOURCE.has("my_company") && SOURCE.get("my_company") != null)
                 _myCompany = Rating.fromJson(SOURCE.getJsonObject("my_company"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _myCompany;
+        if (_myCompany != null && _myCompany.isSet())
+            return _myCompany;
+
+        return null;
     }
 
     public UserRating myCompany(Rating myCompany) throws ParseException {
@@ -150,5 +146,13 @@ public class UserRating implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

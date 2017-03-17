@@ -18,38 +18,38 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Route implements Parcelable {
-    private static final String TAG = "Route";
+public class ETA implements Parcelable {
+    private static final String TAG = "ETA";
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
-    @Json(name = "assigned")
-    private Boolean _assigned;
+    @Json(name = "end")
+    private Date _end;
 
-    @Json(name = "created")
-    private Date _created;
+    @Json(name = "hour_estimate")
+    private Double _hourEstimate;
 
-    @Json(name = "declined")
-    private Boolean _declined;
+    @Json(name = "mode")
+    private Boolean _mode;
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "start")
+    private Date _start;
 
-    @Json(name = "routed")
-    private User _routed;
+    @Json(name = "status")
+    private ETAStatus _status;
 
-    @Json(name = "tecnichian")
-    private User _tecnichian;
+    @Json(name = "user")
+    private User _user;
 
     @Source
     private JsonObject SOURCE;
 
-    public Route() {
+    public ETA() {
         SOURCE = new JsonObject();
     }
 
-    public Route(JsonObject obj) {
+    public ETA(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -78,7 +78,7 @@ public class Route implements Parcelable {
         return _actions;
     }
 
-    public Route actions(ActionsEnum[] actions) throws ParseException {
+    public ETA actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
         JsonArray ja = new JsonArray();
         for (ActionsEnum item : actions) {
@@ -88,144 +88,147 @@ public class Route implements Parcelable {
         return this;
     }
 
-    public void setAssigned(Boolean assigned) throws ParseException {
-        _assigned = assigned;
-        SOURCE.put("assigned", assigned);
+    public void setEnd(Date end) throws ParseException {
+        _end = end;
+        SOURCE.put("end", end.getJson());
     }
 
-    public Boolean getAssigned() {
+    public Date getEnd() {
         try {
-            if (_assigned == null && SOURCE.has("assigned") && SOURCE.get("assigned") != null)
-                _assigned = SOURCE.getBoolean("assigned");
+            if (_end == null && SOURCE.has("end") && SOURCE.get("end") != null)
+                _end = Date.fromJson(SOURCE.getJsonObject("end"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _assigned;
-    }
-
-    public Route assigned(Boolean assigned) throws ParseException {
-        _assigned = assigned;
-        SOURCE.put("assigned", assigned);
-        return this;
-    }
-
-    public void setCreated(Date created) throws ParseException {
-        _created = created;
-        SOURCE.put("created", created.getJson());
-    }
-
-    public Date getCreated() {
-        try {
-            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
-                _created = Date.fromJson(SOURCE.getJsonObject("created"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_end != null && _end.isSet())
+            return _end;
 
         return null;
     }
 
-    public Route created(Date created) throws ParseException {
-        _created = created;
-        SOURCE.put("created", created.getJson());
+    public ETA end(Date end) throws ParseException {
+        _end = end;
+        SOURCE.put("end", end.getJson());
         return this;
     }
 
-    public void setDeclined(Boolean declined) throws ParseException {
-        _declined = declined;
-        SOURCE.put("declined", declined);
+    public void setHourEstimate(Double hourEstimate) throws ParseException {
+        _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
     }
 
-    public Boolean getDeclined() {
+    public Double getHourEstimate() {
         try {
-            if (_declined == null && SOURCE.has("declined") && SOURCE.get("declined") != null)
-                _declined = SOURCE.getBoolean("declined");
+            if (_hourEstimate == null && SOURCE.has("hour_estimate") && SOURCE.get("hour_estimate") != null)
+                _hourEstimate = SOURCE.getDouble("hour_estimate");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _declined;
+        return _hourEstimate;
     }
 
-    public Route declined(Boolean declined) throws ParseException {
-        _declined = declined;
-        SOURCE.put("declined", declined);
+    public ETA hourEstimate(Double hourEstimate) throws ParseException {
+        _hourEstimate = hourEstimate;
+        SOURCE.put("hour_estimate", hourEstimate);
         return this;
     }
 
-    public void setId(Integer id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
+    public void setMode(Boolean mode) throws ParseException {
+        _mode = mode;
+        SOURCE.put("mode", mode);
     }
 
-    public Integer getId() {
+    public Boolean getMode() {
         try {
-            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getInt("id");
+            if (_mode == null && SOURCE.has("mode") && SOURCE.get("mode") != null)
+                _mode = SOURCE.getBoolean("mode");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _id;
+        return _mode;
     }
 
-    public Route id(Integer id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
+    public ETA mode(Boolean mode) throws ParseException {
+        _mode = mode;
+        SOURCE.put("mode", mode);
         return this;
     }
 
-    public void setRouted(User routed) throws ParseException {
-        _routed = routed;
-        SOURCE.put("routed", routed.getJson());
+    public void setStart(Date start) throws ParseException {
+        _start = start;
+        SOURCE.put("start", start.getJson());
     }
 
-    public User getRouted() {
+    public Date getStart() {
         try {
-            if (_routed == null && SOURCE.has("routed") && SOURCE.get("routed") != null)
-                _routed = User.fromJson(SOURCE.getJsonObject("routed"));
+            if (_start == null && SOURCE.has("start") && SOURCE.get("start") != null)
+                _start = Date.fromJson(SOURCE.getJsonObject("start"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_routed != null && _routed.isSet())
-            return _routed;
+        if (_start != null && _start.isSet())
+            return _start;
 
         return null;
     }
 
-    public Route routed(User routed) throws ParseException {
-        _routed = routed;
-        SOURCE.put("routed", routed.getJson());
+    public ETA start(Date start) throws ParseException {
+        _start = start;
+        SOURCE.put("start", start.getJson());
         return this;
     }
 
-    public void setTecnichian(User tecnichian) throws ParseException {
-        _tecnichian = tecnichian;
-        SOURCE.put("tecnichian", tecnichian.getJson());
+    public void setStatus(ETAStatus status) throws ParseException {
+        _status = status;
+        SOURCE.put("status", status.getJson());
     }
 
-    public User getTecnichian() {
+    public ETAStatus getStatus() {
         try {
-            if (_tecnichian == null && SOURCE.has("tecnichian") && SOURCE.get("tecnichian") != null)
-                _tecnichian = User.fromJson(SOURCE.getJsonObject("tecnichian"));
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = ETAStatus.fromJson(SOURCE.getJsonObject("status"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_tecnichian != null && _tecnichian.isSet())
-            return _tecnichian;
+        if (_status != null && _status.isSet())
+            return _status;
 
         return null;
     }
 
-    public Route tecnichian(User tecnichian) throws ParseException {
-        _tecnichian = tecnichian;
-        SOURCE.put("tecnichian", tecnichian.getJson());
+    public ETA status(ETAStatus status) throws ParseException {
+        _status = status;
+        SOURCE.put("status", status.getJson());
+        return this;
+    }
+
+    public void setUser(User user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user.getJson());
+    }
+
+    public User getUser() {
+        try {
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_user != null && _user.isSet())
+            return _user;
+
+        return null;
+    }
+
+    public ETA user(User user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user.getJson());
         return this;
     }
 
@@ -233,10 +236,20 @@ public class Route implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "accept")
-        ACCEPT("accept"),
-        @Json(name = "decline")
-        DECLINE("decline");
+        @Json(name = "add")
+        ADD("add"),
+        @Json(name = "confirm")
+        CONFIRM("confirm"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "mark_ready_to_go")
+        MARK_READY_TO_GO("mark_ready_to_go"),
+
+        @Json(name = "on_my_way")
+        ON_MY_WAY("on_my_way"),
+
+        @Json(name = "running_late")
+        RUNNING_LATE("running_late");
 
         private String value;
 
@@ -270,25 +283,25 @@ public class Route implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Route[] array) {
+    public static JsonArray toJsonArray(ETA[] array) {
         JsonArray list = new JsonArray();
-        for (Route item : array) {
+        for (ETA item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Route[] fromJsonArray(JsonArray array) {
-        Route[] list = new Route[array.size()];
+    public static ETA[] fromJsonArray(JsonArray array) {
+        ETA[] list = new ETA[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Route fromJson(JsonObject obj) {
+    public static ETA fromJson(JsonObject obj) {
         try {
-            return new Route(obj);
+            return new ETA(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -302,12 +315,12 @@ public class Route implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Route> CREATOR = new Parcelable.Creator<Route>() {
+    public static final Parcelable.Creator<ETA> CREATOR = new Parcelable.Creator<ETA>() {
 
         @Override
-        public Route createFromParcel(Parcel source) {
+        public ETA createFromParcel(Parcel source) {
             try {
-                return Route.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return ETA.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -315,8 +328,8 @@ public class Route implements Parcelable {
         }
 
         @Override
-        public Route[] newArray(int size) {
-            return new Route[size];
+        public ETA[] newArray(int size) {
+            return new ETA[size];
         }
     };
 
@@ -335,7 +348,7 @@ public class Route implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return getId() != null && getId() != 0;
+        return getMode() != null;
     }
 
     private Set<ActionsEnum> _actionsSet = null;

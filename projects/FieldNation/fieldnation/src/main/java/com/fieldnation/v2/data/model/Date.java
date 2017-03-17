@@ -75,17 +75,16 @@ public class Date implements Parcelable {
 
     public String getUtc() {
         try {
-            if (_utc != null)
-                return _utc;
-
-            if (SOURCE.has("utc") && SOURCE.get("utc") != null)
+            if (_utc == null && SOURCE.has("utc") && SOURCE.get("utc") != null)
                 _utc = SOURCE.getString("utc");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _utc;
+        if (!misc.isEmptyOrNull(_utc))
+            return _utc;
+
+        return null;
     }
 
     public Date utc(String utc) throws ParseException {
@@ -157,10 +156,14 @@ public class Date implements Parcelable {
         dest.writeParcelable(getJson(), flags);
     }
 
-
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getUtc());
+    }
+
     public Date(Calendar calendar) throws ParseException {
         this();
         utc(DateUtils.v2CalToUtc(calendar));
@@ -177,9 +180,5 @@ public class Date implements Parcelable {
 
     public long getUtcLong() throws ParseException {
         return DateUtils.v2UtcToLong(getUtc());
-    }
-
-    public boolean isValid() {
-        return !misc.isEmptyOrNull(getUtc());
     }
 }

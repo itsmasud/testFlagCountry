@@ -180,4 +180,8 @@ public class WorkOrderPublishStats implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    public boolean isSet() {
+        return true;
+    }
 }
