@@ -13,6 +13,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.nav.NavActivity;
@@ -52,7 +53,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
         // TODO fill out _savedList;
         try {
-            _savedList = new SavedList().id("workorders_tomorrow");
+            _savedList = new SavedList().id("workorders_assignments");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -62,7 +63,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.v(TAG, "onRestoreInstanceState");
         if (savedInstanceState != null) {
-            _recyclerView.startSearch(_savedList);
+            _recyclerView.startSearch(_savedList, new GetWorkOrdersOptions().fFlightboardTomorrow(true));
         }
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -74,7 +75,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _recyclerView.startSearch(_savedList);
+        _recyclerView.startSearch(_savedList, new GetWorkOrdersOptions().fFlightboardTomorrow(true));
     }
 
     @Override
@@ -123,6 +124,13 @@ public class ConfirmActivity extends AuthSimpleActivity {
                     || workOrders.getResults().length == 0) {
                 return;
             }
+
+            if (workOrders.getMetadata().getTotal()
+                    > workOrders.getMetadata().getPage() * workOrders.getMetadata().getPerPage()) {
+                // Todo need to load all the pages
+            }
+
+
 /*
 TODO            for (WorkOrder wo : workOrders.getResults()) {
                 Action[] actions = wo.getPrimaryActions();

@@ -44,6 +44,7 @@ public class SearchResultScreen extends RelativeLayout {
     private WorkordersWebApi _workOrderClient;
 
     // Data
+    private GetWorkOrdersOptions _workOrdersOptions;
     private SavedList _savedList;
     private Location _location;
     private OnClickListener _onClickListener;
@@ -128,24 +129,26 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
     }
 
     private void getPage(int page) {
-        if (_savedList == null)
+        if (_workOrdersOptions == null)
             return;
 
-        WorkordersWebApi.getWorkOrders(App.get(),
-                new GetWorkOrdersOptions()
-                        .list(_savedList.getId())
-                        .page(page),
-                true, false);
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
         if (_refreshView != null)
             _refreshView.startRefreshing();
     }
 
     public void startSearch(SavedList savedList) {
+        startSearch(savedList, new GetWorkOrdersOptions());
+    }
+
+    public void startSearch(SavedList savedList, GetWorkOrdersOptions workOrdersOptions) {
         if (savedList == null) {
             return;
         }
 
+        _workOrdersOptions = workOrdersOptions;
+        _workOrdersOptions.setList(savedList.getId());
         _savedList = savedList;
 
 /*

@@ -23,8 +23,53 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.Cancellation;
+import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.Contacts;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.EtaMassAccept;
+import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.Expenses;
+import com.fieldnation.v2.data.model.Hold;
+import com.fieldnation.v2.data.model.Holds;
+import com.fieldnation.v2.data.model.IdResponse;
+import com.fieldnation.v2.data.model.Location;
+import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.Messages;
+import com.fieldnation.v2.data.model.Milestones;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Status;
+import com.fieldnation.v2.data.model.SwapResponse;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TaskAlert;
+import com.fieldnation.v2.data.model.Tasks;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.Users;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -85,7 +130,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
-     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -1237,7 +1281,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: cancelSwapRequest
      * Cancel work order swap request.
-     *
      */
     public static void cancelSwapRequest(Context context) {
         try {
@@ -1256,40 +1299,6 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "cancelSwapRequest"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: completeTaskByWorkOrderAndTask
-     * Completes a task associated with a work order
-     *
-     * @param workOrderId Work order id
-     * @param taskId      Task id
-     */
-    public static void completeTask(Context context, Integer workOrderId, Integer taskId) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/complete");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/complete");
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/complete")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "completeTask"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -1441,7 +1450,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param userId User id
+     * @param userId      User id
      */
     public static void declineRequest(Context context, Integer workOrderId, Integer userId) {
         try {
@@ -1475,7 +1484,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param userId User id
+     * @param userId      User id
      * @param async       Async (Optional)
      */
     public static void declineRequest(Context context, Integer workOrderId, Integer userId, Boolean async) {
@@ -1509,7 +1518,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: declineSwapRequest
      * Decline work order swap request.
-     *
      */
     public static void declineSwapRequest(Context context) {
         try {
@@ -2414,7 +2422,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getETAByWorkOrder
      * Gets the eta for a work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getETA(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
@@ -3673,6 +3681,7 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
                     + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                     + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                    + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
                     + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                     + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                     + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
@@ -3730,6 +3739,7 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getF() != null ? "&f_=" + getWorkOrdersOptions.getF() : "")
                             + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                             + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
+                            + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
                             + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                             + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                             + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
@@ -3819,40 +3829,6 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "groupTask"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: incompleteTaskByWorkOrderAndTask
-     * Marks a task associated with a work order as incomplete
-     *
-     * @param workOrderId Work order id
-     * @param taskId      Task id
-     */
-    public static void incompleteTask(Context context, Integer workOrderId, Integer taskId) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/incomplete");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/incomplete");
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tasks/{task_id}/incomplete")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "incompleteTask"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -5619,7 +5595,7 @@ public class WorkordersWebApi extends TopicClient {
      * Updates the eta of a work order (depending on your role)
      *
      * @param workOrderId ID of work order
-     * @param eta JSON Payload
+     * @param eta         JSON Payload
      */
     public static void updateETA(Context context, Integer workOrderId, ETA eta) {
         try {
@@ -5655,25 +5631,25 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: updateETAByWorkOrder
      * Updates the eta of a work order (depending on your role)
      *
-     * @param workOrderId ID of work order
-     * @param eta JSON Payload
+     * @param workOrderId      ID of work order
+     * @param eta              JSON Payload
      * @param updateETAOptions Additional optional parameters
      */
     public static void updateETA(Context context, Integer workOrderId, ETA eta, UpdateETAOptions updateETAOptions) {
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/eta" + (updateETAOptions.getConfirm() != null ? "?confirm=" + updateETAOptions.getConfirm() : "")
-                                    + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
-                                    + (updateETAOptions.getAsync() != null ? "&async=" + updateETAOptions.getAsync() : "")
-                                   );
+                    + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
+                    + (updateETAOptions.getAsync() != null ? "&async=" + updateETAOptions.getAsync() : "")
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/eta")
                     .urlParams("" + (updateETAOptions.getConfirm() != null ? "?confirm=" + updateETAOptions.getConfirm() : "")
-                                    + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
-                                    + (updateETAOptions.getAsync() != null ? "&async=" + updateETAOptions.getAsync() : "")
-                                   );
+                            + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
+                            + (updateETAOptions.getAsync() != null ? "&async=" + updateETAOptions.getAsync() : "")
+                    );
 
             if (eta != null)
                 builder.body(eta.getJson().toString());
@@ -6462,9 +6438,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: updateScheduleByWorkOrder
      * Updates the service schedule or eta of a work order (depending on your role)
      *
-     * @param workOrderId           ID of work order
-     * @param schedule              JSON Payload
-     * @param async Async (Optional)
+     * @param workOrderId ID of work order
+     * @param schedule    JSON Payload
+     * @param async       Async (Optional)
      */
     public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async) {
         try {
@@ -6914,9 +6890,6 @@ public class WorkordersWebApi extends TopicClient {
         public void onCancelSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
         }
 
-        public void onCompleteTask(boolean success, Error error) {
-        }
-
         public void onCompleteWorkOrder(boolean success, Error error) {
         }
 
@@ -7031,7 +7004,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onGetRequests(Requests requests, boolean success, Error error) {
         }
 
-        public void onGetScheduleAndLocation(EtaWithLocation etaWithLocation, boolean success, Error error) {
+        public void onGetScheduleAndLocation(EtaMassAcceptWithLocation etaMassAcceptWithLocation, boolean success, Error error) {
         }
 
         public void onGetSchedule(Schedule schedule, boolean success, Error error) {
@@ -7068,9 +7041,6 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onGroupTask(boolean success, Error error) {
-        }
-
-        public void onIncompleteTask(boolean success, Error error) {
         }
 
         public void onIncompleteWorkOrder(boolean success, Error error) {
@@ -7350,10 +7320,6 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "completeTask":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "completeWorkOrder":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
@@ -7562,7 +7528,7 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "GetScheduleAndLocation":
                         if (success)
-                            successObject = EtaWithLocation.fromJson(new JsonObject(data));
+                            successObject = EtaMassAcceptWithLocation.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7633,10 +7599,6 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "groupTask":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "incompleteTask":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7927,9 +7889,6 @@ public class WorkordersWebApi extends TopicClient {
                     case "cancelSwapRequest":
                         listener.onCancelSwapRequest((SwapResponse) successObject, success, (Error) failObject);
                         break;
-                    case "completeTask":
-                        listener.onCompleteTask(success, (Error) failObject);
-                        break;
                     case "completeWorkOrder":
                         listener.onCompleteWorkOrder(success, (Error) failObject);
                         break;
@@ -8045,7 +8004,7 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onGetRequests((Requests) successObject, success, (Error) failObject);
                         break;
                     case "GetScheduleAndLocation":
-                        listener.onGetScheduleAndLocation((EtaWithLocation) successObject, success, (Error) failObject);
+                        listener.onGetScheduleAndLocation((EtaMassAcceptWithLocation) successObject, success, (Error) failObject);
                         break;
                     case "getSchedule":
                         listener.onGetSchedule((Schedule) successObject, success, (Error) failObject);
@@ -8082,9 +8041,6 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "groupTask":
                         listener.onGroupTask(success, (Error) failObject);
-                        break;
-                    case "incompleteTask":
-                        listener.onIncompleteTask(success, (Error) failObject);
                         break;
                     case "incompleteWorkOrder":
                         listener.onIncompleteWorkOrder(success, (Error) failObject);
