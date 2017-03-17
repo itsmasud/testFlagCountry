@@ -128,6 +128,10 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         super.onDetachedFromWindow();
     }
 
+    public WoPagingAdapter getAdapter() {
+        return _adapter;
+    }
+
     private void getPage(int page) {
         if (_workOrdersOptions == null)
             return;
