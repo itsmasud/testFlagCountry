@@ -15,8 +15,8 @@ import com.fieldnation.fnlog.Log;
  * Created by dmgen from swagger.
  */
 
-public class UpdateScheduleOptions implements Parcelable {
-    private static final String TAG = "UpdateScheduleOptions";
+public class UpdateETAOptions implements Parcelable {
+    private static final String TAG = "UpdateETAOptions";
 
     @Json(name = "confirm")
     private Boolean _confirm;
@@ -27,7 +27,7 @@ public class UpdateScheduleOptions implements Parcelable {
     @Json(name = "async")
     private Boolean _async;
 
-    public UpdateScheduleOptions() {
+    public UpdateETAOptions() {
     }
 
     public void setConfirm(Boolean confirm) {
@@ -38,7 +38,7 @@ public class UpdateScheduleOptions implements Parcelable {
         return _confirm;
     }
 
-    public UpdateScheduleOptions confirm(Boolean confirm) {
+    public UpdateETAOptions confirm(Boolean confirm) {
         _confirm = confirm;
         return this;
     }
@@ -51,7 +51,7 @@ public class UpdateScheduleOptions implements Parcelable {
         return _updateFromIvr;
     }
 
-    public UpdateScheduleOptions updateFromIvr(Boolean updateFromIvr) {
+    public UpdateETAOptions updateFromIvr(Boolean updateFromIvr) {
         _updateFromIvr = updateFromIvr;
         return this;
     }
@@ -64,7 +64,7 @@ public class UpdateScheduleOptions implements Parcelable {
         return _async;
     }
 
-    public UpdateScheduleOptions async(Boolean async) {
+    public UpdateETAOptions async(Boolean async) {
         _async = async;
         return this;
     }
@@ -72,9 +72,9 @@ public class UpdateScheduleOptions implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static UpdateScheduleOptions fromJson(JsonObject obj) {
+    public static UpdateETAOptions fromJson(JsonObject obj) {
         try {
-            return Unserializer.unserializeObject(UpdateScheduleOptions.class, obj);
+            return Unserializer.unserializeObject(UpdateETAOptions.class, obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -85,9 +85,9 @@ public class UpdateScheduleOptions implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(UpdateScheduleOptions updateScheduleOptions) {
+    public static JsonObject toJson(UpdateETAOptions updateETAOptions) {
         try {
-            return Serializer.serializeObject(updateScheduleOptions);
+            return Serializer.serializeObject(updateETAOptions);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -97,12 +97,12 @@ public class UpdateScheduleOptions implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<UpdateScheduleOptions> CREATOR = new Parcelable.Creator<UpdateScheduleOptions>() {
+    public static final Parcelable.Creator<UpdateETAOptions> CREATOR = new Parcelable.Creator<UpdateETAOptions>() {
 
         @Override
-        public UpdateScheduleOptions createFromParcel(Parcel source) {
+        public UpdateETAOptions createFromParcel(Parcel source) {
             try {
-                return UpdateScheduleOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return UpdateETAOptions.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -110,8 +110,8 @@ public class UpdateScheduleOptions implements Parcelable {
         }
 
         @Override
-        public UpdateScheduleOptions[] newArray(int size) {
-            return new UpdateScheduleOptions[size];
+        public UpdateETAOptions[] newArray(int size) {
+            return new UpdateETAOptions[size];
         }
     };
 

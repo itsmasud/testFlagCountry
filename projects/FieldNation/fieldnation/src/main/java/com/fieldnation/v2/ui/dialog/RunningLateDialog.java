@@ -24,11 +24,14 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.Calendar;
@@ -42,7 +45,7 @@ public class RunningLateDialog extends SimpleDialog {
 
     private static final String PARAM_WORKORDER = "workOrder";
 
-    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "Other"};
+    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "30", "60", "Other"};
 
     // Ui
     private TextView _bodyTextView;
@@ -105,17 +108,17 @@ public class RunningLateDialog extends SimpleDialog {
 
         Calendar cal = null;
         try {
-            if (_workOrder.getSchedule() != null) {
-                if (_workOrder.getSchedule().getEta() != null && _workOrder.getSchedule().getEta().getStart() != null) {
-                    cal = _workOrder.getSchedule().getEta().getStart().getCalendar();
-                } else {
-                    cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                }
-                _bodyTextView.setText(
-                        _workOrder.getTitle()
-                                + " is scheduled to begin at "
-                                + DateUtils.formatTime2(cal) + ".");
+            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+                cal = _workOrder.getEta().getStart().getCalendar();
+            } else if (_workOrder.getSchedule() != null
+                    && _workOrder.getSchedule().getServiceWindow() != null
+                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+                cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
+            _bodyTextView.setText(
+                    _workOrder.getTitle()
+                            + " is scheduled to begin at "
+                            + DateUtils.formatTime2(cal) + ".");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -180,26 +183,26 @@ public class RunningLateDialog extends SimpleDialog {
     private final View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_timeframePosition == 3) {
-                try {
-                    int delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
-                    WorkorderClient.actionRunningLate(App.get(), _workOrder.getWorkOrderId(), "Running late. Will be there in " + delayMin + "min", delayMin * 60);
-                    ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                    _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
-                }
-            } else {
-                try {
-                    int delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
-                    WorkorderClient.actionRunningLate(App.get(), _workOrder.getWorkOrderId(), "Running late. Will be there in " + delayMin + "min", delayMin * 60);
-                    ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                    _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
-                }
+            try {
+                int delayMin = 0;
+
+                if (_timeframePosition == 3)
+                    delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
+                else
+                    delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
+
+                ETA eta = new ETA()
+                        .status(new ETAStatus()
+                                .condition(new Condition()
+                                        .estimatedDelay(delayMin * 60)
+                                        .substatus(Condition.SubstatusEnum.DELAYED)));
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+
+                ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
+                _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
             }
             dismiss(true);
         }

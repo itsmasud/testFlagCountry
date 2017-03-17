@@ -4,12 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
@@ -18,14 +23,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.AaaaPlaceholder;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.PPNs;
-import com.fieldnation.v2.data.model.ProfileAndWorkHistory;
-import com.fieldnation.v2.data.model.TypesOfWork;
-import com.fieldnation.v2.data.model.User;
-import com.fieldnation.v2.data.model.UserTaxInfo;
-import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
  * Created by dmgen from swagger.
@@ -126,7 +125,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getPay(Context context, Integer userId, boolean isBackground) {
+    public static void getPay(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay");
 
@@ -150,7 +149,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -164,7 +163,7 @@ public class UsersWebApi extends TopicClient {
      * @param workOrderId  Work Order ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean isBackground) {
+    public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
 
@@ -188,7 +187,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -201,7 +200,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getSettings(Context context, Integer userId, boolean isBackground) {
+    public static void getSettings(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings");
 
@@ -225,7 +224,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -238,7 +237,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTax(Context context, Integer userId, boolean isBackground) {
+    public static void getTax(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax");
 
@@ -262,7 +261,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -275,7 +274,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getTour(Context context, Integer userId, boolean isBackground) {
+    public static void getTour(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
 
@@ -299,7 +298,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -312,7 +311,7 @@ public class UsersWebApi extends TopicClient {
      * @param user         User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getUser(Context context, String user, boolean isBackground) {
+    public static void getUser(Context context, String user, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + user);
 
@@ -336,7 +335,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -350,7 +349,7 @@ public class UsersWebApi extends TopicClient {
      * @param preference   Preference Key
      * @param isBackground indicates that this call is low priority
      */
-    public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean isBackground) {
+    public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
 
@@ -374,7 +373,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -387,7 +386,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean isBackground) {
+    public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks");
 
@@ -411,7 +410,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -424,7 +423,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getUserTypesOfWork(Context context, Integer userId, boolean isBackground) {
+    public static void getUserTypesOfWork(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work");
 
@@ -448,7 +447,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -461,7 +460,7 @@ public class UsersWebApi extends TopicClient {
      * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getWorkHistory(Context context, Integer userId, boolean isBackground) {
+    public static void getWorkHistory(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/work_history");
 
@@ -485,7 +484,7 @@ public class UsersWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -889,6 +888,7 @@ public class UsersWebApi extends TopicClient {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
+            Log.v(STAG, "Listener " + topicId);
             new AsyncParser(this, (Bundle) payload);
         }
 
@@ -988,6 +988,8 @@ public class UsersWebApi extends TopicClient {
 
         @Override
         protected Object doInBackground(Object... params) {
+            Log.v(TAG, "Start doInBackground");
+            Stopwatch watch = new Stopwatch(true);
             try {
                 switch (transactionParams.apiFunction) {
                     case "addPay":
@@ -1116,6 +1118,8 @@ public class UsersWebApi extends TopicClient {
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+            } finally {
+                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
             }
             return null;
         }
@@ -1123,6 +1127,9 @@ public class UsersWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                if (failObject != null && failObject instanceof Error) {
+                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                }
                 listener.onUsersWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "addPay":

@@ -4,13 +4,17 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
@@ -161,7 +165,7 @@ public class LocationsWebApi extends TopicClient {
      *
      * @param isBackground indicates that this call is low priority
      */
-    public static void getCountries(Context context, boolean isBackground) {
+    public static void getCountries(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/locations/countries");
 
@@ -185,7 +189,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -197,7 +201,7 @@ public class LocationsWebApi extends TopicClient {
      *
      * @param isBackground indicates that this call is low priority
      */
-    public static void getLocations(Context context, boolean isBackground) {
+    public static void getLocations(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/locations");
 
@@ -221,7 +225,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -234,7 +238,7 @@ public class LocationsWebApi extends TopicClient {
      * @param locationId Location ID
      * @param isBackground indicates that this call is low priority
      */
-    public static void getProviders(Context context, Integer locationId, boolean isBackground) {
+    public static void getProviders(Context context, Integer locationId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/locations/" + locationId + "/providers");
 
@@ -258,7 +262,7 @@ public class LocationsWebApi extends TopicClient {
 
             WebTransactionService.queueTransaction(context, transaction);
 
-            new CacheDispatcher(context, key);
+            if (allowCacheResponse) new CacheDispatcher(context, key);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -370,8 +374,9 @@ public class LocationsWebApi extends TopicClient {
      * Updates a stored location
      *
      * @param locationId Location id
+     * @param json JSON payload
      */
-    public static void updateLocation(Context context, Integer locationId) {
+    public static void updateLocation(Context context, Integer locationId, StoredLocation json) {
         try {
             String key = misc.md5("PUT//api/rest/v2/locations/" + locationId);
 
@@ -379,6 +384,9 @@ public class LocationsWebApi extends TopicClient {
                     .protocol("https")
                     .method("PUT")
                     .path("/api/rest/v2/locations/" + locationId);
+
+            if (json != null)
+                builder.body(json.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}")
@@ -443,6 +451,7 @@ public class LocationsWebApi extends TopicClient {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
+            Log.v(STAG, "Listener " + topicId);
             new AsyncParser(this, (Bundle) payload);
         }
 
@@ -506,6 +515,8 @@ public class LocationsWebApi extends TopicClient {
 
         @Override
         protected Object doInBackground(Object... params) {
+            Log.v(TAG, "Start doInBackground");
+            Stopwatch watch = new Stopwatch(true);
             try {
                 switch (transactionParams.apiFunction) {
                     case "addAttribute":
@@ -568,6 +579,8 @@ public class LocationsWebApi extends TopicClient {
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+            } finally {
+                Log.v(TAG, "doInBackground: " + transactionParams.apiFunction + " time: " + watch.finish());
             }
             return null;
         }
@@ -575,6 +588,9 @@ public class LocationsWebApi extends TopicClient {
         @Override
         protected void onPostExecute(Object o) {
             try {
+                if (failObject != null && failObject instanceof Error) {
+                    ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
+                }
                 listener.onLocationsWebApi(transactionParams.apiFunction, successObject, success, failObject);
                 switch (transactionParams.apiFunction) {
                     case "addAttribute":

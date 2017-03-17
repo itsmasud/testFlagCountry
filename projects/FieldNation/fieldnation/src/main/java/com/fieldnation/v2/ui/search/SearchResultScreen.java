@@ -135,7 +135,7 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
                 new GetWorkOrdersOptions()
                         .list(_savedList.getId())
                         .page(page),
-                false);
+                true, false);
 
         if (_refreshView != null)
             _refreshView.startRefreshing();

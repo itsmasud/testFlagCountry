@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -50,17 +52,16 @@ public class ScheduleServiceWindow implements Parcelable {
 
     public Date getEnd() {
         try {
-            if (_end != null)
-                return _end;
-
-            if (SOURCE.has("end") && SOURCE.get("end") != null)
+            if (_end == null && SOURCE.has("end") && SOURCE.get("end") != null)
                 _end = Date.fromJson(SOURCE.getJsonObject("end"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _end;
+        if (_end != null && _end.isSet())
+            return _end;
+
+        return null;
     }
 
     public ScheduleServiceWindow end(Date end) throws ParseException {
@@ -76,12 +77,8 @@ public class ScheduleServiceWindow implements Parcelable {
 
     public ModeEnum getMode() {
         try {
-            if (_mode != null)
-                return _mode;
-
-            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+            if (_mode == null && SOURCE.has("mode") && SOURCE.get("mode") != null)
                 _mode = ModeEnum.fromString(SOURCE.getString("mode"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,17 +99,16 @@ public class ScheduleServiceWindow implements Parcelable {
 
     public Date getStart() {
         try {
-            if (_start != null)
-                return _start;
-
-            if (SOURCE.has("start") && SOURCE.get("start") != null)
+            if (_start == null && SOURCE.has("start") && SOURCE.get("start") != null)
                 _start = Date.fromJson(SOURCE.getJsonObject("start"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _start;
+        if (_start != null && _start.isSet())
+            return _start;
+
+        return null;
     }
 
     public ScheduleServiceWindow start(Date start) throws ParseException {
@@ -227,13 +223,19 @@ public class ScheduleServiceWindow implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getMode() != null && getStart() != null && getStart().isSet();
+    }
+
     public String getFormatedDate() {
         try {
             if (!misc.isEmptyOrNull(getStart().getUtc())) {
                 String when = "";
                 Calendar cal = null;
                 cal = getStart().getCalendar();
-                when = DateUtils.formatDateReallyLong(cal);
+                when = DateUtils.formatDateReallyLong(cal
+);
 
                 // Wednesday, Dec 4, 2056
                 if (!misc.isEmptyOrNull(getEnd().getUtc())) {
@@ -387,12 +389,5 @@ public class ScheduleServiceWindow implements Parcelable {
             }
         }
         return null;
-    }
-
-    /*-*****************************-*/
-    /*-         Human Code          -*/
-    /*-*****************************-*/
-    public boolean isSet() {
-        return getMode() != null && getStart() != null && getStart().isSet();
     }
 }

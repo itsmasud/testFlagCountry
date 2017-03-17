@@ -1318,4 +1318,45 @@ public class WorkOrder implements Parcelable {
         }
         return _actionsSet;
     }
+
+    public boolean isOnHold() {
+        if (getHolds() == null)
+            return false;
+
+        if (getHolds().length == 0)
+            return false;
+
+        if (getHolds().length > 0)
+            return true;
+        return false;
+    }
+
+    public boolean areHoldsAcknowledged() {
+        if (getHolds() == null)
+            return true;
+
+        if (getHolds().length == 0)
+            return true;
+
+        Hold[] holds = getHolds();
+        for (Hold hold : holds) {
+            if (!hold.getAcknowledged())
+                return false;
+        }
+
+        return true;
+    }
+
+    public Hold getUnAcknowledgedHold() {
+        if (getHolds() == null || getHolds().length == 0)
+            return null;
+
+        Hold[] holds = getHolds();
+        for (Hold hold : holds) {
+            if (!hold.getAcknowledged())
+                return hold;
+        }
+
+        return null;
+    }
 }

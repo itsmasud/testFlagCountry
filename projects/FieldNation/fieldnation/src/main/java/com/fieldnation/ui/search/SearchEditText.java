@@ -164,7 +164,7 @@ public class SearchEditText extends RelativeLayout {
         try {
             _progressBar.setVisibility(VISIBLE);
             _lastLookup = Integer.parseInt(_searchTermEditText.getText().toString());
-            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, true, false);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

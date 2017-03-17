@@ -59,9 +59,11 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         WorkOrderTransactionBuilder.actionEta(context, workOrderId, startTime, endTime, note);
     }
 
+/*
     public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
         WorkOrderTransactionBuilder.actionOnMyWay(context, workOrderId, lat, lon);
     }
+*/
 
     public boolean subActions() {
         return register(TOPIC_ID_ACTION_COMPLETE);

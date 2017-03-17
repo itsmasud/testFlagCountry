@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -29,9 +26,6 @@ public class Schedule implements Parcelable {
 
     @Json(name = "correlation_id")
     private String _correlationId;
-
-    @Json(name = "eta")
-    private ScheduleEta _eta;
 
     @Json(name = "no_refresh")
     private Boolean _noRefresh;
@@ -122,32 +116,6 @@ public class Schedule implements Parcelable {
     public Schedule correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
         SOURCE.put("correlation_id", correlationId);
-        return this;
-    }
-
-    public void setEta(ScheduleEta eta) throws ParseException {
-        _eta = eta;
-        SOURCE.put("eta", eta.getJson());
-    }
-
-    public ScheduleEta getEta() {
-        try {
-            if (_eta != null)
-                return _eta;
-
-            if (SOURCE.has("eta") && SOURCE.get("eta") != null)
-                _eta = ScheduleEta.fromJson(SOURCE.getJsonObject("eta"));
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _eta;
-    }
-
-    public Schedule eta(ScheduleEta eta) throws ParseException {
-        _eta = eta;
-        SOURCE.put("eta", eta.getJson());
         return this;
     }
 
@@ -375,8 +343,8 @@ public class Schedule implements Parcelable {
     }
 
     public enum ActionsEnum {
-        @Json(name = "eta")
-        ETA("eta");
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 
@@ -475,7 +443,7 @@ public class Schedule implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getCorrelationId());
+        return getServiceWindow() != null && getServiceWindow().isSet();
     }
 
     private Set<ActionsEnum> _actionsSet = null;
