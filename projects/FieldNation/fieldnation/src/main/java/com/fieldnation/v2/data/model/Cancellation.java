@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class Cancellation implements Parcelable {
 
     public Integer getCancelReason() {
         try {
-            if (_cancelReason != null)
-                return _cancelReason;
-
-            if (SOURCE.has("cancel_reason") && SOURCE.get("cancel_reason") != null)
+            if (_cancelReason == null && SOURCE.has("cancel_reason") && SOURCE.get("cancel_reason") != null)
                 _cancelReason = SOURCE.getInt("cancel_reason");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class Cancellation implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +146,13 @@ public class Cancellation implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

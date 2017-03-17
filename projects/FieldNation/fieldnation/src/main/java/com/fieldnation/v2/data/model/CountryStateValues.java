@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class CountryStateValues implements Parcelable {
 
     public String getLabel() {
         try {
-            if (_label != null)
-                return _label;
-
-            if (SOURCE.has("label") && SOURCE.get("label") != null)
+            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
                 _label = SOURCE.getString("label");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class CountryStateValues implements Parcelable {
 
     public String getValue() {
         try {
-            if (_value != null)
-                return _value;
-
-            if (SOURCE.has("value") && SOURCE.get("value") != null)
+            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
                 _value = SOURCE.getString("value");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +146,13 @@ public class CountryStateValues implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }
