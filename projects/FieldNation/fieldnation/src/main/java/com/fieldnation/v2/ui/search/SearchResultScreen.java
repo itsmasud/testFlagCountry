@@ -272,10 +272,8 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public boolean useHeader() {
-/*
-TODO            if (_searchParams != null)
-                return _searchParams.canEdit;
-*/
+//TODO            if (_searchParams != null)
+//                return _searchParams.canEdit;
             return false;
         }
 
@@ -289,7 +287,6 @@ TODO            if (_searchParams != null)
         public void onBindHeaderViewHolder(BaseHolder holder) {
             ((HeaderView) holder.itemView).setSavedList(_savedList);
         }
-
 
         @Override
         public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
