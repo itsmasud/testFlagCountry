@@ -1114,7 +1114,7 @@ TODO     private void setTasks(List<Task> tasks) {
                     Log.v(TAG, "docid: " + doc.getId());
                     // task completed here
                     if (!task.getCompleted().isSet()) {
-                        WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+                        //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
                     }
 // TODO: file link is not coming as part of File object. See comment in PA-623
 //                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
@@ -1131,7 +1131,7 @@ TODO     private void setTasks(List<Task> tasks) {
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
             if (!task.getCompleted().isSet()) {
-                WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+                //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             }
             setLoading(true);
         }
@@ -1223,7 +1223,7 @@ TODO     private void setTasks(List<Task> tasks) {
         public void onUniqueTask(Task task) {
             if (task.getCompleted().isSet())
                 return;
-            WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+            //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             setLoading(true);
         }
     };

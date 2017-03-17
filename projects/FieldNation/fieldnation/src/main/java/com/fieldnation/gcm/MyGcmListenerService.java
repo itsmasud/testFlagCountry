@@ -131,16 +131,17 @@ public class MyGcmListenerService extends GcmListenerService {
                                 WorkOrderActivity.makeIntentConfirm(this, Integer.parseInt(action.getId())), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
-                    case "tomorrow": {
-                        App.get().setNeedsConfirmation(true);
-                        PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                                ConfirmActivity.startNewIntent(this), 0);
-                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
-                    }
                     default:
                         break;
                 }
                 break;
+            }
+
+            case CONFIRM_TOMORROW: {
+                App.get().setNeedsConfirmation(true);
+                PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
+                        ConfirmActivity.startNewIntent(this), 0);
+                return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
             }
         }
         return null;
@@ -149,15 +150,6 @@ public class MyGcmListenerService extends GcmListenerService {
     private void buildPushNotification(GcmMessage gcmMessage) {
         // TODO, need to finish implementing this once we figure out how to send the other data
         int id = 0;
-        switch (gcmMessage.category) {
-            case "CONFIRM_SCHEDULE":
-                id = CONFIRM_PUSH_NOTIFICATION;
-                break;
-            default:
-                id = App.secureRandom.nextInt();
-                break;
-        }
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);
         builder.setContentTitle(gcmMessage.title);
@@ -181,6 +173,12 @@ public class MyGcmListenerService extends GcmListenerService {
                 secondaryIntent = getIntentFromAction(secondaryAction, id);
             }
         }
+
+        if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW)
+                || (secondaryAction != null && secondaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
+            id = CONFIRM_PUSH_NOTIFICATION;
+        else
+            id = App.secureRandom.nextInt();
 
         // no buttons
         if (primaryIntent == null && secondaryIntent == null) {
