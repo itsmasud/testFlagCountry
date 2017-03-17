@@ -183,7 +183,7 @@ public class CounterOfferDialog extends SimpleDialog {
 
             _counterReason = coRequest.getCounterNotes();
             try {
-                _expires = coRequest.getExpires().getUtcLong();
+                _expires = coRequest.getExpires() == null ? 0 : coRequest.getExpires().getUtcLong();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

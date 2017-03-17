@@ -127,7 +127,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
                 _payLayout.setVisibility(VISIBLE);
             }
         }
-// TODO: probably this is a bad way of check if schedule is available or not
+
         if (requests.getOpenRequest().getSchedule() == null) {
             _scheduleLayout.setVisibility(GONE);
         } else {
@@ -149,6 +149,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
                 v.setExpense(expense);
                 _expenseLayout.addView(v);
             }
+            setVisibility(VISIBLE);
         }
     }
 
