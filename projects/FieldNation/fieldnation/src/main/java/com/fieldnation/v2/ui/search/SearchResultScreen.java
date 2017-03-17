@@ -50,6 +50,9 @@ public class SearchResultScreen extends RelativeLayout {
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
 
+    /*-*****************************-*/
+    /*-         Life Cycle          -*/
+    /*-*****************************-*/
     public SearchResultScreen(Context context) {
         super(context);
         init();
@@ -93,24 +96,6 @@ public class SearchResultScreen extends RelativeLayout {
                 .start(App.get());
     }
 
-    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
-        @Override
-        public void onLocation(SimpleGps simpleGps, Location location) {
-            _location = location;
-/*
-TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
-                _searchParams.location(_location.getLatitude(), _location.getLongitude());
-            }
-*/
-            _simpleGps.stop();
-        }
-
-        @Override
-        public void onFail(SimpleGps simpleGps) {
-            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
-        }
-    };
-
     @Override
     protected void onAttachedToWindow() {
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
@@ -128,18 +113,16 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         super.onDetachedFromWindow();
     }
 
-    public WoPagingAdapter getAdapter() {
-        return _adapter;
+    public void setOnChildClickListener(OnClickListener listener) {
+        _onClickListener = listener;
     }
 
-    private void getPage(int page) {
-        if (_workOrdersOptions == null)
-            return;
+    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
+        _onListReceivedListener = listener;
+    }
 
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
-
-        if (_refreshView != null)
-            _refreshView.startRefreshing();
+    public WoPagingAdapter getAdapter() {
+        return _adapter;
     }
 
     public void startSearch(SavedList savedList) {
@@ -155,22 +138,22 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         _workOrdersOptions.setList(savedList.getId());
         _savedList = savedList;
 
-/*
-TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
-            _searchParams.location(_location.getLatitude(), _location.getLongitude());
-        }
-*/
+//TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
+//            _searchParams.location(_location.getLatitude(), _location.getLongitude());
+//        }
 
         _adapter.clear();
         _adapter.refreshAll();
     }
 
-    public void setOnChildClickListener(OnClickListener listener) {
-        _onClickListener = listener;
-    }
+    private void getPage(int page) {
+        if (_workOrdersOptions == null)
+            return;
 
-    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
-        _onListReceivedListener = listener;
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+
+        if (_refreshView != null)
+            _refreshView.startRefreshing();
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -180,6 +163,53 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
         }
     };
 
+    private final View.OnClickListener _card_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_onClickListener != null)
+                _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    /****************DATA****************/
+    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(SimpleGps simpleGps, Location location) {
+            _location = location;
+//TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
+//                _searchParams.location(_location.getLatitude(), _location.getLongitude());
+//            }
+            _simpleGps.stop();
+        }
+
+        @Override
+        public void onFail(SimpleGps simpleGps) {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+    };
+
+    public void addWorkOrders(WorkOrders workOrders) {
+        if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null) {
+            _refreshView.refreshComplete();
+            return;
+        }
+
+        ListEnvelope envelope = workOrders.getMetadata();
+
+        Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
+
+        if (envelope.getTotal() == 0) {
+            _adapter.clear();
+        } else if (workOrders.getResults().length > 0
+                && envelope.getPerPage() > 0
+                && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
+            _adapter.addObjects(envelope.getPage(), workOrders.getResults());
+        else
+            _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
+
+        _refreshView.refreshComplete();
+    }
+
     private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -188,10 +218,10 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
 
         @Override
         public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-/*
-TODO            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
-                return;
-*/
+
+//TODO            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
+//                return;
+
             // TODO see if getList() is the list ID
             if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
                 return;
@@ -199,25 +229,10 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
             if (_onListReceivedListener != null)
                 _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
-            if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
-                _refreshView.refreshComplete();
-                return;
-            }
-
-            ListEnvelope envelope = workOrders.getMetadata();
-
-            Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-
-            if (envelope.getTotal() == 0) {
-                _adapter.clear();
-            } else if (workOrders.getResults().length > 0
-                    && envelope.getPerPage() > 0
-                    && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
-                _adapter.addObjects(envelope.getPage(), workOrders.getResults());
+            if (!success)
+                addWorkOrders(null);
             else
-                _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
-
-            _refreshView.refreshComplete();
+                addWorkOrders(workOrders);
         }
 
         @Override
@@ -288,13 +303,9 @@ TODO            if (_searchParams != null)
         }
     };
 
-    private final View.OnClickListener _card_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_onClickListener != null)
-                _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
-        }
-    };
+    /*-*****************************-*/
+    /*-         Listeners           -*/
+    /*-*****************************-*/
 
     public interface OnClickListener {
         void onWorkOrderClicked(WorkOrder workOrder);
