@@ -36,6 +36,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "bundle")
     private Bundle _bundle;
 
+    @Json(name = "buyer_rating")
+    private BuyerRating _buyerRating;
+
     @Json(name = "client")
     private Company _client;
 
@@ -262,6 +265,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder bundle(Bundle bundle) throws ParseException {
         _bundle = bundle;
         SOURCE.put("bundle", bundle.getJson());
+        return this;
+    }
+
+    public void setBuyerRating(BuyerRating buyerRating) throws ParseException {
+        _buyerRating = buyerRating;
+        SOURCE.put("buyer_rating", buyerRating.getJson());
+    }
+
+    public BuyerRating getBuyerRating() {
+        try {
+            if (_buyerRating == null && SOURCE.has("buyer_rating") && SOURCE.get("buyer_rating") != null)
+                _buyerRating = BuyerRating.fromJson(SOURCE.getJsonObject("buyer_rating"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_buyerRating != null && _buyerRating.isSet())
+            return _buyerRating;
+
+        return null;
+    }
+
+    public WorkOrder buyerRating(BuyerRating buyerRating) throws ParseException {
+        _buyerRating = buyerRating;
+        SOURCE.put("buyer_rating", buyerRating.getJson());
         return this;
     }
 

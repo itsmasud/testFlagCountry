@@ -93,6 +93,7 @@ import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
@@ -791,11 +792,15 @@ TODO     private void setTasks(List<Task> tasks) {
 
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
-/*
-TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workorder, _workorder.getCompanyName());
+
+                if (App.get().getProfile().canRequestWorkOnMarketplace()
+                        && !_workOrder.getW2()
+                        && _workOrder.getBuyerRating().isSet()
+                        && _workOrder.getBuyerRating().getUser() != null
+                        && _workOrder.getBuyerRating().getUser() != 0) {
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
-*/
+
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 _startCheckIn.run();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
