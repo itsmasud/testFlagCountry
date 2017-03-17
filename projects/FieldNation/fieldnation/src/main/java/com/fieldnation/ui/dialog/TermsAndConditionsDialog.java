@@ -72,7 +72,7 @@ public class TermsAndConditionsDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=provider"));
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
             startActivity(intent);
         }
     };
