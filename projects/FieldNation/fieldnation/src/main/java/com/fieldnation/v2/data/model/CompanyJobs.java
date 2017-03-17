@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -44,12 +42,8 @@ public class CompanyJobs implements Parcelable {
 
     public Integer getMarketplace() {
         try {
-            if (_marketplace != null)
-                return _marketplace;
-
-            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
                 _marketplace = SOURCE.getInt("marketplace");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +64,8 @@ public class CompanyJobs implements Parcelable {
 
     public Integer getMyCompany() {
         try {
-            if (_myCompany != null)
-                return _myCompany;
-
-            if (SOURCE.has("my_company") && SOURCE.get("my_company") != null)
+            if (_myCompany == null && SOURCE.has("my_company") && SOURCE.get("my_company") != null)
                 _myCompany = SOURCE.getInt("my_company");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +140,13 @@ public class CompanyJobs implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

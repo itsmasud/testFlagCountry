@@ -240,4 +240,8 @@ public class Shipments implements Parcelable {
         }
         return _actionsSet;
     }
+
+    public boolean isSet() {
+        return true;
+    }
 }

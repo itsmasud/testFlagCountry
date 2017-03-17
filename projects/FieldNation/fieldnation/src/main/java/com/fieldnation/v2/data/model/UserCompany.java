@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -89,12 +87,8 @@ public class UserCompany implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -115,12 +109,8 @@ public class UserCompany implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -141,12 +131,8 @@ public class UserCompany implements Parcelable {
 
     public Integer getTechnicians() {
         try {
-            if (_technicians != null)
-                return _technicians;
-
-            if (SOURCE.has("technicians") && SOURCE.get("technicians") != null)
+            if (_technicians == null && SOURCE.has("technicians") && SOURCE.get("technicians") != null)
                 _technicians = SOURCE.getInt("technicians");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -249,4 +235,12 @@ public class UserCompany implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
 }

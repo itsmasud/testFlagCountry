@@ -50,7 +50,7 @@ public class Pay implements Parcelable {
     private PayFinance _finance;
 
     @Json(name = "hold")
-    private PayModifiers _hold;
+    private PayModifier _hold;
 
     @Json(name = "increases")
     private PayIncreases _increases;
@@ -147,17 +147,16 @@ public class Pay implements Parcelable {
 
     public PayAdditional getAdditional() {
         try {
-            if (_additional != null)
-                return _additional;
-
-            if (SOURCE.has("additional") && SOURCE.get("additional") != null)
+            if (_additional == null && SOURCE.has("additional") && SOURCE.get("additional") != null)
                 _additional = PayAdditional.fromJson(SOURCE.getJsonObject("additional"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _additional;
+        if (_additional != null && _additional.isSet())
+            return _additional;
+
+        return null;
     }
 
     public Pay additional(PayAdditional additional) throws ParseException {
@@ -173,17 +172,16 @@ public class Pay implements Parcelable {
 
     public PayBase getBase() {
         try {
-            if (_base != null)
-                return _base;
-
-            if (SOURCE.has("base") && SOURCE.get("base") != null)
+            if (_base == null && SOURCE.has("base") && SOURCE.get("base") != null)
                 _base = PayBase.fromJson(SOURCE.getJsonObject("base"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _base;
+        if (_base != null && _base.isSet())
+            return _base;
+
+        return null;
     }
 
     public Pay base(PayBase base) throws ParseException {
@@ -199,17 +197,16 @@ public class Pay implements Parcelable {
 
     public PayModifiers getBonuses() {
         try {
-            if (_bonuses != null)
-                return _bonuses;
-
-            if (SOURCE.has("bonuses") && SOURCE.get("bonuses") != null)
+            if (_bonuses == null && SOURCE.has("bonuses") && SOURCE.get("bonuses") != null)
                 _bonuses = PayModifiers.fromJson(SOURCE.getJsonObject("bonuses"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _bonuses;
+        if (_bonuses != null && _bonuses.isSet())
+            return _bonuses;
+
+        return null;
     }
 
     public Pay bonuses(PayModifiers bonuses) throws ParseException {
@@ -225,12 +222,8 @@ public class Pay implements Parcelable {
 
     public String getCorrelationId() {
         try {
-            if (_correlationId != null)
-                return _correlationId;
-
-            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
                 _correlationId = SOURCE.getString("correlation_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -251,17 +244,16 @@ public class Pay implements Parcelable {
 
     public PayModifiers getDiscounts() {
         try {
-            if (_discounts != null)
-                return _discounts;
-
-            if (SOURCE.has("discounts") && SOURCE.get("discounts") != null)
+            if (_discounts == null && SOURCE.has("discounts") && SOURCE.get("discounts") != null)
                 _discounts = PayModifiers.fromJson(SOURCE.getJsonObject("discounts"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _discounts;
+        if (_discounts != null && _discounts.isSet())
+            return _discounts;
+
+        return null;
     }
 
     public Pay discounts(PayModifiers discounts) throws ParseException {
@@ -277,17 +269,16 @@ public class Pay implements Parcelable {
 
     public Date getEstimatedPaymentDate() {
         try {
-            if (_estimatedPaymentDate != null)
-                return _estimatedPaymentDate;
-
-            if (SOURCE.has("estimated_payment_date") && SOURCE.get("estimated_payment_date") != null)
+            if (_estimatedPaymentDate == null && SOURCE.has("estimated_payment_date") && SOURCE.get("estimated_payment_date") != null)
                 _estimatedPaymentDate = Date.fromJson(SOURCE.getJsonObject("estimated_payment_date"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _estimatedPaymentDate;
+        if (_estimatedPaymentDate != null && _estimatedPaymentDate.isSet())
+            return _estimatedPaymentDate;
+
+        return null;
     }
 
     public Pay estimatedPaymentDate(Date estimatedPaymentDate) throws ParseException {
@@ -303,17 +294,16 @@ public class Pay implements Parcelable {
 
     public Expenses getExpenses() {
         try {
-            if (_expenses != null)
-                return _expenses;
-
-            if (SOURCE.has("expenses") && SOURCE.get("expenses") != null)
+            if (_expenses == null && SOURCE.has("expenses") && SOURCE.get("expenses") != null)
                 _expenses = Expenses.fromJson(SOURCE.getJsonObject("expenses"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _expenses;
+        if (_expenses != null && _expenses.isSet())
+            return _expenses;
+
+        return null;
     }
 
     public Pay expenses(Expenses expenses) throws ParseException {
@@ -356,17 +346,16 @@ public class Pay implements Parcelable {
 
     public PayFinance getFinance() {
         try {
-            if (_finance != null)
-                return _finance;
-
-            if (SOURCE.has("finance") && SOURCE.get("finance") != null)
+            if (_finance == null && SOURCE.has("finance") && SOURCE.get("finance") != null)
                 _finance = PayFinance.fromJson(SOURCE.getJsonObject("finance"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _finance;
+        if (_finance != null && _finance.isSet())
+            return _finance;
+
+        return null;
     }
 
     public Pay finance(PayFinance finance) throws ParseException {
@@ -375,27 +364,26 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setHold(PayModifiers hold) throws ParseException {
+    public void setHold(PayModifier hold) throws ParseException {
         _hold = hold;
         SOURCE.put("hold", hold.getJson());
     }
 
-    public PayModifiers getHold() {
+    public PayModifier getHold() {
         try {
-            if (_hold != null)
-                return _hold;
-
-            if (SOURCE.has("hold") && SOURCE.get("hold") != null)
-                _hold = PayModifiers.fromJson(SOURCE.getJsonObject("hold"));
-
+            if (_hold == null && SOURCE.has("hold") && SOURCE.get("hold") != null)
+                _hold = PayModifier.fromJson(SOURCE.getJsonObject("hold"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _hold;
+        if (_hold != null && _hold.isSet())
+            return _hold;
+
+        return null;
     }
 
-    public Pay hold(PayModifiers hold) throws ParseException {
+    public Pay hold(PayModifier hold) throws ParseException {
         _hold = hold;
         SOURCE.put("hold", hold.getJson());
         return this;
@@ -408,17 +396,16 @@ public class Pay implements Parcelable {
 
     public PayIncreases getIncreases() {
         try {
-            if (_increases != null)
-                return _increases;
-
-            if (SOURCE.has("increases") && SOURCE.get("increases") != null)
+            if (_increases == null && SOURCE.has("increases") && SOURCE.get("increases") != null)
                 _increases = PayIncreases.fromJson(SOURCE.getJsonObject("increases"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _increases;
+        if (_increases != null && _increases.isSet())
+            return _increases;
+
+        return null;
     }
 
     public Pay increases(PayIncreases increases) throws ParseException {
@@ -434,12 +421,8 @@ public class Pay implements Parcelable {
 
     public Double getLaborSum() {
         try {
-            if (_laborSum != null)
-                return _laborSum;
-
-            if (SOURCE.has("labor_sum") && SOURCE.get("labor_sum") != null)
+            if (_laborSum == null && SOURCE.has("labor_sum") && SOURCE.get("labor_sum") != null)
                 _laborSum = SOURCE.getDouble("labor_sum");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -460,12 +443,8 @@ public class Pay implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -486,12 +465,8 @@ public class Pay implements Parcelable {
 
     public Double getNumberOfDevices() {
         try {
-            if (_numberOfDevices != null)
-                return _numberOfDevices;
-
-            if (SOURCE.has("number_of_devices") && SOURCE.get("number_of_devices") != null)
+            if (_numberOfDevices == null && SOURCE.has("number_of_devices") && SOURCE.get("number_of_devices") != null)
                 _numberOfDevices = SOURCE.getDouble("number_of_devices");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -512,17 +487,16 @@ public class Pay implements Parcelable {
 
     public PayModifier getPayment() {
         try {
-            if (_payment != null)
-                return _payment;
-
-            if (SOURCE.has("payment") && SOURCE.get("payment") != null)
+            if (_payment == null && SOURCE.has("payment") && SOURCE.get("payment") != null)
                 _payment = PayModifier.fromJson(SOURCE.getJsonObject("payment"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _payment;
+        if (_payment != null && _payment.isSet())
+            return _payment;
+
+        return null;
     }
 
     public Pay payment(PayModifier payment) throws ParseException {
@@ -538,17 +512,16 @@ public class Pay implements Parcelable {
 
     public PayModifiers getPenalties() {
         try {
-            if (_penalties != null)
-                return _penalties;
-
-            if (SOURCE.has("penalties") && SOURCE.get("penalties") != null)
+            if (_penalties == null && SOURCE.has("penalties") && SOURCE.get("penalties") != null)
                 _penalties = PayModifiers.fromJson(SOURCE.getJsonObject("penalties"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _penalties;
+        if (_penalties != null && _penalties.isSet())
+            return _penalties;
+
+        return null;
     }
 
     public Pay penalties(PayModifiers penalties) throws ParseException {
@@ -564,17 +537,16 @@ public class Pay implements Parcelable {
 
     public PricingInsights getPricingInsights() {
         try {
-            if (_pricingInsights != null)
-                return _pricingInsights;
-
-            if (SOURCE.has("pricing_insights") && SOURCE.get("pricing_insights") != null)
+            if (_pricingInsights == null && SOURCE.has("pricing_insights") && SOURCE.get("pricing_insights") != null)
                 _pricingInsights = PricingInsights.fromJson(SOURCE.getJsonObject("pricing_insights"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _pricingInsights;
+        if (_pricingInsights != null && _pricingInsights.isSet())
+            return _pricingInsights;
+
+        return null;
     }
 
     public Pay pricingInsights(PricingInsights pricingInsights) throws ParseException {
@@ -590,17 +562,16 @@ public class Pay implements Parcelable {
 
     public PayRange getRange() {
         try {
-            if (_range != null)
-                return _range;
-
-            if (SOURCE.has("range") && SOURCE.get("range") != null)
+            if (_range == null && SOURCE.has("range") && SOURCE.get("range") != null)
                 _range = PayRange.fromJson(SOURCE.getJsonObject("range"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _range;
+        if (_range != null && _range.isSet())
+            return _range;
+
+        return null;
     }
 
     public Pay range(PayRange range) throws ParseException {
@@ -616,12 +587,8 @@ public class Pay implements Parcelable {
 
     public Double getReportedHours() {
         try {
-            if (_reportedHours != null)
-                return _reportedHours;
-
-            if (SOURCE.has("reported_hours") && SOURCE.get("reported_hours") != null)
+            if (_reportedHours == null && SOURCE.has("reported_hours") && SOURCE.get("reported_hours") != null)
                 _reportedHours = SOURCE.getDouble("reported_hours");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -642,12 +609,8 @@ public class Pay implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -668,12 +631,8 @@ public class Pay implements Parcelable {
 
     public Integer getStatusId() {
         try {
-            if (_statusId != null)
-                return _statusId;
-
-            if (SOURCE.has("status_id") && SOURCE.get("status_id") != null)
+            if (_statusId == null && SOURCE.has("status_id") && SOURCE.get("status_id") != null)
                 _statusId = SOURCE.getInt("status_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -694,12 +653,8 @@ public class Pay implements Parcelable {
 
     public Double getTotal() {
         try {
-            if (_total != null)
-                return _total;
-
-            if (SOURCE.has("total") && SOURCE.get("total") != null)
+            if (_total == null && SOURCE.has("total") && SOURCE.get("total") != null)
                 _total = SOURCE.getDouble("total");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -720,12 +675,8 @@ public class Pay implements Parcelable {
 
     public TypeEnum getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = TypeEnum.fromString(SOURCE.getString("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -746,12 +697,8 @@ public class Pay implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -955,6 +902,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
         return null;
+    }
+
+    public boolean isSet() {
+        return getType() != null;
     }
 
 }

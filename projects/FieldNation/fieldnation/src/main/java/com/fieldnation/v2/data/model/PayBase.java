@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -44,12 +42,8 @@ public class PayBase implements Parcelable {
 
     public Double getAmount() {
         try {
-            if (_amount != null)
-                return _amount;
-
-            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+            if (_amount == null && SOURCE.has("amount") && SOURCE.get("amount") != null)
                 _amount = SOURCE.getDouble("amount");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +64,8 @@ public class PayBase implements Parcelable {
 
     public Double getUnits() {
         try {
-            if (_units != null)
-                return _units;
-
-            if (SOURCE.has("units") && SOURCE.get("units") != null)
+            if (_units == null && SOURCE.has("units") && SOURCE.get("units") != null)
                 _units = SOURCE.getDouble("units");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +140,13 @@ public class PayBase implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getAmount() != null && getAmount() != 0;
     }
 }

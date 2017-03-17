@@ -24,52 +24,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Assignee;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.Cancellation;
-import com.fieldnation.v2.data.model.Contact;
-import com.fieldnation.v2.data.model.Contacts;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.Eta;
-import com.fieldnation.v2.data.model.EtaWithLocation;
-import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.Hold;
-import com.fieldnation.v2.data.model.Holds;
-import com.fieldnation.v2.data.model.IdResponse;
-import com.fieldnation.v2.data.model.Location;
-import com.fieldnation.v2.data.model.Message;
-import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.data.model.Milestones;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
-import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.Problems;
-import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
-import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Status;
-import com.fieldnation.v2.data.model.SwapResponse;
-import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskAlert;
-import com.fieldnation.v2.data.model.Tasks;
-import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
-import com.fieldnation.v2.data.model.Users;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -130,6 +86,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
+     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -1281,6 +1238,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: cancelSwapRequest
      * Cancel work order swap request.
+     *
      */
     public static void cancelSwapRequest(Context context) {
         try {
@@ -1484,15 +1442,16 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
+     * @param userId User id
      */
-    public static void declineRequest(Context context, Integer workOrderId) {
+    public static void declineRequest(Context context, Integer workOrderId, Integer userId) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/declines/{user_id}");
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/declines/" + userId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/declines/{user_id}");
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/declines/" + userId);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/declines/{user_id}")
@@ -1517,16 +1476,17 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
+     * @param userId User id
      * @param async       Async (Optional)
      */
-    public static void declineRequest(Context context, Integer workOrderId, Boolean async) {
+    public static void declineRequest(Context context, Integer workOrderId, Integer userId, Boolean async) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/declines/{user_id}?async=" + async);
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/declines/" + userId + "?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/declines/{user_id}")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/declines/" + userId)
                     .urlParams("?async=" + async);
 
             WebTransaction transaction = new WebTransaction.Builder()
@@ -1550,6 +1510,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: declineSwapRequest
      * Decline work order swap request.
+     *
      */
     public static void declineSwapRequest(Context context) {
         try {
@@ -2437,6 +2398,43 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getDiscounts"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getETAByWorkOrder
+     * Gets the eta for a work order
+     *
+     * @param workOrderId ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getETA(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/eta");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/eta");
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/eta")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getETA"))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -3944,7 +3942,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param eta JSON Payload
      */
-    public static void MassAcceptWorkOrder(Context context, Eta eta) {
+    public static void MassAcceptWorkOrder(Context context, EtaMassAccept eta) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/mass-accept");
 
@@ -3981,7 +3979,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param eta   JSON Payload
      * @param async Async (Optional)
      */
-    public static void MassAcceptWorkOrder(Context context, Eta eta, Boolean async) {
+    public static void MassAcceptWorkOrder(Context context, EtaMassAccept eta, Boolean async) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/mass-accept?async=" + async);
 
@@ -4002,39 +4000,6 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "MassAcceptWorkOrder"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: onMyWay
-     * Make on my way to a workorder
-     *
-     * @param workOrderId ID of work order
-     */
-    public static void onMyWay(Context context, Integer workOrderId) {
-        try {
-            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/on-my-way");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/on-my-way");
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/on-my-way")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "onMyWay"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -5651,6 +5616,88 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: updateETAByWorkOrder
+     * Updates the eta of a work order (depending on your role)
+     *
+     * @param workOrderId ID of work order
+     * @param eta JSON Payload
+     */
+    public static void updateETA(Context context, Integer workOrderId, ETA eta) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/eta");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/eta");
+
+            if (eta != null)
+                builder.body(eta.getJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/eta")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateETA"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: updateETAByWorkOrder
+     * Updates the eta of a work order (depending on your role)
+     *
+     * @param workOrderId ID of work order
+     * @param eta JSON Payload
+     * @param updateETAOptions Additional optional parameters
+     */
+    public static void updateETA(Context context, Integer workOrderId, ETA eta, UpdateETAOptions updateETAOptions) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/eta" + (updateETAOptions.getConfirm() != null ? "?confirm=" + updateETAOptions.getConfirm() : "")
+                                    + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
+                                    + (updateETAOptions.getAsync() != null ? "&async=" + updateETAOptions.getAsync() : "")
+                                   );
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/eta")
+                    .urlParams("" + (updateETAOptions.getConfirm() != null ? "?confirm=" + updateETAOptions.getConfirm() : "")
+                                    + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
+                                    + (updateETAOptions.getAsync() != null ? "&async=" + updateETAOptions.getAsync() : "")
+                                   );
+
+            if (eta != null)
+                builder.body(eta.getJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/eta")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateETA"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: updateExpenseByWorkOrderAndExpense
      * Update an Expense of a Work order
      *
@@ -6418,23 +6465,17 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId           ID of work order
      * @param schedule              JSON Payload
-     * @param updateScheduleOptions Additional optional parameters
+     * @param async Async (Optional)
      */
-    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, UpdateScheduleOptions updateScheduleOptions) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async) {
         try {
-            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule" + (updateScheduleOptions.getConfirm() != null ? "?confirm=" + updateScheduleOptions.getConfirm() : "")
-                    + (updateScheduleOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateScheduleOptions.getUpdateFromIvr() : "")
-                    + (updateScheduleOptions.getAsync() != null ? "&async=" + updateScheduleOptions.getAsync() : "")
-            );
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/schedule")
-                    .urlParams("" + (updateScheduleOptions.getConfirm() != null ? "?confirm=" + updateScheduleOptions.getConfirm() : "")
-                            + (updateScheduleOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateScheduleOptions.getUpdateFromIvr() : "")
-                            + (updateScheduleOptions.getAsync() != null ? "&async=" + updateScheduleOptions.getAsync() : "")
-                    );
+                    .urlParams("?async=" + async);
 
             if (schedule != null)
                 builder.body(schedule.getJson().toString());
@@ -6937,6 +6978,9 @@ public class WorkordersWebApi extends TopicClient {
         public void onGetDiscounts(PayModifiers payModifiers, boolean success, Error error) {
         }
 
+        public void onGetETA(ETA eTA, boolean success, Error error) {
+        }
+
         public void onGetExpenses(Expenses expenses, boolean success, Error error) {
         }
 
@@ -7036,9 +7080,6 @@ public class WorkordersWebApi extends TopicClient {
         public void onMassAcceptWorkOrder(boolean success, Error error) {
         }
 
-        public void onOnMyWay(boolean success, Error error) {
-        }
-
         public void onPublish(boolean success, Error error) {
         }
 
@@ -7121,6 +7162,9 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onUpdateDiscount(IdResponse idResponse, boolean success, Error error) {
+        }
+
+        public void onUpdateETA(boolean success, Error error) {
         }
 
         public void onUpdateExpense(Expense expense, boolean success, Error error) {
@@ -7409,6 +7453,12 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "getETA":
+                        if (success)
+                            successObject = ETA.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "getExpenses":
                         if (success)
                             successObject = Expenses.fromJson(new JsonObject(data));
@@ -7599,10 +7649,6 @@ public class WorkordersWebApi extends TopicClient {
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "onMyWay":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "publish":
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
@@ -7721,6 +7767,10 @@ public class WorkordersWebApi extends TopicClient {
                         if (success)
                             successObject = IdResponse.fromJson(new JsonObject(data));
                         else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "updateETA":
+                        if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateExpense":
@@ -7941,6 +7991,9 @@ public class WorkordersWebApi extends TopicClient {
                     case "getDiscounts":
                         listener.onGetDiscounts((PayModifiers) successObject, success, (Error) failObject);
                         break;
+                    case "getETA":
+                        listener.onGetETA((ETA) successObject, success, (Error) failObject);
+                        break;
                     case "getExpenses":
                         listener.onGetExpenses((Expenses) successObject, success, (Error) failObject);
                         break;
@@ -8040,9 +8093,6 @@ public class WorkordersWebApi extends TopicClient {
                     case "MassAcceptWorkOrder":
                         listener.onMassAcceptWorkOrder(success, (Error) failObject);
                         break;
-                    case "onMyWay":
-                        listener.onOnMyWay(success, (Error) failObject);
-                        break;
                     case "publish":
                         listener.onPublish(success, (Error) failObject);
                         break;
@@ -8126,6 +8176,9 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "updateDiscount":
                         listener.onUpdateDiscount((IdResponse) successObject, success, (Error) failObject);
+                        break;
+                    case "updateETA":
+                        listener.onUpdateETA(success, (Error) failObject);
                         break;
                     case "updateExpense":
                         listener.onUpdateExpense((Expense) successObject, success, (Error) failObject);

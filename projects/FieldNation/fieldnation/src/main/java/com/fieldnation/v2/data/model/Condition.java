@@ -17,11 +17,8 @@ import java.text.ParseException;
  * Created by dmgen from swagger.
  */
 
-public class OnMyWay implements Parcelable {
-    private static final String TAG = "OnMyWay";
-
-    @Json(name = "active")
-    private Boolean _active;
+public class Condition implements Parcelable {
+    private static final String TAG = "Condition";
 
     @Json(name = "coords")
     private Coords _coords;
@@ -42,39 +39,20 @@ public class OnMyWay implements Parcelable {
     private String _status;
 
     @Json(name = "substatus")
-    private String _substatus;
+    private SubstatusEnum _substatus;
+
+    @Json(name = "user")
+    private User _user;
 
     @Source
     private JsonObject SOURCE;
 
-    public OnMyWay() {
+    public Condition() {
         SOURCE = new JsonObject();
     }
 
-    public OnMyWay(JsonObject obj) {
+    public Condition(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setActive(Boolean active) throws ParseException {
-        _active = active;
-        SOURCE.put("active", active);
-    }
-
-    public Boolean getActive() {
-        try {
-            if (_active == null && SOURCE.has("active") && SOURCE.get("active") != null)
-                _active = SOURCE.getBoolean("active");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _active;
-    }
-
-    public OnMyWay active(Boolean active) throws ParseException {
-        _active = active;
-        SOURCE.put("active", active);
-        return this;
     }
 
     public void setCoords(Coords coords) throws ParseException {
@@ -96,7 +74,7 @@ public class OnMyWay implements Parcelable {
         return null;
     }
 
-    public OnMyWay coords(Coords coords) throws ParseException {
+    public Condition coords(Coords coords) throws ParseException {
         _coords = coords;
         SOURCE.put("coords", coords.getJson());
         return this;
@@ -121,7 +99,7 @@ public class OnMyWay implements Parcelable {
         return null;
     }
 
-    public OnMyWay created(Date created) throws ParseException {
+    public Condition created(Date created) throws ParseException {
         _created = created;
         SOURCE.put("created", created.getJson());
         return this;
@@ -143,7 +121,7 @@ public class OnMyWay implements Parcelable {
         return _distance;
     }
 
-    public OnMyWay distance(Double distance) throws ParseException {
+    public Condition distance(Double distance) throws ParseException {
         _distance = distance;
         SOURCE.put("distance", distance);
         return this;
@@ -165,7 +143,7 @@ public class OnMyWay implements Parcelable {
         return _driveTime;
     }
 
-    public OnMyWay driveTime(Integer driveTime) throws ParseException {
+    public Condition driveTime(Integer driveTime) throws ParseException {
         _driveTime = driveTime;
         SOURCE.put("drive_time", driveTime);
         return this;
@@ -187,7 +165,7 @@ public class OnMyWay implements Parcelable {
         return _estimatedDelay;
     }
 
-    public OnMyWay estimatedDelay(Integer estimatedDelay) throws ParseException {
+    public Condition estimatedDelay(Integer estimatedDelay) throws ParseException {
         _estimatedDelay = estimatedDelay;
         SOURCE.put("estimated_delay", estimatedDelay);
         return this;
@@ -209,21 +187,21 @@ public class OnMyWay implements Parcelable {
         return _status;
     }
 
-    public OnMyWay status(String status) throws ParseException {
+    public Condition status(String status) throws ParseException {
         _status = status;
         SOURCE.put("status", status);
         return this;
     }
 
-    public void setSubstatus(String substatus) throws ParseException {
+    public void setSubstatus(SubstatusEnum substatus) throws ParseException {
         _substatus = substatus;
-        SOURCE.put("substatus", substatus);
+        SOURCE.put("substatus", substatus.toString());
     }
 
-    public String getSubstatus() {
+    public SubstatusEnum getSubstatus() {
         try {
             if (_substatus == null && SOURCE.has("substatus") && SOURCE.get("substatus") != null)
-                _substatus = SOURCE.getString("substatus");
+                _substatus = SubstatusEnum.fromString(SOURCE.getString("substatus"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -231,34 +209,95 @@ public class OnMyWay implements Parcelable {
         return _substatus;
     }
 
-    public OnMyWay substatus(String substatus) throws ParseException {
+    public Condition substatus(SubstatusEnum substatus) throws ParseException {
         _substatus = substatus;
-        SOURCE.put("substatus", substatus);
+        SOURCE.put("substatus", substatus.toString());
         return this;
+    }
+
+    public void setUser(User user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user.getJson());
+    }
+
+    public User getUser() {
+        try {
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_user != null && _user.isSet())
+            return _user;
+
+        return null;
+    }
+
+    public Condition user(User user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user.getJson());
+        return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum SubstatusEnum {
+        @Json(name = "delayed")
+        DELAYED("delayed");
+
+        private String value;
+
+        SubstatusEnum(String value) {
+            this.value = value;
+        }
+
+        public static SubstatusEnum fromString(String value) {
+            SubstatusEnum[] values = values();
+            for (SubstatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static SubstatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            SubstatusEnum[] list = new SubstatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(OnMyWay[] array) {
+    public static JsonArray toJsonArray(Condition[] array) {
         JsonArray list = new JsonArray();
-        for (OnMyWay item : array) {
+        for (Condition item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static OnMyWay[] fromJsonArray(JsonArray array) {
-        OnMyWay[] list = new OnMyWay[array.size()];
+    public static Condition[] fromJsonArray(JsonArray array) {
+        Condition[] list = new Condition[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static OnMyWay fromJson(JsonObject obj) {
+    public static Condition fromJson(JsonObject obj) {
         try {
-            return new OnMyWay(obj);
+            return new Condition(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -272,12 +311,12 @@ public class OnMyWay implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<OnMyWay> CREATOR = new Parcelable.Creator<OnMyWay>() {
+    public static final Parcelable.Creator<Condition> CREATOR = new Parcelable.Creator<Condition>() {
 
         @Override
-        public OnMyWay createFromParcel(Parcel source) {
+        public Condition createFromParcel(Parcel source) {
             try {
-                return OnMyWay.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Condition.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -285,8 +324,8 @@ public class OnMyWay implements Parcelable {
         }
 
         @Override
-        public OnMyWay[] newArray(int size) {
-            return new OnMyWay[size];
+        public Condition[] newArray(int size) {
+            return new Condition[size];
         }
     };
 

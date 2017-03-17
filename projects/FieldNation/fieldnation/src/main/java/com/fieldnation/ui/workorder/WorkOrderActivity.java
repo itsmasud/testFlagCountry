@@ -387,9 +387,11 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 return;
             }
 
-            Debug.setLong("last_workorder", workOrder.getWorkOrderId());
-            _workOrder = workOrder;
-            populateUi();
+            if (_workOrderId == (int) workOrder.getWorkOrderId()) {
+                Debug.setLong("last_workorder", workOrder.getWorkOrderId());
+                _workOrder = workOrder;
+                populateUi();
+            }
         }
 
         @Override

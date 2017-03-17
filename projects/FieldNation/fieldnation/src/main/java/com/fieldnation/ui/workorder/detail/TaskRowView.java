@@ -199,7 +199,7 @@ public class TaskRowView extends RelativeLayout {
 
     private void updateCheckBox() {
         if (hasAction()) {
-            if (_task.getCompleted().isValid()) {
+            if (_task.getCompleted() != null) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
                 _iconView.setText(R.string.icon_task_done);
             } else {
@@ -207,7 +207,7 @@ public class TaskRowView extends RelativeLayout {
                 _iconView.setText(R.string.icon_task);
             }
         } else {
-            if (_task.getCompleted().isValid()) {
+            if (_task.getCompleted() != null) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
                 _iconView.setText(R.string.icon_task_done);
             } else {

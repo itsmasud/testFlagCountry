@@ -29,6 +29,10 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Condition;
+import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 
 /**
  * Created by Michael on 10/5/2016.
@@ -49,7 +53,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
     private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
-    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "Other"};
+    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "30", "60", "Other"};
 
     // Ui
     private TextView _titleTextView;
@@ -480,23 +484,26 @@ public class ReportProblemDialog extends SimpleDialog {
                     break;
 
                 case WILL_BE_LATE:
-                    if (_timeframePosition == 3) {
-                        try {
-                            WorkorderClient.actionRunningLate(App.get(), _workOrderId, explanation, Integer.parseInt(_timeframeEditText.getText().toString()) * 60);
-                            ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                            ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
-                        }
-                    } else {
-                        try {
-                            String delay = TIMEFRAMES[_timeframePosition];
-                            WorkorderClient.actionRunningLate(App.get(), _workOrderId, explanation, Integer.parseInt(delay) * 60);
-                            ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                            ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
-                        }
+                    try {
+                        int delayMin = 0;
+
+                        if (_timeframePosition == 3)
+                            delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
+                        else
+                            delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
+
+                        ETA eta = new ETA()
+                                .status(new ETAStatus()
+                                        .condition(new Condition()
+                                                .estimatedDelay(delayMin * 60)
+                                                .substatus(Condition.SubstatusEnum.DELAYED)));
+                        WorkordersWebApi.updateETA(App.get(), (int) _workOrderId, eta);
+
+                        ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
+                        _onSendDispatcher.dispatch(getUid(), _workOrderId);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
                     }
                     break;
 
