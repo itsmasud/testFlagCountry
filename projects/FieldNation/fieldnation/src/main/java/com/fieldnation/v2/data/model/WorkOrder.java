@@ -1306,7 +1306,7 @@ public class WorkOrder implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getCorrelationId());
+        return true;
     }
 
     private Set<ActionsEnum> _actionsSet = null;

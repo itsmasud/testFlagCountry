@@ -128,6 +128,6 @@ public class UpdateModelMetadataUniversalContext implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getCorrelationId());
+        return true;
     }
 }
