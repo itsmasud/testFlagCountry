@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,17 +57,16 @@ public class UpdateModel implements Parcelable {
 
     public UpdateModelMetadata getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = UpdateModelMetadata.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public UpdateModel metadata(UpdateModelMetadata metadata) throws ParseException {
@@ -79,17 +82,16 @@ public class UpdateModel implements Parcelable {
 
     public UpdateModelParams getParams() {
         try {
-            if (_params != null)
-                return _params;
-
-            if (SOURCE.has("params") && SOURCE.get("params") != null)
+            if (_params == null && SOURCE.has("params") && SOURCE.get("params") != null)
                 _params = UpdateModelParams.fromJson(SOURCE.getJsonObject("params"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_params != null && _params.isSet())
         return _params;
+
+        return null;
     }
 
     public UpdateModel params(UpdateModelParams params) throws ParseException {
@@ -105,12 +107,8 @@ public class UpdateModel implements Parcelable {
 
     public String getServiceName() {
         try {
-            if (_serviceName != null)
-                return _serviceName;
-
-            if (SOURCE.has("service_name") && SOURCE.get("service_name") != null)
+            if (_serviceName == null && SOURCE.has("service_name") && SOURCE.get("service_name") != null)
                 _serviceName = SOURCE.getString("service_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +129,8 @@ public class UpdateModel implements Parcelable {
 
     public String getTimestamp() {
         try {
-            if (_timestamp != null)
-                return _timestamp;
-
-            if (SOURCE.has("timestamp") && SOURCE.get("timestamp") != null)
+            if (_timestamp == null && SOURCE.has("timestamp") && SOURCE.get("timestamp") != null)
                 _timestamp = SOURCE.getString("timestamp");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,12 +151,8 @@ public class UpdateModel implements Parcelable {
 
     public String getVersion() {
         try {
-            if (_version != null)
-                return _version;
-
-            if (SOURCE.has("version") && SOURCE.get("version") != null)
+            if (_version == null && SOURCE.has("version") && SOURCE.get("version") != null)
                 _version = SOURCE.getString("version");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -237,5 +227,13 @@ public class UpdateModel implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

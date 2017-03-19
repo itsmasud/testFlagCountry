@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -41,12 +45,8 @@ public class SwapResponse implements Parcelable {
 
     public Boolean getSuccess() {
         try {
-            if (_success != null)
-                return _success;
-
-            if (SOURCE.has("success") && SOURCE.get("success") != null)
+            if (_success == null && SOURCE.has("success") && SOURCE.get("success") != null)
                 _success = SOURCE.getBoolean("success");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -121,5 +121,13 @@ public class SwapResponse implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

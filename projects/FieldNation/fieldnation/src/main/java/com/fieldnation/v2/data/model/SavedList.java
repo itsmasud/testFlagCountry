@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -59,12 +63,8 @@ public class SavedList implements Parcelable {
 
     public String getColumns() {
         try {
-            if (_columns != null)
-                return _columns;
-
-            if (SOURCE.has("columns") && SOURCE.get("columns") != null)
+            if (_columns == null && SOURCE.has("columns") && SOURCE.get("columns") != null)
                 _columns = SOURCE.getString("columns");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -85,12 +85,8 @@ public class SavedList implements Parcelable {
 
     public Integer getCount() {
         try {
-            if (_count != null)
-                return _count;
-
-            if (SOURCE.has("count") && SOURCE.get("count") != null)
+            if (_count == null && SOURCE.has("count") && SOURCE.get("count") != null)
                 _count = SOURCE.getInt("count");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -111,12 +107,8 @@ public class SavedList implements Parcelable {
 
     public Boolean getDefault() {
         try {
-            if (_default != null)
-                return _default;
-
-            if (SOURCE.has("default") && SOURCE.get("default") != null)
+            if (_default == null && SOURCE.has("default") && SOURCE.get("default") != null)
                 _default = SOURCE.getBoolean("default");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -137,12 +129,8 @@ public class SavedList implements Parcelable {
 
     public String getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getString("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -163,12 +151,8 @@ public class SavedList implements Parcelable {
 
     public String getLabel() {
         try {
-            if (_label != null)
-                return _label;
-
-            if (SOURCE.has("label") && SOURCE.get("label") != null)
+            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
                 _label = SOURCE.getString("label");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -189,12 +173,8 @@ public class SavedList implements Parcelable {
 
     public OrderEnum getOrder() {
         try {
-            if (_order != null)
-                return _order;
-
-            if (SOURCE.has("order") && SOURCE.get("order") != null)
+            if (_order == null && SOURCE.has("order") && SOURCE.get("order") != null)
                 _order = OrderEnum.fromString(SOURCE.getString("order"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -215,12 +195,8 @@ public class SavedList implements Parcelable {
 
     public String getSort() {
         try {
-            if (_sort != null)
-                return _sort;
-
-            if (SOURCE.has("sort") && SOURCE.get("sort") != null)
+            if (_sort == null && SOURCE.has("sort") && SOURCE.get("sort") != null)
                 _sort = SOURCE.getString("sort");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -338,6 +314,11 @@ public class SavedList implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getId());
+    }
+
     public String getTitle() {
         if (getCount() == null) {
             return getLabel();

@@ -45,12 +45,8 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
 
     public Boolean getMoreResults() {
         try {
-            if (_moreResults != null)
-                return _moreResults;
-
-            if (SOURCE.has("more_results") && SOURCE.get("more_results") != null)
+            if (_moreResults == null && SOURCE.has("more_results") && SOURCE.get("more_results") != null)
                 _moreResults = SOURCE.getBoolean("more_results");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -71,17 +67,16 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
 
     public User getProfile() {
         try {
-            if (_profile != null)
-                return _profile;
-
-            if (SOURCE.has("profile") && SOURCE.get("profile") != null)
+            if (_profile == null && SOURCE.has("profile") && SOURCE.get("profile") != null)
                 _profile = User.fromJson(SOURCE.getJsonObject("profile"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _profile;
+        if (_profile != null && _profile.isSet())
+            return _profile;
+
+        return null;
     }
 
     public ProfileAndWorkHistoryRating profile(User profile) throws ParseException {
@@ -97,12 +92,8 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
 
     public JsonObject getWorkHistory() {
         try {
-            if (_workHistory != null)
-                return _workHistory;
-
-            if (SOURCE.has("work_history") && SOURCE.get("work_history") != null)
+            if (_workHistory == null && SOURCE.has("work_history") && SOURCE.get("work_history") != null)
                 _workHistory = SOURCE.getJsonObject("work_history");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -177,5 +168,13 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

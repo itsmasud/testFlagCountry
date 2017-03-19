@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -235,7 +233,7 @@ public class ScheduleServiceWindow implements Parcelable {
                 Calendar cal = null;
                 cal = getStart().getCalendar();
                 when = DateUtils.formatDateReallyLong(cal
-);
+                );
 
                 // Wednesday, Dec 4, 2056
                 if (!misc.isEmptyOrNull(getEnd().getUtc())) {

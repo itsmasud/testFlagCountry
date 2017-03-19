@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class ErrorTraceArgs implements Parcelable {
 
     public String getMessage() {
         try {
-            if (_message != null)
-                return _message;
-
-            if (SOURCE.has("message") && SOURCE.get("message") != null)
+            if (_message == null && SOURCE.has("message") && SOURCE.get("message") != null)
                 _message = SOURCE.getString("message");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class ErrorTraceArgs implements Parcelable {
 
     public Integer getStatusCode() {
         try {
-            if (_statusCode != null)
-                return _statusCode;
-
-            if (SOURCE.has("status_code") && SOURCE.get("status_code") != null)
+            if (_statusCode == null && SOURCE.has("status_code") && SOURCE.get("status_code") != null)
                 _statusCode = SOURCE.getInt("status_code");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +146,13 @@ public class ErrorTraceArgs implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -56,12 +60,8 @@ public class MessageFrom implements Parcelable {
 
     public Boolean getHideWoManager() {
         try {
-            if (_hideWoManager != null)
-                return _hideWoManager;
-
-            if (SOURCE.has("hideWoManager") && SOURCE.get("hideWoManager") != null)
+            if (_hideWoManager == null && SOURCE.has("hideWoManager") && SOURCE.get("hideWoManager") != null)
                 _hideWoManager = SOURCE.getBoolean("hideWoManager");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -82,12 +82,8 @@ public class MessageFrom implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -108,12 +104,8 @@ public class MessageFrom implements Parcelable {
 
     public String getMsgLink() {
         try {
-            if (_msgLink != null)
-                return _msgLink;
-
-            if (SOURCE.has("msgLink") && SOURCE.get("msgLink") != null)
+            if (_msgLink == null && SOURCE.has("msgLink") && SOURCE.get("msgLink") != null)
                 _msgLink = SOURCE.getString("msgLink");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -134,12 +126,8 @@ public class MessageFrom implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -160,12 +148,8 @@ public class MessageFrom implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -186,12 +170,8 @@ public class MessageFrom implements Parcelable {
 
     public String getThumbnail() {
         try {
-            if (_thumbnail != null)
-                return _thumbnail;
-
-            if (SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
+            if (_thumbnail == null && SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
                 _thumbnail = SOURCE.getString("thumbnail");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -266,5 +246,13 @@ public class MessageFrom implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

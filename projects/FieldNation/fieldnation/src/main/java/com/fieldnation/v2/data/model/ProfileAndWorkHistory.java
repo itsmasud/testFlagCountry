@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -41,17 +45,16 @@ public class ProfileAndWorkHistory implements Parcelable {
 
     public ProfileAndWorkHistoryRating getRating() {
         try {
-            if (_rating != null)
-                return _rating;
-
-            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+            if (_rating == null && SOURCE.has("rating") && SOURCE.get("rating") != null)
                 _rating = ProfileAndWorkHistoryRating.fromJson(SOURCE.getJsonObject("rating"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_rating != null && _rating.isSet())
         return _rating;
+
+        return null;
     }
 
     public ProfileAndWorkHistory rating(ProfileAndWorkHistoryRating rating) throws ParseException {
@@ -121,5 +124,13 @@ public class ProfileAndWorkHistory implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

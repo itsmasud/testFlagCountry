@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -74,17 +78,16 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public CustomField getCustomField() {
         try {
-            if (_customField != null)
-                return _customField;
-
-            if (SOURCE.has("custom_field") && SOURCE.get("custom_field") != null)
+            if (_customField == null && SOURCE.has("custom_field") && SOURCE.get("custom_field") != null)
                 _customField = CustomField.fromJson(SOURCE.getJsonObject("custom_field"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_customField != null && _customField.isSet())
         return _customField;
+
+        return null;
     }
 
     public SelectionRuleCriteria customField(CustomField customField) throws ParseException {
@@ -100,12 +103,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -126,12 +125,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public String getExtra() {
         try {
-            if (_extra != null)
-                return _extra;
-
-            if (SOURCE.has("extra") && SOURCE.get("extra") != null)
+            if (_extra == null && SOURCE.has("extra") && SOURCE.get("extra") != null)
                 _extra = SOURCE.getString("extra");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -152,12 +147,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -178,12 +169,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public NameEnum getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = NameEnum.fromString(SOURCE.getString("name"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -204,12 +191,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public OperationEnum getOperation() {
         try {
-            if (_operation != null)
-                return _operation;
-
-            if (SOURCE.has("operation") && SOURCE.get("operation") != null)
+            if (_operation == null && SOURCE.has("operation") && SOURCE.get("operation") != null)
                 _operation = OperationEnum.fromString(SOURCE.getString("operation"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -230,12 +213,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public Integer getOrder() {
         try {
-            if (_order != null)
-                return _order;
-
-            if (SOURCE.has("order") && SOURCE.get("order") != null)
+            if (_order == null && SOURCE.has("order") && SOURCE.get("order") != null)
                 _order = SOURCE.getInt("order");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -256,12 +235,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public Boolean getRequired() {
         try {
-            if (_required != null)
-                return _required;
-
-            if (SOURCE.has("required") && SOURCE.get("required") != null)
+            if (_required == null && SOURCE.has("required") && SOURCE.get("required") != null)
                 _required = SOURCE.getBoolean("required");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -282,12 +257,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public String getService() {
         try {
-            if (_service != null)
-                return _service;
-
-            if (SOURCE.has("service") && SOURCE.get("service") != null)
+            if (_service == null && SOURCE.has("service") && SOURCE.get("service") != null)
                 _service = SOURCE.getString("service");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -308,12 +279,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -334,12 +301,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public String getValue() {
         try {
-            if (_value != null)
-                return _value;
-
-            if (SOURCE.has("value") && SOURCE.get("value") != null)
+            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
                 _value = SOURCE.getString("value");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -360,12 +323,8 @@ public class SelectionRuleCriteria implements Parcelable {
 
     public Integer getWeight() {
         try {
-            if (_weight != null)
-                return _weight;
-
-            if (SOURCE.has("weight") && SOURCE.get("weight") != null)
+            if (_weight == null && SOURCE.has("weight") && SOURCE.get("weight") != null)
                 _weight = SOURCE.getInt("weight");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -592,5 +551,13 @@ public class SelectionRuleCriteria implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }
