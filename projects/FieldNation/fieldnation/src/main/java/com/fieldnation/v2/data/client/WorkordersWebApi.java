@@ -4371,15 +4371,15 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeRequest(Context context, Integer workOrderId, Integer requestId) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/request/" + requestId);
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/request/" + requestId);
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
 
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/request/{request_id}")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
@@ -4406,16 +4406,16 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void removeRequest(Context context, Integer workOrderId, Integer requestId, Boolean async) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/request/" + requestId + "?async=" + async);
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/request/" + requestId)
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId)
                     .urlParams("?async=" + async);
 
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/request/[request_id]")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests/[request_id]")
                     .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
