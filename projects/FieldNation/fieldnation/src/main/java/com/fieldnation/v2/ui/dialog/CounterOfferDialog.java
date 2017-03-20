@@ -483,9 +483,12 @@ public class CounterOfferDialog extends SimpleDialog {
                 Log.e(TAG, "_expireDuration: " + _expires);
 
                 if (_workOrder.getRequests().getOpenRequest() != null) {
-                    WorkordersWebApi.removeRequest(App.get(), _workOrder.getWorkOrderId(), _workOrder.getRequests().getOpenRequest());
                     _refreshView.startRefreshing();
+                    WorkordersWebApi.removeRequest(App.get(), _workOrder.getWorkOrderId(),
+                            _workOrder.getRequests().getOpenRequest().getId());
                 } else {
+                    _refreshView.startRefreshing();
+
                     Expense[] exp = new Expense[_expenses.size()];
                     for (int i = 0; i < _expenses.size(); i++) {
                         exp[i] = _expenses.get(i);
@@ -514,7 +517,6 @@ public class CounterOfferDialog extends SimpleDialog {
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
-                    _refreshView.startRefreshing();
                 }
             }
         }

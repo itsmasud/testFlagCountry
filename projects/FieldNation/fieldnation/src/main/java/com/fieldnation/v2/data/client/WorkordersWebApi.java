@@ -4367,22 +4367,19 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param request     JSON Model
+     * @param requestId   JSON Model
      */
-    public static void removeRequest(Context context, Integer workOrderId, Request request) {
+    public static void removeRequest(Context context, Integer workOrderId, Integer requestId) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests");
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/request/" + requestId);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests");
-
-            if (request != null)
-                builder.body(request.getJson().toString());
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/request/" + requestId);
 
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/request/{request_id}")
                     .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
@@ -4404,24 +4401,21 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param request     JSON Model
+     * @param requestId   JSON Model
      * @param async       Async (Optional)
      */
-    public static void removeRequest(Context context, Integer workOrderId, Request request, Boolean async) {
+    public static void removeRequest(Context context, Integer workOrderId, Integer requestId, Boolean async) {
         try {
-            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests?async=" + async);
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/request/" + requestId + "?async=" + async);
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/requests")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/request/" + requestId)
                     .urlParams("?async=" + async);
 
-            if (request != null)
-                builder.body(request.getJson().toString());
-
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/request/[request_id]")
                     .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
