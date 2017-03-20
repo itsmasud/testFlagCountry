@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -409,6 +412,11 @@ public class PayModifier implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -417,9 +425,5 @@ public class PayModifier implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
-    }
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
     }
 }

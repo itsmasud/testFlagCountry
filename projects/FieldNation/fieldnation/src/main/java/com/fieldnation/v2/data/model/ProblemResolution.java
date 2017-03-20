@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -85,17 +89,16 @@ public class ProblemResolution implements Parcelable {
 
     public Date getAt() {
         try {
-            if (_at != null)
-                return _at;
-
-            if (SOURCE.has("at") && SOURCE.get("at") != null)
+            if (_at == null && SOURCE.has("at") && SOURCE.get("at") != null)
                 _at = Date.fromJson(SOURCE.getJsonObject("at"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_at != null && _at.isSet())
         return _at;
+
+        return null;
     }
 
     public ProblemResolution at(Date at) throws ParseException {
@@ -111,17 +114,16 @@ public class ProblemResolution implements Parcelable {
 
     public User getBy() {
         try {
-            if (_by != null)
-                return _by;
-
-            if (SOURCE.has("by") && SOURCE.get("by") != null)
+            if (_by == null && SOURCE.has("by") && SOURCE.get("by") != null)
                 _by = User.fromJson(SOURCE.getJsonObject("by"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_by != null && _by.isSet())
         return _by;
+
+        return null;
     }
 
     public ProblemResolution by(User by) throws ParseException {
@@ -137,12 +139,8 @@ public class ProblemResolution implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -292,5 +290,13 @@ public class ProblemResolution implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

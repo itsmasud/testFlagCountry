@@ -5,12 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -43,12 +48,8 @@ public class RichText implements Parcelable {
 
     public String getHtml() {
         try {
-            if (_html != null)
-                return _html;
-
-            if (SOURCE.has("html") && SOURCE.get("html") != null)
+            if (_html == null && SOURCE.has("html") && SOURCE.get("html") != null)
                 _html = SOURCE.getString("html");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -69,12 +70,8 @@ public class RichText implements Parcelable {
 
     public String getMarkdown() {
         try {
-            if (_markdown != null)
-                return _markdown;
-
-            if (SOURCE.has("markdown") && SOURCE.get("markdown") != null)
+            if (_markdown == null && SOURCE.has("markdown") && SOURCE.get("markdown") != null)
                 _markdown = SOURCE.getString("markdown");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,6 +147,10 @@ public class RichText implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
 
     public boolean isSet() {
         return !misc.isEmptyOrNull(getHtml()) && !misc.isEmptyOrNull(getMarkdown());

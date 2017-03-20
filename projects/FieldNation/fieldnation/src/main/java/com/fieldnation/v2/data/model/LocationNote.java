@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,12 +57,8 @@ public class LocationNote implements Parcelable {
 
     public String getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = SOURCE.getString("created");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -79,12 +79,8 @@ public class LocationNote implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -105,12 +101,8 @@ public class LocationNote implements Parcelable {
 
     public Boolean getPrivate() {
         try {
-            if (_private != null)
-                return _private;
-
-            if (SOURCE.has("private") && SOURCE.get("private") != null)
+            if (_private == null && SOURCE.has("private") && SOURCE.get("private") != null)
                 _private = SOURCE.getBoolean("private");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +123,8 @@ public class LocationNote implements Parcelable {
 
     public String getText() {
         try {
-            if (_text != null)
-                return _text;
-
-            if (SOURCE.has("text") && SOURCE.get("text") != null)
+            if (_text == null && SOURCE.has("text") && SOURCE.get("text") != null)
                 _text = SOURCE.getString("text");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,12 +145,8 @@ public class LocationNote implements Parcelable {
 
     public Integer getUserId() {
         try {
-            if (_userId != null)
-                return _userId;
-
-            if (SOURCE.has("user_id") && SOURCE.get("user_id") != null)
+            if (_userId == null && SOURCE.has("user_id") && SOURCE.get("user_id") != null)
                 _userId = SOURCE.getInt("user_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -237,5 +221,13 @@ public class LocationNote implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

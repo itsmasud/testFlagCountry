@@ -5,11 +5,10 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 
@@ -62,12 +61,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public Boolean getCanSort() {
         try {
-            if (_canSort != null)
-                return _canSort;
-
-            if (SOURCE.has("can_sort") && SOURCE.get("can_sort") != null)
+            if (_canSort == null && SOURCE.has("can_sort") && SOURCE.get("can_sort") != null)
                 _canSort = SOURCE.getBoolean("can_sort");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -88,12 +83,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public String getGroup() {
         try {
-            if (_group != null)
-                return _group;
-
-            if (SOURCE.has("group") && SOURCE.get("group") != null)
+            if (_group == null && SOURCE.has("group") && SOURCE.get("group") != null)
                 _group = SOURCE.getString("group");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -114,12 +105,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public String getIcon() {
         try {
-            if (_icon != null)
-                return _icon;
-
-            if (SOURCE.has("icon") && SOURCE.get("icon") != null)
+            if (_icon == null && SOURCE.has("icon") && SOURCE.get("icon") != null)
                 _icon = SOURCE.getString("icon");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -140,12 +127,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public String getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getString("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -166,12 +149,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public String getLabel() {
         try {
-            if (_label != null)
-                return _label;
-
-            if (SOURCE.has("label") && SOURCE.get("label") != null)
+            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
                 _label = SOURCE.getString("label");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -192,12 +171,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public Integer getOrder() {
         try {
-            if (_order != null)
-                return _order;
-
-            if (SOURCE.has("order") && SOURCE.get("order") != null)
+            if (_order == null && SOURCE.has("order") && SOURCE.get("order") != null)
                 _order = SOURCE.getInt("order");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -218,12 +193,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public Boolean getSelected() {
         try {
-            if (_selected != null)
-                return _selected;
-
-            if (SOURCE.has("selected") && SOURCE.get("selected") != null)
+            if (_selected == null && SOURCE.has("selected") && SOURCE.get("selected") != null)
                 _selected = SOURCE.getBoolean("selected");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -244,12 +215,8 @@ public class AvailableColumnItems implements Parcelable {
 
     public String getSortDir() {
         try {
-            if (_sortDir != null)
-                return _sortDir;
-
-            if (SOURCE.has("sort_dir") && SOURCE.get("sort_dir") != null)
+            if (_sortDir == null && SOURCE.has("sort_dir") && SOURCE.get("sort_dir") != null)
                 _sortDir = SOURCE.getString("sort_dir");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -324,5 +291,13 @@ public class AvailableColumnItems implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getId());
     }
 }

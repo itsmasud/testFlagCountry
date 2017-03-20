@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -23,9 +26,6 @@ public class Schedule implements Parcelable {
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
-
-    @Json(name = "correlation_id")
-    private String _correlationId;
 
     @Json(name = "no_refresh")
     private Boolean _noRefresh;
@@ -94,28 +94,6 @@ public class Schedule implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
-        return this;
-    }
-
-    public void setCorrelationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
-    }
-
-    public String getCorrelationId() {
-        try {
-            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
-                _correlationId = SOURCE.getString("correlation_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _correlationId;
-    }
-
-    public Schedule correlationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 

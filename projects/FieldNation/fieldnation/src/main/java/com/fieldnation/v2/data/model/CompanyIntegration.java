@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -65,12 +69,8 @@ public class CompanyIntegration implements Parcelable {
 
     public Boolean getActive() {
         try {
-            if (_active != null)
-                return _active;
-
-            if (SOURCE.has("active") && SOURCE.get("active") != null)
+            if (_active == null && SOURCE.has("active") && SOURCE.get("active") != null)
                 _active = SOURCE.getBoolean("active");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -91,12 +91,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getApiDomainName() {
         try {
-            if (_apiDomainName != null)
-                return _apiDomainName;
-
-            if (SOURCE.has("api_domain_name") && SOURCE.get("api_domain_name") != null)
+            if (_apiDomainName == null && SOURCE.has("api_domain_name") && SOURCE.get("api_domain_name") != null)
                 _apiDomainName = SOURCE.getString("api_domain_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -117,12 +113,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getApiKey() {
         try {
-            if (_apiKey != null)
-                return _apiKey;
-
-            if (SOURCE.has("api_key") && SOURCE.get("api_key") != null)
+            if (_apiKey == null && SOURCE.has("api_key") && SOURCE.get("api_key") != null)
                 _apiKey = SOURCE.getString("api_key");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -143,12 +135,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getApiPass() {
         try {
-            if (_apiPass != null)
-                return _apiPass;
-
-            if (SOURCE.has("api_pass") && SOURCE.get("api_pass") != null)
+            if (_apiPass == null && SOURCE.has("api_pass") && SOURCE.get("api_pass") != null)
                 _apiPass = SOURCE.getString("api_pass");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -169,12 +157,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getCompanyId() {
         try {
-            if (_companyId != null)
-                return _companyId;
-
-            if (SOURCE.has("company_id") && SOURCE.get("company_id") != null)
+            if (_companyId == null && SOURCE.has("company_id") && SOURCE.get("company_id") != null)
                 _companyId = SOURCE.getString("company_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -195,12 +179,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getCompanyIntegrationId() {
         try {
-            if (_companyIntegrationId != null)
-                return _companyIntegrationId;
-
-            if (SOURCE.has("company_integration_id") && SOURCE.get("company_integration_id") != null)
+            if (_companyIntegrationId == null && SOURCE.has("company_integration_id") && SOURCE.get("company_integration_id") != null)
                 _companyIntegrationId = SOURCE.getString("company_integration_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -221,12 +201,8 @@ public class CompanyIntegration implements Parcelable {
 
     public Boolean getDisableNotifications() {
         try {
-            if (_disableNotifications != null)
-                return _disableNotifications;
-
-            if (SOURCE.has("disable_notifications") && SOURCE.get("disable_notifications") != null)
+            if (_disableNotifications == null && SOURCE.has("disable_notifications") && SOURCE.get("disable_notifications") != null)
                 _disableNotifications = SOURCE.getBoolean("disable_notifications");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -247,12 +223,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getExternalApiIntegrationId() {
         try {
-            if (_externalApiIntegrationId != null)
-                return _externalApiIntegrationId;
-
-            if (SOURCE.has("external_api_integration_id") && SOURCE.get("external_api_integration_id") != null)
+            if (_externalApiIntegrationId == null && SOURCE.has("external_api_integration_id") && SOURCE.get("external_api_integration_id") != null)
                 _externalApiIntegrationId = SOURCE.getString("external_api_integration_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -273,12 +245,8 @@ public class CompanyIntegration implements Parcelable {
 
     public String getIntegrationType() {
         try {
-            if (_integrationType != null)
-                return _integrationType;
-
-            if (SOURCE.has("integration_type") && SOURCE.get("integration_type") != null)
+            if (_integrationType == null && SOURCE.has("integration_type") && SOURCE.get("integration_type") != null)
                 _integrationType = SOURCE.getString("integration_type");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -353,5 +321,13 @@ public class CompanyIntegration implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

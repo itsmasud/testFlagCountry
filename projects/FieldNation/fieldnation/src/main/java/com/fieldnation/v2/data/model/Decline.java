@@ -21,55 +21,39 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Hold implements Parcelable {
-    private static final String TAG = "Hold";
-
-    @Json(name = "acknowledged")
-    private Boolean _acknowledged;
+public class Decline implements Parcelable {
+    private static final String TAG = "Decline";
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "created")
+    private Date _created;
+
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "reason_id")
+    private Integer _reasonId;
 
-    @Json(name = "reason")
-    private String _reason;
+    @Json(name = "reason_text")
+    private Boolean _reasonText;
+
+    @Json(name = "user")
+    private User _user;
+
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
 
     @Source
     private JsonObject SOURCE;
 
-    public Hold() {
+    public Decline() {
         SOURCE = new JsonObject();
     }
 
-    public Hold(JsonObject obj) {
+    public Decline(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setAcknowledged(Boolean acknowledged) throws ParseException {
-        _acknowledged = acknowledged;
-        SOURCE.put("acknowledged", acknowledged);
-    }
-
-    public Boolean getAcknowledged() {
-        try {
-            if (_acknowledged == null && SOURCE.has("acknowledged") && SOURCE.get("acknowledged") != null)
-                _acknowledged = SOURCE.getBoolean("acknowledged");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _acknowledged;
-    }
-
-    public Hold acknowledged(Boolean acknowledged) throws ParseException {
-        _acknowledged = acknowledged;
-        SOURCE.put("acknowledged", acknowledged);
-        return this;
     }
 
     public void setActions(ActionsEnum[] actions) throws ParseException {
@@ -97,13 +81,38 @@ public class Hold implements Parcelable {
         return _actions;
     }
 
-    public Hold actions(ActionsEnum[] actions) throws ParseException {
+    public Decline actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
         JsonArray ja = new JsonArray();
         for (ActionsEnum item : actions) {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
+        return this;
+    }
+
+    public void setCreated(Date created) throws ParseException {
+        _created = created;
+        SOURCE.put("created", created.getJson());
+    }
+
+    public Date getCreated() {
+        try {
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
+                _created = Date.fromJson(SOURCE.getJsonObject("created"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
+    }
+
+    public Decline created(Date created) throws ParseException {
+        _created = created;
+        SOURCE.put("created", created.getJson());
         return this;
     }
 
@@ -123,53 +132,100 @@ public class Hold implements Parcelable {
         return _id;
     }
 
-    public Hold id(Integer id) throws ParseException {
+    public Decline id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
         return this;
     }
 
-    public void setName(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public void setReasonId(Integer reasonId) throws ParseException {
+        _reasonId = reasonId;
+        SOURCE.put("reason_id", reasonId);
     }
 
-    public String getName() {
+    public Integer getReasonId() {
         try {
-            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
-                _name = SOURCE.getString("name");
+            if (_reasonId == null && SOURCE.has("reason_id") && SOURCE.get("reason_id") != null)
+                _reasonId = SOURCE.getInt("reason_id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _name;
+        return _reasonId;
     }
 
-    public Hold name(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public Decline reasonId(Integer reasonId) throws ParseException {
+        _reasonId = reasonId;
+        SOURCE.put("reason_id", reasonId);
         return this;
     }
 
-    public void setReason(String reason) throws ParseException {
-        _reason = reason;
-        SOURCE.put("reason", reason);
+    public void setReasonText(Boolean reasonText) throws ParseException {
+        _reasonText = reasonText;
+        SOURCE.put("reason_text", reasonText);
     }
 
-    public String getReason() {
+    public Boolean getReasonText() {
         try {
-            if (_reason == null && SOURCE.has("reason") && SOURCE.get("reason") != null)
-                _reason = SOURCE.getString("reason");
+            if (_reasonText == null && SOURCE.has("reason_text") && SOURCE.get("reason_text") != null)
+                _reasonText = SOURCE.getBoolean("reason_text");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _reason;
+        return _reasonText;
     }
 
-    public Hold reason(String reason) throws ParseException {
-        _reason = reason;
-        SOURCE.put("reason", reason);
+    public Decline reasonText(Boolean reasonText) throws ParseException {
+        _reasonText = reasonText;
+        SOURCE.put("reason_text", reasonText);
+        return this;
+    }
+
+    public void setUser(User user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user.getJson());
+    }
+
+    public User getUser() {
+        try {
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = User.fromJson(SOURCE.getJsonObject("user"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_user != null && _user.isSet())
+            return _user;
+
+        return null;
+    }
+
+    public Decline user(User user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user.getJson());
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
+        _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
+    }
+
+    public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _workOrderId;
+    }
+
+    public Decline workOrderId(Integer workOrderId) throws ParseException {
+        _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 
@@ -177,8 +233,8 @@ public class Hold implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unkown")
-        UNKOWN("unkown");
+        @Json(name = "delete")
+        DELETE("delete");
 
         private String value;
 
@@ -212,25 +268,25 @@ public class Hold implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Hold[] array) {
+    public static JsonArray toJsonArray(Decline[] array) {
         JsonArray list = new JsonArray();
-        for (Hold item : array) {
+        for (Decline item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Hold[] fromJsonArray(JsonArray array) {
-        Hold[] list = new Hold[array.size()];
+    public static Decline[] fromJsonArray(JsonArray array) {
+        Decline[] list = new Decline[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Hold fromJson(JsonObject obj) {
+    public static Decline fromJson(JsonObject obj) {
         try {
-            return new Hold(obj);
+            return new Decline(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -244,12 +300,12 @@ public class Hold implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Hold> CREATOR = new Parcelable.Creator<Hold>() {
+    public static final Parcelable.Creator<Decline> CREATOR = new Parcelable.Creator<Decline>() {
 
         @Override
-        public Hold createFromParcel(Parcel source) {
+        public Decline createFromParcel(Parcel source) {
             try {
-                return Hold.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Decline.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -257,8 +313,8 @@ public class Hold implements Parcelable {
         }
 
         @Override
-        public Hold[] newArray(int size) {
-            return new Hold[size];
+        public Decline[] newArray(int size) {
+            return new Decline[size];
         }
     };
 

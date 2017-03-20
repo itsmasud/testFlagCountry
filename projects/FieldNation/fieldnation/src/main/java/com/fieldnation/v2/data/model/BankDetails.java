@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,12 +51,8 @@ public class BankDetails implements Parcelable {
 
     public String getAccountNumber() {
         try {
-            if (_accountNumber != null)
-                return _accountNumber;
-
-            if (SOURCE.has("account_number") && SOURCE.get("account_number") != null)
+            if (_accountNumber == null && SOURCE.has("account_number") && SOURCE.get("account_number") != null)
                 _accountNumber = SOURCE.getString("account_number");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +73,8 @@ public class BankDetails implements Parcelable {
 
     public String getAccountholderName() {
         try {
-            if (_accountholderName != null)
-                return _accountholderName;
-
-            if (SOURCE.has("accountholder_name") && SOURCE.get("accountholder_name") != null)
+            if (_accountholderName == null && SOURCE.has("accountholder_name") && SOURCE.get("accountholder_name") != null)
                 _accountholderName = SOURCE.getString("accountholder_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +95,8 @@ public class BankDetails implements Parcelable {
 
     public Double getRoutingNumber() {
         try {
-            if (_routingNumber != null)
-                return _routingNumber;
-
-            if (SOURCE.has("routing_number") && SOURCE.get("routing_number") != null)
+            if (_routingNumber == null && SOURCE.has("routing_number") && SOURCE.get("routing_number") != null)
                 _routingNumber = SOURCE.getDouble("routing_number");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -179,5 +171,13 @@ public class BankDetails implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

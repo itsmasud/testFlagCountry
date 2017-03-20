@@ -21,29 +21,29 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Signatures implements Parcelable {
-    private static final String TAG = "Signatures";
+public class Declines implements Parcelable {
+    private static final String TAG = "Declines";
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
-
-    @Json(name = "correlation_id")
-    private String _correlationId;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private Signature[] _results;
+    private Decline[] _results;
+
+    @Json(name = "user_decline")
+    private Decline _userDecline;
 
     @Source
     private JsonObject SOURCE;
 
-    public Signatures() {
+    public Declines() {
         SOURCE = new JsonObject();
     }
 
-    public Signatures(JsonObject obj) {
+    public Declines(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -72,35 +72,13 @@ public class Signatures implements Parcelable {
         return _actions;
     }
 
-    public Signatures actions(ActionsEnum[] actions) throws ParseException {
+    public Declines actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
         JsonArray ja = new JsonArray();
         for (ActionsEnum item : actions) {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
-        return this;
-    }
-
-    public void setCorrelationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
-    }
-
-    public String getCorrelationId() {
-        try {
-            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
-                _correlationId = SOURCE.getString("correlation_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _correlationId;
-    }
-
-    public Signatures correlationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
@@ -118,29 +96,29 @@ public class Signatures implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }
 
-    public Signatures metadata(ListEnvelope metadata) throws ParseException {
+    public Declines metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Signature[] results) throws ParseException {
+    public void setResults(Decline[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Signature.toJsonArray(results));
+        SOURCE.put("results", Decline.toJsonArray(results));
     }
 
-    public Signature[] getResults() {
+    public Decline[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
             if (SOURCE.has("results") && SOURCE.get("results") != null) {
-                _results = Signature.fromJsonArray(SOURCE.getJsonArray("results"));
+                _results = Decline.fromJsonArray(SOURCE.getJsonArray("results"));
             }
 
         } catch (Exception ex) {
@@ -150,9 +128,34 @@ public class Signatures implements Parcelable {
         return _results;
     }
 
-    public Signatures results(Signature[] results) throws ParseException {
+    public Declines results(Decline[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Signature.toJsonArray(results), true);
+        SOURCE.put("results", Decline.toJsonArray(results), true);
+        return this;
+    }
+
+    public void setUserDecline(Decline userDecline) throws ParseException {
+        _userDecline = userDecline;
+        SOURCE.put("user_decline", userDecline.getJson());
+    }
+
+    public Decline getUserDecline() {
+        try {
+            if (_userDecline == null && SOURCE.has("user_decline") && SOURCE.get("user_decline") != null)
+                _userDecline = Decline.fromJson(SOURCE.getJsonObject("user_decline"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_userDecline != null && _userDecline.isSet())
+            return _userDecline;
+
+        return null;
+    }
+
+    public Declines userDecline(Decline userDecline) throws ParseException {
+        _userDecline = userDecline;
+        SOURCE.put("user_decline", userDecline.getJson());
         return this;
     }
 
@@ -195,25 +198,25 @@ public class Signatures implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Signatures[] array) {
+    public static JsonArray toJsonArray(Declines[] array) {
         JsonArray list = new JsonArray();
-        for (Signatures item : array) {
+        for (Declines item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Signatures[] fromJsonArray(JsonArray array) {
-        Signatures[] list = new Signatures[array.size()];
+    public static Declines[] fromJsonArray(JsonArray array) {
+        Declines[] list = new Declines[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Signatures fromJson(JsonObject obj) {
+    public static Declines fromJson(JsonObject obj) {
         try {
-            return new Signatures(obj);
+            return new Declines(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -227,12 +230,12 @@ public class Signatures implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Signatures> CREATOR = new Parcelable.Creator<Signatures>() {
+    public static final Parcelable.Creator<Declines> CREATOR = new Parcelable.Creator<Declines>() {
 
         @Override
-        public Signatures createFromParcel(Parcel source) {
+        public Declines createFromParcel(Parcel source) {
             try {
-                return Signatures.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Declines.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -240,8 +243,8 @@ public class Signatures implements Parcelable {
         }
 
         @Override
-        public Signatures[] newArray(int size) {
-            return new Signatures[size];
+        public Declines[] newArray(int size) {
+            return new Declines[size];
         }
     };
 
@@ -261,15 +264,5 @@ public class Signatures implements Parcelable {
 
     public boolean isSet() {
         return true;
-    }
-
-    private Set<ActionsEnum> _actionsSet = null;
-
-    public Set<ActionsEnum> getActionsSet() {
-        if (_actionsSet == null) {
-            _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(getActions()));
-        }
-        return _actionsSet;
     }
 }

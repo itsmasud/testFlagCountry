@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -48,17 +50,16 @@ public class Date implements Parcelable {
 
     public Local getLocal() {
         try {
-        if (_local != null)
-            return _local;
-
-        if (SOURCE.has("local") && SOURCE.get("local") != null)
+            if (_local == null && SOURCE.has("local") && SOURCE.get("local") != null)
             _local = Local.fromJson(SOURCE.getJsonObject("local"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_local != null && _local.isSet())
         return _local;
+
+        return null;
     }
 
     public Date local(Local local) throws ParseException {
