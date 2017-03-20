@@ -911,6 +911,7 @@ TODO     private void setTasks(List<Task> tasks) {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            setLoading(true);
         }
 
         @Override
@@ -983,6 +984,7 @@ TODO     private void setTasks(List<Task> tasks) {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            setLoading(true);
         }
 
         @Override
@@ -998,6 +1000,7 @@ TODO     private void setTasks(List<Task> tasks) {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            setLoading(true);
         }
 
         @Override
