@@ -251,6 +251,11 @@ public class Coords implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getLatitude() != null && getLongitude() != null && getLatitude() != 0 && getLongitude() != 0;
+    }
+
     public Coords(double latitude, double longitude) throws ParseException {
         this();
         setLatitude(latitude);
@@ -259,9 +264,5 @@ public class Coords implements Parcelable {
 
     public Coords(android.location.Location location) throws ParseException {
         this(location.getLatitude(), location.getLongitude());
-    }
-
-    public boolean isSet() {
-        return getLatitude() != null && getLongitude() != null && getLatitude() != 0 && getLongitude() != 0;
     }
 }
