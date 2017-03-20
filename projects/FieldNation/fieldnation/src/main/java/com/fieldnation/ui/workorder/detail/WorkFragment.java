@@ -70,7 +70,6 @@ import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
@@ -1489,31 +1488,6 @@ TODO     private void setTasks(List<Task> tasks) {
 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
                     WorkOrderTracker.Action.COUNTER_OFFER, workorder.getWorkOrderId());
-
-            try {
-                Request request = new Request();
-                request.counter(true);
-
-                if (!misc.isEmptyOrNull(reason))
-                    request.counterNotes(reason);
-
-                if (pay != null)
-                    request.pay(pay);
-
-                if (schedule != null)
-                    request.schedule(schedule);
-
-                if (expenses != null)
-                    request.expenses(expenses);
-
-                if (expires > 0)
-                    request.expires(new Date(expires));
-
-                WorkordersWebApi.request(App.get(), workorder.getWorkOrderId(), request);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
         }
     };
 

@@ -853,6 +853,11 @@ public class Pay implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getType() != null;
+    }
+
     public String[] toDisplayStringLong() {
         String line1 = null;
         String line2 = null;
@@ -903,9 +908,4 @@ public class Pay implements Parcelable {
         }
         return null;
     }
-
-    public boolean isSet() {
-        return getType() != null;
-    }
-
 }
