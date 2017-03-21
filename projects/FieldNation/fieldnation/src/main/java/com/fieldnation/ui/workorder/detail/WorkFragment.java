@@ -1429,7 +1429,6 @@ TODO     private void setTasks(List<Task> tasks) {
         }
     };
 
-
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
