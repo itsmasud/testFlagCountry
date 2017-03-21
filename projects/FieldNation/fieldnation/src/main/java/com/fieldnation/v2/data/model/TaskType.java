@@ -30,8 +30,8 @@ public class TaskType implements Parcelable {
     @Json(name = "key")
     private String _key;
 
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "title")
+    private String _title;
 
     @Source
     private JsonObject SOURCE;
@@ -88,25 +88,25 @@ public class TaskType implements Parcelable {
         return this;
     }
 
-    public void setName(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public void setTitle(String title) throws ParseException {
+        _title = title;
+        SOURCE.put("title", title);
     }
 
-    public String getName() {
+    public String getTitle() {
         try {
-            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
-                _name = SOURCE.getString("name");
+            if (_title == null && SOURCE.has("title") && SOURCE.get("title") != null)
+                _title = SOURCE.getString("title");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _name;
+        return _title;
     }
 
-    public TaskType name(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public TaskType title(String title) throws ParseException {
+        _title = title;
+        SOURCE.put("title", title);
         return this;
     }
 

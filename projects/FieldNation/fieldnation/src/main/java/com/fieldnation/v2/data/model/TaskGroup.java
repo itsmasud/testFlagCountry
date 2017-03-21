@@ -25,7 +25,7 @@ public class TaskGroup implements Parcelable {
     private static final String TAG = "TaskGroup";
 
     @Json(name = "id")
-    private String _id;
+    private Integer _id;
 
     @Json(name = "label")
     private String _label;
@@ -41,15 +41,15 @@ public class TaskGroup implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setId(String id) throws ParseException {
+    public void setId(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
     }
 
-    public String getId() {
+    public Integer getId() {
         try {
             if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getString("id");
+                _id = SOURCE.getInt("id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -57,7 +57,7 @@ public class TaskGroup implements Parcelable {
         return _id;
     }
 
-    public TaskGroup id(String id) throws ParseException {
+    public TaskGroup id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
         return this;
@@ -153,6 +153,6 @@ public class TaskGroup implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getId());
+        return getId() != null && getId() != 0;
     }
 }

@@ -30,20 +30,17 @@ public class Task implements Parcelable {
     @Json(name = "alerts")
     private TaskAlert[] _alerts;
 
-    @Json(name = "attachment")
-    private Attachment _attachment;
-
     @Json(name = "attachments")
-    private Attachment[] _attachments;
+    private AttachmentFolder _attachments;
 
     @Json(name = "author")
     private User _author;
 
     @Json(name = "check_in")
-    private CheckInOut _checkIn;
+    private TimeLog _checkIn;
 
     @Json(name = "check_out")
-    private CheckInOut _checkOut;
+    private TimeLog _checkOut;
 
     @Json(name = "closing_notes")
     private String _closingNotes;
@@ -51,26 +48,17 @@ public class Task implements Parcelable {
     @Json(name = "completed")
     private Date _completed;
 
-    @Json(name = "confirmed")
-    private Boolean _confirmed;
-
     @Json(name = "created")
     private Date _created;
 
     @Json(name = "custom_field")
     private CustomField _customField;
 
-    @Json(name = "description")
-    private String _description;
-
-    @Json(name = "document")
-    private TaskDocument _document;
-
     @Json(name = "email")
     private String _email;
 
-    @Json(name = "folder_id")
-    private Integer _folderId;
+    @Json(name = "eta")
+    private ETA _eta;
 
     @Json(name = "group")
     private TaskGroup _group;
@@ -81,14 +69,8 @@ public class Task implements Parcelable {
     @Json(name = "label")
     private String _label;
 
-    @Json(name = "on_my_way")
-    private OnMyWay _onMyWay;
-
     @Json(name = "phone")
     private String _phone;
-
-    @Json(name = "ready_to_go")
-    private Boolean _readyToGo;
 
     @Json(name = "shipment")
     private Shipment _shipment;
@@ -96,14 +78,11 @@ public class Task implements Parcelable {
     @Json(name = "signature")
     private Signature _signature;
 
-    @Json(name = "time_zone")
-    private TimeZone _timeZone;
+    @Json(name = "status")
+    private StatusEnum _status;
 
     @Json(name = "type")
     private TaskType _type;
-
-    @Json(name = "value")
-    private String _value;
 
     @Source
     private JsonObject SOURCE;
@@ -178,55 +157,28 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setAttachment(Attachment attachment) throws ParseException {
-        _attachment = attachment;
-        SOURCE.put("attachment", attachment.getJson());
+    public void setAttachments(AttachmentFolder attachments) throws ParseException {
+        _attachments = attachments;
+        SOURCE.put("attachments", attachments.getJson());
     }
 
-    public Attachment getAttachment() {
+    public AttachmentFolder getAttachments() {
         try {
-            if (_attachment == null && SOURCE.has("attachment") && SOURCE.get("attachment") != null)
-                _attachment = Attachment.fromJson(SOURCE.getJsonObject("attachment"));
+            if (_attachments == null && SOURCE.has("attachments") && SOURCE.get("attachments") != null)
+                _attachments = AttachmentFolder.fromJson(SOURCE.getJsonObject("attachments"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_attachment != null && _attachment.isSet())
-            return _attachment;
+        if (_attachments != null && _attachments.isSet())
+            return _attachments;
 
         return null;
     }
 
-    public Task attachment(Attachment attachment) throws ParseException {
-        _attachment = attachment;
-        SOURCE.put("attachment", attachment.getJson());
-        return this;
-    }
-
-    public void setAttachments(Attachment[] attachments) throws ParseException {
+    public Task attachments(AttachmentFolder attachments) throws ParseException {
         _attachments = attachments;
-        SOURCE.put("attachments", Attachment.toJsonArray(attachments));
-    }
-
-    public Attachment[] getAttachments() {
-        try {
-            if (_attachments != null)
-                return _attachments;
-
-            if (SOURCE.has("attachments") && SOURCE.get("attachments") != null) {
-                _attachments = Attachment.fromJsonArray(SOURCE.getJsonArray("attachments"));
-            }
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _attachments;
-    }
-
-    public Task attachments(Attachment[] attachments) throws ParseException {
-        _attachments = attachments;
-        SOURCE.put("attachments", Attachment.toJsonArray(attachments), true);
+        SOURCE.put("attachments", attachments.getJson());
         return this;
     }
 
@@ -255,15 +207,15 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setCheckIn(CheckInOut checkIn) throws ParseException {
+    public void setCheckIn(TimeLog checkIn) throws ParseException {
         _checkIn = checkIn;
         SOURCE.put("check_in", checkIn.getJson());
     }
 
-    public CheckInOut getCheckIn() {
+    public TimeLog getCheckIn() {
         try {
             if (_checkIn == null && SOURCE.has("check_in") && SOURCE.get("check_in") != null)
-                _checkIn = CheckInOut.fromJson(SOURCE.getJsonObject("check_in"));
+                _checkIn = TimeLog.fromJson(SOURCE.getJsonObject("check_in"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -274,21 +226,21 @@ public class Task implements Parcelable {
         return null;
     }
 
-    public Task checkIn(CheckInOut checkIn) throws ParseException {
+    public Task checkIn(TimeLog checkIn) throws ParseException {
         _checkIn = checkIn;
         SOURCE.put("check_in", checkIn.getJson());
         return this;
     }
 
-    public void setCheckOut(CheckInOut checkOut) throws ParseException {
+    public void setCheckOut(TimeLog checkOut) throws ParseException {
         _checkOut = checkOut;
         SOURCE.put("check_out", checkOut.getJson());
     }
 
-    public CheckInOut getCheckOut() {
+    public TimeLog getCheckOut() {
         try {
             if (_checkOut == null && SOURCE.has("check_out") && SOURCE.get("check_out") != null)
-                _checkOut = CheckInOut.fromJson(SOURCE.getJsonObject("check_out"));
+                _checkOut = TimeLog.fromJson(SOURCE.getJsonObject("check_out"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -299,7 +251,7 @@ public class Task implements Parcelable {
         return null;
     }
 
-    public Task checkOut(CheckInOut checkOut) throws ParseException {
+    public Task checkOut(TimeLog checkOut) throws ParseException {
         _checkOut = checkOut;
         SOURCE.put("check_out", checkOut.getJson());
         return this;
@@ -349,28 +301,6 @@ public class Task implements Parcelable {
     public Task completed(Date completed) throws ParseException {
         _completed = completed;
         SOURCE.put("completed", completed.getJson());
-        return this;
-    }
-
-    public void setConfirmed(Boolean confirmed) throws ParseException {
-        _confirmed = confirmed;
-        SOURCE.put("confirmed", confirmed);
-    }
-
-    public Boolean getConfirmed() {
-        try {
-            if (_confirmed == null && SOURCE.has("confirmed") && SOURCE.get("confirmed") != null)
-                _confirmed = SOURCE.getBoolean("confirmed");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _confirmed;
-    }
-
-    public Task confirmed(Boolean confirmed) throws ParseException {
-        _confirmed = confirmed;
-        SOURCE.put("confirmed", confirmed);
         return this;
     }
 
@@ -424,53 +354,6 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setDescription(String description) throws ParseException {
-        _description = description;
-        SOURCE.put("description", description);
-    }
-
-    public String getDescription() {
-        try {
-            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
-                _description = SOURCE.getString("description");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _description;
-    }
-
-    public Task description(String description) throws ParseException {
-        _description = description;
-        SOURCE.put("description", description);
-        return this;
-    }
-
-    public void setDocument(TaskDocument document) throws ParseException {
-        _document = document;
-        SOURCE.put("document", document.getJson());
-    }
-
-    public TaskDocument getDocument() {
-        try {
-            if (_document == null && SOURCE.has("document") && SOURCE.get("document") != null)
-                _document = TaskDocument.fromJson(SOURCE.getJsonObject("document"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_document != null && _document.isSet())
-            return _document;
-
-        return null;
-    }
-
-    public Task document(TaskDocument document) throws ParseException {
-        _document = document;
-        SOURCE.put("document", document.getJson());
-        return this;
-    }
-
     public void setEmail(String email) throws ParseException {
         _email = email;
         SOURCE.put("email", email);
@@ -493,25 +376,28 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setFolderId(Integer folderId) throws ParseException {
-        _folderId = folderId;
-        SOURCE.put("folder_id", folderId);
+    public void setEta(ETA eta) throws ParseException {
+        _eta = eta;
+        SOURCE.put("eta", eta.getJson());
     }
 
-    public Integer getFolderId() {
+    public ETA getEta() {
         try {
-            if (_folderId == null && SOURCE.has("folder_id") && SOURCE.get("folder_id") != null)
-                _folderId = SOURCE.getInt("folder_id");
+            if (_eta == null && SOURCE.has("eta") && SOURCE.get("eta") != null)
+                _eta = ETA.fromJson(SOURCE.getJsonObject("eta"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _folderId;
+        if (_eta != null && _eta.isSet())
+            return _eta;
+
+        return null;
     }
 
-    public Task folderId(Integer folderId) throws ParseException {
-        _folderId = folderId;
-        SOURCE.put("folder_id", folderId);
+    public Task eta(ETA eta) throws ParseException {
+        _eta = eta;
+        SOURCE.put("eta", eta.getJson());
         return this;
     }
 
@@ -584,31 +470,6 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setOnMyWay(OnMyWay onMyWay) throws ParseException {
-        _onMyWay = onMyWay;
-        SOURCE.put("on_my_way", onMyWay.getJson());
-    }
-
-    public OnMyWay getOnMyWay() {
-        try {
-            if (_onMyWay == null && SOURCE.has("on_my_way") && SOURCE.get("on_my_way") != null)
-                _onMyWay = OnMyWay.fromJson(SOURCE.getJsonObject("on_my_way"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_onMyWay != null && _onMyWay.isSet())
-            return _onMyWay;
-
-        return null;
-    }
-
-    public Task onMyWay(OnMyWay onMyWay) throws ParseException {
-        _onMyWay = onMyWay;
-        SOURCE.put("on_my_way", onMyWay.getJson());
-        return this;
-    }
-
     public void setPhone(String phone) throws ParseException {
         _phone = phone;
         SOURCE.put("phone", phone);
@@ -628,28 +489,6 @@ public class Task implements Parcelable {
     public Task phone(String phone) throws ParseException {
         _phone = phone;
         SOURCE.put("phone", phone);
-        return this;
-    }
-
-    public void setReadyToGo(Boolean readyToGo) throws ParseException {
-        _readyToGo = readyToGo;
-        SOURCE.put("ready_to_go", readyToGo);
-    }
-
-    public Boolean getReadyToGo() {
-        try {
-            if (_readyToGo == null && SOURCE.has("ready_to_go") && SOURCE.get("ready_to_go") != null)
-                _readyToGo = SOURCE.getBoolean("ready_to_go");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _readyToGo;
-    }
-
-    public Task readyToGo(Boolean readyToGo) throws ParseException {
-        _readyToGo = readyToGo;
-        SOURCE.put("ready_to_go", readyToGo);
         return this;
     }
 
@@ -703,28 +542,25 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setTimeZone(TimeZone timeZone) throws ParseException {
-        _timeZone = timeZone;
-        SOURCE.put("time_zone", timeZone.getJson());
+    public void setStatus(StatusEnum status) throws ParseException {
+        _status = status;
+        SOURCE.put("status", status.toString());
     }
 
-    public TimeZone getTimeZone() {
+    public StatusEnum getStatus() {
         try {
-            if (_timeZone == null && SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
-                _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
-
-        return null;
+        return _status;
     }
 
-    public Task timeZone(TimeZone timeZone) throws ParseException {
-        _timeZone = timeZone;
-        SOURCE.put("time_zone", timeZone.getJson());
+    public Task status(StatusEnum status) throws ParseException {
+        _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
@@ -753,50 +589,51 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setValue(String value) throws ParseException {
-        _value = value;
-        SOURCE.put("value", value);
-    }
-
-    public String getValue() {
-        try {
-            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
-                _value = SOURCE.getString("value");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _value;
-    }
-
-    public Task value(String value) throws ParseException {
-        _value = value;
-        SOURCE.put("value", value);
-        return this;
-    }
-
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
-    public enum ActionsEnum {
-        @Json(name = "check_in")
-        CHECK_IN("check_in"),
-        @Json(name = "check_out")
-        CHECK_OUT("check_out"),
-        @Json(name = "closing_notes")
-        CLOSING_NOTES("closing_notes"),
+    public enum StatusEnum {
         @Json(name = "complete")
         COMPLETE("complete"),
-        @Json(name = "create_shipment")
-        CREATE_SHIPMENT("create_shipment"),
-        @Json(name = "eta")
-        ETA("eta"),
         @Json(name = "incomplete")
-        INCOMPLETE("incomplete"),
-        @Json(name = "signature")
-        SIGNATURE("signature"),
-        @Json(name = "upload")
-        UPLOAD("upload");
+        INCOMPLETE("incomplete");
+
+        private String value;
+
+        StatusEnum(String value) {
+            this.value = value;
+    }
+
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+    }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "complete")
+        COMPLETE("complete"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 
