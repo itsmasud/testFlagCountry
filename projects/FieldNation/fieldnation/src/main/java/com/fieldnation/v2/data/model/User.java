@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -134,12 +138,8 @@ public class User implements Parcelable {
 
     public String getAddress() {
         try {
-            if (_address != null)
-                return _address;
-
-            if (SOURCE.has("address") && SOURCE.get("address") != null)
+            if (_address == null && SOURCE.has("address") && SOURCE.get("address") != null)
                 _address = SOURCE.getString("address");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -214,12 +214,8 @@ public class User implements Parcelable {
 
     public String getCity() {
         try {
-            if (_city != null)
-                return _city;
-
-            if (SOURCE.has("city") && SOURCE.get("city") != null)
+            if (_city == null && SOURCE.has("city") && SOURCE.get("city") != null)
                 _city = SOURCE.getString("city");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -240,17 +236,16 @@ public class User implements Parcelable {
 
     public Company getClient() {
         try {
-            if (_client != null)
-                return _client;
-
-            if (SOURCE.has("client") && SOURCE.get("client") != null)
+            if (_client == null && SOURCE.has("client") && SOURCE.get("client") != null)
                 _client = Company.fromJson(SOURCE.getJsonObject("client"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _client;
+        if (_client != null && _client.isSet())
+            return _client;
+
+        return null;
     }
 
     public User client(Company client) throws ParseException {
@@ -266,17 +261,16 @@ public class User implements Parcelable {
 
     public UserCompany getCompany() {
         try {
-            if (_company != null)
-                return _company;
-
-            if (SOURCE.has("company") && SOURCE.get("company") != null)
+            if (_company == null && SOURCE.has("company") && SOURCE.get("company") != null)
                 _company = UserCompany.fromJson(SOURCE.getJsonObject("company"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _company;
+        if (_company != null && _company.isSet())
+            return _company;
+
+        return null;
     }
 
     public User company(UserCompany company) throws ParseException {
@@ -292,17 +286,16 @@ public class User implements Parcelable {
 
     public Coords getCoords() {
         try {
-            if (_coords != null)
-                return _coords;
-
-            if (SOURCE.has("coords") && SOURCE.get("coords") != null)
+            if (_coords == null && SOURCE.has("coords") && SOURCE.get("coords") != null)
                 _coords = Coords.fromJson(SOURCE.getJsonObject("coords"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _coords;
+        if (_coords != null && _coords.isSet())
+            return _coords;
+
+        return null;
     }
 
     public User coords(Coords coords) throws ParseException {
@@ -318,12 +311,8 @@ public class User implements Parcelable {
 
     public String getCountry() {
         try {
-            if (_country != null)
-                return _country;
-
-            if (SOURCE.has("country") && SOURCE.get("country") != null)
+            if (_country == null && SOURCE.has("country") && SOURCE.get("country") != null)
                 _country = SOURCE.getString("country");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -371,12 +360,8 @@ public class User implements Parcelable {
 
     public String getEmail() {
         try {
-            if (_email != null)
-                return _email;
-
-            if (SOURCE.has("email") && SOURCE.get("email") != null)
+            if (_email == null && SOURCE.has("email") && SOURCE.get("email") != null)
                 _email = SOURCE.getString("email");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -397,12 +382,8 @@ public class User implements Parcelable {
 
     public String getFirstName() {
         try {
-            if (_firstName != null)
-                return _firstName;
-
-            if (SOURCE.has("first_name") && SOURCE.get("first_name") != null)
+            if (_firstName == null && SOURCE.has("first_name") && SOURCE.get("first_name") != null)
                 _firstName = SOURCE.getString("first_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -423,12 +404,8 @@ public class User implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -449,17 +426,16 @@ public class User implements Parcelable {
 
     public UserJobs getJobs() {
         try {
-            if (_jobs != null)
-                return _jobs;
-
-            if (SOURCE.has("jobs") && SOURCE.get("jobs") != null)
+            if (_jobs == null && SOURCE.has("jobs") && SOURCE.get("jobs") != null)
                 _jobs = UserJobs.fromJson(SOURCE.getJsonObject("jobs"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _jobs;
+        if (_jobs != null && _jobs.isSet())
+            return _jobs;
+
+        return null;
     }
 
     public User jobs(UserJobs jobs) throws ParseException {
@@ -475,17 +451,16 @@ public class User implements Parcelable {
 
     public Date getLastActive() {
         try {
-            if (_lastActive != null)
-                return _lastActive;
-
-            if (SOURCE.has("last_active") && SOURCE.get("last_active") != null)
+            if (_lastActive == null && SOURCE.has("last_active") && SOURCE.get("last_active") != null)
                 _lastActive = Date.fromJson(SOURCE.getJsonObject("last_active"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _lastActive;
+        if (_lastActive != null && _lastActive.isSet())
+            return _lastActive;
+
+        return null;
     }
 
     public User lastActive(Date lastActive) throws ParseException {
@@ -501,12 +476,8 @@ public class User implements Parcelable {
 
     public String getLastName() {
         try {
-            if (_lastName != null)
-                return _lastName;
-
-            if (SOURCE.has("last_name") && SOURCE.get("last_name") != null)
+            if (_lastName == null && SOURCE.has("last_name") && SOURCE.get("last_name") != null)
                 _lastName = SOURCE.getString("last_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -527,12 +498,8 @@ public class User implements Parcelable {
 
     public Boolean getManaged() {
         try {
-            if (_managed != null)
-                return _managed;
-
-            if (SOURCE.has("managed") && SOURCE.get("managed") != null)
+            if (_managed == null && SOURCE.has("managed") && SOURCE.get("managed") != null)
                 _managed = SOURCE.getBoolean("managed");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -553,12 +520,8 @@ public class User implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -579,12 +542,8 @@ public class User implements Parcelable {
 
     public String getPhone() {
         try {
-            if (_phone != null)
-                return _phone;
-
-            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+            if (_phone == null && SOURCE.has("phone") && SOURCE.get("phone") != null)
                 _phone = SOURCE.getString("phone");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -632,12 +591,8 @@ public class User implements Parcelable {
 
     public Boolean getProtec() {
         try {
-            if (_protec != null)
-                return _protec;
-
-            if (SOURCE.has("protec") && SOURCE.get("protec") != null)
+            if (_protec == null && SOURCE.has("protec") && SOURCE.get("protec") != null)
                 _protec = SOURCE.getBoolean("protec");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -658,17 +613,16 @@ public class User implements Parcelable {
 
     public UserRating getRating() {
         try {
-            if (_rating != null)
-                return _rating;
-
-            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+            if (_rating == null && SOURCE.has("rating") && SOURCE.get("rating") != null)
                 _rating = UserRating.fromJson(SOURCE.getJsonObject("rating"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _rating;
+        if (_rating != null && _rating.isSet())
+            return _rating;
+
+        return null;
     }
 
     public User rating(UserRating rating) throws ParseException {
@@ -684,17 +638,16 @@ public class User implements Parcelable {
 
     public Request getRequest() {
         try {
-            if (_request != null)
-                return _request;
-
-            if (SOURCE.has("request") && SOURCE.get("request") != null)
+            if (_request == null && SOURCE.has("request") && SOURCE.get("request") != null)
                 _request = Request.fromJson(SOURCE.getJsonObject("request"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _request;
+        if (_request != null && _request.isSet())
+            return _request;
+
+        return null;
     }
 
     public User request(Request request) throws ParseException {
@@ -710,12 +663,8 @@ public class User implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -736,17 +685,16 @@ public class User implements Parcelable {
 
     public Route getRoute() {
         try {
-            if (_route != null)
-                return _route;
-
-            if (SOURCE.has("route") && SOURCE.get("route") != null)
+            if (_route == null && SOURCE.has("route") && SOURCE.get("route") != null)
                 _route = Route.fromJson(SOURCE.getJsonObject("route"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _route;
+        if (_route != null && _route.isSet())
+            return _route;
+
+        return null;
     }
 
     public User route(Route route) throws ParseException {
@@ -762,12 +710,8 @@ public class User implements Parcelable {
 
     public String getState() {
         try {
-            if (_state != null)
-                return _state;
-
-            if (SOURCE.has("state") && SOURCE.get("state") != null)
+            if (_state == null && SOURCE.has("state") && SOURCE.get("state") != null)
                 _state = SOURCE.getString("state");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -788,12 +732,8 @@ public class User implements Parcelable {
 
     public String getThumbnail() {
         try {
-            if (_thumbnail != null)
-                return _thumbnail;
-
-            if (SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
+            if (_thumbnail == null && SOURCE.has("thumbnail") && SOURCE.get("thumbnail") != null)
                 _thumbnail = SOURCE.getString("thumbnail");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -814,17 +754,16 @@ public class User implements Parcelable {
 
     public TimeZone getTimeZone() {
         try {
-            if (_timeZone != null)
-                return _timeZone;
-
-            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+            if (_timeZone == null && SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
                 _timeZone = TimeZone.fromJson(SOURCE.getJsonObject("time_zone"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _timeZone;
+        if (_timeZone != null && _timeZone.isSet())
+            return _timeZone;
+
+        return null;
     }
 
     public User timeZone(TimeZone timeZone) throws ParseException {
@@ -867,12 +806,8 @@ public class User implements Parcelable {
 
     public String getWebsite() {
         try {
-            if (_website != null)
-                return _website;
-
-            if (SOURCE.has("website") && SOURCE.get("website") != null)
+            if (_website == null && SOURCE.has("website") && SOURCE.get("website") != null)
                 _website = SOURCE.getString("website");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -893,12 +828,8 @@ public class User implements Parcelable {
 
     public Boolean getWorkedWith() {
         try {
-            if (_workedWith != null)
-                return _workedWith;
-
-            if (SOURCE.has("worked_with") && SOURCE.get("worked_with") != null)
+            if (_workedWith == null && SOURCE.has("worked_with") && SOURCE.get("worked_with") != null)
                 _workedWith = SOURCE.getBoolean("worked_with");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -919,12 +850,8 @@ public class User implements Parcelable {
 
     public Boolean getWorkerCompensation() {
         try {
-            if (_workerCompensation != null)
-                return _workerCompensation;
-
-            if (SOURCE.has("worker_compensation") && SOURCE.get("worker_compensation") != null)
+            if (_workerCompensation == null && SOURCE.has("worker_compensation") && SOURCE.get("worker_compensation") != null)
                 _workerCompensation = SOURCE.getBoolean("worker_compensation");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -945,12 +872,8 @@ public class User implements Parcelable {
 
     public String getZip() {
         try {
-            if (_zip != null)
-                return _zip;
-
-            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+            if (_zip == null && SOURCE.has("zip") && SOURCE.get("zip") != null)
                 _zip = SOURCE.getString("zip");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -1025,5 +948,13 @@ public class User implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

@@ -10,15 +10,19 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
  */
 
-public class EtaWithLocation implements Parcelable {
-    private static final String TAG = "EtaWithLocation";
+public class EtaMassAcceptWithLocation implements Parcelable {
+    private static final String TAG = "EtaMassAcceptWithLocation";
 
     @Json(name = "bundle")
     private Bundle _bundle;
@@ -38,11 +42,11 @@ public class EtaWithLocation implements Parcelable {
     @Source
     private JsonObject SOURCE;
 
-    public EtaWithLocation() {
+    public EtaMassAcceptWithLocation() {
         SOURCE = new JsonObject();
     }
 
-    public EtaWithLocation(JsonObject obj) {
+    public EtaMassAcceptWithLocation(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -53,20 +57,19 @@ public class EtaWithLocation implements Parcelable {
 
     public Bundle getBundle() {
         try {
-            if (_bundle != null)
-                return _bundle;
-
-            if (SOURCE.has("bundle") && SOURCE.get("bundle") != null)
+            if (_bundle == null && SOURCE.has("bundle") && SOURCE.get("bundle") != null)
                 _bundle = Bundle.fromJson(SOURCE.getJsonObject("bundle"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _bundle;
+        if (_bundle != null && _bundle.isSet())
+            return _bundle;
+
+        return null;
     }
 
-    public EtaWithLocation bundle(Bundle bundle) throws ParseException {
+    public EtaMassAcceptWithLocation bundle(Bundle bundle) throws ParseException {
         _bundle = bundle;
         SOURCE.put("bundle", bundle.getJson());
         return this;
@@ -79,20 +82,19 @@ public class EtaWithLocation implements Parcelable {
 
     public Location getLocation() {
         try {
-            if (_location != null)
-                return _location;
-
-            if (SOURCE.has("location") && SOURCE.get("location") != null)
+            if (_location == null && SOURCE.has("location") && SOURCE.get("location") != null)
                 _location = Location.fromJson(SOURCE.getJsonObject("location"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _location;
+        if (_location != null && _location.isSet())
+            return _location;
+
+        return null;
     }
 
-    public EtaWithLocation location(Location location) throws ParseException {
+    public EtaMassAcceptWithLocation location(Location location) throws ParseException {
         _location = location;
         SOURCE.put("location", location.getJson());
         return this;
@@ -105,20 +107,19 @@ public class EtaWithLocation implements Parcelable {
 
     public Schedule getSchedule() {
         try {
-            if (_schedule != null)
-                return _schedule;
-
-            if (SOURCE.has("schedule") && SOURCE.get("schedule") != null)
+            if (_schedule == null && SOURCE.has("schedule") && SOURCE.get("schedule") != null)
                 _schedule = Schedule.fromJson(SOURCE.getJsonObject("schedule"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _schedule;
+        if (_schedule != null && _schedule.isSet())
+            return _schedule;
+
+        return null;
     }
 
-    public EtaWithLocation schedule(Schedule schedule) throws ParseException {
+    public EtaMassAcceptWithLocation schedule(Schedule schedule) throws ParseException {
         _schedule = schedule;
         SOURCE.put("schedule", schedule.getJson());
         return this;
@@ -131,12 +132,8 @@ public class EtaWithLocation implements Parcelable {
 
     public String getTitle() {
         try {
-            if (_title != null)
-                return _title;
-
-            if (SOURCE.has("title") && SOURCE.get("title") != null)
+            if (_title == null && SOURCE.has("title") && SOURCE.get("title") != null)
                 _title = SOURCE.getString("title");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -144,7 +141,7 @@ public class EtaWithLocation implements Parcelable {
         return _title;
     }
 
-    public EtaWithLocation title(String title) throws ParseException {
+    public EtaMassAcceptWithLocation title(String title) throws ParseException {
         _title = title;
         SOURCE.put("title", title);
         return this;
@@ -157,12 +154,8 @@ public class EtaWithLocation implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -170,7 +163,7 @@ public class EtaWithLocation implements Parcelable {
         return _workOrderId;
     }
 
-    public EtaWithLocation workOrderId(Integer workOrderId) throws ParseException {
+    public EtaMassAcceptWithLocation workOrderId(Integer workOrderId) throws ParseException {
         _workOrderId = workOrderId;
         SOURCE.put("work_order_id", workOrderId);
         return this;
@@ -179,25 +172,25 @@ public class EtaWithLocation implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(EtaWithLocation[] array) {
+    public static JsonArray toJsonArray(EtaMassAcceptWithLocation[] array) {
         JsonArray list = new JsonArray();
-        for (EtaWithLocation item : array) {
+        for (EtaMassAcceptWithLocation item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static EtaWithLocation[] fromJsonArray(JsonArray array) {
-        EtaWithLocation[] list = new EtaWithLocation[array.size()];
+    public static EtaMassAcceptWithLocation[] fromJsonArray(JsonArray array) {
+        EtaMassAcceptWithLocation[] list = new EtaMassAcceptWithLocation[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static EtaWithLocation fromJson(JsonObject obj) {
+    public static EtaMassAcceptWithLocation fromJson(JsonObject obj) {
         try {
-            return new EtaWithLocation(obj);
+            return new EtaMassAcceptWithLocation(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -211,12 +204,12 @@ public class EtaWithLocation implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<EtaWithLocation> CREATOR = new Parcelable.Creator<EtaWithLocation>() {
+    public static final Parcelable.Creator<EtaMassAcceptWithLocation> CREATOR = new Parcelable.Creator<EtaMassAcceptWithLocation>() {
 
         @Override
-        public EtaWithLocation createFromParcel(Parcel source) {
+        public EtaMassAcceptWithLocation createFromParcel(Parcel source) {
             try {
-                return EtaWithLocation.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return EtaMassAcceptWithLocation.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -224,8 +217,8 @@ public class EtaWithLocation implements Parcelable {
         }
 
         @Override
-        public EtaWithLocation[] newArray(int size) {
-            return new EtaWithLocation[size];
+        public EtaMassAcceptWithLocation[] newArray(int size) {
+            return new EtaMassAcceptWithLocation[size];
         }
     };
 
@@ -237,5 +230,13 @@ public class EtaWithLocation implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

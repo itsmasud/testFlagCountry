@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -21,7 +25,7 @@ public class Routes implements Parcelable {
     private static final String TAG = "Routes";
 
     @Json(name = "actions")
-    private ActionsEnum _actions;
+    private ActionsEnum[] _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
@@ -43,18 +47,23 @@ public class Routes implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setActions(ActionsEnum actions) throws ParseException {
+    public void setActions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum getActions() {
+    public ActionsEnum[] getActions() {
         try {
             if (_actions != null)
                 return _actions;
 
-            if (SOURCE.has("actions") && SOURCE.get("actions") != null)
-                _actions = ActionsEnum.fromString(SOURCE.getString("actions"));
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -63,9 +72,13 @@ public class Routes implements Parcelable {
         return _actions;
     }
 
-    public Routes actions(ActionsEnum actions) throws ParseException {
+    public Routes actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
-        SOURCE.put("actions", actions.toString());
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
         return this;
     }
 
@@ -76,17 +89,16 @@ public class Routes implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public Routes metadata(ListEnvelope metadata) throws ParseException {
@@ -102,17 +114,16 @@ public class Routes implements Parcelable {
 
     public Route getOpenRoute() {
         try {
-            if (_openRoute != null)
-                return _openRoute;
-
-            if (SOURCE.has("open_route") && SOURCE.get("open_route") != null)
+            if (_openRoute == null && SOURCE.has("open_route") && SOURCE.get("open_route") != null)
                 _openRoute = Route.fromJson(SOURCE.getJsonObject("open_route"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _openRoute;
+        if (_openRoute != null && _openRoute.isSet())
+            return _openRoute;
+
+        return null;
     }
 
     public Routes openRoute(Route openRoute) throws ParseException {
@@ -245,5 +256,13 @@ public class Routes implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

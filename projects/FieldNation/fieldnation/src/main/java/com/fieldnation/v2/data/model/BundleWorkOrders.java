@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -50,12 +54,8 @@ public class BundleWorkOrders implements Parcelable {
 
     public Integer getBundleId() {
         try {
-            if (_bundleId != null)
-                return _bundleId;
-
-            if (SOURCE.has("bundle_id") && SOURCE.get("bundle_id") != null)
+            if (_bundleId == null && SOURCE.has("bundle_id") && SOURCE.get("bundle_id") != null)
                 _bundleId = SOURCE.getInt("bundle_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -103,12 +103,8 @@ public class BundleWorkOrders implements Parcelable {
 
     public Integer getTotal() {
         try {
-            if (_total != null)
-                return _total;
-
-            if (SOURCE.has("total") && SOURCE.get("total") != null)
+            if (_total == null && SOURCE.has("total") && SOURCE.get("total") != null)
                 _total = SOURCE.getInt("total");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -129,12 +125,8 @@ public class BundleWorkOrders implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -209,5 +201,13 @@ public class BundleWorkOrders implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

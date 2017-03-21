@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -45,12 +51,8 @@ public class PayModifiersSum implements Parcelable {
 
     public Double getAll() {
         try {
-            if (_all != null)
-                return _all;
-
-            if (SOURCE.has("all") && SOURCE.get("all") != null)
+            if (_all == null && SOURCE.has("all") && SOURCE.get("all") != null)
                 _all = SOURCE.getDouble("all");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -71,12 +73,8 @@ public class PayModifiersSum implements Parcelable {
 
     public Double getCharged() {
         try {
-            if (_charged != null)
-                return _charged;
-
-            if (SOURCE.has("charged") && SOURCE.get("charged") != null)
+            if (_charged == null && SOURCE.has("charged") && SOURCE.get("charged") != null)
                 _charged = SOURCE.getDouble("charged");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -97,12 +95,8 @@ public class PayModifiersSum implements Parcelable {
 
     public Double getUncharged() {
         try {
-            if (_uncharged != null)
-                return _uncharged;
-
-            if (SOURCE.has("uncharged") && SOURCE.get("uncharged") != null)
+            if (_uncharged == null && SOURCE.has("uncharged") && SOURCE.get("uncharged") != null)
                 _uncharged = SOURCE.getDouble("uncharged");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -177,5 +171,13 @@ public class PayModifiersSum implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

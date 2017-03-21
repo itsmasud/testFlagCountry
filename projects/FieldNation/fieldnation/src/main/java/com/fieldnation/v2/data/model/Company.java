@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -68,12 +72,8 @@ public class Company implements Parcelable {
 
     public String getAbout() {
         try {
-            if (_about != null)
-                return _about;
-
-            if (SOURCE.has("about") && SOURCE.get("about") != null)
+            if (_about == null && SOURCE.has("about") && SOURCE.get("about") != null)
                 _about = SOURCE.getString("about");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -94,12 +94,8 @@ public class Company implements Parcelable {
 
     public Boolean getBlocked() {
         try {
-            if (_blocked != null)
-                return _blocked;
-
-            if (SOURCE.has("blocked") && SOURCE.get("blocked") != null)
+            if (_blocked == null && SOURCE.has("blocked") && SOURCE.get("blocked") != null)
                 _blocked = SOURCE.getBoolean("blocked");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -156,12 +152,8 @@ public class Company implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -182,17 +174,16 @@ public class Company implements Parcelable {
 
     public CompanyJobs getJobs() {
         try {
-            if (_jobs != null)
-                return _jobs;
-
-            if (SOURCE.has("jobs") && SOURCE.get("jobs") != null)
+            if (_jobs == null && SOURCE.has("jobs") && SOURCE.get("jobs") != null)
                 _jobs = CompanyJobs.fromJson(SOURCE.getJsonObject("jobs"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _jobs;
+        if (_jobs != null && _jobs.isSet())
+            return _jobs;
+
+        return null;
     }
 
     public Company jobs(CompanyJobs jobs) throws ParseException {
@@ -208,17 +199,16 @@ public class Company implements Parcelable {
 
     public Location getLocation() {
         try {
-            if (_location != null)
-                return _location;
-
-            if (SOURCE.has("location") && SOURCE.get("location") != null)
+            if (_location == null && SOURCE.has("location") && SOURCE.get("location") != null)
                 _location = Location.fromJson(SOURCE.getJsonObject("location"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _location;
+        if (_location != null && _location.isSet())
+            return _location;
+
+        return null;
     }
 
     public Company location(Location location) throws ParseException {
@@ -234,12 +224,8 @@ public class Company implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -260,12 +246,8 @@ public class Company implements Parcelable {
 
     public String getPhoto() {
         try {
-            if (_photo != null)
-                return _photo;
-
-            if (SOURCE.has("photo") && SOURCE.get("photo") != null)
+            if (_photo == null && SOURCE.has("photo") && SOURCE.get("photo") != null)
                 _photo = SOURCE.getString("photo");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -286,12 +268,8 @@ public class Company implements Parcelable {
 
     public Integer getProviderCount() {
         try {
-            if (_providerCount != null)
-                return _providerCount;
-
-            if (SOURCE.has("provider_count") && SOURCE.get("provider_count") != null)
+            if (_providerCount == null && SOURCE.has("provider_count") && SOURCE.get("provider_count") != null)
                 _providerCount = SOURCE.getInt("provider_count");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -312,17 +290,16 @@ public class Company implements Parcelable {
 
     public Rating getRating() {
         try {
-            if (_rating != null)
-                return _rating;
-
-            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
+            if (_rating == null && SOURCE.has("rating") && SOURCE.get("rating") != null)
                 _rating = Rating.fromJson(SOURCE.getJsonObject("rating"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _rating;
+        if (_rating != null && _rating.isSet())
+            return _rating;
+
+        return null;
     }
 
     public Company rating(Rating rating) throws ParseException {
@@ -392,5 +369,13 @@ public class Company implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

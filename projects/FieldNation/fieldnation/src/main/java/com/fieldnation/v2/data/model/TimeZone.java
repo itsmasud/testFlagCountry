@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -50,12 +54,8 @@ public class TimeZone implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,12 +76,8 @@ public class TimeZone implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,12 +98,8 @@ public class TimeZone implements Parcelable {
 
     public Double getOffset() {
         try {
-            if (_offset != null)
-                return _offset;
-
-            if (SOURCE.has("offset") && SOURCE.get("offset") != null)
+            if (_offset == null && SOURCE.has("offset") && SOURCE.get("offset") != null)
                 _offset = SOURCE.getDouble("offset");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -128,12 +120,8 @@ public class TimeZone implements Parcelable {
 
     public String getShort() {
         try {
-            if (_short != null)
-                return _short;
-
-            if (SOURCE.has("short") && SOURCE.get("short") != null)
+            if (_short == null && SOURCE.has("short") && SOURCE.get("short") != null)
                 _short = SOURCE.getString("short");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,5 +196,13 @@ public class TimeZone implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

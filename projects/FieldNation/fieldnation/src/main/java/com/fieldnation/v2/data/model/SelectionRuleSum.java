@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -50,12 +54,8 @@ public class SelectionRuleSum implements Parcelable {
 
     public Integer getMatch() {
         try {
-            if (_match != null)
-                return _match;
-
-            if (SOURCE.has("match") && SOURCE.get("match") != null)
+            if (_match == null && SOURCE.has("match") && SOURCE.get("match") != null)
                 _match = SOURCE.getInt("match");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,12 +76,8 @@ public class SelectionRuleSum implements Parcelable {
 
     public Integer getNoMatchOptional() {
         try {
-            if (_noMatchOptional != null)
-                return _noMatchOptional;
-
-            if (SOURCE.has("no_match_optional") && SOURCE.get("no_match_optional") != null)
+            if (_noMatchOptional == null && SOURCE.has("no_match_optional") && SOURCE.get("no_match_optional") != null)
                 _noMatchOptional = SOURCE.getInt("no_match_optional");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,12 +98,8 @@ public class SelectionRuleSum implements Parcelable {
 
     public Integer getNoMatchRequired() {
         try {
-            if (_noMatchRequired != null)
-                return _noMatchRequired;
-
-            if (SOURCE.has("no_match_required") && SOURCE.get("no_match_required") != null)
+            if (_noMatchRequired == null && SOURCE.has("no_match_required") && SOURCE.get("no_match_required") != null)
                 _noMatchRequired = SOURCE.getInt("no_match_required");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -128,12 +120,8 @@ public class SelectionRuleSum implements Parcelable {
 
     public Integer getTotal() {
         try {
-            if (_total != null)
-                return _total;
-
-            if (SOURCE.has("total") && SOURCE.get("total") != null)
+            if (_total == null && SOURCE.has("total") && SOURCE.get("total") != null)
                 _total = SOURCE.getInt("total");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,5 +196,13 @@ public class SelectionRuleSum implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

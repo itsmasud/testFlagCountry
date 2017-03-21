@@ -12,9 +12,10 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -114,16 +115,29 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
     private void populateButtons() {
         Log.v(TAG, "populateButtons");
-
         Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
-        Set<Schedule.ActionsEnum> scheduleActions = _workOrder.getSchedule().getActionsSet();
         Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
 
         if (false) {
 
+            // ack hold
+        } else if (_workOrder.isOnHold() && !_workOrder.areHoldsAcknowledged()) {
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_report_a_problem);
+            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
+            _rightWhiteButton.setText(R.string.btn_acknowledge_hold);
+            setVisibility(View.VISIBLE);
+
+            // is on hold
+        } else if (_workOrder.isOnHold()) {
+
             // set eta
-        } else if (scheduleActions.contains(Schedule.ActionsEnum.ETA)
-                && _workOrder.getSchedule().getEta().getUser().getId() == 0) {
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -134,8 +148,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightWhiteButton.setText(R.string.btn_set_eta);
             setVisibility(View.VISIBLE);
 
-            // ready (NCNS confirm)
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.CONFIRM)) {
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.MARK_READY_TO_GO)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -143,30 +157,34 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_readyToGo_onClick);
+            _rightWhiteButton.setText(R.string.btn_ready_to_go);
+            setVisibility(View.VISIBLE);
+
+            // confirm
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_running_late);
+            _leftWhiteButton.setOnClickListener(_runningLate_onClick);
+
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_confirm_onClick);
             _rightWhiteButton.setText(R.string.btn_confirm);
             setVisibility(View.VISIBLE);
 
             // on my way
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-//            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setText(R.string.btn_running_late);
+            _leftWhiteButton.setOnClickListener(_runningLate_onClick);
 
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setOnClickListener(_onMyWay_onClick);
-//            _rightWhiteButton.setText(R.string.btn_on_my_way);
-//            setVisibility(View.VISIBLE);
-
-            // ack hold
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setText(R.string.btn_report_a_problem);
-//            _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
-
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setOnClickListener(_ackHold_onClick);
-//            _rightWhiteButton.setText(R.string.btn_acknowledge_hold);
-//            setVisibility(View.VISIBLE);
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_onMyWay_onClick);
+            _rightWhiteButton.setText(R.string.btn_on_my_way);
+            setVisibility(View.VISIBLE);
 
             // check_out
         } else if (_workOrder.getTimeLogs().getOpenTimeLog() != null
@@ -201,8 +219,13 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
             _rightWhiteButton.setVisibility(VISIBLE);
-            _rightWhiteButton.setOnClickListener(_checkin_onClick);
-            _rightWhiteButton.setText(R.string.btn_check_in);
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+                _rightWhiteButton.setText(R.string.btn_check_in_again);
+                _rightWhiteButton.setOnClickListener(_checkinAgain_onClick);
+            } else {
+                _rightWhiteButton.setText(R.string.btn_check_in);
+                _rightWhiteButton.setOnClickListener(_checkin_onClick);
+            }
             setVisibility(View.VISIBLE);
 
             // mark incomplete
@@ -231,15 +254,18 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // accept
-//            inflate();
-//            _leftWhiteButton.setVisibility(VISIBLE);
-//            _leftWhiteButton.setOnClickListener(_notInterested_onClick);
-//            _leftWhiteButton.setText(R.string.btn_not_interested);
+        } else if (_workOrder.getRoutes() != null
+                && _workOrder.getRoutes().getOpenRoute() != null
+                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+            inflate();
+            _leftWhiteButton.setVisibility(VISIBLE);
+            _leftWhiteButton.setOnClickListener(_notInterested_onClick);
+            _leftWhiteButton.setText(R.string.btn_not_interested);
 
-//            _rightWhiteButton.setVisibility(VISIBLE);
-//            _rightWhiteButton.setOnClickListener(_accept_onClick);
-//            _rightWhiteButton.setText(R.string.btn_accept);
-//            setVisibility(View.VISIBLE);
+            _rightWhiteButton.setVisibility(VISIBLE);
+            _rightWhiteButton.setOnClickListener(_accept_onClick);
+            _rightWhiteButton.setText(R.string.btn_accept);
+            setVisibility(View.VISIBLE);
 
             // request
         } else if (_workOrder.getRequests() != null
@@ -270,8 +296,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             }
             setVisibility(View.VISIBLE);
 
+            // View payments
         } else if (_workOrder.getStatus().getId() == 6) {
-//              View payments
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -282,8 +308,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightWhiteButton.setOnClickListener(_viewPayment_onClick);
             setVisibility(View.VISIBLE);
 
+            // View fees
         } else if (_workOrder.getStatus().getId() == 7) {
-//              View fees
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -299,8 +325,13 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             inflate();
             // TODO figure out the check in again logic
             _leftWhiteButton.setVisibility(VISIBLE);
-            _leftWhiteButton.setText(R.string.btn_check_in);
-            _leftWhiteButton.setOnClickListener(_checkin_onClick);
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+                _leftWhiteButton.setText(R.string.btn_check_in_again);
+                _leftWhiteButton.setOnClickListener(_checkinAgain_onClick);
+            } else {
+                _leftWhiteButton.setText(R.string.btn_check_in);
+                _leftWhiteButton.setOnClickListener(_checkin_onClick);
+            }
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_closing_onClick);
@@ -387,10 +418,10 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _confirmAssignment_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) _listener.onConfirmAssignment();
+            if (_listener != null) _listener.onAccept();
         }
     };
 
@@ -483,36 +514,36 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
         void onRequest();
 
-        void onConfirmAssignment();
-
         void onWithdraw();
+
+        void onAccept();
 
         void onViewCounter();
 
+        void onConfirm();
+
+        void onEta();
+
         void onReadyToGo();
 
-        void onConfirm();
+        void onMyWay();
+
+        void onReportProblem();
+
+        void onAcknowledgeHold();
 
         void onCheckIn();
 
         void onCheckInAgain();
 
+        void onCheckOut();
+
         void onEnterClosingNotes();
 
         void onMarkComplete();
 
-        void onCheckOut();
-
-        void onAcknowledgeHold();
-
         void onMarkIncomplete();
 
         void onViewPayment();
-
-        void onReportProblem();
-
-        void onMyWay();
-
-        void onEta();
     }
 }

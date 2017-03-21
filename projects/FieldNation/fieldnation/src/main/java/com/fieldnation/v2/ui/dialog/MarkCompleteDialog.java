@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
@@ -110,14 +111,11 @@ public class MarkCompleteDialog extends SimpleDialog {
         public void onClick(View v) {
             _onContinueClickDispatcher.dispatch(getUid(), null);
             dismiss(true);
-/*
-TODO            if (App.get().getProfile().canRequestWorkOnMarketplace()
-                    && !_workOrder.getW2()
-                    && _workOrder.getBuyerRatingInfo().getRatingId() == null) {
 
+
+            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                 RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder, _workOrder.getCompany().getName());
             }
-*/
         }
     };
 

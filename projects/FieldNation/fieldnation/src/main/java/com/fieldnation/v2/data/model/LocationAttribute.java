@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,12 +51,8 @@ public class LocationAttribute implements Parcelable {
 
     public String getKey() {
         try {
-            if (_key != null)
-                return _key;
-
-            if (SOURCE.has("key") && SOURCE.get("key") != null)
+            if (_key == null && SOURCE.has("key") && SOURCE.get("key") != null)
                 _key = SOURCE.getString("key");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +73,8 @@ public class LocationAttribute implements Parcelable {
 
     public Boolean getPrivate() {
         try {
-            if (_private != null)
-                return _private;
-
-            if (SOURCE.has("private") && SOURCE.get("private") != null)
+            if (_private == null && SOURCE.has("private") && SOURCE.get("private") != null)
                 _private = SOURCE.getBoolean("private");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +95,8 @@ public class LocationAttribute implements Parcelable {
 
     public String getValue() {
         try {
-            if (_value != null)
-                return _value;
-
-            if (SOURCE.has("value") && SOURCE.get("value") != null)
+            if (_value == null && SOURCE.has("value") && SOURCE.get("value") != null)
                 _value = SOURCE.getString("value");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -179,5 +171,13 @@ public class LocationAttribute implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

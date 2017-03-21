@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,12 +57,8 @@ public class MessageProblem implements Parcelable {
 
     public Boolean getCanResolve() {
         try {
-            if (_canResolve != null)
-                return _canResolve;
-
-            if (SOURCE.has("can_resolve") && SOURCE.get("can_resolve") != null)
+            if (_canResolve == null && SOURCE.has("can_resolve") && SOURCE.get("can_resolve") != null)
                 _canResolve = SOURCE.getBoolean("can_resolve");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -79,12 +79,8 @@ public class MessageProblem implements Parcelable {
 
     public Boolean getEscalateToPerformance() {
         try {
-            if (_escalateToPerformance != null)
-                return _escalateToPerformance;
-
-            if (SOURCE.has("escalate_to_performance") && SOURCE.get("escalate_to_performance") != null)
+            if (_escalateToPerformance == null && SOURCE.has("escalate_to_performance") && SOURCE.get("escalate_to_performance") != null)
                 _escalateToPerformance = SOURCE.getBoolean("escalate_to_performance");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -105,12 +101,8 @@ public class MessageProblem implements Parcelable {
 
     public Integer getFlagId() {
         try {
-            if (_flagId != null)
-                return _flagId;
-
-            if (SOURCE.has("flag_id") && SOURCE.get("flag_id") != null)
+            if (_flagId == null && SOURCE.has("flag_id") && SOURCE.get("flag_id") != null)
                 _flagId = SOURCE.getInt("flag_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +123,8 @@ public class MessageProblem implements Parcelable {
 
     public Boolean getResolved() {
         try {
-            if (_resolved != null)
-                return _resolved;
-
-            if (SOURCE.has("resolved") && SOURCE.get("resolved") != null)
+            if (_resolved == null && SOURCE.has("resolved") && SOURCE.get("resolved") != null)
                 _resolved = SOURCE.getBoolean("resolved");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,17 +145,16 @@ public class MessageProblem implements Parcelable {
 
     public MessageProblemType getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = MessageProblemType.fromJson(SOURCE.getJsonObject("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_type != null && _type.isSet())
         return _type;
+
+        return null;
     }
 
     public MessageProblem type(MessageProblemType type) throws ParseException {
@@ -237,5 +224,13 @@ public class MessageProblem implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

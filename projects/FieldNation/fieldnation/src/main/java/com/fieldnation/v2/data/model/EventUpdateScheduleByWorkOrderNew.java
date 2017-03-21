@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -50,12 +54,8 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
 
     public String getEnd() {
         try {
-            if (_end != null)
-                return _end;
-
-            if (SOURCE.has("end") && SOURCE.get("end") != null)
+            if (_end == null && SOURCE.has("end") && SOURCE.get("end") != null)
                 _end = SOURCE.getString("end");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,12 +76,8 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
 
     public String getMode() {
         try {
-            if (_mode != null)
-                return _mode;
-
-            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+            if (_mode == null && SOURCE.has("mode") && SOURCE.get("mode") != null)
                 _mode = SOURCE.getString("mode");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,12 +98,8 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
 
     public String getStart() {
         try {
-            if (_start != null)
-                return _start;
-
-            if (SOURCE.has("start") && SOURCE.get("start") != null)
+            if (_start == null && SOURCE.has("start") && SOURCE.get("start") != null)
                 _start = SOURCE.getString("start");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -128,12 +120,8 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
 
     public String getTimeZone() {
         try {
-            if (_timeZone != null)
-                return _timeZone;
-
-            if (SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
+            if (_timeZone == null && SOURCE.has("time_zone") && SOURCE.get("time_zone") != null)
                 _timeZone = SOURCE.getString("time_zone");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,5 +196,13 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -19,6 +23,12 @@ import java.text.ParseException;
 
 public class Hold implements Parcelable {
     private static final String TAG = "Hold";
+
+    @Json(name = "acknowledged")
+    private Boolean _acknowledged;
+
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "id")
     private Integer _id;
@@ -40,6 +50,63 @@ public class Hold implements Parcelable {
         SOURCE = obj;
     }
 
+    public void setAcknowledged(Boolean acknowledged) throws ParseException {
+        _acknowledged = acknowledged;
+        SOURCE.put("acknowledged", acknowledged);
+    }
+
+    public Boolean getAcknowledged() {
+        try {
+            if (_acknowledged == null && SOURCE.has("acknowledged") && SOURCE.get("acknowledged") != null)
+                _acknowledged = SOURCE.getBoolean("acknowledged");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _acknowledged;
+    }
+
+    public Hold acknowledged(Boolean acknowledged) throws ParseException {
+        _acknowledged = acknowledged;
+        SOURCE.put("acknowledged", acknowledged);
+        return this;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public Hold actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
+    }
+
     public void setId(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
@@ -47,12 +114,8 @@ public class Hold implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +136,8 @@ public class Hold implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +158,8 @@ public class Hold implements Parcelable {
 
     public String getReason() {
         try {
-            if (_reason != null)
-                return _reason;
-
-            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+            if (_reason == null && SOURCE.has("reason") && SOURCE.get("reason") != null)
                 _reason = SOURCE.getString("reason");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -116,6 +171,42 @@ public class Hold implements Parcelable {
         _reason = reason;
         SOURCE.put("reason", reason);
         return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "unkown")
+        UNKOWN("unkown");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/
@@ -179,5 +270,13 @@ public class Hold implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

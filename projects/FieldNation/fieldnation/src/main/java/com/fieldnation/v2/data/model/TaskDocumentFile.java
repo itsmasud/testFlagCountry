@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,12 +51,8 @@ public class TaskDocumentFile implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +73,8 @@ public class TaskDocumentFile implements Parcelable {
 
     public Integer getSize() {
         try {
-            if (_size != null)
-                return _size;
-
-            if (SOURCE.has("size") && SOURCE.get("size") != null)
+            if (_size == null && SOURCE.has("size") && SOURCE.get("size") != null)
                 _size = SOURCE.getInt("size");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +95,8 @@ public class TaskDocumentFile implements Parcelable {
 
     public String getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = SOURCE.getString("type");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -179,5 +171,13 @@ public class TaskDocumentFile implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

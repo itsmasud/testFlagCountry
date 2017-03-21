@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,12 +51,8 @@ public class WorkOrderPublishStats implements Parcelable {
 
     public Integer getCounterOffers() {
         try {
-            if (_counterOffers != null)
-                return _counterOffers;
-
-            if (SOURCE.has("counter_offers") && SOURCE.get("counter_offers") != null)
+            if (_counterOffers == null && SOURCE.has("counter_offers") && SOURCE.get("counter_offers") != null)
                 _counterOffers = SOURCE.getInt("counter_offers");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +73,8 @@ public class WorkOrderPublishStats implements Parcelable {
 
     public Integer getRequests() {
         try {
-            if (_requests != null)
-                return _requests;
-
-            if (SOURCE.has("requests") && SOURCE.get("requests") != null)
+            if (_requests == null && SOURCE.has("requests") && SOURCE.get("requests") != null)
                 _requests = SOURCE.getInt("requests");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +95,8 @@ public class WorkOrderPublishStats implements Parcelable {
 
     public Integer getRoutes() {
         try {
-            if (_routes != null)
-                return _routes;
-
-            if (SOURCE.has("routes") && SOURCE.get("routes") != null)
+            if (_routes == null && SOURCE.has("routes") && SOURCE.get("routes") != null)
                 _routes = SOURCE.getInt("routes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -179,5 +171,13 @@ public class WorkOrderPublishStats implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

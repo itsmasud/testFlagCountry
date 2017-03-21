@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class PayRange implements Parcelable {
 
     public Double getMax() {
         try {
-            if (_max != null)
-                return _max;
-
-            if (SOURCE.has("max") && SOURCE.get("max") != null)
+            if (_max == null && SOURCE.has("max") && SOURCE.get("max") != null)
                 _max = SOURCE.getDouble("max");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class PayRange implements Parcelable {
 
     public Double getMin() {
         try {
-            if (_min != null)
-                return _min;
-
-            if (SOURCE.has("min") && SOURCE.get("min") != null)
+            if (_min == null && SOURCE.has("min") && SOURCE.get("min") != null)
                 _min = SOURCE.getDouble("min");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +146,13 @@ public class PayRange implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getMax() != null && getMin() != null && getMax() != 0 && getMin() != 0;
     }
 }

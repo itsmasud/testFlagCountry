@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class Map implements Parcelable {
 
     public String getHref() {
         try {
-            if (_href != null)
-                return _href;
-
-            if (SOURCE.has("href") && SOURCE.get("href") != null)
+            if (_href == null && SOURCE.has("href") && SOURCE.get("href") != null)
                 _href = SOURCE.getString("href");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class Map implements Parcelable {
 
     public String getUrl() {
         try {
-            if (_url != null)
-                return _url;
-
-            if (SOURCE.has("url") && SOURCE.get("url") != null)
+            if (_url == null && SOURCE.has("url") && SOURCE.get("url") != null)
                 _url = SOURCE.getString("url");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +146,13 @@ public class Map implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return !misc.isEmptyOrNull(getHref()) && !misc.isEmptyOrNull(getUrl());
     }
 }

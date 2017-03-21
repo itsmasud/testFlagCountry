@@ -6,17 +6,23 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.nav.NavActivity;
 import com.fieldnation.v2.ui.search.SearchResultScreen;
+import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 
 /**
  * Created by Michael on 10/3/2016.
@@ -31,6 +37,10 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     // Data
     private SavedList _savedList;
+    private boolean _needsConfirm = false;
+    private GetWorkOrdersOptions _options =
+            new GetWorkOrdersOptions()
+                    .fFlightboardTomorrow(true);
 
     @Override
     public int getLayoutResource() {
@@ -50,9 +60,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
         setTitle("Tomorrow's Work");
 
-        // TODO fill out _savedList;
         try {
-            _savedList = new SavedList().id("workorders_tomorrow");
+            _savedList = new SavedList().id("workorders_assignments");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -62,7 +71,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.v(TAG, "onRestoreInstanceState");
         if (savedInstanceState != null) {
-            _recyclerView.startSearch(_savedList);
+            _recyclerView.startSearch(_savedList, _options);
         }
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -74,7 +83,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _recyclerView.startSearch(_savedList);
+        _recyclerView.startSearch(_savedList, _options);
     }
 
     @Override
@@ -101,10 +110,16 @@ public class ConfirmActivity extends AuthSimpleActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.remindme_menuitem:
+                NavActivity.startNew(App.get());
+                finish();
                 break;
             case R.id.done_menuitem:
-                App.get().setNeedsConfirmation(false);
-                NavActivity.startNew(App.get());
+                if (!_needsConfirm) {
+                    App.get().setNeedsConfirmation(false);
+                    NavActivity.startNew(App.get());
+                } else {
+                    ToastClient.toast(App.get(), "Please confirm your work before continuing", Toast.LENGTH_SHORT);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -119,25 +134,30 @@ public class ConfirmActivity extends AuthSimpleActivity {
         @Override
         public void OnWorkOrderListReceived(WorkOrders workOrders) {
             if (workOrders == null
-                    || workOrders.getResults() != null
+                    || workOrders.getResults() == null
                     || workOrders.getResults().length == 0) {
                 return;
             }
-/*
-TODO            for (WorkOrder wo : workOrders.getResults()) {
-                Action[] actions = wo.getPrimaryActions();
-                if (actions != null) {
-                    for (Action a : actions) {
-                        if (a.getType() == Action.ActionType.READY) {
-                            _doneButton.setVisibility(View.GONE);
-                            return;
-                        }
-                    }
-                }
-            }
-*/
+            scanWorkOrders();
         }
     };
+
+    private void scanWorkOrders() {
+        Log.v(TAG, "scanWorkOrders");
+        WoPagingAdapter adapter = _recyclerView.getAdapter();
+        _needsConfirm = false;
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            Object obj = adapter.getObject(i);
+            if (obj instanceof WorkOrder) {
+                WorkOrder wo = (WorkOrder) obj;
+                if (wo.getEta() != null
+                        && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
+                    _needsConfirm = true;
+                    return;
+                }
+            }
+        }
+    }
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");

@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -95,12 +99,8 @@ public class ListEnvelope implements Parcelable {
 
     public String getColumns() {
         try {
-            if (_columns != null)
-                return _columns;
-
-            if (SOURCE.has("columns") && SOURCE.get("columns") != null)
+            if (_columns == null && SOURCE.has("columns") && SOURCE.get("columns") != null)
                 _columns = SOURCE.getString("columns");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -121,12 +121,8 @@ public class ListEnvelope implements Parcelable {
 
     public String getList() {
         try {
-            if (_list != null)
-                return _list;
-
-            if (SOURCE.has("list") && SOURCE.get("list") != null)
+            if (_list == null && SOURCE.has("list") && SOURCE.get("list") != null)
                 _list = SOURCE.getString("list");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -147,12 +143,8 @@ public class ListEnvelope implements Parcelable {
 
     public OrderEnum getOrder() {
         try {
-            if (_order != null)
-                return _order;
-
-            if (SOURCE.has("order") && SOURCE.get("order") != null)
+            if (_order == null && SOURCE.has("order") && SOURCE.get("order") != null)
                 _order = OrderEnum.fromString(SOURCE.getString("order"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -173,12 +165,8 @@ public class ListEnvelope implements Parcelable {
 
     public Integer getPage() {
         try {
-            if (_page != null)
-                return _page;
-
-            if (SOURCE.has("page") && SOURCE.get("page") != null)
+            if (_page == null && SOURCE.has("page") && SOURCE.get("page") != null)
                 _page = SOURCE.getInt("page");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -199,12 +187,8 @@ public class ListEnvelope implements Parcelable {
 
     public Integer getPages() {
         try {
-            if (_pages != null)
-                return _pages;
-
-            if (SOURCE.has("pages") && SOURCE.get("pages") != null)
+            if (_pages == null && SOURCE.has("pages") && SOURCE.get("pages") != null)
                 _pages = SOURCE.getInt("pages");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -225,12 +209,8 @@ public class ListEnvelope implements Parcelable {
 
     public Integer getPerPage() {
         try {
-            if (_perPage != null)
-                return _perPage;
-
-            if (SOURCE.has("per_page") && SOURCE.get("per_page") != null)
+            if (_perPage == null && SOURCE.has("per_page") && SOURCE.get("per_page") != null)
                 _perPage = SOURCE.getInt("per_page");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -251,12 +231,8 @@ public class ListEnvelope implements Parcelable {
 
     public String getSort() {
         try {
-            if (_sort != null)
-                return _sort;
-
-            if (SOURCE.has("sort") && SOURCE.get("sort") != null)
+            if (_sort == null && SOURCE.has("sort") && SOURCE.get("sort") != null)
                 _sort = SOURCE.getString("sort");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -277,12 +253,8 @@ public class ListEnvelope implements Parcelable {
 
     public Integer getTotal() {
         try {
-            if (_total != null)
-                return _total;
-
-            if (SOURCE.has("total") && SOURCE.get("total") != null)
+            if (_total == null && SOURCE.has("total") && SOURCE.get("total") != null)
                 _total = SOURCE.getInt("total");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -303,12 +275,8 @@ public class ListEnvelope implements Parcelable {
 
     public ViewEnum getView() {
         try {
-            if (_view != null)
-                return _view;
-
-            if (SOURCE.has("view") && SOURCE.get("view") != null)
+            if (_view == null && SOURCE.has("view") && SOURCE.get("view") != null)
                 _view = ViewEnum.fromString(SOURCE.getString("view"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -464,5 +432,13 @@ public class ListEnvelope implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

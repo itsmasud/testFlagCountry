@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class UserJobs implements Parcelable {
 
     public Integer getCompany() {
         try {
-            if (_company != null)
-                return _company;
-
-            if (SOURCE.has("company") && SOURCE.get("company") != null)
+            if (_company == null && SOURCE.has("company") && SOURCE.get("company") != null)
                 _company = SOURCE.getInt("company");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class UserJobs implements Parcelable {
 
     public Integer getMarketplace() {
         try {
-            if (_marketplace != null)
-                return _marketplace;
-
-            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
                 _marketplace = SOURCE.getInt("marketplace");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -150,5 +146,13 @@ public class UserJobs implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

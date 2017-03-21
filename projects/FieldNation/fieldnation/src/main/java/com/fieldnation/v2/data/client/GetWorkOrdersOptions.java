@@ -3,6 +3,8 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.v2.data.model.*;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -20,7 +22,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _list;
 
     @Json(name = "columns")
-    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests";
+    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests,eta";
 
     @Json(name = "page")
     private Integer _page;
@@ -48,6 +50,9 @@ public class GetWorkOrdersOptions implements Parcelable {
 
     @Json(name = "fRating")
     private String _fRating;
+
+    @Json(name = "fFlightboardTomorrow")
+    private Boolean _fFlightboardTomorrow;
 
     @Json(name = "fRequests")
     private Boolean _fRequests;
@@ -312,6 +317,19 @@ public class GetWorkOrdersOptions implements Parcelable {
 
     public GetWorkOrdersOptions fRating(String fRating) {
         _fRating = fRating;
+        return this;
+    }
+
+    public void setFFlightboardTomorrow(Boolean fFlightboardTomorrow) {
+        _fFlightboardTomorrow = fFlightboardTomorrow;
+    }
+
+    public Boolean getFFlightboardTomorrow() {
+        return _fFlightboardTomorrow;
+    }
+
+    public GetWorkOrdersOptions fFlightboardTomorrow(Boolean fFlightboardTomorrow) {
+        _fFlightboardTomorrow = fFlightboardTomorrow;
         return this;
     }
 

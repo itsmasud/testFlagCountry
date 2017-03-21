@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -28,6 +32,9 @@ public class Messages implements Parcelable {
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
+
+    @Json(name = "problem_reported")
+    private Boolean _problemReported;
 
     @Json(name = "results")
     private Message[] _results;
@@ -91,12 +98,8 @@ public class Messages implements Parcelable {
 
     public String getCorrelationId() {
         try {
-            if (_correlationId != null)
-                return _correlationId;
-
-            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
                 _correlationId = SOURCE.getString("correlation_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -117,22 +120,43 @@ public class Messages implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public Messages metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
+        return this;
+    }
+
+    public void setProblemReported(Boolean problemReported) throws ParseException {
+        _problemReported = problemReported;
+        SOURCE.put("problem_reported", problemReported);
+    }
+
+    public Boolean getProblemReported() {
+        try {
+            if (_problemReported == null && SOURCE.has("problem_reported") && SOURCE.get("problem_reported") != null)
+                _problemReported = SOURCE.getBoolean("problem_reported");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _problemReported;
+    }
+
+    public Messages problemReported(Boolean problemReported) throws ParseException {
+        _problemReported = problemReported;
+        SOURCE.put("problem_reported", problemReported);
         return this;
     }
 
@@ -170,12 +194,8 @@ public class Messages implements Parcelable {
 
     public Integer getSum() {
         try {
-            if (_sum != null)
-                return _sum;
-
-            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+            if (_sum == null && SOURCE.has("sum") && SOURCE.get("sum") != null)
                 _sum = SOURCE.getInt("sum");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -196,12 +216,8 @@ public class Messages implements Parcelable {
 
     public Integer getUnread() {
         try {
-            if (_unread != null)
-                return _unread;
-
-            if (SOURCE.has("unread") && SOURCE.get("unread") != null)
+            if (_unread == null && SOURCE.has("unread") && SOURCE.get("unread") != null)
                 _unread = SOURCE.getInt("unread");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -312,5 +328,13 @@ public class Messages implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

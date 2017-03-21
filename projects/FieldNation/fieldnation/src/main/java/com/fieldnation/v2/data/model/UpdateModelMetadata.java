@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,17 +48,16 @@ public class UpdateModelMetadata implements Parcelable {
 
     public UpdateModelMetadataData getData() {
         try {
-            if (_data != null)
-                return _data;
-
-            if (SOURCE.has("data") && SOURCE.get("data") != null)
+            if (_data == null && SOURCE.has("data") && SOURCE.get("data") != null)
                 _data = UpdateModelMetadataData.fromJson(SOURCE.getJsonObject("data"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_data != null && _data.isSet())
         return _data;
+
+        return null;
     }
 
     public UpdateModelMetadata data(UpdateModelMetadataData data) throws ParseException {
@@ -70,17 +73,16 @@ public class UpdateModelMetadata implements Parcelable {
 
     public UpdateModelMetadataUniversalContext getUniversalContext() {
         try {
-            if (_universalContext != null)
-                return _universalContext;
-
-            if (SOURCE.has("universal_context") && SOURCE.get("universal_context") != null)
+            if (_universalContext == null && SOURCE.has("universal_context") && SOURCE.get("universal_context") != null)
                 _universalContext = UpdateModelMetadataUniversalContext.fromJson(SOURCE.getJsonObject("universal_context"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_universalContext != null && _universalContext.isSet())
         return _universalContext;
+
+        return null;
     }
 
     public UpdateModelMetadata universalContext(UpdateModelMetadataUniversalContext universalContext) throws ParseException {
@@ -150,5 +152,13 @@ public class UpdateModelMetadata implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

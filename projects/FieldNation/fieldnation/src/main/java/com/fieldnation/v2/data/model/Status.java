@@ -5,12 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -80,12 +85,8 @@ public class Status implements Parcelable {
 
     public String getCode() {
         try {
-            if (_code != null)
-                return _code;
-
-            if (SOURCE.has("code") && SOURCE.get("code") != null)
+            if (_code == null && SOURCE.has("code") && SOURCE.get("code") != null)
                 _code = SOURCE.getString("code");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -106,12 +107,8 @@ public class Status implements Parcelable {
 
     public String getCorrelationId() {
         try {
-            if (_correlationId != null)
-                return _correlationId;
-
-            if (SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
                 _correlationId = SOURCE.getString("correlation_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -132,12 +129,8 @@ public class Status implements Parcelable {
 
     public Integer getDelay() {
         try {
-            if (_delay != null)
-                return _delay;
-
-            if (SOURCE.has("delay") && SOURCE.get("delay") != null)
+            if (_delay == null && SOURCE.has("delay") && SOURCE.get("delay") != null)
                 _delay = SOURCE.getInt("delay");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -158,12 +151,8 @@ public class Status implements Parcelable {
 
     public String getDisplay() {
         try {
-            if (_display != null)
-                return _display;
-
-            if (SOURCE.has("display") && SOURCE.get("display") != null)
+            if (_display == null && SOURCE.has("display") && SOURCE.get("display") != null)
                 _display = SOURCE.getString("display");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -184,12 +173,8 @@ public class Status implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -210,12 +195,8 @@ public class Status implements Parcelable {
 
     public Boolean getIsRouted() {
         try {
-            if (_isRouted != null)
-                return _isRouted;
-
-            if (SOURCE.has("is_routed") && SOURCE.get("is_routed") != null)
+            if (_isRouted == null && SOURCE.has("is_routed") && SOURCE.get("is_routed") != null)
                 _isRouted = SOURCE.getBoolean("is_routed");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -236,12 +217,8 @@ public class Status implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -262,12 +239,8 @@ public class Status implements Parcelable {
 
     public Boolean getNcns() {
         try {
-            if (_ncns != null)
-                return _ncns;
-
-            if (SOURCE.has("ncns") && SOURCE.get("ncns") != null)
+            if (_ncns == null && SOURCE.has("ncns") && SOURCE.get("ncns") != null)
                 _ncns = SOURCE.getBoolean("ncns");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -288,12 +261,8 @@ public class Status implements Parcelable {
 
     public Boolean getProblemReported() {
         try {
-            if (_problemReported != null)
-                return _problemReported;
-
-            if (SOURCE.has("problem_reported") && SOURCE.get("problem_reported") != null)
+            if (_problemReported == null && SOURCE.has("problem_reported") && SOURCE.get("problem_reported") != null)
                 _problemReported = SOURCE.getBoolean("problem_reported");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -314,12 +283,8 @@ public class Status implements Parcelable {
 
     public String getSubStatus() {
         try {
-            if (_subStatus != null)
-                return _subStatus;
-
-            if (SOURCE.has("sub_status") && SOURCE.get("sub_status") != null)
+            if (_subStatus == null && SOURCE.has("sub_status") && SOURCE.get("sub_status") != null)
                 _subStatus = SOURCE.getString("sub_status");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -394,5 +359,13 @@ public class Status implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

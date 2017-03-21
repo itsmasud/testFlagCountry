@@ -287,7 +287,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public void getData() {
         Log.v(TAG, "getData");
         setLoading(true);
-        WorkordersWebApi.getWorkOrder(this, _workOrderId, false);
+        WorkordersWebApi.getWorkOrder(this, _workOrderId, true, false);
     }
 
     /*-*************************-*/
@@ -392,9 +392,11 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 return;
             }
 
-            Debug.setLong("last_workorder", workOrder.getWorkOrderId());
-            _workOrder = workOrder;
-            populateUi();
+            if (_workOrderId == (int) workOrder.getWorkOrderId()) {
+                Debug.setLong("last_workorder", workOrder.getWorkOrderId());
+                _workOrder = workOrder;
+                populateUi();
+            }
         }
 
         @Override
@@ -404,7 +406,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
             Log.v(TAG, "onWorkordersWebApi " + methodName);
 
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
     };
 

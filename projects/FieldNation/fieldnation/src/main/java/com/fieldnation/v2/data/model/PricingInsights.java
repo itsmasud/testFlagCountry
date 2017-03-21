@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -41,17 +45,16 @@ public class PricingInsights implements Parcelable {
 
     public PricingInsightsRegion getRegion() {
         try {
-            if (_region != null)
-                return _region;
-
-            if (SOURCE.has("region") && SOURCE.get("region") != null)
+            if (_region == null && SOURCE.has("region") && SOURCE.get("region") != null)
                 _region = PricingInsightsRegion.fromJson(SOURCE.getJsonObject("region"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_region != null && _region.isSet())
         return _region;
+
+        return null;
     }
 
     public PricingInsights region(PricingInsightsRegion region) throws ParseException {
@@ -121,5 +124,13 @@ public class PricingInsights implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

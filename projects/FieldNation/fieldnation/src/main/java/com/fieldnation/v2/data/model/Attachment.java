@@ -10,6 +10,7 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -115,17 +116,16 @@ public class Attachment implements Parcelable {
 
     public User getAuthor() {
         try {
-            if (_author != null)
-                return _author;
-
-            if (SOURCE.has("author") && SOURCE.get("author") != null)
+            if (_author == null && SOURCE.has("author") && SOURCE.get("author") != null)
                 _author = User.fromJson(SOURCE.getJsonObject("author"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _author;
+        if (_author != null && _author.isSet())
+            return _author;
+
+        return null;
     }
 
     public Attachment author(User author) throws ParseException {
@@ -141,17 +141,16 @@ public class Attachment implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _created;
+        if (_created != null && _created.isSet())
+            return _created;
+
+        return null;
     }
 
     public Attachment created(Date created) throws ParseException {
@@ -167,17 +166,16 @@ public class Attachment implements Parcelable {
 
     public File getFile() {
         try {
-            if (_file != null)
-                return _file;
-
-            if (SOURCE.has("file") && SOURCE.get("file") != null)
+            if (_file == null && SOURCE.has("file") && SOURCE.get("file") != null)
                 _file = File.fromJson(SOURCE.getJsonObject("file"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _file;
+        if (_file != null && _file.isSet())
+            return _file;
+
+        return null;
     }
 
     public Attachment file(File file) throws ParseException {
@@ -193,12 +191,8 @@ public class Attachment implements Parcelable {
 
     public Integer getFolderId() {
         try {
-            if (_folderId != null)
-                return _folderId;
-
-            if (SOURCE.has("folder_id") && SOURCE.get("folder_id") != null)
+            if (_folderId == null && SOURCE.has("folder_id") && SOURCE.get("folder_id") != null)
                 _folderId = SOURCE.getInt("folder_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -219,12 +213,8 @@ public class Attachment implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -245,12 +235,8 @@ public class Attachment implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -271,17 +257,16 @@ public class Attachment implements Parcelable {
 
     public Date getReviewed() {
         try {
-            if (_reviewed != null)
-                return _reviewed;
-
-            if (SOURCE.has("reviewed") && SOURCE.get("reviewed") != null)
+            if (_reviewed == null && SOURCE.has("reviewed") && SOURCE.get("reviewed") != null)
                 _reviewed = Date.fromJson(SOURCE.getJsonObject("reviewed"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _reviewed;
+        if (_reviewed != null && _reviewed.isSet())
+            return _reviewed;
+
+        return null;
     }
 
     public Attachment reviewed(Date reviewed) throws ParseException {
@@ -297,17 +282,16 @@ public class Attachment implements Parcelable {
 
     public User getReviewer() {
         try {
-            if (_reviewer != null)
-                return _reviewer;
-
-            if (SOURCE.has("reviewer") && SOURCE.get("reviewer") != null)
+            if (_reviewer == null && SOURCE.has("reviewer") && SOURCE.get("reviewer") != null)
                 _reviewer = User.fromJson(SOURCE.getJsonObject("reviewer"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _reviewer;
+        if (_reviewer != null && _reviewer.isSet())
+            return _reviewer;
+
+        return null;
     }
 
     public Attachment reviewer(User reviewer) throws ParseException {
@@ -323,12 +307,8 @@ public class Attachment implements Parcelable {
 
     public Boolean getShowBeforeAssignment() {
         try {
-            if (_showBeforeAssignment != null)
-                return _showBeforeAssignment;
-
-            if (SOURCE.has("show_before_assignment") && SOURCE.get("show_before_assignment") != null)
+            if (_showBeforeAssignment == null && SOURCE.has("show_before_assignment") && SOURCE.get("show_before_assignment") != null)
                 _showBeforeAssignment = SOURCE.getBoolean("show_before_assignment");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -349,12 +329,8 @@ public class Attachment implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -375,12 +351,8 @@ public class Attachment implements Parcelable {
 
     public String getStatusDescription() {
         try {
-            if (_statusDescription != null)
-                return _statusDescription;
-
-            if (SOURCE.has("status_description") && SOURCE.get("status_description") != null)
+            if (_statusDescription == null && SOURCE.has("status_description") && SOURCE.get("status_description") != null)
                 _statusDescription = SOURCE.getString("status_description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -401,17 +373,16 @@ public class Attachment implements Parcelable {
 
     public Task getTask() {
         try {
-            if (_task != null)
-                return _task;
-
-            if (SOURCE.has("task") && SOURCE.get("task") != null)
+            if (_task == null && SOURCE.has("task") && SOURCE.get("task") != null)
                 _task = Task.fromJson(SOURCE.getJsonObject("task"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _task;
+        if (_task != null && _task.isSet())
+            return _task;
+
+        return null;
     }
 
     public Attachment task(Task task) throws ParseException {
@@ -562,6 +533,10 @@ public class Attachment implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
+    }
+
     private Set<Attachment.ActionsEnum> _actionsSet = null;
 
     public Set<Attachment.ActionsEnum> getActionsSet() {
@@ -571,5 +546,4 @@ public class Attachment implements Parcelable {
         }
         return _actionsSet;
     }
-
 }
