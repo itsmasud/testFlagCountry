@@ -86,7 +86,7 @@ public class TaskRowView extends RelativeLayout {
         _task = task;
         _workOrder = workOrder;
 
-        if (_task.getFolderId() != null) {
+        if (_task.getAttachments() != null && _task.getAttachments().getId() != null) {
             subscribeUpload();
         }
 
@@ -187,15 +187,8 @@ public class TaskRowView extends RelativeLayout {
     private boolean hasAction() {
         if (_task == null && _task.getActionsSet() == null) return false;
 
-        return (_task.getActionsSet().contains(Task.ActionsEnum.CHECK_IN)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CHECK_OUT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CLOSING_NOTES)
-                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CREATE_SHIPMENT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.ETA)
-                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.SIGNATURE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.UPLOAD));
+        return (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
+                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE));
     }
 
     private void updateCheckBox() {
@@ -225,7 +218,7 @@ public class TaskRowView extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        if (_task == null || _task.getFolderId() == null)
+        if (_task == null || _task.getAttachments() == null || _task.getAttachments().getId() == null)
             return;
 
         if (_workorderClient == null)
@@ -234,8 +227,8 @@ public class TaskRowView extends RelativeLayout {
         if (!_workorderClient.isConnected())
             return;
 
-        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _task.getFolderId());
-        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _task.getFolderId());
+        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _task.getAttachments().getId());
+        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _task.getAttachments().getId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {

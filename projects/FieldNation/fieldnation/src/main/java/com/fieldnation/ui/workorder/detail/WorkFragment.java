@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
@@ -56,6 +57,7 @@ import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -1109,18 +1111,18 @@ TODO     private void setTasks(List<Task> tasks) {
 
         @Override
         public void onDownload(Task task) {
-            Attachment doc = task.getAttachment();
+            AttachmentFolder folder = task.getAttachments();
 
-            if (doc != null) {
+            if (folder != null && folder.getResults() != null && folder.getResults().length > 0) {
+                Attachment doc = folder.getResults()[0];
                 if (doc != null && doc.getId() != null) {
                     Log.v(TAG, "docid: " + doc.getId());
-                    // task completed here
+                    // TODO task completed here
                     if (!task.getCompleted().isSet()) {
                         //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
                     }
-// TODO: file link is not coming as part of File object. See comment in PA-623
-//                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
-//                                doc.getFile().getName(), doc.getFile().getMime());
+                    FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
+                            doc.getFile().getName(), doc.getFile().getMime());
                 }
             }
         }
@@ -1225,6 +1227,7 @@ TODO     private void setTasks(List<Task> tasks) {
         public void onUniqueTask(Task task) {
             if (task.getCompleted().isSet())
                 return;
+            // TODO mark compelte
             //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             setLoading(true);
         }
