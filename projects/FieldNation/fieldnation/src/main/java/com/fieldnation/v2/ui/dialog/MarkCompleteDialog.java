@@ -113,11 +113,7 @@ public class MarkCompleteDialog extends SimpleDialog {
             dismiss(true);
 
 
-            if (App.get().getProfile().canRequestWorkOnMarketplace()
-                    && !_workOrder.getW2()
-                    && _workOrder.getBuyerRating().isSet()
-                    && _workOrder.getBuyerRating().getUser() != null
-                    && _workOrder.getBuyerRating().getUser() != 0) {
+            if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                 RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder, _workOrder.getCompany().getName());
             }
         }
