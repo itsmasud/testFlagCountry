@@ -109,9 +109,6 @@ public class ClosingNotesDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss(true);
-            _onOkDispatcher.dispatch(getUid(), _editText.getText().toString());
-
             try {
                 WorkOrder workOrder = new WorkOrder();
                 workOrder.closingNotes(_editText.getText().toString());
@@ -119,6 +116,8 @@ public class ClosingNotesDialog extends SimpleDialog {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            _onOkDispatcher.dispatch(getUid(), _editText.getText().toString());
+            dismiss(true);
         }
     };
 
