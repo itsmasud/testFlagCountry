@@ -54,6 +54,9 @@ public class GetWorkOrdersOptions implements Parcelable {
     @Json(name = "fFlightboardTomorrow")
     private Boolean _fFlightboardTomorrow;
 
+    @Json(name = "fHasRemoteWork")
+    private Boolean _fHasRemoteWork;
+
     @Json(name = "fRequests")
     private Boolean _fRequests;
 
@@ -330,6 +333,19 @@ public class GetWorkOrdersOptions implements Parcelable {
 
     public GetWorkOrdersOptions fFlightboardTomorrow(Boolean fFlightboardTomorrow) {
         _fFlightboardTomorrow = fFlightboardTomorrow;
+        return this;
+    }
+
+    public void setFHasRemoteWork(Boolean fHasRemoteWork) {
+        _fHasRemoteWork = fHasRemoteWork;
+    }
+
+    public Boolean getFHasRemoteWork() {
+        return _fHasRemoteWork;
+    }
+
+    public GetWorkOrdersOptions fHasRemoteWork(Boolean fHasRemoteWork) {
+        _fHasRemoteWork = fHasRemoteWork;
         return this;
     }
 

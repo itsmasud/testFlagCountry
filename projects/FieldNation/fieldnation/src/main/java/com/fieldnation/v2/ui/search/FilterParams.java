@@ -62,7 +62,7 @@ public class FilterParams {
         }
 
         if (remoteWork != null && remoteWork) {
-            // TODO add the remote work thing here
+            options.fHasRemoteWork(remoteWork);
         }
 
         return options;
