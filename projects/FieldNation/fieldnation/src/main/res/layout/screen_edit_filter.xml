@@ -21,13 +21,13 @@
             android:layout_centerVertical="true"
             android:text="Filters" />
 
-        <Button
-            android:id="@+id/apply_button"
+        <com.fieldnation.ui.IconFontButton
+            android:id="@+id/close_button"
             style="@style/Material.Button.Flat"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:gravity="right|center_vertical"
-            android:text="APPLY"
+            android:text="@string/icon_x"
             android:textColor="@color/fn_white_text" />
     </RelativeLayout>
 

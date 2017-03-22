@@ -72,7 +72,7 @@ public class SearchEditScreen extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.screen_edit_search, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.screen_edit_filter, this);
 
         if (isInEditMode())
             return;

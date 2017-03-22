@@ -308,7 +308,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onOk(FilterParams filterParams) {
             _filterParams = filterParams;
-            _adapter.notifyDataSetChanged();
+            _adapter.refreshAll();
         }
     };
 

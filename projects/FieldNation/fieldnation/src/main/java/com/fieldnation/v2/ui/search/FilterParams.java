@@ -63,6 +63,8 @@ public class FilterParams {
 
         if (remoteWork != null && remoteWork) {
             options.fHasRemoteWork(remoteWork);
+        } else {
+            options.fHasRemoteWork(null);
         }
 
         return options;
