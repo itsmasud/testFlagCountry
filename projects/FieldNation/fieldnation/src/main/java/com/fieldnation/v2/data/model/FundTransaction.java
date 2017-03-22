@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -80,12 +84,8 @@ public class FundTransaction implements Parcelable {
 
     public Double getAmount() {
         try {
-            if (_amount != null)
-                return _amount;
-
-            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+            if (_amount == null && SOURCE.has("amount") && SOURCE.get("amount") != null)
                 _amount = SOURCE.getDouble("amount");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -106,17 +106,16 @@ public class FundTransaction implements Parcelable {
 
     public BankDetails getBankDetails() {
         try {
-            if (_bankDetails != null)
-                return _bankDetails;
-
-            if (SOURCE.has("bank_details") && SOURCE.get("bank_details") != null)
+            if (_bankDetails == null && SOURCE.has("bank_details") && SOURCE.get("bank_details") != null)
                 _bankDetails = BankDetails.fromJson(SOURCE.getJsonObject("bank_details"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_bankDetails != null && _bankDetails.isSet())
         return _bankDetails;
+
+        return null;
     }
 
     public FundTransaction bankDetails(BankDetails bankDetails) throws ParseException {
@@ -132,17 +131,16 @@ public class FundTransaction implements Parcelable {
 
     public BillingAddress getBillingAddress() {
         try {
-            if (_billingAddress != null)
-                return _billingAddress;
-
-            if (SOURCE.has("billing_address") && SOURCE.get("billing_address") != null)
+            if (_billingAddress == null && SOURCE.has("billing_address") && SOURCE.get("billing_address") != null)
                 _billingAddress = BillingAddress.fromJson(SOURCE.getJsonObject("billing_address"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_billingAddress != null && _billingAddress.isSet())
         return _billingAddress;
+
+        return null;
     }
 
     public FundTransaction billingAddress(BillingAddress billingAddress) throws ParseException {
@@ -158,17 +156,16 @@ public class FundTransaction implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_created != null && _created.isSet())
         return _created;
+
+        return null;
     }
 
     public FundTransaction created(Date created) throws ParseException {
@@ -184,17 +181,16 @@ public class FundTransaction implements Parcelable {
 
     public CreditCard getCreditCard() {
         try {
-            if (_creditCard != null)
-                return _creditCard;
-
-            if (SOURCE.has("credit_card") && SOURCE.get("credit_card") != null)
+            if (_creditCard == null && SOURCE.has("credit_card") && SOURCE.get("credit_card") != null)
                 _creditCard = CreditCard.fromJson(SOURCE.getJsonObject("credit_card"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_creditCard != null && _creditCard.isSet())
         return _creditCard;
+
+        return null;
     }
 
     public FundTransaction creditCard(CreditCard creditCard) throws ParseException {
@@ -210,12 +206,8 @@ public class FundTransaction implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -236,12 +228,8 @@ public class FundTransaction implements Parcelable {
 
     public String getExternalId() {
         try {
-            if (_externalId != null)
-                return _externalId;
-
-            if (SOURCE.has("external_id") && SOURCE.get("external_id") != null)
+            if (_externalId == null && SOURCE.has("external_id") && SOURCE.get("external_id") != null)
                 _externalId = SOURCE.getString("external_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -262,12 +250,8 @@ public class FundTransaction implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -288,12 +272,8 @@ public class FundTransaction implements Parcelable {
 
     public String getNote() {
         try {
-            if (_note != null)
-                return _note;
-
-            if (SOURCE.has("note") && SOURCE.get("note") != null)
+            if (_note == null && SOURCE.has("note") && SOURCE.get("note") != null)
                 _note = SOURCE.getString("note");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -314,12 +294,8 @@ public class FundTransaction implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -340,12 +316,8 @@ public class FundTransaction implements Parcelable {
 
     public String getStatusReason() {
         try {
-            if (_statusReason != null)
-                return _statusReason;
-
-            if (SOURCE.has("status_reason") && SOURCE.get("status_reason") != null)
+            if (_statusReason == null && SOURCE.has("status_reason") && SOURCE.get("status_reason") != null)
                 _statusReason = SOURCE.getString("status_reason");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -366,12 +338,8 @@ public class FundTransaction implements Parcelable {
 
     public TypeEnum getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = TypeEnum.fromString(SOURCE.getString("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -392,17 +360,16 @@ public class FundTransaction implements Parcelable {
 
     public Date getUpdated() {
         try {
-            if (_updated != null)
-                return _updated;
-
-            if (SOURCE.has("updated") && SOURCE.get("updated") != null)
+            if (_updated == null && SOURCE.has("updated") && SOURCE.get("updated") != null)
                 _updated = Date.fromJson(SOURCE.getJsonObject("updated"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_updated != null && _updated.isSet())
         return _updated;
+
+        return null;
     }
 
     public FundTransaction updated(Date updated) throws ParseException {
@@ -418,17 +385,16 @@ public class FundTransaction implements Parcelable {
 
     public WorkOrder getWorkOrder() {
         try {
-            if (_workOrder != null)
-                return _workOrder;
-
-            if (SOURCE.has("work_order") && SOURCE.get("work_order") != null)
+            if (_workOrder == null && SOURCE.has("work_order") && SOURCE.get("work_order") != null)
                 _workOrder = WorkOrder.fromJson(SOURCE.getJsonObject("work_order"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_workOrder != null && _workOrder.isSet())
         return _workOrder;
+
+        return null;
     }
 
     public FundTransaction workOrder(WorkOrder workOrder) throws ParseException {
@@ -585,5 +551,13 @@ public class FundTransaction implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

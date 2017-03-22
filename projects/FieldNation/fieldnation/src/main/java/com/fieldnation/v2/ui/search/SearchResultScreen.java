@@ -44,6 +44,7 @@ public class SearchResultScreen extends RelativeLayout {
     private WorkordersWebApi _workOrderClient;
 
     // Data
+    private GetWorkOrdersOptions _workOrdersOptions;
     private SavedList _savedList;
     private Location _location;
     private OnClickListener _onClickListener;
@@ -127,25 +128,31 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         super.onDetachedFromWindow();
     }
 
+    public WoPagingAdapter getAdapter() {
+        return _adapter;
+    }
+
     private void getPage(int page) {
-        if (_savedList == null)
+        if (_workOrdersOptions == null)
             return;
 
-        WorkordersWebApi.getWorkOrders(App.get(),
-                new GetWorkOrdersOptions()
-                        .list(_savedList.getId())
-                        .page(page),
-                true, false);
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
         if (_refreshView != null)
             _refreshView.startRefreshing();
     }
 
     public void startSearch(SavedList savedList) {
+        startSearch(savedList, new GetWorkOrdersOptions());
+    }
+
+    public void startSearch(SavedList savedList, GetWorkOrdersOptions workOrdersOptions) {
         if (savedList == null) {
             return;
         }
 
+        _workOrdersOptions = workOrdersOptions;
+        _workOrdersOptions.setList(savedList.getId());
         _savedList = savedList;
 
 /*
@@ -180,6 +187,22 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
         }
 
         @Override
+        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "onWorkordersWebApi: " + methodName);
+
+            if (methodName.startsWith("get"))
+                return;
+
+            _adapter.refreshAll();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    _refreshView.startRefreshing();
+                }
+            });
+        }
+
+        @Override
         public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
 /*
 TODO            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
@@ -211,17 +234,6 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
                 _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
 
             _refreshView.refreshComplete();
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onWorkordersWebApi: " + methodName);
-
-            if (methodName.startsWith("get"))
-                return;
-
-            _adapter.refreshAll();
-            _refreshView.startRefreshing();
         }
     };
 
@@ -268,7 +280,6 @@ TODO            if (_searchParams != null)
             ((HeaderView) holder.itemView).setSavedList(_savedList);
         }
 
-
         @Override
         public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
@@ -286,6 +297,13 @@ TODO            if (_searchParams != null)
         public void onClick(View v) {
             if (_onClickListener != null)
                 _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    private final WorkOrderCard.OnActionListener _workOrderCard_onAction = new WorkOrderCard.OnActionListener() {
+        @Override
+        public void onAction() {
+            _refreshView.startRefreshing();
         }
     };
 

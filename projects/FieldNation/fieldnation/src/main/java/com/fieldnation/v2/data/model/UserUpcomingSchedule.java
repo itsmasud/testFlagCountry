@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,12 +51,8 @@ public class UserUpcomingSchedule implements Parcelable {
 
     public String getDate() {
         try {
-            if (_date != null)
-                return _date;
-
-            if (SOURCE.has("date") && SOURCE.get("date") != null)
+            if (_date == null && SOURCE.has("date") && SOURCE.get("date") != null)
                 _date = SOURCE.getString("date");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +73,8 @@ public class UserUpcomingSchedule implements Parcelable {
 
     public String getFrom() {
         try {
-            if (_from != null)
-                return _from;
-
-            if (SOURCE.has("from") && SOURCE.get("from") != null)
+            if (_from == null && SOURCE.has("from") && SOURCE.get("from") != null)
                 _from = SOURCE.getString("from");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +95,8 @@ public class UserUpcomingSchedule implements Parcelable {
 
     public String getTo() {
         try {
-            if (_to != null)
-                return _to;
-
-            if (SOURCE.has("to") && SOURCE.get("to") != null)
+            if (_to == null && SOURCE.has("to") && SOURCE.get("to") != null)
                 _to = SOURCE.getString("to");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -179,5 +171,13 @@ public class UserUpcomingSchedule implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

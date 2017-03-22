@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,17 +48,16 @@ public class UpdateModelParams implements Parcelable {
 
     public UpdateModelParamsModel getModel() {
         try {
-            if (_model != null)
-                return _model;
-
-            if (SOURCE.has("model") && SOURCE.get("model") != null)
+            if (_model == null && SOURCE.has("model") && SOURCE.get("model") != null)
                 _model = UpdateModelParamsModel.fromJson(SOURCE.getJsonObject("model"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_model != null && _model.isSet())
         return _model;
+
+        return null;
     }
 
     public UpdateModelParams model(UpdateModelParamsModel model) throws ParseException {
@@ -70,17 +73,16 @@ public class UpdateModelParams implements Parcelable {
 
     public EventUpdateScheduleByWorkOrder getUpdateScheduleByWorkOrder() {
         try {
-            if (_updateScheduleByWorkOrder != null)
-                return _updateScheduleByWorkOrder;
-
-            if (SOURCE.has("updateScheduleByWorkOrder") && SOURCE.get("updateScheduleByWorkOrder") != null)
+            if (_updateScheduleByWorkOrder == null && SOURCE.has("updateScheduleByWorkOrder") && SOURCE.get("updateScheduleByWorkOrder") != null)
                 _updateScheduleByWorkOrder = EventUpdateScheduleByWorkOrder.fromJson(SOURCE.getJsonObject("updateScheduleByWorkOrder"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_updateScheduleByWorkOrder != null && _updateScheduleByWorkOrder.isSet())
         return _updateScheduleByWorkOrder;
+
+        return null;
     }
 
     public UpdateModelParams updateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) throws ParseException {
@@ -150,5 +152,13 @@ public class UpdateModelParams implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

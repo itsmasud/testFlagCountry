@@ -95,6 +95,7 @@ public class WorkOrderCard extends RelativeLayout {
     private WorkOrder _workOrder;
     private Location _location;
     private String _savedSearchTitle;
+    private OnActionListener _onActionListener;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -508,6 +509,10 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
+    public void setOnActionListener(OnActionListener onActionListener) {
+        _onActionListener = onActionListener;
+    }
+
     // other icons
     // phone-solid
     // map-location-solid
@@ -611,6 +616,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteWarningDialog_onMarkIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
         @Override
         public void onMarkIncomplete(long workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
                         WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getWorkOrderId());
@@ -620,8 +627,9 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _ackHold_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
+            if (_onActionListener != null) _onActionListener.onAction();
 
+            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
             try {
                 Hold unAckHold = _workOrder.getUnAcknowledgedHold();
                 Hold ackHold = new Hold().id(unAckHold.getId()).acknowledged(true);
@@ -664,6 +672,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
         @Override
         public void onCheckIn(long workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, (int) workOrderId);
         }
@@ -686,6 +696,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
         @Override
         public void onCheckOut(long workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, (int) workOrderId);
         }
@@ -702,6 +714,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
         @Override
         public void onRequested(int workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
         }
@@ -718,6 +732,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
         @Override
         public void onAccepted(int workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
         }
@@ -726,6 +742,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CONFIRM, null, _workOrder.getWorkOrderId());
             try {
                 ETA eta = new ETA()
@@ -750,6 +768,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final EtaDialog.OnEtaListener _etaDialog_onEta = new EtaDialog.OnEtaListener() {
         @Override
         public void onEta(int workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ETA, WorkOrderTracker.Action.ETA, workOrderId);
         }
@@ -766,6 +786,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
         @Override
         public void onDeclined(long workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, workOrderId);
         }
@@ -774,6 +796,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
@@ -807,6 +831,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _readyToGo_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getWorkOrderId());
             try {
                 ETA eta = new ETA()
@@ -831,6 +857,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
         public void onSend(long workorderId, String explanation, ReportProblemType type) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workorderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, (int) workorderId);
         }
@@ -839,6 +867,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _phone_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CALL_BUYER, null, _workOrder.getWorkOrderId());
             try {
                 Contact contact = _workOrder.getContacts().getResults()[0];
@@ -863,6 +893,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
         public void onWithdraw(long workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, (int) workOrderId);
         }
@@ -887,6 +919,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
         public void onSend(long workOrderId) {
+            if (_onActionListener != null) _onActionListener.onAction();
+
             if (_workOrder.getWorkOrderId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
         }
@@ -931,4 +965,8 @@ public class WorkOrderCard extends RelativeLayout {
                     R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
         }
     };
+
+    public interface OnActionListener {
+        void onAction();
+    }
 }

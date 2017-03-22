@@ -305,6 +305,6 @@ public class Assignee implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getCorrelationId());
+        return true;
     }
 }

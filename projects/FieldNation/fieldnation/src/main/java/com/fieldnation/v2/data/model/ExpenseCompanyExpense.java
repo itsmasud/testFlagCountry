@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -50,12 +54,8 @@ public class ExpenseCompanyExpense implements Parcelable {
 
     public String getApiCode() {
         try {
-            if (_apiCode != null)
-                return _apiCode;
-
-            if (SOURCE.has("api_code") && SOURCE.get("api_code") != null)
+            if (_apiCode == null && SOURCE.has("api_code") && SOURCE.get("api_code") != null)
                 _apiCode = SOURCE.getString("api_code");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,12 +76,8 @@ public class ExpenseCompanyExpense implements Parcelable {
 
     public Double getExpenseAmount() {
         try {
-            if (_expenseAmount != null)
-                return _expenseAmount;
-
-            if (SOURCE.has("expense_amount") && SOURCE.get("expense_amount") != null)
+            if (_expenseAmount == null && SOURCE.has("expense_amount") && SOURCE.get("expense_amount") != null)
                 _expenseAmount = SOURCE.getDouble("expense_amount");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,12 +98,8 @@ public class ExpenseCompanyExpense implements Parcelable {
 
     public String getHiddenTags() {
         try {
-            if (_hiddenTags != null)
-                return _hiddenTags;
-
-            if (SOURCE.has("hidden_tags") && SOURCE.get("hidden_tags") != null)
+            if (_hiddenTags == null && SOURCE.has("hidden_tags") && SOURCE.get("hidden_tags") != null)
                 _hiddenTags = SOURCE.getString("hidden_tags");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -128,12 +120,8 @@ public class ExpenseCompanyExpense implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,5 +196,13 @@ public class ExpenseCompanyExpense implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

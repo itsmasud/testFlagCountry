@@ -65,7 +65,6 @@ import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
@@ -88,6 +87,7 @@ import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
@@ -704,10 +704,15 @@ public class WorkFragment extends WorkorderFragment {
 
             if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
-/*TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workorder, _workorder.getCompanyName());
+
+                if (App.get().getProfile().canRequestWorkOnMarketplace()
+                        && !_workOrder.getW2()
+                        && _workOrder.getBuyerRating().isSet()
+                        && _workOrder.getBuyerRating().getUser() != null
+                        && _workOrder.getBuyerRating().getUser() != 0) {
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
-*/
+
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 _startCheckIn.run();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
@@ -819,11 +824,12 @@ public class WorkFragment extends WorkorderFragment {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            setLoading(true);
         }
 
         @Override
         public void onEta() {
-
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
 
         @Override
@@ -891,6 +897,7 @@ public class WorkFragment extends WorkorderFragment {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            setLoading(true);
         }
 
         @Override
@@ -906,6 +913,7 @@ public class WorkFragment extends WorkorderFragment {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            setLoading(true);
         }
 
         @Override
@@ -1021,7 +1029,7 @@ public class WorkFragment extends WorkorderFragment {
                     Log.v(TAG, "docid: " + doc.getId());
                     // task completed here
                     if (!task.getCompleted().isSet()) {
-                        WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+                        //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
                     }
 // TODO: file link is not coming as part of File object. See comment in PA-623
 //                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
@@ -1038,7 +1046,7 @@ public class WorkFragment extends WorkorderFragment {
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
             if (!task.getCompleted().isSet()) {
-                WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+                //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             }
             setLoading(true);
         }
@@ -1130,7 +1138,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onUniqueTask(Task task) {
             if (task.getCompleted().isSet())
                 return;
-            WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+            //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
             setLoading(true);
         }
     };
@@ -1367,7 +1375,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(String message) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getWorkOrderId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
             setLoading(true);
         }
     };
@@ -1379,31 +1386,6 @@ public class WorkFragment extends WorkorderFragment {
 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
                     WorkOrderTracker.Action.COUNTER_OFFER, workorder.getWorkOrderId());
-
-            try {
-                Request request = new Request();
-                request.counter(true);
-
-                if (!misc.isEmptyOrNull(reason))
-                    request.counterNotes(reason);
-
-                if (pay != null)
-                    request.pay(pay);
-
-                if (schedule != null)
-                    request.schedule(schedule);
-
-                if (expenses != null)
-                    request.expenses(expenses);
-
-                if (expires > 0)
-                    request.expires(new Date(expires));
-
-                WorkordersWebApi.request(App.get(), workorder.getWorkOrderId(), request);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
         }
     };
 
@@ -1653,5 +1635,3 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 }
-
-

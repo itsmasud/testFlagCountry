@@ -173,9 +173,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightWhiteButton.setText(R.string.btn_confirm);
             setVisibility(View.VISIBLE);
 
+            // on my way
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
-            // on my way
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_running_late);

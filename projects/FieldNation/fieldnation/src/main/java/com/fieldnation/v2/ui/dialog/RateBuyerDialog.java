@@ -1,27 +1,26 @@
-package com.fieldnation.v2.ui;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fndialog.DialogManager;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -31,15 +30,15 @@ import java.lang.ref.WeakReference;
 /**
  * Created by shoaib.ahmed on 07/28/2016.
  */
-public class RateBuyerActivity extends AuthSimpleActivity {
-    private static final String TAG = "RateBuyerActivity";
+public class RateBuyerDialog extends FullScreenDialog {
+    private static final String TAG = "RateBuyerDialog";
 
     // State
-    private static final String STATE_WORKORDER = "RateBuyerActivity:STATE_WORKORDER";
-    private static final String STATE_GOLD_STAR = "RateBuyerActivity:STATE_GOLD_STAR";
-    private static final String STATE_SCOPE_RATING = "RateBuyerActivity:STATE_SCOPE_RATING";
-    private static final String STATE_RESPECT_RATING = "RateBuyerActivity:STATE_RESPECT_RATING";
-    private static final String STATE_COMMENT_TEXT = "RateBuyerActivity:STATE_COMMENT_TEXT";
+    private static final String PARAM_WORKORDER = "workOrder";
+    private static final String STATE_GOLD_STAR = "RateBuyerDialog:STATE_GOLD_STAR";
+    private static final String STATE_SCOPE_RATING = "RateBuyerDialog:STATE_SCOPE_RATING";
+    private static final String STATE_RESPECT_RATING = "RateBuyerDialog:STATE_RESPECT_RATING";
+    private static final String STATE_COMMENT_TEXT = "RateBuyerDialog:STATE_COMMENT_TEXT";
 
     private static final String INTENT_WORKORDER = "INTENT_WORKORDER";
 
@@ -74,110 +73,43 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    @Override
-    public int getLayoutResource() {
-        return R.layout.activity_rate_buyer;
+    public RateBuyerDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onFinishCreate(Bundle savedInstanceState) {
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            if (extras.containsKey(INTENT_WORKORDER))
-                _workOrder = extras.getParcelable(INTENT_WORKORDER);
-        }
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View v = inflater.inflate(R.layout.activity_rate_buyer, container, false);
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+        _rateStarView = (StarView) v.findViewById(R.id.star_rating);
+        _picView = (ProfilePicView) v.findViewById(R.id.pic_view);
+        _companyNameTextView = (TextView) v.findViewById(R.id.company_name_textview);
+        _locationTextView = (TextView) v.findViewById(R.id.location_textview);
+        _expectationNoTextView = (TextView) v.findViewById(R.id.expectation_no_textview);
+        _expectationYesTextView = (TextView) v.findViewById(R.id.expectation_yes_textview);
+        _chkProfessionalNoTextView = (TextView) v.findViewById(R.id.chk_professional_no_textview);
+        _chkProfessionalYesTextView = (TextView) v.findViewById(R.id.chk_professinal_yes_textview);
+        _otherThoughtsEditText = (EditText) v.findViewById(R.id.other_thoughts_edittext);
+        _submitButton = (Button) v.findViewById(R.id.submit_button);
+        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
 
-        _rateStarView = (StarView) findViewById(R.id.star_rating);
+        return v;
+    }
 
-        _picView = (ProfilePicView) findViewById(R.id.pic_view);
+    @Override
+    public void onStart() {
+        super.onStart();
+
         _picView.setProfilePic(R.drawable.missing_circle);
-
-        _companyNameTextView = (TextView) findViewById(R.id.company_name_textview);
-        _locationTextView = (TextView) findViewById(R.id.location_textview);
-
-        _expectationNoTextView = (TextView) findViewById(R.id.expectation_no_textview);
         _expectationNoTextView.setOnClickListener(expectation_onClick_listener);
-        _expectationYesTextView = (TextView) findViewById(R.id.expectation_yes_textview);
         _expectationYesTextView.setOnClickListener(expectation_onClick_listener);
-
-        _chkProfessionalNoTextView = (TextView) findViewById(R.id.chk_professional_no_textview);
         _chkProfessionalNoTextView.setOnClickListener(chkProfession_onClick_listener);
-        _chkProfessionalYesTextView = (TextView) findViewById(R.id.chk_professinal_yes_textview);
         _chkProfessionalYesTextView.setOnClickListener(chkProfession_onClick_listener);
-
-        _otherThoughtsEditText = (EditText) findViewById(R.id.other_thoughts_edittext);
         _otherThoughtsEditText.addTextChangedListener(_textEditText_watcherListener);
-
-        _submitButton = (Button) findViewById(R.id.submit_button);
         _submitButton.setOnClickListener(_submit_onClick);
-
-        _cancelButton = (Button) findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
-    }
 
-    @Override
-    public int getToolbarId() {
-        return 0;
-    }
-
-    @Override
-    public DialogManager getDialogManager() {
-        return (DialogManager) findViewById(R.id.dialogManager);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_WORKORDER))
-                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
-
-            if (savedInstanceState.containsKey(STATE_GOLD_STAR))
-                _goldStar = savedInstanceState.getInt(STATE_GOLD_STAR);
-
-            if (savedInstanceState.containsKey(STATE_SCOPE_RATING))
-                _hasSelectedScopeRating = savedInstanceState.getBoolean(STATE_SCOPE_RATING);
-
-            if (savedInstanceState.containsKey(STATE_RESPECT_RATING))
-                _hasSelectedRespectRating = savedInstanceState.getBoolean(STATE_RESPECT_RATING);
-
-            if (savedInstanceState.containsKey(STATE_COMMENT_TEXT))
-                _commentText = savedInstanceState.getString(STATE_COMMENT_TEXT);
-        }
-
-        super.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
-
-        if (_rateStarView.getNumberOfGoldStar() != 0)
-            outState.putInt(STATE_GOLD_STAR, _rateStarView.getNumberOfGoldStar());
-
-        if (_hasSelectedScopeRating != null)
-            outState.putBoolean(STATE_SCOPE_RATING, _hasSelectedScopeRating);
-
-        if (_hasSelectedRespectRating != null)
-            outState.putBoolean(STATE_RESPECT_RATING, _hasSelectedRespectRating);
-
-        if (_commentText != null)
-            outState.putString(STATE_COMMENT_TEXT, _commentText);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onProfile(Profile profile) {
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        _submitButton.requestFocus();
     }
 
     @Override
@@ -188,6 +120,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
         if (_clear) {
             _otherThoughtsEditText.setText("");
         } else {
+
             _rateStarView.setStars(_goldStar);
 
             if (_hasSelectedScopeRating != null) {
@@ -197,6 +130,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
                 } else {
                     _expectationNoTextView.setBackgroundResource(R.drawable.circle_red);
                     _expectationYesTextView.setBackgroundResource(R.drawable.circle_dark_gray);
+
                 }
             }
 
@@ -207,6 +141,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
                 } else {
                     _chkProfessionalNoTextView.setBackgroundResource(R.drawable.circle_red);
                     _chkProfessionalYesTextView.setBackgroundResource(R.drawable.circle_dark_gray);
+
                 }
             }
 
@@ -227,15 +162,56 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     }
 
     @Override
-    protected void onStop() {
-        _clear = true;
-        super.onStop();
+    public void show(Bundle payload, boolean animate) {
+        _workOrder = payload.getParcelable(PARAM_WORKORDER);
+        populateUi();
+        super.show(payload, animate);
     }
 
     @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.hold, R.anim.fg_slide_out_bottom);
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onRestoreDialogState");
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_GOLD_STAR))
+                _goldStar = savedState.getInt(STATE_GOLD_STAR);
+
+            if (savedState.containsKey(STATE_SCOPE_RATING))
+                _hasSelectedScopeRating = savedState.getBoolean(STATE_SCOPE_RATING);
+
+            if (savedState.containsKey(STATE_RESPECT_RATING))
+                _hasSelectedRespectRating = savedState.getBoolean(STATE_RESPECT_RATING);
+
+            if (savedState.containsKey(STATE_COMMENT_TEXT))
+                _commentText = savedState.getString(STATE_COMMENT_TEXT);
+        }
+
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        if (_rateStarView.getNumberOfGoldStar() != 0)
+            outState.putInt(STATE_GOLD_STAR, _rateStarView.getNumberOfGoldStar());
+
+        if (_hasSelectedScopeRating != null)
+            outState.putBoolean(STATE_SCOPE_RATING, _hasSelectedScopeRating);
+
+        if (_hasSelectedRespectRating != null)
+            outState.putBoolean(STATE_RESPECT_RATING, _hasSelectedRespectRating);
+
+        if (_commentText != null)
+            outState.putString(STATE_COMMENT_TEXT, _commentText);
+
+        super.onSaveDialogState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        if (_photos != null && _photos.isConnected()) {
+            _photos.disconnect(App.get());
+        }
+        super.onPause();
     }
 
     public void setListener(Listener listener) {
@@ -247,11 +223,12 @@ public class RateBuyerActivity extends AuthSimpleActivity {
 
         _rateStarView.setListener(_startView_onClick);
         _rateStarView.setChangeEnabled(true);
-        _rateStarView.setStarFontSize(getResources().getInteger(R.integer.textSizeBuyerRatingStar));
+        _rateStarView.setStarFontSize(getView().getResources().getInteger(R.integer.textSizeBuyerRatingStar));
 
-        _titleTextView.setText(getString(R.string.dialog_rate_buyer_title, _workOrder.getWorkOrderId()));
+        _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrder.getWorkOrderId()));
 
-        if (_workOrder.getCompany().getName() != null) {
+        if (_workOrder.getCompany() != null
+                && _workOrder.getCompany().getName() != null) {
             _companyNameTextView.setText(_workOrder.getCompany().getName());
         }
 
@@ -264,19 +241,16 @@ public class RateBuyerActivity extends AuthSimpleActivity {
                 locationName = misc.isEmptyOrNull(locationName) ? "" : locationName + ", " + _workOrder.getLocation().getState();
             if (!misc.isEmptyOrNull(locationName))
                 _locationTextView.setText(locationName);
-            else
-                _locationTextView.setVisibility(View.GONE);
+            else _locationTextView.setVisibility(View.GONE);
         }
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-/*
-TODO            String url = _workOrder.getCompany() getBuyerRatingInfo().getCompanyLogo();
+            String url = _workOrder.getCompany().getPhoto();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
                 _photos.subGet(url, true, false);
             }
-*/
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
         }
@@ -330,6 +304,7 @@ TODO            String url = _workOrder.getCompany() getBuyerRatingInfo().getCom
                 _submitButton.setEnabled(true);
             else
                 _submitButton.setEnabled(false);
+
         }
     };
 
@@ -376,17 +351,18 @@ TODO            String url = _workOrder.getCompany() getBuyerRatingInfo().getCom
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             WorkorderClient.sendRating(App.get(), _workOrder.getWorkOrderId(),
                     _goldStar, _hasSelectedScopeRating == true ? 1 : 0,
                     _hasSelectedRespectRating == true ? 1 : 0, _commentText);
-            onBackPressed();
+            dismiss(true);
         }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            onBackPressed();
+            dismiss(true);
         }
     };
 
@@ -402,15 +378,15 @@ TODO            String url = _workOrder.getCompany() getBuyerRatingInfo().getCom
         }
     };
 
+    public static void show(Context context, String uid, WorkOrder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable(PARAM_WORKORDER, workOrder);
+
+        Controller.show(context, uid, RateBuyerDialog.class, params);
+    }
+
     private interface Listener {
         void onOk(long workorderId, int satisfactionRating, int scopeRating,
                   int respectRating, String otherComments);
-    }
-
-    public static void startNew(Context context, WorkOrder workOrder) {
-        Intent intent = new Intent(context, RateBuyerActivity.class);
-        intent.putExtra(INTENT_WORKORDER, workOrder);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_bottom, R.anim.hold);
     }
 }

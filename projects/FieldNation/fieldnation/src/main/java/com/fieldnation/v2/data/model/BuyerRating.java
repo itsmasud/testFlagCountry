@@ -21,92 +21,92 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class UserBlockedBy implements Parcelable {
-    private static final String TAG = "UserBlockedBy";
+public class BuyerRating implements Parcelable {
+    private static final String TAG = "BuyerRating";
 
-    @Json(name = "id")
-    private Integer _id;
+    @Json(name = "marketplace")
+    private Double _marketplace;
 
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "user")
+    private Double _user;
 
     @Source
     private JsonObject SOURCE;
 
-    public UserBlockedBy() {
+    public BuyerRating() {
         SOURCE = new JsonObject();
     }
 
-    public UserBlockedBy(JsonObject obj) {
+    public BuyerRating(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setId(Integer id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
+    public void setMarketplace(Double marketplace) throws ParseException {
+        _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
     }
 
-    public Integer getId() {
+    public Double getMarketplace() {
         try {
-            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getInt("id");
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = SOURCE.getDouble("marketplace");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _id;
+        return _marketplace;
     }
 
-    public UserBlockedBy id(Integer id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
+    public BuyerRating marketplace(Double marketplace) throws ParseException {
+        _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
         return this;
     }
 
-    public void setName(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public void setUser(Double user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user);
     }
 
-    public String getName() {
+    public Double getUser() {
         try {
-            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
-                _name = SOURCE.getString("name");
+            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
+                _user = SOURCE.getDouble("user");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _name;
+        return _user;
     }
 
-    public UserBlockedBy name(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public BuyerRating user(Double user) throws ParseException {
+        _user = user;
+        SOURCE.put("user", user);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(UserBlockedBy[] array) {
+    public static JsonArray toJsonArray(BuyerRating[] array) {
         JsonArray list = new JsonArray();
-        for (UserBlockedBy item : array) {
+        for (BuyerRating item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static UserBlockedBy[] fromJsonArray(JsonArray array) {
-        UserBlockedBy[] list = new UserBlockedBy[array.size()];
+    public static BuyerRating[] fromJsonArray(JsonArray array) {
+        BuyerRating[] list = new BuyerRating[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static UserBlockedBy fromJson(JsonObject obj) {
+    public static BuyerRating fromJson(JsonObject obj) {
         try {
-            return new UserBlockedBy(obj);
+            return new BuyerRating(obj);
         } catch (Exception ex) {
             Log.v(TAG, TAG, ex);
             return null;
@@ -120,12 +120,12 @@ public class UserBlockedBy implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<UserBlockedBy> CREATOR = new Parcelable.Creator<UserBlockedBy>() {
+    public static final Creator<BuyerRating> CREATOR = new Creator<BuyerRating>() {
 
         @Override
-        public UserBlockedBy createFromParcel(Parcel source) {
+        public BuyerRating createFromParcel(Parcel source) {
             try {
-                return UserBlockedBy.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return BuyerRating.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -133,8 +133,8 @@ public class UserBlockedBy implements Parcelable {
         }
 
         @Override
-        public UserBlockedBy[] newArray(int size) {
-            return new UserBlockedBy[size];
+        public BuyerRating[] newArray(int size) {
+            return new BuyerRating[size];
         }
     };
 
@@ -153,6 +153,6 @@ public class UserBlockedBy implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return getId() != null && getId() != 0;
+        return true;
     }
 }

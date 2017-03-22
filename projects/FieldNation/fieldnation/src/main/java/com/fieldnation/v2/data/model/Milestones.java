@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -69,17 +75,16 @@ public class Milestones implements Parcelable {
 
     public Date getApproved() {
         try {
-            if (_approved != null)
-                return _approved;
-
-            if (SOURCE.has("approved") && SOURCE.get("approved") != null)
+            if (_approved == null && SOURCE.has("approved") && SOURCE.get("approved") != null)
                 _approved = Date.fromJson(SOURCE.getJsonObject("approved"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_approved != null && _approved.isSet())
         return _approved;
+
+        return null;
     }
 
     public Milestones approved(Date approved) throws ParseException {
@@ -95,17 +100,16 @@ public class Milestones implements Parcelable {
 
     public Date getAssigned() {
         try {
-            if (_assigned != null)
-                return _assigned;
-
-            if (SOURCE.has("assigned") && SOURCE.get("assigned") != null)
+            if (_assigned == null && SOURCE.has("assigned") && SOURCE.get("assigned") != null)
                 _assigned = Date.fromJson(SOURCE.getJsonObject("assigned"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_assigned != null && _assigned.isSet())
         return _assigned;
+
+        return null;
     }
 
     public Milestones assigned(Date assigned) throws ParseException {
@@ -121,17 +125,16 @@ public class Milestones implements Parcelable {
 
     public Date getCanceled() {
         try {
-            if (_canceled != null)
-                return _canceled;
-
-            if (SOURCE.has("canceled") && SOURCE.get("canceled") != null)
+            if (_canceled == null && SOURCE.has("canceled") && SOURCE.get("canceled") != null)
                 _canceled = Date.fromJson(SOURCE.getJsonObject("canceled"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_canceled != null && _canceled.isSet())
         return _canceled;
+
+        return null;
     }
 
     public Milestones canceled(Date canceled) throws ParseException {
@@ -147,17 +150,16 @@ public class Milestones implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_created != null && _created.isSet())
         return _created;
+
+        return null;
     }
 
     public Milestones created(Date created) throws ParseException {
@@ -173,17 +175,16 @@ public class Milestones implements Parcelable {
 
     public Date getPaid() {
         try {
-            if (_paid != null)
-                return _paid;
-
-            if (SOURCE.has("paid") && SOURCE.get("paid") != null)
+            if (_paid == null && SOURCE.has("paid") && SOURCE.get("paid") != null)
                 _paid = Date.fromJson(SOURCE.getJsonObject("paid"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_paid != null && _paid.isSet())
         return _paid;
+
+        return null;
     }
 
     public Milestones paid(Date paid) throws ParseException {
@@ -199,17 +200,16 @@ public class Milestones implements Parcelable {
 
     public Date getPublished() {
         try {
-            if (_published != null)
-                return _published;
-
-            if (SOURCE.has("published") && SOURCE.get("published") != null)
+            if (_published == null && SOURCE.has("published") && SOURCE.get("published") != null)
                 _published = Date.fromJson(SOURCE.getJsonObject("published"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_published != null && _published.isSet())
         return _published;
+
+        return null;
     }
 
     public Milestones published(Date published) throws ParseException {
@@ -225,17 +225,16 @@ public class Milestones implements Parcelable {
 
     public Date getRouted() {
         try {
-            if (_routed != null)
-                return _routed;
-
-            if (SOURCE.has("routed") && SOURCE.get("routed") != null)
+            if (_routed == null && SOURCE.has("routed") && SOURCE.get("routed") != null)
                 _routed = Date.fromJson(SOURCE.getJsonObject("routed"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_routed != null && _routed.isSet())
         return _routed;
+
+        return null;
     }
 
     public Milestones routed(Date routed) throws ParseException {
@@ -251,12 +250,8 @@ public class Milestones implements Parcelable {
 
     public Double getTimeAlive() {
         try {
-            if (_timeAlive != null)
-                return _timeAlive;
-
-            if (SOURCE.has("time_alive") && SOURCE.get("time_alive") != null)
+            if (_timeAlive == null && SOURCE.has("time_alive") && SOURCE.get("time_alive") != null)
                 _timeAlive = SOURCE.getDouble("time_alive");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -277,12 +272,8 @@ public class Milestones implements Parcelable {
 
     public Double getTimeToDispatch() {
         try {
-            if (_timeToDispatch != null)
-                return _timeToDispatch;
-
-            if (SOURCE.has("time_to_dispatch") && SOURCE.get("time_to_dispatch") != null)
+            if (_timeToDispatch == null && SOURCE.has("time_to_dispatch") && SOURCE.get("time_to_dispatch") != null)
                 _timeToDispatch = SOURCE.getDouble("time_to_dispatch");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -303,12 +294,8 @@ public class Milestones implements Parcelable {
 
     public Double getTimeToWorkDone() {
         try {
-            if (_timeToWorkDone != null)
-                return _timeToWorkDone;
-
-            if (SOURCE.has("time_to_work_done") && SOURCE.get("time_to_work_done") != null)
+            if (_timeToWorkDone == null && SOURCE.has("time_to_work_done") && SOURCE.get("time_to_work_done") != null)
                 _timeToWorkDone = SOURCE.getDouble("time_to_work_done");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -329,17 +316,16 @@ public class Milestones implements Parcelable {
 
     public Date getWorkdone() {
         try {
-            if (_workdone != null)
-                return _workdone;
-
-            if (SOURCE.has("workdone") && SOURCE.get("workdone") != null)
+            if (_workdone == null && SOURCE.has("workdone") && SOURCE.get("workdone") != null)
                 _workdone = Date.fromJson(SOURCE.getJsonObject("workdone"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_workdone != null && _workdone.isSet())
         return _workdone;
+
+        return null;
     }
 
     public Milestones workdone(Date workdone) throws ParseException {
@@ -410,6 +396,10 @@ public class Milestones implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
 
     public boolean isSet() {
         return true;

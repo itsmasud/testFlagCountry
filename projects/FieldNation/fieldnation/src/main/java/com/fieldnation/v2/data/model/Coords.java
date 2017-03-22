@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -245,6 +251,11 @@ public class Coords implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return getLatitude() != null && getLongitude() != null && getLatitude() != 0 && getLongitude() != 0;
+    }
+
     public Coords(double latitude, double longitude) throws ParseException {
         this();
         setLatitude(latitude);
@@ -253,9 +264,5 @@ public class Coords implements Parcelable {
 
     public Coords(android.location.Location location) throws ParseException {
         this(location.getLatitude(), location.getLongitude());
-    }
-
-    public boolean isSet() {
-        return getLatitude() != null && getLongitude() != null && getLatitude() != 0 && getLongitude() != 0;
     }
 }

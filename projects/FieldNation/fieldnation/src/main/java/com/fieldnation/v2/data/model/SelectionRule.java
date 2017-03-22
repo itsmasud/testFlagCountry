@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -92,12 +98,8 @@ public class SelectionRule implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -118,17 +120,16 @@ public class SelectionRule implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public SelectionRule metadata(ListEnvelope metadata) throws ParseException {
@@ -144,12 +145,8 @@ public class SelectionRule implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -197,12 +194,8 @@ public class SelectionRule implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -223,17 +216,16 @@ public class SelectionRule implements Parcelable {
 
     public SelectionRuleSum getSum() {
         try {
-            if (_sum != null)
-                return _sum;
-
-            if (SOURCE.has("sum") && SOURCE.get("sum") != null)
+            if (_sum == null && SOURCE.has("sum") && SOURCE.get("sum") != null)
                 _sum = SelectionRuleSum.fromJson(SOURCE.getJsonObject("sum"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_sum != null && _sum.isSet())
         return _sum;
+
+        return null;
     }
 
     public SelectionRule sum(SelectionRuleSum sum) throws ParseException {
@@ -377,6 +369,10 @@ public class SelectionRule implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
 
     public boolean isSet() {
         return getId() != null && getId() != 0;

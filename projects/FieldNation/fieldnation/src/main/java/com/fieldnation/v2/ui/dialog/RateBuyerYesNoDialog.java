@@ -8,7 +8,6 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.RateBuyerActivity;
 
 /**
  * Created by mc on 1/20/17.
@@ -16,6 +15,9 @@ import com.fieldnation.v2.ui.RateBuyerActivity;
 
 public class RateBuyerYesNoDialog extends TwoButtonDialog {
     private static final String TAG = "RateBuyerYesNoDialog";
+
+    // Dialog tags
+    private static final String DIALOG_RATE_BUYER = TAG + ".discountDialog";
 
     private static final String PARAM_WORKORDER = "workOrder";
 
@@ -35,7 +37,7 @@ public class RateBuyerYesNoDialog extends TwoButtonDialog {
     @Override
     public boolean onPrimaryClick() {
         _onContinueDispatcher.dispatch(getUid(), null);
-        RateBuyerActivity.startNew(App.get(), _workOrder);
+        RateBuyerDialog.show(App.get(), DIALOG_RATE_BUYER, _workOrder);
         return super.onPrimaryClick();
     }
 
