@@ -258,29 +258,32 @@ public class PhotoUploadDialog extends SimpleDialog {
                     attachment.folderId(_task.getAttachments().getId()).notes(_description);
 
                     // TODO: API is not working
-                if (_filePath != null) {
-                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_filePath));
-                } else if (_uri != null) {
-                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_uri.getPath()));
-                }
+                    if (_filePath != null) {
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_filePath));
+                    } else if (_uri != null) {
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_uri.getPath()));
+                    }
 
                 } catch (Exception e) {
-
+                    Log.v(TAG, e);
                 }
             }
 
 
             if (_slot != null) {
                 try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_slot.getId()).notes(_description);
+
                     // TODO: uploading when using slot
-//                if (_filePath != null) {
-//                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), _slot, new File(_filePath));
-//                } else if (_uri != null) {
-//                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_uri.getPath()));
-//                }
+                    if (_filePath != null) {
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(_filePath));
+                    } else if (_uri != null) {
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(_uri.getPath()));
+                    }
 
                 } catch (Exception e) {
-
+                    Log.v(TAG, e);
                 }
             }
         }

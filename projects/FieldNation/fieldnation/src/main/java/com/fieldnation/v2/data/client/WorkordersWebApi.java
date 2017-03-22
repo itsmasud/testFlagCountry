@@ -229,7 +229,7 @@ public class WorkordersWebApi extends TopicClient {
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment, "application/json")
+                    .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
