@@ -1,6 +1,7 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -30,6 +31,12 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.Task;
+
+import java.io.File;
 
 /**
  * @author shoaib.ahmed
@@ -64,6 +71,10 @@ public class PhotoUploadDialog extends SimpleDialog {
     private Bitmap _bitmap;
     private boolean _hideImageView = false;
     private int _workOrderId = 0;
+    private String _filePath;
+    private Uri _uri;
+    private Task _task;
+    private AttachmentFolder _slot;
 
 
     /*-*************************************-*/
@@ -111,7 +122,6 @@ public class PhotoUploadDialog extends SimpleDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_photo_upload, container, false);
 
         _imageView = (ImageView) v.findViewById(R.id.photo_imageview);
@@ -125,7 +135,6 @@ public class PhotoUploadDialog extends SimpleDialog {
 
     @Override
     public void onStart() {
-        Log.e(TAG, "onStart");
         super.onStart();
         _imageView.setOnClickListener(_photoImageView_onClick);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
@@ -138,7 +147,6 @@ public class PhotoUploadDialog extends SimpleDialog {
 
     @Override
     public void onResume() {
-        Log.e(TAG, "onResume");
         super.onResume();
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
@@ -157,7 +165,6 @@ public class PhotoUploadDialog extends SimpleDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
-        Log.e(TAG, "override show");
         super.show(payload, animate);
         _originalFileName = payload.getString("fileName");
         _workOrderId = payload.getInt("workOrderId");
@@ -165,10 +172,17 @@ public class PhotoUploadDialog extends SimpleDialog {
             _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
         }
 
+        if (payload.containsKey("task"))
+            _task = payload.getParcelable("task");
+        if (payload.containsKey("slot"))
+            _slot = payload.getParcelable("slot");
+
         if (payload.containsKey("uri")) {
-            FileCacheClient.cacheDeliverableUpload(App.get(), (Uri) payload.getParcelable("uri"));
+            _uri = (Uri) payload.getParcelable("uri");
+            FileCacheClient.cacheDeliverableUpload(App.get(), _uri);
         } else if (payload.containsKey("filePath")) {
-            setPhoto(MemUtils.getMemoryEfficientBitmap(payload.getString("filePath"), 400));
+            _filePath = payload.getString("filePath");
+            setPhoto(MemUtils.getMemoryEfficientBitmap(_filePath, 400));
         }
     }
 
@@ -181,7 +195,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     }
 
     private void populateUi() {
-        Log.e(TAG, "populateUi");
         if (_imageView == null)
             return;
 
@@ -238,8 +251,38 @@ public class PhotoUploadDialog extends SimpleDialog {
                 _newFileName += _extension;
             }
             dismiss(true);
-            _onOkDispatcher.dispatch(getUid(), _workOrderId, _newFileName, _description);
 
+            if (_task != null) {
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_task.getAttachments().getId()).notes(_description);
+
+                    // TODO: API is not working
+                if (_filePath != null) {
+                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_filePath));
+                } else if (_uri != null) {
+                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_uri.getPath()));
+                }
+
+                } catch (Exception e) {
+
+                }
+            }
+
+
+            if (_slot != null) {
+                try {
+                    // TODO: uploading when using slot
+//                if (_filePath != null) {
+//                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), _slot, new File(_filePath));
+//                } else if (_uri != null) {
+//                    WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_uri.getPath()));
+//                }
+
+                } catch (Exception e) {
+
+                }
+            }
         }
     };
 
@@ -290,13 +333,35 @@ public class PhotoUploadDialog extends SimpleDialog {
     private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onImageClickDispatcher.dispatch(getUid());
+//            _onImageClickDispatcher.dispatch(getUid());
+
+
+            Intent intent;
+            if (_uri == null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(new File(_filePath)), "image/*");
+
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, _uri);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+
         }
     };
 
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
+            _fileCacheClient.subDeliverableCache();
         }
 
         @Override
@@ -305,22 +370,42 @@ public class PhotoUploadDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, String uid, int workOrderId, String fileName, Uri uri) {
-        Log.e(TAG, "show");
+    public static void show(Context context, String uid, int workOrderId, Task task, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
+        params.putParcelable("task", task);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, int workOrderId, String fileName, String filePath) {
-        Log.e(TAG, "show");
+    public static void show(Context context, String uid, int workOrderId, Task task, String fileName, String filePath) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putString("filePath", filePath);
+        params.putParcelable("task", task);
+
+        Controller.show(context, uid, PhotoUploadDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+        params.putString("fileName", fileName);
+        params.putParcelable("uri", uri);
+        params.putParcelable("slot", slot);
+
+        Controller.show(context, uid, PhotoUploadDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, int workOrderId, AttachmentFolder slot, String fileName, String filePath) {
+        Bundle params = new Bundle();
+        params.putInt("workOrderId", workOrderId);
+        params.putString("fileName", fileName);
+        params.putString("filePath", filePath);
+        params.putParcelable("slot", slot);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }

@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -30,13 +29,10 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
@@ -45,9 +41,6 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
-
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
@@ -103,7 +96,6 @@ import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.io.File;
-
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -136,7 +128,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
-    private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -351,9 +342,9 @@ public class WorkFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2});
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, _workOrder.getWorkOrderId(), _currentTask);
         } else {
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1});
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, _workOrder.getWorkOrderId(), _currentTask);
         }
     }
 
@@ -366,7 +357,6 @@ public class WorkFragment extends WorkorderFragment {
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
 
-        AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
@@ -387,8 +377,6 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-        PhotoUploadDialog.addOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_okListener);
-        PhotoUploadDialog.addOnImageClickListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_imageClickListener);
 
         OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -415,7 +403,6 @@ public class WorkFragment extends WorkorderFragment {
     public void onDetach() {
         Log.v(TAG, "onDetach");
 
-        AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
@@ -436,9 +423,6 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-        PhotoUploadDialog.removeOnOkListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_okListener);
-        PhotoUploadDialog.removeOnImageClickListener(DIALOG_PHOTO_UPLOAD, _photoUploadDialog_imageClickListener);
-
 
         OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
         OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
@@ -718,55 +702,9 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
             Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
 
-            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK
-                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
-                    && resultCode == Activity.RESULT_OK) {
-
-                setLoading(true);
-
-                if (data == null) {
-                    Log.e(TAG, "uploading an image using camera");
-                    _tempUri = null;
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), _tempFile.getName(), _tempFile.toString());
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        ClipData clipData = data.getClipData();
-
-                        if (clipData != null) {
-                            int count = clipData.getItemCount();
-                            Intent intent = new Intent();
-                            Uri uri = null;
-
-                            if (count == 1) {
-                                _tempUri = data.getData();
-                                _tempFile = null;
-                                PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), data.getData());
-                            } else {
-                                for (int i = 0; i < count; ++i) {
-                                    uri = clipData.getItemAt(i).getUri();
-                                    if (uri != null) {
-// TODO                                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(), _currentTask.getSlotId(), intent.setData(uri));
-                                    }
-                                }
-                            }
-                        } else {
-                            Log.v(TAG, "Single local/ non-local file upload");
-                            _tempUri = data.getData();
-                            _tempFile = null;
-                            PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
-                        }
-                    } else {
-                        Log.v(TAG, "Android version is pre-4.3");
-                        _tempUri = data.getData();
-                        _tempFile = null;
-                        PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
-                    }
-                }
-
-            } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+            if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
-/*
-TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
+/*TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
                     RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workorder, _workorder.getCompanyName());
                 }
 */
@@ -1410,23 +1348,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrder.getWorkOrderId(), _workOrder.getClosingNotes());
     }
 
-    private final AppPickerDialog.OnOkListener _appPicker_onOk = new AppPickerDialog.OnOkListener() {
-        @Override
-        public void onOk(Intent pack) {
-            if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + pack.toString());
-                startActivityForResult(pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
-            } else {
-                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
-                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-                _tempFile = temppath;
-                pack.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(pack, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
-            }
-            setLoading(true);
-        }
-    };
-
     private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
@@ -1617,47 +1538,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             populateUi();
         }
     };
-
-
-    private final PhotoUploadDialog.OnOkListener _photoUploadDialog_okListener = new PhotoUploadDialog.OnOkListener() {
-        @Override
-        public void onOk(int workOrderId, String filename, String photoDescription) {
-            Log.e(TAG, "uploading an image using camera");
-// TODO
-//            if (_tempFile != null) {
-//                WorkordersWebApi.addAttachment(App.get(), workOrderId, _currentTask.getId(), filename, _tempFile, true);
-//            } else if (_tempUri != null) {
-//                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getId(),
-//                        filename, _tempUri, photoDescription);
-//            }
-
-        }
-    };
-
-
-    private final PhotoUploadDialog.OnImageClickListener _photoUploadDialog_imageClickListener = new PhotoUploadDialog.OnImageClickListener() {
-        @Override
-        public void onImageClick() {
-            Intent intent;
-            if (_tempUri == null) {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
-
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            try {
-                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-    };
-
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override

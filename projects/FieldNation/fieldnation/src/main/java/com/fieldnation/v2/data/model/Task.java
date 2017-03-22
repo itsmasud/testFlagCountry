@@ -34,7 +34,7 @@ public class Task implements Parcelable {
     private Attachment _attachment;
 
     @Json(name = "attachments")
-    private Attachment[] _attachments;
+    private AttachmentFolder _attachments;
 
     @Json(name = "author")
     private User _author;
@@ -203,30 +203,28 @@ public class Task implements Parcelable {
         return this;
     }
 
-    public void setAttachments(Attachment[] attachments) throws ParseException {
+    public void setAttachments(AttachmentFolder attachments) throws ParseException {
         _attachments = attachments;
-        SOURCE.put("attachments", Attachment.toJsonArray(attachments));
+        SOURCE.put("attachments", attachments.getJson());
     }
 
-    public Attachment[] getAttachments() {
+    public AttachmentFolder getAttachments() {
         try {
-            if (_attachments != null)
-                return _attachments;
-
-            if (SOURCE.has("attachments") && SOURCE.get("attachments") != null) {
-                _attachments = Attachment.fromJsonArray(SOURCE.getJsonArray("attachments"));
-            }
-
+            if (_attachments == null && SOURCE.has("attachments") && SOURCE.get("attachments") != null)
+                _attachments = AttachmentFolder.fromJson(SOURCE.getJsonObject("attachments"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _attachments;
+        if (_attachments != null && _attachments.isSet())
+            return _attachments;
+
+        return null;
     }
 
-    public Task attachments(Attachment[] attachments) throws ParseException {
+    public Task attachments(AttachmentFolder attachments) throws ParseException {
         _attachments = attachments;
-        SOURCE.put("attachments", Attachment.toJsonArray(attachments), true);
+        SOURCE.put("attachments", attachments.getJson());
         return this;
     }
 
