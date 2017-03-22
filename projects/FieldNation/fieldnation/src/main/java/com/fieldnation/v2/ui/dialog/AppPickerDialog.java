@@ -81,13 +81,6 @@ public class AppPickerDialog extends SimpleDialog {
         _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
     }
 
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        dismiss(true);
-//    }
-
-
     @Override
     public void onResume() {
         super.onResume();
@@ -287,9 +280,10 @@ public class AppPickerDialog extends SimpleDialog {
                                 PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
                             else
                                 PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
-
                         }
                     }
+
+                    dismiss(true);
 
                 }
             } catch (Exception ex) {
