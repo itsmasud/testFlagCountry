@@ -1,15 +1,15 @@
 package com.fieldnation.v2.ui.search;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.v2.data.model.SavedList;
 
 /**
  * Created by mc on 12/22/16.
@@ -18,14 +18,12 @@ import com.fieldnation.v2.data.model.SavedList;
 public class HeaderView extends RelativeLayout {
     private static final String TAG = "HeaderView";
 
-    private static final String DIALOG_FILTER_DRAWER = TAG + ".filterDrawerDialog";
-
     // Ui
     private IconFontTextView _iconFontView;
     private TextView _filtersTextView;
 
     // Data
-    private SavedList _savedList;
+    private FilterParams _filterParams;
 
     public HeaderView(Context context) {
         super(context);
@@ -49,36 +47,39 @@ public class HeaderView extends RelativeLayout {
             return;
 
         _iconFontView = (IconFontTextView) findViewById(R.id.icon_view);
-        _iconFontView.setOnClickListener(_iconFontView_onClick);
         _filtersTextView = (TextView) findViewById(R.id.filter_textview);
 
         populateUi();
     }
 
-    public void setSavedList(SavedList savedList) {
-        _savedList = savedList;
+    public void setFilterParams(FilterParams filterParams) {
+        _filterParams = filterParams;
         populateUi();
     }
 
-    private void populateUi() {
-        if (_savedList == null)
-            return;
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        _iconFontView.setOnClickListener(l);
+    }
 
+    private void populateUi() {
         if (_filtersTextView == null)
             return;
 
+        if (_filterParams == null)
+            return;
         // profile, current, other, remote
-/*
+
         try {
-TODO            switch (_savedSearchParams.uiLocationSpinner) {
+            switch (_filterParams.uiLocationSpinner) {
                 case 0:
-                    _filtersTextView.setText("Filters: Profile, " + _savedSearchParams.radius.intValue() + "mi");
+                    _filtersTextView.setText("Filters: Profile, " + _filterParams.radius.intValue() + "mi");
                     break;
                 case 1:
-                    _filtersTextView.setText("Filters: Current, " + _savedSearchParams.radius.intValue() + "mi");
+                    _filtersTextView.setText("Filters: Current, " + _filterParams.radius.intValue() + "mi");
                     break;
                 case 2:
-                    _filtersTextView.setText("Filters: Custom, " + _savedSearchParams.radius.intValue() + "mi");
+                    _filtersTextView.setText("Filters: Custom, " + _filterParams.radius.intValue() + "mi");
                     break;
                 case 3:
                     _filtersTextView.setText("Filters: Remote");
@@ -88,13 +89,6 @@ TODO            switch (_savedSearchParams.uiLocationSpinner) {
             Log.v(TAG, ex);
             _filtersTextView.setText("Filters: None");
         }
-*/
     }
 
-    private final OnClickListener _iconFontView_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //TODO FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _savedSearchParams);
-        }
-    };
 }

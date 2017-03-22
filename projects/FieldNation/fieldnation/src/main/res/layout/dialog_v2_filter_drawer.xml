@@ -5,10 +5,19 @@
     android:background="@color/fn_primary"
     android:orientation="vertical">
 
-    <com.fieldnation.ui.search.SearchEditScreen
-        android:id="@+id/searchEditScreen"
+    <com.fieldnation.v2.ui.search.FilterEditScreen
+        android:id="@+id/filterEditScreen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/icon_view" />
+
+    <Button
+        android:id="@+id/clear_button"
+        style="@style/Material.Button.Flat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="@string/btn_clear"
+        android:textColor="@color/fn_white_text" />
 
 </LinearLayout>

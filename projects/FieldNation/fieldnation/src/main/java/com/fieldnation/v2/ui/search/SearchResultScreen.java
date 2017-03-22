@@ -24,6 +24,7 @@ import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.FilterDrawerDialog;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 import com.fieldnation.v2.ui.worecycler.WorkOrderHolder;
@@ -34,6 +35,9 @@ import com.fieldnation.v2.ui.workorder.WorkOrderCard;
  */
 public class SearchResultScreen extends RelativeLayout {
     private static final String TAG = "SearchResultScreen";
+
+    // Dialogs
+    private static final String DIALOG_FILTER_DRAWER = TAG + "filterDrawerDialog";
 
     //UI
     private OverScrollRecyclerView _workOrderList;
@@ -46,6 +50,7 @@ public class SearchResultScreen extends RelativeLayout {
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
     private SavedList _savedList;
+    private FilterParams _filterParams;
     private Location _location;
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
@@ -93,15 +98,36 @@ public class SearchResultScreen extends RelativeLayout {
                 .start(App.get());
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
+        super.onAttachedToWindow();
+
+        FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
+
+        FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+
+        super.onDetachedFromWindow();
+    }
+
     private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
         public void onLocation(SimpleGps simpleGps, Location location) {
             _location = location;
-/*
-TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
-                _searchParams.location(_location.getLatitude(), _location.getLongitude());
+
+            if (_filterParams != null && _filterParams.uiLocationSpinner == 1 && _location != null) {
+                _filterParams.latitude = _location.getLatitude();
+                _filterParams.longitude = _location.getLongitude();
             }
-*/
             _simpleGps.stop();
         }
 
@@ -111,23 +137,6 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         }
     };
 
-    @Override
-    protected void onAttachedToWindow() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
-        super.onAttachedToWindow();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
-
-        super.onDetachedFromWindow();
-    }
-
     public WoPagingAdapter getAdapter() {
         return _adapter;
     }
@@ -135,6 +144,8 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
     private void getPage(int page) {
         if (_workOrdersOptions == null)
             return;
+
+        _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
 
         WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
@@ -154,12 +165,12 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         _workOrdersOptions = workOrdersOptions;
         _workOrdersOptions.setList(savedList.getId());
         _savedList = savedList;
+        _filterParams = FilterParams.load(savedList.getId());
 
-/*
-TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
-            _searchParams.location(_location.getLatitude(), _location.getLongitude());
+        if (_filterParams.uiLocationSpinner == 1 && _location != null) {
+            _filterParams.latitude = _location.getLatitude();
+            _filterParams.longitude = _location.getLongitude();
         }
-*/
 
         _adapter.clear();
         _adapter.refreshAll();
@@ -204,10 +215,6 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
 
         @Override
         public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-/*
-TODO            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
-                return;
-*/
             // TODO see if getList() is the list ID
             if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
                 return;
@@ -262,11 +269,7 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
 
         @Override
         public boolean useHeader() {
-/*
-TODO            if (_searchParams != null)
-                return _searchParams.canEdit;
-*/
-            return false;
+            return _savedList.getId().equals("workorders_available") || _savedList.getId().equals("workorders_routed");
         }
 
         @Override
@@ -277,7 +280,9 @@ TODO            if (_searchParams != null)
 
         @Override
         public void onBindHeaderViewHolder(BaseHolder holder) {
-            ((HeaderView) holder.itemView).setSavedList(_savedList);
+            HeaderView view = (HeaderView) holder.itemView;
+            view.setFilterParams(_filterParams);
+            view.setOnClickListener(_header_onClick);
         }
 
         @Override
@@ -289,6 +294,21 @@ TODO            if (_searchParams != null)
         @Override
         public void onBindEmptyViewHolder(BaseHolder holder) {
             // nothing
+        }
+    };
+
+    private final View.OnClickListener _header_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _filterParams.listId);
+        }
+    };
+
+    private final FilterDrawerDialog.OnOkListener _filterDrawer_onOk = new FilterDrawerDialog.OnOkListener() {
+        @Override
+        public void onOk(FilterParams filterParams) {
+            _filterParams = filterParams;
+            _adapter.notifyDataSetChanged();
         }
     };
 
