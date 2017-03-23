@@ -69,7 +69,6 @@ public class DialogManager extends FrameLayout implements Constants {
     @Override
     protected Parcelable onSaveInstanceState() {
         Log.v(TAG, "onSaveInstanceState");
-        Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
 
         Bundle savedInstance = new Bundle();
         savedInstance.putParcelable("super", super.onSaveInstanceState());
