@@ -24,6 +24,7 @@ import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.FilterDrawerDialog;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 import com.fieldnation.v2.ui.worecycler.WorkOrderHolder;
@@ -34,6 +35,9 @@ import com.fieldnation.v2.ui.workorder.WorkOrderCard;
  */
 public class SearchResultScreen extends RelativeLayout {
     private static final String TAG = "SearchResultScreen";
+
+    // Dialogs
+    private static final String DIALOG_FILTER_DRAWER = TAG + "filterDrawerDialog";
 
     //UI
     private OverScrollRecyclerView _workOrderList;
@@ -46,13 +50,11 @@ public class SearchResultScreen extends RelativeLayout {
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
     private SavedList _savedList;
+    private FilterParams _filterParams;
     private Location _location;
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
 
-    /*-*****************************-*/
-    /*-         Life Cycle          -*/
-    /*-*****************************-*/
     public SearchResultScreen(Context context) {
         super(context);
         init();
@@ -102,6 +104,8 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderClient.connect(App.get());
 
         super.onAttachedToWindow();
+
+        FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
     @Override
@@ -110,19 +114,43 @@ public class SearchResultScreen extends RelativeLayout {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
 
+        FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+
         super.onDetachedFromWindow();
     }
 
-    public void setOnChildClickListener(OnClickListener listener) {
-        _onClickListener = listener;
-    }
+    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(SimpleGps simpleGps, Location location) {
+            _location = location;
 
-    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
-        _onListReceivedListener = listener;
-    }
+            if (_filterParams != null && _filterParams.uiLocationSpinner == 1 && _location != null) {
+                _filterParams.latitude = _location.getLatitude();
+                _filterParams.longitude = _location.getLongitude();
+            }
+            _simpleGps.stop();
+        }
+
+        @Override
+        public void onFail(SimpleGps simpleGps) {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+    };
 
     public WoPagingAdapter getAdapter() {
         return _adapter;
+    }
+
+    private void getPage(int page) {
+        if (_workOrdersOptions == null)
+            return;
+
+        _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
+
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+
+        if (_refreshView != null)
+            _refreshView.startRefreshing();
     }
 
     public void startSearch(SavedList savedList) {
@@ -137,23 +165,23 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrdersOptions = workOrdersOptions;
         _workOrdersOptions.setList(savedList.getId());
         _savedList = savedList;
+        _filterParams = FilterParams.load(savedList.getId());
 
-//TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
-//            _searchParams.location(_location.getLatitude(), _location.getLongitude());
-//        }
+        if (_filterParams.uiLocationSpinner == 1 && _location != null) {
+            _filterParams.latitude = _location.getLatitude();
+            _filterParams.longitude = _location.getLongitude();
+        }
 
         _adapter.clear();
         _adapter.refreshAll();
     }
 
-    private void getPage(int page) {
-        if (_workOrdersOptions == null)
-            return;
+    public void setOnChildClickListener(OnClickListener listener) {
+        _onClickListener = listener;
+    }
 
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
-
-        if (_refreshView != null)
-            _refreshView.startRefreshing();
+    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
+        _onListReceivedListener = listener;
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -163,76 +191,10 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _card_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_onClickListener != null)
-                _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
-        }
-    };
-
-    /****************DATA****************/
-    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
-        @Override
-        public void onLocation(SimpleGps simpleGps, Location location) {
-            _location = location;
-//TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
-//                _searchParams.location(_location.getLatitude(), _location.getLongitude());
-//            }
-            _simpleGps.stop();
-        }
-
-        @Override
-        public void onFail(SimpleGps simpleGps) {
-            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
-        }
-    };
-
-    public void addWorkOrders(WorkOrders workOrders) {
-        if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null) {
-            _refreshView.refreshComplete();
-            return;
-        }
-
-        ListEnvelope envelope = workOrders.getMetadata();
-
-        Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-
-        if (envelope.getTotal() == 0) {
-            _adapter.clear();
-        } else if (workOrders.getResults().length > 0
-                && envelope.getPerPage() > 0
-                && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
-            _adapter.addObjects(envelope.getPage(), workOrders.getResults());
-        else
-            _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
-
-        _refreshView.refreshComplete();
-    }
-
     private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
             _workOrderClient.subWorkordersWebApi();
-        }
-
-        @Override
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-
-//TODO            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
-//                return;
-
-            // TODO see if getList() is the list ID
-            if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
-                return;
-
-            if (_onListReceivedListener != null)
-                _onListReceivedListener.OnWorkOrderListReceived(workOrders);
-
-            if (!success)
-                addWorkOrders(null);
-            else
-                addWorkOrders(workOrders);
         }
 
         @Override
@@ -243,7 +205,42 @@ public class SearchResultScreen extends RelativeLayout {
                 return;
 
             _adapter.refreshAll();
-            _refreshView.startRefreshing();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    _refreshView.startRefreshing();
+                }
+            });
+        }
+
+        @Override
+        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+            // TODO see if getList() is the list ID
+            if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
+                return;
+
+            if (_onListReceivedListener != null)
+                _onListReceivedListener.OnWorkOrderListReceived(workOrders);
+
+            if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
+                _refreshView.refreshComplete();
+                return;
+            }
+
+            ListEnvelope envelope = workOrders.getMetadata();
+
+            Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
+
+            if (envelope.getTotal() == 0) {
+                _adapter.clear();
+            } else if (workOrders.getResults().length > 0
+                    && envelope.getPerPage() > 0
+                    && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
+                _adapter.addObjects(envelope.getPage(), workOrders.getResults());
+            else
+                _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
+
+            _refreshView.refreshComplete();
         }
     };
 
@@ -272,9 +269,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public boolean useHeader() {
-//TODO            if (_searchParams != null)
-//                return _searchParams.canEdit;
-            return false;
+            return _savedList.getId().equals("workorders_available") || _savedList.getId().equals("workorders_routed");
         }
 
         @Override
@@ -285,7 +280,9 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onBindHeaderViewHolder(BaseHolder holder) {
-            ((HeaderView) holder.itemView).setSavedList(_savedList);
+            HeaderView view = (HeaderView) holder.itemView;
+            view.setFilterParams(_filterParams);
+            view.setOnClickListener(_header_onClick);
         }
 
         @Override
@@ -300,9 +297,35 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    /*-*****************************-*/
-    /*-         Listeners           -*/
-    /*-*****************************-*/
+    private final View.OnClickListener _header_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _filterParams.listId);
+        }
+    };
+
+    private final FilterDrawerDialog.OnOkListener _filterDrawer_onOk = new FilterDrawerDialog.OnOkListener() {
+        @Override
+        public void onOk(FilterParams filterParams) {
+            _filterParams = filterParams;
+            _adapter.refreshAll();
+        }
+    };
+
+    private final View.OnClickListener _card_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_onClickListener != null)
+                _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    private final WorkOrderCard.OnActionListener _workOrderCard_onAction = new WorkOrderCard.OnActionListener() {
+        @Override
+        public void onAction() {
+            _refreshView.startRefreshing();
+        }
+    };
 
     public interface OnClickListener {
         void onWorkOrderClicked(WorkOrder workOrder);

@@ -791,6 +791,7 @@ public class EtaDialog extends FullScreenDialog {
                             eta.setStart(new Date(_etaStart));
                             eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                             eta.setUser(new User().id((int) App.getProfileId()));
+                            eta.setHourEstimate(_durationMilliseconds / 3600.0);
                             request.setEta(eta);
                         }
                         WorkordersWebApi.request(App.get(), _workOrder.getWorkOrderId(), request);
@@ -839,6 +840,7 @@ public class EtaDialog extends FullScreenDialog {
                         eta.setStart(new Date(_etaStart));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                         eta.setUser(new User().id((int) App.getProfileId()));
+                        eta.setHourEstimate(_durationMilliseconds / 3600.0);
                         WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
                         dismiss(true);
                         break;
@@ -867,6 +869,7 @@ public class EtaDialog extends FullScreenDialog {
                     eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                     eta.setUser(new User().id((int) App.getProfileId()));
                     WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                    eta.setHourEstimate(_durationMilliseconds / 3600.0);
                     dismiss(true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);

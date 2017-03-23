@@ -20,6 +20,8 @@
             style="@style/EditText"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title_textview"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
             android:gravity="top"
             android:hint="@string/enter_closing_notes_here"
             android:imeOptions="actionDone"

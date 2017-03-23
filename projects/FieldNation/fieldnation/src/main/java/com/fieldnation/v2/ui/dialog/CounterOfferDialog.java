@@ -465,21 +465,6 @@ public class CounterOfferDialog extends SimpleDialog {
 
                 _counterReason = _reasonView.getReason();
 
-//                if (misc.isEmptyOrNull(_counterReason)) {
-//                    Toast.makeText(getActivity(), "Counter offer reason cannot be null. Please enter a reason.", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
-
-//                    int seconds = -1;
-//                    if (_expires) {
-//                        try {
-//                            seconds = (int) (ISO8601.toUtc(_expirationDate)
-//                                    - System.currentTimeMillis()) / 1000;
-//                        } catch (Exception ex) {
-//                            Log.v(TAG, ex);
-//                        }
-//                    }
-
                 Log.e(TAG, "_expireDuration: " + _expires);
 
                 if (_workOrder.getRequests().getOpenRequest() != null) {
@@ -550,10 +535,10 @@ public class CounterOfferDialog extends SimpleDialog {
                     exp[i] = _expenses.get(i);
                 }
 
-                _refreshView.refreshComplete();
                 _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
                 dismiss(true);
             }
+            _refreshView.refreshComplete();
         }
 
         @Override

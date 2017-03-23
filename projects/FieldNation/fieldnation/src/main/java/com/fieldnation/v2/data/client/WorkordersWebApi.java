@@ -80,9 +80,25 @@ public class WorkordersWebApi extends TopicClient {
     private static final String STAG = "WorkordersWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
+
 
     public WorkordersWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -214,7 +230,7 @@ public class WorkordersWebApi extends TopicClient {
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId)
-                    .multipartField("attachment", attachment, "application/json")
+                    .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
             WebTransaction transaction = new WebTransaction.Builder()
@@ -3683,6 +3699,7 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                     + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
                     + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
+                                    + (getWorkOrdersOptions.getFHasRemoteWork() != null ? "&f_has_remote_work=" + getWorkOrdersOptions.getFHasRemoteWork() : "")
                     + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                     + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                     + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
@@ -3741,6 +3758,7 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                             + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
                             + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
+                                    + (getWorkOrdersOptions.getFHasRemoteWork() != null ? "&f_has_remote_work=" + getWorkOrdersOptions.getFHasRemoteWork() : "")
                             + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                             + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                             + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")

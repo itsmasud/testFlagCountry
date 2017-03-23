@@ -77,62 +77,10 @@ public class RateBuyerDialog extends FullScreenDialog {
         super(context, container);
     }
 
-
-//    @Override
-//    public void onAttachedToWindow() {
-//        super.onAttachedToWindow();
-//        _submitButton.requestFocus();
-//    }
-
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        if (_workOrder != null)
-            outState.putParcelable(PARAM_WORKORDER, _workOrder);
-
-        if (_rateStarView.getNumberOfGoldStar() != 0)
-            outState.putInt(STATE_GOLD_STAR, _rateStarView.getNumberOfGoldStar());
-
-        if (_hasSelectedScopeRating != null)
-            outState.putBoolean(STATE_SCOPE_RATING, _hasSelectedScopeRating);
-
-        if (_hasSelectedRespectRating != null)
-            outState.putBoolean(STATE_RESPECT_RATING, _hasSelectedRespectRating);
-
-        if (_commentText != null)
-            outState.putString(STATE_COMMENT_TEXT, _commentText);
-
-        super.onSaveDialogState(outState);
-    }
-
-    @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        Log.v(TAG, "onRestoreDialogState");
-        if (savedState != null) {
-            if (savedState.containsKey(PARAM_WORKORDER))
-                _workOrder = savedState.getParcelable(PARAM_WORKORDER);
-
-            if (savedState.containsKey(STATE_GOLD_STAR))
-                _goldStar = savedState.getInt(STATE_GOLD_STAR);
-
-            if (savedState.containsKey(STATE_SCOPE_RATING))
-                _hasSelectedScopeRating = savedState.getBoolean(STATE_SCOPE_RATING);
-
-            if (savedState.containsKey(STATE_RESPECT_RATING))
-                _hasSelectedRespectRating = savedState.getBoolean(STATE_RESPECT_RATING);
-
-            if (savedState.containsKey(STATE_COMMENT_TEXT))
-                _commentText = savedState.getString(STATE_COMMENT_TEXT);
-        }
-
-        super.onRestoreDialogState(savedState);
-    }
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.activity_rate_buyer, container, false);
+        Log.v(TAG, "onCreateView");
+        View v = inflater.inflate(R.layout.dialog_rate_buyer, container, false);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _rateStarView = (StarView) v.findViewById(R.id.star_rating);
@@ -150,9 +98,9 @@ public class RateBuyerDialog extends FullScreenDialog {
         return v;
     }
 
-
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
 
         _picView.setProfilePic(R.drawable.missing_circle);
@@ -167,16 +115,8 @@ public class RateBuyerDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onPause() {
-        if (_photos != null && _photos.isConnected()) {
-            _photos.disconnect(App.get());
-        }
-        super.onPause();
-    }
-
-    @Override
     public void onResume() {
-        Log.e(TAG, "onResume");
+        Log.v(TAG, "onResume");
         super.onResume();
 
         if (_clear) {
@@ -223,12 +163,58 @@ public class RateBuyerDialog extends FullScreenDialog {
         populateUi();
     }
 
-
     @Override
     public void show(Bundle payload, boolean animate) {
+        Log.v(TAG, "show");
         _workOrder = payload.getParcelable(PARAM_WORKORDER);
-        populateUi();
         super.show(payload, animate);
+
+        populateUi();
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onRestoreDialogState");
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_GOLD_STAR))
+                _goldStar = savedState.getInt(STATE_GOLD_STAR);
+
+            if (savedState.containsKey(STATE_SCOPE_RATING))
+                _hasSelectedScopeRating = savedState.getBoolean(STATE_SCOPE_RATING);
+
+            if (savedState.containsKey(STATE_RESPECT_RATING))
+                _hasSelectedRespectRating = savedState.getBoolean(STATE_RESPECT_RATING);
+
+            if (savedState.containsKey(STATE_COMMENT_TEXT))
+                _commentText = savedState.getString(STATE_COMMENT_TEXT);
+        }
+
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveDialogState");
+        if (_rateStarView.getNumberOfGoldStar() != 0)
+            outState.putInt(STATE_GOLD_STAR, _rateStarView.getNumberOfGoldStar());
+
+        if (_hasSelectedScopeRating != null)
+            outState.putBoolean(STATE_SCOPE_RATING, _hasSelectedScopeRating);
+
+        if (_hasSelectedRespectRating != null)
+            outState.putBoolean(STATE_RESPECT_RATING, _hasSelectedRespectRating);
+
+        if (_commentText != null)
+            outState.putString(STATE_COMMENT_TEXT, _commentText);
+    }
+
+    @Override
+    public void onPause() {
+        Log.v(TAG, "onPause");
+        if (_photos != null && _photos.isConnected()) {
+            _photos.disconnect(App.get());
+        }
+        super.onPause();
     }
 
     public void setListener(Listener listener) {
@@ -263,12 +249,11 @@ public class RateBuyerDialog extends FullScreenDialog {
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            // TODO company logo is missing in workorder details
-//            String url = _workOrder.getRating().getCompany().getCompanyLogo();
-//            if (!misc.isEmptyOrNull(url)) {
-//                PhotoClient.get(App.get(), url, true, false);
-//                _photos.subGet(url, true, false);
-//            }
+            String url = _workOrder.getCompany().getPhoto();
+            if (!misc.isEmptyOrNull(url)) {
+                PhotoClient.get(App.get(), url, true, false);
+                _photos.subGet(url, true, false);
+            }
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
         }
@@ -300,8 +285,6 @@ public class RateBuyerDialog extends FullScreenDialog {
                 _submitButton.setEnabled(true);
             else
                 _submitButton.setEnabled(false);
-
-
         }
     };
 
@@ -368,7 +351,6 @@ public class RateBuyerDialog extends FullScreenDialog {
         }
     };
 
-
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -387,7 +369,6 @@ public class RateBuyerDialog extends FullScreenDialog {
         }
     };
 
-
     private final StarView.Listener _startView_onClick = new StarView.Listener() {
         @Override
         public void onClick(int goldStar) {
@@ -400,7 +381,6 @@ public class RateBuyerDialog extends FullScreenDialog {
         }
     };
 
-
     public static void show(Context context, String uid, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORKORDER, workOrder);
@@ -408,10 +388,8 @@ public class RateBuyerDialog extends FullScreenDialog {
         Controller.show(context, uid, RateBuyerDialog.class, params);
     }
 
-
     private interface Listener {
         void onOk(long workorderId, int satisfactionRating, int scopeRating,
                   int respectRating, String otherComments);
     }
-
 }

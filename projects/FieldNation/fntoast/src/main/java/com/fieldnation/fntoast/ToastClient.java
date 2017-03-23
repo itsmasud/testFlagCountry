@@ -219,7 +219,7 @@ public class ToastClient extends TopicClient {
         }
 
         public void showToast(String title, int duration) {
-            Log.v(TAG, "showToast");
+            Log.v(TAG, "showToast " + title);
             Toast.makeText(getActivity(), title, duration).show();
         }
 
