@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
@@ -140,8 +141,8 @@ public class WorkOrderCard extends RelativeLayout {
         _testButton.setOnClickListener(_test_onClick);
 
         // Just in case we forget to hide this button when building a release version
-//        if (!BuildConfig.DEBUG)
-        _testButton.setVisibility(GONE);
+        if (!BuildConfig.DEBUG)
+            _testButton.setVisibility(GONE);
 
         DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_OUT, _checkInOutDialog_onCheckIn);

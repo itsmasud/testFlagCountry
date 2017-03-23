@@ -58,7 +58,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
-        setTitle("Tomorrow's Work");
+        setTitle("Confirm Work");
 
         try {
             _savedList = new SavedList().id("workorders_assignments");
