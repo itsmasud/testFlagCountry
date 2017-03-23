@@ -233,8 +233,8 @@ public class TaskRowView extends RelativeLayout {
         if (!_workorderClient.isConnected())
             return;
 
-        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _task.getFolderId());
-        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _task.getFolderId());
+        _workorderClient.subDeliverableUpload(_workOrder.getId(), _task.getFolderId());
+        _workorderClient.subDeliverableProgress(_workOrder.getId(), _task.getFolderId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {

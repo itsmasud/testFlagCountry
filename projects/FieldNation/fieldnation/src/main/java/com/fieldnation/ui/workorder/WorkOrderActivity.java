@@ -264,7 +264,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         if (_tabview == null)
             return;
 
-        setTitle("WO: " + _workOrder.getWorkOrderId());
+        setTitle("WO: " + _workOrder.getId());
         if (_workOrder.getMessages() != null
                 && _workOrder.getMessages().getMetadata() != null
                 && _workOrder.getMessages().getMetadata().getTotal() != null) {
@@ -387,8 +387,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 return;
             }
 
-            if (_workOrderId == (int) workOrder.getWorkOrderId()) {
-                Debug.setLong("last_workorder", workOrder.getWorkOrderId());
+            if (_workOrderId == (int) workOrder.getId()) {
+                Debug.setLong("last_workorder", workOrder.getId());
                 _workOrder = workOrder;
                 populateUi();
             }

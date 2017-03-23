@@ -415,7 +415,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
         if (miscFolder != null) {
             String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(), miscFolder.getId(), fileName, _scannedImagePath);
+            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getId(), miscFolder.getId(), fileName, _scannedImagePath);
         }
 
     }

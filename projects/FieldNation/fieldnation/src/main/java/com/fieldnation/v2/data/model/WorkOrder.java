@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -68,6 +65,9 @@ public class WorkOrder implements Parcelable {
 
     @Json(name = "holds")
     private Hold[] _holds;
+
+    @Json(name = "id")
+    private Integer _id;
 
     @Json(name = "location")
     private Location _location;
@@ -143,9 +143,6 @@ public class WorkOrder implements Parcelable {
 
     @Json(name = "w2")
     private Boolean _w2;
-
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
 
     @Source
     private JsonObject SOURCE;
@@ -536,6 +533,28 @@ public class WorkOrder implements Parcelable {
     public WorkOrder holds(Hold[] holds) throws ParseException {
         _holds = holds;
         SOURCE.put("holds", Hold.toJsonArray(holds), true);
+        return this;
+    }
+
+    public void setId(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+    }
+
+    public Integer getId() {
+        try {
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _id;
+    }
+
+    public WorkOrder id(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
@@ -1166,28 +1185,6 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) throws ParseException {
-        _workOrderId = workOrderId;
-        SOURCE.put("work_order_id", workOrderId);
-    }
-
-    public Integer getWorkOrderId() {
-        try {
-            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
-                _workOrderId = SOURCE.getInt("work_order_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _workOrderId;
-    }
-
-    public WorkOrder workOrderId(Integer workOrderId) throws ParseException {
-        _workOrderId = workOrderId;
-        SOURCE.put("work_order_id", workOrderId);
-        return this;
-    }
-
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
@@ -1236,6 +1233,7 @@ public class WorkOrder implements Parcelable {
         public String toString() {
             return String.valueOf(value);
         }
+
     }
 
     /*-*****************************-*/
@@ -1312,7 +1310,7 @@ public class WorkOrder implements Parcelable {
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
-        if (_actionsSet == null) {
+        if (_actionsSet == null && getActions() != null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
         }

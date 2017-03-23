@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.PendingIntent;
-import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
@@ -47,7 +46,6 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -204,9 +202,9 @@ public class DeliverableFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, _workOrder.getWorkOrderId(), folder);
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, _workOrder.getId(), folder);
         } else {
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, _workOrder.getWorkOrderId(), folder);
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, _workOrder.getId(), folder);
         }
 
     }
@@ -403,7 +401,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), false, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
         }
     };
 
@@ -417,7 +415,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteDeliverable(App.get(), _workOrder.getWorkOrderId(), documentId);
+                            WorkorderClient.deleteDeliverable(App.get(), _workOrder.getId(), documentId);
                             setLoading(true);
                         }
 

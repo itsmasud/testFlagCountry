@@ -215,8 +215,8 @@ public class SearchEditText extends RelativeLayout {
                 return;
 
             if (_lastLookup != null && _listener != null
-                    && (int) workOrder.getWorkOrderId() == (int) _lastLookup) {
-                _listener.onLookupWorkOrder(workOrder.getWorkOrderId());
+                    && (int) workOrder.getId() == (int) _lastLookup) {
+                _listener.onLookupWorkOrder(workOrder.getId());
                 _lastLookup = null;
             }
         }
