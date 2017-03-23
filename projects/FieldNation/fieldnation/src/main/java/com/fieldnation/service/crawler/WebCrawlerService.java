@@ -10,6 +10,9 @@ import android.os.IBinder;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Message;
+import com.fieldnation.data.profile.Notification;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.AsyncTaskEx;
@@ -18,6 +21,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
@@ -269,6 +273,69 @@ public class WebCrawlerService extends Service {
         _bundleClient.connect(this);
     }
 
+    private final WorkordersWebApi.Listener _workorderClient_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "_workorderClient_listener.onConnected");
+            _workorderClient.subWorkordersWebApi();
+
+            incrementPendingRequestCounter(1);
+            incRequestCounter(1);
+            WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
+        }
+
+        @Override
+        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
+
+            incrementPendingRequestCounter(-1);
+
+            for (SavedList list : savedList) {
+                incrementPendingRequestCounter(1);
+                incRequestCounter(1);
+                WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
+            }
+        }
+
+        @Override
+        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+            incrementPendingRequestCounter(-1);
+
+            // get the details
+            WorkOrder[] works = workOrders.getResults();
+            for (WorkOrder workOrder : works) {
+                incrementPendingRequestCounter(1);
+                incRequestCounter(1);
+                WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getWorkOrderId(), false, true);
+            }
+
+            //
+            ListEnvelope metadata = workOrders.getMetadata();
+            if (metadata.getPage() == 1) {
+                for (int i = 2; i <= workOrders.getMetadata().getPage() + 1; i++) {
+                    incrementPendingRequestCounter(1);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                }
+            }
+        }
+
+        @Override
+        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
+            incrementPendingRequestCounter(-1);
+
+            if (workOrder.getBundle() != null && workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
+                incrementPendingRequestCounter(1);
+                incRequestCounter(1);
+                BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
+            }
+
+            _workorderDetails.add(workOrder);
+            _workorderThreadManager.wakeUp();
+
+            // TODO get messages for work order
+        }
+    };
+
     private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
@@ -350,142 +417,6 @@ public class WebCrawlerService extends Service {
         }
     };
 
-
-    private final WorkordersWebApi.Listener _workorderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_workorderClient_listener.onConnected");
-            _workorderClient.subWorkordersWebApi();
-
-            incrementPendingRequestCounter(1);
-            incRequestCounter(1);
-            WorkordersWebApi.getWorkOrderLists(WebCrawlerService.this, false, true);
-        }
-
-        @Override
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
-
-            incrementPendingRequestCounter(-1);
-
-            for (SavedList list : savedList) {
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
-            }
-        }
-
-        @Override
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            incrementPendingRequestCounter(-1);
-
-            // get the details
-            WorkOrder[] works = workOrders.getResults();
-            for (WorkOrder workOrder : works) {
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getWorkOrderId(), false, true);
-            }
-
-            //
-            ListEnvelope metadata = workOrders.getMetadata();
-            if (metadata.getPage() == 1) {
-                for (int i = 2; i <= workOrders.getMetadata().getPage() + 1; i++) {
-                    incrementPendingRequestCounter(1);
-                    incRequestCounter(1);
-                    WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
-                }
-            }
-        }
-
-        @Override
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-            incrementPendingRequestCounter(-1);
-
-            if (workOrder.getBundle() != null && workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
-                BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
-            }
-        }
-
-        @Override
-        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed, boolean isCached) {
-            Log.v(TAG, "onWorkorderList, " + selector + ", " + page + ", " + failed + ", " + isCached);
-
-            incrementPendingRequestCounter(-1);
-
-            if (list == null || list.size() == 0 || failed) {
-                _workorderThreadManager.wakeUp();
-                return;
-            }
-
-            Log.v(TAG, "onWorkorderList(" + list.size() + "," + selector.getCall() + "," + page + ")");
-
-            incrementPendingRequestCounter(1);
-            incRequestCounter(1);
-            // only grab the first two pages for completed work.
-            if (selector != WorkorderDataSelector.COMPLETED || page < 2)
-                WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true, false);
-
-            Log.v(TAG, "onWorkorderList, Request details");
-            for (int i = 0; i < list.size(); i++) {
-                Workorder workorder = list.get(i);
-
-                if (workorder == null)
-                    continue;
-
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                WorkorderClient.get(WebCrawlerService.this, workorder.getWorkOrderId(), false, true);
-                if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
-                    incRequestCounter(1);
-                    WorkorderClient.getBundle(WebCrawlerService.this, workorder.getBundleId(), false, true);
-                }
-            }
-            Log.v(TAG, "onWorkorderList, done");
-        }
-
-        @Override
-        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
-            incrementPendingRequestCounter(-1);
-
-            if (failed || workorder == null) return;
-
-            Log.v(TAG, "onDetails " + workorder.getWorkOrderId());
-
-            synchronized (LOCK) {
-                _workorderDetails.add(workorder);
-
-                Log.v(TAG, "workorder list size " + _workorderDetails.size());
-            }
-            _workorderThreadManager.wakeUp();
-        }
-
-        @Override
-        public void onMessageList(long workorderId, List<com.fieldnation.data.workorder.Message> messages, boolean failed) {
-            Log.v(TAG, "WorkorderClient.onMessageList");
-
-            incrementPendingRequestCounter(-1);
-
-            if (failed)
-                return;
-
-            for (int i = 0; i < messages.size(); i++) {
-                com.fieldnation.data.workorder.Message message = messages.get(i);
-                if (message != null && message.getFromUser() != null) {
-                    if (message.getFromUser().getPhotoUrl() != null) {
-                        incRequestCounter(1);
-                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    }
-
-                    if (message.getFromUser().getPhotoThumbUrl() != null) {
-                        incRequestCounter(1);
-                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
-                    }
-                }
-            }
-            _workorderThreadManager.wakeUp();
-        }
-    };
-
     private final BundlesWebApi.Listener _bundlesClient_listener = new BundlesWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -534,60 +465,24 @@ public class WebCrawlerService extends Service {
                 return false;
 
             Log.v(TAG, "WorkorderDetailWorker running" + workorder.getWorkOrderId());
-            incRequestCounter(3);
-            incrementPendingRequestCounter(1);
-            WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkOrderId(), true, false);
-            WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkOrderId(), true);
-            WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkOrderId(), true);
+            //WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkOrderId(), true, false);
+            //WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkOrderId(), true);
+            //WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkOrderId(), true);
 
-            // get signatures
-            Signature[] sigs = workorder.getSignatureList();
-            if (sigs != null && sigs.length > 0) {
-                for (Signature sig : sigs) {
-                    try {
-                        // Log.v(TAG, "getSignature");
-                        WorkorderClient.getSignature(_context, workorder.getWorkOrderId(), sig.getSignatureId(), true);
-                        incRequestCounter(1);
-                        //Thread.sleep(1000);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-            }
-
-            UploadSlot[] slots = workorder.getUploadSlots();
-            if (slots != null && slots.length > 0) {
-                for (UploadSlot slot : slots) {
-                    UploadedDocument[] docs = slot.getUploadedDocuments();
-                    if (docs != null && docs.length > 0) {
-                        for (UploadedDocument doc : docs) {
-                            try {
-                                DocumentClient.downloadDocument(_context, doc.getId(),
-                                        doc.getDownloadLink(), doc.getFileName(), true);
-                                incRequestCounter(1);
-                                //Thread.sleep(1000);
-                            } catch (Exception ex) {
-                                Log.v(TAG, ex);
-                            }
+/*
+            AttachmentFolders attachmentFolders = workorder.getAttachments();
+            if (attachmentFolders != null && attachmentFolders.getResults() != null && attachmentFolders.getResults().length > 0) {
+                AttachmentFolder[] folders = attachmentFolders.getResults();
+                for (AttachmentFolder attachmentFolder : folders) {
+                    if (attachmentFolder != null && attachmentFolder.getResults() != null && attachmentFolder.getResults().length > 0) {
+                        Attachment[] attachments = attachmentFolder.getResults();
+                        for (Attachment attachment : attachments){
+                            // TODO, download attachment
                         }
                     }
                 }
             }
-
-            Document[] documents = workorder.getDocuments();
-            if (documents != null && documents.length > 0) {
-                for (Document doc : documents) {
-                    try {
-                        DocumentClient.downloadDocument(_context, doc.getDocumentId(),
-                                doc.getFilePath(), doc.getFileName(), true);
-                        incRequestCounter(1);
-                        //Thread.sleep(1000);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-            }
-
+*/
             return true;
         }
 
