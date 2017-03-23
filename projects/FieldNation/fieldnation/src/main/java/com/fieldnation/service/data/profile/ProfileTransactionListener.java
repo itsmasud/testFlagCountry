@@ -222,11 +222,6 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             ProfileClient.get(context, false);
             ProfileClient.listMessages(context, 0, false, false);
             ProfileClient.listNotifications(context, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
 
             ProfileDispatch.switchUser(context, userId, false);
 

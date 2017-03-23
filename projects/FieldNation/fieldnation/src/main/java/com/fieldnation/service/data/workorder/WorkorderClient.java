@@ -2,7 +2,6 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -10,10 +9,7 @@ import android.widget.Toast;
 
 import com.fieldnation.FileHelper;
 import com.fieldnation.data.profile.Notification;
-import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Message;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
@@ -25,7 +21,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.v2.data.model.ExpenseCategory;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -50,6 +45,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*****************************-*/
     /*-             list            -*/
     /*-*****************************-*/
+/*
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync, boolean allowCache) {
         Log.v(STAG, "list:{selector:" + selector + ", page:" + page + ", isSync:" + isSync + ", allowCache:" + allowCache + "}");
 
@@ -83,6 +79,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
         return register(topicId);
     }
+*/
 
     /*-********************************-*/
     /*-             details            -*/
@@ -146,6 +143,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return unregister(topicId);
     }
 
+/*
     public static void listAlerts(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
@@ -171,6 +169,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
         return register(topicId);
     }
+*/
 
     public boolean subActions() {
         return subActions(0);
@@ -189,6 +188,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Tasks               -*/
     /*-*********************************-*/
+/*
     public static void listTasks(Context context, long workorderId, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_TASKS);
@@ -213,6 +213,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
         return register(topicId);
     }
+*/
 
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
         WorkorderTransactionBuilder.actionCompleteTask(context, workorderId, taskId);
@@ -231,6 +232,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
+/*
     public static void listMessages(Context context, long workorderId, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
@@ -265,17 +267,21 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionMarkMessagesRead(Context context, long workorderId) {
         WorkorderTransactionBuilder.listMessages(context, workorderId, true, false);
     }
+*/
 
     /*-*********************************-*/
     /*-             Notification        -*/
     /*-*********************************-*/
+/*
     public static void actionMarkNotificationRead(Context context, long workorderId) {
         WorkorderTransactionBuilder.listAlerts(context, workorderId, true, false);
     }
+*/
 
     /*-*********************************-*/
     /*-             Discounts           -*/
     /*-*********************************-*/
+/*
     public static void createDiscount(Context context, long workorderId, String description, double price) {
         WorkorderTransactionBuilder.createDiscount(context, workorderId, description, price);
     }
@@ -283,10 +289,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void deleteDiscount(Context context, long workorderId, long discountId) {
         WorkorderTransactionBuilder.deleteDiscount(context, workorderId, discountId);
     }
+*/
 
     /*-*********************************-*/
     /*-             Expense             -*/
     /*-*********************************-*/
+/*
     public static void createExpense(Context context, long workorderId, String description, double price,
                                      ExpenseCategory category) {
         WorkorderTransactionBuilder.createExpense(context, workorderId,
@@ -296,10 +304,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void deleteExpense(Context context, long workorderId, long expenseId) {
         WorkorderTransactionBuilder.deleteExpense(context, workorderId, expenseId);
     }
+*/
 
     /*-*************************************-*/
     /*-             Shipments               -*/
     /*-*************************************-*/
+/*
     public static void createShipment(Context context, long workorderId, String description,
                                       boolean isToSite, String carrier, String carrierName,
                                       String trackingNumber) {
@@ -337,6 +347,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.postShipment(context, workorderId, description,
                 isToSite, carrier, carrierName, trackingNumber, taskId);
     }
+*/
 
     /*-*************************************-*/
     /*-             Ratings               -*/
@@ -359,6 +370,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
+/*
     public static void getSignature(Context context, long workorderId, long signatureId) {
         getSignature(context, workorderId, signatureId, false);
     }
@@ -371,11 +383,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
+*/
 
 //    public static void actionCompleteSignatureTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
 //        WorkorderTransactionBuilder.actionCompleteShipmentTask(context, workorderId, taskId, printName, signatureJson);
 //    }
 
+/*
     public boolean subGetSignature(boolean isSync) {
         return subGetSignature(0, 0, isSync);
     }
@@ -397,6 +411,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
         return register(topicId);
     }
+*/
 
     // add signature json
 /*
@@ -412,6 +427,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 */
 
+/*
     public static void addSignatureSvg(Context context, long workorderId, String name, String svg) {
         WorkorderTransactionBuilder.addSignatureSvg(context, workorderId, name, svg);
     }
@@ -423,6 +439,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void deleteSignature(Context context, long workorderId, long signatureId) {
         WorkorderTransactionBuilder.deleteSignature(context, workorderId, signatureId);
     }
+*/
 
 
     /*-******************************************-*/
@@ -434,6 +451,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 */
 
+/*
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
         WorkorderTransactionBuilder.actionChangePay(context, workorderId, pay, explanation);
     }
@@ -455,6 +473,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {
         WorkorderTransactionBuilder.actionClosingNotes(context, workorderId, closingNotes);
     }
+*/
 
     // acknowledge hold
 /*
@@ -464,12 +483,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 */
 
     // counter offer
+/*
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
+*/
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
@@ -490,6 +511,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 */
 
+/*
     public static void actionWithdrawRequest(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionWithdrawRequest(context, workorderId);
     }
@@ -497,10 +519,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionReeadyToGo(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionReady(context, workorderId);
     }
+*/
 
     /*-******************************************-*/
     /*-             workorder checkin            -*/
     /*-******************************************-*/
+/*
     public static void actionCheckin(Context context, long workorderId, String dateTime) {
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, dateTime);
     }
@@ -508,11 +532,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCheckin(Context context, long workorderId, String dateTime, Location location) {
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location, dateTime);
     }
+*/
 
     /*-*******************************************-*/
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
 
+/*
     public static void actionCheckout(Context context, long workorderId, String dateTime) {
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime);
     }
@@ -528,6 +554,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount, Location location) {
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime, deviceCount, location);
     }
+*/
 
 
     /*-*****************************************-*/
@@ -563,6 +590,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
+
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
 
@@ -686,6 +714,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId);
     }
 
+
 //    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
 //        Intent intent = new Intent(context, WorkorderService.class);
 //        intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_DELIVERABLE);
@@ -708,6 +737,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             Time Log                -*/
     /*-*************************************-*/
+/*
     public static void addTimeLog(Context context, long workorderId, long startDate, long endDate) {
         WorkorderTransactionBuilder.postTimeLog(context, workorderId, startDate, endDate);
     }
@@ -727,6 +757,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void deleteTimeLog(Context context, long workorderId, long loggedHoursId) {
         WorkorderTransactionBuilder.deleteTimeLog(context, workorderId, loggedHoursId);
     }
+*/
 
     /*-**********************************-*/
     /*-             Listener             -*/

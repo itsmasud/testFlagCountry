@@ -515,7 +515,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             WorkorderDispatch.action(context, workorderId, "complete", false);
-            WorkorderClient.listTasks(context, workorderId, false);
+//            WorkorderClient.listTasks(context, workorderId, false);
             return onDetails(context, result, transaction, params, httpResult, throwable);
 
         } else if (result == Result.DELETE) {
@@ -583,7 +583,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             WorkorderDispatch.action(context, workorderId, action, false);
-            WorkorderClient.listTasks(context, workorderId, false);
+//            WorkorderClient.listTasks(context, workorderId, false);
 
             if (action.equals("acknowledge-hold")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
@@ -604,7 +604,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("messages/new")) {
-                WorkorderClient.listMessages(context, workorderId, false, false);
+//                WorkorderClient.listMessages(context, workorderId, false, false);
 
             } else if (action.equals("pay-change")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
@@ -669,7 +669,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             try {
                 WorkorderDispatch.action(context, workorderId, "checkin", false);
-                WorkorderClient.listTasks(context, workorderId, false);
+//                WorkorderClient.listTasks(context, workorderId, false);
                 return onDetails(context, result, transaction, params, httpResult, throwable);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -704,7 +704,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             try {
-                WorkorderClient.listTasks(context, workorderId, false);
+//                WorkorderClient.listTasks(context, workorderId, false);
                 WorkorderDispatch.action(context, workorderId, "checkout", false);
                 return onDetails(context, result, transaction, params, httpResult, throwable);
             } catch (Exception ex) {
@@ -1000,7 +1000,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
             WorkorderClient.get(context, workorderId, false);
-            WorkorderClient.listTasks(context, workorderId, false);
+//            WorkorderClient.listTasks(context, workorderId, false);
 
             return Result.CONTINUE;
 
