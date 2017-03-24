@@ -22,7 +22,6 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.nav.NavActivity;
-import com.fieldnation.v2.ui.search.SearchResultScreen;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 
 /**
@@ -36,7 +35,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private static final String DIALOG_REMIND_ME = TAG + ".remindMeDialog";
 
     // Ui
-    private SearchResultScreen _recyclerView;
+    private ConfirmResultScreen _recyclerView;
     private Toolbar _toolbar;
 
     // Data
@@ -59,7 +58,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
 
-        _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
+        _recyclerView = (ConfirmResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
         setTitle("Confirm Work");
@@ -147,7 +146,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         // do nothing, you're stuck here.... muhahahah
     }
 
-    private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
+    private final ConfirmResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new ConfirmResultScreen.OnWorkOrderListReceivedListener() {
         @Override
         public void OnWorkOrderListReceived(WorkOrders workOrders) {
             if (workOrders == null
