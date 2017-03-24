@@ -17,6 +17,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -25,6 +26,8 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -95,6 +98,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 .updateListener(_gps_listener)
                 .priority(SimpleGps.Priority.HIGHEST)
                 .start(App.get());
+
+        BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
     }
 
     @Override
@@ -155,6 +160,37 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     public void onProfile(Profile profile) {
     }
 
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkOrder workOrder = (WorkOrder) _adapter.getObject(0);
+            if (workOrder.getRoutes() != null
+                    && workOrder.getRoutes().getOpenRoute() != null
+                    && workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+/*
+TODO                AcceptBundleDialog.show(
+                        App.get(),
+                        UID_DIALOG_ACCEPT_BUNDLE,
+                        _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length,
+                        wo.getWorkorderId(),
+                        AcceptBundleDialog.TYPE_REQUEST);
+*/
+            } else if (workOrder.getRequests() != null
+                    && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+/*
+TODO                AcceptBundleDialog.show(
+                        App.get(),
+                        UID_DIALOG_ACCEPT_BUNDLE,
+                        _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length,
+                        wo.getWorkorderId(),
+                        AcceptBundleDialog.TYPE_ACCEPT);
+*/
+            }
+        }
+    };
+
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -163,36 +199,6 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
                     _woBundle.getWorkorder().length,
                     _woBundle.getWorkorder()[0].getWorkorderId().intValue(),
                     _woBundle.getWorkorder()[0].getCompanyId());
-*/
-        }
-    };
-
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-/*
-TODO            Workorder wo = _woBundle.getWorkorder()[0];
-
-            if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
-                AcceptBundleDialog.show(
-                        App.get(),
-                        UID_DIALOG_ACCEPT_BUNDLE,
-                        _woBundle.getBundleId(),
-                        _woBundle.getWorkorder().length,
-                        wo.getWorkorderId(),
-                        AcceptBundleDialog.TYPE_REQUEST);
-
-            } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
-                AcceptBundleDialog.show(
-                        App.get(),
-                        UID_DIALOG_ACCEPT_BUNDLE,
-                        _woBundle.getBundleId(),
-                        _woBundle.getWorkorder().length,
-                        wo.getWorkorderId(),
-                        AcceptBundleDialog.TYPE_ACCEPT);
-            } else {
-                // do nothing
-            }
 */
         }
     };
@@ -218,65 +224,12 @@ TODO            Workorder wo = _woBundle.getWorkorder()[0];
         }
     };
 
-/*
-TODO    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            _workorderClient.subBundle();
-            _workorderClient.subActions();
-        }
-
-        @Override
-        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {
-            if (bundle == null) {
-                ToastClient.toast(WorkorderBundleDetailActivity.this, "Sorry, could not get bundle details.", Toast.LENGTH_LONG);
-                finish();
-                return;
-            }
-            _woBundle = bundle;
-            Workorder wo = bundle.getWorkorder()[0];
-
-            try {
-                if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
-                    _okButton.setText("REQUEST (" + _woBundle.getWorkorder().length + ")");
-                    _buttonToolbar.setVisibility(View.VISIBLE);
-                } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
-                    _okButton.setText("ACCEPT (" + _woBundle.getWorkorder().length + ")");
-                    _buttonToolbar.setVisibility(View.VISIBLE);
-                } else {
-                    _buttonToolbar.setVisibility(View.GONE);
-                }
-                setLoading(false);
-            } catch (Exception ex) {
-            }
-
-            _adapter = new BundleAdapter(_woBundle, _wocard_listener);
-            _listview.setAdapter(_adapter);
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            setLoading(true);
-            WorkorderClient.getBundle(App.get(), _bundleId, false, false);
-        }
-    };
-*/
-
-    /*
-        private final WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.DefaultListener() {
-            @Override
-            public void onClick(WorkorderCardView view, Workorder workorder) {
-    // TODO            WorkOrderActivity.startNew(App.get(), workorder.getWorkorderId().intValue());
-            }
-        };
-    */
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
             _adapter.refreshAll();
         }
     };
-
 
     private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
@@ -300,13 +253,27 @@ TODO    private final WorkorderClient.Listener _workorderClient_listener = new W
 
         @Override
         public void onGetBundleWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            _refreshView.refreshComplete();
+            Log.v(TAG, "onGetBundleWorkOrders " + workOrders.getResults().length);
+            setLoading(false);
 
             if (!success || workOrders == null || workOrders.getResults() == null) {
                 return;
             }
 
             _adapter.addObjects(1, workOrders.getResults());
+
+            for (WorkOrder workOrder : workOrders.getResults()) {
+                if (workOrder.getRoutes() != null
+                        && workOrder.getRoutes().getOpenRoute() != null
+                        && workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                    _okButton.setText(R.string.btn_accept);
+                    break;
+                } else if (workOrder.getRequests() != null
+                        && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                    _okButton.setText(R.string.btn_request);
+                    break;
+                }
+            }
         }
     };
 
@@ -314,8 +281,6 @@ TODO    private final WorkorderClient.Listener _workorderClient_listener = new W
         @Override
         public BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType) {
             WorkOrderCard view = new WorkOrderCard(parent.getContext());
-
-            // TODO, hook up listener?
             return new WorkOrderHolder(view);
         }
 
@@ -352,7 +317,9 @@ TODO    private final WorkorderClient.Listener _workorderClient_listener = new W
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-            BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            Log.v(TAG, "requestPage");
+            if (_bundleId != 0)
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
         }
     };
 
