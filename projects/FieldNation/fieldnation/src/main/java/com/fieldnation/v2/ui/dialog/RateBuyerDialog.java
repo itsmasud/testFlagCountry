@@ -79,7 +79,8 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.activity_rate_buyer, container, false);
+        Log.v(TAG, "onCreateView");
+        View v = inflater.inflate(R.layout.dialog_rate_buyer, container, false);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _rateStarView = (StarView) v.findViewById(R.id.star_rating);
@@ -99,6 +100,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
 
         _picView.setProfilePic(R.drawable.missing_circle);
@@ -114,7 +116,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     @Override
     public void onResume() {
-        Log.e(TAG, "onResume");
+        Log.v(TAG, "onResume");
         super.onResume();
 
         if (_clear) {
@@ -163,9 +165,11 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
+        Log.v(TAG, "show");
         _workOrder = payload.getParcelable(PARAM_WORKORDER);
-        populateUi();
         super.show(payload, animate);
+
+        populateUi();
     }
 
     @Override
@@ -190,7 +194,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
+        Log.v(TAG, "onSaveDialogState");
         if (_rateStarView.getNumberOfGoldStar() != 0)
             outState.putInt(STATE_GOLD_STAR, _rateStarView.getNumberOfGoldStar());
 
@@ -202,12 +206,11 @@ public class RateBuyerDialog extends FullScreenDialog {
 
         if (_commentText != null)
             outState.putString(STATE_COMMENT_TEXT, _commentText);
-
-        super.onSaveDialogState(outState);
     }
 
     @Override
     public void onPause() {
+        Log.v(TAG, "onPause");
         if (_photos != null && _photos.isConnected()) {
             _photos.disconnect(App.get());
         }

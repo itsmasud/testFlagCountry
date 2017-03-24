@@ -1,7 +1,6 @@
 package com.fieldnation.v2.ui;
 
 import android.support.v7.widget.RecyclerView;
-import android.view.ViewGroup;
 
 import com.fieldnation.fnlog.Log;
 
@@ -111,6 +110,9 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
         int location = 0;
         try {
             if (_pages.size() == 0 || _pages.get(1).size() == 0) {
+                if (shouldInjectPlaceHolder(0))
+                    _displayList.add(getInjectedPlaceHolder(location));
+
                 _displayList.add(getEmptyPlaceHolder());
             } else {
                 for (List<DataModel> page : _pages) {
