@@ -253,7 +253,6 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
 
         @Override
         public void onGetBundleWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            Log.v(TAG, "onGetBundleWorkOrders " + workOrders.getResults().length);
             setLoading(false);
 
             if (!success || workOrders == null || workOrders.getResults() == null) {

@@ -41,20 +41,22 @@
 
         <Button
             android:id="@+id/notInterested_button"
-            style="?attr/buttonWhiteStyle"
+            style="@style/Material.Button.Flat"
             android:layout_below="@+id/date_textview"
             android:layout_toLeftOf="@+id/ok_button"
             android:layout_weight="1"
             android:text="@string/btn_not_interested"
+            android:textColor="@color/fn_white_text"
             android:visibility="visible" />
 
         <Button
             android:id="@+id/ok_button"
-            style="?attr/buttonWhiteStyle"
+            style="@style/Material.Button.Flat"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/date_textview"
             android:layout_weight="1"
             android:text="@string/btn_accept"
+            android:textColor="@color/fn_white_text"
             android:visibility="visible" />
     </LinearLayout>
 
