@@ -168,8 +168,6 @@ public class RateBuyerDialog extends FullScreenDialog {
         Log.v(TAG, "show");
         _workOrder = payload.getParcelable(PARAM_WORKORDER);
         super.show(payload, animate);
-
-        populateUi();
     }
 
     @Override
