@@ -196,10 +196,10 @@ public class RunningLateDialog extends SimpleDialog {
                                 .condition(new Condition()
                                         .estimatedDelay(delayMin * 60)
                                         .substatus(Condition.SubstatusEnum.DELAYED)));
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
 
                 ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                _onSendDispatcher.dispatch(getUid(), _workOrder.getId());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);

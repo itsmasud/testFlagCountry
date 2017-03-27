@@ -210,9 +210,9 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         if (!_workorderClient.isConnected())
             return;
 
-        Log.v(TAG, "subscribe, " + _workOrder.getWorkOrderId() + ", " + _slot.getId());
-        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _slot.getId());
-        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _slot.getId());
+        Log.v(TAG, "subscribe, " + _workOrder.getId() + ", " + _slot.getId());
+        _workorderClient.subDeliverableUpload(_workOrder.getId(), _slot.getId());
+        _workorderClient.subDeliverableProgress(_workOrder.getId(), _slot.getId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {

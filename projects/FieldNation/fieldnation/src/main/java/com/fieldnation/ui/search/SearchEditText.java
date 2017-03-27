@@ -164,7 +164,7 @@ public class SearchEditText extends RelativeLayout {
         try {
             _progressBar.setVisibility(VISIBLE);
             _lastLookup = Integer.parseInt(_searchTermEditText.getText().toString());
-            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, true, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, false, false);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -215,8 +215,8 @@ public class SearchEditText extends RelativeLayout {
                 return;
 
             if (_lastLookup != null && _listener != null
-                    && (int) workOrder.getWorkOrderId() == (int) _lastLookup) {
-                _listener.onLookupWorkOrder(workOrder.getWorkOrderId());
+                    && (int) workOrder.getId() == (int) _lastLookup) {
+                _listener.onLookupWorkOrder(workOrder.getId());
                 _lastLookup = null;
             }
         }

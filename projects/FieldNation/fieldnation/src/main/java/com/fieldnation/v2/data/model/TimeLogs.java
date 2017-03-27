@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -117,7 +114,7 @@ public class TimeLogs implements Parcelable {
         }
 
         if (_confirmed != null && _confirmed.isSet())
-        return _confirmed;
+            return _confirmed;
 
         return null;
     }
@@ -186,7 +183,7 @@ public class TimeLogs implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }
@@ -211,7 +208,7 @@ public class TimeLogs implements Parcelable {
         }
 
         if (_onmyway != null && _onmyway.isSet())
-        return _onmyway;
+            return _onmyway;
 
         return null;
     }
@@ -236,7 +233,7 @@ public class TimeLogs implements Parcelable {
         }
 
         if (_openTimeLog != null && _openTimeLog.isSet())
-        return _openTimeLog;
+            return _openTimeLog;
 
         return null;
     }
@@ -332,7 +329,7 @@ public class TimeLogs implements Parcelable {
         }
 
         if (_timeZone != null && _timeZone.isSet())
-        return _timeZone;
+            return _timeZone;
 
         return null;
     }
@@ -455,7 +452,7 @@ public class TimeLogs implements Parcelable {
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
-        if (_actionsSet == null) {
+        if (_actionsSet == null && getActions() != null) {
             _actionsSet = new HashSet<>();
             _actionsSet.addAll(Arrays.asList(getActions()));
         }

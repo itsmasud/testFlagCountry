@@ -306,7 +306,7 @@ public class EtaDialog extends FullScreenDialog {
 
         // Wod request work, Woc Request work
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-            _toolbar.setTitle("Request " + _workOrder.getWorkOrderId());
+            _toolbar.setTitle("Request " + _workOrder.getId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
             _expirationLayout.setVisibility(View.VISIBLE);
@@ -322,7 +322,7 @@ public class EtaDialog extends FullScreenDialog {
 
             // Woc accept route, Wod Accept route (onSetEta)
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
-            _toolbar.setTitle("Accept " + _workOrder.getWorkOrderId());
+            _toolbar.setTitle("Accept " + _workOrder.getId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -339,7 +339,7 @@ public class EtaDialog extends FullScreenDialog {
 /*
             // old confirm, work order start, confirm task
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-            _toolbar.setTitle("Confirm " + _workOrder.getWorkOrderId());
+            _toolbar.setTitle("Confirm " + _workOrder.getId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -352,7 +352,7 @@ public class EtaDialog extends FullScreenDialog {
 
             // Add eta from WoC
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ADD)) {
-            _toolbar.setTitle("Set ETA " + _workOrder.getWorkOrderId());
+            _toolbar.setTitle("Set ETA " + _workOrder.getId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
@@ -779,7 +779,7 @@ public class EtaDialog extends FullScreenDialog {
             try {
                 switch (_dialogType) {
                     case PARAM_DIALOG_TYPE_REQUEST: {
-                        _onRequestedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                        _onRequestedDispatcher.dispatch(getUid(), _workOrder.getId());
 
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
@@ -794,37 +794,37 @@ public class EtaDialog extends FullScreenDialog {
                             eta.setHourEstimate(_durationMilliseconds / 3600.0);
                             request.setEta(eta);
                         }
-                        WorkordersWebApi.request(App.get(), _workOrder.getWorkOrderId(), request);
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
 
                         dismiss(true);
                         break;
                     }
 
                     case PARAM_DIALOG_TYPE_ACCEPT: {
-                        _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                        _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getId());
 
                         Assignee assignee = new Assignee();
                         assignee.setUser(new User().id((int) App.getProfileId()));
-                        WorkordersWebApi.assignUser(App.get(), _workOrder.getWorkOrderId(), assignee);
+                        WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee);
 
                         break;
                     }
 /*
                     case PARAM_DIALOG_TYPE_CONFIRM:{
-                        _onConfirmedDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                        _onConfirmedDispatcher.dispatch(getUid(), _workOrder.getId());
 
                         if (_etaSwitch.isChecked()) {
                             String startDate = ISO8601.fromCalendar(_etaStart);
                             WorkorderClient.actionConfirm(
                                     App.get(),
-                                    _workOrder.getWorkOrderId(),
+                                    _workOrder.getId(),
                                     startDate,
                                     ISO8601.getEndDate(startDate, _durationMilliseconds),
                                     _noteEditText.getText().toString().trim());
                         } else {
                             WorkorderClient.actionConfirm(
                                     App.get(),
-                                    _workOrder.getWorkOrderId(),
+                                    _workOrder.getId(),
                                     null, null,
                                     _noteEditText.getText().toString().trim());
                         }
@@ -835,13 +835,13 @@ public class EtaDialog extends FullScreenDialog {
 
                     case PARAM_DIALOG_TYPE_ADD:  // add eta
                     case PARAM_DIALOG_TYPE_EDIT: {
-                        _onEtaDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                        _onEtaDispatcher.dispatch(getUid(), _workOrder.getId());
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                         eta.setUser(new User().id((int) App.getProfileId()));
                         eta.setHourEstimate(_durationMilliseconds / 3600.0);
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
                         dismiss(true);
                         break;
                     }
@@ -868,7 +868,7 @@ public class EtaDialog extends FullScreenDialog {
                     eta.setStart(new Date(_etaStart));
                     eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                     eta.setUser(new User().id((int) App.getProfileId()));
-                    WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                    WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
                     eta.setHourEstimate(_durationMilliseconds / 3600.0);
                     dismiss(true);
                 } catch (Exception ex) {

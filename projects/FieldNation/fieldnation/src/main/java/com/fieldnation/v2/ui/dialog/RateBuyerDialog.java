@@ -226,7 +226,7 @@ public class RateBuyerDialog extends FullScreenDialog {
         _rateStarView.setChangeEnabled(true);
         _rateStarView.setStarFontSize(getView().getResources().getInteger(R.integer.textSizeBuyerRatingStar));
 
-        _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrder.getWorkOrderId()));
+        _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrder.getId()));
 
         if (_workOrder.getCompany() != null
                 && _workOrder.getCompany().getName() != null) {
@@ -353,7 +353,7 @@ public class RateBuyerDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
 
-            WorkorderClient.sendRating(App.get(), _workOrder.getWorkOrderId(),
+            WorkorderClient.sendRating(App.get(), _workOrder.getId(),
                     _goldStar, _hasSelectedScopeRating == true ? 1 : 0,
                     _hasSelectedRespectRating == true ? 1 : 0, _commentText);
             dismiss(true);
