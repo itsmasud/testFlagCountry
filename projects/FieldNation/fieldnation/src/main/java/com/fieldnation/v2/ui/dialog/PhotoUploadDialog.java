@@ -273,12 +273,12 @@ public class PhotoUploadDialog extends SimpleDialog {
             if (_slot != null) {
                 try {
                     Attachment attachment = new Attachment();
-                    attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
+                    attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
                     if (_filePath != null) {
                         WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(_filePath));
                     } else if (_uri != null) {
-                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(FileUtils.getFilePathFromUri(App.get(), _uri)));
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(FileUtils.getFilePathFromUri(App.get(), _uri)));
                     }
 
                 } catch (Exception e) {
