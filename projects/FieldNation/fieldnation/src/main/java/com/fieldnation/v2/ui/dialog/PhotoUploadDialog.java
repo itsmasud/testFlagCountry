@@ -255,13 +255,13 @@ public class PhotoUploadDialog extends SimpleDialog {
             if (_task != null) {
                 try {
                     Attachment attachment = new Attachment();
-                    attachment.folderId(_task.getAttachments().getId()).notes(_description);
+                    attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    // TODO: API is not working
+                    // TODO: API cant take notes with the attachment
                     if (_filePath != null) {
                         WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_filePath));
                     } else if (_uri != null) {
-                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_uri.getPath()));
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(FileUtils.getFilePathFromUri(App.get(), _uri)));
                     }
 
                 } catch (Exception e) {
@@ -273,13 +273,12 @@ public class PhotoUploadDialog extends SimpleDialog {
             if (_slot != null) {
                 try {
                     Attachment attachment = new Attachment();
-                    attachment.folderId(_slot.getId()).notes(_description);
+                    attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    // TODO: uploading when using slot
                     if (_filePath != null) {
                         WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(_filePath));
                     } else if (_uri != null) {
-                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(_uri.getPath()));
+                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(FileUtils.getFilePathFromUri(App.get(), _uri)));
                     }
 
                 } catch (Exception e) {
@@ -368,8 +367,8 @@ public class PhotoUploadDialog extends SimpleDialog {
         }
 
         @Override
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
-            setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+        public void onDeliverableCacheEnd(Uri uri, String filePath) {
+            setPhoto(MemUtils.getMemoryEfficientBitmap(filePath, 400));
         }
     };
 

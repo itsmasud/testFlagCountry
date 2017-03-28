@@ -87,7 +87,7 @@ public class MessageFragment extends WorkorderFragment {
 //        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
         if (_workorder != null) {
             _refreshView.startRefreshing();
-            WorkordersWebApi.getMessages(App.get(), _workorder.getWorkOrderId(), true, false);
+            WorkordersWebApi.getMessages(App.get(), _workorder.getId(), true, false);
         }
     }
 
@@ -103,7 +103,7 @@ public class MessageFragment extends WorkorderFragment {
             return;
 
         Log.v(TAG, "getMessages");
-        WorkordersWebApi.getMessages(App.get(), _workorder.getWorkOrderId(), true, false);
+        WorkordersWebApi.getMessages(App.get(), _workorder.getId(), false, false);
     }
 
     private void populateUi() {
@@ -172,7 +172,7 @@ public class MessageFragment extends WorkorderFragment {
                 try {
                     Message msg = new Message();
                     msg.setMessage(_inputView.getInputText());
-                    WorkordersWebApi.addMessage(App.get(), _workorder.getWorkOrderId(), msg);
+                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

@@ -194,7 +194,7 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
         @Override
         public void onTaskClick(Task task) {
             if (_listener != null) {
-                WorkOrderTracker.onTaskEvent(App.get(), task.getType(), _workOrder.getWorkOrderId());
+                WorkOrderTracker.onTaskEvent(App.get(), task.getType(), _workOrder.getId());
                 switch (task.getType().getId()) {
 
                     case 1:

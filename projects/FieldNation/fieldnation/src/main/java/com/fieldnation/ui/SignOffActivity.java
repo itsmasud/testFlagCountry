@@ -213,13 +213,13 @@ public class SignOffActivity extends AuthSimpleActivity {
             if (_taskId != -1) {
                 signature.task(new Task().id(_taskId));
             }
-            WorkordersWebApi.addSignature(App.get(), _workOrder.getWorkOrderId(), signature);
+            WorkordersWebApi.addSignature(App.get(), _workOrder.getId(), signature);
 
             if (_completeWorkorder) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
-                        WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getWorkOrderId());
-                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getWorkOrderId());
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
+                        WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
+                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId());
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);

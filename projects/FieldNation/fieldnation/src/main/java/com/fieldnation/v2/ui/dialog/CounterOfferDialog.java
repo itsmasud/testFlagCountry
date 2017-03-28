@@ -469,7 +469,7 @@ public class CounterOfferDialog extends SimpleDialog {
 
                 if (_workOrder.getRequests().getOpenRequest() != null) {
                     _refreshView.startRefreshing();
-                    WorkordersWebApi.removeRequest(App.get(), _workOrder.getWorkOrderId(),
+                    WorkordersWebApi.removeRequest(App.get(), _workOrder.getId(),
                             _workOrder.getRequests().getOpenRequest().getId());
                 } else {
                     _refreshView.startRefreshing();
@@ -498,7 +498,7 @@ public class CounterOfferDialog extends SimpleDialog {
                         if (_expires > 0)
                             request.expires(new Date(_expires));
 
-                        WorkordersWebApi.request(App.get(), _workOrder.getWorkOrderId(), request);
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -567,7 +567,7 @@ public class CounterOfferDialog extends SimpleDialog {
                     if (_expires > 0)
                         request.expires(new Date(_expires));
 
-                    WorkordersWebApi.request(App.get(), _workOrder.getWorkOrderId(), request);
+                    WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

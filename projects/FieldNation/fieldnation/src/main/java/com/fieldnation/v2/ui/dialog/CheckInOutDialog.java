@@ -348,8 +348,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                     if (_location != null) {
                         cio.coords(new Coords(_location));
                     }
-                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), new TimeLog().in(cio));
-                    _onCheckInDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), new TimeLog().in(cio));
+                    _onCheckInDispatcher.dispatch(getUid(), _workOrder.getId());
 
                 } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                     boolean callMade = false;
@@ -365,7 +365,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                                 timeLog.devices((double) _itemSelectedPosition);
                             }
                             timeLog.out(cio);
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), timeLog);
+                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog);
                             callMade = true;
                             break;
                         }
@@ -375,7 +375,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                         Log.v(TAG, "break!");
                     }
 
-                    _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                    _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getId());
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);

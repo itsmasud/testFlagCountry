@@ -28,7 +28,7 @@
                 app:theme="@style/FieldNation.Material.ToolBar"></android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
-        <com.fieldnation.v2.ui.search.SearchResultScreen
+        <com.fieldnation.ui.ncns.ConfirmResultScreen
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

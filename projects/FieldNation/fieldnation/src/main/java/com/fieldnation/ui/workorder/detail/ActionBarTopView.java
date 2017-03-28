@@ -11,7 +11,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
@@ -377,9 +377,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE,
-                    null, _workOrder.getWorkOrderId().intValue());
+                    null, _workOrder.getId());
 
-            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
+            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
         }
     };
 
@@ -396,7 +396,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
         }
@@ -405,7 +405,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
         public void onSend(long workOrderId) {
-            if (_workOrder.getWorkOrderId() == workOrderId)
+            if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                         WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
         }

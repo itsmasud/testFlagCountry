@@ -264,7 +264,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         if (_tabview == null)
             return;
 
-        setTitle("WO: " + _workOrder.getWorkOrderId());
+        setTitle("WO: " + _workOrder.getId());
         if (_workOrder.getMessages() != null
                 && _workOrder.getMessages().getMetadata() != null
                 && _workOrder.getMessages().getMetadata().getTotal() != null) {
@@ -282,12 +282,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         for (int i = 0; i < _fragments.length; i++) {
             _fragments[i].setLoading(loading);
         }
-    }
-
-    public void getData() {
-        Log.v(TAG, "getData");
-        setLoading(true);
-        WorkordersWebApi.getWorkOrder(this, _workOrderId, true, false);
     }
 
     /*-*************************-*/
@@ -381,7 +375,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         public void onConnected() {
             Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
             _workOrderApi.subWorkordersWebApi();
-            getData();
+            setLoading(true);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         @Override
@@ -392,8 +387,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 return;
             }
 
-            if (_workOrderId == (int) workOrder.getWorkOrderId()) {
-                Debug.setLong("last_workorder", workOrder.getWorkOrderId());
+            if (_workOrderId == (int) workOrder.getId()) {
+                Debug.setLong("last_workorder", workOrder.getId());
                 _workOrder = workOrder;
                 populateUi();
             }
@@ -406,7 +401,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
             Log.v(TAG, "onWorkordersWebApi " + methodName);
 
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 
@@ -436,7 +431,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static Intent makeIntentShow(Context context, int workOrderId) {
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(/*Intent.FLAG_ACTIVITY_CLEAR_TOP |*/ Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
         return intent;

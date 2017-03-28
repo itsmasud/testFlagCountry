@@ -305,7 +305,7 @@ public class WebCrawlerService extends Service {
             for (WorkOrder workOrder : works) {
                 incrementPendingRequestCounter(1);
                 incRequestCounter(1);
-                WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getWorkOrderId(), false, true);
+                WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
             }
 
             //
@@ -464,10 +464,10 @@ public class WebCrawlerService extends Service {
             if (workorder == null)
                 return false;
 
-            Log.v(TAG, "WorkorderDetailWorker running" + workorder.getWorkOrderId());
-            //WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkOrderId(), true, false);
-            //WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkOrderId(), true);
-            //WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkOrderId(), true);
+            Log.v(TAG, "WorkorderDetailWorker running" + workorder.getId());
+            //WorkorderClient.listMessages(WebCrawlerService.this, workorder.getId(), true, false);
+            //WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getId(), true);
+            //WorkorderClient.listTasks(WebCrawlerService.this, workorder.getId(), true);
 
 /*
             AttachmentFolders attachmentFolders = workorder.getAttachments();
