@@ -15,6 +15,7 @@
         android:id="@+id/done_menuitem"
         android:enabled="true"
         android:orderInCategory="400"
+        app:actionViewClass="com.fieldnation.ui.menu.DoneMenuButton"
         android:title="DONE"
         app:showAsAction="always" />
 

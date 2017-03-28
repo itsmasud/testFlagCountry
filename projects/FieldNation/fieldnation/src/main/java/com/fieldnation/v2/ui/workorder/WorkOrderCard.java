@@ -463,11 +463,11 @@ public class WorkOrderCard extends RelativeLayout {
                 && _workOrder.getBundle().getId() != null
                 && _workOrder.getBundle().getId() > 0
                 && (_workOrder.getStatus().getId() == 2
-                || _workOrder.getStatus().getId() == 3)) {
+                || _workOrder.getStatus().getId() == 9)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
             button.setText(getResources().getString(R.string.btn_view_bundle_num,
-                    _workOrder.getBundle().getMetadata().getTotal()));
+                    _workOrder.getBundle().getMetadata().getTotal() + 1));
 
             // accept
         } else if (_workOrder.getRoutes() != null

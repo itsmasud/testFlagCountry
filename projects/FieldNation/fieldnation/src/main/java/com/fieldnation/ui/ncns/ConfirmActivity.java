@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -15,6 +16,7 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.menu.DoneMenuButton;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.SavedList;
@@ -37,6 +39,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     // Ui
     private ConfirmResultScreen _recyclerView;
     private Toolbar _toolbar;
+    private Button _doneButton;
 
     // Data
     private SavedList _savedList;
@@ -120,6 +123,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.confirm, menu);
+        _doneButton = ((DoneMenuButton) menu.findItem(R.id.done_menuitem).getActionView()).getButton();
         return true;
     }
 
@@ -127,12 +131,13 @@ public class ConfirmActivity extends AuthSimpleActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.remindme_menuitem:
-                NavActivity.startNew(App.get());
-                finish();
+                TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
                 break;
             case R.id.done_menuitem:
                 if (!_needsConfirm) {
-                    TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
+                    App.get().setNeedsConfirmation(false);
+                    NavActivity.startNew(App.get());
+                    finish();
                 } else {
                     ToastClient.toast(App.get(), "Please confirm and set ETAs before continuing", Toast.LENGTH_SHORT);
                 }
@@ -162,6 +167,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         Log.v(TAG, "scanWorkOrders");
         WoPagingAdapter adapter = _recyclerView.getAdapter();
         _needsConfirm = false;
+        _doneButton.setEnabled(true);
         for (int i = 0; i < adapter.getItemCount(); i++) {
             Object obj = adapter.getObject(i);
             if (obj instanceof WorkOrder) {
@@ -169,6 +175,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
                 if ((wo.getEta() != null && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM))
                         || (wo.getEta() != null && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD))) {
                     _needsConfirm = true;
+                    _doneButton.setEnabled(false);
                     return;
                 }
             }
@@ -178,8 +185,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final TwoButtonDialog.OnPrimaryListener _remindMe_onOk = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
-            App.get().setNeedsConfirmation(false);
             NavActivity.startNew(App.get());
+            finish();
         }
     };
 

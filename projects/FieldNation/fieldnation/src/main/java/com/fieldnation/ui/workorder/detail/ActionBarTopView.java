@@ -245,12 +245,12 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
                 && _workOrder.getBundle().getId() != null
                 && _workOrder.getBundle().getId() > 0
                 && (_workOrder.getStatus().getId() == 2
-                || _workOrder.getStatus().getId() == 3)) {
+                || _workOrder.getStatus().getId() == 9)) {
             inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
             _rightWhiteButton.setText(getResources().getString(R.string.btn_view_bundle_num,
-                    _workOrder.getBundle().getMetadata().getTotal()));
+                    _workOrder.getBundle().getMetadata().getTotal() + 1));
             setVisibility(View.VISIBLE);
 
             // accept
