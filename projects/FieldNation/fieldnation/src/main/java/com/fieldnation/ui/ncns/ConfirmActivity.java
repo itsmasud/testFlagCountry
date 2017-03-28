@@ -20,8 +20,8 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.nav.NavActivity;
-import com.fieldnation.v2.ui.search.SearchResultScreen;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 
 /**
@@ -31,8 +31,11 @@ import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 public class ConfirmActivity extends AuthSimpleActivity {
     private static final String TAG = "ConfirmActivity";
 
+    // Dialogs
+    private static final String DIALOG_REMIND_ME = TAG + ".remindMeDialog";
+
     // Ui
-    private SearchResultScreen _recyclerView;
+    private ConfirmResultScreen _recyclerView;
     private Toolbar _toolbar;
 
     // Data
@@ -55,7 +58,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
 
-        _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
+        _recyclerView = (ConfirmResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
         setTitle("Confirm Work");
@@ -81,9 +84,23 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         _recyclerView.startSearch(_savedList, _options);
+    }
+
+    @Override
+    protected void onStop() {
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
+
+        super.onStop();
     }
 
     @Override
@@ -115,10 +132,9 @@ public class ConfirmActivity extends AuthSimpleActivity {
                 break;
             case R.id.done_menuitem:
                 if (!_needsConfirm) {
-                    App.get().setNeedsConfirmation(false);
-                    NavActivity.startNew(App.get());
+                    TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
                 } else {
-                    ToastClient.toast(App.get(), "Please confirm your work before continuing", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), "Please confirm and set ETAs before continuing", Toast.LENGTH_SHORT);
                 }
                 break;
         }
@@ -130,7 +146,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         // do nothing, you're stuck here.... muhahahah
     }
 
-    private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
+    private final ConfirmResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new ConfirmResultScreen.OnWorkOrderListReceivedListener() {
         @Override
         public void OnWorkOrderListReceived(WorkOrders workOrders) {
             if (workOrders == null
@@ -150,14 +166,22 @@ public class ConfirmActivity extends AuthSimpleActivity {
             Object obj = adapter.getObject(i);
             if (obj instanceof WorkOrder) {
                 WorkOrder wo = (WorkOrder) obj;
-                if (wo.getEta() != null
-                        && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
+                if ((wo.getEta() != null && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM))
+                        || (wo.getEta() != null && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD))) {
                     _needsConfirm = true;
                     return;
                 }
             }
         }
     }
+
+    private final TwoButtonDialog.OnPrimaryListener _remindMe_onOk = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary() {
+            App.get().setNeedsConfirmation(false);
+            NavActivity.startNew(App.get());
+        }
+    };
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
