@@ -368,9 +368,9 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a contact to a work order
      *
      * @param workOrderId Work order id
-     * @param json        JSON Model
+     * @param contact JSON Model
      */
-    public static void addContact(Context context, Integer workOrderId, Contact json) {
+    public static void addContact(Context context, Integer workOrderId, Contact contact) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/contacts");
 
@@ -379,8 +379,8 @@ public class WorkordersWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/contacts");
 
-            if (json != null)
-                builder.body(json.getJson().toString());
+            if (contact != null)
+                builder.body(contact.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/contacts")
@@ -579,6 +579,82 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addFolder"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: addHoldByWorkOrder
+     * Adds a hold on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param hold Hold object with updates
+     */
+    public static void addHold(Context context, Integer workOrderId, Hold hold) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/holds");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds");
+
+            if (hold != null)
+                builder.body(hold.getJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/holds")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "addHold"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: addHoldByWorkOrder
+     * Adds a hold on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param hold Hold object with updates
+     * @param async Async (Optional)
+     */
+    public static void addHold(Context context, Integer workOrderId, Hold hold, Boolean async) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/holds?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds")
+                    .urlParams("?async=" + async);
+
+            if (hold != null)
+                builder.body(hold.getJson().toString());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/holds")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "addHold"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -2587,6 +2663,84 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getHoldByWorkOrderAndHold
+     * Gets a hold on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param holdId ID of hold to update
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getHold(Context context, Integer workOrderId, Integer holdId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getHold"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getHoldByWorkOrderAndHold
+     * Gets a hold on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param holdId ID of hold to update
+     * @param async Async (Optional)
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getHold(Context context, Integer workOrderId, Integer holdId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId)
+                    .urlParams("?async=" + async);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getHold"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getHoldsByWorkOrder
      * Get holds on work order
      *
@@ -3699,7 +3853,6 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                     + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
                     + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
-                                    + (getWorkOrdersOptions.getFHasRemoteWork() != null ? "&f_has_remote_work=" + getWorkOrdersOptions.getFHasRemoteWork() : "")
                     + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                     + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                     + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
@@ -3738,7 +3891,8 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                     + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                     + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                    + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                                    + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
+                                    + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                     + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
             );
 
@@ -3758,7 +3912,6 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getFMaxApprovalTime() != null ? "&f_max_approval_time=" + getWorkOrdersOptions.getFMaxApprovalTime() : "")
                             + (getWorkOrdersOptions.getFRating() != null ? "&f_rating=" + getWorkOrdersOptions.getFRating() : "")
                             + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
-                                    + (getWorkOrdersOptions.getFHasRemoteWork() != null ? "&f_has_remote_work=" + getWorkOrdersOptions.getFHasRemoteWork() : "")
                             + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                             + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
                             + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
@@ -3797,7 +3950,8 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                             + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                             + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                            + (getWorkOrdersOptions.getFGeo() != null ? "&f_geo=" + getWorkOrdersOptions.getFGeo() : "")
+                                    + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
+                                    + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                             + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
                     );
 
@@ -4005,6 +4159,42 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: massRequests
+     * Work order mass requests
+     *
+     * @param requests JSON Payload
+     */
+    public static void massRequests(Context context, String requests) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/mass-requests");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/mass-requests");
+
+            if (requests != null)
+                builder.body(requests);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/mass-requests")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "massRequests"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: publishByWorkOrder
      * Publishes a work order to the marketplace where it can garner requests.
      *
@@ -4176,7 +4366,7 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: removeContactByWorkOrderAndContactId
+     * Swagger operationId: removeContactByWorkOrderAndContact
      * Removes a work order contact
      *
      * @param workOrderId Work order id
@@ -4233,6 +4423,76 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "removeDiscount"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: removeHoldByWorkOrderAndHold
+     * Removes a hold on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param holdId ID of hold to update
+     */
+    public static void removeHold(Context context, Integer workOrderId, Integer holdId) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "removeHold"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: removeHoldByWorkOrderAndHold
+     * Removes a hold on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param holdId ID of hold to update
+     * @param async Async (Optional)
+     */
+    public static void removeHold(Context context, Integer workOrderId, Integer holdId, Boolean async) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId)
+                    .urlParams("?async=" + async);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/holds/{hold_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "removeHold"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -4386,7 +4646,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param requestId   JSON Model
+     * @param requestId ID of work order request/counter offer
      */
     public static void removeRequest(Context context, Integer workOrderId, Integer requestId) {
         try {
@@ -4420,7 +4680,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param requestId   JSON Model
+     * @param requestId ID of work order request/counter offer
      * @param async       Async (Optional)
      */
     public static void removeRequest(Context context, Integer workOrderId, Integer requestId, Boolean async) {
@@ -4434,7 +4694,7 @@ public class WorkordersWebApi extends TopicClient {
                     .urlParams("?async=" + async);
 
             WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests/[request_id]")
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/requests/{request_id}")
                     .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
@@ -5450,14 +5710,14 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: updateContactByWorkOrderAndContactId
-     * Updates a work order contact
+     * Swagger operationId: updateContactByWorkOrderAndContact
+     * Update contact of a work order
      *
      * @param workOrderId Work order id
      * @param contactId   Contact id
-     * @param json        JSON Model
+     * @param contact JSON Model
      */
-    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact json) {
+    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact contact) {
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId);
 
@@ -5466,8 +5726,8 @@ public class WorkordersWebApi extends TopicClient {
                     .method("PUT")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId);
 
-            if (json != null)
-                builder.body(json.getJson().toString());
+            if (contact != null)
+                builder.body(contact.getJson().toString());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/contacts/{contact_id}")
@@ -5839,8 +6099,8 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: updateHoldByWorkOrder
-     * Updates a single hold on a work order
+     * Swagger operationId: updateHoldByWorkOrderAndHold
+     * Updates a hold on a work order
      *
      * @param workOrderId ID of work order
      * @param holdId      ID of hold to update
@@ -5877,8 +6137,8 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: updateHoldByWorkOrder
-     * Updates a single hold on a work order
+     * Swagger operationId: updateHoldByWorkOrderAndHold
+     * Updates a hold on a work order
      *
      * @param workOrderId ID of work order
      * @param holdId      ID of hold to update
@@ -5906,82 +6166,6 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateHold"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: updateHoldsByWorkOrder
-     * Updates any holds on a work order.
-     *
-     * @param workOrderId ID of work order
-     * @param holds       Holds
-     */
-    public static void updateHolds(Context context, Integer workOrderId, String holds) {
-        try {
-            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds");
-
-            if (holds != null)
-                builder.body(holds);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/holds")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "updateHolds"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: updateHoldsByWorkOrder
-     * Updates any holds on a work order.
-     *
-     * @param workOrderId ID of work order
-     * @param holds       Holds
-     * @param async       Async (Optional)
-     */
-    public static void updateHolds(Context context, Integer workOrderId, String holds, Boolean async) {
-        try {
-            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds?async=" + async);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/holds")
-                    .urlParams("?async=" + async);
-
-            if (holds != null)
-                builder.body(holds);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/holds")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "updateHolds"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -6846,67 +7030,70 @@ public class WorkordersWebApi extends TopicClient {
         public void onAcceptSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
         }
 
-        public void onAddAlertToWorkOrderAndTask(boolean success, Error error) {
+        public void onAddAlertToWorkOrderAndTask(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddAttachment(Attachment attachment, boolean success, Error error) {
+        public void onAddAttachment(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddBonus(boolean success, Error error) {
+        public void onAddBonus(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddContact(IdResponse idResponse, boolean success, Error error) {
+        public void onAddContact(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddDiscount(IdResponse idResponse, boolean success, Error error) {
+        public void onAddDiscount(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddExpense(Expense expense, boolean success, Error error) {
+        public void onAddExpense(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddFolder(boolean success, Error error) {
+        public void onAddFolder(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddIncrease(PayIncrease payIncrease, boolean success, Error error) {
+        public void onAddHold(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddMessage(IdResponse idResponse, boolean success, Error error) {
+        public void onAddIncrease(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddPenalty(boolean success, Error error) {
+        public void onAddMessage(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddProblem(boolean success, Error error) {
+        public void onAddPenalty(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddShipment(IdResponse idResponse, boolean success, Error error) {
+        public void onAddProblem(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddSignature(Signature signature, boolean success, Error error) {
+        public void onAddShipment(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddTask(IdResponse idResponse, boolean success, Error error) {
+        public void onAddSignature(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAddTimeLog(TimeLog timeLog, boolean success, Error error) {
+        public void onAddTask(WorkOrder workOrder, boolean success, Error error) {
+        }
+
+        public void onAddTimeLog(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onAddWorkOrder(boolean success, Error error) {
         }
 
-        public void onApproveWorkOrder(boolean success, Error error) {
+        public void onApproveWorkOrder(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onAssignUser(boolean success, Error error) {
+        public void onAssignUser(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onCancelSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
         }
 
-        public void onCompleteWorkOrder(boolean success, Error error) {
+        public void onCompleteWorkOrder(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onDecline(boolean success, Error error) {
+        public void onDecline(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onDeclineRequest(boolean success, Error error) {
@@ -6915,7 +7102,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onDeclineSwapRequest(SwapResponse swapResponse, boolean success, Error error) {
         }
 
-        public void onDeleteAttachment(boolean success, Error error) {
+        public void onDeleteAttachment(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onDeleteExpense(boolean success, Error error) {
@@ -6936,7 +7123,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onDeleteWorkOrder(boolean success, Error error) {
         }
 
-        public void onDenyIncrease(boolean success, Error error) {
+        public void onDenyIncrease(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onGetAssignee(Assignee assignee, boolean success, Error error) {
@@ -6973,6 +7160,9 @@ public class WorkordersWebApi extends TopicClient {
         }
 
         public void onGetFolder(AttachmentFolder attachmentFolder, boolean success, Error error) {
+        }
+
+        public void onGetHold(Hold hold, boolean success, Error error) {
         }
 
         public void onGetHolds(Holds holds, boolean success, Error error) {
@@ -7053,7 +7243,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
         }
 
-        public void onGroupTask(boolean success, Error error) {
+        public void onGroupTask(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onIncompleteWorkOrder(boolean success, Error error) {
@@ -7062,7 +7252,10 @@ public class WorkordersWebApi extends TopicClient {
         public void onMassAcceptWorkOrder(boolean success, Error error) {
         }
 
-        public void onPublish(boolean success, Error error) {
+        public void onMassRequests(boolean success, Error error) {
+        }
+
+        public void onPublish(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onRemoveAlert(boolean success, Error error) {
@@ -7080,6 +7273,9 @@ public class WorkordersWebApi extends TopicClient {
         public void onRemoveDiscount(boolean success, Error error) {
         }
 
+        public void onRemoveHold(WorkOrder workOrder, boolean success, Error error) {
+        }
+
         public void onRemoveMessage(IdResponse idResponse, boolean success, Error error) {
         }
 
@@ -7092,19 +7288,19 @@ public class WorkordersWebApi extends TopicClient {
         public void onRemoveRequest(boolean success, Error error) {
         }
 
-        public void onRemoveTask(boolean success, Error error) {
+        public void onRemoveTask(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onRemoveTimeLog(boolean success, Error error) {
         }
 
-        public void onReorderTask(boolean success, Error error) {
+        public void onReorderTask(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onReplyMessage(IdResponse idResponse, boolean success, Error error) {
+        public void onReplyMessage(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onRequest(boolean success, Error error) {
+        public void onRequest(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onResolveReopenReportProblem(boolean success, Error error) {
@@ -7113,7 +7309,7 @@ public class WorkordersWebApi extends TopicClient {
         public void onRevertWorkOrderToDraft(boolean success, Error error) {
         }
 
-        public void onRouteUser(boolean success, Error error) {
+        public void onRouteUser(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onUnapproveWorkOrder(boolean success, Error error) {
@@ -7128,73 +7324,70 @@ public class WorkordersWebApi extends TopicClient {
         public void onUnRouteUser(boolean success, Error error) {
         }
 
-        public void onUpdateAllTimeLogs(boolean success, Error error) {
+        public void onUpdateAllTimeLogs(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateAttachment(boolean success, Error error) {
+        public void onUpdateAttachment(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateBonus(boolean success, Error error) {
+        public void onUpdateBonus(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateContact(boolean success, Error error) {
+        public void onUpdateContact(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateCustomField(CustomField customField, boolean success, Error error) {
+        public void onUpdateCustomField(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateDiscount(IdResponse idResponse, boolean success, Error error) {
+        public void onUpdateDiscount(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateETA(boolean success, Error error) {
+        public void onUpdateETA(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateExpense(Expense expense, boolean success, Error error) {
+        public void onUpdateExpense(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateFolder(boolean success, Error error) {
+        public void onUpdateFolder(WorkOrder workOrder, boolean success, Error error) {
         }
 
         public void onUpdateHold(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateHolds(boolean success, Error error) {
+        public void onUpdateIncrease(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateIncrease(PayIncrease payIncrease, boolean success, Error error) {
+        public void onUpdateLocation(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateLocation(boolean success, Error error) {
+        public void onUpdateMessage(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateMessage(IdResponse idResponse, boolean success, Error error) {
+        public void onUpdatePay(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdatePay(boolean success, Error error) {
+        public void onUpdatePenalty(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdatePenalty(boolean success, Error error) {
+        public void onUpdateProblem(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateProblem(boolean success, Error error) {
+        public void onUpdateSchedule(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateSchedule(boolean success, Error error) {
+        public void onUpdateShipment(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateShipment(boolean success, Error error) {
+        public void onUpdateTask(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateTask(boolean success, Error error) {
+        public void onUpdateTimeLog(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateTimeLog(boolean success, Error error) {
+        public void onUpdateWorkOrder(WorkOrder workOrder, boolean success, Error error) {
         }
 
-        public void onUpdateWorkOrder(boolean success, Error error) {
-        }
-
-        public void onVerifyTimeLog(boolean success, Error error) {
+        public void onVerifyTimeLog(WorkOrder workOrder, boolean success, Error error) {
         }
 
     }
@@ -7236,82 +7429,98 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addAlertToWorkOrderAndTask":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addAttachment":
                         if (success)
-                            successObject = Attachment.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addBonus":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addContact":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addDiscount":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addExpense":
                         if (success)
-                            successObject = Expense.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addFolder":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "addHold":
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addIncrease":
                         if (success)
-                            successObject = PayIncrease.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addMessage":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addPenalty":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addProblem":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addShipment":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addSignature":
                         if (success)
-                            successObject = Signature.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addTask":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "addTimeLog":
                         if (success)
-                            successObject = TimeLog.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7320,11 +7529,15 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "approveWorkOrder":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "assignUser":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "cancelSwapRequest":
@@ -7334,11 +7547,15 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "completeWorkOrder":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "decline":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "declineRequest":
@@ -7352,7 +7569,9 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "deleteAttachment":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "deleteExpense":
@@ -7380,7 +7599,9 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "denyIncrease":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "getAssignee":
@@ -7452,6 +7673,12 @@ public class WorkordersWebApi extends TopicClient {
                     case "getFolder":
                         if (success)
                             successObject = AttachmentFolder.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "getHold":
+                        if (success)
+                            successObject = Hold.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
@@ -7612,7 +7839,9 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "groupTask":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "incompleteWorkOrder":
@@ -7623,8 +7852,14 @@ public class WorkordersWebApi extends TopicClient {
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "publish":
+                    case "massRequests":
                         if (!success)
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
+                    case "publish":
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeAlert":
@@ -7647,6 +7882,12 @@ public class WorkordersWebApi extends TopicClient {
                         if (!success)
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
+                    case "removeHold":
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
+                            failObject = Error.fromJson(new JsonObject(data));
+                        break;
                     case "removeMessage":
                         if (success)
                             successObject = IdResponse.fromJson(new JsonObject(data));
@@ -7666,7 +7907,9 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeTask":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "removeTimeLog":
@@ -7674,17 +7917,21 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "reorderTask":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "replyMessage":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "request":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "resolveReopenReportProblem":
@@ -7696,7 +7943,9 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "routeUser":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "unapproveWorkOrder":
@@ -7716,45 +7965,57 @@ public class WorkordersWebApi extends TopicClient {
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateAllTimeLogs":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateAttachment":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateBonus":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateContact":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateCustomField":
                         if (success)
-                            successObject = CustomField.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateDiscount":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateETA":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateExpense":
                         if (success)
-                            successObject = Expense.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateFolder":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateHold":
@@ -7763,60 +8024,76 @@ public class WorkordersWebApi extends TopicClient {
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
-                    case "updateHolds":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
                     case "updateIncrease":
                         if (success)
-                            successObject = PayIncrease.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateLocation":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateMessage":
                         if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
                         else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updatePay":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updatePenalty":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateProblem":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateSchedule":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateShipment":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateTask":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateTimeLog":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "updateWorkOrder":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     case "verifyTimeLog":
-                        if (!success)
+                        if (success)
+                            successObject = WorkOrder.fromJson(new JsonObject(data));
+                        else
                             failObject = Error.fromJson(new JsonObject(data));
                         break;
                     default:
@@ -7846,67 +8123,70 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onAcceptSwapRequest((SwapResponse) successObject, success, (Error) failObject);
                         break;
                     case "addAlertToWorkOrderAndTask":
-                        listener.onAddAlertToWorkOrderAndTask(success, (Error) failObject);
+                        listener.onAddAlertToWorkOrderAndTask((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addAttachment":
-                        listener.onAddAttachment((Attachment) successObject, success, (Error) failObject);
+                        listener.onAddAttachment((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addBonus":
-                        listener.onAddBonus(success, (Error) failObject);
+                        listener.onAddBonus((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addContact":
-                        listener.onAddContact((IdResponse) successObject, success, (Error) failObject);
+                        listener.onAddContact((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addDiscount":
-                        listener.onAddDiscount((IdResponse) successObject, success, (Error) failObject);
+                        listener.onAddDiscount((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addExpense":
-                        listener.onAddExpense((Expense) successObject, success, (Error) failObject);
+                        listener.onAddExpense((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addFolder":
-                        listener.onAddFolder(success, (Error) failObject);
+                        listener.onAddFolder((WorkOrder) successObject, success, (Error) failObject);
+                        break;
+                    case "addHold":
+                        listener.onAddHold((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addIncrease":
-                        listener.onAddIncrease((PayIncrease) successObject, success, (Error) failObject);
+                        listener.onAddIncrease((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addMessage":
-                        listener.onAddMessage((IdResponse) successObject, success, (Error) failObject);
+                        listener.onAddMessage((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addPenalty":
-                        listener.onAddPenalty(success, (Error) failObject);
+                        listener.onAddPenalty((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addProblem":
-                        listener.onAddProblem(success, (Error) failObject);
+                        listener.onAddProblem((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addShipment":
-                        listener.onAddShipment((IdResponse) successObject, success, (Error) failObject);
+                        listener.onAddShipment((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addSignature":
-                        listener.onAddSignature((Signature) successObject, success, (Error) failObject);
+                        listener.onAddSignature((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addTask":
-                        listener.onAddTask((IdResponse) successObject, success, (Error) failObject);
+                        listener.onAddTask((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addTimeLog":
-                        listener.onAddTimeLog((TimeLog) successObject, success, (Error) failObject);
+                        listener.onAddTimeLog((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "addWorkOrder":
                         listener.onAddWorkOrder(success, (Error) failObject);
                         break;
                     case "approveWorkOrder":
-                        listener.onApproveWorkOrder(success, (Error) failObject);
+                        listener.onApproveWorkOrder((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "assignUser":
-                        listener.onAssignUser(success, (Error) failObject);
+                        listener.onAssignUser((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "cancelSwapRequest":
                         listener.onCancelSwapRequest((SwapResponse) successObject, success, (Error) failObject);
                         break;
                     case "completeWorkOrder":
-                        listener.onCompleteWorkOrder(success, (Error) failObject);
+                        listener.onCompleteWorkOrder((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "decline":
-                        listener.onDecline(success, (Error) failObject);
+                        listener.onDecline((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "declineRequest":
                         listener.onDeclineRequest(success, (Error) failObject);
@@ -7915,7 +8195,7 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onDeclineSwapRequest((SwapResponse) successObject, success, (Error) failObject);
                         break;
                     case "deleteAttachment":
-                        listener.onDeleteAttachment(success, (Error) failObject);
+                        listener.onDeleteAttachment((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "deleteExpense":
                         listener.onDeleteExpense(success, (Error) failObject);
@@ -7936,7 +8216,7 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onDeleteWorkOrder(success, (Error) failObject);
                         break;
                     case "denyIncrease":
-                        listener.onDenyIncrease(success, (Error) failObject);
+                        listener.onDenyIncrease((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "getAssignee":
                         listener.onGetAssignee((Assignee) successObject, success, (Error) failObject);
@@ -7973,6 +8253,9 @@ public class WorkordersWebApi extends TopicClient {
                         break;
                     case "getFolder":
                         listener.onGetFolder((AttachmentFolder) successObject, success, (Error) failObject);
+                        break;
+                    case "getHold":
+                        listener.onGetHold((Hold) successObject, success, (Error) failObject);
                         break;
                     case "getHolds":
                         listener.onGetHolds((Holds) successObject, success, (Error) failObject);
@@ -8053,7 +8336,7 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onGetWorkOrders((WorkOrders) successObject, success, (Error) failObject);
                         break;
                     case "groupTask":
-                        listener.onGroupTask(success, (Error) failObject);
+                        listener.onGroupTask((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "incompleteWorkOrder":
                         listener.onIncompleteWorkOrder(success, (Error) failObject);
@@ -8061,8 +8344,11 @@ public class WorkordersWebApi extends TopicClient {
                     case "MassAcceptWorkOrder":
                         listener.onMassAcceptWorkOrder(success, (Error) failObject);
                         break;
+                    case "massRequests":
+                        listener.onMassRequests(success, (Error) failObject);
+                        break;
                     case "publish":
-                        listener.onPublish(success, (Error) failObject);
+                        listener.onPublish((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "removeAlert":
                         listener.onRemoveAlert(success, (Error) failObject);
@@ -8079,6 +8365,9 @@ public class WorkordersWebApi extends TopicClient {
                     case "removeDiscount":
                         listener.onRemoveDiscount(success, (Error) failObject);
                         break;
+                    case "removeHold":
+                        listener.onRemoveHold((WorkOrder) successObject, success, (Error) failObject);
+                        break;
                     case "removeMessage":
                         listener.onRemoveMessage((IdResponse) successObject, success, (Error) failObject);
                         break;
@@ -8092,19 +8381,19 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onRemoveRequest(success, (Error) failObject);
                         break;
                     case "removeTask":
-                        listener.onRemoveTask(success, (Error) failObject);
+                        listener.onRemoveTask((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "removeTimeLog":
                         listener.onRemoveTimeLog(success, (Error) failObject);
                         break;
                     case "reorderTask":
-                        listener.onReorderTask(success, (Error) failObject);
+                        listener.onReorderTask((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "replyMessage":
-                        listener.onReplyMessage((IdResponse) successObject, success, (Error) failObject);
+                        listener.onReplyMessage((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "request":
-                        listener.onRequest(success, (Error) failObject);
+                        listener.onRequest((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "resolveReopenReportProblem":
                         listener.onResolveReopenReportProblem(success, (Error) failObject);
@@ -8113,7 +8402,7 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onRevertWorkOrderToDraft(success, (Error) failObject);
                         break;
                     case "routeUser":
-                        listener.onRouteUser(success, (Error) failObject);
+                        listener.onRouteUser((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "unapproveWorkOrder":
                         listener.onUnapproveWorkOrder(success, (Error) failObject);
@@ -8128,73 +8417,70 @@ public class WorkordersWebApi extends TopicClient {
                         listener.onUnRouteUser(success, (Error) failObject);
                         break;
                     case "updateAllTimeLogs":
-                        listener.onUpdateAllTimeLogs(success, (Error) failObject);
+                        listener.onUpdateAllTimeLogs((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateAttachment":
-                        listener.onUpdateAttachment(success, (Error) failObject);
+                        listener.onUpdateAttachment((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateBonus":
-                        listener.onUpdateBonus(success, (Error) failObject);
+                        listener.onUpdateBonus((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateContact":
-                        listener.onUpdateContact(success, (Error) failObject);
+                        listener.onUpdateContact((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateCustomField":
-                        listener.onUpdateCustomField((CustomField) successObject, success, (Error) failObject);
+                        listener.onUpdateCustomField((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateDiscount":
-                        listener.onUpdateDiscount((IdResponse) successObject, success, (Error) failObject);
+                        listener.onUpdateDiscount((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateETA":
-                        listener.onUpdateETA(success, (Error) failObject);
+                        listener.onUpdateETA((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateExpense":
-                        listener.onUpdateExpense((Expense) successObject, success, (Error) failObject);
+                        listener.onUpdateExpense((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateFolder":
-                        listener.onUpdateFolder(success, (Error) failObject);
+                        listener.onUpdateFolder((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateHold":
                         listener.onUpdateHold((WorkOrder) successObject, success, (Error) failObject);
                         break;
-                    case "updateHolds":
-                        listener.onUpdateHolds(success, (Error) failObject);
-                        break;
                     case "updateIncrease":
-                        listener.onUpdateIncrease((PayIncrease) successObject, success, (Error) failObject);
+                        listener.onUpdateIncrease((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateLocation":
-                        listener.onUpdateLocation(success, (Error) failObject);
+                        listener.onUpdateLocation((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateMessage":
-                        listener.onUpdateMessage((IdResponse) successObject, success, (Error) failObject);
+                        listener.onUpdateMessage((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updatePay":
-                        listener.onUpdatePay(success, (Error) failObject);
+                        listener.onUpdatePay((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updatePenalty":
-                        listener.onUpdatePenalty(success, (Error) failObject);
+                        listener.onUpdatePenalty((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateProblem":
-                        listener.onUpdateProblem(success, (Error) failObject);
+                        listener.onUpdateProblem((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateSchedule":
-                        listener.onUpdateSchedule(success, (Error) failObject);
+                        listener.onUpdateSchedule((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateShipment":
-                        listener.onUpdateShipment(success, (Error) failObject);
+                        listener.onUpdateShipment((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateTask":
-                        listener.onUpdateTask(success, (Error) failObject);
+                        listener.onUpdateTask((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateTimeLog":
-                        listener.onUpdateTimeLog(success, (Error) failObject);
+                        listener.onUpdateTimeLog((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "updateWorkOrder":
-                        listener.onUpdateWorkOrder(success, (Error) failObject);
+                        listener.onUpdateWorkOrder((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     case "verifyTimeLog":
-                        listener.onVerifyTimeLog(success, (Error) failObject);
+                        listener.onVerifyTimeLog((WorkOrder) successObject, success, (Error) failObject);
                         break;
                     default:
                         Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

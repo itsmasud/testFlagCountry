@@ -255,8 +255,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
             // accept
         } else if (_workOrder.getRoutes() != null
-                && _workOrder.getRoutes().getOpenRoute() != null
-                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                && _workOrder.getRoutes().getUserRoute() != null
+                && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setOnClickListener(_notInterested_onClick);

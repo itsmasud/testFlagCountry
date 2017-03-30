@@ -56,15 +56,15 @@ public class FilterParams {
 
         if ((remoteWork == null || !remoteWork)
                 && radius != null && latitude != null && longitude != null) {
-            options.setFGeo(radius + "," + latitude + "," + longitude);
+//            options.setFGeo(radius + "," + latitude + "," + longitude);
         } else {
-            options.setFGeo(null);
+//            options.setFGeo(null);
         }
 
         if (remoteWork != null && remoteWork) {
-            options.fHasRemoteWork(remoteWork);
+            options.fRemoteWork(remoteWork);
         } else {
-            options.fHasRemoteWork(null);
+            options.fRemoteWork(null);
         }
 
         return options;

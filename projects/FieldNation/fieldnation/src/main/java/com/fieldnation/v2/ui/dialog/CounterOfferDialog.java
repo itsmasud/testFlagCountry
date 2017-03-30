@@ -528,7 +528,7 @@ public class CounterOfferDialog extends SimpleDialog {
         }
 
         @Override
-        public void onRequest(boolean success, Error error) {
+        public void onRequest(WorkOrder workOrder, boolean success, Error error) {
             if (success) {
                 Expense[] exp = new Expense[_expenses.size()];
                 for (int i = 0; i < _expenses.size(); i++) {

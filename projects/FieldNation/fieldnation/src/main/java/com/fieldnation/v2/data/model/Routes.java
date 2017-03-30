@@ -30,11 +30,11 @@ public class Routes implements Parcelable {
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
-    @Json(name = "open_route")
-    private Route _openRoute;
-
     @Json(name = "results")
     private Route[] _results;
+
+    @Json(name = "user_route")
+    private Route _userRoute;
 
     @Source
     private JsonObject SOURCE;
@@ -107,31 +107,6 @@ public class Routes implements Parcelable {
         return this;
     }
 
-    public void setOpenRoute(Route openRoute) throws ParseException {
-        _openRoute = openRoute;
-        SOURCE.put("open_route", openRoute.getJson());
-    }
-
-    public Route getOpenRoute() {
-        try {
-            if (_openRoute == null && SOURCE.has("open_route") && SOURCE.get("open_route") != null)
-                _openRoute = Route.fromJson(SOURCE.getJsonObject("open_route"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_openRoute != null && _openRoute.isSet())
-            return _openRoute;
-
-        return null;
-    }
-
-    public Routes openRoute(Route openRoute) throws ParseException {
-        _openRoute = openRoute;
-        SOURCE.put("open_route", openRoute.getJson());
-        return this;
-    }
-
     public void setResults(Route[] results) throws ParseException {
         _results = results;
         SOURCE.put("results", Route.toJsonArray(results));
@@ -156,6 +131,31 @@ public class Routes implements Parcelable {
     public Routes results(Route[] results) throws ParseException {
         _results = results;
         SOURCE.put("results", Route.toJsonArray(results), true);
+        return this;
+    }
+
+    public void setUserRoute(Route userRoute) throws ParseException {
+        _userRoute = userRoute;
+        SOURCE.put("user_route", userRoute.getJson());
+    }
+
+    public Route getUserRoute() {
+        try {
+            if (_userRoute == null && SOURCE.has("user_route") && SOURCE.get("user_route") != null)
+                _userRoute = Route.fromJson(SOURCE.getJsonObject("user_route"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_userRoute != null && _userRoute.isSet())
+            return _userRoute;
+
+        return null;
+    }
+
+    public Routes userRoute(Route userRoute) throws ParseException {
+        _userRoute = userRoute;
+        SOURCE.put("user_route", userRoute.getJson());
         return this;
     }
 

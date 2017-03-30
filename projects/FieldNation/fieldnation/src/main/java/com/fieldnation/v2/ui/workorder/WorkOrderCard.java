@@ -471,8 +471,8 @@ public class WorkOrderCard extends RelativeLayout {
 
             // accept
         } else if (_workOrder.getRoutes() != null
-                && _workOrder.getRoutes().getOpenRoute() != null
-                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                && _workOrder.getRoutes().getUserRoute() != null
+                && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_accept_onClick);
             button.setText(R.string.btn_accept);

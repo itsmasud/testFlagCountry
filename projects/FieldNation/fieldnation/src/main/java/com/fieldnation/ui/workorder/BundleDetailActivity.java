@@ -165,8 +165,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void onClick(View v) {
             WorkOrder workOrder = (WorkOrder) _adapter.getObject(0);
             if (workOrder.getRoutes() != null
-                    && workOrder.getRoutes().getOpenRoute() != null
-                    && workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                    && workOrder.getRoutes().getUserRoute() != null
+                    && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
 /*
 TODO                AcceptBundleDialog.show(
                         App.get(),
@@ -263,8 +263,8 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
 
             for (WorkOrder workOrder : workOrders.getResults()) {
                 if (workOrder.getRoutes() != null
-                        && workOrder.getRoutes().getOpenRoute() != null
-                        && workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                        && workOrder.getRoutes().getUserRoute() != null
+                        && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
                     _okButton.setText(R.string.btn_accept);
                     break;
                 } else if (workOrder.getRequests() != null

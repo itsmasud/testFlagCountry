@@ -54,9 +54,6 @@ public class GetWorkOrdersOptions implements Parcelable {
     @Json(name = "fFlightboardTomorrow")
     private Boolean _fFlightboardTomorrow;
 
-    @Json(name = "fHasRemoteWork")
-    private Boolean _fHasRemoteWork;
-
     @Json(name = "fRequests")
     private Boolean _fRequests;
 
@@ -171,8 +168,11 @@ public class GetWorkOrdersOptions implements Parcelable {
     @Json(name = "fFinancing")
     private String _fFinancing;
 
-    @Json(name = "fGeo")
-    private String _fGeo;
+    @Json(name = "fLocationRadius")
+    private String _fLocationRadius;
+
+    @Json(name = "fRemoteWork")
+    private Boolean _fRemoteWork;
 
     @Json(name = "fSearch")
     private String _fSearch;
@@ -333,19 +333,6 @@ public class GetWorkOrdersOptions implements Parcelable {
 
     public GetWorkOrdersOptions fFlightboardTomorrow(Boolean fFlightboardTomorrow) {
         _fFlightboardTomorrow = fFlightboardTomorrow;
-        return this;
-    }
-
-    public void setFHasRemoteWork(Boolean fHasRemoteWork) {
-        _fHasRemoteWork = fHasRemoteWork;
-    }
-
-    public Boolean getFHasRemoteWork() {
-        return _fHasRemoteWork;
-    }
-
-    public GetWorkOrdersOptions fHasRemoteWork(Boolean fHasRemoteWork) {
-        _fHasRemoteWork = fHasRemoteWork;
         return this;
     }
 
@@ -843,16 +830,29 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
-    public void setFGeo(String fGeo) {
-        _fGeo = fGeo;
+    public void setFLocationRadius(String fLocationRadius) {
+        _fLocationRadius = fLocationRadius;
     }
 
-    public String getFGeo() {
-        return _fGeo;
+    public String getFLocationRadius() {
+        return _fLocationRadius;
     }
 
-    public GetWorkOrdersOptions fGeo(String fGeo) {
-        _fGeo = fGeo;
+    public GetWorkOrdersOptions fLocationRadius(String fLocationRadius) {
+        _fLocationRadius = fLocationRadius;
+        return this;
+    }
+
+    public void setFRemoteWork(Boolean fRemoteWork) {
+        _fRemoteWork = fRemoteWork;
+    }
+
+    public Boolean getFRemoteWork() {
+        return _fRemoteWork;
+    }
+
+    public GetWorkOrdersOptions fRemoteWork(Boolean fRemoteWork) {
+        _fRemoteWork = fRemoteWork;
         return this;
     }
 

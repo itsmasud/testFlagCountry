@@ -228,8 +228,8 @@ public class EtaDialog extends FullScreenDialog {
                 && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
             _dialogType = PARAM_DIALOG_TYPE_REQUEST;
         } else if (_workOrder.getRoutes() != null
-                && _workOrder.getRoutes().getOpenRoute() != null
-                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                && _workOrder.getRoutes().getUserRoute() != null
+                && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             _dialogType = PARAM_DIALOG_TYPE_ACCEPT;
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
@@ -860,7 +860,7 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onAssignUser(boolean success, Error error) {
+        public void onAssignUser(WorkOrder workOrder, boolean success, Error error) {
             if (success) {
                 // TODO this might not work
                 try {
