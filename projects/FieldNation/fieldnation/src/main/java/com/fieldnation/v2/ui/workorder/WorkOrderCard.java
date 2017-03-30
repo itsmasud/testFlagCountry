@@ -30,6 +30,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Coords;
@@ -460,10 +461,7 @@ public class WorkOrderCard extends RelativeLayout {
 
             // view_bundle
         } else if (_workOrder.getBundle() != null
-                && _workOrder.getBundle().getId() != null
-                && _workOrder.getBundle().getId() > 0
-                && (_workOrder.getStatus().getId() == 2
-                || _workOrder.getStatus().getId() == 9)) {
+                && _workOrder.getBundle().getActionsSet().contains(Bundle.ActionsEnum.VIEW)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
             button.setText(getResources().getString(R.string.btn_view_bundle_num,

@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -23,6 +20,9 @@ import java.util.Set;
 
 public class Bundle implements Parcelable {
     private static final String TAG = "Bundle";
+
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "id")
     private Integer _id;
@@ -42,6 +42,41 @@ public class Bundle implements Parcelable {
 
     public Bundle(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public Bundle actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -80,7 +115,7 @@ public class Bundle implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }
@@ -116,6 +151,42 @@ public class Bundle implements Parcelable {
         _results = results;
         SOURCE.put("results", WorkOrder.toJsonArray(results), true);
         return this;
+    }
+
+    /*-******************************-*/
+    /*-             Enums            -*/
+    /*-******************************-*/
+    public enum ActionsEnum {
+        @Json(name = "view")
+        VIEW("view");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
     }
 
     /*-*****************************-*/
@@ -187,5 +258,15 @@ public class Bundle implements Parcelable {
 
     public boolean isSet() {
         return getId() != null && getId() != 0;
+    }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null && getActions() != null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
     }
 }

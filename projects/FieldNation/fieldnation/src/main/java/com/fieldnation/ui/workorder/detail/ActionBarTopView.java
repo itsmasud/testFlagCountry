@@ -12,6 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
+import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
@@ -242,10 +243,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
             // view_bundle
         } else if (_workOrder.getBundle() != null
-                && _workOrder.getBundle().getId() != null
-                && _workOrder.getBundle().getId() > 0
-                && (_workOrder.getStatus().getId() == 2
-                || _workOrder.getStatus().getId() == 9)) {
+                && _workOrder.getBundle().getActionsSet().contains(Bundle.ActionsEnum.VIEW)) {
             inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
