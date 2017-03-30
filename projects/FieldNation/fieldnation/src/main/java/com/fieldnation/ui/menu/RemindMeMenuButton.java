@@ -12,33 +12,33 @@ import com.fieldnation.R;
  * Created by mc on 3/28/17.
  */
 
-public class DoneMenuButton extends RelativeLayout {
-    private static final String TAG = "DoneMenuButton";
+public class RemindMeMenuButton extends RelativeLayout {
+    private static final String TAG = "RemindMeMenuButton";
 
     private Button _button;
 
-    public DoneMenuButton(Context context) {
+    public RemindMeMenuButton(Context context) {
         super(context);
         init();
     }
 
-    public DoneMenuButton(Context context, AttributeSet attrs) {
+    public RemindMeMenuButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public DoneMenuButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RemindMeMenuButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_toolbar_done_button, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_toolbar_remindme_button, this);
 
         if (isInEditMode())
             return;
 
-        _button = (Button) findViewById(R.id.done_button);
+        _button = (Button) findViewById(R.id.remindme_button);
     }
 
     public Button getButton() {

@@ -4,10 +4,10 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/done_button"
+        android:id="@+id/remindme_button"
         style="@style/Material.Button.Flat"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="@string/btn_done"
+        android:text="@string/btn_remind_me"
         android:textColor="@color/btn_toolbar_text" />
 </RelativeLayout>

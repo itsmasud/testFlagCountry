@@ -91,6 +91,7 @@
     <string name="btn_ready_to_go">READY TO GO</string>
     <string name="btn_recognize_hold">RECOGNIZE HOLD</string>
     <string name="btn_reject">REJECT</string>
+    <string name="btn_remind_me">REMIND ME</string>
     <string name="btn_remind_me_later">REMIND ME LATER</string>
     <string name="btn_remote_work">REMOTE WORK</string>
     <string name="btn_report_a_problem">REPORT A PROBLEM</string>

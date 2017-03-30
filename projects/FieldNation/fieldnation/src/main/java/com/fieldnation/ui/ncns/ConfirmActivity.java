@@ -17,14 +17,12 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.menu.DoneMenuButton;
+import com.fieldnation.ui.menu.RemindMeMenuButton;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
-import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.nav.NavActivity;
-import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 
 /**
  * Created by Michael on 10/3/2016.
@@ -40,13 +38,12 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private ConfirmResultScreen _recyclerView;
     private Toolbar _toolbar;
     private Button _doneButton;
+    private Button _remindMeButton;
 
     // Data
     private SavedList _savedList;
     private boolean _needsConfirm = false;
-    private GetWorkOrdersOptions _options =
-            new GetWorkOrdersOptions()
-                    .fFlightboardTomorrow(true);
+    private GetWorkOrdersOptions _options = new GetWorkOrdersOptions().fFlightboardTomorrow(true);
 
     @Override
     public int getLayoutResource() {
@@ -89,7 +86,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         TwoButtonDialog.addOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
     }
 
@@ -124,6 +120,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.confirm, menu);
         _doneButton = ((DoneMenuButton) menu.findItem(R.id.done_menuitem).getActionView()).getButton();
+        _remindMeButton = ((RemindMeMenuButton) menu.findItem(R.id.remindme_menuitem).getActionView()).getButton();
         return true;
     }
 
@@ -153,34 +150,27 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     private final ConfirmResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new ConfirmResultScreen.OnWorkOrderListReceivedListener() {
         @Override
-        public void OnWorkOrderListReceived(WorkOrders workOrders) {
+        public void OnWorkOrderListReceived(final WorkOrders workOrders) {
             if (workOrders == null
                     || workOrders.getResults() == null
                     || workOrders.getResults().length == 0) {
                 return;
             }
-            scanWorkOrders();
+
+            _doneButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (workOrders.getActionsSet().contains(WorkOrders.ActionsEnum.REMIND)) {
+                        _doneButton.setEnabled(false);
+                        _remindMeButton.setEnabled(true);
+                    } else {
+                        _doneButton.setEnabled(true);
+                        _remindMeButton.setEnabled(false);
+                    }
+                }
+            });
         }
     };
-
-    private void scanWorkOrders() {
-        Log.v(TAG, "scanWorkOrders");
-        WoPagingAdapter adapter = _recyclerView.getAdapter();
-        _needsConfirm = false;
-        _doneButton.setEnabled(true);
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            Object obj = adapter.getObject(i);
-            if (obj instanceof WorkOrder) {
-                WorkOrder wo = (WorkOrder) obj;
-                if ((wo.getEta() != null && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM))
-                        || (wo.getEta() != null && wo.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD))) {
-                    _needsConfirm = true;
-                    _doneButton.setEnabled(false);
-                    return;
-                }
-            }
-        }
-    }
 
     private final TwoButtonDialog.OnPrimaryListener _remindMe_onOk = new TwoButtonDialog.OnPrimaryListener() {
         @Override
