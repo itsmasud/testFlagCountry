@@ -71,6 +71,7 @@ import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.ShipmentTask;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -1021,43 +1022,27 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCustomField(Task task) {
-            // TODO task.getCustomField() is null. Please see the comment of PA-623
             CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, task.getCustomField());
         }
 
         @Override
         public void onDownload(Task task) {
-//            Attachment doc = task.getAttachment();
-//
-//            if (doc != null) {
-//                if (doc != null && doc.getId() != null) {
-//                    Log.v(TAG, "docid: " + doc.getId());
-//                    // TODO task completed here
-//                    if (!task.getCompleted().isSet()) {
-//                        //WorkordersWebApi.completeTask(App.get(), _workOrder.getId(), task.getId());
-//                    }
-//                    FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
-//                            doc.getFile().getName(), doc.getFile().getMime());
-//                }
-//            }
+            Attachment doc = task.getAttachment();
 
-            //TODO PA-623 version
-            AttachmentFolder folder = task.getAttachments();
-
-            if (folder != null && folder.getResults() != null && folder.getResults().length > 0) {
-                Attachment doc = folder.getResults()[0];
+            if (doc != null) {
                 if (doc != null && doc.getId() != null) {
                     Log.v(TAG, "docid: " + doc.getId());
-                    // TODO task completed here
-                    if (!task.getCompleted().isSet()) {
-                        //WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+                    if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                        try {
+                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
                     }
                     FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
                             doc.getFile().getName(), doc.getFile().getMime());
                 }
             }
-
-
         }
 
         @Override
@@ -1067,20 +1052,23 @@ public class WorkFragment extends WorkorderFragment {
             intent.setData(Uri.parse("mailto:" + email));
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
-            if (!task.getCompleted().isSet()) {
-                //WorkordersWebApi.completeTask(App.get(), _workOrder.getId(), task.getId());
+            try {
+                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             setLoading(true);
         }
 
         @Override
         public void onPhone(Task task) {
+            if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                try {
+                    WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
-            if (!task.getCompleted().isSet()) {
-                WorkorderClient.actionCompleteTask(App.get(),
-                        _workOrder.getId(), task.getId());
-                setLoading(true);
-            }
             try {
                 if (task.getPhone() != null) {
                     // Todo, need to figure out if there is a phone number here
@@ -1158,11 +1146,16 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onUniqueTask(Task task) {
-            if (task.getCompleted().isSet())
+            if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
                 return;
-            // TODO mark compelte
-            //WorkordersWebApi.completeTask(App.get(), _workOrder.getId(), task.getId());
+
+            try {
+                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
+
         }
     };
 
@@ -1574,6 +1567,9 @@ public class WorkFragment extends WorkorderFragment {
                 shipment.carrier(shipmentCarrier);
                 shipment.name(description);
                 shipment.direction(direction);
+
+                if (taskId > 0)
+                    shipment.task(new ShipmentTask().id(taskId));
 
                 WorkordersWebApi.addShipment(App.get(), _workOrder.getId(), shipment);
 
