@@ -86,7 +86,7 @@ public class TaskRowView extends RelativeLayout {
         _task = task;
         _workOrder = workOrder;
 
-        if (_task.getFolderId() != null) {
+        if (_task.getAttachments() != null && _task.getAttachments().getId() != null) {
             subscribeUpload();
         }
 
@@ -117,14 +117,6 @@ public class TaskRowView extends RelativeLayout {
 
         if (_task == null)
             return;
-
-        setEnabled(hasAction());
-
-        if (hasAction()) {
-            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-        } else {
-            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-        }
 
         if (_uploadingFiles.size() > 0) {
 
@@ -157,7 +149,6 @@ public class TaskRowView extends RelativeLayout {
 
         }
 
-        // TODO:  CustomField object is missing. Please see the comment in PA-623
         else if (_task.getCustomField() != null) {
             _progressBar.setVisibility(GONE);
 
@@ -183,38 +174,26 @@ public class TaskRowView extends RelativeLayout {
         updateCheckBox();
     }
 
-    private boolean hasAction() {
-        if (_task == null && _task.getActionsSet() == null) return false;
-
-        return (_task.getActionsSet().contains(Task.ActionsEnum.CHECK_IN)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CHECK_OUT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CLOSING_NOTES)
-                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CREATE_SHIPMENT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.ETA)
-                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.SIGNATURE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.UPLOAD));
-    }
-
     private void updateCheckBox() {
-        if (hasAction()) {
-            if (_task.getCompleted() != null) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-                _iconView.setText(R.string.icon_task_done);
-            } else {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
-                _iconView.setText(R.string.icon_task);
-            }
+        if (_task != null && _task.getActionsSet() != null
+                && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
+                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
+                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE))) {
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            setEnabled(true);
         } else {
-            if (_task.getCompleted() != null) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-                _iconView.setText(R.string.icon_task_done);
-            } else {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-                _iconView.setText(R.string.icon_task);
-            }
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            setEnabled(false);
         }
+
+        if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+            _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+            _iconView.setText(R.string.icon_task_done);
+        } else {
+            _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
+            _iconView.setText(R.string.icon_task);
+        }
+
     }
 
     /*-*********************************-*/
@@ -224,7 +203,7 @@ public class TaskRowView extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        if (_task == null || _task.getFolderId() == null)
+        if (_task == null || _task.getAttachments() == null || _task.getAttachments().getId() == null)
             return;
 
         if (_workorderClient == null)
@@ -233,8 +212,8 @@ public class TaskRowView extends RelativeLayout {
         if (!_workorderClient.isConnected())
             return;
 
-        _workorderClient.subDeliverableUpload(_workOrder.getId(), _task.getFolderId());
-        _workorderClient.subDeliverableProgress(_workOrder.getId(), _task.getFolderId());
+        _workorderClient.subDeliverableUpload(_workOrder.getId(), _task.getAttachments().getId());
+        _workorderClient.subDeliverableProgress(_workOrder.getId(), _task.getAttachments().getId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -274,7 +253,7 @@ public class TaskRowView extends RelativeLayout {
         public void onClick(View v) {
             updateCheckBox();
 
-            if (_listener != null && hasAction()) {
+            if (_listener != null) {
                 _listener.onTaskClick(_task);
             }
         }
