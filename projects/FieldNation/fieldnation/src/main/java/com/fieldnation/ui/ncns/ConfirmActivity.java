@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -120,27 +120,10 @@ public class ConfirmActivity extends AuthSimpleActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.confirm, menu);
         _doneButton = ((DoneMenuButton) menu.findItem(R.id.done_menuitem).getActionView()).getButton();
+        _doneButton.setOnClickListener(_doneButton_onClick);
         _remindMeButton = ((RemindMeMenuButton) menu.findItem(R.id.remindme_menuitem).getActionView()).getButton();
+        _remindMeButton.setOnClickListener(_remindMeButton_onClick);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.remindme_menuitem:
-                TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
-                break;
-            case R.id.done_menuitem:
-                if (!_needsConfirm) {
-                    App.get().setNeedsConfirmation(false);
-                    NavActivity.startNew(App.get());
-                    finish();
-                } else {
-                    ToastClient.toast(App.get(), "Please confirm and set ETAs before continuing", Toast.LENGTH_SHORT);
-                }
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -169,6 +152,26 @@ public class ConfirmActivity extends AuthSimpleActivity {
                     }
                 }
             });
+        }
+    };
+
+    private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!_needsConfirm) {
+                App.get().setNeedsConfirmation(false);
+                NavActivity.startNew(App.get());
+                finish();
+            } else {
+                ToastClient.toast(App.get(), "Please confirm and set ETAs before continuing", Toast.LENGTH_SHORT);
+            }
+        }
+    };
+
+    private final View.OnClickListener _remindMeButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
         }
     };
 
