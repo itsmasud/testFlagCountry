@@ -292,7 +292,6 @@ public class PhotoUploadDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
-            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
@@ -335,9 +334,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            _onImageClickDispatcher.dispatch(getUid());
-
-
             Intent intent;
             if (_uri == null) {
                 intent = new Intent(Intent.ACTION_VIEW);
@@ -412,84 +408,4 @@ public class PhotoUploadDialog extends SimpleDialog {
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
-    public interface OnOkListener {
-        void onOk(int workOrderId, String fileName, String description);
-    }
-
-    private static KeyedDispatcher<PhotoUploadDialog.OnOkListener> _onOkDispatcher = new KeyedDispatcher<PhotoUploadDialog.OnOkListener>() {
-        @Override
-        public void onDispatch(PhotoUploadDialog.OnOkListener listener, Object... parameters) {
-            listener.onOk((Integer) parameters[0], (String) parameters[1], (String) parameters[2]);
-        }
-    };
-
-    public static void addOnOkListener(String uid, PhotoUploadDialog.OnOkListener onOkListener) {
-        _onOkDispatcher.add(uid, onOkListener);
-    }
-
-    public static void removeOnOkListener(String uid, PhotoUploadDialog.OnOkListener onOkListener) {
-        _onOkDispatcher.remove(uid, onOkListener);
-    }
-
-    public static void removeAllOnOkListener(String uid) {
-        _onOkDispatcher.removeAll(uid);
-    }
-
-
-    /*-**************************-*/
-    /*-         Image Click           -*/
-    /*-**************************-*/
-    public interface OnImageClickListener {
-        void onImageClick();
-    }
-
-    private static KeyedDispatcher<PhotoUploadDialog.OnImageClickListener> _onImageClickDispatcher = new KeyedDispatcher<OnImageClickListener>() {
-        @Override
-        public void onDispatch(PhotoUploadDialog.OnImageClickListener listener, Object... parameters) {
-            listener.onImageClick();
-        }
-    };
-
-    public static void addOnImageClickListener(String uid, PhotoUploadDialog.OnImageClickListener onImageClickListener) {
-        _onImageClickDispatcher.add(uid, onImageClickListener);
-    }
-
-    public static void removeOnImageClickListener(String uid, PhotoUploadDialog.OnImageClickListener onImageClickListener) {
-        _onImageClickDispatcher.remove(uid, onImageClickListener);
-    }
-
-    public static void removeAllOnImageClickListener(String uid) {
-        _onImageClickDispatcher.removeAll(uid);
-    }
-
-
-    /*-**************************-*/
-    /*-         Cancel           -*/
-    /*-**************************-*/
-    public interface OnCancelListener {
-        void onCancel();
-    }
-
-    private static KeyedDispatcher<PhotoUploadDialog.OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<PhotoUploadDialog.OnCancelListener>() {
-        @Override
-        public void onDispatch(PhotoUploadDialog.OnCancelListener listener, Object... parameters) {
-            listener.onCancel();
-        }
-    };
-
-    public static void addOnCancelListener(String uid, PhotoUploadDialog.OnCancelListener onCancelListener) {
-        _onCancelDispatcher.add(uid, onCancelListener);
-    }
-
-    public static void removeOnCancelListener(String uid, PhotoUploadDialog.OnCancelListener onCancelListener) {
-        _onCancelDispatcher.remove(uid, onCancelListener);
-    }
-
-    public static void removeAllOnCancelListener(String uid) {
-        _onCancelDispatcher.removeAll(uid);
-    }
 }

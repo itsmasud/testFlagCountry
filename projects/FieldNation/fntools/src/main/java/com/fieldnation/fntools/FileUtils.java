@@ -3,6 +3,7 @@ package com.fieldnation.fntools;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -170,24 +171,6 @@ public class FileUtils {
         }
     }
 
-    private static boolean isFileExtensionChanged(final String newFileName, final String originalExt) {
-        return !newFileName.substring(newFileName.lastIndexOf('.') + 1).equals(originalExt);
-    }
-
-    public static String getFileNameWithOriginalExtenstion(final String newFileName, String originalFileName) {
-
-        if (isFileExtensionChanged(newFileName, originalFileName.substring(originalFileName.lastIndexOf('.') + 1))) {
-            return newFileName.substring(0, newFileName.lastIndexOf('.') + 1)
-                    + originalFileName.substring(originalFileName.lastIndexOf('.') + 1);
-        }
-        return newFileName;
-    }
-
-    public static String getFileAbsolutePathWithOriginalExtension(String directoryPath, String newFileName, String originalFileName) {
-        return directoryPath + File.separator
-                + FileUtils.getFileNameWithOriginalExtenstion(newFileName, originalFileName);
-    }
-
     public static boolean isValidFileName(String fileName) {
         // TODO need more character to add
         final String[] srch = {"/", "\\", "?", "%", "*", ":", "|", "\"", "\'", "<", ">"};
@@ -208,8 +191,8 @@ public class FileUtils {
             return uri.getPath();
 
         } else if (uri.getScheme().equals("content")) {
-            if (uri.getAuthority().equals("media")) {
-//                Log.e("FileUtils", "For gallery app");
+//            if (uri.getAuthority().equals("media")) {
+                Log.e("FileUtils", "For gallery app, google photo");
                 Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
                 int filePathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
@@ -217,12 +200,12 @@ public class FileUtils {
                 cursor.close();
                 return filePath;
 
-            } else if (uri.getAuthority() != null &&
-                    uri.getAuthority().equals("com.google.android.apps.photos.contentprovider")) {
+//            } else if (uri.getAuthority() != null &&
+//                    uri.getAuthority().equals("com.google.android.apps.photos.contentprovider")) {
 //                Log.e("FileUtils", "form google photos");
-                return null;
-
-            }
+//                return null;
+//
+//            }
         }
         return null;
     }
