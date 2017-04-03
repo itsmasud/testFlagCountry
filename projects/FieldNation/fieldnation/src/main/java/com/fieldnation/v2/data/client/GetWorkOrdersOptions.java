@@ -3,8 +3,6 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -867,6 +865,18 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fSearch(String fSearch) {
         _fSearch = fSearch;
         return this;
+    }
+
+    public String toQueryString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("?list=" + getList());
+
+        if (getColumns() != null)
+            sb.append("?columns=" + getColumns());
+
+
+        return sb.toString();
     }
 
     /*-*****************************-*/

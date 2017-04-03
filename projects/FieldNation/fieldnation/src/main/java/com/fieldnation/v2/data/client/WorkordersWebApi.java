@@ -12,7 +12,6 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
-import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
@@ -368,7 +367,7 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a contact to a work order
      *
      * @param workOrderId Work order id
-     * @param contact JSON Model
+     * @param contact     JSON Model
      */
     public static void addContact(Context context, Integer workOrderId, Contact contact) {
         try {
@@ -594,7 +593,7 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a hold on a work order
      *
      * @param workOrderId ID of work order
-     * @param hold Hold object with updates
+     * @param hold        Hold object with updates
      */
     public static void addHold(Context context, Integer workOrderId, Hold hold) {
         try {
@@ -631,8 +630,8 @@ public class WorkordersWebApi extends TopicClient {
      * Adds a hold on a work order
      *
      * @param workOrderId ID of work order
-     * @param hold Hold object with updates
-     * @param async Async (Optional)
+     * @param hold        Hold object with updates
+     * @param async       Async (Optional)
      */
     public static void addHold(Context context, Integer workOrderId, Hold hold, Boolean async) {
         try {
@@ -2666,8 +2665,8 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getHoldByWorkOrderAndHold
      * Gets a hold on a work order
      *
-     * @param workOrderId ID of work order
-     * @param holdId ID of hold to update
+     * @param workOrderId  ID of work order
+     * @param holdId       ID of hold to update
      * @param isBackground indicates that this call is low priority
      */
     public static void getHold(Context context, Integer workOrderId, Integer holdId, boolean allowCacheResponse, boolean isBackground) {
@@ -2704,9 +2703,9 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getHoldByWorkOrderAndHold
      * Gets a hold on a work order
      *
-     * @param workOrderId ID of work order
-     * @param holdId ID of hold to update
-     * @param async Async (Optional)
+     * @param workOrderId  ID of work order
+     * @param holdId       ID of hold to update
+     * @param async        Async (Optional)
      * @param isBackground indicates that this call is low priority
      */
     public static void getHold(Context context, Integer workOrderId, Integer holdId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
@@ -3841,7 +3840,8 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+            String key = misc.md5("GET//api/rest/v2/workorders"
+                    + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
                     + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                     + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                     + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
@@ -3891,8 +3891,8 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                     + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                     + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                                    + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
-                                    + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
+                    + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
+                    + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                     + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
             );
 
@@ -3950,8 +3950,8 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                             + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                             + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                                    + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
-                                    + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
+                            + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
+                            + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                             + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
                     );
 
@@ -4438,7 +4438,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes a hold on a work order
      *
      * @param workOrderId ID of work order
-     * @param holdId ID of hold to update
+     * @param holdId      ID of hold to update
      */
     public static void removeHold(Context context, Integer workOrderId, Integer holdId) {
         try {
@@ -4472,8 +4472,8 @@ public class WorkordersWebApi extends TopicClient {
      * Removes a hold on a work order
      *
      * @param workOrderId ID of work order
-     * @param holdId ID of hold to update
-     * @param async Async (Optional)
+     * @param holdId      ID of hold to update
+     * @param async       Async (Optional)
      */
     public static void removeHold(Context context, Integer workOrderId, Integer holdId, Boolean async) {
         try {
@@ -4646,7 +4646,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param requestId ID of work order request/counter offer
+     * @param requestId   ID of work order request/counter offer
      */
     public static void removeRequest(Context context, Integer workOrderId, Integer requestId) {
         try {
@@ -4680,7 +4680,7 @@ public class WorkordersWebApi extends TopicClient {
      * Removes or hides a request by a user from a work order
      *
      * @param workOrderId Work order id
-     * @param requestId ID of work order request/counter offer
+     * @param requestId   ID of work order request/counter offer
      * @param async       Async (Optional)
      */
     public static void removeRequest(Context context, Integer workOrderId, Integer requestId, Boolean async) {
@@ -5715,7 +5715,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId Work order id
      * @param contactId   Contact id
-     * @param contact JSON Model
+     * @param contact     JSON Model
      */
     public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact contact) {
         try {
