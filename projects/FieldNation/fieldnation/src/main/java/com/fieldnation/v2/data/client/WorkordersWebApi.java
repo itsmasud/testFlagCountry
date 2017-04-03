@@ -3891,9 +3891,11 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                     + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                     + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                    + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
                     + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                     + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+                    + (getWorkOrdersOptions.getFLocationRadius() != null ?
+                    ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
+                            + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
             );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -3950,9 +3952,10 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getFAssignment() != null ? "&f_assignment=" + getWorkOrdersOptions.getFAssignment() : "")
                             + (getWorkOrdersOptions.getFConfirmation() != null ? "&f_confirmation=" + getWorkOrdersOptions.getFConfirmation() : "")
                             + (getWorkOrdersOptions.getFFinancing() != null ? "&f_financing=" + getWorkOrdersOptions.getFFinancing() : "")
-                            + (getWorkOrdersOptions.getFLocationRadius() != null ? "&f_location_radius=" + getWorkOrdersOptions.getFLocationRadius() : "")
                             + (getWorkOrdersOptions.getFRemoteWork() != null ? "&f_remote_work=" + getWorkOrdersOptions.getFRemoteWork() : "")
                             + (getWorkOrdersOptions.getFSearch() != null ? "&f_search=" + getWorkOrdersOptions.getFSearch() : "")
+                            + (getWorkOrdersOptions.getFLocationRadius() != null ? ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
+                            + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
                     );
 
             WebTransaction transaction = new WebTransaction.Builder()

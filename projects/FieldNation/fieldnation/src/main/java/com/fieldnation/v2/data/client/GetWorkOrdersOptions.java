@@ -167,7 +167,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _fFinancing;
 
     @Json(name = "fLocationRadius")
-    private String _fLocationRadius;
+    private String[] _fLocationRadius;
 
     @Json(name = "fRemoteWork")
     private Boolean _fRemoteWork;
@@ -828,17 +828,46 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
-    public void setFLocationRadius(String fLocationRadius) {
+    public boolean isFFinancingSet() {
+        return _fFinancing != null;
+    }
+
+    public String getFFinancingUrlParam() {
+        return "f_financing=" + _fFinancing;
+    }
+
+    public void setFLocationRadius(String[] fLocationRadius) {
         _fLocationRadius = fLocationRadius;
     }
 
-    public String getFLocationRadius() {
+    public String[] getFLocationRadius() {
         return _fLocationRadius;
     }
 
-    public GetWorkOrdersOptions fLocationRadius(String fLocationRadius) {
+    public GetWorkOrdersOptions fLocationRadius(String[] fLocationRadius) {
         _fLocationRadius = fLocationRadius;
         return this;
+    }
+
+    public boolean isFLocationRadiusSet() {
+        return _fLocationRadius != null;
+    }
+
+    public String getFLocationRadiusUrlParam() {
+        StringBuilder sb = new StringBuilder();
+
+        boolean first = true;
+        for (String val : _fLocationRadius) {
+            if (first) {
+                first = false;
+            } else {
+                sb.append("&");
+            }
+
+            sb.append("f_location_radius[]=" + val);
+        }
+
+        return sb.toString();
     }
 
     public void setFRemoteWork(Boolean fRemoteWork) {
@@ -867,17 +896,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
-    public String toQueryString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("?list=" + getList());
-
-        if (getColumns() != null)
-            sb.append("?columns=" + getColumns());
-
-
-        return sb.toString();
+    public boolean isFSearchSet() {
+        return _fSearch != null;
     }
+
+    public String getFSearchUrlParam() {
+        return "f_search=" + _fSearch;
+    }
+
 
     /*-*****************************-*/
     /*-             Json            -*/

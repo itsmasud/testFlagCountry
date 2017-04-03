@@ -55,10 +55,20 @@ public class FilterParams {
     public GetWorkOrdersOptions applyFilter(GetWorkOrdersOptions options) {
 
         if ((remoteWork == null || !remoteWork)
-                && radius != null && latitude != null && longitude != null) {
-//            options.setFGeo(radius + "," + latitude + "," + longitude);
+                && radius != null) {
+
+            String[] locationOpts = new String[2];
+
+            if (latitude != null && longitude != null)
+                locationOpts[0] = latitude + "," + longitude;
+            else
+                locationOpts[0] = "";
+
+            locationOpts[1] = radius + "";
+
+            options.setFLocationRadius(locationOpts);
         } else {
-//            options.setFGeo(null);
+            options.setFLocationRadius(null);
         }
 
         if (remoteWork != null && remoteWork) {
