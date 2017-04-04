@@ -25,6 +25,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
@@ -349,6 +350,9 @@ public class CheckInOutDialog extends FullScreenDialog {
                         cio.coords(new Coords(_location));
                     }
                     WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), new TimeLog().in(cio));
+
+                    GpsTrackingService.stop(App.get());
+
                     _onCheckInDispatcher.dispatch(getUid(), _workOrder.getId());
 
                 } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
