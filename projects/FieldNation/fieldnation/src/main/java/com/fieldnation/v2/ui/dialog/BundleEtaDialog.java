@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog.v2;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -19,7 +18,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.ui.BundleEtaCardView;
+import com.fieldnation.v2.ui.BundleEtaCardView;
 
 import java.util.Random;
 

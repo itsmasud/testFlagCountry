@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.v2.ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
