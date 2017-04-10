@@ -190,8 +190,8 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
 
         if (_attachment.getAuthor() != null) {
             String firstName = _attachment.getAuthor().getFirstName();
-            String lastName = _attachment.getAuthor().getFirstName();
-            _usernameTextView.setText(firstName == null ? "" : firstName + " " + lastName == null ? "" : lastName);
+            String lastName = _attachment.getAuthor().getLastName();
+            _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
             _byTextView.setVisibility(VISIBLE);
         } else {
             _byTextView.setVisibility(GONE);

@@ -207,7 +207,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         if (_doc.getAuthor() != null) {
             String firstName = _doc.getAuthor().getFirstName();
             String lastName = _doc.getAuthor().getLastName();
-            _usernameTextView.setText(firstName == null ? "" : firstName + " " + lastName == null ? "" : lastName);
+            _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
         }
 
 
