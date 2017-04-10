@@ -181,6 +181,7 @@ public class PhotoUploadDialog extends SimpleDialog {
             _uri = (Uri) payload.getParcelable("uri");
             FileCacheClient.cacheDeliverableUpload(App.get(), _uri);
         } else if (payload.containsKey("filePath")) {
+            _uri = null;
             _filePath = payload.getString("filePath");
             setPhoto(MemUtils.getMemoryEfficientBitmap(_filePath, 400));
         }
@@ -260,10 +261,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     // TODO: API cant take notes with the attachment
                     if (_filePath != null) {
                         WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(_filePath));
-                    } else if (_uri != null) {
-                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _task.getAttachments().getId(), attachment, new File(FileUtils.getFilePathFromUri(App.get(), _uri)));
                     }
-
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -277,10 +275,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
                     if (_filePath != null) {
                         WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(_filePath));
-                    } else if (_uri != null) {
-                        WorkordersWebApi.addAttachment(App.get(), _workOrderId, _slot.getId(), attachment, new File(FileUtils.getFilePathFromUri(App.get(), _uri)));
                     }
-
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -364,6 +359,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filePath) {
+            _filePath = filePath;
             setPhoto(MemUtils.getMemoryEfficientBitmap(filePath, 400));
         }
     };
