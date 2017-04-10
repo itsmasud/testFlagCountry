@@ -1118,7 +1118,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onShipment(Task task) {
             Shipment[] shipments = _workOrder.getShipments().getResults();
-            if (shipments == null) {
+            if (shipments == null || shipments.length == 0) {
                 ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
             } else {
                 TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
