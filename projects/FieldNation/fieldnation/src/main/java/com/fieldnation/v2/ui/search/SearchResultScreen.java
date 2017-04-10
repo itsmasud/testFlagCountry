@@ -269,7 +269,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public boolean useHeader() {
-            return _savedList.getId().equals("workorders_available") || _savedList.getId().equals("workorders_routed");
+            return _savedList.getId().equals("workorders_available");
         }
 
         @Override
