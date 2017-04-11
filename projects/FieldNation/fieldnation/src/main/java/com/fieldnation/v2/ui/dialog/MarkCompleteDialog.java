@@ -95,7 +95,6 @@ public class MarkCompleteDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             _onSignatureClickDispatcher.dispatch(getUid(), null);
-            dismiss(true);
         }
     };
 
