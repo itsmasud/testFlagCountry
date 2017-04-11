@@ -151,5 +151,4 @@ public class CustomFieldRowView extends RelativeLayout {
     public interface Listener {
         void onClick(CustomFieldRowView view, CustomField field);
     }
-
 }
