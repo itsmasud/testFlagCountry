@@ -86,7 +86,7 @@ public class PricingInsights implements Parcelable {
         try {
             return new PricingInsights(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

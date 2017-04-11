@@ -183,7 +183,7 @@ public class LocationNote implements Parcelable {
         try {
             return new LocationNote(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -133,7 +133,7 @@ public class TaskType implements Parcelable {
         try {
             return new TaskType(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

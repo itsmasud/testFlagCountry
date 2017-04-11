@@ -147,9 +147,7 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
-        }
-
-        else if (_task.getCustomField() != null) {
+        } else if (_task.getCustomField() != null) {
             _progressBar.setVisibility(GONE);
 
             boolean isDescriptionSet = false;
@@ -179,21 +177,30 @@ public class TaskRowView extends RelativeLayout {
                 && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
                 || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
                 || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE))) {
+
+
+            if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+                _iconView.setText(R.string.icon_task_done);
+            } else {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
+                _iconView.setText(R.string.icon_task);
+            }
+
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             setEnabled(true);
         } else {
+            if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+                _iconView.setText(R.string.icon_task_done);
+            } else {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+                _iconView.setText(R.string.icon_task);
+            }
+
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             setEnabled(false);
         }
-
-        if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
-            _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-            _iconView.setText(R.string.icon_task_done);
-        } else {
-            _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
-            _iconView.setText(R.string.icon_task);
-        }
-
     }
 
     /*-*********************************-*/

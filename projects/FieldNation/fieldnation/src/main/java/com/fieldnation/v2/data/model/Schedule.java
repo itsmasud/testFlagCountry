@@ -376,7 +376,7 @@ public class Schedule implements Parcelable {
         try {
             return new Schedule(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

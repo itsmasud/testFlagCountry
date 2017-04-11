@@ -56,7 +56,9 @@ public class TransactionListener extends WebTransactionListener {
 
     @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        Log.v(TAG, "onComplete");
         if (result == Result.CONTINUE) {
+            Log.v(TAG, "onComplete - CONTINUE");
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
 
@@ -64,13 +66,19 @@ public class TransactionListener extends WebTransactionListener {
                 bundle.putParcelable("params", params);
 
                 if (httpResult.isFile()) {
+                    Log.v(TAG, "isFile true");
                     File file = httpResult.getFile();
-                    bundle.putByteArray("data", StreamUtils.readAllFromStream(new FileInputStream(file), (int) file.length(), 1000));
+                    byte[] raw = StreamUtils.readAllFromStream(new FileInputStream(file), (int) file.length(), 1000);
+                    Log.v(TAG, "file size: " + raw.length);
+                    bundle.putByteArray("data", raw);
+                    bundle.putString
                 } else {
+                    Log.v(TAG, "isFile false");
                     bundle.putByteArray("data", httpResult.getByteArray());
                 }
                 bundle.putBoolean("success", true);
 
+                Log.v(TAG, "topicId: " + params.topicId);
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
@@ -89,6 +97,7 @@ public class TransactionListener extends WebTransactionListener {
 
             return Result.CONTINUE;
         } else if (result == Result.DELETE) {
+            Log.v(TAG, "onComplete - DELETE");
             try {
                 TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
 
@@ -121,6 +130,7 @@ public class TransactionListener extends WebTransactionListener {
 
             return Result.DELETE;
         } else if (result == Result.RETRY) {
+            Log.v(TAG, "onComplete - RETRY");
             Log.v(TAG, "break!");
             return Result.RETRY;
         }

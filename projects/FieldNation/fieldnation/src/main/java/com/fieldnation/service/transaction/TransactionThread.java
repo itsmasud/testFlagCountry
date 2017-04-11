@@ -206,7 +206,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
                 // this can cause OOM errors, only uncomment when trying to debug something
                 //if (!result.isFile() && result.getString() != null) {
-                Log.v(TAG, "Result: " + result.getString());
+                // Log.v(TAG, "Result: " + result.getString());
                 //}
             } catch (Exception ex) {
                 Log.v(TAG, ex);

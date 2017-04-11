@@ -116,7 +116,7 @@ public class Pays implements Parcelable {
         try {
             return new Pays(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

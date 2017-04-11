@@ -158,7 +158,7 @@ public class ExpenseCompanyExpense implements Parcelable {
         try {
             return new ExpenseCompanyExpense(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

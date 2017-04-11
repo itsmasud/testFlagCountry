@@ -245,7 +245,7 @@ public class CheckInOut implements Parcelable {
         try {
             return new CheckInOut(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

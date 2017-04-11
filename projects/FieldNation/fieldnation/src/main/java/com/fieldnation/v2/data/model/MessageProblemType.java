@@ -108,7 +108,7 @@ public class MessageProblemType implements Parcelable {
         try {
             return new MessageProblemType(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -122,7 +122,7 @@ public class LocationValidation implements Parcelable {
         try {
             return new LocationValidation(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -60,7 +60,7 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(IncompleteWorkOrderOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -73,7 +73,7 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         try {
             return Serializer.serializeObject(incompleteWorkOrderOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

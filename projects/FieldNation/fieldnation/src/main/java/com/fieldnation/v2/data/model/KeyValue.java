@@ -58,7 +58,7 @@ public class KeyValue implements Parcelable {
         try {
             return new KeyValue(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

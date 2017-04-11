@@ -232,7 +232,7 @@ public class Hold implements Parcelable {
         try {
             return new Hold(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

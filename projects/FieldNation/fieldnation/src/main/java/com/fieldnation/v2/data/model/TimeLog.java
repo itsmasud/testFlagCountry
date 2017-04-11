@@ -511,7 +511,7 @@ public class TimeLog implements Parcelable {
         try {
             return new TimeLog(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

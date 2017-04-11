@@ -3,8 +3,6 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -76,7 +74,7 @@ public class GetProvidersOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(GetProvidersOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -89,7 +87,7 @@ public class GetProvidersOptions implements Parcelable {
         try {
             return Serializer.serializeObject(getProvidersOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

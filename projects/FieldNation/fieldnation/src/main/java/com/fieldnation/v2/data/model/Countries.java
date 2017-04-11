@@ -116,7 +116,7 @@ public class Countries implements Parcelable {
         try {
             return new Countries(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

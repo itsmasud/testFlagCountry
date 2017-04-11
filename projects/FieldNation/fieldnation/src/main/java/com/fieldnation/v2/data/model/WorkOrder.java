@@ -1258,7 +1258,7 @@ public class WorkOrder implements Parcelable {
         try {
             return new WorkOrder(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -330,7 +330,7 @@ public class SelectionRule implements Parcelable {
         try {
             return new SelectionRule(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

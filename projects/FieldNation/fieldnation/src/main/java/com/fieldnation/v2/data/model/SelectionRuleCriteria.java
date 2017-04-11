@@ -513,7 +513,7 @@ public class SelectionRuleCriteria implements Parcelable {
         try {
             return new SelectionRuleCriteria(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

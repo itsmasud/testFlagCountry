@@ -241,7 +241,7 @@ public class ErrorTrace implements Parcelable {
         try {
             return new ErrorTrace(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

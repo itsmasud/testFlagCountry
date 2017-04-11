@@ -108,7 +108,7 @@ public class TechnicianW9Status implements Parcelable {
         try {
             return new TechnicianW9Status(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

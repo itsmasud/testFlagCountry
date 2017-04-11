@@ -302,7 +302,7 @@ public class AttachmentFolder implements Parcelable {
         try {
             return new AttachmentFolder(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

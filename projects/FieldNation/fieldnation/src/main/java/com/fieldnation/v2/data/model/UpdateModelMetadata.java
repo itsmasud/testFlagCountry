@@ -114,7 +114,7 @@ public class UpdateModelMetadata implements Parcelable {
         try {
             return new UpdateModelMetadata(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

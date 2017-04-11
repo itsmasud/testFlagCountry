@@ -912,7 +912,7 @@ public class GetWorkOrdersOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(GetWorkOrdersOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -925,7 +925,7 @@ public class GetWorkOrdersOptions implements Parcelable {
         try {
             return Serializer.serializeObject(getWorkOrdersOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -178,7 +178,7 @@ public class ScheduleServiceWindow implements Parcelable {
         try {
             return new ScheduleServiceWindow(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

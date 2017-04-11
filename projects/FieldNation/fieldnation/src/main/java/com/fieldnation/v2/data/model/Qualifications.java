@@ -160,7 +160,7 @@ public class Qualifications implements Parcelable {
         try {
             return new Qualifications(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

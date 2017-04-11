@@ -108,7 +108,7 @@ public class CountryStateValues implements Parcelable {
         try {
             return new CountryStateValues(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

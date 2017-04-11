@@ -130,7 +130,7 @@ public class ProfileAndWorkHistoryRating implements Parcelable {
         try {
             return new ProfileAndWorkHistoryRating(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

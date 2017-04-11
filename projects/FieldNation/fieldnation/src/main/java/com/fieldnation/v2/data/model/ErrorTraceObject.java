@@ -58,7 +58,7 @@ public class ErrorTraceObject implements Parcelable {
         try {
             return new ErrorTraceObject(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

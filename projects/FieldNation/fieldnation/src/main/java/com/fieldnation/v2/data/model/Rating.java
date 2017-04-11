@@ -236,7 +236,7 @@ public class Rating implements Parcelable {
         try {
             return new Rating(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

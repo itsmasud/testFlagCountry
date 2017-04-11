@@ -76,7 +76,7 @@ public class UpdateETAOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(UpdateETAOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -89,7 +89,7 @@ public class UpdateETAOptions implements Parcelable {
         try {
             return Serializer.serializeObject(updateETAOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

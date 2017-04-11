@@ -83,7 +83,7 @@ public class PricingInsightsRegionProviders implements Parcelable {
         try {
             return new PricingInsightsRegionProviders(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

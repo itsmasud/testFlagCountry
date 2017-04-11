@@ -114,7 +114,7 @@ public class UpdateModelParams implements Parcelable {
         try {
             return new UpdateModelParams(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

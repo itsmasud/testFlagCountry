@@ -60,7 +60,7 @@ public class UpdateExpenseOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(UpdateExpenseOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -73,7 +73,7 @@ public class UpdateExpenseOptions implements Parcelable {
         try {
             return Serializer.serializeObject(updateExpenseOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

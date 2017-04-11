@@ -189,7 +189,7 @@ public class UpdateModel implements Parcelable {
         try {
             return new UpdateModel(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
