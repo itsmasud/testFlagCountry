@@ -78,7 +78,7 @@ public class TransactionListener extends WebTransactionListener {
                 bundle.putBoolean("success", true);
 
                 Log.v(TAG, "topicId: " + params.topicId);
-                TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
+                TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
