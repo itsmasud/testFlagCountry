@@ -114,7 +114,6 @@ public class SignOffActivity extends AuthSimpleActivity {
                     _workOrder = (WorkOrder) objects[0];
                     _taskId = (Integer) objects[1];
                     _completeWorkorder = (Boolean) objects[2];
-
                 }
             }.executeEx(extras);
 

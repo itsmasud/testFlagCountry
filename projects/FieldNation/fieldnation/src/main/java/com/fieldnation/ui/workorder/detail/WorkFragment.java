@@ -546,7 +546,7 @@ public class WorkFragment extends WorkorderFragment {
             } else if (_currentLocation != null) {
                 doCheckin();
             } else if (_locationFailed) {
-
+                LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_IN, false);
             }
             setLoading(true);
         }
@@ -559,7 +559,6 @@ public class WorkFragment extends WorkorderFragment {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-
         }
     }
 
@@ -610,6 +609,7 @@ public class WorkFragment extends WorkorderFragment {
                 doCheckOut();
             } else if (_locationFailed) {
                 // location failed
+                LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_OUT, false);
             }
             setLoading(true);
         }
@@ -1494,7 +1494,7 @@ public class WorkFragment extends WorkorderFragment {
                         WorkOrder workOrder = (WorkOrder) params[1];
 
                         Intent intent = new Intent(context, SignOffActivity.class);
-// TODO                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
+                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
                         intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
                         startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
                         return null;
