@@ -552,7 +552,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private void doCheckin() {
 //        setLoading(true);
         if (_currentLocation != null) {
@@ -962,7 +961,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
@@ -1000,7 +998,6 @@ public class WorkFragment extends WorkorderFragment {
             _yesNoDialog.show();
         }
     };
-
 
     private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
@@ -1252,7 +1249,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onCounterOffer(WorkOrder workOrder) {
@@ -1278,14 +1274,12 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
             CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
     };
-
 
     private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
         @Override
@@ -1321,7 +1315,6 @@ public class WorkFragment extends WorkorderFragment {
             _yesNoDialog.show();
         }
     };
-
 
     private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
         @Override
