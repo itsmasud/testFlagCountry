@@ -71,7 +71,6 @@ public class TransactionListener extends WebTransactionListener {
                     byte[] raw = StreamUtils.readAllFromStream(new FileInputStream(file), (int) file.length(), 1000);
                     Log.v(TAG, "file size: " + raw.length);
                     bundle.putByteArray("data", raw);
-                    bundle.putString
                 } else {
                     Log.v(TAG, "isFile false");
                     bundle.putByteArray("data", httpResult.getByteArray());
