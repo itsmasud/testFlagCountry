@@ -469,7 +469,7 @@ public class CounterOfferDialog extends SimpleDialog {
 
                 if (_workOrder.getRequests().getOpenRequest() != null) {
                     _refreshView.startRefreshing();
-                    WorkordersWebApi.removeRequest(App.get(), _workOrder.getId(),
+                    WorkordersWebApi.deleteRequest(App.get(), _workOrder.getId(),
                             _workOrder.getRequests().getOpenRequest().getId());
                 } else {
                     _refreshView.startRefreshing();
@@ -542,7 +542,7 @@ public class CounterOfferDialog extends SimpleDialog {
         }
 
         @Override
-        public void onRemoveRequest(boolean success, Error error) {
+        public void onDeleteRequest(WorkOrder workOrder, boolean success, Error error) {
             if (success) {
                 Expense[] exp = new Expense[_expenses.size()];
                 for (int i = 0; i < _expenses.size(); i++) {

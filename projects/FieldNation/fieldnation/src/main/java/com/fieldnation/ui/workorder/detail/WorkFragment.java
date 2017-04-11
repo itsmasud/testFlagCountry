@@ -983,7 +983,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkordersWebApi.removeTimeLog(App.get(), _workOrder.getId(), (int) timeLogId);
+                            WorkordersWebApi.deleteTimeLog(App.get(), _workOrder.getId(), (int) timeLogId);
                             setLoading(true);
                         }
 
@@ -1336,7 +1336,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkordersWebApi.removeDiscount(App.get(), _workOrder.getId(), discount.getId());
+                            WorkordersWebApi.deleteDiscount(App.get(), _workOrder.getId(), discount.getId());
                         }
 
                         @Override
