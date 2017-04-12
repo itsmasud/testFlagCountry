@@ -1,12 +1,14 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,14 +23,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Countries;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
-import com.fieldnation.v2.data.model.LocationAttribute;
-import com.fieldnation.v2.data.model.LocationNote;
-import com.fieldnation.v2.data.model.LocationProviders;
-import com.fieldnation.v2.data.model.StoredLocation;
-import com.fieldnation.v2.data.model.StoredLocations;
 
 /**
  * Created by dmgen from swagger.
@@ -72,6 +68,12 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("attribute", attribute);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .key(key)
@@ -79,7 +81,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "addAttribute"))
+                                    LocationsWebApi.class, "addAttribute", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -108,6 +110,10 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations")
                     .key(key)
@@ -115,7 +121,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "addLocations"))
+                                    LocationsWebApi.class, "addLocations", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -145,6 +151,11 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/notes")
                     .key(key)
@@ -152,7 +163,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "addNotes"))
+                                    LocationsWebApi.class, "addNotes", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -179,6 +190,10 @@ public class LocationsWebApi extends TopicClient {
                     .method("DELETE")
                     .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("attribute", attribute);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .key(key)
@@ -186,7 +201,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "deleteAttribute"))
+                                    LocationsWebApi.class, "deleteAttribute", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -212,6 +227,9 @@ public class LocationsWebApi extends TopicClient {
                     .method("DELETE")
                     .path("/api/rest/v2/locations/" + locationId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}")
                     .key(key)
@@ -219,7 +237,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "deleteLocation"))
+                                    LocationsWebApi.class, "deleteLocation", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -246,6 +264,10 @@ public class LocationsWebApi extends TopicClient {
                     .method("DELETE")
                     .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("noteId", noteId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/locations/{location_id}/notes/{note_id}")
                     .key(key)
@@ -253,7 +275,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "deleteNote"))
+                                    LocationsWebApi.class, "deleteNote", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -279,6 +301,8 @@ public class LocationsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/locations/countries");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations/countries")
                     .key(key)
@@ -286,7 +310,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "getCountries"))
+                                    LocationsWebApi.class, "getCountries", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -315,6 +339,8 @@ public class LocationsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/locations");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations")
                     .key(key)
@@ -322,7 +348,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "getLocations"))
+                                    LocationsWebApi.class, "getLocations", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -352,6 +378,9 @@ public class LocationsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/locations/" + locationId + "/providers");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations/{location_id}/providers")
                     .key(key)
@@ -359,7 +388,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "getProviders"))
+                                    LocationsWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -392,6 +421,11 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}")
                     .key(key)
@@ -399,7 +433,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "updateLocation"))
+                                    LocationsWebApi.class, "updateLocation", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -430,6 +464,12 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("noteId", noteId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}/notes/{note_id}")
                     .key(key)
@@ -437,7 +477,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "updateNote"))
+                                    LocationsWebApi.class, "updateNote", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -462,13 +502,13 @@ public class LocationsWebApi extends TopicClient {
                 case "progress": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onStart(transactionParams.apiFunction);
+                    onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -478,13 +518,13 @@ public class LocationsWebApi extends TopicClient {
             }
         }
 
-        public void onStart(String methodName) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onProgress(String methodName, long pos, long size, long time) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -574,7 +614,7 @@ public class LocationsWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

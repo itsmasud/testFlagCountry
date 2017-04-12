@@ -33,6 +33,7 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
@@ -414,7 +415,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {

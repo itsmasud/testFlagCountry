@@ -1,12 +1,14 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -18,11 +20,11 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.KeyValue;
-import com.fieldnation.v2.data.model.UpdateModel;
 
 /**
  * Created by dmgen from swagger.
@@ -67,6 +69,12 @@ public class SystemWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("path", path);
+            methodParams.put("event", event);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
                     .key(key)
@@ -74,7 +82,7 @@ public class SystemWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/SystemWebApi",
-                                    SystemWebApi.class, "systemUpdateModel"))
+                                    SystemWebApi.class, "systemUpdateModel", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -107,6 +115,13 @@ public class SystemWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("path", path);
+            methodParams.put("event", event);
+            methodParams.put("async", async);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
                     .key(key)
@@ -114,7 +129,7 @@ public class SystemWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/SystemWebApi",
-                                    SystemWebApi.class, "systemUpdateModel"))
+                                    SystemWebApi.class, "systemUpdateModel", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -139,13 +154,13 @@ public class SystemWebApi extends TopicClient {
                 case "progress": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onStart(transactionParams.apiFunction);
+                    onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -155,13 +170,13 @@ public class SystemWebApi extends TopicClient {
             }
         }
 
-        public void onStart(String methodName) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onProgress(String methodName, long pos, long size, long time) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -223,7 +238,7 @@ public class SystemWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

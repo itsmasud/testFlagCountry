@@ -25,6 +25,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -251,7 +252,7 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getBundleWorkOrders")) {
                 WorkOrders workOrders = (WorkOrders) successObject;
                 setLoading(false);

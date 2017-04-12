@@ -51,6 +51,7 @@ import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
@@ -1639,7 +1640,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
 
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");

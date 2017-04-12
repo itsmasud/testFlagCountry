@@ -26,6 +26,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -284,7 +285,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
                 incrementPendingRequestCounter(-1);
@@ -422,7 +423,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getBundleWorkOrders")) {
                 incrementPendingRequestCounter(-1);
             }

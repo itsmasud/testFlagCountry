@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -22,14 +23,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.AaaaPlaceholder;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.PPNs;
-import com.fieldnation.v2.data.model.ProfileAndWorkHistory;
-import com.fieldnation.v2.data.model.TypesOfWork;
-import com.fieldnation.v2.data.model.User;
-import com.fieldnation.v2.data.model.UserTaxInfo;
-import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
  * Created by dmgen from swagger.
@@ -68,6 +63,9 @@ public class UsersWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/users/" + userId + "/pay");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
                     .key(key)
@@ -75,7 +73,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "addPay"))
+                                    UsersWebApi.class, "addPay", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -105,6 +103,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
                     .key(key)
@@ -112,7 +115,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "addTypesOfWork"))
+                                    UsersWebApi.class, "addTypesOfWork", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -139,6 +142,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/pay");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/pay")
                     .key(key)
@@ -146,7 +152,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getPay"))
+                                    UsersWebApi.class, "getPay", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -177,6 +183,10 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("workOrderId", workOrderId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/workorder/{work_order_id}")
                     .key(key)
@@ -184,7 +194,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getProfileAndWorkHistory"))
+                                    UsersWebApi.class, "getProfileAndWorkHistory", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -214,6 +224,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/settings");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/settings")
                     .key(key)
@@ -221,7 +234,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getSettings"))
+                                    UsersWebApi.class, "getSettings", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -251,6 +264,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/tax");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tax")
                     .key(key)
@@ -258,7 +274,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getTax"))
+                                    UsersWebApi.class, "getTax", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -288,6 +304,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/tour");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tour")
                     .key(key)
@@ -295,7 +314,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getTour"))
+                                    UsersWebApi.class, "getTour", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -325,6 +344,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + user);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("user", user);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user}")
                     .key(key)
@@ -332,7 +354,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUser"))
+                                    UsersWebApi.class, "getUser", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -363,6 +385,10 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("preference", preference);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .key(key)
@@ -370,7 +396,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUserPreferenceValue"))
+                                    UsersWebApi.class, "getUserPreferenceValue", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -400,6 +426,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/preferredprovidernetworks");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferredprovidernetworks")
                     .key(key)
@@ -407,7 +436,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUserPreferredProviderNetworks"))
+                                    UsersWebApi.class, "getUserPreferredProviderNetworks", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -437,6 +466,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/types-of-work");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/types-of-work")
                     .key(key)
@@ -444,7 +476,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUserTypesOfWork"))
+                                    UsersWebApi.class, "getUserTypesOfWork", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -474,6 +506,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/work_history");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/work_history")
                     .key(key)
@@ -481,7 +516,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getWorkHistory"))
+                                    UsersWebApi.class, "getWorkHistory", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -514,6 +549,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
                     .key(key)
@@ -521,7 +561,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "sendAccountActivationLink"))
+                                    UsersWebApi.class, "sendAccountActivationLink", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -551,6 +591,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
                     .key(key)
@@ -558,7 +603,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "sendVerificationCodeViaSms"))
+                                    UsersWebApi.class, "sendVerificationCodeViaSms", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -588,6 +633,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
                     .key(key)
@@ -595,7 +645,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "sendVerificationCodeViaVoiceCall"))
+                                    UsersWebApi.class, "sendVerificationCodeViaVoiceCall", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -626,6 +676,12 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("preference", preference);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .key(key)
@@ -633,7 +689,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "setUserPreference"))
+                                    UsersWebApi.class, "setUserPreference", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -660,6 +716,10 @@ public class UsersWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/users/" + userId + "/notifications/" + notificationId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("notificationId", notificationId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/notifications/{notification_id}")
                     .key(key)
@@ -667,7 +727,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "swipNotification"))
+                                    UsersWebApi.class, "swipNotification", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -696,6 +756,10 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/users/switch")
                     .key(key)
@@ -703,7 +767,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "switchUser"))
+                                    UsersWebApi.class, "switchUser", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -729,6 +793,9 @@ public class UsersWebApi extends TopicClient {
                     .method("PATCH")
                     .path("/api/rest/v2/users/" + userId + "/pay");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
                     .key(key)
@@ -736,7 +803,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updatePay"))
+                                    UsersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -762,6 +829,9 @@ public class UsersWebApi extends TopicClient {
                     .method("PATCH")
                     .path("/api/rest/v2/users/" + userId + "/settings");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
                     .key(key)
@@ -769,7 +839,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updateSettings"))
+                                    UsersWebApi.class, "updateSettings", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -799,6 +869,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
                     .key(key)
@@ -806,7 +881,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updateTax"))
+                                    UsersWebApi.class, "updateTax", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -832,6 +907,9 @@ public class UsersWebApi extends TopicClient {
                     .method("PATCH")
                     .path("/api/rest/v2/users/" + userId + "/tour");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
                     .key(key)
@@ -839,7 +917,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updateTour"))
+                                    UsersWebApi.class, "updateTour", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -867,6 +945,10 @@ public class UsersWebApi extends TopicClient {
                     .path("/api/rest/v2/users/" + userId + "/profile/avatar")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("file", Uri.fromFile(file));
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
                     .key(key)
@@ -874,7 +956,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "uploadProfilePhoto"))
+                                    UsersWebApi.class, "uploadProfilePhoto", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -904,6 +986,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
                     .key(key)
@@ -911,7 +998,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "verifyAccount"))
+                                    UsersWebApi.class, "verifyAccount", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -936,13 +1023,13 @@ public class UsersWebApi extends TopicClient {
                 case "progress": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onStart(transactionParams.apiFunction);
+                    onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -952,13 +1039,13 @@ public class UsersWebApi extends TopicClient {
             }
         }
 
-        public void onStart(String methodName) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onProgress(String methodName, long pos, long size, long time) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -1080,7 +1167,7 @@ public class UsersWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

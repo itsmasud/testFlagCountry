@@ -21,6 +21,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
@@ -527,7 +528,7 @@ public class CounterOfferDialog extends SimpleDialog {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {

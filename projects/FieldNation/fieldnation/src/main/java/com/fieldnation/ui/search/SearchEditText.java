@@ -25,6 +25,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.ArrayList;
@@ -207,7 +208,7 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 _progressBar.setVisibility(GONE);

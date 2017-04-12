@@ -25,6 +25,9 @@ public class TransactionParams implements Parcelable {
     @Json(name = "apiFunction")
     public String apiFunction;
 
+    @Json(name = "methodParams")
+    public JsonObject methodParams;
+
     public TransactionParams() {
     }
 

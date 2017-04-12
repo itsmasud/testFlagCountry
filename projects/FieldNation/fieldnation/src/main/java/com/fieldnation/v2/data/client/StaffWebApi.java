@@ -1,12 +1,14 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -21,9 +23,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.EmailTemplates;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.Robocalls;
 
 /**
  * Created by dmgen from swagger.
@@ -63,6 +64,9 @@ public class StaffWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/staff/email-templates/category/" + category);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("category", category);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/staff/email-templates/category/{category}")
                     .key(key)
@@ -70,7 +74,7 @@ public class StaffWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
-                                    StaffWebApi.class, "getEmailTemplates"))
+                                    StaffWebApi.class, "getEmailTemplates", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -99,6 +103,8 @@ public class StaffWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/staff/robocalls");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/staff/robocalls")
                     .key(key)
@@ -106,7 +112,7 @@ public class StaffWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
-                                    StaffWebApi.class, "getRobocalls"))
+                                    StaffWebApi.class, "getRobocalls", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -139,6 +145,11 @@ public class StaffWebApi extends TopicClient {
             if (body != null)
                 builder.body(body);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (body != null)
+                methodParams.put("body", body);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/staff/recruitment/send-communications/{work_order_id}")
                     .key(key)
@@ -146,7 +157,7 @@ public class StaffWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
-                                    StaffWebApi.class, "sendCommunication"))
+                                    StaffWebApi.class, "sendCommunication", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -171,13 +182,13 @@ public class StaffWebApi extends TopicClient {
                 case "progress": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onStart(transactionParams.apiFunction);
+                    onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -187,13 +198,13 @@ public class StaffWebApi extends TopicClient {
             }
         }
 
-        public void onStart(String methodName) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onProgress(String methodName, long pos, long size, long time) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -263,7 +274,7 @@ public class StaffWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

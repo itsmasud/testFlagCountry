@@ -355,7 +355,7 @@ public class WorkOrderCard extends RelativeLayout {
                     _payTypeTextView.setText("IN REVIEW");
                     break;
                 default:
-                    Log.v(TAG, "break!");
+                    // Log.v(TAG, "break!");
                     break;
             }
         }

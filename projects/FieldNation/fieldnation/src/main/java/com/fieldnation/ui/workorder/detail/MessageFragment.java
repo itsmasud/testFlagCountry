@@ -17,6 +17,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
@@ -193,7 +194,7 @@ public class MessageFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getMessages")) {
                 Messages messages = (Messages) successObject;
                 Error error = (Error) failObject;

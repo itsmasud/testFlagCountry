@@ -64,6 +64,9 @@ public class CompanyWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/company/" + companyId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}")
                     .key(key)
@@ -71,7 +74,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getCompanyDetails"))
+                                    CompanyWebApi.class, "getCompanyDetails", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -103,6 +106,10 @@ public class CompanyWebApi extends TopicClient {
                     .path("/api/rest/v2/company/" + companyId + "/integrations")
                     .urlParams("?access_token=" + accessToken);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+            methodParams.put("accessToken", accessToken);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
                     .key(key)
@@ -110,7 +117,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getIntegrations"))
+                                    CompanyWebApi.class, "getIntegrations", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -141,6 +148,9 @@ public class CompanyWebApi extends TopicClient {
                     .path("/api/rest/v2/company/managed-providers")
                     .urlParams("?work_order_id=" + workOrderId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/managed-providers")
                     .key(key)
@@ -148,7 +158,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getManagedProviders"))
+                                    CompanyWebApi.class, "getManagedProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -184,6 +194,9 @@ public class CompanyWebApi extends TopicClient {
                             + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
                     );
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/managed-providers")
                     .key(key)
@@ -191,7 +204,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getManagedProviders"))
+                                    CompanyWebApi.class, "getManagedProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -221,6 +234,9 @@ public class CompanyWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/company/" + companyId + "/ratings");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}/ratings")
                     .key(key)
@@ -228,7 +244,45 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getRatings"))
+                                    CompanyWebApi.class, "getRatings", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getTags
+     * Gets tags/labels
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getTags(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/tags");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/tags");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/tags")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getTags", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -258,6 +312,10 @@ public class CompanyWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+            methodParams.put("financeId", financeId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")
                     .key(key)
@@ -265,7 +323,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "updateFund"))
+                                    CompanyWebApi.class, "updateFund", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -296,6 +354,12 @@ public class CompanyWebApi extends TopicClient {
             if (fundTransaction != null)
                 builder.body(fundTransaction.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+            methodParams.put("financeId", financeId);
+            if (fundTransaction != null)
+                methodParams.put("fundTransaction", fundTransaction.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")
                     .key(key)
@@ -303,7 +367,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "updateFund"))
+                                    CompanyWebApi.class, "updateFund", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -328,13 +392,13 @@ public class CompanyWebApi extends TopicClient {
                 case "progress": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onStart(transactionParams.apiFunction);
+                    onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -344,13 +408,13 @@ public class CompanyWebApi extends TopicClient {
             }
         }
 
-        public void onStart(String methodName) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onProgress(String methodName, long pos, long size, long time) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -425,7 +489,7 @@ public class CompanyWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

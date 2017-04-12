@@ -19,6 +19,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -198,7 +199,7 @@ public class ConfirmResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
                 // TODO see if getList() is the list ID

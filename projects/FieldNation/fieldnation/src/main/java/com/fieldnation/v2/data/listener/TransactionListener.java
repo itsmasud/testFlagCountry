@@ -24,18 +24,18 @@ import java.io.FileInputStream;
 public class TransactionListener extends WebTransactionListener {
     private static final String TAG = "TransactionListener";
 
-    /**
-     * @param apiClass    (Required) the api function's class that spawned the call
-     * @param apiFunction (Required) The api function's name that spawned the call
-     * @return
-     */
     public static byte[] params(String topicId, Class<?> apiClass, String apiFunction) {
+        return params(topicId, apiClass, apiFunction, null);
+    }
+
+    public static byte[] params(String topicId, Class<?> apiClass, String apiFunction, JsonObject methodParams) {
         try {
             TransactionParams params = new TransactionParams();
 
             params.topicId = topicId;
             params.apiClassName = apiClass.getName();
             params.apiFunction = apiFunction;
+            params.methodParams = methodParams;
 
             return params.toJson().toByteArray();
         } catch (Exception ex) {

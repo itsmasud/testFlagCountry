@@ -37,6 +37,7 @@ import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
@@ -859,7 +860,7 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("assignUser")) {
                 if (success) {
                     // TODO this might not work

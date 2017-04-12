@@ -23,6 +23,7 @@ import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.List;
@@ -379,7 +380,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
