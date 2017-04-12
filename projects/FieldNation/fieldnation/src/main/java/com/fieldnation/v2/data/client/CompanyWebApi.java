@@ -662,7 +662,6 @@ public class CompanyWebApi extends TopicClient {
         }
     }
 
-
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
