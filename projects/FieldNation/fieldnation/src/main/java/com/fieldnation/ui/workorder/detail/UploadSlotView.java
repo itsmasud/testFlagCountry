@@ -282,12 +282,9 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                 int folderId = obj.getInt("attachment.folder_id");
 
                 if (folderId == _slot.getId()) {
-                    if (!success) {
-                        _uploadingFiles.remove(name);
-                        _uploadingProgress.remove(name);
-                    } else {
-                        _uploadingFiles.add(name);
-                    }
+                    _uploadingFiles.remove(name);
+                    _uploadingProgress.remove(name);
+                    WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
                     populateUi();
                 }
             } catch (Exception ex) {
