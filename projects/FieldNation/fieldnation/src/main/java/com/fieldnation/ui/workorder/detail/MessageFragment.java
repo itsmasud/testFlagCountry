@@ -193,13 +193,17 @@ public class MessageFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onGetMessages(Messages messages, boolean success, Error error) {
-            if (!success || error != null)
-                return;
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getMessages")) {
+                Messages messages = (Messages) successObject;
+                Error error = (Error) failObject;
+                if (!success || error != null)
+                    return;
 
-            _adapter.addObjects(messages.getMetadata().getPage(), messages.getResults());
+                _adapter.addObjects(messages.getMetadata().getPage(), messages.getResults());
 
-            rebuildList();
+                rebuildList();
+            }
         }
     };
 }

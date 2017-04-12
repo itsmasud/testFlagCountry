@@ -1,14 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -23,8 +21,10 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.IdResponse;
 
 /**
  * Created by dmgen from swagger.
@@ -85,6 +85,39 @@ public class CustomFieldsWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: deleteCustomField
+     * Removes a work order custom field
+     *
+     * @param customFieldId Custom field id
+     */
+    public static void deleteCustomField(Context context, Integer customFieldId) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/custom-fields/" + customFieldId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
+                                    CustomFieldsWebApi.class, "deleteCustomField"))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getCustomFields
      * Gets a list of work order custom fields
      *
@@ -115,39 +148,6 @@ public class CustomFieldsWebApi extends TopicClient {
             WebTransactionService.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: removeCustomField
-     * Removes a work order custom field
-     *
-     * @param customFieldId Custom field id
-     */
-    public static void removeCustomField(Context context, Integer customFieldId) {
-        try {
-            String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("DELETE")
-                    .path("/api/rest/v2/custom-fields/" + customFieldId);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "removeCustomField"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -267,7 +267,7 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param projectId     Project id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibilityByProject(Context context, Integer customFieldId, Integer projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 
@@ -283,7 +283,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
+                                    CustomFieldsWebApi.class, "updateCustomFieldVisibilityByProjectId"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -302,28 +302,35 @@ public class CustomFieldsWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onCustomFieldsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(String methodName) {
         }
 
-        public void onAddCustomField(IdResponse idResponse, boolean success, Error error) {
+        public void onProgress(String methodName, long pos, long size, long time) {
         }
 
-        public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
-        }
-
-        public void onRemoveCustomField(boolean success, Error error) {
-        }
-
-        public void onUpdateCustomField(boolean success, Error error) {
-        }
-
-        public void onUpdateCustomFieldVisibility(boolean success, Error error) {
-        }
-
-        public void onUpdateCustomFieldVisibilityByProject(boolean success, Error error) {
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -352,38 +359,38 @@ public class CustomFieldsWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "addCustomField":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "deleteCustomField":
+                        case "updateCustomField":
+                        case "updateCustomFieldVisibility":
+                        case "updateCustomFieldVisibilityByProjectId":
+                            successObject = data;
+                            break;
+                        case "addCustomField":
                             successObject = IdResponse.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getCustomFields":
-                        if (success)
+                            break;
+                        case "getCustomFields":
                             successObject = CustomFields.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addCustomField":
+                        case "deleteCustomField":
+                        case "getCustomFields":
+                        case "updateCustomField":
+                        case "updateCustomFieldVisibility":
+                        case "updateCustomFieldVisibilityByProjectId":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removeCustomField":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateCustomField":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateCustomFieldVisibility":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateCustomFieldVisibilityByProject":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -399,30 +406,7 @@ public class CustomFieldsWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onCustomFieldsWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "addCustomField":
-                        listener.onAddCustomField((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "getCustomFields":
-                        listener.onGetCustomFields((CustomFields) successObject, success, (Error) failObject);
-                        break;
-                    case "removeCustomField":
-                        listener.onRemoveCustomField(success, (Error) failObject);
-                        break;
-                    case "updateCustomField":
-                        listener.onUpdateCustomField(success, (Error) failObject);
-                        break;
-                    case "updateCustomFieldVisibility":
-                        listener.onUpdateCustomFieldVisibility(success, (Error) failObject);
-                        break;
-                    case "updateCustomFieldVisibilityByProject":
-                        listener.onUpdateCustomFieldVisibilityByProject(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

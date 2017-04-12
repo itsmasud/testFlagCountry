@@ -414,7 +414,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {

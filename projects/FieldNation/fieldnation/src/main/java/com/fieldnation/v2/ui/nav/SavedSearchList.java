@@ -16,7 +16,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.nav.ToolbarMenuBehavior;
 import com.fieldnation.ui.nav.ToolbarMenuInterface;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.SavedList;
 
 /**
@@ -199,9 +198,12 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
 
         @Override
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
-            _list = savedList;
-            populateUi();
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrderLists")) {
+                SavedList[] savedList = (SavedList[]) successObject;
+                _list = savedList;
+                populateUi();
+            }
         }
     };
 

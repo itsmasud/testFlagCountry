@@ -3,8 +3,6 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -40,6 +38,14 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         return this;
     }
 
+    public boolean isReasonSet() {
+        return _reason != null;
+    }
+
+    public String getReasonUrlParam() {
+        return "reason=" + _reason;
+    }
+
     public void setAsync(Boolean async) {
         _async = async;
     }
@@ -51,6 +57,14 @@ public class IncompleteWorkOrderOptions implements Parcelable {
     public IncompleteWorkOrderOptions async(Boolean async) {
         _async = async;
         return this;
+    }
+
+    public boolean isAsyncSet() {
+        return _async != null;
+    }
+
+    public String getAsyncUrlParam() {
+        return "async=" + _async;
     }
 
     /*-*****************************-*/

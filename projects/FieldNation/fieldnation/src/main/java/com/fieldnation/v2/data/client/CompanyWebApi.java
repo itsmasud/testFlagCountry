@@ -1,14 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -23,8 +21,10 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.CompanyIntegrations;
+import com.fieldnation.v2.data.model.CompanyRating;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.FundTransaction;
 
 /**
  * Created by dmgen from swagger.
@@ -52,7 +52,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getCompanyDetails
      * Get Company Details
      *
-     * @param companyId ID of company
+     * @param companyId    ID of company
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -89,8 +89,8 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getIntegrations
      * Get a list of all company_integrations for a company.
      *
-     * @param companyId null
-     * @param accessToken null
+     * @param companyId    null
+     * @param accessToken  null
      * @param isBackground indicates that this call is low priority
      */
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean allowCacheResponse, boolean isBackground) {
@@ -125,10 +125,91 @@ public class CompanyWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getManagedProviders
+     * Get Company Managed Providers
+     *
+     * @param workOrderId  null
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getManagedProviders(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/managed-providers?work_order_id=" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/managed-providers")
+                    .urlParams("?work_order_id=" + workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/managed-providers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getManagedProviders"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getManagedProviders
+     * Get Company Managed Providers
+     *
+     * @param workOrderId                null
+     * @param getManagedProvidersOptions Additional optional parameters
+     * @param isBackground               indicates that this call is low priority
+     */
+    public static void getManagedProviders(Context context, Integer workOrderId, GetManagedProvidersOptions getManagedProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/managed-providers?work_order_id=" + workOrderId + (getManagedProvidersOptions.getCompanyId() != null ? "&company_id=" + getManagedProvidersOptions.getCompanyId() : "")
+                    + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
+            );
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/managed-providers")
+                    .urlParams("?work_order_id=" + workOrderId + (getManagedProvidersOptions.getCompanyId() != null ? "&company_id=" + getManagedProvidersOptions.getCompanyId() : "")
+                            + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
+                    );
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/managed-providers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getManagedProviders"))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getRatingsByCompanyId
      * Get Rating Details of a Company
      *
-     * @param companyId Company ID
+     * @param companyId    Company ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getRatings(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -199,8 +280,8 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: updateFundByFund
      * Perform fund deposit
      *
-     * @param companyId ID of company
-     * @param financeId ID of finance account
+     * @param companyId       ID of company
+     * @param financeId       ID of finance account
      * @param fundTransaction Transaction attempting to be created (Optional)
      */
     public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
@@ -241,24 +322,36 @@ public class CompanyWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onCompanyWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(String methodName) {
         }
 
-        public void onGetCompanyDetails(boolean success, Error error) {
+        public void onProgress(String methodName, long pos, long size, long time) {
         }
 
-        public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
         }
-
-        public void onGetRatings(CompanyRating companyRating, boolean success, Error error) {
-        }
-
-        public void onUpdateFund(boolean success, Error error) {
-        }
-
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -286,30 +379,37 @@ public class CompanyWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "getCompanyDetails":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getIntegrations":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "getCompanyDetails":
+                        case "getManagedProviders":
+                        case "updateFund":
+                            successObject = data;
+                            break;
+                        case "getIntegrations":
                             successObject = CompanyIntegrations.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getRatings":
-                        if (success)
+                            break;
+                        case "getRatings":
                             successObject = CompanyRating.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "getCompanyDetails":
+                        case "getIntegrations":
+                        case "getManagedProviders":
+                        case "getRatings":
+                        case "getTags":
+                        case "updateFund":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateFund":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -325,24 +425,7 @@ public class CompanyWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onCompanyWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "getCompanyDetails":
-                        listener.onGetCompanyDetails(success, (Error) failObject);
-                        break;
-                    case "getIntegrations":
-                        listener.onGetIntegrations((CompanyIntegrations) successObject, success, (Error) failObject);
-                        break;
-                    case "getRatings":
-                        listener.onGetRatings((CompanyRating) successObject, success, (Error) failObject);
-                        break;
-                    case "updateFund":
-                        listener.onUpdateFund(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

@@ -4,8 +4,6 @@ import android.test.ApplicationTestCase;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.SavedList;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -49,9 +47,11 @@ public class ApplicationTest extends ApplicationTestCase<App> {
         }
 
         @Override
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
-            signal.countDown();
-            Log.v(TAG, "onGetWorkOrderLists");
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrderLists")) {
+                signal.countDown();
+                Log.v(TAG, "onGetWorkOrderLists");
+            }
         }
     };
 }

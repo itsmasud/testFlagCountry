@@ -23,7 +23,6 @@ import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.List;
@@ -380,22 +379,22 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-            Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
-            if (workOrder == null || !success) {
-                setLoading(false);
-                return;
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrder")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
+                if (workOrder == null || !success) {
+                    setLoading(false);
+                    return;
+                }
+
+                if (_workOrderId == (int) workOrder.getId()) {
+                    Debug.setLong("last_workorder", workOrder.getId());
+                    _workOrder = workOrder;
+                    populateUi();
+                }
             }
 
-            if (_workOrderId == (int) workOrder.getId()) {
-                Debug.setLong("last_workorder", workOrder.getId());
-                _workOrder = workOrder;
-                populateUi();
-            }
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.startsWith("get") || !success)
                 return;
 

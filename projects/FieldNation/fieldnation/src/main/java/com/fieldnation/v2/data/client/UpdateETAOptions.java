@@ -3,8 +3,6 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.v2.data.model.*;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -43,6 +41,14 @@ public class UpdateETAOptions implements Parcelable {
         return this;
     }
 
+    public boolean isConfirmSet() {
+        return _confirm != null;
+    }
+
+    public String getConfirmUrlParam() {
+        return "confirm=" + _confirm;
+    }
+
     public void setUpdateFromIvr(Boolean updateFromIvr) {
         _updateFromIvr = updateFromIvr;
     }
@@ -56,6 +62,14 @@ public class UpdateETAOptions implements Parcelable {
         return this;
     }
 
+    public boolean isUpdateFromIvrSet() {
+        return _updateFromIvr != null;
+    }
+
+    public String getUpdateFromIvrUrlParam() {
+        return "update_from_ivr=" + _updateFromIvr;
+    }
+
     public void setAsync(Boolean async) {
         _async = async;
     }
@@ -67,6 +81,14 @@ public class UpdateETAOptions implements Parcelable {
     public UpdateETAOptions async(Boolean async) {
         _async = async;
         return this;
+    }
+
+    public boolean isAsyncSet() {
+        return _async != null;
+    }
+
+    public String getAsyncUrlParam() {
+        return "async=" + _async;
     }
 
     /*-*****************************-*/

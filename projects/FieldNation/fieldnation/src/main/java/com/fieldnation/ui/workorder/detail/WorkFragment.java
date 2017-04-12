@@ -1639,7 +1639,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
 
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");

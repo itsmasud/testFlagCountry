@@ -22,7 +22,6 @@ import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Date;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
@@ -528,51 +527,52 @@ public class CounterOfferDialog extends SimpleDialog {
         }
 
         @Override
-        public void onRequest(WorkOrder workOrder, boolean success, Error error) {
-            if (success) {
-                Expense[] exp = new Expense[_expenses.size()];
-                for (int i = 0; i < _expenses.size(); i++) {
-                    exp[i] = _expenses.get(i);
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("request")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (success) {
+                    Expense[] exp = new Expense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
+                    }
+
+                    _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
+                    dismiss(true);
                 }
-
-                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
-                dismiss(true);
-            }
-            _refreshView.refreshComplete();
-        }
-
-        @Override
-        public void onDeleteRequest(WorkOrder workOrder, boolean success, Error error) {
-            if (success) {
-                Expense[] exp = new Expense[_expenses.size()];
-                for (int i = 0; i < _expenses.size(); i++) {
-                    exp[i] = _expenses.get(i);
-                }
-                try {
-                    Request request = new Request();
-                    request.counter(true);
-
-                    if (!misc.isEmptyOrNull(_counterReason))
-                        request.counterNotes(_counterReason);
-
-                    if (_counterPay != null)
-                        request.pay(_counterPay);
-
-                    if (_counterSchedule != null)
-                        request.schedule(_counterSchedule);
-
-                    if (exp != null)
-                        request.expenses(exp);
-
-                    if (_expires > 0)
-                        request.expires(new Date(_expires));
-
-                    WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            } else {
                 _refreshView.refreshComplete();
+            } else if (methodName.equals("deleteRequest")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (success) {
+                    Expense[] exp = new Expense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
+                    }
+                    try {
+                        Request request = new Request();
+                        request.counter(true);
+
+                        if (!misc.isEmptyOrNull(_counterReason))
+                            request.counterNotes(_counterReason);
+
+                        if (_counterPay != null)
+                            request.pay(_counterPay);
+
+                        if (_counterSchedule != null)
+                            request.schedule(_counterSchedule);
+
+                        if (exp != null)
+                            request.expenses(exp);
+
+                        if (_expires > 0)
+                            request.expires(new Date(_expires));
+
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                } else {
+                    _refreshView.refreshComplete();
+                }
             }
         }
     };

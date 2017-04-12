@@ -25,7 +25,6 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -252,25 +251,28 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
         }
 
         @Override
-        public void onGetBundleWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            setLoading(false);
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getBundleWorkOrders")) {
+                WorkOrders workOrders = (WorkOrders) successObject;
+                setLoading(false);
 
-            if (!success || workOrders == null || workOrders.getResults() == null) {
-                return;
-            }
+                if (!success || workOrders == null || workOrders.getResults() == null) {
+                    return;
+                }
 
-            _adapter.addObjects(1, workOrders.getResults());
+                _adapter.addObjects(1, workOrders.getResults());
 
-            for (WorkOrder workOrder : workOrders.getResults()) {
-                if (workOrder.getRoutes() != null
-                        && workOrder.getRoutes().getUserRoute() != null
-                        && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-                    _okButton.setText(R.string.btn_accept);
-                    break;
-                } else if (workOrder.getRequests() != null
-                        && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-                    _okButton.setText(R.string.btn_request);
-                    break;
+                for (WorkOrder workOrder : workOrders.getResults()) {
+                    if (workOrder.getRoutes() != null
+                            && workOrder.getRoutes().getUserRoute() != null
+                            && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                        _okButton.setText(R.string.btn_accept);
+                        break;
+                    } else if (workOrder.getRequests() != null
+                            && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                        _okButton.setText(R.string.btn_request);
+                        break;
+                    }
                 }
             }
         }

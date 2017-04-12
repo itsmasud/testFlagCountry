@@ -46,12 +46,31 @@ public class TransactionListener extends WebTransactionListener {
 
     @Override
     public void onStart(Context context, WebTransaction transaction) {
-        super.onStart(context, transaction);
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("params", params);
+            bundle.putString("type", "start");
+            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     @Override
     public void onProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
-        super.onProgress(context, transaction, pos, size, time);
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("params", params);
+            bundle.putString("type", "progress");
+            bundle.putLong("pos", pos);
+            bundle.putLong("size", size);
+            bundle.putLong("time", time);
+            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     @Override
@@ -76,6 +95,7 @@ public class TransactionListener extends WebTransactionListener {
                     bundle.putByteArray("data", httpResult.getByteArray());
                 }
                 bundle.putBoolean("success", true);
+                bundle.putString("type", "complete");
 
                 Log.v(TAG, "topicId: " + params.topicId);
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
@@ -110,6 +130,7 @@ public class TransactionListener extends WebTransactionListener {
                     bundle.putByteArray("data", httpResult.getByteArray());
                 }
                 bundle.putBoolean("success", false);
+                bundle.putString("type", "complete");
 
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
 

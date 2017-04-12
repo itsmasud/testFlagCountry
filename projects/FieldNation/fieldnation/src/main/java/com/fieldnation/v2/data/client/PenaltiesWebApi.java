@@ -1,14 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -20,11 +18,10 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.PayModifier;
 
 /**
  * Created by dmgen from swagger.
@@ -51,7 +48,6 @@ public class PenaltiesWebApi extends TopicClient {
     /**
      * Swagger operationId: addPenalty
      * Add a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
-     *
      */
     public static void addPenalty(Context context) {
         try {
@@ -81,12 +77,12 @@ public class PenaltiesWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: removePenaltyByPenalty
+     * Swagger operationId: deletePenaltyByPenalty
      * Removes a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
      * @param penaltyId Penalty ID
      */
-    public static void removePenalty(Context context, Integer penaltyId) {
+    public static void deletePenalty(Context context, Integer penaltyId) {
         try {
             String key = misc.md5("DELETE//api/rest/v2/penalties/" + penaltyId);
 
@@ -102,7 +98,7 @@ public class PenaltiesWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/PenaltiesWebApi",
-                                    PenaltiesWebApi.class, "removePenalty"))
+                                    PenaltiesWebApi.class, "deletePenalty"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -158,21 +154,36 @@ public class PenaltiesWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onPenaltiesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(String methodName) {
         }
 
-        public void onAddPenalty(PayModifier payModifier, boolean success, Error error) {
+        public void onProgress(String methodName, long pos, long size, long time) {
         }
 
-        public void onRemovePenalty(boolean success, Error error) {
+        public void onComplete(String methodName, Object successObject, boolean success, Object failObject) {
         }
-
-        public void onUpdatePenalty(boolean success, Error error) {
-        }
-
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -200,24 +211,30 @@ public class PenaltiesWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "addPenalty":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "deletePenalty":
+                        case "updatePenalty":
+                            successObject = data;
+                            break;
+                        case "addPenalty":
                             successObject = PayModifier.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addPenalty":
+                        case "deletePenalty":
+                        case "updatePenalty":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removePenalty":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updatePenalty":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -233,21 +250,7 @@ public class PenaltiesWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onPenaltiesWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "addPenalty":
-                        listener.onAddPenalty((PayModifier) successObject, success, (Error) failObject);
-                        break;
-                    case "removePenalty":
-                        listener.onRemovePenalty(success, (Error) failObject);
-                        break;
-                    case "updatePenalty":
-                        listener.onUpdatePenalty(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
