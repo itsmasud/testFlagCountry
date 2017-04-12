@@ -21,11 +21,20 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class WorkOrderPublishStats implements Parcelable {
-    private static final String TAG = "WorkOrderPublishStats";
+public class PublishStats implements Parcelable {
+    private static final String TAG = "PublishStats";
+
+    @Json(name = "all_requests")
+    private Integer _allRequests;
+
+    @Json(name = "correlation_id")
+    private String _correlationId;
 
     @Json(name = "counter_offers")
     private Integer _counterOffers;
+
+    @Json(name = "declines")
+    private Integer _declines;
 
     @Json(name = "requests")
     private Integer _requests;
@@ -36,12 +45,56 @@ public class WorkOrderPublishStats implements Parcelable {
     @Source
     private JsonObject SOURCE;
 
-    public WorkOrderPublishStats() {
+    public PublishStats() {
         SOURCE = new JsonObject();
     }
 
-    public WorkOrderPublishStats(JsonObject obj) {
+    public PublishStats(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setAllRequests(Integer allRequests) throws ParseException {
+        _allRequests = allRequests;
+        SOURCE.put("all_requests", allRequests);
+    }
+
+    public Integer getAllRequests() {
+        try {
+            if (_allRequests == null && SOURCE.has("all_requests") && SOURCE.get("all_requests") != null)
+                _allRequests = SOURCE.getInt("all_requests");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _allRequests;
+    }
+
+    public PublishStats allRequests(Integer allRequests) throws ParseException {
+        _allRequests = allRequests;
+        SOURCE.put("all_requests", allRequests);
+        return this;
+    }
+
+    public void setCorrelationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
+    }
+
+    public String getCorrelationId() {
+        try {
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _correlationId;
+    }
+
+    public PublishStats correlationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
+        return this;
     }
 
     public void setCounterOffers(Integer counterOffers) throws ParseException {
@@ -60,9 +113,31 @@ public class WorkOrderPublishStats implements Parcelable {
         return _counterOffers;
     }
 
-    public WorkOrderPublishStats counterOffers(Integer counterOffers) throws ParseException {
+    public PublishStats counterOffers(Integer counterOffers) throws ParseException {
         _counterOffers = counterOffers;
         SOURCE.put("counter_offers", counterOffers);
+        return this;
+    }
+
+    public void setDeclines(Integer declines) throws ParseException {
+        _declines = declines;
+        SOURCE.put("declines", declines);
+    }
+
+    public Integer getDeclines() {
+        try {
+            if (_declines == null && SOURCE.has("declines") && SOURCE.get("declines") != null)
+                _declines = SOURCE.getInt("declines");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _declines;
+    }
+
+    public PublishStats declines(Integer declines) throws ParseException {
+        _declines = declines;
+        SOURCE.put("declines", declines);
         return this;
     }
 
@@ -82,7 +157,7 @@ public class WorkOrderPublishStats implements Parcelable {
         return _requests;
     }
 
-    public WorkOrderPublishStats requests(Integer requests) throws ParseException {
+    public PublishStats requests(Integer requests) throws ParseException {
         _requests = requests;
         SOURCE.put("requests", requests);
         return this;
@@ -104,7 +179,7 @@ public class WorkOrderPublishStats implements Parcelable {
         return _routes;
     }
 
-    public WorkOrderPublishStats routes(Integer routes) throws ParseException {
+    public PublishStats routes(Integer routes) throws ParseException {
         _routes = routes;
         SOURCE.put("routes", routes);
         return this;
@@ -113,25 +188,25 @@ public class WorkOrderPublishStats implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(WorkOrderPublishStats[] array) {
+    public static JsonArray toJsonArray(PublishStats[] array) {
         JsonArray list = new JsonArray();
-        for (WorkOrderPublishStats item : array) {
+        for (PublishStats item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static WorkOrderPublishStats[] fromJsonArray(JsonArray array) {
-        WorkOrderPublishStats[] list = new WorkOrderPublishStats[array.size()];
+    public static PublishStats[] fromJsonArray(JsonArray array) {
+        PublishStats[] list = new PublishStats[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static WorkOrderPublishStats fromJson(JsonObject obj) {
+    public static PublishStats fromJson(JsonObject obj) {
         try {
-            return new WorkOrderPublishStats(obj);
+            return new PublishStats(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -145,12 +220,12 @@ public class WorkOrderPublishStats implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<WorkOrderPublishStats> CREATOR = new Parcelable.Creator<WorkOrderPublishStats>() {
+    public static final Parcelable.Creator<PublishStats> CREATOR = new Parcelable.Creator<PublishStats>() {
 
         @Override
-        public WorkOrderPublishStats createFromParcel(Parcel source) {
+        public PublishStats createFromParcel(Parcel source) {
             try {
-                return WorkOrderPublishStats.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return PublishStats.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -158,8 +233,8 @@ public class WorkOrderPublishStats implements Parcelable {
         }
 
         @Override
-        public WorkOrderPublishStats[] newArray(int size) {
-            return new WorkOrderPublishStats[size];
+        public PublishStats[] newArray(int size) {
+            return new PublishStats[size];
         }
     };
 

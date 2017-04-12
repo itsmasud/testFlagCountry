@@ -21,92 +21,67 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class TaskGroup implements Parcelable {
-    private static final String TAG = "TaskGroup";
+public class WorkOrderRole implements Parcelable {
+    private static final String TAG = "WorkOrderRole";
 
-    @Json(name = "id")
-    private String _id;
-
-    @Json(name = "label")
-    private String _label;
+    @Json(name = "role")
+    private String _role;
 
     @Source
     private JsonObject SOURCE;
 
-    public TaskGroup() {
+    public WorkOrderRole() {
         SOURCE = new JsonObject();
     }
 
-    public TaskGroup(JsonObject obj) {
+    public WorkOrderRole(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setId(String id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
+    public void setRole(String role) throws ParseException {
+        _role = role;
+        SOURCE.put("role", role);
     }
 
-    public String getId() {
+    public String getRole() {
         try {
-            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getString("id");
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
+                _role = SOURCE.getString("role");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _id;
+        return _role;
     }
 
-    public TaskGroup id(String id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
-        return this;
-    }
-
-    public void setLabel(String label) throws ParseException {
-        _label = label;
-        SOURCE.put("label", label);
-    }
-
-    public String getLabel() {
-        try {
-            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
-                _label = SOURCE.getString("label");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _label;
-    }
-
-    public TaskGroup label(String label) throws ParseException {
-        _label = label;
-        SOURCE.put("label", label);
+    public WorkOrderRole role(String role) throws ParseException {
+        _role = role;
+        SOURCE.put("role", role);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(TaskGroup[] array) {
+    public static JsonArray toJsonArray(WorkOrderRole[] array) {
         JsonArray list = new JsonArray();
-        for (TaskGroup item : array) {
+        for (WorkOrderRole item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static TaskGroup[] fromJsonArray(JsonArray array) {
-        TaskGroup[] list = new TaskGroup[array.size()];
+    public static WorkOrderRole[] fromJsonArray(JsonArray array) {
+        WorkOrderRole[] list = new WorkOrderRole[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static TaskGroup fromJson(JsonObject obj) {
+    public static WorkOrderRole fromJson(JsonObject obj) {
         try {
-            return new TaskGroup(obj);
+            return new WorkOrderRole(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -120,12 +95,12 @@ public class TaskGroup implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<TaskGroup> CREATOR = new Parcelable.Creator<TaskGroup>() {
+    public static final Parcelable.Creator<WorkOrderRole> CREATOR = new Parcelable.Creator<WorkOrderRole>() {
 
         @Override
-        public TaskGroup createFromParcel(Parcel source) {
+        public WorkOrderRole createFromParcel(Parcel source) {
             try {
-                return TaskGroup.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return WorkOrderRole.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -133,8 +108,8 @@ public class TaskGroup implements Parcelable {
         }
 
         @Override
-        public TaskGroup[] newArray(int size) {
-            return new TaskGroup[size];
+        public WorkOrderRole[] newArray(int size) {
+            return new WorkOrderRole[size];
         }
     };
 
@@ -153,6 +128,6 @@ public class TaskGroup implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getId());
+        return true;
     }
 }

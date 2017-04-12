@@ -21,35 +21,35 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class TaskGroup implements Parcelable {
-    private static final String TAG = "TaskGroup";
+public class Template implements Parcelable {
+    private static final String TAG = "Template";
 
     @Json(name = "id")
-    private String _id;
+    private Integer _id;
 
-    @Json(name = "label")
-    private String _label;
+    @Json(name = "name")
+    private String _name;
 
     @Source
     private JsonObject SOURCE;
 
-    public TaskGroup() {
+    public Template() {
         SOURCE = new JsonObject();
     }
 
-    public TaskGroup(JsonObject obj) {
+    public Template(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setId(String id) throws ParseException {
+    public void setId(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
     }
 
-    public String getId() {
+    public Integer getId() {
         try {
             if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getString("id");
+                _id = SOURCE.getInt("id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -57,56 +57,56 @@ public class TaskGroup implements Parcelable {
         return _id;
     }
 
-    public TaskGroup id(String id) throws ParseException {
+    public Template id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
         return this;
     }
 
-    public void setLabel(String label) throws ParseException {
-        _label = label;
-        SOURCE.put("label", label);
+    public void setName(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
     }
 
-    public String getLabel() {
+    public String getName() {
         try {
-            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
-                _label = SOURCE.getString("label");
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _label;
+        return _name;
     }
 
-    public TaskGroup label(String label) throws ParseException {
-        _label = label;
-        SOURCE.put("label", label);
+    public Template name(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(TaskGroup[] array) {
+    public static JsonArray toJsonArray(Template[] array) {
         JsonArray list = new JsonArray();
-        for (TaskGroup item : array) {
+        for (Template item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static TaskGroup[] fromJsonArray(JsonArray array) {
-        TaskGroup[] list = new TaskGroup[array.size()];
+    public static Template[] fromJsonArray(JsonArray array) {
+        Template[] list = new Template[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static TaskGroup fromJson(JsonObject obj) {
+    public static Template fromJson(JsonObject obj) {
         try {
-            return new TaskGroup(obj);
+            return new Template(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -120,12 +120,12 @@ public class TaskGroup implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<TaskGroup> CREATOR = new Parcelable.Creator<TaskGroup>() {
+    public static final Parcelable.Creator<Template> CREATOR = new Parcelable.Creator<Template>() {
 
         @Override
-        public TaskGroup createFromParcel(Parcel source) {
+        public Template createFromParcel(Parcel source) {
             try {
-                return TaskGroup.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Template.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -133,8 +133,8 @@ public class TaskGroup implements Parcelable {
         }
 
         @Override
-        public TaskGroup[] newArray(int size) {
-            return new TaskGroup[size];
+        public Template[] newArray(int size) {
+            return new Template[size];
         }
     };
 
@@ -153,6 +153,6 @@ public class TaskGroup implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return !misc.isEmptyOrNull(getId());
+        return getId() != null && getId() != 0;
     }
 }

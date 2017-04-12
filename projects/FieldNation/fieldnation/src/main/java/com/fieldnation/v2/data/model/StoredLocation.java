@@ -66,9 +66,6 @@ public class StoredLocation implements Parcelable {
     @Json(name = "name")
     private String _name;
 
-    @Json(name = "notes")
-    private LocationNote[] _notes;
-
     @Json(name = "state")
     private String _state;
 
@@ -430,33 +427,6 @@ public class StoredLocation implements Parcelable {
     public StoredLocation name(String name) throws ParseException {
         _name = name;
         SOURCE.put("name", name);
-        return this;
-    }
-
-    public void setNotes(LocationNote[] notes) throws ParseException {
-        _notes = notes;
-        SOURCE.put("notes", LocationNote.toJsonArray(notes));
-    }
-
-    public LocationNote[] getNotes() {
-        try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null) {
-                _notes = LocationNote.fromJsonArray(SOURCE.getJsonArray("notes"));
-            }
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _notes;
-    }
-
-    public StoredLocation notes(LocationNote[] notes) throws ParseException {
-        _notes = notes;
-        SOURCE.put("notes", LocationNote.toJsonArray(notes), true);
         return this;
     }
 

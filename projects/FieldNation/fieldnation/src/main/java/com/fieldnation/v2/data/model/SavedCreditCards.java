@@ -21,63 +21,24 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Holds implements Parcelable {
-    private static final String TAG = "Holds";
-
-    @Json(name = "actions")
-    private String[] _actions;
+public class SavedCreditCards implements Parcelable {
+    private static final String TAG = "SavedCreditCards";
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private Hold[] _results;
+    private SavedCreditCard[] _results;
 
     @Source
     private JsonObject SOURCE;
 
-    public Holds() {
+    public SavedCreditCards() {
         SOURCE = new JsonObject();
     }
 
-    public Holds(JsonObject obj) {
+    public SavedCreditCards(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setActions(String[] actions) throws ParseException {
-        _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (String item : actions) {
-            ja.add(item);
-        }
-        SOURCE.put("actions", ja);
-    }
-
-    public String[] getActions() {
-        try {
-            if (_actions != null)
-                return _actions;
-
-            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
-                JsonArray ja = SOURCE.getJsonArray("actions");
-                _actions = ja.toArray(new String[ja.size()]);
-            }
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _actions;
-    }
-
-    public Holds actions(String[] actions) throws ParseException {
-        _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (String item : actions) {
-            ja.add(item);
-        }
-        SOURCE.put("actions", ja, true);
-        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -94,29 +55,29 @@ public class Holds implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }
 
-    public Holds metadata(ListEnvelope metadata) throws ParseException {
+    public SavedCreditCards metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Hold[] results) throws ParseException {
+    public void setResults(SavedCreditCard[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Hold.toJsonArray(results));
+        SOURCE.put("results", SavedCreditCard.toJsonArray(results));
     }
 
-    public Hold[] getResults() {
+    public SavedCreditCard[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
             if (SOURCE.has("results") && SOURCE.get("results") != null) {
-                _results = Hold.fromJsonArray(SOURCE.getJsonArray("results"));
+                _results = SavedCreditCard.fromJsonArray(SOURCE.getJsonArray("results"));
             }
 
         } catch (Exception ex) {
@@ -126,34 +87,34 @@ public class Holds implements Parcelable {
         return _results;
     }
 
-    public Holds results(Hold[] results) throws ParseException {
+    public SavedCreditCards results(SavedCreditCard[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Hold.toJsonArray(results), true);
+        SOURCE.put("results", SavedCreditCard.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Holds[] array) {
+    public static JsonArray toJsonArray(SavedCreditCards[] array) {
         JsonArray list = new JsonArray();
-        for (Holds item : array) {
+        for (SavedCreditCards item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Holds[] fromJsonArray(JsonArray array) {
-        Holds[] list = new Holds[array.size()];
+    public static SavedCreditCards[] fromJsonArray(JsonArray array) {
+        SavedCreditCards[] list = new SavedCreditCards[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Holds fromJson(JsonObject obj) {
+    public static SavedCreditCards fromJson(JsonObject obj) {
         try {
-            return new Holds(obj);
+            return new SavedCreditCards(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -167,12 +128,12 @@ public class Holds implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Holds> CREATOR = new Parcelable.Creator<Holds>() {
+    public static final Parcelable.Creator<SavedCreditCards> CREATOR = new Parcelable.Creator<SavedCreditCards>() {
 
         @Override
-        public Holds createFromParcel(Parcel source) {
+        public SavedCreditCards createFromParcel(Parcel source) {
             try {
-                return Holds.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return SavedCreditCards.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -180,8 +141,8 @@ public class Holds implements Parcelable {
         }
 
         @Override
-        public Holds[] newArray(int size) {
-            return new Holds[size];
+        public SavedCreditCards[] newArray(int size) {
+            return new SavedCreditCards[size];
         }
     };
 

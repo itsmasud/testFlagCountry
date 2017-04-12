@@ -27,6 +27,12 @@ public class Cancellation implements Parcelable {
     @Json(name = "cancel_reason")
     private Integer _cancelReason;
 
+    @Json(name = "cancel_request_not_charge")
+    private Boolean _cancelRequestNotCharge;
+
+    @Json(name = "message_to_provider")
+    private String _messageToProvider;
+
     @Json(name = "notes")
     private String _notes;
 
@@ -60,6 +66,50 @@ public class Cancellation implements Parcelable {
     public Cancellation cancelReason(Integer cancelReason) throws ParseException {
         _cancelReason = cancelReason;
         SOURCE.put("cancel_reason", cancelReason);
+        return this;
+    }
+
+    public void setCancelRequestNotCharge(Boolean cancelRequestNotCharge) throws ParseException {
+        _cancelRequestNotCharge = cancelRequestNotCharge;
+        SOURCE.put("cancel_request_not_charge", cancelRequestNotCharge);
+    }
+
+    public Boolean getCancelRequestNotCharge() {
+        try {
+            if (_cancelRequestNotCharge == null && SOURCE.has("cancel_request_not_charge") && SOURCE.get("cancel_request_not_charge") != null)
+                _cancelRequestNotCharge = SOURCE.getBoolean("cancel_request_not_charge");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _cancelRequestNotCharge;
+    }
+
+    public Cancellation cancelRequestNotCharge(Boolean cancelRequestNotCharge) throws ParseException {
+        _cancelRequestNotCharge = cancelRequestNotCharge;
+        SOURCE.put("cancel_request_not_charge", cancelRequestNotCharge);
+        return this;
+    }
+
+    public void setMessageToProvider(String messageToProvider) throws ParseException {
+        _messageToProvider = messageToProvider;
+        SOURCE.put("message_to_provider", messageToProvider);
+    }
+
+    public String getMessageToProvider() {
+        try {
+            if (_messageToProvider == null && SOURCE.has("message_to_provider") && SOURCE.get("message_to_provider") != null)
+                _messageToProvider = SOURCE.getString("message_to_provider");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _messageToProvider;
+    }
+
+    public Cancellation messageToProvider(String messageToProvider) throws ParseException {
+        _messageToProvider = messageToProvider;
+        SOURCE.put("message_to_provider", messageToProvider);
         return this;
     }
 

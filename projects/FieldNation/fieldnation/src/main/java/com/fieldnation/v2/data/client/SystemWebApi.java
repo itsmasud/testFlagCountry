@@ -49,6 +49,88 @@ public class SystemWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getBanners
+     * Get a list of all banners.
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getBanners(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/system/banners");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/system/banners");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/system/banners")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/SystemWebApi",
+                                    SystemWebApi.class, "getBanners", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getBanners
+     * Get a list of all banners.
+     *
+     * @param getBannersOptions Additional optional parameters
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getBanners(Context context, GetBannersOptions getBannersOptions, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/system/banners" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
+                                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
+                                   );
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/system/banners")
+                    .urlParams("" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
+                                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
+                                   );
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/system/banners")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/SystemWebApi",
+                                    SystemWebApi.class, "getBanners", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: systemUpdateModel
      * Fires an event that a model has been updated and propogates the new model to all interested parties.
      *
@@ -210,12 +292,16 @@ public class SystemWebApi extends TopicClient {
                         case "systemUpdateModel":
                             successObject = UpdateModel.fromJson(new JsonObject(data));
                             break;
+                        case "getBanners":
+                            successObject = Banner.fromJson(new JsonObject(data));
+                            break;
                         default:
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
                             break;
                     }
                 } else {
                     switch (transactionParams.apiFunction) {
+                        case "getBanners":
                         case "systemUpdateModel":
                             failObject = Error.fromJson(new JsonObject(data));
                             break;

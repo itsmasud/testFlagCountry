@@ -21,23 +21,26 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Qualifications implements Parcelable {
-    private static final String TAG = "Qualifications";
+public class Tags implements Parcelable {
+    private static final String TAG = "Tags";
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
-    @Json(name = "selection_rule")
-    private SelectionRule _selectionRule;
+    @Json(name = "metadata")
+    private ListEnvelope _metadata;
+
+    @Json(name = "results")
+    private Tag[] _results;
 
     @Source
     private JsonObject SOURCE;
 
-    public Qualifications() {
+    public Tags() {
         SOURCE = new JsonObject();
     }
 
-    public Qualifications(JsonObject obj) {
+    public Tags(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -66,7 +69,7 @@ public class Qualifications implements Parcelable {
         return _actions;
     }
 
-    public Qualifications actions(ActionsEnum[] actions) throws ParseException {
+    public Tags actions(ActionsEnum[] actions) throws ParseException {
         _actions = actions;
         JsonArray ja = new JsonArray();
         for (ActionsEnum item : actions) {
@@ -76,28 +79,55 @@ public class Qualifications implements Parcelable {
         return this;
     }
 
-    public void setSelectionRule(SelectionRule selectionRule) throws ParseException {
-        _selectionRule = selectionRule;
-        SOURCE.put("selection_rule", selectionRule.getJson());
+    public void setMetadata(ListEnvelope metadata) throws ParseException {
+        _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
     }
 
-    public SelectionRule getSelectionRule() {
+    public ListEnvelope getMetadata() {
         try {
-            if (_selectionRule == null && SOURCE.has("selection_rule") && SOURCE.get("selection_rule") != null)
-                _selectionRule = SelectionRule.fromJson(SOURCE.getJsonObject("selection_rule"));
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+                _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_selectionRule != null && _selectionRule.isSet())
-        return _selectionRule;
+        if (_metadata != null && _metadata.isSet())
+            return _metadata;
 
         return null;
     }
 
-    public Qualifications selectionRule(SelectionRule selectionRule) throws ParseException {
-        _selectionRule = selectionRule;
-        SOURCE.put("selection_rule", selectionRule.getJson());
+    public Tags metadata(ListEnvelope metadata) throws ParseException {
+        _metadata = metadata;
+        SOURCE.put("metadata", metadata.getJson());
+        return this;
+    }
+
+    public void setResults(Tag[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Tag.toJsonArray(results));
+    }
+
+    public Tag[] getResults() {
+        try {
+            if (_results != null)
+                return _results;
+
+            if (SOURCE.has("results") && SOURCE.get("results") != null) {
+                _results = Tag.fromJsonArray(SOURCE.getJsonArray("results"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _results;
+    }
+
+    public Tags results(Tag[] results) throws ParseException {
+        _results = results;
+        SOURCE.put("results", Tag.toJsonArray(results), true);
         return this;
     }
 
@@ -106,9 +136,7 @@ public class Qualifications implements Parcelable {
     /*-******************************-*/
     public enum ActionsEnum {
         @Json(name = "add")
-        ADD("add"),
-        @Json(name = "edit")
-        EDIT("edit");
+        ADD("add");
 
         private String value;
 
@@ -142,25 +170,25 @@ public class Qualifications implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Qualifications[] array) {
+    public static JsonArray toJsonArray(Tags[] array) {
         JsonArray list = new JsonArray();
-        for (Qualifications item : array) {
+        for (Tags item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Qualifications[] fromJsonArray(JsonArray array) {
-        Qualifications[] list = new Qualifications[array.size()];
+    public static Tags[] fromJsonArray(JsonArray array) {
+        Tags[] list = new Tags[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Qualifications fromJson(JsonObject obj) {
+    public static Tags fromJson(JsonObject obj) {
         try {
-            return new Qualifications(obj);
+            return new Tags(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -174,12 +202,12 @@ public class Qualifications implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Qualifications> CREATOR = new Parcelable.Creator<Qualifications>() {
+    public static final Parcelable.Creator<Tags> CREATOR = new Parcelable.Creator<Tags>() {
 
         @Override
-        public Qualifications createFromParcel(Parcel source) {
+        public Tags createFromParcel(Parcel source) {
             try {
-                return Qualifications.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Tags.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -187,8 +215,8 @@ public class Qualifications implements Parcelable {
         }
 
         @Override
-        public Qualifications[] newArray(int size) {
-            return new Qualifications[size];
+        public Tags[] newArray(int size) {
+            return new Tags[size];
         }
     };
 

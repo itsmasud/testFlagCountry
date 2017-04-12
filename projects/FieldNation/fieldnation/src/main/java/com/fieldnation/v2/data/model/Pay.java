@@ -5,12 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -81,9 +86,6 @@ public class Pay implements Parcelable {
 
     @Json(name = "role")
     private String _role;
-
-    @Json(name = "status_id")
-    private Integer _statusId;
 
     @Json(name = "total")
     private Double _total;
@@ -621,28 +623,6 @@ public class Pay implements Parcelable {
     public Pay role(String role) throws ParseException {
         _role = role;
         SOURCE.put("role", role);
-        return this;
-    }
-
-    public void setStatusId(Integer statusId) throws ParseException {
-        _statusId = statusId;
-        SOURCE.put("status_id", statusId);
-    }
-
-    public Integer getStatusId() {
-        try {
-            if (_statusId == null && SOURCE.has("status_id") && SOURCE.get("status_id") != null)
-                _statusId = SOURCE.getInt("status_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _statusId;
-    }
-
-    public Pay statusId(Integer statusId) throws ParseException {
-        _statusId = statusId;
-        SOURCE.put("status_id", statusId);
         return this;
     }
 

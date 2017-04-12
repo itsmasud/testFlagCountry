@@ -21,23 +21,23 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Pays implements Parcelable {
-    private static final String TAG = "Pays";
+public class CompanyFeatures implements Parcelable {
+    private static final String TAG = "CompanyFeatures";
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private Pay[] _results;
+    private CompanyFeature[] _results;
 
     @Source
     private JsonObject SOURCE;
 
-    public Pays() {
+    public CompanyFeatures() {
         SOURCE = new JsonObject();
     }
 
-    public Pays(JsonObject obj) {
+    public CompanyFeatures(JsonObject obj) {
         SOURCE = obj;
     }
 
@@ -55,29 +55,29 @@ public class Pays implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }
 
-    public Pays metadata(ListEnvelope metadata) throws ParseException {
+    public CompanyFeatures metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Pay[] results) throws ParseException {
+    public void setResults(CompanyFeature[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Pay.toJsonArray(results));
+        SOURCE.put("results", CompanyFeature.toJsonArray(results));
     }
 
-    public Pay[] getResults() {
+    public CompanyFeature[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
             if (SOURCE.has("results") && SOURCE.get("results") != null) {
-                _results = Pay.fromJsonArray(SOURCE.getJsonArray("results"));
+                _results = CompanyFeature.fromJsonArray(SOURCE.getJsonArray("results"));
             }
 
         } catch (Exception ex) {
@@ -87,34 +87,34 @@ public class Pays implements Parcelable {
         return _results;
     }
 
-    public Pays results(Pay[] results) throws ParseException {
+    public CompanyFeatures results(CompanyFeature[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Pay.toJsonArray(results), true);
+        SOURCE.put("results", CompanyFeature.toJsonArray(results), true);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Pays[] array) {
+    public static JsonArray toJsonArray(CompanyFeatures[] array) {
         JsonArray list = new JsonArray();
-        for (Pays item : array) {
+        for (CompanyFeatures item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Pays[] fromJsonArray(JsonArray array) {
-        Pays[] list = new Pays[array.size()];
+    public static CompanyFeatures[] fromJsonArray(JsonArray array) {
+        CompanyFeatures[] list = new CompanyFeatures[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Pays fromJson(JsonObject obj) {
+    public static CompanyFeatures fromJson(JsonObject obj) {
         try {
-            return new Pays(obj);
+            return new CompanyFeatures(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -128,12 +128,12 @@ public class Pays implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Pays> CREATOR = new Parcelable.Creator<Pays>() {
+    public static final Parcelable.Creator<CompanyFeatures> CREATOR = new Parcelable.Creator<CompanyFeatures>() {
 
         @Override
-        public Pays createFromParcel(Parcel source) {
+        public CompanyFeatures createFromParcel(Parcel source) {
             try {
-                return Pays.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return CompanyFeatures.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -141,8 +141,8 @@ public class Pays implements Parcelable {
         }
 
         @Override
-        public Pays[] newArray(int size) {
-            return new Pays[size];
+        public CompanyFeatures[] newArray(int size) {
+            return new CompanyFeatures[size];
         }
     };
 

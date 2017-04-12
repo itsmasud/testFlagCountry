@@ -42,6 +42,9 @@ public class Contact implements Parcelable {
     @Json(name = "role")
     private String _role;
 
+    @Json(name = "userId")
+    private Integer _userId;
+
     @Source
     private JsonObject SOURCE;
 
@@ -182,6 +185,28 @@ public class Contact implements Parcelable {
     public Contact role(String role) throws ParseException {
         _role = role;
         SOURCE.put("role", role);
+        return this;
+    }
+
+    public void setUserId(Integer userId) throws ParseException {
+        _userId = userId;
+        SOURCE.put("userId", userId);
+    }
+
+    public Integer getUserId() {
+        try {
+            if (_userId == null && SOURCE.has("userId") && SOURCE.get("userId") != null)
+                _userId = SOURCE.getInt("userId");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _userId;
+    }
+
+    public Contact userId(Integer userId) throws ParseException {
+        _userId = userId;
+        SOURCE.put("userId", userId);
         return this;
     }
 

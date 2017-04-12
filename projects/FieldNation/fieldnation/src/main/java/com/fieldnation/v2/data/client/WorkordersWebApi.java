@@ -52,6 +52,7 @@ import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.PayModifiers;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.Qualifications;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
@@ -62,6 +63,8 @@ import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Signatures;
 import com.fieldnation.v2.data.model.SwapResponse;
+import com.fieldnation.v2.data.model.Tag;
+import com.fieldnation.v2.data.model.Tags;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TaskAlert;
 import com.fieldnation.v2.data.model.Tasks;
@@ -69,6 +72,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.Users;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrderOverview;
 import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
@@ -1089,6 +1093,48 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: addQualificationByWorkOrder
+     * Add qualification for work order.
+     *
+     * @param workOrderId    ID of work order
+     * @param qualifications Qualification information
+     */
+    public static void addQualification(Context context, Integer workOrderId, Qualifications qualifications) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/qualifications");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/qualifications");
+
+            if (qualifications != null)
+                builder.body(qualifications.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (qualifications != null)
+                methodParams.put("qualifications", qualifications.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/qualifications")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "addQualification", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: addShipmentByWorkOrder
      * Adds a shipment to a work order
      *
@@ -1252,6 +1298,93 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addSignature", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: addTagByWorkOrder
+     * Adds a tag to a work order
+     *
+     * @param workOrderId ID of work order
+     * @param tag         Tag
+     */
+    public static void addTag(Context context, Integer workOrderId, Tag tag) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tags");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tags");
+
+            if (tag != null)
+                builder.body(tag.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (tag != null)
+                methodParams.put("tag", tag.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tags")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "addTag", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: addTagByWorkOrder
+     * Adds a tag to a work order
+     *
+     * @param workOrderId ID of work order
+     * @param tag         Tag
+     * @param async       Async (Optional)
+     */
+    public static void addTag(Context context, Integer workOrderId, Tag tag, Boolean async) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tags?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tags")
+                    .urlParams("?async=" + async);
+
+            if (tag != null)
+                builder.body(tag.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("async", async);
+            if (tag != null)
+                methodParams.put("tag", tag.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/tags")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "addTag", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -2441,7 +2574,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param messageId   ID of work order message
      */
-    public static void deleteMessage(Context context, String workOrderId, String messageId) {
+    public static void deleteMessage(Context context, Integer workOrderId, Integer messageId) {
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
 
@@ -4060,6 +4193,46 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getOverviewByWorkOrder
+     * Gets overview by work order
+     *
+     * @param workOrderId  ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getOverview(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/overview");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getOverview", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getPayByWorkOrder
      * Gets the pay for a work order
      *
@@ -4270,7 +4443,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
-    public static void getProviders(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProviders(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers");
 
@@ -4311,7 +4484,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param getProvidersOptions Additional optional parameters
      * @param isBackground        indicates that this call is low priority
      */
-    public static void getProviders(Context context, String workOrderId, GetProvidersOptions getProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
+    public static void getProviders(Context context, Integer workOrderId, GetProvidersOptions getProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
                     + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
@@ -4338,6 +4511,46 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getProviders", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getQualificationsByWorkOrder
+     * Returns a list of qualifications applied to work order
+     *
+     * @param workOrderId  ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getQualifications(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/qualifications");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/qualifications");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/qualifications")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getQualifications", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -5511,6 +5724,44 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: removeQualificationByWorkOrder
+     * Remove qualification work order
+     *
+     * @param workOrderId     ID of work order
+     * @param qualificationId ID of qualification
+     */
+    public static void removeQualification(Context context, Integer workOrderId, Integer qualificationId) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/qualifications/" + qualificationId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/qualifications/" + qualificationId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("qualificationId", qualificationId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/workorders/{work_order_id}/qualifications/{qualification_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "removeQualification", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: reorderTaskByWorkOrderAndTaskAndTargetTask
      * Reorders a task associated with a work order to a position before or after a target task
      *
@@ -5560,7 +5811,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param messageId   ID of work order message
      * @param json        JSON payload
      */
-    public static void replyMessage(Context context, String workOrderId, String messageId, Message json) {
+    public static void replyMessage(Context context, Integer workOrderId, Integer messageId, Message json) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
 
@@ -5605,7 +5856,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param json        JSON payload
      * @param async       Async (Optional)
      */
-    public static void replyMessage(Context context, String workOrderId, String messageId, Message json, Boolean async) {
+    public static void replyMessage(Context context, Integer workOrderId, Integer messageId, Message json, Boolean async) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId + "?async=" + async);
 
@@ -7166,7 +7417,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param messageId   ID of work order message
      * @param json        JSON payload
      */
-    public static void updateMessage(Context context, String workOrderId, String messageId, Message json) {
+    public static void updateMessage(Context context, Integer workOrderId, Integer messageId, Message json) {
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
 
@@ -7463,6 +7714,48 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: updateQualificationByWorkOrder
+     * Update qualification for work order.
+     *
+     * @param workOrderId    ID of work order
+     * @param qualifications Qualification information
+     */
+    public static void updateQualification(Context context, Integer workOrderId, Qualifications qualifications) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/qualifications");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/qualifications");
+
+            if (qualifications != null)
+                builder.body(qualifications.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (qualifications != null)
+                methodParams.put("qualifications", qualifications.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/qualifications")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateQualification", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: updateScheduleByWorkOrder
      * Updates the service schedule or eta of a work order (depending on your role)
      *
@@ -7630,6 +7923,97 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "updateShipment", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: updateTagByWorkOrderAndProblem
+     * Updates a tag on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param tagId       ID of work order
+     * @param tag         Tag
+     */
+    public static void updateTag(Context context, Integer workOrderId, Integer tagId, Tag tag) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
+
+            if (tag != null)
+                builder.body(tag.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("tagId", tagId);
+            if (tag != null)
+                methodParams.put("tag", tag.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tags/{tag_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateTag", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: updateTagByWorkOrderAndProblem
+     * Updates a tag on a work order
+     *
+     * @param workOrderId ID of work order
+     * @param tagId       ID of work order
+     * @param tag         Tag
+     * @param async       Async (Optional)
+     */
+    public static void updateTag(Context context, Integer workOrderId, Integer tagId, Tag tag, Boolean async) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId + "?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId)
+                    .urlParams("?async=" + async);
+
+            if (tag != null)
+                builder.body(tag.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("tagId", tagId);
+            methodParams.put("async", async);
+            if (tag != null)
+                methodParams.put("tag", tag.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/tags/{tag_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateTag", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -8011,12 +8395,11 @@ public class WorkordersWebApi extends TopicClient {
                         case "getRequests":
                             successObject = Requests.fromJson(new JsonObject(data));
                             break;
-                        case "getIncreases":
-                            successObject = PayIncreases.fromJson(new JsonObject(data));
-                            break;
-                        case "addWorkOrder":
                         case "getWorkOrders":
                             successObject = WorkOrders.fromJson(new JsonObject(data));
+                            break;
+                        case "getIncreases":
+                            successObject = PayIncreases.fromJson(new JsonObject(data));
                             break;
                         case "getStatus":
                             successObject = com.fieldnation.v2.data.model.Status.fromJson(new JsonObject(data));
@@ -8058,28 +8441,40 @@ public class WorkordersWebApi extends TopicClient {
                         case "getHold":
                             successObject = Hold.fromJson(new JsonObject(data));
                             break;
+                        case "getTags":
+                            successObject = Tags.fromJson(new JsonObject(data));
+                            break;
+                        case "getOverview":
+                            successObject = WorkOrderOverview.fromJson(new JsonObject(data));
+                            break;
                         case "getAssignee":
                             successObject = Assignee.fromJson(new JsonObject(data));
                             break;
                         case "getHolds":
                             successObject = Holds.fromJson(new JsonObject(data));
                             break;
+                        case "getTag":
+                            successObject = Tag.fromJson(new JsonObject(data));
+                            break;
                         case "getExpenses":
                             successObject = Expenses.fromJson(new JsonObject(data));
+                            break;
+                        case "getTask":
+                            successObject = Task.fromJson(new JsonObject(data));
                             break;
                         case "getBonuses":
                         case "getDiscounts":
                         case "getPenalties":
                             successObject = PayModifiers.fromJson(new JsonObject(data));
                             break;
-                        case "getTask":
-                            successObject = Task.fromJson(new JsonObject(data));
-                            break;
                         case "getFolder":
                             successObject = AttachmentFolder.fromJson(new JsonObject(data));
                             break;
                         case "getMilestones":
                             successObject = Milestones.fromJson(new JsonObject(data));
+                            break;
+                        case "getQualifications":
+                            successObject = Qualifications.fromJson(new JsonObject(data));
                             break;
                         case "acceptIncrease":
                         case "addAlertToWorkOrderAndTask":
@@ -8094,11 +8489,13 @@ public class WorkordersWebApi extends TopicClient {
                         case "addMessage":
                         case "addPenalty":
                         case "addProblem":
+                        case "addQualification":
                         case "addShipment":
                         case "addSignature":
                         case "addTag":
                         case "addTask":
                         case "addTimeLog":
+                        case "addWorkOrder":
                         case "approveWorkOrder":
                         case "assignUser":
                         case "completeWorkOrder":
@@ -8129,6 +8526,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "groupTask":
                         case "incompleteWorkOrder":
                         case "publish":
+                        case "removeQualification":
                         case "reorderTask":
                         case "replyMessage":
                         case "request":
@@ -8154,6 +8552,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "updatePay":
                         case "updatePenalty":
                         case "updateProblem":
+                        case "updateQualification":
                         case "updateSchedule":
                         case "updateShipment":
                         case "updateTag":
@@ -8226,6 +8625,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "addMessage":
                         case "addPenalty":
                         case "addProblem":
+                        case "addQualification":
                         case "addShipment":
                         case "addSignature":
                         case "addTag":
@@ -8279,12 +8679,14 @@ public class WorkordersWebApi extends TopicClient {
                         case "getLocation":
                         case "getMessages":
                         case "getMilestones":
+                        case "getOverview":
                         case "getPay":
                         case "getPenalties":
                         case "getPenalty":
                         case "getProblem":
                         case "getProblems":
                         case "getProviders":
+                        case "getQualifications":
                         case "getRequest":
                         case "getRequests":
                         case "GetScheduleAndLocation":
@@ -8306,6 +8708,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "MassAcceptWorkOrder":
                         case "massRequests":
                         case "publish":
+                        case "removeQualification":
                         case "reorderTask":
                         case "replyMessage":
                         case "request":
@@ -8331,6 +8734,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "updatePay":
                         case "updatePenalty":
                         case "updateProblem":
+                        case "updateQualification":
                         case "updateSchedule":
                         case "updateShipment":
                         case "updateTag":

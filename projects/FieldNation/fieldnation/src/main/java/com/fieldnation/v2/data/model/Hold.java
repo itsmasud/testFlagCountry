@@ -24,8 +24,8 @@ import java.util.Set;
 public class Hold implements Parcelable {
     private static final String TAG = "Hold";
 
-    @Json(name = "acknowledged")
-    private Boolean _acknowledged;
+    @Json(name = "acknowledgment")
+    private Acknowledgment _acknowledgment;
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
@@ -33,11 +33,11 @@ public class Hold implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "reason")
     private String _reason;
+
+    @Json(name = "type")
+    private HoldType _type;
 
     @Source
     private JsonObject SOURCE;
@@ -50,25 +50,28 @@ public class Hold implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setAcknowledged(Boolean acknowledged) throws ParseException {
-        _acknowledged = acknowledged;
-        SOURCE.put("acknowledged", acknowledged);
+    public void setAcknowledgment(Acknowledgment acknowledgment) throws ParseException {
+        _acknowledgment = acknowledgment;
+        SOURCE.put("acknowledgment", acknowledgment.getJson());
     }
 
-    public Boolean getAcknowledged() {
+    public Acknowledgment getAcknowledgment() {
         try {
-            if (_acknowledged == null && SOURCE.has("acknowledged") && SOURCE.get("acknowledged") != null)
-                _acknowledged = SOURCE.getBoolean("acknowledged");
+            if (_acknowledgment == null && SOURCE.has("acknowledgment") && SOURCE.get("acknowledgment") != null)
+                _acknowledgment = Acknowledgment.fromJson(SOURCE.getJsonObject("acknowledgment"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _acknowledged;
+        if (_acknowledgment != null && _acknowledgment.isSet())
+            return _acknowledgment;
+
+        return null;
     }
 
-    public Hold acknowledged(Boolean acknowledged) throws ParseException {
-        _acknowledged = acknowledged;
-        SOURCE.put("acknowledged", acknowledged);
+    public Hold acknowledgment(Acknowledgment acknowledgment) throws ParseException {
+        _acknowledgment = acknowledgment;
+        SOURCE.put("acknowledgment", acknowledgment.getJson());
         return this;
     }
 
@@ -129,28 +132,6 @@ public class Hold implements Parcelable {
         return this;
     }
 
-    public void setName(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
-    }
-
-    public String getName() {
-        try {
-            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
-                _name = SOURCE.getString("name");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _name;
-    }
-
-    public Hold name(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
-        return this;
-    }
-
     public void setReason(String reason) throws ParseException {
         _reason = reason;
         SOURCE.put("reason", reason);
@@ -173,12 +154,41 @@ public class Hold implements Parcelable {
         return this;
     }
 
+    public void setType(HoldType type) throws ParseException {
+        _type = type;
+        SOURCE.put("type", type.getJson());
+    }
+
+    public HoldType getType() {
+        try {
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = HoldType.fromJson(SOURCE.getJsonObject("type"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_type != null && _type.isSet())
+            return _type;
+
+        return null;
+    }
+
+    public Hold type(HoldType type) throws ParseException {
+        _type = type;
+        SOURCE.put("type", type.getJson());
+        return this;
+    }
+
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unkown")
-        UNKOWN("unkown");
+        @Json(name = "acknowledge")
+        ACKNOWLEDGE("acknowledge"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 
