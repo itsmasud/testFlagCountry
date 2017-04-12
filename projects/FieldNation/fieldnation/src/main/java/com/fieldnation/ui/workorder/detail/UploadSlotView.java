@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.UniqueTag;
@@ -232,11 +233,41 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
 
         @Override
+        public void onStart(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onStart");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                Integer folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.add(name);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
             if (!methodName.equals("addAttachment"))
                 return;
 
-            Log.v(TAG, "break!");
+            Log.v(TAG, "onProgress");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                Integer folderId = obj.getInt("attachment.folder_id");
+
+                Double percent = pos * 1.0 / size;
+                _uploadingProgress.put(name, (int) (pos * 100 / size));
+                populateUi();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
         @Override
@@ -244,7 +275,24 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             if (!methodName.equals("addAttachment"))
                 return;
 
-            Log.v(TAG, "break!");
+            Log.v(TAG, "onComplete");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    if (!success) {
+                        _uploadingFiles.remove(name);
+                        _uploadingProgress.remove(name);
+                    } else {
+                        _uploadingFiles.add(name);
+                    }
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 
