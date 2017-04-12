@@ -17,14 +17,59 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.Cancellation;
+import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.Contacts;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.EtaMassAccept;
+import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.Expenses;
+import com.fieldnation.v2.data.model.Hold;
+import com.fieldnation.v2.data.model.Holds;
+import com.fieldnation.v2.data.model.Location;
+import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.Messages;
+import com.fieldnation.v2.data.model.Milestones;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Signatures;
+import com.fieldnation.v2.data.model.SwapResponse;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TaskAlert;
+import com.fieldnation.v2.data.model.Tasks;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.Users;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -214,6 +259,8 @@ public class WorkordersWebApi extends TopicClient {
                                     WorkordersWebApi.class, "addAttachment", methodParams))
                     .useAuth(true)
                     .request(builder)
+                    .setTrack(true)
+                    .setTrackType(TrackerEnum.DELIVERABLES)
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);
@@ -260,6 +307,8 @@ public class WorkordersWebApi extends TopicClient {
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "addAttachment", methodParams))
                     .useAuth(true)
+                    .setTrack(true)
+                    .setTrackType(TrackerEnum.DELIVERABLES)
                     .request(builder)
                     .build();
 

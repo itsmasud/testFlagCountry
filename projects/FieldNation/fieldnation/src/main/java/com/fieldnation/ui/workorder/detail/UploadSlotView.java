@@ -17,6 +17,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -47,6 +49,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
     private WorkorderClient _workorderClient;
+    private WorkordersWebApi _workOrderApi;
     private ForLoopRunnable _docsRunnable = null;
 
     /*-*************************************-*/
@@ -81,6 +84,9 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
+
         populateUi();
     }
 
@@ -88,6 +94,10 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     protected void onDetachedFromWindow() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
+
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
+
         super.onDetachedFromWindow();
     }
 
@@ -215,6 +225,29 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _workorderClient.subDeliverableProgress(_workOrder.getId(), _slot.getId());
     }
 
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "break!");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "break!");
+        }
+    };
+
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -239,11 +272,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         @Override
         public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
 //            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + pos + "," + size + "," + time + ")");
-
             Double percent = pos * 1.0 / size;
-
             Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
-
             _uploadingProgress.put(filename, (int) (pos * 100 / size));
             populateUi();
         }
