@@ -3,14 +3,14 @@
 <resources>
     <string name="app_name">Field Nation NCNS</string>
     <string name="auth_account_name">Field Nation NCNS</string>
-    <string name="auth_default_username"></string>
-    <string name="auth_default_password"></string>
+    <string name="auth_default_username">mp.provider2</string>
+    <string name="auth_default_password">mp.provider2</string>
     <string name="auth_fn_grant_type">password</string>
     <string name="auth_fn_client_id">android1</string>
     <string name="auth_fn_client_secret">pjfdrjG^B8KhfaDd5WTJyUWFMps4yXjH</string>
     <string name="auth_account_type">com.fieldnation.ncns</string>
     <string name="auth_authority">com.fieldnation.ncns.service</string>
-    <string name="web_fn_hostname">ml.fieldnation.com</string>
+    <string name="web_fn_hostname">mono-demo.fndev.net</string>
     <integer name="ga_local_dispatch_period">60</integer>
     <bool name="ga_dry_run">false</bool>
     <string name="sp_app_id">fn:live</string>
@@ -28,5 +28,4 @@
     <string name="placeholder_one_line_address"></string>
     <string name="placeholder_distance"></string>
     <string name="placeholder_city_state_distance"></string>
-
 </resources>
