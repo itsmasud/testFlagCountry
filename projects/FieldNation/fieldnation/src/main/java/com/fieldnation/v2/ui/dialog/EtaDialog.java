@@ -411,6 +411,7 @@ public class EtaDialog extends FullScreenDialog {
         } catch (Exception e) {
         }
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+    }
 
     private boolean isValidEta(final Calendar arrival) {
         if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
@@ -431,9 +432,8 @@ public class EtaDialog extends FullScreenDialog {
                 Calendar scal = schedule.getServiceWindow().getStart().getCalendar();
                 Calendar ecal = schedule.getServiceWindow().getEnd().getCalendar();
 
-                if (arrival.getTimeInMillis() < scal.getTimeInMillis() || arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
+                if (DateUtils.isBeforeDay(arrival, scal) || DateUtils.isAfterDay(arrival, ecal))
                     return false;
-                }
 
                 // move to first day
                 arrival.set(Calendar.DAY_OF_MONTH, scal.get(Calendar.DAY_OF_MONTH));
@@ -451,8 +451,8 @@ public class EtaDialog extends FullScreenDialog {
                 Calendar scal = schedule.getServiceWindow().getStart().getCalendar();
                 Calendar ecal = schedule.getServiceWindow().getEnd().getCalendar();
 
-                if (scal.getTimeInMillis() > arrival.getTimeInMillis()
-                        || ecal.getTimeInMillis() < arrival.getTimeInMillis()) {
+                if (arrival.getTimeInMillis() < scal.getTimeInMillis()
+                        || arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
                     return false;
                 }
                 // arrival is within the start and end days, constrain check to the day of
@@ -460,8 +460,8 @@ public class EtaDialog extends FullScreenDialog {
                 scal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
                 ecal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
 
-                if (scal.getTimeInMillis() <= arrival.getTimeInMillis()
-                        && ecal.getTimeInMillis() >= arrival.getTimeInMillis())
+                if (arrival.getTimeInMillis() >= scal.getTimeInMillis()
+                        && arrival.getTimeInMillis() <= ecal.getTimeInMillis())
                     return true;
             }
         } catch (Exception ex) {
