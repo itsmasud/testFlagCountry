@@ -76,6 +76,7 @@ public class CounterOfferDialog extends SimpleDialog {
     private String _counterReason;
     private long _expires = 0;
     private WorkordersWebApi _workOrderApi;
+    private String _explanation;
 
     // Data
     private boolean _tacAccept;
@@ -431,6 +432,7 @@ public class CounterOfferDialog extends SimpleDialog {
         @Override
         public void onComplete(Pay pay, String explanation) {
             _counterPay = pay;
+            _explanation = explanation;
             populateUi();
         }
     };
@@ -497,6 +499,9 @@ public class CounterOfferDialog extends SimpleDialog {
 
                         if (_expires > 0)
                             request.expires(new Date(_expires));
+
+                        if (!misc.isEmptyOrNull(_explanation))
+                            request.setNotes(_explanation);
 
                         WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
                     } catch (Exception ex) {

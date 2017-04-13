@@ -17,7 +17,6 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
@@ -49,7 +48,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
-    private WorkorderClient _workorderClient;
     private WorkordersWebApi _workOrderApi;
     private ForLoopRunnable _docsRunnable = null;
 
@@ -82,9 +80,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
         _loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
 
@@ -93,9 +88,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-
         if (_workOrderApi != null && _workOrderApi.isConnected())
             _workOrderApi.disconnect(App.get());
 
@@ -108,7 +100,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _docListener = listener;
         _profileId = profileId;
 
-        subscribe();
         populateUi();
     }
 
@@ -123,8 +114,16 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
     }
 
-    private void populateDocs() {
-        final List<Object> files = new LinkedList();
+    private void populateUi() {
+        if (_titleTextView == null)
+            return;
+
+        if (_workOrder == null)
+            return;
+
+        _titleTextView.setText(_slot.getName().toUpperCase());
+
+        final List<Object> files = new LinkedList<>();
 
         Collections.addAll(files, _uploadingFiles.toArray());
 
@@ -145,7 +144,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             }
             _docsRunnable = new ForLoopRunnable(files.size(), new Handler(), 50) {
                 private final List<Object> _docs = files;
-                private final List<UploadedDocumentView> _views = new LinkedList();
+                private final List<UploadedDocumentView> _views = new LinkedList<>();
                 private final String[] uploadingFileNames = _uploadingFiles.toArray(new String[_uploadingFiles.size()]);
 
                 @Override
@@ -183,7 +182,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                 }
             };
             post(_docsRunnable);
-            //}
         } else {
             _docsList.removeAllViews();
         }
@@ -196,36 +194,9 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
     }
 
-    private void populateUi() {
-        if (_titleTextView == null)
-            return;
-
-        if (_workOrder == null)
-            return;
-
-        _titleTextView.setText(_slot.getName().toUpperCase());
-
-        populateDocs();
-    }
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private void subscribe() {
-        if (_workOrder == null)
-            return;
-
-        if (_slot == null)
-            return;
-
-        if (!_workorderClient.isConnected())
-            return;
-
-        Log.v(TAG, "subscribe, " + _workOrder.getId() + ", " + _slot.getId());
-        _workorderClient.subDeliverableUpload(_workOrder.getId(), _slot.getId());
-        _workorderClient.subDeliverableProgress(_workOrder.getId(), _slot.getId());
-    }
-
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -264,7 +235,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
                 if (folderId == _slot.getId()) {
                     Double percent = pos * 1.0 / size;
-                    Log.v(TAG, "onUploadDeliverableProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+                    Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
                     _uploadingFiles.add(name);
                     _uploadingProgress.put(name, (int) (pos * 100 / size));
                     populateUi();
@@ -288,43 +259,11 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                 if (folderId == _slot.getId()) {
                     _uploadingFiles.remove(name);
                     _uploadingProgress.remove(name);
-                    WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
                     populateUi();
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-        }
-    };
-
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "onConnected()");
-            subscribe();
-        }
-
-        @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed + ")");
-            if (slotId == _slot.getId()) {
-                if (failed || isComplete) {
-                    _uploadingFiles.remove(filename);
-                    _uploadingProgress.remove(filename);
-                } else {
-                    _uploadingFiles.add(filename);
-                    populateUi();
-                }
-            }
-        }
-
-        @Override
-        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
-//            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + pos + "," + size + "," + time + ")");
-            Double percent = pos * 1.0 / size;
-            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
-            _uploadingProgress.put(filename, (int) (pos * 100 / size));
-            populateUi();
         }
     };
 

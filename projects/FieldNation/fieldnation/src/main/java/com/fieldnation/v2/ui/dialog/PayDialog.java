@@ -322,9 +322,6 @@ public class PayDialog extends SimpleDialog {
                             .units(Double.parseDouble(_extraMaxHoursEditText.getText().toString())));
                     break;
             }
-            if (_explanationEditText != null && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
-                pay.setNotes(_explanationEditText.getText().toString());
-            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -401,7 +398,6 @@ public class PayDialog extends SimpleDialog {
                 _hourlyRateEditText.requestFocus();
                 break;
         }
-        _explanationEditText.setText(_pay.getNotes());
     }
 
     /*-*********************************-*/
