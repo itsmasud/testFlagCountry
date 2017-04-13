@@ -240,7 +240,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
-                Integer folderId = obj.getInt("attachment.folder_id");
+                int folderId = obj.getInt("attachment.folder_id");
 
                 if (folderId == _slot.getId()) {
                     _uploadingFiles.add(name);
@@ -260,11 +260,15 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");
-                Integer folderId = obj.getInt("attachment.folder_id");
+                int folderId = obj.getInt("attachment.folder_id");
 
-                Double percent = pos * 1.0 / size;
-                _uploadingProgress.put(name, (int) (pos * 100 / size));
-                populateUi();
+                if (folderId == _slot.getId()) {
+                    Double percent = pos * 1.0 / size;
+                    Log.v(TAG, "onUploadDeliverableProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, (int) (pos * 100 / size));
+                    populateUi();
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

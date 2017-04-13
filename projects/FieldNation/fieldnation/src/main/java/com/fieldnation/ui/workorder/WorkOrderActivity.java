@@ -381,7 +381,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("getWorkOrder")) {
+            if (successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
                 if (workOrder == null || !success) {
@@ -394,6 +394,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                     _workOrder = workOrder;
                     populateUi();
                 }
+            } else if (!methodName.startsWith("get")) {
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
             }
 
             if (methodName.startsWith("get") || !success)
