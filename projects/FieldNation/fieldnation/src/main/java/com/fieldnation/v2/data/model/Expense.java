@@ -24,6 +24,9 @@ import java.util.Set;
 public class Expense implements Parcelable {
     private static final String TAG = "Expense";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "added")
     private Date _added;
 
@@ -66,6 +69,41 @@ public class Expense implements Parcelable {
 
     public Expense(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public Expense actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
     }
 
     public void setAdded(Date added) throws ParseException {
@@ -350,6 +388,47 @@ public class Expense implements Parcelable {
 
         public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
             StatusEnum[] list = new StatusEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public enum ActionsEnum {
+        @Json(name = "approve")
+        APPROVE("approve"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "deny")
+        DENY("deny"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "reopen")
+        REOPEN("reopen");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
             for (int i = 0; i < list.length; i++) {
                 list[i] = fromString(jsonArray.getString(i));
             }

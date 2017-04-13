@@ -148,7 +148,7 @@ public class PayIncreases implements Parcelable {
         }
 
         if (_sum != null && _sum.isSet())
-        return _sum;
+            return _sum;
 
         return null;
     }

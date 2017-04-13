@@ -37,10 +37,10 @@ import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
-import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
@@ -860,19 +860,21 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onAssignUser(WorkOrder workOrder, boolean success, Error error) {
-            if (success) {
-                // TODO this might not work
-                try {
-                    ETA eta = new ETA();
-                    eta.setStart(new Date(_etaStart));
-                    eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
-                    eta.setUser(new User().id((int) App.getProfileId()));
-                    WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
-                    eta.setHourEstimate(_durationMilliseconds / 3600.0);
-                    dismiss(true);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("assignUser")) {
+                if (success) {
+                    // TODO this might not work
+                    try {
+                        ETA eta = new ETA();
+                        eta.setStart(new Date(_etaStart));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.setUser(new User().id((int) App.getProfileId()));
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                        eta.setHourEstimate(_durationMilliseconds / 3600.0);
+                        dismiss(true);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
                 }
             }
         }

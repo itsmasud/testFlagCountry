@@ -407,7 +407,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
-        public void onDelete(UploadedDocumentView v, Attachment document) {
+        public void onDelete(UploadedDocumentView v, final Attachment document) {
 
             final int documentId = document.getId();
             _yesNoDialog.setData(getString(R.string.delete_file),
@@ -415,7 +415,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteDeliverable(App.get(), _workOrder.getId(), documentId);
+                            WorkordersWebApi.deleteAttachment(App.get(),_workOrder.getId(),document.getFolderId(),documentId);
                             setLoading(true);
                         }
 

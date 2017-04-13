@@ -63,6 +63,9 @@ public class UsersWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/users/" + userId + "/pay");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
                     .key(key)
@@ -70,7 +73,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "addPay"))
+                                    UsersWebApi.class, "addPay", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -100,6 +103,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
                     .key(key)
@@ -107,7 +115,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "addTypesOfWork"))
+                                    UsersWebApi.class, "addTypesOfWork", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -134,6 +142,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/pay");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/pay")
                     .key(key)
@@ -141,7 +152,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getPay"))
+                                    UsersWebApi.class, "getPay", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -172,6 +183,10 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("workOrderId", workOrderId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/workorder/{work_order_id}")
                     .key(key)
@@ -179,7 +194,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getProfileAndWorkHistory"))
+                                    UsersWebApi.class, "getProfileAndWorkHistory", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -209,6 +224,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/settings");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/settings")
                     .key(key)
@@ -216,7 +234,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getSettings"))
+                                    UsersWebApi.class, "getSettings", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -246,6 +264,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/tax");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tax")
                     .key(key)
@@ -253,7 +274,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getTax"))
+                                    UsersWebApi.class, "getTax", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -283,6 +304,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/tour");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/tour")
                     .key(key)
@@ -290,7 +314,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getTour"))
+                                    UsersWebApi.class, "getTour", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -320,6 +344,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + user);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("user", user);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user}")
                     .key(key)
@@ -327,7 +354,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUser"))
+                                    UsersWebApi.class, "getUser", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -358,6 +385,10 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/preferences/" + preference);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("preference", preference);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .key(key)
@@ -365,7 +396,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUserPreferenceValue"))
+                                    UsersWebApi.class, "getUserPreferenceValue", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -383,7 +414,7 @@ public class UsersWebApi extends TopicClient {
      * Swagger operationId: getUserPreferredProviderNetworks
      * Get the Preferred Provider Networks the user is a part of
      *
-     * @param userId User ID
+     * @param userId       User ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
@@ -395,6 +426,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/preferredprovidernetworks");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/preferredprovidernetworks")
                     .key(key)
@@ -402,7 +436,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUserPreferredProviderNetworks"))
+                                    UsersWebApi.class, "getUserPreferredProviderNetworks", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -432,6 +466,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/types-of-work");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/types-of-work")
                     .key(key)
@@ -439,7 +476,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getUserTypesOfWork"))
+                                    UsersWebApi.class, "getUserTypesOfWork", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -469,6 +506,9 @@ public class UsersWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/users/" + userId + "/work_history");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/users/{user_id}/work_history")
                     .key(key)
@@ -476,7 +516,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "getWorkHistory"))
+                                    UsersWebApi.class, "getWorkHistory", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -509,6 +549,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
                     .key(key)
@@ -516,7 +561,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "sendAccountActivationLink"))
+                                    UsersWebApi.class, "sendAccountActivationLink", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -546,6 +591,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
                     .key(key)
@@ -553,7 +603,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "sendVerificationCodeViaSms"))
+                                    UsersWebApi.class, "sendVerificationCodeViaSms", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -583,6 +633,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
                     .key(key)
@@ -590,7 +645,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "sendVerificationCodeViaVoiceCall"))
+                                    UsersWebApi.class, "sendVerificationCodeViaVoiceCall", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -621,6 +676,12 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("preference", preference);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
                     .key(key)
@@ -628,7 +689,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "setUserPreference"))
+                                    UsersWebApi.class, "setUserPreference", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -655,6 +716,10 @@ public class UsersWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/users/" + userId + "/notifications/" + notificationId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("notificationId", notificationId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/notifications/{notification_id}")
                     .key(key)
@@ -662,7 +727,47 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "swipNotification"))
+                                    UsersWebApi.class, "swipNotification", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: switchUser
+     * Switches to the proficed user if they are a allowed as a service company admin
+     *
+     * @param json User id of the user to be switch to, just need user.id
+     */
+    public static void switchUser(Context context, User json) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/users/switch");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/users/switch");
+
+            if (json != null)
+                builder.body(json.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/users/switch")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                                    UsersWebApi.class, "switchUser", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -688,6 +793,9 @@ public class UsersWebApi extends TopicClient {
                     .method("PATCH")
                     .path("/api/rest/v2/users/" + userId + "/pay");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
                     .key(key)
@@ -695,7 +803,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updatePay"))
+                                    UsersWebApi.class, "updatePay", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -721,6 +829,9 @@ public class UsersWebApi extends TopicClient {
                     .method("PATCH")
                     .path("/api/rest/v2/users/" + userId + "/settings");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
                     .key(key)
@@ -728,7 +839,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updateSettings"))
+                                    UsersWebApi.class, "updateSettings", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -758,6 +869,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
                     .key(key)
@@ -765,7 +881,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updateTax"))
+                                    UsersWebApi.class, "updateTax", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -791,6 +907,9 @@ public class UsersWebApi extends TopicClient {
                     .method("PATCH")
                     .path("/api/rest/v2/users/" + userId + "/tour");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
                     .key(key)
@@ -798,7 +917,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "updateTour"))
+                                    UsersWebApi.class, "updateTour", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -826,6 +945,10 @@ public class UsersWebApi extends TopicClient {
                     .path("/api/rest/v2/users/" + userId + "/profile/avatar")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            methodParams.put("file", Uri.fromFile(file));
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
                     .key(key)
@@ -833,7 +956,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "uploadProfilePhoto"))
+                                    UsersWebApi.class, "uploadProfilePhoto", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -863,6 +986,11 @@ public class UsersWebApi extends TopicClient {
             if (json != null)
                 builder.body(json);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (json != null)
+                methodParams.put("json", json);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
                     .key(key)
@@ -870,7 +998,7 @@ public class UsersWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
-                                    UsersWebApi.class, "verifyAccount"))
+                                    UsersWebApi.class, "verifyAccount", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -889,81 +1017,36 @@ public class UsersWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onUsersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onAddPay(User user, boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onAddTypesOfWork(boolean success, Error error) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
-
-        public void onGetPay(User user, boolean success, Error error) {
-        }
-
-        public void onGetProfileAndWorkHistory(ProfileAndWorkHistory profileAndWorkHistory, boolean success, Error error) {
-        }
-
-        public void onGetSettings(User user, boolean success, Error error) {
-        }
-
-        public void onGetTax(UserTaxInfo userTaxInfo, boolean success, Error error) {
-        }
-
-        public void onGetTour(User user, boolean success, Error error) {
-        }
-
-        public void onGetUser(User user, boolean success, Error error) {
-        }
-
-        public void onGetUserPreferenceValue(AaaaPlaceholder aaaaPlaceholder, boolean success, Error error) {
-        }
-
-        public void onGetUserPreferredProviderNetworks(PPNs pPNs, boolean success, Error error) {
-        }
-
-        public void onGetUserTypesOfWork(TypesOfWork typesOfWork, boolean success, Error error) {
-        }
-
-        public void onGetWorkHistory(byte[] workHistory, boolean success, Error error) {
-        }
-
-        public void onSendAccountActivationLink(boolean success, Error error) {
-        }
-
-        public void onSendVerificationCodeViaSms(boolean success, Error error) {
-        }
-
-        public void onSendVerificationCodeViaVoiceCall(boolean success, Error error) {
-        }
-
-        public void onSetUserPreference(boolean success, Error error) {
-        }
-
-        public void onSwipNotification(boolean success, Error error) {
-        }
-
-        public void onUpdatePay(User user, boolean success, Error error) {
-        }
-
-        public void onUpdateSettings(User user, boolean success, Error error) {
-        }
-
-        public void onUpdateTax(boolean success, Error error) {
-        }
-
-        public void onUpdateTour(User user, boolean success, Error error) {
-        }
-
-        public void onUploadProfilePhoto(boolean success, Error error) {
-        }
-
-        public void onVerifyAccount(boolean success, Error error) {
-        }
-
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -991,130 +1074,84 @@ public class UsersWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "addPay":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "addTypesOfWork":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getPay":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getProfileAndWorkHistory":
-                        if (success)
-                            successObject = ProfileAndWorkHistory.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getSettings":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getTax":
-                        if (success)
-                            successObject = UserTaxInfo.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getTour":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getUser":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getUserPreferenceValue":
-                        if (success)
-                            successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getUserPreferredProviderNetworks":
-                        if (success)
-                            successObject = PPNs.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getUserTypesOfWork":
-                        if (success)
-                            successObject = TypesOfWork.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getWorkHistory":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "addTypesOfWork":
+                        case "sendAccountActivationLink":
+                        case "sendVerificationCodeViaSms":
+                        case "sendVerificationCodeViaVoiceCall":
+                        case "setUserPreference":
+                        case "swipNotification":
+                        case "switchUser":
+                        case "updateTax":
+                        case "uploadProfilePhoto":
+                        case "verifyAccount":
                             successObject = data;
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "sendAccountActivationLink":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "sendVerificationCodeViaSms":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "sendVerificationCodeViaVoiceCall":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "setUserPreference":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "swipNotification":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updatePay":
-                        if (success)
+                            break;
+                        case "getProfileAndWorkHistory":
+                            successObject = ProfileAndWorkHistory.fromJson(new JsonObject(data));
+                            break;
+                        case "getWorkHistory":
+                            successObject = new JsonObject(data);
+                            break;
+                        case "getUserPreferenceValue":
+                            successObject = AaaaPlaceholder.fromJson(new JsonObject(data));
+                            break;
+                        case "getUserPreferredProviderNetworks":
+                            successObject = PPNs.fromJson(new JsonObject(data));
+                            break;
+                        case "getUserTypesOfWork":
+                            successObject = TypesOfWork.fromJson(new JsonObject(data));
+                            break;
+                        case "getTax":
+                            successObject = UserTaxInfo.fromJson(new JsonObject(data));
+                            break;
+                        case "addPay":
+                        case "getPay":
+                        case "getSettings":
+                        case "getTour":
+                        case "getUser":
+                        case "updatePay":
+                        case "updateSettings":
+                        case "updateTour":
                             successObject = User.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addPay":
+                        case "addTypesOfWork":
+                        case "getPay":
+                        case "getProfileAndWorkHistory":
+                        case "getSettings":
+                        case "getTax":
+                        case "getTour":
+                        case "getUser":
+                        case "getUserPreferenceValue":
+                        case "getUserPreferredProviderNetworks":
+                        case "getUserTypesOfWork":
+                        case "getWorkHistory":
+                        case "sendAccountActivationLink":
+                        case "sendVerificationCodeViaSms":
+                        case "sendVerificationCodeViaVoiceCall":
+                        case "setUserPreference":
+                        case "swipNotification":
+                        case "switchUser":
+                        case "updatePay":
+                        case "updateSettings":
+                        case "updateTax":
+                        case "updateTour":
+                        case "uploadProfilePhoto":
+                        case "verifyAccount":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateSettings":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateTax":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateTour":
-                        if (success)
-                            successObject = User.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "uploadProfilePhoto":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "verifyAccount":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -1130,81 +1167,7 @@ public class UsersWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onUsersWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "addPay":
-                        listener.onAddPay((User) successObject, success, (Error) failObject);
-                        break;
-                    case "addTypesOfWork":
-                        listener.onAddTypesOfWork(success, (Error) failObject);
-                        break;
-                    case "getPay":
-                        listener.onGetPay((User) successObject, success, (Error) failObject);
-                        break;
-                    case "getProfileAndWorkHistory":
-                        listener.onGetProfileAndWorkHistory((ProfileAndWorkHistory) successObject, success, (Error) failObject);
-                        break;
-                    case "getSettings":
-                        listener.onGetSettings((User) successObject, success, (Error) failObject);
-                        break;
-                    case "getTax":
-                        listener.onGetTax((UserTaxInfo) successObject, success, (Error) failObject);
-                        break;
-                    case "getTour":
-                        listener.onGetTour((User) successObject, success, (Error) failObject);
-                        break;
-                    case "getUser":
-                        listener.onGetUser((User) successObject, success, (Error) failObject);
-                        break;
-                    case "getUserPreferenceValue":
-                        listener.onGetUserPreferenceValue((AaaaPlaceholder) successObject, success, (Error) failObject);
-                        break;
-                    case "getUserPreferredProviderNetworks":
-                        listener.onGetUserPreferredProviderNetworks((PPNs) successObject, success, (Error) failObject);
-                        break;
-                    case "getUserTypesOfWork":
-                        listener.onGetUserTypesOfWork((TypesOfWork) successObject, success, (Error) failObject);
-                        break;
-                    case "getWorkHistory":
-                        listener.onGetWorkHistory((byte[]) successObject, success, (Error) failObject);
-                        break;
-                    case "sendAccountActivationLink":
-                        listener.onSendAccountActivationLink(success, (Error) failObject);
-                        break;
-                    case "sendVerificationCodeViaSms":
-                        listener.onSendVerificationCodeViaSms(success, (Error) failObject);
-                        break;
-                    case "sendVerificationCodeViaVoiceCall":
-                        listener.onSendVerificationCodeViaVoiceCall(success, (Error) failObject);
-                        break;
-                    case "setUserPreference":
-                        listener.onSetUserPreference(success, (Error) failObject);
-                        break;
-                    case "swipNotification":
-                        listener.onSwipNotification(success, (Error) failObject);
-                        break;
-                    case "updatePay":
-                        listener.onUpdatePay((User) successObject, success, (Error) failObject);
-                        break;
-                    case "updateSettings":
-                        listener.onUpdateSettings((User) successObject, success, (Error) failObject);
-                        break;
-                    case "updateTax":
-                        listener.onUpdateTax(success, (Error) failObject);
-                        break;
-                    case "updateTour":
-                        listener.onUpdateTour((User) successObject, success, (Error) failObject);
-                        break;
-                    case "uploadProfilePhoto":
-                        listener.onUploadProfilePhoto(success, (Error) failObject);
-                        break;
-                    case "verifyAccount":
-                        listener.onVerifyAccount(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

@@ -281,7 +281,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // withdraw
         } else if (_workOrder.getRequests() != null
                 && _workOrder.getRequests().getOpenRequest() != null
-                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
+                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setOnClickListener(_withdraw_onClick);

@@ -194,7 +194,13 @@ public class Problems implements Parcelable {
     /*-******************************-*/
     public enum ActionsEnum {
         @Json(name = "add")
-        ADD("add");
+        ADD("add"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "resolve")
+        RESOLVE("resolve");
 
         private String value;
 

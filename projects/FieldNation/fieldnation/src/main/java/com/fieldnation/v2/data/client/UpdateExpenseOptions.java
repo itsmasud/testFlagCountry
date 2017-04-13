@@ -40,6 +40,14 @@ public class UpdateExpenseOptions implements Parcelable {
         return this;
     }
 
+    public boolean isAsyncSet() {
+        return _async != null;
+    }
+
+    public String getAsyncUrlParam() {
+        return "async=" + _async;
+    }
+
     public void setExpense(Expense expense) {
         _expense = expense;
     }

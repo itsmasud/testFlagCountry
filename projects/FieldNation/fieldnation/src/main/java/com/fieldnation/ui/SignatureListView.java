@@ -174,7 +174,7 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
             if (_listener != null
                     && signature != null
                     && signature.getActionsSet() != null
-                    && signature.getActionsSet().contains(Signature.ActionsEnum.REMOVE))
+                    && signature.getActionsSet().contains(Signature.ActionsEnum.DELETE))
                 return _listener.signatureOnLongClick(view, view.getSignature());
 
             return false;

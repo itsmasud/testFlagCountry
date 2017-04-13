@@ -105,6 +105,8 @@ public class Qualifications implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
+        @Json(name = "add")
+        ADD("add"),
         @Json(name = "edit")
         EDIT("edit");
 

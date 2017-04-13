@@ -51,7 +51,10 @@ import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -713,10 +716,7 @@ public class WorkFragment extends WorkorderFragment {
                 requestWorkorder();
 
                 if (App.get().getProfile().canRequestWorkOnMarketplace()
-                        && !_workOrder.getW2()
-                        && _workOrder.getBuyerRating().isSet()
-                        && _workOrder.getBuyerRating().getUser() != null
-                        && _workOrder.getBuyerRating().getUser() != 0) {
+                        && !_workOrder.getW2()) {
                     RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
 
@@ -781,7 +781,7 @@ public class WorkFragment extends WorkorderFragment {
             try {
                 Hold unAck = _workOrder.getUnAcknowledgedHold();
                 Hold param = new Hold();
-                param.acknowledged(true);
+                param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 param.id(unAck.getId());
                 WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param);
             } catch (Exception ex) {
@@ -1027,9 +1027,10 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDownload(Task task) {
-            Attachment doc = task.getAttachment();
+            AttachmentFolder folder = task.getAttachments();
 
-            if (doc != null) {
+            if (folder != null && folder.getResults() != null && folder.getResults().length > 0) {
+                Attachment doc = folder.getResults()[0];
                 if (doc != null && doc.getId() != null) {
                     Log.v(TAG, "docid: " + doc.getId());
                     if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
@@ -1639,7 +1640,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
 
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");

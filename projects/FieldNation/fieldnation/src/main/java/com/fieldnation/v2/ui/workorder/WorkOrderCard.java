@@ -30,6 +30,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
@@ -355,7 +356,7 @@ public class WorkOrderCard extends RelativeLayout {
                     _payTypeTextView.setText("IN REVIEW");
                     break;
                 default:
-                    Log.v(TAG, "break!");
+                    // Log.v(TAG, "break!");
                     break;
             }
         }
@@ -485,7 +486,7 @@ public class WorkOrderCard extends RelativeLayout {
             // withdraw
         } else if (_workOrder.getRequests() != null
                 && _workOrder.getRequests().getOpenRequest() != null
-                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
+                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_withdraw_onClick);
             button.setText(R.string.btn_withdraw);
@@ -624,7 +625,7 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
             try {
                 Hold unAckHold = _workOrder.getUnAcknowledgedHold();
-                Hold ackHold = new Hold().id(unAckHold.getId()).acknowledged(true);
+                Hold ackHold = new Hold().id(unAckHold.getId()).acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAckHold.getId(), ackHold);
             } catch (Exception ex) {
                 Log.v(TAG, ex);

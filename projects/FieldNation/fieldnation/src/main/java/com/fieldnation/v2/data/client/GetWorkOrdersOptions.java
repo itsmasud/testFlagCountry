@@ -3,6 +3,8 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.v2.data.model.*;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -191,6 +193,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isListSet() {
+        return _list != null;
+    }
+
+    public String getListUrlParam() {
+        return "list=" + _list;
+    }
+
     public void setColumns(String columns) {
         _columns = columns;
     }
@@ -202,6 +212,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions columns(String columns) {
         _columns = columns;
         return this;
+    }
+
+    public boolean isColumnsSet() {
+        return _columns != null;
+    }
+
+    public String getColumnsUrlParam() {
+        return "columns=" + _columns;
     }
 
     public void setPage(Integer page) {
@@ -217,6 +235,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isPageSet() {
+        return _page != null;
+    }
+
+    public String getPageUrlParam() {
+        return "page=" + _page;
+    }
+
     public void setPerPage(Integer perPage) {
         _perPage = perPage;
     }
@@ -228,6 +254,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions perPage(Integer perPage) {
         _perPage = perPage;
         return this;
+    }
+
+    public boolean isPerPageSet() {
+        return _perPage != null;
+    }
+
+    public String getPerPageUrlParam() {
+        return "per_page=" + _perPage;
     }
 
     public void setView(String view) {
@@ -243,6 +277,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isViewSet() {
+        return _view != null;
+    }
+
+    public String getViewUrlParam() {
+        return "view=" + _view;
+    }
+
     public void setSticky(Boolean sticky) {
         _sticky = sticky;
     }
@@ -254,6 +296,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions sticky(Boolean sticky) {
         _sticky = sticky;
         return this;
+    }
+
+    public boolean isStickySet() {
+        return _sticky != null;
+    }
+
+    public String getStickyUrlParam() {
+        return "sticky=" + _sticky;
     }
 
     public void setSort(String sort) {
@@ -269,6 +319,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isSortSet() {
+        return _sort != null;
+    }
+
+    public String getSortUrlParam() {
+        return "sort=" + _sort;
+    }
+
     public void setOrder(String order) {
         _order = order;
     }
@@ -280,6 +338,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions order(String order) {
         _order = order;
         return this;
+    }
+
+    public boolean isOrderSet() {
+        return _order != null;
+    }
+
+    public String getOrderUrlParam() {
+        return "order=" + _order;
     }
 
     public void setF(String f) {
@@ -295,6 +361,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFSet() {
+        return _f != null;
+    }
+
+    public String getFUrlParam() {
+        return "f_=" + _f;
+    }
+
     public void setFMaxApprovalTime(Integer fMaxApprovalTime) {
         _fMaxApprovalTime = fMaxApprovalTime;
     }
@@ -306,6 +380,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fMaxApprovalTime(Integer fMaxApprovalTime) {
         _fMaxApprovalTime = fMaxApprovalTime;
         return this;
+    }
+
+    public boolean isFMaxApprovalTimeSet() {
+        return _fMaxApprovalTime != null;
+    }
+
+    public String getFMaxApprovalTimeUrlParam() {
+        return "f_max_approval_time=" + _fMaxApprovalTime;
     }
 
     public void setFRating(String fRating) {
@@ -321,6 +403,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFRatingSet() {
+        return _fRating != null;
+    }
+
+    public String getFRatingUrlParam() {
+        return "f_rating=" + _fRating;
+    }
+
     public void setFFlightboardTomorrow(Boolean fFlightboardTomorrow) {
         _fFlightboardTomorrow = fFlightboardTomorrow;
     }
@@ -332,6 +422,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fFlightboardTomorrow(Boolean fFlightboardTomorrow) {
         _fFlightboardTomorrow = fFlightboardTomorrow;
         return this;
+    }
+
+    public boolean isFFlightboardTomorrowSet() {
+        return _fFlightboardTomorrow != null;
+    }
+
+    public String getFFlightboardTomorrowUrlParam() {
+        return "f_flightboard_tomorrow=" + _fFlightboardTomorrow;
     }
 
     public void setFRequests(Boolean fRequests) {
@@ -347,6 +445,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFRequestsSet() {
+        return _fRequests != null;
+    }
+
+    public String getFRequestsUrlParam() {
+        return "f_requests=" + _fRequests;
+    }
+
     public void setFCounterOffers(Boolean fCounterOffers) {
         _fCounterOffers = fCounterOffers;
     }
@@ -358,6 +464,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fCounterOffers(Boolean fCounterOffers) {
         _fCounterOffers = fCounterOffers;
         return this;
+    }
+
+    public boolean isFCounterOffersSet() {
+        return _fCounterOffers != null;
+    }
+
+    public String getFCounterOffersUrlParam() {
+        return "f_counter_offers=" + _fCounterOffers;
     }
 
     public void setFHourly(String fHourly) {
@@ -373,6 +487,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFHourlySet() {
+        return _fHourly != null;
+    }
+
+    public String getFHourlyUrlParam() {
+        return "f_hourly=" + _fHourly;
+    }
+
     public void setFFixed(String fFixed) {
         _fFixed = fFixed;
     }
@@ -384,6 +506,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fFixed(String fFixed) {
         _fFixed = fFixed;
         return this;
+    }
+
+    public boolean isFFixedSet() {
+        return _fFixed != null;
+    }
+
+    public String getFFixedUrlParam() {
+        return "f_fixed=" + _fFixed;
     }
 
     public void setFDevice(String fDevice) {
@@ -399,6 +529,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFDeviceSet() {
+        return _fDevice != null;
+    }
+
+    public String getFDeviceUrlParam() {
+        return "f_device=" + _fDevice;
+    }
+
     public void setFPay(String fPay) {
         _fPay = fPay;
     }
@@ -410,6 +548,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fPay(String fPay) {
         _fPay = fPay;
         return this;
+    }
+
+    public boolean isFPaySet() {
+        return _fPay != null;
+    }
+
+    public String getFPayUrlParam() {
+        return "f_pay=" + _fPay;
     }
 
     public void setFTemplates(String fTemplates) {
@@ -425,6 +571,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFTemplatesSet() {
+        return _fTemplates != null;
+    }
+
+    public String getFTemplatesUrlParam() {
+        return "f_templates=" + _fTemplates;
+    }
+
     public void setFTypeOfWork(String fTypeOfWork) {
         _fTypeOfWork = fTypeOfWork;
     }
@@ -436,6 +590,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fTypeOfWork(String fTypeOfWork) {
         _fTypeOfWork = fTypeOfWork;
         return this;
+    }
+
+    public boolean isFTypeOfWorkSet() {
+        return _fTypeOfWork != null;
+    }
+
+    public String getFTypeOfWorkUrlParam() {
+        return "f_type_of_work=" + _fTypeOfWork;
     }
 
     public void setFTimeZone(String fTimeZone) {
@@ -451,6 +613,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFTimeZoneSet() {
+        return _fTimeZone != null;
+    }
+
+    public String getFTimeZoneUrlParam() {
+        return "f_time_zone=" + _fTimeZone;
+    }
+
     public void setFMode(String fMode) {
         _fMode = fMode;
     }
@@ -462,6 +632,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fMode(String fMode) {
         _fMode = fMode;
         return this;
+    }
+
+    public boolean isFModeSet() {
+        return _fMode != null;
+    }
+
+    public String getFModeUrlParam() {
+        return "f_mode=" + _fMode;
     }
 
     public void setFCompany(String fCompany) {
@@ -477,6 +655,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFCompanySet() {
+        return _fCompany != null;
+    }
+
+    public String getFCompanyUrlParam() {
+        return "f_company=" + _fCompany;
+    }
+
     public void setFWorkedWith(String fWorkedWith) {
         _fWorkedWith = fWorkedWith;
     }
@@ -488,6 +674,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fWorkedWith(String fWorkedWith) {
         _fWorkedWith = fWorkedWith;
         return this;
+    }
+
+    public boolean isFWorkedWithSet() {
+        return _fWorkedWith != null;
+    }
+
+    public String getFWorkedWithUrlParam() {
+        return "f_worked_with=" + _fWorkedWith;
     }
 
     public void setFManager(String fManager) {
@@ -503,6 +697,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFManagerSet() {
+        return _fManager != null;
+    }
+
+    public String getFManagerUrlParam() {
+        return "f_manager=" + _fManager;
+    }
+
     public void setFClient(String fClient) {
         _fClient = fClient;
     }
@@ -514,6 +716,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fClient(String fClient) {
         _fClient = fClient;
         return this;
+    }
+
+    public boolean isFClientSet() {
+        return _fClient != null;
+    }
+
+    public String getFClientUrlParam() {
+        return "f_client=" + _fClient;
     }
 
     public void setFProject(String fProject) {
@@ -529,6 +739,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFProjectSet() {
+        return _fProject != null;
+    }
+
+    public String getFProjectUrlParam() {
+        return "f_project=" + _fProject;
+    }
+
     public void setFApprovalWindow(String fApprovalWindow) {
         _fApprovalWindow = fApprovalWindow;
     }
@@ -540,6 +758,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fApprovalWindow(String fApprovalWindow) {
         _fApprovalWindow = fApprovalWindow;
         return this;
+    }
+
+    public boolean isFApprovalWindowSet() {
+        return _fApprovalWindow != null;
+    }
+
+    public String getFApprovalWindowUrlParam() {
+        return "f_approval_window=" + _fApprovalWindow;
     }
 
     public void setFReviewWindow(String fReviewWindow) {
@@ -555,6 +781,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFReviewWindowSet() {
+        return _fReviewWindow != null;
+    }
+
+    public String getFReviewWindowUrlParam() {
+        return "f_review_window=" + _fReviewWindow;
+    }
+
     public void setFNetwork(String fNetwork) {
         _fNetwork = fNetwork;
     }
@@ -566,6 +800,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fNetwork(String fNetwork) {
         _fNetwork = fNetwork;
         return this;
+    }
+
+    public boolean isFNetworkSet() {
+        return _fNetwork != null;
+    }
+
+    public String getFNetworkUrlParam() {
+        return "f_network=" + _fNetwork;
     }
 
     public void setFAutoAssign(String fAutoAssign) {
@@ -581,6 +823,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFAutoAssignSet() {
+        return _fAutoAssign != null;
+    }
+
+    public String getFAutoAssignUrlParam() {
+        return "f_auto_assign=" + _fAutoAssign;
+    }
+
     public void setFSchedule(String fSchedule) {
         _fSchedule = fSchedule;
     }
@@ -592,6 +842,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fSchedule(String fSchedule) {
         _fSchedule = fSchedule;
         return this;
+    }
+
+    public boolean isFScheduleSet() {
+        return _fSchedule != null;
+    }
+
+    public String getFScheduleUrlParam() {
+        return "f_schedule=" + _fSchedule;
     }
 
     public void setFCreated(String fCreated) {
@@ -607,6 +865,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFCreatedSet() {
+        return _fCreated != null;
+    }
+
+    public String getFCreatedUrlParam() {
+        return "f_created=" + _fCreated;
+    }
+
     public void setFPublished(String fPublished) {
         _fPublished = fPublished;
     }
@@ -618,6 +884,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fPublished(String fPublished) {
         _fPublished = fPublished;
         return this;
+    }
+
+    public boolean isFPublishedSet() {
+        return _fPublished != null;
+    }
+
+    public String getFPublishedUrlParam() {
+        return "f_published=" + _fPublished;
     }
 
     public void setFRouted(String fRouted) {
@@ -633,6 +907,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFRoutedSet() {
+        return _fRouted != null;
+    }
+
+    public String getFRoutedUrlParam() {
+        return "f_routed=" + _fRouted;
+    }
+
     public void setFPublishedRouted(String fPublishedRouted) {
         _fPublishedRouted = fPublishedRouted;
     }
@@ -644,6 +926,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fPublishedRouted(String fPublishedRouted) {
         _fPublishedRouted = fPublishedRouted;
         return this;
+    }
+
+    public boolean isFPublishedRoutedSet() {
+        return _fPublishedRouted != null;
+    }
+
+    public String getFPublishedRoutedUrlParam() {
+        return "f_published_routed=" + _fPublishedRouted;
     }
 
     public void setFCompleted(String fCompleted) {
@@ -659,6 +949,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFCompletedSet() {
+        return _fCompleted != null;
+    }
+
+    public String getFCompletedUrlParam() {
+        return "f_completed=" + _fCompleted;
+    }
+
     public void setFApprovedCancelled(String fApprovedCancelled) {
         _fApprovedCancelled = fApprovedCancelled;
     }
@@ -670,6 +968,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fApprovedCancelled(String fApprovedCancelled) {
         _fApprovedCancelled = fApprovedCancelled;
         return this;
+    }
+
+    public boolean isFApprovedCancelledSet() {
+        return _fApprovedCancelled != null;
+    }
+
+    public String getFApprovedCancelledUrlParam() {
+        return "f_approved_cancelled=" + _fApprovedCancelled;
     }
 
     public void setFConfirmed(String fConfirmed) {
@@ -685,6 +991,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFConfirmedSet() {
+        return _fConfirmed != null;
+    }
+
+    public String getFConfirmedUrlParam() {
+        return "f_confirmed=" + _fConfirmed;
+    }
+
     public void setFAssigned(String fAssigned) {
         _fAssigned = fAssigned;
     }
@@ -696,6 +1010,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fAssigned(String fAssigned) {
         _fAssigned = fAssigned;
         return this;
+    }
+
+    public boolean isFAssignedSet() {
+        return _fAssigned != null;
+    }
+
+    public String getFAssignedUrlParam() {
+        return "f_assigned=" + _fAssigned;
     }
 
     public void setFSavedLocation(String fSavedLocation) {
@@ -711,6 +1033,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFSavedLocationSet() {
+        return _fSavedLocation != null;
+    }
+
+    public String getFSavedLocationUrlParam() {
+        return "f_saved_location=" + _fSavedLocation;
+    }
+
     public void setFSavedLocationGroup(String fSavedLocationGroup) {
         _fSavedLocationGroup = fSavedLocationGroup;
     }
@@ -722,6 +1052,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fSavedLocationGroup(String fSavedLocationGroup) {
         _fSavedLocationGroup = fSavedLocationGroup;
         return this;
+    }
+
+    public boolean isFSavedLocationGroupSet() {
+        return _fSavedLocationGroup != null;
+    }
+
+    public String getFSavedLocationGroupUrlParam() {
+        return "f_saved_location_group=" + _fSavedLocationGroup;
     }
 
     public void setFCity(String fCity) {
@@ -737,6 +1075,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFCitySet() {
+        return _fCity != null;
+    }
+
+    public String getFCityUrlParam() {
+        return "f_city=" + _fCity;
+    }
+
     public void setFState(String fState) {
         _fState = fState;
     }
@@ -748,6 +1094,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fState(String fState) {
         _fState = fState;
         return this;
+    }
+
+    public boolean isFStateSet() {
+        return _fState != null;
+    }
+
+    public String getFStateUrlParam() {
+        return "f_state=" + _fState;
     }
 
     public void setFPostalCode(String fPostalCode) {
@@ -763,6 +1117,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFPostalCodeSet() {
+        return _fPostalCode != null;
+    }
+
+    public String getFPostalCodeUrlParam() {
+        return "f_postal_code=" + _fPostalCode;
+    }
+
     public void setFCountry(String fCountry) {
         _fCountry = fCountry;
     }
@@ -774,6 +1136,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fCountry(String fCountry) {
         _fCountry = fCountry;
         return this;
+    }
+
+    public boolean isFCountrySet() {
+        return _fCountry != null;
+    }
+
+    public String getFCountryUrlParam() {
+        return "f_country=" + _fCountry;
     }
 
     public void setFFlags(String fFlags) {
@@ -789,6 +1159,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFFlagsSet() {
+        return _fFlags != null;
+    }
+
+    public String getFFlagsUrlParam() {
+        return "f_flags=" + _fFlags;
+    }
+
     public void setFAssignment(String fAssignment) {
         _fAssignment = fAssignment;
     }
@@ -802,6 +1180,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFAssignmentSet() {
+        return _fAssignment != null;
+    }
+
+    public String getFAssignmentUrlParam() {
+        return "f_assignment=" + _fAssignment;
+    }
+
     public void setFConfirmation(String fConfirmation) {
         _fConfirmation = fConfirmation;
     }
@@ -813,6 +1199,14 @@ public class GetWorkOrdersOptions implements Parcelable {
     public GetWorkOrdersOptions fConfirmation(String fConfirmation) {
         _fConfirmation = fConfirmation;
         return this;
+    }
+
+    public boolean isFConfirmationSet() {
+        return _fConfirmation != null;
+    }
+
+    public String getFConfirmationUrlParam() {
+        return "f_confirmation=" + _fConfirmation;
     }
 
     public void setFFinancing(String fFinancing) {
@@ -883,6 +1277,14 @@ public class GetWorkOrdersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isFRemoteWorkSet() {
+        return _fRemoteWork != null;
+    }
+
+    public String getFRemoteWorkUrlParam() {
+        return "f_remote_work=" + _fRemoteWork;
+    }
+
     public void setFSearch(String fSearch) {
         _fSearch = fSearch;
     }
@@ -903,7 +1305,6 @@ public class GetWorkOrdersOptions implements Parcelable {
     public String getFSearchUrlParam() {
         return "f_search=" + _fSearch;
     }
-
 
     /*-*****************************-*/
     /*-             Json            -*/

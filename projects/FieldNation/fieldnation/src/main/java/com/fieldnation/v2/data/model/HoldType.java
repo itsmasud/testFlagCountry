@@ -21,92 +21,92 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class BuyerRating implements Parcelable {
-    private static final String TAG = "BuyerRating";
+public class HoldType implements Parcelable {
+    private static final String TAG = "HoldType";
 
-    @Json(name = "marketplace")
-    private Double _marketplace;
+    @Json(name = "description")
+    private String _description;
 
-    @Json(name = "user")
-    private Double _user;
+    @Json(name = "id")
+    private Integer _id;
 
     @Source
     private JsonObject SOURCE;
 
-    public BuyerRating() {
+    public HoldType() {
         SOURCE = new JsonObject();
     }
 
-    public BuyerRating(JsonObject obj) {
+    public HoldType(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setMarketplace(Double marketplace) throws ParseException {
-        _marketplace = marketplace;
-        SOURCE.put("marketplace", marketplace);
+    public void setDescription(String description) throws ParseException {
+        _description = description;
+        SOURCE.put("description", description);
     }
 
-    public Double getMarketplace() {
+    public String getDescription() {
         try {
-            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
-                _marketplace = SOURCE.getDouble("marketplace");
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
+                _description = SOURCE.getString("description");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _marketplace;
+        return _description;
     }
 
-    public BuyerRating marketplace(Double marketplace) throws ParseException {
-        _marketplace = marketplace;
-        SOURCE.put("marketplace", marketplace);
+    public HoldType description(String description) throws ParseException {
+        _description = description;
+        SOURCE.put("description", description);
         return this;
     }
 
-    public void setUser(Double user) throws ParseException {
-        _user = user;
-        SOURCE.put("user", user);
+    public void setId(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
     }
 
-    public Double getUser() {
+    public Integer getId() {
         try {
-            if (_user == null && SOURCE.has("user") && SOURCE.get("user") != null)
-                _user = SOURCE.getDouble("user");
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _user;
+        return _id;
     }
 
-    public BuyerRating user(Double user) throws ParseException {
-        _user = user;
-        SOURCE.put("user", user);
+    public HoldType id(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(BuyerRating[] array) {
+    public static JsonArray toJsonArray(HoldType[] array) {
         JsonArray list = new JsonArray();
-        for (BuyerRating item : array) {
+        for (HoldType item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static BuyerRating[] fromJsonArray(JsonArray array) {
-        BuyerRating[] list = new BuyerRating[array.size()];
+    public static HoldType[] fromJsonArray(JsonArray array) {
+        HoldType[] list = new HoldType[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static BuyerRating fromJson(JsonObject obj) {
+    public static HoldType fromJson(JsonObject obj) {
         try {
-            return new BuyerRating(obj);
+            return new HoldType(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -120,12 +120,12 @@ public class BuyerRating implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Creator<BuyerRating> CREATOR = new Creator<BuyerRating>() {
+    public static final Parcelable.Creator<HoldType> CREATOR = new Parcelable.Creator<HoldType>() {
 
         @Override
-        public BuyerRating createFromParcel(Parcel source) {
+        public HoldType createFromParcel(Parcel source) {
             try {
-                return BuyerRating.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return HoldType.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -133,8 +133,8 @@ public class BuyerRating implements Parcelable {
         }
 
         @Override
-        public BuyerRating[] newArray(int size) {
-            return new BuyerRating[size];
+        public HoldType[] newArray(int size) {
+            return new HoldType[size];
         }
     };
 
@@ -153,6 +153,6 @@ public class BuyerRating implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return true;
+        return getId() != null && getId() != 0;
     }
 }

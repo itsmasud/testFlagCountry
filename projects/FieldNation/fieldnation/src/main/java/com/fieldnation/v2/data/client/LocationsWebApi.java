@@ -53,8 +53,8 @@ public class LocationsWebApi extends TopicClient {
      * Adds an attribute to a stored location
      *
      * @param locationId Location id
-     * @param attribute Attribute
-     * @param json JSON Model
+     * @param attribute  Attribute
+     * @param json       JSON Model
      */
     public static void addAttribute(Context context, Integer locationId, Integer attribute, LocationAttribute json) {
         try {
@@ -68,6 +68,12 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("attribute", attribute);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/attributes/{attribute}")
                     .key(key)
@@ -75,7 +81,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "addAttribute"))
+                                    LocationsWebApi.class, "addAttribute", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -104,6 +110,10 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations")
                     .key(key)
@@ -111,7 +121,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "addLocations"))
+                                    LocationsWebApi.class, "addLocations", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -127,7 +137,7 @@ public class LocationsWebApi extends TopicClient {
      * Adds a note to a stored location
      *
      * @param locationId Location id
-     * @param json Notes
+     * @param json       Notes
      */
     public static void addNotes(Context context, Integer locationId, LocationNote json) {
         try {
@@ -141,6 +151,11 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/locations/{location_id}/notes")
                     .key(key)
@@ -148,7 +163,119 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "addNotes"))
+                                    LocationsWebApi.class, "addNotes", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: deleteAttributeByLocationAndAttribute
+     * Delete an attribute from a stored location
+     *
+     * @param locationId Location id
+     * @param attribute  Attribute
+     */
+    public static void deleteAttribute(Context context, Integer locationId, Integer attribute) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("attribute", attribute);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/locations/{location_id}/attributes/{attribute}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
+                                    LocationsWebApi.class, "deleteAttribute", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: deleteLocation
+     * Soft deletes a stored location
+     *
+     * @param locationId Location id
+     */
+    public static void deleteLocation(Context context, Integer locationId) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/locations/" + locationId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/locations/{location_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
+                                    LocationsWebApi.class, "deleteLocation", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: deleteNoteByLocation
+     * Deletes a note attached to a stored location
+     *
+     * @param locationId Location id
+     * @param noteId     Location note id
+     */
+    public static void deleteNote(Context context, Integer locationId, Integer noteId) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/notes/" + noteId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("noteId", noteId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/locations/{location_id}/notes/{note_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
+                                    LocationsWebApi.class, "deleteNote", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -174,6 +301,8 @@ public class LocationsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/locations/countries");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations/countries")
                     .key(key)
@@ -181,7 +310,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "getCountries"))
+                                    LocationsWebApi.class, "getCountries", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -210,6 +339,8 @@ public class LocationsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/locations");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations")
                     .key(key)
@@ -217,7 +348,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "getLocations"))
+                                    LocationsWebApi.class, "getLocations", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -235,7 +366,7 @@ public class LocationsWebApi extends TopicClient {
      * Swagger operationId: getProvidersByLocationId
      * Get Providers Info By Location ID
      *
-     * @param locationId Location ID
+     * @param locationId   Location ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getProviders(Context context, Integer locationId, boolean allowCacheResponse, boolean isBackground) {
@@ -247,6 +378,9 @@ public class LocationsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/locations/" + locationId + "/providers");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/locations/{location_id}/providers")
                     .key(key)
@@ -254,7 +388,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "getProviders"))
+                                    LocationsWebApi.class, "getProviders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -269,112 +403,11 @@ public class LocationsWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: removeAttributeByLocationAndAttribute
-     * Removes an attribute from a stored location
-     *
-     * @param locationId Location id
-     * @param attribute Attribute
-     */
-    public static void removeAttribute(Context context, Integer locationId, Integer attribute) {
-        try {
-            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("DELETE")
-                    .path("/api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/locations/{location_id}/attributes/{attribute}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "removeAttribute"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: removeLocation
-     * Soft deletes a stored location
-     *
-     * @param locationId Location id
-     */
-    public static void removeLocation(Context context, Integer locationId) {
-        try {
-            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("DELETE")
-                    .path("/api/rest/v2/locations/" + locationId);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/locations/{location_id}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "removeLocation"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: removeNoteByLocation
-     * Removes a note attached to a stored location
-     *
-     * @param locationId Location id
-     * @param noteId     Location note id
-     */
-    public static void removeNote(Context context, Integer locationId, Integer noteId) {
-        try {
-            String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/notes/" + noteId);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("DELETE")
-                    .path("/api/rest/v2/locations/" + locationId + "/notes/" + noteId);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/locations/{location_id}/notes/{note_id}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "removeNote"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
      * Swagger operationId: updateLocation
      * Updates a stored location
      *
      * @param locationId Location id
-     * @param json JSON payload
+     * @param json       JSON payload
      */
     public static void updateLocation(Context context, Integer locationId, StoredLocation json) {
         try {
@@ -388,6 +421,11 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}")
                     .key(key)
@@ -395,7 +433,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "updateLocation"))
+                                    LocationsWebApi.class, "updateLocation", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -411,8 +449,8 @@ public class LocationsWebApi extends TopicClient {
      * Updates a note attached to a stored location
      *
      * @param locationId Location id
-     * @param noteId Location note id
-     * @param json Notes
+     * @param noteId     Location note id
+     * @param json       Notes
      */
     public static void updateNote(Context context, Integer locationId, Integer noteId, LocationNote json) {
         try {
@@ -426,6 +464,12 @@ public class LocationsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("locationId", locationId);
+            methodParams.put("noteId", noteId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/locations/{location_id}/notes/{note_id}")
                     .key(key)
@@ -433,7 +477,7 @@ public class LocationsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/LocationsWebApi",
-                                    LocationsWebApi.class, "updateNote"))
+                                    LocationsWebApi.class, "updateNote", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -452,45 +496,36 @@ public class LocationsWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onLocationsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onAddAttribute(IdResponse idResponse, boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onAddLocations(IdResponse idResponse, boolean success, Error error) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
-
-        public void onAddNotes(boolean success, Error error) {
-        }
-
-        public void onGetCountries(Countries countries, boolean success, Error error) {
-        }
-
-        public void onGetLocations(StoredLocations storedLocations, boolean success, Error error) {
-        }
-
-        public void onGetProviders(LocationProviders locationProviders, boolean success, Error error) {
-        }
-
-        public void onRemoveAttribute(boolean success, Error error) {
-        }
-
-        public void onRemoveLocation(boolean success, Error error) {
-        }
-
-        public void onRemoveNote(boolean success, Error error) {
-        }
-
-        public void onUpdateLocation(boolean success, Error error) {
-        }
-
-        public void onUpdateNote(boolean success, Error error) {
-        }
-
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -518,64 +553,52 @@ public class LocationsWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "addAttribute":
-                        if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "addLocations":
-                        if (success)
-                            successObject = IdResponse.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "addNotes":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getCountries":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "getCountries":
                             successObject = Countries.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getLocations":
-                        if (success)
-                            successObject = StoredLocations.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getProviders":
-                        if (success)
+                            break;
+                        case "addNotes":
+                        case "deleteAttribute":
+                        case "deleteLocation":
+                        case "deleteNote":
+                        case "updateLocation":
+                        case "updateNote":
+                            successObject = data;
+                            break;
+                        case "getProviders":
                             successObject = LocationProviders.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        case "getLocations":
+                            successObject = StoredLocations.fromJson(new JsonObject(data));
+                            break;
+                        case "addAttribute":
+                        case "addLocations":
+                            successObject = IdResponse.fromJson(new JsonObject(data));
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addAttribute":
+                        case "addLocations":
+                        case "addNotes":
+                        case "deleteAttribute":
+                        case "deleteLocation":
+                        case "deleteNote":
+                        case "getCountries":
+                        case "getLocations":
+                        case "getProviders":
+                        case "updateLocation":
+                        case "updateNote":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removeAttribute":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removeLocation":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removeNote":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateLocation":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateNote":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -591,45 +614,7 @@ public class LocationsWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onLocationsWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "addAttribute":
-                        listener.onAddAttribute((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "addLocations":
-                        listener.onAddLocations((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "addNotes":
-                        listener.onAddNotes(success, (Error) failObject);
-                        break;
-                    case "getCountries":
-                        listener.onGetCountries((Countries) successObject, success, (Error) failObject);
-                        break;
-                    case "getLocations":
-                        listener.onGetLocations((StoredLocations) successObject, success, (Error) failObject);
-                        break;
-                    case "getProviders":
-                        listener.onGetProviders((LocationProviders) successObject, success, (Error) failObject);
-                        break;
-                    case "removeAttribute":
-                        listener.onRemoveAttribute(success, (Error) failObject);
-                        break;
-                    case "removeLocation":
-                        listener.onRemoveLocation(success, (Error) failObject);
-                        break;
-                    case "removeNote":
-                        listener.onRemoveNote(success, (Error) failObject);
-                        break;
-                    case "updateLocation":
-                        listener.onUpdateLocation(success, (Error) failObject);
-                        break;
-                    case "updateNote":
-                        listener.onUpdateNote(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

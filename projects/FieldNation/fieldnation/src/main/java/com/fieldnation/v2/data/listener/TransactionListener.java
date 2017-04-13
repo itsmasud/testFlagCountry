@@ -11,6 +11,7 @@ import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 
@@ -24,18 +25,18 @@ import java.io.FileInputStream;
 public class TransactionListener extends WebTransactionListener {
     private static final String TAG = "TransactionListener";
 
-    /**
-     * @param apiClass    (Required) the api function's class that spawned the call
-     * @param apiFunction (Required) The api function's name that spawned the call
-     * @return
-     */
     public static byte[] params(String topicId, Class<?> apiClass, String apiFunction) {
+        return params(topicId, apiClass, apiFunction, null);
+    }
+
+    public static byte[] params(String topicId, Class<?> apiClass, String apiFunction, JsonObject methodParams) {
         try {
             TransactionParams params = new TransactionParams();
 
             params.topicId = topicId;
             params.apiClassName = apiClass.getName();
             params.apiFunction = apiFunction;
+            params.methodParams = methodParams.toString();
 
             return params.toJson().toByteArray();
         } catch (Exception ex) {
@@ -46,12 +47,35 @@ public class TransactionListener extends WebTransactionListener {
 
     @Override
     public void onStart(Context context, WebTransaction transaction) {
-        super.onStart(context, transaction);
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("params", params);
+            bundle.putString("type", "start");
+            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+
+            if (transaction.isTracked()) {
+                UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     @Override
     public void onProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
-        super.onProgress(context, transaction, pos, size, time);
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("params", params);
+            bundle.putString("type", "progress");
+            bundle.putLong("pos", pos);
+            bundle.putLong("size", size);
+            bundle.putLong("time", time);
+            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     @Override
@@ -76,9 +100,14 @@ public class TransactionListener extends WebTransactionListener {
                     bundle.putByteArray("data", httpResult.getByteArray());
                 }
                 bundle.putBoolean("success", true);
+                bundle.putString("type", "complete");
 
                 Log.v(TAG, "topicId: " + params.topicId);
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+
+                if (transaction.isTracked()) {
+                    UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
+                }
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
@@ -110,8 +139,13 @@ public class TransactionListener extends WebTransactionListener {
                     bundle.putByteArray("data", httpResult.getByteArray());
                 }
                 bundle.putBoolean("success", false);
+                bundle.putString("type", "complete");
 
                 TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.TEMP);
+
+                if (transaction.isTracked()) {
+                    UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
+                }
 
                 String method = new JsonObject(transaction.getRequestString()).getString("method");
                 if (method.equals("GET")) {
@@ -131,6 +165,9 @@ public class TransactionListener extends WebTransactionListener {
         } else if (result == Result.RETRY) {
             Log.v(TAG, "onComplete - RETRY");
             Log.v(TAG, "break!");
+            if (transaction.isTracked()) {
+                UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
+            }
             return Result.RETRY;
         }
         return super.onComplete(context, result, transaction, httpResult, throwable);

@@ -338,9 +338,7 @@ public class ListEnvelope implements Parcelable {
         @Json(name = "asc")
         ASC("asc"),
         @Json(name = "desc")
-        DESC("desc"),
-        @Json(name = "false")
-        FALSE("false");
+        DESC("desc");
 
         private String value;
 

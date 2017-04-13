@@ -66,6 +66,10 @@ public class CustomFieldsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/custom-fields")
                     .key(key)
@@ -73,7 +77,43 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "addCustomField"))
+                                    CustomFieldsWebApi.class, "addCustomField", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: deleteCustomField
+     * Removes a work order custom field
+     *
+     * @param customFieldId Custom field id
+     */
+    public static void deleteCustomField(Context context, Integer customFieldId) {
+        try {
+            String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("DELETE")
+                    .path("/api/rest/v2/custom-fields/" + customFieldId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("customFieldId", customFieldId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
+                                    CustomFieldsWebApi.class, "deleteCustomField", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -99,6 +139,8 @@ public class CustomFieldsWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/custom-fields");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/custom-fields")
                     .key(key)
@@ -106,7 +148,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "getCustomFields"))
+                                    CustomFieldsWebApi.class, "getCustomFields", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -115,39 +157,6 @@ public class CustomFieldsWebApi extends TopicClient {
             WebTransactionService.queueTransaction(context, transaction);
 
             if (allowCacheResponse) new CacheDispatcher(context, key);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: removeCustomField
-     * Removes a work order custom field
-     *
-     * @param customFieldId Custom field id
-     */
-    public static void removeCustomField(Context context, Integer customFieldId) {
-        try {
-            String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("DELETE")
-                    .path("/api/rest/v2/custom-fields/" + customFieldId);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "removeCustomField"))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(STAG, ex);
         }
@@ -172,6 +181,11 @@ public class CustomFieldsWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("customFieldId", customFieldId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}")
                     .key(key)
@@ -179,7 +193,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "updateCustomField"))
+                                    CustomFieldsWebApi.class, "updateCustomField", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -206,6 +220,10 @@ public class CustomFieldsWebApi extends TopicClient {
                     .method("PUT")
                     .path("/api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("customFieldId", customFieldId);
+            methodParams.put("visibility", visibility);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/{visibility}")
                     .key(key)
@@ -213,7 +231,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
+                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -241,6 +259,11 @@ public class CustomFieldsWebApi extends TopicClient {
                     .method("PUT")
                     .path("/api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("customFieldId", customFieldId);
+            methodParams.put("clientId", clientId);
+            methodParams.put("visibility", visibility);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/client/{client_id}/{visibility}")
                     .key(key)
@@ -248,7 +271,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
+                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -267,7 +290,7 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param projectId     Project id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibilityByProject(Context context, Integer customFieldId, Integer projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 
@@ -276,6 +299,11 @@ public class CustomFieldsWebApi extends TopicClient {
                     .method("PUT")
                     .path("/api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("customFieldId", customFieldId);
+            methodParams.put("projectId", projectId);
+            methodParams.put("visibility", visibility);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/project/{project_id}/{visibility}")
                     .key(key)
@@ -283,7 +311,7 @@ public class CustomFieldsWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CustomFieldsWebApi",
-                                    CustomFieldsWebApi.class, "updateCustomFieldVisibility"))
+                                    CustomFieldsWebApi.class, "updateCustomFieldVisibilityByProjectId"))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -302,28 +330,35 @@ public class CustomFieldsWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onCustomFieldsWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onAddCustomField(IdResponse idResponse, boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onGetCustomFields(CustomFields customFields, boolean success, Error error) {
-        }
-
-        public void onRemoveCustomField(boolean success, Error error) {
-        }
-
-        public void onUpdateCustomField(boolean success, Error error) {
-        }
-
-        public void onUpdateCustomFieldVisibility(boolean success, Error error) {
-        }
-
-        public void onUpdateCustomFieldVisibilityByProject(boolean success, Error error) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
     }
 
@@ -352,38 +387,38 @@ public class CustomFieldsWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "addCustomField":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "deleteCustomField":
+                        case "updateCustomField":
+                        case "updateCustomFieldVisibility":
+                        case "updateCustomFieldVisibilityByProjectId":
+                            successObject = data;
+                            break;
+                        case "addCustomField":
                             successObject = IdResponse.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getCustomFields":
-                        if (success)
+                            break;
+                        case "getCustomFields":
                             successObject = CustomFields.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addCustomField":
+                        case "deleteCustomField":
+                        case "getCustomFields":
+                        case "updateCustomField":
+                        case "updateCustomFieldVisibility":
+                        case "updateCustomFieldVisibilityByProjectId":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removeCustomField":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateCustomField":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateCustomFieldVisibility":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateCustomFieldVisibilityByProject":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -399,30 +434,7 @@ public class CustomFieldsWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onCustomFieldsWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "addCustomField":
-                        listener.onAddCustomField((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "getCustomFields":
-                        listener.onGetCustomFields((CustomFields) successObject, success, (Error) failObject);
-                        break;
-                    case "removeCustomField":
-                        listener.onRemoveCustomField(success, (Error) failObject);
-                        break;
-                    case "updateCustomField":
-                        listener.onUpdateCustomField(success, (Error) failObject);
-                        break;
-                    case "updateCustomFieldVisibility":
-                        listener.onUpdateCustomFieldVisibility(success, (Error) failObject);
-                        break;
-                    case "updateCustomFieldVisibilityByProject":
-                        listener.onUpdateCustomFieldVisibilityByProject(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

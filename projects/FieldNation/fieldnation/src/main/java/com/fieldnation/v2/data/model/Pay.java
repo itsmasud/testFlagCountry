@@ -58,9 +58,6 @@ public class Pay implements Parcelable {
     @Json(name = "labor_sum")
     private Double _laborSum;
 
-    @Json(name = "notes")
-    private String _notes;
-
     @Json(name = "number_of_devices")
     private Double _numberOfDevices;
 
@@ -81,9 +78,6 @@ public class Pay implements Parcelable {
 
     @Json(name = "role")
     private String _role;
-
-    @Json(name = "status_id")
-    private Integer _statusId;
 
     @Json(name = "total")
     private Double _total;
@@ -436,28 +430,6 @@ public class Pay implements Parcelable {
         return this;
     }
 
-    public void setNotes(String notes) throws ParseException {
-        _notes = notes;
-        SOURCE.put("notes", notes);
-    }
-
-    public String getNotes() {
-        try {
-            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
-                _notes = SOURCE.getString("notes");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _notes;
-    }
-
-    public Pay notes(String notes) throws ParseException {
-        _notes = notes;
-        SOURCE.put("notes", notes);
-        return this;
-    }
-
     public void setNumberOfDevices(Double numberOfDevices) throws ParseException {
         _numberOfDevices = numberOfDevices;
         SOURCE.put("number_of_devices", numberOfDevices);
@@ -621,28 +593,6 @@ public class Pay implements Parcelable {
     public Pay role(String role) throws ParseException {
         _role = role;
         SOURCE.put("role", role);
-        return this;
-    }
-
-    public void setStatusId(Integer statusId) throws ParseException {
-        _statusId = statusId;
-        SOURCE.put("status_id", statusId);
-    }
-
-    public Integer getStatusId() {
-        try {
-            if (_statusId == null && SOURCE.has("status_id") && SOURCE.get("status_id") != null)
-                _statusId = SOURCE.getInt("status_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _statusId;
-    }
-
-    public Pay statusId(Integer statusId) throws ParseException {
-        _statusId = statusId;
-        SOURCE.put("status_id", statusId);
         return this;
     }
 

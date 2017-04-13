@@ -52,7 +52,7 @@ public class BundlesWebApi extends TopicClient {
      * Swagger operationId: getBundleWorkOrders
      * Returns a list of work orders in a bundle.
      *
-     * @param bundleId Bundle ID
+     * @param bundleId     Bundle ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getBundleWorkOrders(Context context, Integer bundleId, boolean allowCacheResponse, boolean isBackground) {
@@ -64,6 +64,9 @@ public class BundlesWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/bundles/" + bundleId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("bundleId", bundleId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/bundles/{bundle_id}")
                     .key(key)
@@ -71,7 +74,7 @@ public class BundlesWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/BundlesWebApi",
-                                    BundlesWebApi.class, "getBundleWorkOrders"))
+                                    BundlesWebApi.class, "getBundleWorkOrders", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -93,15 +96,36 @@ public class BundlesWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onBundlesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onGetBundleWorkOrders(WorkOrders workOrders, boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        }
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -129,16 +153,24 @@ public class BundlesWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "getBundleWorkOrders":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "getBundleWorkOrders":
                             successObject = WorkOrders.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "getBundleWorkOrders":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -154,15 +186,7 @@ public class BundlesWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onBundlesWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "getBundleWorkOrders":
-                        listener.onGetBundleWorkOrders((WorkOrders) successObject, success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

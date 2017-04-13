@@ -3,6 +3,8 @@ package com.fieldnation.v2.data.client;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.v2.data.model.*;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -41,6 +43,14 @@ public class GetProvidersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isStickySet() {
+        return _sticky != null;
+    }
+
+    public String getStickyUrlParam() {
+        return "sticky=" + _sticky;
+    }
+
     public void setDefaultView(String defaultView) {
         _defaultView = defaultView;
     }
@@ -54,6 +64,14 @@ public class GetProvidersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isDefaultViewSet() {
+        return _defaultView != null;
+    }
+
+    public String getDefaultViewUrlParam() {
+        return "default_view=" + _defaultView;
+    }
+
     public void setView(String view) {
         _view = view;
     }
@@ -65,6 +83,14 @@ public class GetProvidersOptions implements Parcelable {
     public GetProvidersOptions view(String view) {
         _view = view;
         return this;
+    }
+
+    public boolean isViewSet() {
+        return _view != null;
+    }
+
+    public String getViewUrlParam() {
+        return "view=" + _view;
     }
 
     /*-*****************************-*/
