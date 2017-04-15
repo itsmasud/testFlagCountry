@@ -791,6 +791,10 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             if (_onActionListener != null) _onActionListener.onAction();
 
+            if (!App.get().isLocationEnabled()){
+
+            }
+
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
