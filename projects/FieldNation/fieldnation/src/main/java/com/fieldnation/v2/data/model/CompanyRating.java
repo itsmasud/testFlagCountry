@@ -86,7 +86,7 @@ public class CompanyRating implements Parcelable {
         try {
             return new CompanyRating(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

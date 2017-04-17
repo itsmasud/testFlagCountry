@@ -163,7 +163,7 @@ public class BundleWorkOrders implements Parcelable {
         try {
             return new BundleWorkOrders(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

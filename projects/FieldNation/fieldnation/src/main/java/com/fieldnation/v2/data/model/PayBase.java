@@ -108,7 +108,7 @@ public class PayBase implements Parcelable {
         try {
             return new PayBase(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -13,8 +15,11 @@ import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -178,7 +183,7 @@ public class ScheduleServiceWindow implements Parcelable {
         try {
             return new ScheduleServiceWindow(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

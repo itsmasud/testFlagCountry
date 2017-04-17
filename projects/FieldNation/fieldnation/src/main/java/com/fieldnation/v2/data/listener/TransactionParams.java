@@ -25,6 +25,9 @@ public class TransactionParams implements Parcelable {
     @Json(name = "apiFunction")
     public String apiFunction;
 
+    @Json(name = "methodParams")
+    public String methodParams;
+
     public TransactionParams() {
     }
 
@@ -35,7 +38,7 @@ public class TransactionParams implements Parcelable {
         try {
             return Unserializer.unserializeObject(TransactionParams.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -48,7 +51,7 @@ public class TransactionParams implements Parcelable {
         try {
             return Serializer.serializeObject(transactionParams);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

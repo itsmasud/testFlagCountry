@@ -205,8 +205,10 @@ public class Assignee implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unknown")
-        UNKNOWN("unknown");
+        @Json(name = "ready_to_go")
+        READY_TO_GO("ready_to_go"),
+        @Json(name = "unassign")
+        UNASSIGN("unassign");
 
         private String value;
 
@@ -260,7 +262,7 @@ public class Assignee implements Parcelable {
         try {
             return new Assignee(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

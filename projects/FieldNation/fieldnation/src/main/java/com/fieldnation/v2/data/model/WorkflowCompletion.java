@@ -21,65 +21,27 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Declines implements Parcelable {
-    private static final String TAG = "Declines";
-
-    @Json(name = "actions")
-    private ActionsEnum[] _actions;
+public class WorkflowCompletion implements Parcelable {
+    private static final String TAG = "WorkflowCompletion";
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
     @Json(name = "results")
-    private Decline[] _results;
+    private String[] _results;
 
-    @Json(name = "user_decline")
-    private Decline _userDecline;
+    @Json(name = "status")
+    private StatusEnum _status;
 
     @Source
     private JsonObject SOURCE;
 
-    public Declines() {
+    public WorkflowCompletion() {
         SOURCE = new JsonObject();
     }
 
-    public Declines(JsonObject obj) {
+    public WorkflowCompletion(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setActions(ActionsEnum[] actions) throws ParseException {
-        _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja);
-    }
-
-    public ActionsEnum[] getActions() {
-        try {
-            if (_actions != null)
-                return _actions;
-
-            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
-                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
-            }
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _actions;
-    }
-
-    public Declines actions(ActionsEnum[] actions) throws ParseException {
-        _actions = actions;
-        JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
-        }
-        SOURCE.put("actions", ja, true);
-        return this;
     }
 
     public void setMetadata(ListEnvelope metadata) throws ParseException {
@@ -101,24 +63,29 @@ public class Declines implements Parcelable {
         return null;
     }
 
-    public Declines metadata(ListEnvelope metadata) throws ParseException {
+    public WorkflowCompletion metadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
         return this;
     }
 
-    public void setResults(Decline[] results) throws ParseException {
+    public void setResults(String[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Decline.toJsonArray(results));
+        JsonArray ja = new JsonArray();
+        for (String item : results) {
+            ja.add(item);
+        }
+        SOURCE.put("results", ja);
     }
 
-    public Decline[] getResults() {
+    public String[] getResults() {
         try {
             if (_results != null)
                 return _results;
 
             if (SOURCE.has("results") && SOURCE.get("results") != null) {
-                _results = Decline.fromJsonArray(SOURCE.getJsonArray("results"));
+                JsonArray ja = SOURCE.getJsonArray("results");
+                _results = ja.toArray(new String[ja.size()]);
             }
 
         } catch (Exception ex) {
@@ -128,61 +95,64 @@ public class Declines implements Parcelable {
         return _results;
     }
 
-    public Declines results(Decline[] results) throws ParseException {
+    public WorkflowCompletion results(String[] results) throws ParseException {
         _results = results;
-        SOURCE.put("results", Decline.toJsonArray(results), true);
+        JsonArray ja = new JsonArray();
+        for (String item : results) {
+            ja.add(item);
+        }
+        SOURCE.put("results", ja, true);
         return this;
     }
 
-    public void setUserDecline(Decline userDecline) throws ParseException {
-        _userDecline = userDecline;
-        SOURCE.put("user_decline", userDecline.getJson());
+    public void setStatus(StatusEnum status) throws ParseException {
+        _status = status;
+        SOURCE.put("status", status.toString());
     }
 
-    public Decline getUserDecline() {
+    public StatusEnum getStatus() {
         try {
-            if (_userDecline == null && SOURCE.has("user_decline") && SOURCE.get("user_decline") != null)
-                _userDecline = Decline.fromJson(SOURCE.getJsonObject("user_decline"));
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_userDecline != null && _userDecline.isSet())
-            return _userDecline;
-
-        return null;
+        return _status;
     }
 
-    public Declines userDecline(Decline userDecline) throws ParseException {
-        _userDecline = userDecline;
-        SOURCE.put("user_decline", userDecline.getJson());
+    public WorkflowCompletion status(StatusEnum status) throws ParseException {
+        _status = status;
+        SOURCE.put("status", status.toString());
         return this;
     }
 
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
-    public enum ActionsEnum {
-        @Json(name = "add")
-        ADD("add");
+    public enum StatusEnum {
+        @Json(name = "invalid")
+        INVALID("invalid"),
+        @Json(name = "valid")
+        VALID("valid");
 
         private String value;
 
-        ActionsEnum(String value) {
+        StatusEnum(String value) {
             this.value = value;
         }
 
-        public static ActionsEnum fromString(String value) {
-            ActionsEnum[] values = values();
-            for (ActionsEnum v : values) {
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
                 if (v.value.equals(value))
                     return v;
             }
             return null;
         }
 
-        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
-            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
             for (int i = 0; i < list.length; i++) {
                 list[i] = fromString(jsonArray.getString(i));
             }
@@ -198,27 +168,27 @@ public class Declines implements Parcelable {
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Declines[] array) {
+    public static JsonArray toJsonArray(WorkflowCompletion[] array) {
         JsonArray list = new JsonArray();
-        for (Declines item : array) {
+        for (WorkflowCompletion item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Declines[] fromJsonArray(JsonArray array) {
-        Declines[] list = new Declines[array.size()];
+    public static WorkflowCompletion[] fromJsonArray(JsonArray array) {
+        WorkflowCompletion[] list = new WorkflowCompletion[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Declines fromJson(JsonObject obj) {
+    public static WorkflowCompletion fromJson(JsonObject obj) {
         try {
-            return new Declines(obj);
+            return new WorkflowCompletion(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -230,12 +200,12 @@ public class Declines implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Declines> CREATOR = new Parcelable.Creator<Declines>() {
+    public static final Parcelable.Creator<WorkflowCompletion> CREATOR = new Parcelable.Creator<WorkflowCompletion>() {
 
         @Override
-        public Declines createFromParcel(Parcel source) {
+        public WorkflowCompletion createFromParcel(Parcel source) {
             try {
-                return Declines.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return WorkflowCompletion.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -243,8 +213,8 @@ public class Declines implements Parcelable {
         }
 
         @Override
-        public Declines[] newArray(int size) {
-            return new Declines[size];
+        public WorkflowCompletion[] newArray(int size) {
+            return new WorkflowCompletion[size];
         }
     };
 

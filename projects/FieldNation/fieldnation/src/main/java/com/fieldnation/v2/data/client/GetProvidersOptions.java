@@ -43,6 +43,14 @@ public class GetProvidersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isStickySet() {
+        return _sticky != null;
+    }
+
+    public String getStickyUrlParam() {
+        return "sticky=" + _sticky;
+    }
+
     public void setDefaultView(String defaultView) {
         _defaultView = defaultView;
     }
@@ -54,6 +62,14 @@ public class GetProvidersOptions implements Parcelable {
     public GetProvidersOptions defaultView(String defaultView) {
         _defaultView = defaultView;
         return this;
+    }
+
+    public boolean isDefaultViewSet() {
+        return _defaultView != null;
+    }
+
+    public String getDefaultViewUrlParam() {
+        return "default_view=" + _defaultView;
     }
 
     public void setView(String view) {
@@ -69,6 +85,14 @@ public class GetProvidersOptions implements Parcelable {
         return this;
     }
 
+    public boolean isViewSet() {
+        return _view != null;
+    }
+
+    public String getViewUrlParam() {
+        return "view=" + _view;
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -76,7 +100,7 @@ public class GetProvidersOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(GetProvidersOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -89,7 +113,7 @@ public class GetProvidersOptions implements Parcelable {
         try {
             return Serializer.serializeObject(getProvidersOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

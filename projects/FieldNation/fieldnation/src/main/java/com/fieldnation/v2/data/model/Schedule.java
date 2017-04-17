@@ -27,6 +27,9 @@ public class Schedule implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "no_refresh")
     private Boolean _noRefresh;
 
@@ -94,6 +97,28 @@ public class Schedule implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
+        return this;
+    }
+
+    public void setCorrelationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
+    }
+
+    public String getCorrelationId() {
+        try {
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _correlationId;
+    }
+
+    public Schedule correlationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
@@ -376,7 +401,7 @@ public class Schedule implements Parcelable {
         try {
             return new Schedule(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

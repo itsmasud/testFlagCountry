@@ -336,8 +336,8 @@ public class Signature implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "remove")
-        REMOVE("remove");
+        @Json(name = "delete")
+        DELETE("delete");
 
         private String value;
 
@@ -391,7 +391,7 @@ public class Signature implements Parcelable {
         try {
             return new Signature(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

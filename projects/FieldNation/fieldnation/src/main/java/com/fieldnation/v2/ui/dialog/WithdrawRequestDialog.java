@@ -32,7 +32,7 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
             int requestId = bundle.getInt("requestId");
 
             try {
-                WorkordersWebApi.removeRequest(App.get(), workOrderId, requestId);
+                WorkordersWebApi.deleteRequest(App.get(), workOrderId, requestId);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

@@ -300,8 +300,6 @@ public class PayIncrease implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "accept")
         ACCEPT("accept"),
-        @Json(name = "delete")
-        DELETE("delete"),
         @Json(name = "edit")
         EDIT("edit");
 
@@ -357,7 +355,7 @@ public class PayIncrease implements Parcelable {
         try {
             return new PayIncrease(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

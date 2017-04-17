@@ -110,29 +110,31 @@ public class RequestNewPayTile extends RelativeLayout {
                 break;
         }
 
-        switch (increase.getStatus()) {
-            case PENDING: // pending
-                setVisibility(VISIBLE);
-                _statusTextView.setText("PENDING APPROVAL");
-                _statusTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+        if (increase.getStatus() != null) {
+            switch (increase.getStatus()) {
+                case PENDING: // pending
+                    setVisibility(VISIBLE);
+                    _statusTextView.setText("PENDING APPROVAL");
+                    _statusTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
 
-                _iconTextView.setText(R.string.icon_circle_pending);
-                _iconTextView.setTextColor(getResources().getColor(R.color.fn_yellow));
-                break;
-            case ACCEPTED: // approved
-                setVisibility(GONE);
-                break;
-            case DECLINED: // denied
-                setVisibility(VISIBLE);
-                _statusTextView.setText("DECLINED");
-                _statusTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                    _iconTextView.setText(R.string.icon_circle_pending);
+                    _iconTextView.setTextColor(getResources().getColor(R.color.fn_yellow));
+                    break;
+                case ACCEPTED: // approved
+                    setVisibility(GONE);
+                    break;
+                case DECLINED: // denied
+                    setVisibility(VISIBLE);
+                    _statusTextView.setText("DECLINED");
+                    _statusTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
-                _iconTextView.setText(R.string.icon_circle_delete);
-                _iconTextView.setTextColor(getResources().getColor(R.color.fn_red));
-                break;
-            default:
-                setVisibility(GONE);
-                break;
+                    _iconTextView.setText(R.string.icon_circle_delete);
+                    _iconTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                    break;
+                default:
+                    setVisibility(GONE);
+                    break;
+            }
         }
     }
 }

@@ -116,7 +116,7 @@ public class CustomFields implements Parcelable {
         try {
             return new CustomFields(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

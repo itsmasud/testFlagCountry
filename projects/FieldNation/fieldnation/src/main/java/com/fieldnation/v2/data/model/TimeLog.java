@@ -63,9 +63,6 @@ public class TimeLog implements Parcelable {
     @Json(name = "was_late")
     private Boolean _wasLate;
 
-    @Json(name = "work_order_id")
-    private Integer _workOrderId;
-
     @Source
     private JsonObject SOURCE;
 
@@ -391,28 +388,6 @@ public class TimeLog implements Parcelable {
         return this;
     }
 
-    public void setWorkOrderId(Integer workOrderId) throws ParseException {
-        _workOrderId = workOrderId;
-        SOURCE.put("work_order_id", workOrderId);
-    }
-
-    public Integer getWorkOrderId() {
-        try {
-            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
-                _workOrderId = SOURCE.getInt("work_order_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _workOrderId;
-    }
-
-    public TimeLog workOrderId(Integer workOrderId) throws ParseException {
-        _workOrderId = workOrderId;
-        SOURCE.put("work_order_id", workOrderId);
-        return this;
-    }
-
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
@@ -511,7 +486,7 @@ public class TimeLog implements Parcelable {
         try {
             return new TimeLog(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

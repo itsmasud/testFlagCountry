@@ -338,9 +338,7 @@ public class ListEnvelope implements Parcelable {
         @Json(name = "asc")
         ASC("asc"),
         @Json(name = "desc")
-        DESC("desc"),
-        @Json(name = "false")
-        FALSE("false");
+        DESC("desc");
 
         private String value;
 
@@ -394,7 +392,7 @@ public class ListEnvelope implements Parcelable {
         try {
             return new ListEnvelope(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

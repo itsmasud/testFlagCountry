@@ -58,7 +58,7 @@ public class AaaaPlaceholder implements Parcelable {
         try {
             return new AaaaPlaceholder(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

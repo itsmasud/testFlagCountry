@@ -26,7 +26,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -285,54 +285,53 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrderLists")) {
+                SavedList[] savedList = (SavedList[]) successObject;
+                incrementPendingRequestCounter(-1);
 
-            incrementPendingRequestCounter(-1);
-
-            for (SavedList list : savedList) {
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
-            }
-        }
-
-        @Override
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            incrementPendingRequestCounter(-1);
-
-            // get the details
-            WorkOrder[] works = workOrders.getResults();
-            for (WorkOrder workOrder : works) {
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
-            }
-
-            //
-            ListEnvelope metadata = workOrders.getMetadata();
-            if (metadata.getPage() == 1) {
-                for (int i = 2; i <= workOrders.getMetadata().getPage() + 1; i++) {
+                for (SavedList list : savedList) {
                     incrementPendingRequestCounter(1);
                     incRequestCounter(1);
-                    WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                    WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(list.getId()).page(1), false, true);
                 }
+
+            } else if (methodName.equals("getWorkOrders")) {
+                WorkOrders workOrders = (WorkOrders) successObject;
+                incrementPendingRequestCounter(-1);
+
+                // get the details
+                WorkOrder[] works = workOrders.getResults();
+                for (WorkOrder workOrder : works) {
+                    incrementPendingRequestCounter(1);
+                    incRequestCounter(1);
+                    WorkordersWebApi.getWorkOrder(WebCrawlerService.this, workOrder.getId(), false, true);
+                }
+
+                //
+                ListEnvelope metadata = workOrders.getMetadata();
+                if (metadata.getPage() == 1) {
+                    for (int i = 2; i <= workOrders.getMetadata().getPage() + 1; i++) {
+                        incrementPendingRequestCounter(1);
+                        incRequestCounter(1);
+                        WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
+                    }
+                }
+            } else if (methodName.equals("getWorkOrder")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                incrementPendingRequestCounter(-1);
+
+                if (workOrder.getBundle() != null && workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
+                    incrementPendingRequestCounter(1);
+                    incRequestCounter(1);
+                    BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
+                }
+
+                _workorderDetails.add(workOrder);
+                _workorderThreadManager.wakeUp();
+
+                // TODO get messages for work order
             }
-        }
-
-        @Override
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-            incrementPendingRequestCounter(-1);
-
-            if (workOrder.getBundle() != null && workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
-                incrementPendingRequestCounter(1);
-                incRequestCounter(1);
-                BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
-            }
-
-            _workorderDetails.add(workOrder);
-            _workorderThreadManager.wakeUp();
-
-            // TODO get messages for work order
         }
     };
 
@@ -424,8 +423,10 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onGetBundleWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            incrementPendingRequestCounter(-1);
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getBundleWorkOrders")) {
+                incrementPendingRequestCounter(-1);
+            }
         }
     };
 

@@ -105,6 +105,8 @@ public class Qualifications implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
+        @Json(name = "add")
+        ADD("add"),
         @Json(name = "edit")
         EDIT("edit");
 
@@ -160,7 +162,7 @@ public class Qualifications implements Parcelable {
         try {
             return new Qualifications(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

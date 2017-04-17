@@ -25,7 +25,7 @@ public class Message implements Parcelable {
     private static final String TAG = "Message";
 
     @Json(name = "actions")
-    private ActionsEnum[] _actions;
+    private String[] _actions;
 
     @Json(name = "created")
     private Date _created;
@@ -42,20 +42,14 @@ public class Message implements Parcelable {
     @Json(name = "parent_id")
     private Boolean _parentId;
 
-    @Json(name = "problem")
-    private MessageProblem _problem;
-
     @Json(name = "read")
     private Boolean _read;
 
     @Json(name = "replies")
-    private Message _replies;
+    private Messages _replies;
 
     @Json(name = "role")
     private String _role;
-
-    @Json(name = "sharedText")
-    private String _sharedText;
 
     @Json(name = "to")
     private MessageTo _to;
@@ -71,22 +65,23 @@ public class Message implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setActions(ActionsEnum[] actions) throws ParseException {
+    public void setActions(String[] actions) throws ParseException {
         _actions = actions;
         JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
+        for (String item : actions) {
+            ja.add(item);
         }
         SOURCE.put("actions", ja);
     }
 
-    public ActionsEnum[] getActions() {
+    public String[] getActions() {
         try {
             if (_actions != null)
                 return _actions;
 
             if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
-                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+                JsonArray ja = SOURCE.getJsonArray("actions");
+                _actions = ja.toArray(new String[ja.size()]);
             }
 
         } catch (Exception ex) {
@@ -96,11 +91,11 @@ public class Message implements Parcelable {
         return _actions;
     }
 
-    public Message actions(ActionsEnum[] actions) throws ParseException {
+    public Message actions(String[] actions) throws ParseException {
         _actions = actions;
         JsonArray ja = new JsonArray();
-        for (ActionsEnum item : actions) {
-            ja.add(item.toString());
+        for (String item : actions) {
+            ja.add(item);
         }
         SOURCE.put("actions", ja, true);
         return this;
@@ -222,31 +217,6 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setProblem(MessageProblem problem) throws ParseException {
-        _problem = problem;
-        SOURCE.put("problem", problem.getJson());
-    }
-
-    public MessageProblem getProblem() {
-        try {
-            if (_problem == null && SOURCE.has("problem") && SOURCE.get("problem") != null)
-                _problem = MessageProblem.fromJson(SOURCE.getJsonObject("problem"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_problem != null && _problem.isSet())
-        return _problem;
-
-        return null;
-    }
-
-    public Message problem(MessageProblem problem) throws ParseException {
-        _problem = problem;
-        SOURCE.put("problem", problem.getJson());
-        return this;
-    }
-
     public void setRead(Boolean read) throws ParseException {
         _read = read;
         SOURCE.put("read", read);
@@ -269,15 +239,15 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setReplies(Message replies) throws ParseException {
+    public void setReplies(Messages replies) throws ParseException {
         _replies = replies;
         SOURCE.put("replies", replies.getJson());
     }
 
-    public Message getReplies() {
+    public Messages getReplies() {
         try {
             if (_replies == null && SOURCE.has("replies") && SOURCE.get("replies") != null)
-                _replies = Message.fromJson(SOURCE.getJsonObject("replies"));
+                _replies = Messages.fromJson(SOURCE.getJsonObject("replies"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -288,7 +258,7 @@ public class Message implements Parcelable {
         return null;
     }
 
-    public Message replies(Message replies) throws ParseException {
+    public Message replies(Messages replies) throws ParseException {
         _replies = replies;
         SOURCE.put("replies", replies.getJson());
         return this;
@@ -313,28 +283,6 @@ public class Message implements Parcelable {
     public Message role(String role) throws ParseException {
         _role = role;
         SOURCE.put("role", role);
-        return this;
-    }
-
-    public void setSharedText(String sharedText) throws ParseException {
-        _sharedText = sharedText;
-        SOURCE.put("sharedText", sharedText);
-    }
-
-    public String getSharedText() {
-        try {
-            if (_sharedText == null && SOURCE.has("sharedText") && SOURCE.get("sharedText") != null)
-                _sharedText = SOURCE.getString("sharedText");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _sharedText;
-    }
-
-    public Message sharedText(String sharedText) throws ParseException {
-        _sharedText = sharedText;
-        SOURCE.put("sharedText", sharedText);
         return this;
     }
 
@@ -363,44 +311,6 @@ public class Message implements Parcelable {
         return this;
     }
 
-    /*-******************************-*/
-    /*-             Enums            -*/
-    /*-******************************-*/
-    public enum ActionsEnum {
-        @Json(name = "create")
-        CREATE("create"),
-        @Json(name = "edit")
-        EDIT("edit");
-
-        private String value;
-
-        ActionsEnum(String value) {
-            this.value = value;
-        }
-
-        public static ActionsEnum fromString(String value) {
-            ActionsEnum[] values = values();
-            for (ActionsEnum v : values) {
-                if (v.value.equals(value))
-                    return v;
-            }
-            return null;
-        }
-
-        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
-            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
-            for (int i = 0; i < list.length; i++) {
-                list[i] = fromString(jsonArray.getString(i));
-            }
-            return list;
-        }
-
-        @Override
-        public String toString() {
-            return String.valueOf(value);
-        }
-    }
-
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -424,7 +334,7 @@ public class Message implements Parcelable {
         try {
             return new Message(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

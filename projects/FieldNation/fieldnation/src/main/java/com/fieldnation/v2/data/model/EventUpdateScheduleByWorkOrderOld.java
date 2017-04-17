@@ -158,7 +158,7 @@ public class EventUpdateScheduleByWorkOrderOld implements Parcelable {
         try {
             return new EventUpdateScheduleByWorkOrderOld(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

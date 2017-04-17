@@ -220,7 +220,7 @@ public class PayModifiers implements Parcelable {
         try {
             return new PayModifiers(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

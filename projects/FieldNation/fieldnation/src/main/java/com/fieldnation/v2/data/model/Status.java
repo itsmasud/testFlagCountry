@@ -27,6 +27,9 @@ public class Status implements Parcelable {
     @Json(name = "code")
     private String _code;
 
+    @Json(name = "confirmed")
+    private Boolean _confirmed;
+
     @Json(name = "correlation_id")
     private String _correlationId;
 
@@ -60,6 +63,9 @@ public class Status implements Parcelable {
 
     @Json(name = "ncns")
     private Boolean _ncns;
+
+    @Json(name = "problem")
+    private Problem _problem;
 
     @Json(name = "problem_reported")
     private Boolean _problemReported;
@@ -97,6 +103,28 @@ public class Status implements Parcelable {
     public Status code(String code) throws ParseException {
         _code = code;
         SOURCE.put("code", code);
+        return this;
+    }
+
+    public void setConfirmed(Boolean confirmed) throws ParseException {
+        _confirmed = confirmed;
+        SOURCE.put("confirmed", confirmed);
+    }
+
+    public Boolean getConfirmed() {
+        try {
+            if (_confirmed == null && SOURCE.has("confirmed") && SOURCE.get("confirmed") != null)
+                _confirmed = SOURCE.getBoolean("confirmed");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _confirmed;
+    }
+
+    public Status confirmed(Boolean confirmed) throws ParseException {
+        _confirmed = confirmed;
+        SOURCE.put("confirmed", confirmed);
         return this;
     }
 
@@ -254,6 +282,31 @@ public class Status implements Parcelable {
         return this;
     }
 
+    public void setProblem(Problem problem) throws ParseException {
+        _problem = problem;
+        SOURCE.put("problem", problem.getJson());
+    }
+
+    public Problem getProblem() {
+        try {
+            if (_problem == null && SOURCE.has("problem") && SOURCE.get("problem") != null)
+                _problem = Problem.fromJson(SOURCE.getJsonObject("problem"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_problem != null && _problem.isSet())
+            return _problem;
+
+        return null;
+    }
+
+    public Status problem(Problem problem) throws ParseException {
+        _problem = problem;
+        SOURCE.put("problem", problem.getJson());
+        return this;
+    }
+
     public void setProblemReported(Boolean problemReported) throws ParseException {
         _problemReported = problemReported;
         SOURCE.put("problem_reported", problemReported);
@@ -321,7 +374,7 @@ public class Status implements Parcelable {
         try {
             return new Status(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

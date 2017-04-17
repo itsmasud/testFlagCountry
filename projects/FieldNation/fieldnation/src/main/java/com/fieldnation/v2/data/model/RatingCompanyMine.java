@@ -183,7 +183,7 @@ public class RatingCompanyMine implements Parcelable {
         try {
             return new RatingCompanyMine(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

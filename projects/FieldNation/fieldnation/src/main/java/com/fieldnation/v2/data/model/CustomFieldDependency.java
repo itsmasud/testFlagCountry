@@ -177,7 +177,7 @@ public class CustomFieldDependency implements Parcelable {
         try {
             return new CustomFieldDependency(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -283,7 +283,7 @@ public class LocationCoordinates implements Parcelable {
         try {
             return new LocationCoordinates(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

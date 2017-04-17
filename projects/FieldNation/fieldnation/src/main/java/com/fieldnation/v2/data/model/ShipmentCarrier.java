@@ -231,7 +231,7 @@ public class ShipmentCarrier implements Parcelable {
         try {
             return new ShipmentCarrier(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

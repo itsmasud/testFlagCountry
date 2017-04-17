@@ -208,7 +208,7 @@ public class MessageFrom implements Parcelable {
         try {
             return new MessageFrom(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

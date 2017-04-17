@@ -39,6 +39,9 @@ public class FundTransaction implements Parcelable {
     @Json(name = "credit_card")
     private CreditCard _creditCard;
 
+    @Json(name = "credit_card_id")
+    private String _creditCardId;
+
     @Json(name = "description")
     private String _description;
 
@@ -196,6 +199,28 @@ public class FundTransaction implements Parcelable {
     public FundTransaction creditCard(CreditCard creditCard) throws ParseException {
         _creditCard = creditCard;
         SOURCE.put("credit_card", creditCard.getJson());
+        return this;
+    }
+
+    public void setCreditCardId(String creditCardId) throws ParseException {
+        _creditCardId = creditCardId;
+        SOURCE.put("credit_card_id", creditCardId);
+    }
+
+    public String getCreditCardId() {
+        try {
+            if (_creditCardId == null && SOURCE.has("credit_card_id") && SOURCE.get("credit_card_id") != null)
+                _creditCardId = SOURCE.getString("credit_card_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _creditCardId;
+    }
+
+    public FundTransaction creditCardId(String creditCardId) throws ParseException {
+        _creditCardId = creditCardId;
+        SOURCE.put("credit_card_id", creditCardId);
         return this;
     }
 
@@ -513,7 +538,7 @@ public class FundTransaction implements Parcelable {
         try {
             return new FundTransaction(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

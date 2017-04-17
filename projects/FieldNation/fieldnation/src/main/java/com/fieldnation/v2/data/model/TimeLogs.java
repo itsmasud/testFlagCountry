@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -27,9 +30,6 @@ public class TimeLogs implements Parcelable {
     @Json(name = "confirmed")
     private Date _confirmed;
 
-    @Json(name = "correlation_id")
-    private String _correlationId;
-
     @Json(name = "hours")
     private Double _hours;
 
@@ -44,9 +44,6 @@ public class TimeLogs implements Parcelable {
 
     @Json(name = "results")
     private TimeLog[] _results;
-
-    @Json(name = "should_verify")
-    private Boolean _shouldVerify;
 
     @Json(name = "status")
     private String _status;
@@ -122,28 +119,6 @@ public class TimeLogs implements Parcelable {
     public TimeLogs confirmed(Date confirmed) throws ParseException {
         _confirmed = confirmed;
         SOURCE.put("confirmed", confirmed.getJson());
-        return this;
-    }
-
-    public void setCorrelationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
-    }
-
-    public String getCorrelationId() {
-        try {
-            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
-                _correlationId = SOURCE.getString("correlation_id");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _correlationId;
-    }
-
-    public TimeLogs correlationId(String correlationId) throws ParseException {
-        _correlationId = correlationId;
-        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 
@@ -271,28 +246,6 @@ public class TimeLogs implements Parcelable {
         return this;
     }
 
-    public void setShouldVerify(Boolean shouldVerify) throws ParseException {
-        _shouldVerify = shouldVerify;
-        SOURCE.put("should_verify", shouldVerify);
-    }
-
-    public Boolean getShouldVerify() {
-        try {
-            if (_shouldVerify == null && SOURCE.has("should_verify") && SOURCE.get("should_verify") != null)
-                _shouldVerify = SOURCE.getBoolean("should_verify");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _shouldVerify;
-    }
-
-    public TimeLogs shouldVerify(Boolean shouldVerify) throws ParseException {
-        _shouldVerify = shouldVerify;
-        SOURCE.put("should_verify", shouldVerify);
-        return this;
-    }
-
     public void setStatus(String status) throws ParseException {
         _status = status;
         SOURCE.put("status", status);
@@ -346,8 +299,10 @@ public class TimeLogs implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "add")
         ADD("add"),
-        @Json(name = "edit")
-        EDIT("edit");
+        @Json(name = "can_verify")
+        CAN_VERIFY("can_verify"),
+        @Json(name = "checkin")
+        CHECKIN("checkin");
 
         private String value;
 
@@ -401,7 +356,7 @@ public class TimeLogs implements Parcelable {
         try {
             return new TimeLogs(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

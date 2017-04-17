@@ -303,7 +303,7 @@ public class Condition implements Parcelable {
         try {
             return new Condition(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

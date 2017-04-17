@@ -113,7 +113,7 @@ public class AvailableColumn implements Parcelable {
         try {
             return new AvailableColumn(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

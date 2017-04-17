@@ -27,12 +27,6 @@ public class PayIncreasesSum implements Parcelable {
     @Json(name = "all")
     private Double _all;
 
-    @Json(name = "charged")
-    private Double _charged;
-
-    @Json(name = "uncharged")
-    private Double _uncharged;
-
     @Source
     private JsonObject SOURCE;
 
@@ -66,50 +60,6 @@ public class PayIncreasesSum implements Parcelable {
         return this;
     }
 
-    public void setCharged(Double charged) throws ParseException {
-        _charged = charged;
-        SOURCE.put("charged", charged);
-    }
-
-    public Double getCharged() {
-        try {
-            if (_charged == null && SOURCE.has("charged") && SOURCE.get("charged") != null)
-                _charged = SOURCE.getDouble("charged");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _charged;
-    }
-
-    public PayIncreasesSum charged(Double charged) throws ParseException {
-        _charged = charged;
-        SOURCE.put("charged", charged);
-        return this;
-    }
-
-    public void setUncharged(Double uncharged) throws ParseException {
-        _uncharged = uncharged;
-        SOURCE.put("uncharged", uncharged);
-    }
-
-    public Double getUncharged() {
-        try {
-            if (_uncharged == null && SOURCE.has("uncharged") && SOURCE.get("uncharged") != null)
-                _uncharged = SOURCE.getDouble("uncharged");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _uncharged;
-    }
-
-    public PayIncreasesSum uncharged(Double uncharged) throws ParseException {
-        _uncharged = uncharged;
-        SOURCE.put("uncharged", uncharged);
-        return this;
-    }
-
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -133,7 +83,7 @@ public class PayIncreasesSum implements Parcelable {
         try {
             return new PayIncreasesSum(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

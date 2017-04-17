@@ -710,9 +710,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId);
     }
 
-    public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
-        WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId);
-    }
+//    public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
+//        WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId);
+//    }
 
 
 //    public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {

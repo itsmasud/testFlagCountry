@@ -108,7 +108,7 @@ public class UserBlockedBy implements Parcelable {
         try {
             return new UserBlockedBy(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

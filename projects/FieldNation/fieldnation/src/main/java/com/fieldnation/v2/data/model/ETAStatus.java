@@ -183,7 +183,7 @@ public class ETAStatus implements Parcelable {
         try {
             return new ETAStatus(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

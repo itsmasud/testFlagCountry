@@ -19,7 +19,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -198,8 +198,37 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
+            if (methodName.equals("getWorkOrders")) {
+                WorkOrders workOrders = (WorkOrders) successObject;
+                // TODO see if getList() is the list ID
+                if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
+                    return;
+
+                if (_onListReceivedListener != null)
+                    _onListReceivedListener.OnWorkOrderListReceived(workOrders);
+
+                if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
+                    _refreshView.refreshComplete();
+                    return;
+                }
+
+                ListEnvelope envelope = workOrders.getMetadata();
+
+                Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
+
+                if (envelope.getTotal() == 0) {
+                    _adapter.clear();
+                } else if (workOrders.getResults().length > 0
+                        && envelope.getPerPage() > 0
+                        && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
+                    _adapter.addObjects(envelope.getPage(), workOrders.getResults());
+                else
+                    _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
+
+                _refreshView.refreshComplete();
+            }
 
             if (methodName.startsWith("get"))
                 return;
@@ -211,36 +240,6 @@ public class SearchResultScreen extends RelativeLayout {
                     _refreshView.startRefreshing();
                 }
             });
-        }
-
-        @Override
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-            // TODO see if getList() is the list ID
-            if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
-                return;
-
-            if (_onListReceivedListener != null)
-                _onListReceivedListener.OnWorkOrderListReceived(workOrders);
-
-            if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
-                _refreshView.refreshComplete();
-                return;
-            }
-
-            ListEnvelope envelope = workOrders.getMetadata();
-
-            Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-
-            if (envelope.getTotal() == 0) {
-                _adapter.clear();
-            } else if (workOrders.getResults().length > 0
-                    && envelope.getPerPage() > 0
-                    && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
-                _adapter.addObjects(envelope.getPage(), workOrders.getResults());
-            else
-                _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
-
-            _refreshView.refreshComplete();
         }
     };
 
@@ -269,7 +268,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public boolean useHeader() {
-            return _savedList.getId().equals("workorders_available") || _savedList.getId().equals("workorders_routed");
+            return _savedList.getId().equals("workorders_available");
         }
 
         @Override

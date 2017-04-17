@@ -121,9 +121,6 @@ public class TaskRowView extends RelativeLayout {
 
         if (_uploadingFiles.size() > 0) {
 
-
-            Log.e(TAG, "inside _uploadingFiles");
-
             if (_uploadingFiles.size() == 1) {
                 _descriptionTextView.setText(_task.getType().getName() + "\nUploading: " + _uploadingFiles.iterator().next());
             } else if (_uploadingFiles.size() > 1) {
@@ -151,9 +148,7 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
-        }
-
-        else if (_task.getCustomField() != null) {
+        } else if (_task.getCustomField() != null) {
             _progressBar.setVisibility(GONE);
 
             boolean isDescriptionSet = false;
@@ -178,6 +173,37 @@ public class TaskRowView extends RelativeLayout {
         updateCheckBox();
     }
 
+  /*
+    from server:
+        private void updateCheckBox() {
+        if (_task != null && _task.getActionsSet() != null
+                && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
+                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
+                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE))) {
+            if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+                _iconView.setText(R.string.icon_task_done);
+            } else {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+                _iconView.setText(R.string.icon_task);
+            }
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            setEnabled(true);
+        } else {
+            if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+                _iconView.setText(R.string.icon_task_done);
+            } else {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+                _iconView.setText(R.string.icon_task);
+            }
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            setEnabled(false);
+        }
+    }
+     */
+
+
     private void updateCheckBox() {
         if (_task != null && _task.getActionsSet() != null
                 && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
@@ -196,7 +222,6 @@ public class TaskRowView extends RelativeLayout {
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
             _iconView.setText(R.string.icon_task);
         }
-
     }
 
     /*-*********************************-*/
@@ -250,17 +275,7 @@ public class TaskRowView extends RelativeLayout {
             updateCheckBox();
 
             if (_listener != null) {
-//            Double percent = pos * 1.0 / size;
-//            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
-//            int prog = (int) (pos * 100 / size);
-                _uploadingProgress.put("task" + _task.getId(), 10);
-                populateUi();
-//        }
-
                 _listener.onTaskClick(_task);
-
-
-
             }
         }
     };

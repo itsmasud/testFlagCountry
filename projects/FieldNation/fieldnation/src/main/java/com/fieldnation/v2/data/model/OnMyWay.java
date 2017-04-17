@@ -264,7 +264,7 @@ public class OnMyWay implements Parcelable {
         try {
             return new OnMyWay(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

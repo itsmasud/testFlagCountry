@@ -63,11 +63,8 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     @Override
     public void onResume() {
         super.onResume();
-
         if (_title != null)
             _titleTextView.setText(_title);
-
-        populateUi();
     }
 
     @Override
@@ -77,6 +74,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
         _workOrder = payload.getParcelable("workOrder");
         _title = payload.getString("title");
         _task = payload.getParcelable("task");
+        populateUi();
     }
 
     private void populateUi() {

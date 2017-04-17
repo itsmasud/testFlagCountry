@@ -30,6 +30,9 @@ public class AttachmentFolder implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
+    @Json(name = "min_files")
+    private Integer _minFiles;
+
     @Json(name = "name")
     private String _name;
 
@@ -107,6 +110,28 @@ public class AttachmentFolder implements Parcelable {
     public AttachmentFolder id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
+        return this;
+    }
+
+    public void setMinFiles(Integer minFiles) throws ParseException {
+        _minFiles = minFiles;
+        SOURCE.put("min_files", minFiles);
+    }
+
+    public Integer getMinFiles() {
+        try {
+            if (_minFiles == null && SOURCE.has("min_files") && SOURCE.get("min_files") != null)
+                _minFiles = SOURCE.getInt("min_files");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _minFiles;
+    }
+
+    public AttachmentFolder minFiles(Integer minFiles) throws ParseException {
+        _minFiles = minFiles;
+        SOURCE.put("min_files", minFiles);
         return this;
     }
 
@@ -302,7 +327,7 @@ public class AttachmentFolder implements Parcelable {
         try {
             return new AttachmentFolder(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
