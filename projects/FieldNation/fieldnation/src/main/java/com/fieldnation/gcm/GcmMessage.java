@@ -3,7 +3,7 @@ package com.fieldnation.gcm;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.v2.actions.ActionContainer;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -27,8 +27,8 @@ public class GcmMessage implements Parcelable {
     public Integer badge;
     @Json
     public String category;
-    @Json(name = "actions")
-    public ActionContainer actions;
+    @Json
+    public Action[] actions;
 
     /*-*************************************-*/
     /*-			JSON Implementation			-*/
