@@ -215,7 +215,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
                 if (folderId == _slot.getId()) {
                     _uploadingFiles.add(name);
-                    _uploadingProgress.remove(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_QUEUED);
                     populateUi();
                 }
             } catch (Exception ex) {
@@ -255,7 +255,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
                 if (folderId == _slot.getId()) {
                     _uploadingFiles.add(name);
-                    _uploadingProgress.remove(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_PAUSED);
                     populateUi();
                 }
             } catch (Exception ex) {
