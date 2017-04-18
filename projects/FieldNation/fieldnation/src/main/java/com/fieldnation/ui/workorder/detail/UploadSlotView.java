@@ -204,6 +204,26 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
 
         @Override
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onQueued");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_QUEUED);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
         public void onStart(TransactionParams transactionParams, String methodName) {
             if (!methodName.equals("addAttachment"))
                 return;
@@ -215,6 +235,27 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
                 if (folderId == _slot.getId()) {
                     _uploadingFiles.add(name);
+                    _uploadingProgress.remove(name);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onPaused(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onStart");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_PAUSED);
                     populateUi();
                 }
             } catch (Exception ex) {

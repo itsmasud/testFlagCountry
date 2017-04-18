@@ -3,6 +3,7 @@ package com.fieldnation.service.transaction;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
@@ -29,8 +30,30 @@ public abstract class WebTransactionListener {
 
     public enum Result {RETRY, CONTINUE, DELETE}
 
+
+    protected void preOnQueued(Context context, WebTransaction transaction) {
+        onQueued(context, transaction);
+    }
+
+    public void onQueued(Context context, WebTransaction transaction) {
+    }
+
+
+    protected void preOnStart(Context context, WebTransaction transaction) {
+        onStart(context, transaction);
+    }
+
     public void onStart(Context context, WebTransaction transaction) {
     }
+
+
+    protected void preOnPaused(Context context, WebTransaction transaction) {
+        onPaused(context, transaction);
+    }
+
+    public void onPaused(Context context, WebTransaction transaction) {
+    }
+
 
     protected final Result preComplete(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Result result = preCheck(context, transaction, httpResult, throwable);
@@ -123,28 +146,40 @@ public abstract class WebTransactionListener {
             if (throwable instanceof MalformedURLException || throwable instanceof FileNotFoundException) {
                 return Result.DELETE;
 
-            } else if (throwable instanceof SecurityException || throwable instanceof UnknownHostException) {
+            } else if (throwable instanceof UnknownHostException) {
+                GlobalTopicClient.networkDisconnected(context);
+                return Result.RETRY;
+
+            } else if (throwable instanceof SecurityException) {
                 return Result.DELETE;
 
-            } else if (throwable instanceof SSLProtocolException || throwable instanceof ConnectException || throwable instanceof SocketTimeoutException || throwable instanceof EOFException) {
+            } else if (throwable instanceof SSLProtocolException
+                    || throwable instanceof ConnectException
+                    || throwable instanceof SocketTimeoutException
+                    || throwable instanceof EOFException) {
+                GlobalTopicClient.networkDisconnected(context);
                 return Result.RETRY;
 
             } else if (throwable instanceof SSLException) {
                 if (throwable.getMessage().contains("Broken pipe")) {
                     Log.v(TAG, "6");
+                    GlobalTopicClient.networkDisconnected(context);
                     return Result.RETRY;
 
                 } else {
                     Log.v(TAG, "7");
+                    GlobalTopicClient.networkDisconnected(context);
                     return Result.RETRY;
                 }
             } else if (throwable instanceof IOException) {
+                GlobalTopicClient.networkDisconnected(context);
                 return Result.RETRY;
 
             } else if (throwable instanceof Exception) {
                 Log.v(TAG, "9");
                 Log.v(TAG, throwable);
                 if (throwable.getMessage() != null && throwable.getMessage().contains("ETIMEDOUT")) {
+                    GlobalTopicClient.networkDisconnected(context);
                     return Result.RETRY;
 
                 } else {
@@ -157,6 +192,11 @@ public abstract class WebTransactionListener {
         }
 
         return Result.CONTINUE;
+    }
+
+
+    protected void preOnProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
+        onProgress(context, transaction, pos, size, time);
     }
 
     public void onProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
