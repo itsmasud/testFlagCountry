@@ -27,7 +27,6 @@ import com.fieldnation.v2.data.model.CompanyRating;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.FundTransaction;
 import com.fieldnation.v2.data.model.SavedCreditCards;
-import com.fieldnation.v2.data.model.SelectionRules;
 import com.fieldnation.v2.data.model.Tag;
 import com.fieldnation.v2.data.model.Tags;
 
