@@ -12,6 +12,20 @@ import com.fieldnation.fnlog.Log;
 class WebTransactionDispatcher {
     private static final String TAG = "WebTransactionDispatcher";
 
+    public static void queued(Context context, String listenerName, WebTransaction transaction) {
+        try {
+            Class<?> clazz = context.getClassLoader().loadClass(listenerName);
+
+            WebTransactionListener handler = (WebTransactionListener) clazz.getConstructor((Class<?>[]) null)
+                    .newInstance((Object[]) null);
+
+            handler.preOnQueued(context, transaction);
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
     public static void start(Context context, String listenerName, WebTransaction transaction) {
         try {
             Class<?> clazz = context.getClassLoader().loadClass(listenerName);
@@ -19,7 +33,21 @@ class WebTransactionDispatcher {
             WebTransactionListener handler = (WebTransactionListener) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            handler.onStart(context, transaction);
+            handler.preOnStart(context, transaction);
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    public static void paused(Context context, String listenerName, WebTransaction transaction) {
+        try {
+            Class<?> clazz = context.getClassLoader().loadClass(listenerName);
+
+            WebTransactionListener handler = (WebTransactionListener) clazz.getConstructor((Class<?>[]) null)
+                    .newInstance((Object[]) null);
+
+            handler.preOnPaused(context, transaction);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -48,7 +76,7 @@ class WebTransactionDispatcher {
             WebTransactionListener handler = (WebTransactionListener) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            handler.onProgress(context, transaction, pos, size, time);
+            handler.preOnProgress(context, transaction, pos, size, time);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);

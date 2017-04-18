@@ -12,9 +12,9 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.tracker.UploadTrackerClient;
 
 import java.util.List;
 
@@ -168,10 +168,6 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                 Log.v(TAG, "processIntent building transaction");
                 WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
 
-                if (extras.getBoolean(PARAM_TRACK)) {
-                    UploadTrackerClient.uploadQueued(ContextProvider.get(), transaction.getTrackType());
-                }
-
                 Log.v(TAG, "processIntent building transforms");
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
@@ -184,6 +180,11 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                 Log.v(TAG, "processIntent saving transaction");
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save();
+
+                String listenerName = transaction.getListenerName();
+                if (!misc.isEmptyOrNull(listenerName)) {
+                    WebTransactionDispatcher.queued(WebTransactionService.this, listenerName, transaction);
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

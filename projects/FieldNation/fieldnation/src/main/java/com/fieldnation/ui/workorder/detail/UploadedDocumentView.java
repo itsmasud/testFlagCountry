@@ -136,8 +136,10 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         if (_progressBar == null)
             return;
 
-        if (progress == null)
+        if (progress == null) {
             _progressBar.setIndeterminate(true);
+            return;
+        }
 
         _progressBar.setIndeterminate(false);
         _progressBar.setMax(100);
