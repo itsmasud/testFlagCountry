@@ -6,8 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +19,8 @@ import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.UniqueTag;
 
 import java.security.SecureRandom;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 7/17/2015.
@@ -170,6 +174,29 @@ public class ToastClient extends TopicClient {
 
         public abstract int getSnackbarTextId();
 
+        private View findCoordinatorLayoutView() {
+            int limit = 20;
+            List<View> views = new LinkedList<>();
+            View selected = getActivity().findViewById(android.R.id.content);
+            views.add(selected);
+
+            while (views.size() > 0) {
+                View test = views.remove(0);
+                limit--;
+
+                if (limit <= 0)
+                    return selected;
+                if (test instanceof CoordinatorLayout) {
+                    return test;
+                } else if (test instanceof ViewGroup) {
+                    for (int i = 0; i < ((ViewGroup) test).getChildCount(); i++) {
+                        views.add(((ViewGroup) test).getChildAt(i));
+                    }
+                }
+            }
+            return selected;
+        }
+
         public void showSnackBar(long id, String title, String buttonText, final PendingIntent buttonIntent, int duration) {
             Log.v(TAG, "showSnackBar(" + title + ")");
 
@@ -181,7 +208,7 @@ public class ToastClient extends TopicClient {
                 return;
             }
 
-            Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), title, duration);
+            Snackbar snackbar = Snackbar.make(findCoordinatorLayoutView(), title, duration);
             TextView tv = (TextView) snackbar.getView().findViewById(getSnackbarTextId());
             tv.setTextColor(getActivity().getResources().getColor(R.color.fn_white_text));
             snackbar.setActionTextColor(getActivity().getResources().getColor(R.color.fn_clickable_text));

@@ -955,7 +955,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-                _onMyWay_onClick.onClick(v);
+            _onMyWay_onClick.onClick(v);
         }
     };
 
