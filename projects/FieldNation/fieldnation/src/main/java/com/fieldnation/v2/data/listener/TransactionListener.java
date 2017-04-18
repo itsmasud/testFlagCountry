@@ -46,6 +46,23 @@ public class TransactionListener extends WebTransactionListener {
     }
 
     @Override
+    public void onQueued(Context context, WebTransaction transaction) {
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("params", params);
+            bundle.putString("type", "queued");
+            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+
+            if (transaction.isTracked()) {
+                UploadTrackerClient.uploadQueued(context, transaction.getTrackType());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    @Override
     public void onStart(Context context, WebTransaction transaction) {
         try {
             TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
@@ -56,6 +73,23 @@ public class TransactionListener extends WebTransactionListener {
 
             if (transaction.isTracked()) {
                 UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    @Override
+    public void onPaused(Context context, WebTransaction transaction) {
+        try {
+            TransactionParams params = TransactionParams.fromJson(new JsonObject(transaction.getListenerParams()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("params", params);
+            bundle.putString("type", "paused");
+            TopicService.dispatchEvent(context, params.topicId, bundle, Sticky.NONE);
+
+            if (transaction.isTracked()) {
+                UploadTrackerClient.uploadRequeued(context, transaction.getTrackType());
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
