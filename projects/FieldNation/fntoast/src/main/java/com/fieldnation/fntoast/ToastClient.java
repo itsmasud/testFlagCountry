@@ -187,6 +187,7 @@ public class ToastClient extends TopicClient {
                 if (limit <= 0)
                     return selected;
                 if (test instanceof CoordinatorLayout) {
+                    Log.v(TAG, "CoordinatorLayout found in " + (20 - limit));
                     return test;
                 } else if (test instanceof ViewGroup) {
                     for (int i = 0; i < ((ViewGroup) test).getChildCount(); i++) {
