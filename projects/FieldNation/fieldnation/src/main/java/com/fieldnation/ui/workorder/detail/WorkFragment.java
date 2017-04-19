@@ -47,6 +47,7 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -745,8 +746,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-//            ConfirmActivity.startNew(App.get());
-            _actionbartop_listener.onMyWay();
+            ConfirmActivity.startNew(App.get());
+//            _actionbartop_listener.onMyWay();
         }
     };
 
