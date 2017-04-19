@@ -25,23 +25,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentTop="true"
-                app:layout_scrollFlags="scroll|enterAlways"
                 app:theme="@style/FieldNation.Material.ToolBar" />
+
+        </android.support.design.widget.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <com.fieldnation.ui.workorder.WorkorderTabView
                 android:id="@+id/tabview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/toolbar" />
-        </android.support.design.widget.AppBarLayout>
+                android:layout_height="wrap_content" />
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/content_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/tabview"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
+            <android.support.v4.view.ViewPager
+                android:id="@+id/content_viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
 
     <com.fieldnation.fndialog.DialogManager
