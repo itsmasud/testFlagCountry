@@ -44,7 +44,7 @@ public class AttachmentService extends MultiThreadedService {
         Uri uri = intent.getParcelableExtra(PARAM_URI);
 
         Log.v(TAG, "processIntent " + workOrderId + ", " + attachment.getFolderId() + ", "
-                + filename + ", " + filePath + ", " + uri.toString());
+                + filename + ", " + filePath + ", " + (uri == null ? "null" : uri.toString()));
 
         try {
             attachment.file(new com.fieldnation.v2.data.model.File().name(filename));

@@ -5193,6 +5193,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        new Exception("getWorkOrder").printStackTrace();
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
 
@@ -5270,6 +5271,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrders(Context context, boolean allowCacheResponse, boolean isBackground) {
+        new Exception("getWorkOrders").printStackTrace();
         try {
             String key = misc.md5("GET//api/rest/v2/workorders");
 
@@ -5309,6 +5311,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground         indicates that this call is low priority
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, boolean isBackground) {
+        new Exception("getWorkOrders").printStackTrace();
         try {
             String key = misc.md5("GET//api/rest/v2/workorders"
                     + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
