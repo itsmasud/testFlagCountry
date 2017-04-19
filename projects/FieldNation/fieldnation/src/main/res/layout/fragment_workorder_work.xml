@@ -5,7 +5,7 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <com.fieldnation.ui.NestedScrollView
+    <com.fieldnation.ui.OverScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -130,7 +130,7 @@
                 android:text="@string/view_bundle_details"
                 android:visibility="gone" />
         </LinearLayout>
-    </com.fieldnation.ui.NestedScrollView>
+    </com.fieldnation.ui.OverScrollView>
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"

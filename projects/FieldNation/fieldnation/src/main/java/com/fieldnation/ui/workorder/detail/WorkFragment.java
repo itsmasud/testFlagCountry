@@ -37,7 +37,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
-import com.fieldnation.ui.NestedScrollView;
+import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
@@ -145,7 +145,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // UI
     private Button _testButton;
-    private NestedScrollView _scrollView;
+    private OverScrollView _scrollView;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
@@ -259,7 +259,7 @@ public class WorkFragment extends WorkorderFragment {
         _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _scrollView = (NestedScrollView) view.findViewById(R.id.scroll_view);
+        _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
         _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
