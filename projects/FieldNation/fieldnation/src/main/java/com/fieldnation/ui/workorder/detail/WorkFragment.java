@@ -47,7 +47,6 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -746,8 +745,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-            ConfirmActivity.startNew(App.get());
+            //ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
+
+            _actionbartop_listener.onMarkComplete();
         }
     };
 
@@ -1496,10 +1497,7 @@ public class WorkFragment extends WorkorderFragment {
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
-                        Intent intent = new Intent(context, SignOffActivity.class);
-                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
-                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+                        SignOffActivity.startSignOff(App.get(), workOrder, true);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
