@@ -106,6 +106,13 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _docListener = listener;
         _profileId = profileId;
 
+        if (_slot != null && _slot.getResults() != null) {
+            for (Attachment attachment : _slot.getResults()) {
+                _uploadingFiles.remove(attachment.getFile().getName());
+                _uploadingProgress.remove(attachment.getFile().getName());
+            }
+        }
+
         populateUi();
     }
 
@@ -293,7 +300,10 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                     Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
                     _uploadingFiles.add(name);
                     _uploadingProgress.put(name, (int) (pos * 100 / size));
-                    populateUi();
+
+                    if (_docsRunnable == null || !_docsRunnable.isRunning()) {
+                        populateUi();
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);

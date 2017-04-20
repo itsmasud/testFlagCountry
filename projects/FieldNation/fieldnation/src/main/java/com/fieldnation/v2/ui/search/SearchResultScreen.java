@@ -230,7 +230,7 @@ public class SearchResultScreen extends RelativeLayout {
                 _refreshView.refreshComplete();
             }
 
-            if (methodName.startsWith("get"))
+            if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                 return;
 
             _adapter.refreshAll();
