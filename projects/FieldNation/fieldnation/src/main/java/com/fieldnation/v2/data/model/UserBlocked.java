@@ -77,7 +77,7 @@ public class UserBlocked implements Parcelable {
         }
 
         if (_by != null && _by.isSet())
-        return _by;
+            return _by;
 
         return null;
     }

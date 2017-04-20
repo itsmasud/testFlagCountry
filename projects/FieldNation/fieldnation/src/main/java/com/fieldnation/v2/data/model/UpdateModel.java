@@ -64,7 +64,7 @@ public class UpdateModel implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }
@@ -89,7 +89,7 @@ public class UpdateModel implements Parcelable {
         }
 
         if (_params != null && _params.isSet())
-        return _params;
+            return _params;
 
         return null;
     }

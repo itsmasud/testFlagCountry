@@ -61,7 +61,7 @@ public class UserPreferredGroups implements Parcelable {
         }
 
         if (_created != null && _created.isSet())
-        return _created;
+            return _created;
 
         return null;
     }
