@@ -166,6 +166,8 @@ public class WorkOrders implements Parcelable {
         ADVANCED_DATE_FILTERING("advanced_date_filtering"),
         @Json(name = "approve")
         APPROVE("approve"),
+        @Json(name = "auto_assign")
+        AUTO_ASSIGN("auto_assign"),
         @Json(name = "bundle")
         BUNDLE("bundle"),
         @Json(name = "cancel")
@@ -186,6 +188,8 @@ public class WorkOrders implements Parcelable {
         HOLD("hold"),
         @Json(name = "import")
         IMPORT("import"),
+        @Json(name = "location_filtering")
+        LOCATION_FILTERING("location_filtering"),
         @Json(name = "message")
         MESSAGE("message"),
         @Json(name = "payment_link")

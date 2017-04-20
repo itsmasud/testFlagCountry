@@ -48,6 +48,9 @@ public class ListEnvelope implements Parcelable {
     @Json(name = "sort")
     private String _sort;
 
+    @Json(name = "timings")
+    private ListEnvelopeTimings[] _timings;
+
     @Json(name = "total")
     private Integer _total;
 
@@ -243,6 +246,33 @@ public class ListEnvelope implements Parcelable {
     public ListEnvelope sort(String sort) throws ParseException {
         _sort = sort;
         SOURCE.put("sort", sort);
+        return this;
+    }
+
+    public void setTimings(ListEnvelopeTimings[] timings) throws ParseException {
+        _timings = timings;
+        SOURCE.put("timings", ListEnvelopeTimings.toJsonArray(timings));
+    }
+
+    public ListEnvelopeTimings[] getTimings() {
+        try {
+            if (_timings != null)
+                return _timings;
+
+            if (SOURCE.has("timings") && SOURCE.get("timings") != null) {
+                _timings = ListEnvelopeTimings.fromJsonArray(SOURCE.getJsonArray("timings"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _timings;
+    }
+
+    public ListEnvelope timings(ListEnvelopeTimings[] timings) throws ParseException {
+        _timings = timings;
+        SOURCE.put("timings", ListEnvelopeTimings.toJsonArray(timings), true);
         return this;
     }
 

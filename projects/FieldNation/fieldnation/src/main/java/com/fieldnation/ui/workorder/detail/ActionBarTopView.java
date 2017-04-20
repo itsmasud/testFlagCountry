@@ -201,7 +201,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // Mark complete
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.COMPLETE)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -230,7 +230,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // mark incomplete
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);

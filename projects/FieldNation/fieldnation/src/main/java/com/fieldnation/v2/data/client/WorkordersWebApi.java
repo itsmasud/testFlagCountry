@@ -25,56 +25,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Assignee;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.Cancellation;
-import com.fieldnation.v2.data.model.Contact;
-import com.fieldnation.v2.data.model.Contacts;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
-import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.EtaMassAccept;
-import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
-import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.Hold;
-import com.fieldnation.v2.data.model.Holds;
-import com.fieldnation.v2.data.model.Location;
-import com.fieldnation.v2.data.model.Message;
-import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.data.model.Milestones;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
-import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.Problems;
-import com.fieldnation.v2.data.model.Qualifications;
-import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
-import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Signatures;
-import com.fieldnation.v2.data.model.SwapResponse;
-import com.fieldnation.v2.data.model.Tag;
-import com.fieldnation.v2.data.model.Tags;
-import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskAlert;
-import com.fieldnation.v2.data.model.Tasks;
-import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
-import com.fieldnation.v2.data.model.Users;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.data.model.WorkOrderOverview;
-import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -154,6 +106,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
+     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -4280,6 +4233,96 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getOverviewValuesByWorkOrder
+     * Gets overview values by work order
+     *
+     * @param workOrderId ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getOverviewValues(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/overview/values");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getOverviewValues", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getOverviewValuesByWorkOrder
+     * Gets overview values by work order
+     *
+     * @param workOrderId ID of work order
+     * @param getOverviewValuesOptions Additional optional parameters
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getOverviewValues(Context context, Integer workOrderId, GetOverviewValuesOptions getOverviewValuesOptions, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values" + (getOverviewValuesOptions.getClientId() != null ? "?client_id=" + getOverviewValuesOptions.getClientId() : "")
+                                    + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
+                                    + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
+                                    + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
+                                   );
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/overview/values")
+                    .urlParams("" + (getOverviewValuesOptions.getClientId() != null ? "?client_id=" + getOverviewValuesOptions.getClientId() : "")
+                                    + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
+                                    + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
+                                    + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
+                                   );
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/overview/values")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getOverviewValues", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getPayByWorkOrder
      * Gets the pay for a work order
      *
@@ -4598,6 +4641,46 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "getQualifications", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getRatingsByWorkOrder
+     * Get ratings by work order
+     *
+     * @param workOrderId ID of work order
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/ratings");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/workorders/{work_order_id}/ratings")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "getRatings", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -5193,7 +5276,6 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
-        new Exception("getWorkOrder").printStackTrace();
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
 
@@ -5271,7 +5353,6 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkOrders(Context context, boolean allowCacheResponse, boolean isBackground) {
-        new Exception("getWorkOrders").printStackTrace();
         try {
             String key = misc.md5("GET//api/rest/v2/workorders");
 
@@ -5311,7 +5392,6 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground         indicates that this call is low priority
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, boolean isBackground) {
-        new Exception("getWorkOrders").printStackTrace();
         try {
             String key = misc.md5("GET//api/rest/v2/workorders"
                     + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
@@ -7806,6 +7886,93 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: updateRatingsByWorkOrder
+     * Updates ratings or blocks by work order
+     *
+     * @param workOrderId ID of work order
+     * @param ratings rating_json
+     */
+    public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/ratings");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/ratings");
+
+            if (ratings != null)
+                builder.body(ratings.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (ratings != null)
+                methodParams.put("ratings", ratings.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/ratings")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateRatings", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: updateRatingsByWorkOrder
+     * Updates ratings or blocks by work order
+     *
+     * @param workOrderId ID of work order
+     * @param ratings rating_json
+     * @param async Async (Optional)
+     */
+    public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings, Boolean async) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/ratings?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/ratings")
+                    .urlParams("?async=" + async);
+
+            if (ratings != null)
+                builder.body(ratings.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            methodParams.put("async", async);
+            if (ratings != null)
+                methodParams.put("ratings", ratings.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/ratings")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "updateRatings", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: updateScheduleByWorkOrder
      * Updates the service schedule or eta of a work order (depending on your role)
      *
@@ -8486,6 +8653,9 @@ public class WorkordersWebApi extends TopicClient {
                         case "getAttachments":
                             successObject = AttachmentFolders.fromJson(new JsonObject(data));
                             break;
+                        case "getOverviewValues":
+                            successObject = WorkOrderOverviewValues.fromJson(new JsonObject(data));
+                            break;
                         case "getSignatures":
                             successObject = Signatures.fromJson(new JsonObject(data));
                             break;
@@ -8621,6 +8791,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "updatePenalty":
                         case "updateProblem":
                         case "updateQualification":
+                        case "updateRatings":
                         case "updateSchedule":
                         case "updateShipment":
                         case "updateTag":
@@ -8629,6 +8800,9 @@ public class WorkordersWebApi extends TopicClient {
                         case "updateWorkOrder":
                         case "verifyTimeLog":
                             successObject = WorkOrder.fromJson(new JsonObject(data));
+                            break;
+                        case "getRatings":
+                            successObject = WorkOrderRatings.fromJson(new JsonObject(data));
                             break;
                         case "getPay":
                             successObject = Pay.fromJson(new JsonObject(data));
@@ -8748,6 +8922,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "getMessages":
                         case "getMilestones":
                         case "getOverview":
+                        case "getOverviewValues":
                         case "getPay":
                         case "getPenalties":
                         case "getPenalty":
@@ -8755,6 +8930,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "getProblems":
                         case "getProviders":
                         case "getQualifications":
+                        case "getRatings":
                         case "getRequest":
                         case "getRequests":
                         case "GetScheduleAndLocation":
@@ -8803,6 +8979,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "updatePenalty":
                         case "updateProblem":
                         case "updateQualification":
+                        case "updateRatings":
                         case "updateSchedule":
                         case "updateShipment":
                         case "updateTag":

@@ -36,6 +36,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "client")
     private Company _client;
 
+    @Json(name = "client_request")
+    private ClientRequest _clientRequest;
+
     @Json(name = "closing_notes")
     private String _closingNotes;
 
@@ -65,6 +68,9 @@ public class WorkOrder implements Parcelable {
 
     @Json(name = "id")
     private Integer _id;
+
+    @Json(name = "integration")
+    private Integration _integration;
 
     @Json(name = "location")
     private Location _location;
@@ -96,8 +102,8 @@ public class WorkOrder implements Parcelable {
     @Json(name = "qualifications")
     private Qualifications _qualifications;
 
-    @Json(name = "rating")
-    private Rating _rating;
+    @Json(name = "ratings")
+    private WorkOrderRatings _ratings;
 
     @Json(name = "requests")
     private Requests _requests;
@@ -114,6 +120,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "selection_rule")
     private SelectionRule _selectionRule;
 
+    @Json(name = "service_contract")
+    private ServiceContract _serviceContract;
+
     @Json(name = "shipments")
     private Shipments _shipments;
 
@@ -128,6 +137,9 @@ public class WorkOrder implements Parcelable {
 
     @Json(name = "tasks")
     private Tasks _tasks;
+
+    @Json(name = "team")
+    private Team _team;
 
     @Json(name = "template")
     private Template _template;
@@ -290,6 +302,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder client(Company client) throws ParseException {
         _client = client;
         SOURCE.put("client", client.getJson());
+        return this;
+    }
+
+    public void setClientRequest(ClientRequest clientRequest) throws ParseException {
+        _clientRequest = clientRequest;
+        SOURCE.put("client_request", clientRequest.getJson());
+    }
+
+    public ClientRequest getClientRequest() {
+        try {
+            if (_clientRequest == null && SOURCE.has("client_request") && SOURCE.get("client_request") != null)
+                _clientRequest = ClientRequest.fromJson(SOURCE.getJsonObject("client_request"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_clientRequest != null && _clientRequest.isSet())
+            return _clientRequest;
+
+        return null;
+    }
+
+    public WorkOrder clientRequest(ClientRequest clientRequest) throws ParseException {
+        _clientRequest = clientRequest;
+        SOURCE.put("client_request", clientRequest.getJson());
         return this;
     }
 
@@ -531,6 +568,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
+        return this;
+    }
+
+    public void setIntegration(Integration integration) throws ParseException {
+        _integration = integration;
+        SOURCE.put("integration", integration.getJson());
+    }
+
+    public Integration getIntegration() {
+        try {
+            if (_integration == null && SOURCE.has("integration") && SOURCE.get("integration") != null)
+                _integration = Integration.fromJson(SOURCE.getJsonObject("integration"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_integration != null && _integration.isSet())
+            return _integration;
+
+        return null;
+    }
+
+    public WorkOrder integration(Integration integration) throws ParseException {
+        _integration = integration;
+        SOURCE.put("integration", integration.getJson());
         return this;
     }
 
@@ -786,28 +848,28 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
-    public void setRating(Rating rating) throws ParseException {
-        _rating = rating;
-        SOURCE.put("rating", rating.getJson());
+    public void setRatings(WorkOrderRatings ratings) throws ParseException {
+        _ratings = ratings;
+        SOURCE.put("ratings", ratings.getJson());
     }
 
-    public Rating getRating() {
+    public WorkOrderRatings getRatings() {
         try {
-            if (_rating == null && SOURCE.has("rating") && SOURCE.get("rating") != null)
-                _rating = Rating.fromJson(SOURCE.getJsonObject("rating"));
+            if (_ratings == null && SOURCE.has("ratings") && SOURCE.get("ratings") != null)
+                _ratings = WorkOrderRatings.fromJson(SOURCE.getJsonObject("ratings"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_rating != null && _rating.isSet())
-            return _rating;
+        if (_ratings != null && _ratings.isSet())
+            return _ratings;
 
         return null;
     }
 
-    public WorkOrder rating(Rating rating) throws ParseException {
-        _rating = rating;
-        SOURCE.put("rating", rating.getJson());
+    public WorkOrder ratings(WorkOrderRatings ratings) throws ParseException {
+        _ratings = ratings;
+        SOURCE.put("ratings", ratings.getJson());
         return this;
     }
 
@@ -936,6 +998,31 @@ public class WorkOrder implements Parcelable {
         return this;
     }
 
+    public void setServiceContract(ServiceContract serviceContract) throws ParseException {
+        _serviceContract = serviceContract;
+        SOURCE.put("service_contract", serviceContract.getJson());
+    }
+
+    public ServiceContract getServiceContract() {
+        try {
+            if (_serviceContract == null && SOURCE.has("service_contract") && SOURCE.get("service_contract") != null)
+                _serviceContract = ServiceContract.fromJson(SOURCE.getJsonObject("service_contract"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_serviceContract != null && _serviceContract.isSet())
+            return _serviceContract;
+
+        return null;
+    }
+
+    public WorkOrder serviceContract(ServiceContract serviceContract) throws ParseException {
+        _serviceContract = serviceContract;
+        SOURCE.put("service_contract", serviceContract.getJson());
+        return this;
+    }
+
     public void setShipments(Shipments shipments) throws ParseException {
         _shipments = shipments;
         SOURCE.put("shipments", shipments.getJson());
@@ -1058,6 +1145,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder tasks(Tasks tasks) throws ParseException {
         _tasks = tasks;
         SOURCE.put("tasks", tasks.getJson());
+        return this;
+    }
+
+    public void setTeam(Team team) throws ParseException {
+        _team = team;
+        SOURCE.put("team", team.getJson());
+    }
+
+    public Team getTeam() {
+        try {
+            if (_team == null && SOURCE.has("team") && SOURCE.get("team") != null)
+                _team = Team.fromJson(SOURCE.getJsonObject("team"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_team != null && _team.isSet())
+            return _team;
+
+        return null;
+    }
+
+    public WorkOrder team(Team team) throws ParseException {
+        _team = team;
+        SOURCE.put("team", team.getJson());
         return this;
     }
 
@@ -1209,20 +1321,54 @@ public class WorkOrder implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
+        @Json(name = "apply_tags")
+        APPLY_TAGS("apply_tags"),
+        @Json(name = "approve")
+        APPROVE("approve"),
+        @Json(name = "cancel")
+        CANCEL("cancel"),
         @Json(name = "closing_notes")
         CLOSING_NOTES("closing_notes"),
+        @Json(name = "complete")
+        COMPLETE("complete"),
         @Json(name = "confirm")
         CONFIRM("confirm"),
+        @Json(name = "copy")
+        COPY("copy"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "history")
+        HISTORY("history"),
+        @Json(name = "hold")
+        HOLD("hold"),
+        @Json(name = "incomplete")
+        INCOMPLETE("incomplete"),
         @Json(name = "map")
         MAP("map"),
-        @Json(name = "mark_complete")
-        MARK_COMPLETE("mark_complete"),
-        @Json(name = "mark_incomplete")
-        MARK_INCOMPLETE("mark_incomplete"),
         @Json(name = "messaging")
         MESSAGING("messaging"),
+        @Json(name = "overview")
+        OVERVIEW("overview"),
+        @Json(name = "print")
+        PRINT("print"),
+        @Json(name = "publish")
+        PUBLISH("publish"),
         @Json(name = "report_a_problem")
         REPORT_A_PROBLEM("report_a_problem"),
+        @Json(name = "request")
+        REQUEST("request"),
+        @Json(name = "revert")
+        REVERT("revert"),
+        @Json(name = "search-provider")
+        SEARCH_PROVIDER("search-provider"),
+        @Json(name = "tasks")
+        TASKS("tasks"),
+        @Json(name = "unapprove")
+        UNAPPROVE("unapprove"),
+        @Json(name = "unpublish")
+        UNPUBLISH("unpublish"),
         @Json(name = "view_problem")
         VIEW_PROBLEM("view_problem");
 

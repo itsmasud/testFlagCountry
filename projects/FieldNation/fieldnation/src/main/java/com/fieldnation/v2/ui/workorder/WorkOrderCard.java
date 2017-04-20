@@ -459,7 +459,7 @@ public class WorkOrderCard extends RelativeLayout {
 
             // mark incomplete
         } else if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_incomplete_onClick);
             button.setText(R.string.btn_incomplete);

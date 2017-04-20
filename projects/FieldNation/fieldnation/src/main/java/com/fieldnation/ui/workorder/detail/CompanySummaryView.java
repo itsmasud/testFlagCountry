@@ -11,8 +11,6 @@ import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
-import com.fieldnation.v2.data.model.RatingCompanyMarketplace;
-import com.fieldnation.v2.data.model.RatingCompanyMine;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -95,9 +93,11 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
             _nameTextView.setText("Company Name Hidden");
         }
 
-        if (_workOrder.getRating() != null
-                && _workOrder.getRating().getCompany() != null
-                && _workOrder.getRating().getCompany().getMine() != null) {
+
+/*
+        if (_workOrder.getRatings() != null
+                && _workOrder.getRatings().getBuyer() != null
+                && _workOrder.getRatings().getBuyer().getCompany() != null) {
             _newBuyerTextView.setVisibility(GONE);
             _detailsLayout.setVisibility(VISIBLE);
 
@@ -178,17 +178,16 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                 _reviewsTextView.setVisibility(GONE);
             }
         } else {
-            _newBuyerTextView.setVisibility(VISIBLE);
-            _starRating.setStars(0);
-            _detailsLayout.setVisibility(GONE);
-            _reviewsTextView.setVisibility(GONE);
-        }
+*/
+        _newBuyerTextView.setVisibility(VISIBLE);
+        _starRating.setStars(0);
+        _detailsLayout.setVisibility(GONE);
+        _reviewsTextView.setVisibility(GONE);
+//        }
 
         if (_workOrder.getManager() == null) {
         } else {
             _newBuyerTextView.setVisibility(GONE);
-            _detailsLayout.setVisibility(VISIBLE);
-
         }
     }
 }

@@ -21,42 +21,67 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class SelectionRules implements Parcelable {
-    private static final String TAG = "SelectionRules";
+public class WorkOrderRatingsBuyerCompany implements Parcelable {
+    private static final String TAG = "WorkOrderRatingsBuyerCompany";
+
+    @Json(name = "id")
+    private Integer _id;
 
     @Source
     private JsonObject SOURCE;
 
-    public SelectionRules() {
+    public WorkOrderRatingsBuyerCompany() {
         SOURCE = new JsonObject();
     }
 
-    public SelectionRules(JsonObject obj) {
+    public WorkOrderRatingsBuyerCompany(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setId(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+    }
+
+    public Integer getId() {
+        try {
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _id;
+    }
+
+    public WorkOrderRatingsBuyerCompany id(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+        return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(SelectionRules[] array) {
+    public static JsonArray toJsonArray(WorkOrderRatingsBuyerCompany[] array) {
         JsonArray list = new JsonArray();
-        for (SelectionRules item : array) {
+        for (WorkOrderRatingsBuyerCompany item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static SelectionRules[] fromJsonArray(JsonArray array) {
-        SelectionRules[] list = new SelectionRules[array.size()];
+    public static WorkOrderRatingsBuyerCompany[] fromJsonArray(JsonArray array) {
+        WorkOrderRatingsBuyerCompany[] list = new WorkOrderRatingsBuyerCompany[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static SelectionRules fromJson(JsonObject obj) {
+    public static WorkOrderRatingsBuyerCompany fromJson(JsonObject obj) {
         try {
-            return new SelectionRules(obj);
+            return new WorkOrderRatingsBuyerCompany(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -70,12 +95,12 @@ public class SelectionRules implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<SelectionRules> CREATOR = new Parcelable.Creator<SelectionRules>() {
+    public static final Parcelable.Creator<WorkOrderRatingsBuyerCompany> CREATOR = new Parcelable.Creator<WorkOrderRatingsBuyerCompany>() {
 
         @Override
-        public SelectionRules createFromParcel(Parcel source) {
+        public WorkOrderRatingsBuyerCompany createFromParcel(Parcel source) {
             try {
-                return SelectionRules.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return WorkOrderRatingsBuyerCompany.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -83,8 +108,8 @@ public class SelectionRules implements Parcelable {
         }
 
         @Override
-        public SelectionRules[] newArray(int size) {
-            return new SelectionRules[size];
+        public WorkOrderRatingsBuyerCompany[] newArray(int size) {
+            return new WorkOrderRatingsBuyerCompany[size];
         }
     };
 
@@ -103,6 +128,6 @@ public class SelectionRules implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return true;
+        return getId() != null && getId() != 0;
     }
 }

@@ -21,42 +21,92 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Banner implements Parcelable {
-    private static final String TAG = "Banner";
+public class Team implements Parcelable {
+    private static final String TAG = "Team";
+
+    @Json(name = "id")
+    private Integer _id;
+
+    @Json(name = "name")
+    private String _name;
 
     @Source
     private JsonObject SOURCE;
 
-    public Banner() {
+    public Team() {
         SOURCE = new JsonObject();
     }
 
-    public Banner(JsonObject obj) {
+    public Team(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setId(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+    }
+
+    public Integer getId() {
+        try {
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
+                _id = SOURCE.getInt("id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _id;
+    }
+
+    public Team id(Integer id) throws ParseException {
+        _id = id;
+        SOURCE.put("id", id);
+        return this;
+    }
+
+    public void setName(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
+    }
+
+    public String getName() {
+        try {
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _name;
+    }
+
+    public Team name(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
+        return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Banner[] array) {
+    public static JsonArray toJsonArray(Team[] array) {
         JsonArray list = new JsonArray();
-        for (Banner item : array) {
+        for (Team item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Banner[] fromJsonArray(JsonArray array) {
-        Banner[] list = new Banner[array.size()];
+    public static Team[] fromJsonArray(JsonArray array) {
+        Team[] list = new Team[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Banner fromJson(JsonObject obj) {
+    public static Team fromJson(JsonObject obj) {
         try {
-            return new Banner(obj);
+            return new Team(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -70,12 +120,12 @@ public class Banner implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Banner> CREATOR = new Parcelable.Creator<Banner>() {
+    public static final Parcelable.Creator<Team> CREATOR = new Parcelable.Creator<Team>() {
 
         @Override
-        public Banner createFromParcel(Parcel source) {
+        public Team createFromParcel(Parcel source) {
             try {
-                return Banner.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Team.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -83,8 +133,8 @@ public class Banner implements Parcelable {
         }
 
         @Override
-        public Banner[] newArray(int size) {
-            return new Banner[size];
+        public Team[] newArray(int size) {
+            return new Team[size];
         }
     };
 
@@ -103,6 +153,6 @@ public class Banner implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return true;
+        return getId() != null && getId() != 0;
     }
 }
