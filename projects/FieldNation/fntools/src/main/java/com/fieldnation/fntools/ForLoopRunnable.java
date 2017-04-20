@@ -48,6 +48,7 @@ public abstract class ForLoopRunnable implements Runnable {
                 next(i);
             } else {
                 finish(count);
+                _run = false;
                 return;
             }
             i++;
