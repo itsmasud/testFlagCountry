@@ -149,15 +149,25 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                 _loadingProgressBar.setVisibility(VISIBLE);
             }
 
+            final List<View> fViews = new LinkedList<>();
+            for (int i = 0; i < _docsList.getChildCount(); i++) {
+                fViews.add(_docsList.getChildAt(i));
+            }
+
             _docsRunnable = new ForLoopRunnable(files.size(), new Handler(), 50) {
                 private final List<Object> _docs = files;
                 private final String[] uploadingFileNames = _uploadingFiles.toArray(new String[_uploadingFiles.size()]);
                 private final List<View> buffer = new LinkedList<>();
+                private final List<View> views = fViews;
 
                 @Override
                 public void next(int i) throws Exception {
                     UploadedDocumentView v = null;
-                    v = new UploadedDocumentView(getContext());
+                    if (views.size() > 0) {
+                        v = (UploadedDocumentView) views.remove(0);
+                    } else {
+                        v = new UploadedDocumentView(getContext());
+                    }
                     if (_docs.get(i) instanceof Attachment) {
                         Attachment doc = (Attachment) _docs.get(i);
                         v.setListener(_docListener);
