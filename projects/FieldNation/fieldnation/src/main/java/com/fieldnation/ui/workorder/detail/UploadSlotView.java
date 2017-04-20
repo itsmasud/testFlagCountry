@@ -80,10 +80,15 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
         _loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 
+        populateUi();
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
-
-        populateUi();
     }
 
     @Override
@@ -144,29 +149,15 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                 _loadingProgressBar.setVisibility(VISIBLE);
             }
 
-            while (_docsList.getChildCount() > files.size()) {
-                _docsList.removeViewAt(_docsList.getChildCount() - 1);
-            }
-
-            final List<View> fViews = new LinkedList<>();
-            for (int i = 0; i < _docsList.getChildCount(); i++) {
-                fViews.add(_docsList.getChildAt(i));
-            }
-
             _docsRunnable = new ForLoopRunnable(files.size(), new Handler(), 50) {
                 private final List<Object> _docs = files;
                 private final String[] uploadingFileNames = _uploadingFiles.toArray(new String[_uploadingFiles.size()]);
-                private final List<View> views = fViews;
+                private final List<View> buffer = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
                     UploadedDocumentView v = null;
-                    if (fViews.size() > 0) {
-                        v = (UploadedDocumentView) fViews.remove(0);
-                    } else {
-                        v = new UploadedDocumentView(getContext());
-                        _docsList.addView(v);
-                    }
+                    v = new UploadedDocumentView(getContext());
                     if (_docs.get(i) instanceof Attachment) {
                         Attachment doc = (Attachment) _docs.get(i);
                         v.setListener(_docListener);
@@ -180,12 +171,17 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                             v.setProgress(null);
                         }
                     }
+                    buffer.add(v);
                 }
 
                 @Override
                 public void finish(int count) throws Exception {
                     Log.v(TAG, "finish");
                     _loadingProgressBar.setVisibility(GONE);
+                    _docsList.removeAllViews();
+                    for (View v : buffer) {
+                        _docsList.addView(v);
+                    }
                 }
             };
             post(_docsRunnable);

@@ -313,17 +313,15 @@ public class DeliverableFragment extends WorkorderFragment {
             if (_filesRunnable != null)
                 _filesRunnable.cancel();
 
-            while (_filesLayout.getChildCount() > slots.length) {
-                _filesLayout.removeViewAt(_filesLayout.getChildCount() - 1);
-            }
             final List<View> fViews = new LinkedList<>();
             for (int i = 0; i < _filesLayout.getChildCount(); i++) {
                 fViews.add(_filesLayout.getChildAt(i));
             }
 
-            _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
+            _filesRunnable = new ForLoopRunnable(slots.length, new Handler(), 50) {
                 private final AttachmentFolder[] _slots = slots;
                 private final List<View> views = fViews;
+                private final List<View> buffer = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
@@ -333,14 +331,22 @@ public class DeliverableFragment extends WorkorderFragment {
                             v = (UploadSlotView) views.remove(0);
                         else {
                             v = new UploadSlotView(getActivity());
-                            _filesLayout.addView(v);
                         }
 
                         AttachmentFolder slot = _slots[i];
                         v.setData(_workOrder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
+                        buffer.add(v);
                     }
                 }
 
+                @Override
+                public void finish(int count) throws Exception {
+                    Log.v(TAG, "finish");
+                    _filesLayout.removeAllViews();
+                    for (View v : buffer) {
+                        _filesLayout.addView(v);
+                    }
+                }
             };
             _filesLayout.postDelayed(_filesRunnable, 100);
         } else {
