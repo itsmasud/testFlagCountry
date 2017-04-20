@@ -25,8 +25,58 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.Cancellation;
+import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.Contacts;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.EtaMassAccept;
+import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.Expenses;
+import com.fieldnation.v2.data.model.Hold;
+import com.fieldnation.v2.data.model.Holds;
+import com.fieldnation.v2.data.model.Location;
+import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.Messages;
+import com.fieldnation.v2.data.model.Milestones;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.Qualifications;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Signatures;
+import com.fieldnation.v2.data.model.SwapResponse;
+import com.fieldnation.v2.data.model.Tag;
+import com.fieldnation.v2.data.model.Tags;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TaskAlert;
+import com.fieldnation.v2.data.model.Tasks;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.Users;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrderOverview;
+import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
+import com.fieldnation.v2.data.model.WorkOrderRatings;
+import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -106,7 +156,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
-     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -4236,7 +4285,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getOverviewValuesByWorkOrder
      * Gets overview values by work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getOverviewValues(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
@@ -4276,27 +4325,27 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getOverviewValuesByWorkOrder
      * Gets overview values by work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId              ID of work order
      * @param getOverviewValuesOptions Additional optional parameters
-     * @param isBackground indicates that this call is low priority
+     * @param isBackground             indicates that this call is low priority
      */
     public static void getOverviewValues(Context context, Integer workOrderId, GetOverviewValuesOptions getOverviewValuesOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values" + (getOverviewValuesOptions.getClientId() != null ? "?client_id=" + getOverviewValuesOptions.getClientId() : "")
-                                    + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
-                                    + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
-                                    + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
-                                   );
+                    + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
+                    + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
+                    + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/overview/values")
                     .urlParams("" + (getOverviewValuesOptions.getClientId() != null ? "?client_id=" + getOverviewValuesOptions.getClientId() : "")
-                                    + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
-                                    + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
-                                    + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
-                                   );
+                            + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
+                            + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
+                            + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
+                    );
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
@@ -4658,7 +4707,7 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: getRatingsByWorkOrder
      * Get ratings by work order
      *
-     * @param workOrderId ID of work order
+     * @param workOrderId  ID of work order
      * @param isBackground indicates that this call is low priority
      */
     public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
@@ -7890,7 +7939,7 @@ public class WorkordersWebApi extends TopicClient {
      * Updates ratings or blocks by work order
      *
      * @param workOrderId ID of work order
-     * @param ratings rating_json
+     * @param ratings     rating_json
      */
     public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings) {
         try {
@@ -7932,8 +7981,8 @@ public class WorkordersWebApi extends TopicClient {
      * Updates ratings or blocks by work order
      *
      * @param workOrderId ID of work order
-     * @param ratings rating_json
-     * @param async Async (Optional)
+     * @param ratings     rating_json
+     * @param async       Async (Optional)
      */
     public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings, Boolean async) {
         try {
