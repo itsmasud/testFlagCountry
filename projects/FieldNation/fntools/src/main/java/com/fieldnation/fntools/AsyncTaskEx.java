@@ -37,4 +37,5 @@ public abstract class AsyncTaskEx<Params, Progress, Result> extends AsyncTask<Pa
         Log.v(TAG, "Queue: " + sPoolWorkQueue.size());
         return super.executeOnExecutor(THREAD_POOL_EXECUTOR, params);
     }
+
 }
