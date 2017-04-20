@@ -411,12 +411,6 @@ public class EtaDialog extends FullScreenDialog {
         } catch (Exception e) {
         }
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
-
-//        if (_expiringDurationSeconds == INVALID_NUMBER) {
-//            _expirationButton.setText(R.string.btn_never);
-//        } else {
-//            _expirationButton.setText(misc.convertMsToHuman(_expiringDurationSeconds));
-//        }
     }
 
     private boolean isValidEta(final Calendar arrival) {
@@ -434,26 +428,21 @@ public class EtaDialog extends FullScreenDialog {
         // make a copy so we don't mess it up
         Calendar arrival = (Calendar) eta.clone();
         try {
-            // strategy: test if arrival is within the range at all. If it is,
-            // then constrain the check to within a single day, and see if the time falls within that day
             if (passesMidnight(schedule)) {
                 Calendar scal = schedule.getServiceWindow().getStart().getCalendar();
                 Calendar ecal = schedule.getServiceWindow().getEnd().getCalendar();
-                ecal.add(Calendar.DAY_OF_MONTH, 1);
 
-                if (arrival.getTimeInMillis() < scal.getTimeInMillis() || arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
+                if (DateUtils.isBeforeDay(arrival, scal) || DateUtils.isAfterDay(arrival, ecal))
                     return false;
-                }
 
                 // move to first day
                 arrival.set(Calendar.DAY_OF_MONTH, scal.get(Calendar.DAY_OF_MONTH));
+                ecal.set(Calendar.DAY_OF_MONTH, scal.get(Calendar.DAY_OF_MONTH));
+
                 // if too early, then bump a day
-                if (arrival.getTimeInMillis() < scal.getTimeInMillis()) {
-                    arrival.add(Calendar.DAY_OF_MONTH, 1);
-                    // move ecal to the same day. check if arrival is within the end time
-                    ecal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
-                    if (arrival.getTimeInMillis() <= ecal.getTimeInMillis())
-                        return true;
+                if (arrival.getTimeInMillis() < scal.getTimeInMillis()
+                        && arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
+                    return false;
                 } else {
                     return true;
                 }
@@ -462,7 +451,8 @@ public class EtaDialog extends FullScreenDialog {
                 Calendar scal = schedule.getServiceWindow().getStart().getCalendar();
                 Calendar ecal = schedule.getServiceWindow().getEnd().getCalendar();
 
-                if (scal.getTimeInMillis() > arrival.getTimeInMillis() || ecal.getTimeInMillis() < arrival.getTimeInMillis()) {
+                if (arrival.getTimeInMillis() < scal.getTimeInMillis()
+                        || arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
                     return false;
                 }
                 // arrival is within the start and end days, constrain check to the day of
@@ -470,7 +460,8 @@ public class EtaDialog extends FullScreenDialog {
                 scal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
                 ecal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
 
-                if (scal.getTimeInMillis() <= arrival.getTimeInMillis() && ecal.getTimeInMillis() >= arrival.getTimeInMillis())
+                if (arrival.getTimeInMillis() >= scal.getTimeInMillis()
+                        && arrival.getTimeInMillis() <= ecal.getTimeInMillis())
                     return true;
             }
         } catch (Exception ex) {
@@ -499,7 +490,6 @@ public class EtaDialog extends FullScreenDialog {
         return false;
     }
 
-
     private boolean isLastDaySelected(final Calendar eta) {
         if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT)
             return false;
@@ -518,7 +508,6 @@ public class EtaDialog extends FullScreenDialog {
         }
         return false;
     }
-
 
     private static boolean isWithinRange(final Calendar arrival, final Schedule schedule) {
         try {
@@ -724,13 +713,6 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-//    private final View.OnClickListener _expiringButton_onClick = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            DurationPickerDialog.show(App.get(), UID_EXIPRY_DIALOG);
-//        }
-//    };
-
     private final AdapterView.OnItemSelectedListener _expireSpinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -809,30 +791,6 @@ public class EtaDialog extends FullScreenDialog {
 
                         break;
                     }
-/*
-                    case PARAM_DIALOG_TYPE_CONFIRM:{
-                        _onConfirmedDispatcher.dispatch(getUid(), _workOrder.getId());
-
-                        if (_etaSwitch.isChecked()) {
-                            String startDate = ISO8601.fromCalendar(_etaStart);
-                            WorkorderClient.actionConfirm(
-                                    App.get(),
-                                    _workOrder.getId(),
-                                    startDate,
-                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                    _noteEditText.getText().toString().trim());
-                        } else {
-                            WorkorderClient.actionConfirm(
-                                    App.get(),
-                                    _workOrder.getId(),
-                                    null, null,
-                                    _noteEditText.getText().toString().trim());
-                        }
-                        dismiss(true);
-                        break;
-                        }
-*/
-
                     case PARAM_DIALOG_TYPE_ADD:  // add eta
                     case PARAM_DIALOG_TYPE_EDIT: {
                         _onEtaDispatcher.dispatch(getUid(), _workOrder.getId());

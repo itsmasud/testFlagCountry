@@ -90,7 +90,6 @@ public class GpsTrackingService extends MultiThreadedService {
 
         @Override
         public void onFail(SimpleGps simpleGps) {
-            _expirationTime = 0;
         }
     };
 

@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -13,6 +14,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -757,6 +759,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onClick(View v) {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
             ConfirmActivity.startNew(App.get());
+//            _actionbartop_listener.onMyWay();
         }
     };
 
@@ -825,6 +828,12 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onMyWay() {
+            if (!App.get().isLocationEnabled()) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN, intent, PendingIntent.FLAG_ONE_SHOT);
+                ToastClient.snackbar(App.get(), "We would like to use your location to provide more accurate status information to the buyer.", "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+            }
+
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
@@ -1499,10 +1508,7 @@ public class WorkFragment extends WorkorderFragment {
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
-                        Intent intent = new Intent(context, SignOffActivity.class);
-                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
-                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+                        SignOffActivity.startSignOff(App.get(), workOrder, true);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);

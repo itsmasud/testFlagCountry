@@ -1,9 +1,12 @@
 package com.fieldnation.v2.ui.workorder;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.IconFontButton;
@@ -791,6 +795,12 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             if (_onActionListener != null) _onActionListener.onAction();
 
+            if (!App.get().isLocationEnabled()) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN, intent, PendingIntent.FLAG_ONE_SHOT);
+                ToastClient.snackbar(App.get(), "We would like to use your location to provide more accurate status information to the buyer.", "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+            }
+
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
@@ -947,6 +957,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             ConfirmActivity.startNew(App.get());
+            //_onMyWay_onClick.onClick(v);
         }
     };
 

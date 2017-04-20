@@ -304,10 +304,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         setState(State.IDLE);
         setQueueTime(System.currentTimeMillis() + retryTime);
         save();
-
-        if (isTracked())
-            UploadTrackerClient.uploadRequeued(ContextProvider.get(), getTrackType());
-
     }
 
     public WebTransaction save() {
