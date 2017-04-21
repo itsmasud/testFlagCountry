@@ -121,8 +121,10 @@ public class ConfirmActivity extends AuthSimpleActivity {
         getMenuInflater().inflate(R.menu.confirm, menu);
         _doneButton = ((DoneMenuButton) menu.findItem(R.id.done_menuitem).getActionView()).getButton();
         _doneButton.setOnClickListener(_doneButton_onClick);
+        _doneButton.setEnabled(false);
         _remindMeButton = ((RemindMeMenuButton) menu.findItem(R.id.remindme_menuitem).getActionView()).getButton();
         _remindMeButton.setOnClickListener(_remindMeButton_onClick);
+        _remindMeButton.setEnabled(false);
         return true;
     }
 
