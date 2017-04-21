@@ -94,8 +94,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         }
 
 
-/*
-        if (_workOrder.getRatings() != null
+/*        if (_workOrder.getRatings() != null
                 && _workOrder.getRatings().getBuyer() != null
                 && _workOrder.getRatings().getBuyer().getCompany() != null) {
             _newBuyerTextView.setVisibility(GONE);
@@ -138,16 +137,18 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
             }
 
 
-        } else if (_workOrder.getRating() != null
-                && _workOrder.getRating().getCompany() != null
-                && _workOrder.getRating().getCompany().getMarketplace() != null) {
+        } else
+        if (_workOrder.getRatings() != null
+                && _workOrder.getRatings().getBuyer() != null
+                && _workOrder.getRatings().getBuyer().getOverall() != null) {
 
-            RatingCompanyMarketplace rating = _workOrder.getRating().getCompany().getMarketplace();
+            WorkOrderRatingsBuyerOverall overall = _workOrder.getRatings().getBuyer().getOverall();
 
-            if (rating.getAverageDaysToApproval() != null
-                    && rating.getAverageDaysToApproval() != 0) {
+            if (overall.getApprovalDays() != null
+                    && overall.getApprovalDays() != 0
+                    && overall.getPercentApproval() != null) {
                 _daysTextView.setVisibility(VISIBLE);
-                _daysTextView.setText(rating.getAverageDaysToApproval() + " Days");
+                _daysTextView.setText(overall.getAverageDaysToApproval() + " Days");
             } else {
                 _daysTextView.setText("");
                 _daysTextView.setVisibility(GONE);
@@ -177,13 +178,12 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                 _newBuyerTextView.setVisibility(VISIBLE);
                 _reviewsTextView.setVisibility(GONE);
             }
-        } else {
-*/
+        } else {*/
         _newBuyerTextView.setVisibility(VISIBLE);
         _starRating.setStars(0);
         _detailsLayout.setVisibility(GONE);
         _reviewsTextView.setVisibility(GONE);
-//        }
+        //}
 
         if (_workOrder.getManager() == null) {
         } else {
