@@ -65,6 +65,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
+        App.get().spUiContext.page = "Collect Signature";
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
     }
@@ -214,6 +215,7 @@ public class SignOffActivity extends AuthSimpleActivity {
             if (_taskId != -1) {
                 signature.task(new Task().id(_taskId));
             }
+
             WorkordersWebApi.addSignature(App.get(), _workOrder.getId(), signature);
 
             if (_completeWorkorder) {

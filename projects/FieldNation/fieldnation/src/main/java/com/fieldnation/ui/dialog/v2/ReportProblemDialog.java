@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
@@ -491,6 +492,10 @@ public class ReportProblemDialog extends SimpleDialog {
                             delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
                         else
                             delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
+
+                        App.get().spUiContext.elementAction = WorkOrderTracker.Action.RUNNING_LATE.action();
+                        App.get().spUiContext.elementIdentity = WorkOrderTracker.Identity.RUNNING_LATE_ACTION_BUTTON.identity();
+                        App.get().spUiContext.elementType = WorkOrderTracker.Identity.RUNNING_LATE_ACTION_BUTTON.elementType().elementType;
 
                         ETA eta = new ETA()
                                 .status(new ETAStatus()

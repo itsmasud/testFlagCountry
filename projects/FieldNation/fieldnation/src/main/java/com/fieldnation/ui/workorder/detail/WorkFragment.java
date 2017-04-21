@@ -320,7 +320,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
-
         if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
 
@@ -474,7 +473,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void update() {
-//        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
+        App.get().spUiContext.page = WorkOrderTracker.Tab.DETAILS.name();
     }
 
     @Override
@@ -798,6 +797,10 @@ public class WorkFragment extends WorkorderFragment {
                 Hold param = new Hold();
                 param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 param.id(unAck.getId());
+
+                App.get().spUiContext.elementAction = WorkOrderTracker.Action.ACKNOWLEDGE_HOLD.action();
+                App.get().spUiContext.elementIdentity = WorkOrderTracker.Identity.ACKNOWLEDGE_HOLD_ACTION_BUTTON.identity();
+                App.get().spUiContext.elementType = WorkOrderTracker.Identity.ACKNOWLEDGE_HOLD_ACTION_BUTTON.elementType().elementType;
                 WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -844,6 +847,9 @@ public class WorkFragment extends WorkorderFragment {
                 ETA eta = new ETA();
                 eta.status(etaStatus);
 
+                App.get().spUiContext.elementAction = WorkOrderTracker.Action.ON_MY_WAY.action();
+                App.get().spUiContext.elementIdentity = WorkOrderTracker.Identity.ON_MY_WAY_ACTION_BUTTON.identity();
+                App.get().spUiContext.elementType = WorkOrderTracker.Identity.ON_MY_WAY_ACTION_BUTTON.elementType().elementType;
                 WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
