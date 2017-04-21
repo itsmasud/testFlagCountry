@@ -301,6 +301,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+        Log.v(TAG, "onActivityResult " + arg0 + ", " + arg1);
         if (_fragments != null) {
             for (Fragment fragment : _fragments) {
                 if (fragment != null)

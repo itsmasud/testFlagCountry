@@ -231,6 +231,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(TAG, "onActivityResult " + requestCode + ", " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
     }

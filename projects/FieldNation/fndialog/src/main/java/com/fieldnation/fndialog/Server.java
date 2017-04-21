@@ -37,6 +37,7 @@ class Server extends TopicClient implements Constants {
         public void onEvent(String topicId, Parcelable payload) {
             Bundle bundle = (Bundle) payload;
             if (topicId.startsWith(TOPIC_ID_SHOW_DIALOG)) {
+                getClient().clearTopic(TOPIC_ID_SHOW_DIALOG);
                 onShowDialog(
                         bundle.getString(PARAM_DIALOG_UID),
                         bundle.getString(PARAM_DIALOG_CLASS_NAME),
