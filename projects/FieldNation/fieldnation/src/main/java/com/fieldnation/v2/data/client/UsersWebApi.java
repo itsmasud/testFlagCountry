@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -17,6 +20,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -71,6 +75,14 @@ public class UsersWebApi extends TopicClient {
      * @param coords coordinate data. Only need latitude and longitude fields
      */
     public static void addCoords(Context context, Integer userId, Coords coords) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addCoordsByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/coords");
 
@@ -112,6 +124,14 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      */
     public static void addPay(Context context, Integer userId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addPayByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/pay");
 
@@ -149,6 +169,14 @@ public class UsersWebApi extends TopicClient {
      * @param json   JSON model
      */
     public static void addTypesOfWork(Context context, Integer userId, String json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addTypesOfWork")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/types-of-work");
 
@@ -191,6 +219,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getPay(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getPayByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay");
 
@@ -232,6 +268,16 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getProfileAndWorkHistory")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .property("work_order_id")
+                .value(workOrderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
 
@@ -273,6 +319,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getSettings(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getSettingsByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings");
 
@@ -313,6 +367,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getTax(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getTaxByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax");
 
@@ -353,6 +415,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getTour(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getTourByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
 
@@ -393,6 +463,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getUser(Context context, String user, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getUser")
+                .label(user + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + user);
 
@@ -434,6 +512,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getUserPreferenceValueByKey")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
 
@@ -475,6 +561,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getUserPreferredProviderNetworks")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks");
 
@@ -515,6 +609,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getUserTypesOfWork(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getUserTypesOfWork")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work");
 
@@ -555,6 +657,14 @@ public class UsersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getWorkHistory(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getWorkHistory")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/users/" + userId + "/work_history");
 
@@ -595,6 +705,14 @@ public class UsersWebApi extends TopicClient {
      * @param json   JSON Payload
      */
     public static void sendAccountActivationLink(Context context, Integer userId, String json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendAccountActivationLink")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email");
 
@@ -637,6 +755,14 @@ public class UsersWebApi extends TopicClient {
      * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaSms(Context context, Integer userId, String json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendVerificationCodeViaSms")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/text");
 
@@ -679,6 +805,14 @@ public class UsersWebApi extends TopicClient {
      * @param json   JSON Payload
      */
     public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendVerificationCodeViaVoiceCall")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone");
 
@@ -722,6 +856,14 @@ public class UsersWebApi extends TopicClient {
      * @param json       JSON Model
      */
     public static void setUserPreference(Context context, Integer userId, String preference, String json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("setUserPreference")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference);
 
@@ -765,6 +907,16 @@ public class UsersWebApi extends TopicClient {
      * @param notificationId Notification ID
      */
     public static void swipNotification(Context context, Integer userId, Integer notificationId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("swipNotification")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .property("notification_id")
+                .value(notificationId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/notifications/" + notificationId);
 
@@ -842,6 +994,14 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      */
     public static void updatePay(Context context, Integer userId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePayByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/pay");
 
@@ -878,6 +1038,14 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      */
     public static void updateSettings(Context context, Integer userId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateSettingsByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/settings");
 
@@ -915,6 +1083,14 @@ public class UsersWebApi extends TopicClient {
      * @param json   Json User tax info object for updating
      */
     public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTaxByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/tax");
 
@@ -956,6 +1132,14 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      */
     public static void updateTour(Context context, Integer userId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTourByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour");
 
@@ -993,6 +1177,14 @@ public class UsersWebApi extends TopicClient {
      * @param file   Photo to upload
      */
     public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("uploadProfilePhoto")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar");
 
@@ -1032,6 +1224,14 @@ public class UsersWebApi extends TopicClient {
      * @param json   Json Payload
      */
     public static void verifyAccount(Context context, Integer userId, String json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("verifyAccount")
+                .label(userId + "")
+                .category("user")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/2fa");
 

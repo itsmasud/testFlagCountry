@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -17,6 +20,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -104,6 +108,14 @@ public class PenaltiesWebApi extends TopicClient {
      * @param penaltyId Penalty ID
      */
     public static void deletePenalty(Context context, Integer penaltyId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deletePenaltyByPenalty")
+                .label(penaltyId + "")
+                .category("penalty")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/penalties/" + penaltyId);
 
@@ -141,6 +153,14 @@ public class PenaltiesWebApi extends TopicClient {
      * @param json      JSON Model
      */
     public static void updatePenalty(Context context, String penaltyId, PayModifier json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePenaltyByPenalty")
+                .label(penaltyId + "")
+                .category("penalty")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/penalties/" + penaltyId);
 

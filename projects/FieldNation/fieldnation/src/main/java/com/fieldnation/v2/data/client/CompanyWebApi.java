@@ -1,12 +1,17 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -15,20 +20,15 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CompanyFeatures;
-import com.fieldnation.v2.data.model.CompanyIntegrations;
-import com.fieldnation.v2.data.model.CompanyRating;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.FundTransaction;
-import com.fieldnation.v2.data.model.SavedCreditCards;
-import com.fieldnation.v2.data.model.Tag;
-import com.fieldnation.v2.data.model.Tags;
 
 /**
  * Created by dmgen from swagger.
@@ -158,6 +158,14 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getCompanyDetails")
+                .label(companyId + "")
+                .category("company")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/company/" + companyId);
 
@@ -283,6 +291,14 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getIntegrations")
+                .label(companyId + "")
+                .category("company")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken);
 
@@ -407,6 +423,14 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getPredefinedExpensesByWorkOrder")
+                .label(workOrderId + "")
+                .category("company")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId);
 
@@ -447,6 +471,14 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getRatings(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getRatingsByCompanyId")
+                .label(companyId + "")
+                .category("company")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/ratings");
 
@@ -525,6 +557,14 @@ public class CompanyWebApi extends TopicClient {
      * @param accessToken null
      */
     public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getSendRequestedFeatures")
+                .label(featureId + "")
+                .category("company")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/company/features/" + featureId + "?access_token=" + accessToken);
 
@@ -602,6 +642,14 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getTagsByWorkOrder")
+                .label(workOrderId + "")
+                .category("company")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/company/tags/" + workOrderId);
 
@@ -642,6 +690,16 @@ public class CompanyWebApi extends TopicClient {
      * @param financeId ID of finance account
      */
     public static void updateFund(Context context, Integer companyId, Integer financeId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFundByFund")
+                .label(companyId + "")
+                .category("funds")
+                .addContext(App.get().spUiContext)
+                .property("finance_id")
+                .value(financeId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -681,6 +739,16 @@ public class CompanyWebApi extends TopicClient {
      * @param fundTransaction Transaction attempting to be created (Optional)
      */
     public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFundByFund")
+                .label(companyId + "")
+                .category("funds")
+                .addContext(App.get().spUiContext)
+                .property("finance_id")
+                .value(financeId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -811,7 +879,7 @@ public class CompanyWebApi extends TopicClient {
                             successObject = Tags.fromJson(new JsonObject(data));
                             break;
                         case "getSelectionRules":
-//                            successObject = SelectionRules.fromJson(new JsonObject(data));
+                            successObject = SelectionRules.fromJson(new JsonObject(data));
                             break;
                         case "getFeatures":
                             successObject = CompanyFeatures.fromJson(new JsonObject(data));
@@ -823,7 +891,7 @@ public class CompanyWebApi extends TopicClient {
                             successObject = CompanyRating.fromJson(new JsonObject(data));
                             break;
                         case "getPredefinedExpenses":
-//                            successObject = PredefinedExpenses.fromJson(new JsonObject(data));
+                            successObject = PredefinedExpenses.fromJson(new JsonObject(data));
                             break;
                         case "getCompanyDetails":
                         case "getManagedProviders":

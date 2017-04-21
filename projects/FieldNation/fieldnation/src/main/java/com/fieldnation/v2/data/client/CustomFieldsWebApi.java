@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -17,6 +20,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -110,6 +114,14 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param customFieldId Custom field id
      */
     public static void deleteCustomField(Context context, Integer customFieldId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteCustomField")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -185,6 +197,14 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param json          JSON Model
      */
     public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomField")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -227,6 +247,14 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibility")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(App.get().spUiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
 
@@ -266,6 +294,16 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibilityByClient")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(App.get().spUiContext)
+                .property("client_id")
+                .value(clientId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
 
@@ -306,6 +344,16 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibilityByProject")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(App.get().spUiContext)
+                .property("project_id")
+                .value(projectId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 

@@ -28,58 +28,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Assignee;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.Cancellation;
-import com.fieldnation.v2.data.model.Contact;
-import com.fieldnation.v2.data.model.Contacts;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
-import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.EtaMassAccept;
-import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
-import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.Hold;
-import com.fieldnation.v2.data.model.Holds;
-import com.fieldnation.v2.data.model.Location;
-import com.fieldnation.v2.data.model.Message;
-import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.data.model.Milestones;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
-import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.Problems;
-import com.fieldnation.v2.data.model.Qualifications;
-import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
-import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Signatures;
-import com.fieldnation.v2.data.model.SwapResponse;
-import com.fieldnation.v2.data.model.Tag;
-import com.fieldnation.v2.data.model.Tags;
-import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskAlert;
-import com.fieldnation.v2.data.model.Tasks;
-import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
-import com.fieldnation.v2.data.model.Users;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.data.model.WorkOrderOverview;
-import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
-import com.fieldnation.v2.data.model.WorkOrderRatings;
-import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -201,12 +151,57 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: acknowledgeDelayByWorkOrder
+     * Acknowledges a provider's delay on a work order
+     *
+     * @param workOrderId ID of work order
+     */
+    public static void acknowledgeDelay(Context context, Integer workOrderId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("acknowledgeDelayByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(App.get().spUiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/provider/delay");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/provider/delay");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/provider/delay")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "acknowledgeDelay", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: addAlertToWorkOrderAndTask
      * Sets up an alert to be fired upon the completion of a task associated with a work order
      *
      * @param workOrderId Work order id
-     * @param taskId      Task id
-     * @param json        JSON Model
+     * @param taskId Task id
+     * @param json JSON Model
      */
     public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -5758,6 +5753,15 @@ public class WorkordersWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getRatingsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(App.get().spUiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings");
 
@@ -7122,6 +7126,51 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "publish", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: removeProviderByWorkOrder
+     * Unassigns and removes a provider for a work order
+     *
+     * @param workOrderId ID of work order
+     */
+    public static void removeProvider(Context context, Integer workOrderId) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("removeProviderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(App.get().spUiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/provider/cancel");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/provider/cancel");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/provider/cancel")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "removeProvider", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -9632,6 +9681,15 @@ public class WorkordersWebApi extends TopicClient {
      * @param ratings     rating_json
      */
     public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateRatingsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(App.get().spUiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/ratings");
 
@@ -9675,6 +9733,15 @@ public class WorkordersWebApi extends TopicClient {
      * @param async       Async (Optional)
      */
     public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings, Boolean async) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateRatingsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(App.get().spUiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/ratings?async=" + async);
 
@@ -10533,8 +10600,10 @@ public class WorkordersWebApi extends TopicClient {
                         case "getSignatures":
                             successObject = Signatures.fromJson(new JsonObject(data));
                             break;
+                        case "acknowledgeDelay":
                         case "MassAcceptWorkOrder":
                         case "massRequests":
+                        case "removeProvider":
                             successObject = data;
                             break;
                         case "getWorkOrderLists":
@@ -10729,6 +10798,7 @@ public class WorkordersWebApi extends TopicClient {
                     switch (transactionParams.apiFunction) {
                         case "acceptIncrease":
                         case "acceptSwapRequest":
+                        case "acknowledgeDelay":
                         case "addAlertToWorkOrderAndTask":
                         case "addAttachment":
                         case "addBonus":
@@ -10826,6 +10896,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "MassAcceptWorkOrder":
                         case "massRequests":
                         case "publish":
+                        case "removeProvider":
                         case "removeQualification":
                         case "reorderTask":
                         case "replyMessage":
