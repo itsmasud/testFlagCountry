@@ -21,92 +21,70 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class Team implements Parcelable {
-    private static final String TAG = "Team";
+public class WorkOrderRatingsServiceCompany implements Parcelable {
+    private static final String TAG = "WorkOrderRatingsServiceCompany";
 
-    @Json(name = "id")
-    private Integer _id;
-
-    @Json(name = "name")
-    private String _name;
+    @Json(name = "overall")
+    private WorkOrderRatingsServiceCompanyOverall _overall;
 
     @Source
     private JsonObject SOURCE;
 
-    public Team() {
+    public WorkOrderRatingsServiceCompany() {
         SOURCE = new JsonObject();
     }
 
-    public Team(JsonObject obj) {
+    public WorkOrderRatingsServiceCompany(JsonObject obj) {
         SOURCE = obj;
     }
 
-    public void setId(Integer id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
+    public void setOverall(WorkOrderRatingsServiceCompanyOverall overall) throws ParseException {
+        _overall = overall;
+        SOURCE.put("overall", overall.getJson());
     }
 
-    public Integer getId() {
+    public WorkOrderRatingsServiceCompanyOverall getOverall() {
         try {
-            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getInt("id");
+            if (_overall == null && SOURCE.has("overall") && SOURCE.get("overall") != null)
+                _overall = WorkOrderRatingsServiceCompanyOverall.fromJson(SOURCE.getJsonObject("overall"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _id;
+        if (_overall != null && _overall.isSet())
+            return _overall;
+
+        return null;
     }
 
-    public Team id(Integer id) throws ParseException {
-        _id = id;
-        SOURCE.put("id", id);
-        return this;
-    }
-
-    public void setName(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
-    }
-
-    public String getName() {
-        try {
-            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
-                _name = SOURCE.getString("name");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _name;
-    }
-
-    public Team name(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
+    public WorkOrderRatingsServiceCompany overall(WorkOrderRatingsServiceCompanyOverall overall) throws ParseException {
+        _overall = overall;
+        SOURCE.put("overall", overall.getJson());
         return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(Team[] array) {
+    public static JsonArray toJsonArray(WorkOrderRatingsServiceCompany[] array) {
         JsonArray list = new JsonArray();
-        for (Team item : array) {
+        for (WorkOrderRatingsServiceCompany item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static Team[] fromJsonArray(JsonArray array) {
-        Team[] list = new Team[array.size()];
+    public static WorkOrderRatingsServiceCompany[] fromJsonArray(JsonArray array) {
+        WorkOrderRatingsServiceCompany[] list = new WorkOrderRatingsServiceCompany[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static Team fromJson(JsonObject obj) {
+    public static WorkOrderRatingsServiceCompany fromJson(JsonObject obj) {
         try {
-            return new Team(obj);
+            return new WorkOrderRatingsServiceCompany(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -120,12 +98,12 @@ public class Team implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Team> CREATOR = new Parcelable.Creator<Team>() {
+    public static final Parcelable.Creator<WorkOrderRatingsServiceCompany> CREATOR = new Parcelable.Creator<WorkOrderRatingsServiceCompany>() {
 
         @Override
-        public Team createFromParcel(Parcel source) {
+        public WorkOrderRatingsServiceCompany createFromParcel(Parcel source) {
             try {
-                return Team.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return WorkOrderRatingsServiceCompany.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -133,8 +111,8 @@ public class Team implements Parcelable {
         }
 
         @Override
-        public Team[] newArray(int size) {
-            return new Team[size];
+        public WorkOrderRatingsServiceCompany[] newArray(int size) {
+            return new WorkOrderRatingsServiceCompany[size];
         }
     };
 
@@ -153,6 +131,6 @@ public class Team implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return getId() != null && getId() != 0;
+        return true;
     }
 }

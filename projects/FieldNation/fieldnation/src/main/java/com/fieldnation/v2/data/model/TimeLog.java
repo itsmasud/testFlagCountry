@@ -189,7 +189,7 @@ public class TimeLog implements Parcelable {
         }
 
         if (_in != null && _in.isSet())
-        return _in;
+            return _in;
 
         return null;
     }
@@ -214,7 +214,7 @@ public class TimeLog implements Parcelable {
         }
 
         if (_loggedBy != null && _loggedBy.isSet())
-        return _loggedBy;
+            return _loggedBy;
 
         return null;
     }
@@ -239,7 +239,7 @@ public class TimeLog implements Parcelable {
         }
 
         if (_onMyWay != null && _onMyWay.isSet())
-        return _onMyWay;
+            return _onMyWay;
 
         return null;
     }
@@ -264,7 +264,7 @@ public class TimeLog implements Parcelable {
         }
 
         if (_out != null && _out.isSet())
-        return _out;
+            return _out;
 
         return null;
     }
@@ -333,7 +333,7 @@ public class TimeLog implements Parcelable {
         }
 
         if (_timeZone != null && _timeZone.isSet())
-        return _timeZone;
+            return _timeZone;
 
         return null;
     }

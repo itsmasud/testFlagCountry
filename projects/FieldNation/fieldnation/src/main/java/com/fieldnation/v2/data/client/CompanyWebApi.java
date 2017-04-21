@@ -38,9 +38,24 @@ public class CompanyWebApi extends TopicClient {
     private static final String STAG = "CompanyWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public CompanyWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -385,6 +400,46 @@ public class CompanyWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getPredefinedExpensesByWorkOrder
+     * Get a list of predefined expenses by work order.
+     *
+     * @param workOrderId  null
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/predefined-expenses/" + workOrderId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/predefined-expenses/{work_order_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getPredefinedExpenses", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getRatingsByCompanyId
      * Get Rating Details of a Company
      *
@@ -661,6 +716,7 @@ public class CompanyWebApi extends TopicClient {
         }
     }
 
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
@@ -671,16 +727,28 @@ public class CompanyWebApi extends TopicClient {
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
-                case "progress": {
+                case "queued": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -690,7 +758,13 @@ public class CompanyWebApi extends TopicClient {
             }
         }
 
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+        }
+
         public void onStart(TransactionParams transactionParams, String methodName) {
+        }
+
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
@@ -727,32 +801,35 @@ public class CompanyWebApi extends TopicClient {
             try {
                 if (success) {
                     switch (transactionParams.apiFunction) {
+                        case "addTag":
+                            successObject = Tag.fromJson(new JsonObject(data));
+                            break;
+                        case "getCompanyUserCreditCards":
+                            successObject = SavedCreditCards.fromJson(new JsonObject(data));
+                            break;
                         case "getTags":
                             successObject = Tags.fromJson(new JsonObject(data));
+                            break;
+                        case "getSelectionRules":
+//                            successObject = SelectionRules.fromJson(new JsonObject(data));
+                            break;
+                        case "getFeatures":
+                            successObject = CompanyFeatures.fromJson(new JsonObject(data));
+                            break;
+                        case "getIntegrations":
+                            successObject = CompanyIntegrations.fromJson(new JsonObject(data));
+                            break;
+                        case "getRatings":
+                            successObject = CompanyRating.fromJson(new JsonObject(data));
+                            break;
+                        case "getPredefinedExpenses":
+//                            successObject = PredefinedExpenses.fromJson(new JsonObject(data));
                             break;
                         case "getCompanyDetails":
                         case "getManagedProviders":
                         case "getSendRequestedFeatures":
                         case "updateFund":
                             successObject = data;
-                            break;
-                        case "getIntegrations":
-                            successObject = CompanyIntegrations.fromJson(new JsonObject(data));
-                            break;
-                        case "getCompanyUserCreditCards":
-                            successObject = SavedCreditCards.fromJson(new JsonObject(data));
-                            break;
-                        case "getRatings":
-                            successObject = CompanyRating.fromJson(new JsonObject(data));
-                            break;
-                        case "getFeatures":
-                            successObject = CompanyFeatures.fromJson(new JsonObject(data));
-                            break;
-                        case "addTag":
-                            successObject = Tag.fromJson(new JsonObject(data));
-                            break;
-                        case "getSelectionRules":
-                            successObject = SelectionRules.fromJson(new JsonObject(data));
                             break;
                         default:
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
@@ -766,6 +843,7 @@ public class CompanyWebApi extends TopicClient {
                         case "getFeatures":
                         case "getIntegrations":
                         case "getManagedProviders":
+                        case "getPredefinedExpenses":
                         case "getRatings":
                         case "getSelectionRules":
                         case "getSendRequestedFeatures":

@@ -27,6 +27,9 @@ public class Tags implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "correlation_id")
+    private String _correlationId;
+
     @Json(name = "metadata")
     private ListEnvelope _metadata;
 
@@ -76,6 +79,28 @@ public class Tags implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
+        return this;
+    }
+
+    public void setCorrelationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
+    }
+
+    public String getCorrelationId() {
+        try {
+            if (_correlationId == null && SOURCE.has("correlation_id") && SOURCE.get("correlation_id") != null)
+                _correlationId = SOURCE.getString("correlation_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _correlationId;
+    }
+
+    public Tags correlationId(String correlationId) throws ParseException {
+        _correlationId = correlationId;
+        SOURCE.put("correlation_id", correlationId);
         return this;
     }
 

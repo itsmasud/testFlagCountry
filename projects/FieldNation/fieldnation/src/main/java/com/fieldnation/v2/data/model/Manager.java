@@ -24,9 +24,6 @@ import java.util.Set;
 public class Manager implements Parcelable {
     private static final String TAG = "Manager";
 
-    @Json(name = "approval_days")
-    private Integer _approvalDays;
-
     @Json(name = "email")
     private String _email;
 
@@ -42,15 +39,6 @@ public class Manager implements Parcelable {
     @Json(name = "phone")
     private String _phone;
 
-    @Json(name = "rating")
-    private Double _rating;
-
-    @Json(name = "ratings")
-    private Double _ratings;
-
-    @Json(name = "review_period_days")
-    private Integer _reviewPeriodDays;
-
     @Source
     private JsonObject SOURCE;
 
@@ -60,28 +48,6 @@ public class Manager implements Parcelable {
 
     public Manager(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setApprovalDays(Integer approvalDays) throws ParseException {
-        _approvalDays = approvalDays;
-        SOURCE.put("approval_days", approvalDays);
-    }
-
-    public Integer getApprovalDays() {
-        try {
-            if (_approvalDays == null && SOURCE.has("approval_days") && SOURCE.get("approval_days") != null)
-                _approvalDays = SOURCE.getInt("approval_days");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _approvalDays;
-    }
-
-    public Manager approvalDays(Integer approvalDays) throws ParseException {
-        _approvalDays = approvalDays;
-        SOURCE.put("approval_days", approvalDays);
-        return this;
     }
 
     public void setEmail(String email) throws ParseException {
@@ -191,72 +157,6 @@ public class Manager implements Parcelable {
     public Manager phone(String phone) throws ParseException {
         _phone = phone;
         SOURCE.put("phone", phone);
-        return this;
-    }
-
-    public void setRating(Double rating) throws ParseException {
-        _rating = rating;
-        SOURCE.put("rating", rating);
-    }
-
-    public Double getRating() {
-        try {
-            if (_rating == null && SOURCE.has("rating") && SOURCE.get("rating") != null)
-                _rating = SOURCE.getDouble("rating");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _rating;
-    }
-
-    public Manager rating(Double rating) throws ParseException {
-        _rating = rating;
-        SOURCE.put("rating", rating);
-        return this;
-    }
-
-    public void setRatings(Double ratings) throws ParseException {
-        _ratings = ratings;
-        SOURCE.put("ratings", ratings);
-    }
-
-    public Double getRatings() {
-        try {
-            if (_ratings == null && SOURCE.has("ratings") && SOURCE.get("ratings") != null)
-                _ratings = SOURCE.getDouble("ratings");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _ratings;
-    }
-
-    public Manager ratings(Double ratings) throws ParseException {
-        _ratings = ratings;
-        SOURCE.put("ratings", ratings);
-        return this;
-    }
-
-    public void setReviewPeriodDays(Integer reviewPeriodDays) throws ParseException {
-        _reviewPeriodDays = reviewPeriodDays;
-        SOURCE.put("review_period_days", reviewPeriodDays);
-    }
-
-    public Integer getReviewPeriodDays() {
-        try {
-            if (_reviewPeriodDays == null && SOURCE.has("review_period_days") && SOURCE.get("review_period_days") != null)
-                _reviewPeriodDays = SOURCE.getInt("review_period_days");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _reviewPeriodDays;
-    }
-
-    public Manager reviewPeriodDays(Integer reviewPeriodDays) throws ParseException {
-        _reviewPeriodDays = reviewPeriodDays;
-        SOURCE.put("review_period_days", reviewPeriodDays);
         return this;
     }
 

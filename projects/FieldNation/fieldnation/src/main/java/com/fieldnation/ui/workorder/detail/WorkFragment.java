@@ -47,6 +47,7 @@ import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -371,6 +372,8 @@ public class WorkFragment extends WorkorderFragment {
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
+
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -417,6 +420,7 @@ public class WorkFragment extends WorkorderFragment {
 
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -567,8 +571,16 @@ public class WorkFragment extends WorkorderFragment {
 
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
         @Override
-        public void onCheckIn(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, (int) workOrderId);
+        public void onCheckIn(int workOrderId) {
+            setLoading(false);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
+        }
+    };
+
+    private final CheckInOutDialog.OnCancelListener _checkInOutDialog_onCancel = new CheckInOutDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
+            setLoading(false);
         }
     };
 
@@ -643,8 +655,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
         @Override
-        public void onCheckOut(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, (int) workOrderId);
+        public void onCheckOut(int workOrderId) {
+            setLoading(false);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
         }
     };
 
@@ -714,10 +727,10 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
 
             if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                Log.v(TAG, "signature response");
                 requestWorkorder();
 
-                if (App.get().getProfile().canRequestWorkOnMarketplace()
-                        && !_workOrder.getW2()) {
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                     RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
 
@@ -745,8 +758,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-//            ConfirmActivity.startNew(App.get());
-            _actionbartop_listener.onMyWay();
+            ConfirmActivity.startNew(App.get());
+//            _actionbartop_listener.onMyWay();
         }
     };
 
@@ -1492,13 +1505,11 @@ public class WorkFragment extends WorkorderFragment {
                 @Override
                 protected Object doInBackground(Object... params) {
                     try {
+                        Log.v(TAG, "onSignatureClick ");
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
-                        Intent intent = new Intent(context, SignOffActivity.class);
-                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
-                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+                        SignOffActivity.startSignOff(App.get(), workOrder, true);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);

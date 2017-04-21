@@ -55,7 +55,7 @@ public class UpdateModelParams implements Parcelable {
         }
 
         if (_model != null && _model.isSet())
-        return _model;
+            return _model;
 
         return null;
     }
@@ -80,7 +80,7 @@ public class UpdateModelParams implements Parcelable {
         }
 
         if (_updateScheduleByWorkOrder != null && _updateScheduleByWorkOrder.isSet())
-        return _updateScheduleByWorkOrder;
+            return _updateScheduleByWorkOrder;
 
         return null;
     }

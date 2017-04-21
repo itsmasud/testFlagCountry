@@ -34,7 +34,6 @@ import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
@@ -314,24 +313,37 @@ public class DeliverableFragment extends WorkorderFragment {
             if (_filesRunnable != null)
                 _filesRunnable.cancel();
 
-            _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
+            final List<View> fViews = new LinkedList<>();
+            for (int i = 0; i < _filesLayout.getChildCount(); i++) {
+                fViews.add(_filesLayout.getChildAt(i));
+            }
+
+            _filesRunnable = new ForLoopRunnable(slots.length, new Handler(), 50) {
                 private final AttachmentFolder[] _slots = slots;
-                private List<View> views = new LinkedList<>();
+                private final List<View> views = fViews;
+                private final List<View> buffer = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
                     if (_slots[i].getType() == AttachmentFolder.TypeEnum.SLOT) {
-                        UploadSlotView v = new UploadSlotView(getActivity());
+                        UploadSlotView v = null;
+                        if (views.size() > 0)
+                            v = (UploadSlotView) views.remove(0);
+                        else {
+                            v = new UploadSlotView(getActivity());
+                        }
+
                         AttachmentFolder slot = _slots[i];
                         v.setData(_workOrder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
-                        views.add(v);
+                        buffer.add(v);
                     }
                 }
 
                 @Override
                 public void finish(int count) throws Exception {
+                    Log.v(TAG, "finish");
                     _filesLayout.removeAllViews();
-                    for (View v : views) {
+                    for (View v : buffer) {
                         _filesLayout.addView(v);
                     }
                 }
@@ -415,7 +427,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkordersWebApi.deleteAttachment(App.get(),_workOrder.getId(),document.getFolderId(),documentId);
+                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId);
                             setLoading(true);
                         }
 

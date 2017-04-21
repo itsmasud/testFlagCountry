@@ -10,7 +10,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 
 public class WorkorderTabView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.WorkorderTabView";
+    private static final String TAG = "WorkorderTabView";
 
     // UI
     private RelativeLayout _detailLayout;

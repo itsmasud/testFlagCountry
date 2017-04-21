@@ -159,58 +159,23 @@ public class MyGcmListenerService extends GcmListenerService {
         // confirm or ready?
         PendingIntent primaryIntent = null;
         Action primaryAction = null;
-        PendingIntent secondaryIntent = null;
-        Action secondaryAction = null;
 
-        if (gcmMessage.actions != null) {
-            if (gcmMessage.actions.getPrimary() != null && gcmMessage.actions.getPrimary().length > 0) {
-                primaryAction = gcmMessage.actions.getPrimary()[0];
-                primaryIntent = getIntentFromAction(primaryAction, id);
-            }
-
-            if (gcmMessage.actions.getSecondary() != null && gcmMessage.actions.getSecondary().length > 0) {
-                secondaryAction = gcmMessage.actions.getSecondary()[0];
-                secondaryIntent = getIntentFromAction(secondaryAction, id);
-            }
+        if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
+            primaryAction = gcmMessage.actions[0];
+            primaryIntent = getIntentFromAction(primaryAction, id);
         }
 
-        if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW)
-                || (secondaryAction != null && secondaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
+        if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
             id = CONFIRM_PUSH_NOTIFICATION;
         else
             id = App.secureRandom.nextInt();
 
         // no buttons
-        if (primaryIntent == null && secondaryIntent == null) {
+        if (primaryIntent == null) {
 
             // primary only
-        } else if (primaryIntent != null && secondaryIntent == null) {
+        } else if (primaryIntent != null) {
             builder.setContentIntent(primaryIntent);
-
-            // secondary only
-        } else if (primaryIntent == null && secondaryIntent != null) {
-            builder.setContentIntent(secondaryIntent);
-
-        } else if (primaryIntent != null && secondaryIntent != null) {
-            // have both
-            // body
-            builder.setContentIntent(secondaryIntent);
-
-            // secondary button
-            builder.addAction(R.drawable.ic_notif_glass, "View", secondaryIntent);
-
-            // primary button
-            String primaryButtonText = "";
-            switch (primaryAction.getType()) {
-                case CONFIRM:
-                    primaryButtonText = "Confirm";
-                    break;
-                case READY:
-                    primaryButtonText = "Ready";
-                    break;
-            }
-
-            builder.addAction(R.drawable.ic_notif_check, primaryButtonText, primaryIntent);
         }
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();

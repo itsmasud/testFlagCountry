@@ -35,7 +35,7 @@ class Client extends TopicClient implements Constants {
         payload.putString(PARAM_DIALOG_UID, uid);
         payload.setClassLoader(classLoader);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_DIALOG, payload, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_DIALOG, payload, Sticky.TEMP);
     }
 
     public static void show(Context context, String uid, Class<? extends Dialog> klass, Bundle params) {
@@ -47,7 +47,7 @@ class Client extends TopicClient implements Constants {
         Bundle payload = new Bundle();
         payload.putString(PARAM_DIALOG_UID, uid);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_DISMISS_DIALOG, payload, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_DISMISS_DIALOG, payload, Sticky.TEMP);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

@@ -26,6 +26,8 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.ui.AppPickerAdapter;
@@ -254,11 +256,14 @@ public class AppPickerDialog extends SimpleDialog {
                                     for (int i = 0; i < count; ++i) {
                                         uri = clipData.getItemAt(i).getUri();
                                         if (uri != null) {
-                                            if (_slot == null)
-                                                PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, FileUtils.getFileNameFromUri(App.get(), data.getData()), uri);
-                                            else
-                                                PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, FileUtils.getFileNameFromUri(App.get(), data.getData()), uri);
-
+                                            Attachment attachment = new Attachment();
+                                            if (_slot == null) {
+                                                attachment.folderId(_task.getAttachments().getId());
+                                                AttachmentService.addAttachment(App.get(), _workOrderId, attachment, intent.setData(uri));
+                                            } else {
+                                                attachment.folderId(_slot.getId());
+                                                AttachmentService.addAttachment(App.get(), _workOrderId, attachment, intent.setData(uri));
+                                            }
                                         }
                                     }
                                 }

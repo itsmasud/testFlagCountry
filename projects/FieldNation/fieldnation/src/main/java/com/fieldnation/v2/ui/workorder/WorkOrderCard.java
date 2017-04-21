@@ -29,6 +29,7 @@ import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -458,7 +459,7 @@ public class WorkOrderCard extends RelativeLayout {
 
             // mark incomplete
         } else if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_incomplete_onClick);
             button.setText(R.string.btn_incomplete);
@@ -667,11 +668,11 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
         @Override
-        public void onCheckIn(long workOrderId) {
+        public void onCheckIn(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
         }
     };
 
@@ -691,11 +692,11 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
         @Override
-        public void onCheckOut(long workOrderId) {
+        public void onCheckOut(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, (int) workOrderId);
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
         }
     };
 
@@ -955,7 +956,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-                _onMyWay_onClick.onClick(v);
+            ConfirmActivity.startNew(App.get());
+            //_onMyWay_onClick.onClick(v);
         }
     };
 
