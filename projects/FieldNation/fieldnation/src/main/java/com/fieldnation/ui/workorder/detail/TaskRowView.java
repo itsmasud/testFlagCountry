@@ -10,11 +10,13 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -173,37 +175,6 @@ public class TaskRowView extends RelativeLayout {
         updateCheckBox();
     }
 
-  /*
-    from server:
-        private void updateCheckBox() {
-        if (_task != null && _task.getActionsSet() != null
-                && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE))) {
-            if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-                _iconView.setText(R.string.icon_task_done);
-            } else {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-                _iconView.setText(R.string.icon_task);
-            }
-            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-            setEnabled(true);
-        } else {
-            if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-                _iconView.setText(R.string.icon_task_done);
-            } else {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-                _iconView.setText(R.string.icon_task);
-            }
-            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-            setEnabled(false);
-        }
-    }
-     */
-
-
     private void updateCheckBox() {
         if (_task != null && _task.getActionsSet() != null
                 && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
@@ -237,37 +208,6 @@ public class TaskRowView extends RelativeLayout {
         }
     }
 
-//    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-//        @Override
-//        public void onConnected() {
-//            subscribeUpload();
-//        }
-//
-//        @Override
-//        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-//            if (failed || isComplete) {
-//                _uploadingFiles.remove(filename);
-//                _uploadingProgress.put(filename, 100);
-//
-//                if (_uploadingFiles.size() == 0)
-//                    _uploadingProgress.clear();
-//            } else {
-//                _uploadingFiles.add(filename);
-//                if (!_uploadingProgress.containsKey(filename))
-//                    _uploadingProgress.put(filename, 0);
-//            }
-//            populateUi();
-//        }
-
-//        @Override
-//        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
-//            Double percent = pos * 1.0 / size;
-//            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
-//            int prog = (int) (pos * 100 / size);
-//            _uploadingProgress.put(filename, prog);
-//            populateUi();
-//        }
-//    };
 
     private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
         @Override
@@ -288,25 +228,87 @@ public class TaskRowView extends RelativeLayout {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onQueued");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
 
-            if (methodName.contains("addAttachment") && success) {
-            if (success) {
-                _uploadingFiles.remove("task" + _task.getId());
-                _uploadingProgress.put("done", 100);
-
-                if (_uploadingFiles.size() == 0)
-                    _uploadingProgress.clear();
+                if (folderId == _task.getAttachments().getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_QUEUED);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
+        }
 
-//            else {
-//                _uploadingFiles.add(filename);
-//                if (!_uploadingProgress.containsKey(filename))
-//                    _uploadingProgress.put(filename, 0);
-//            }
-            populateUi();
+        @Override
+        public void onPaused(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onPaused");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_PAUSED);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
+        }
 
+        @Override
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onProgress");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    Double percent = pos * 1.0 / size;
+                    Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, (int) (pos * 100 / size));
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onComplete");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    _uploadingFiles.remove(name);
+                    _uploadingProgress.remove(name);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 
