@@ -715,10 +715,10 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
 
             if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                Log.v(TAG, "signature response");
                 requestWorkorder();
 
-                if (App.get().getProfile().canRequestWorkOnMarketplace()
-                        && !_workOrder.getW2()) {
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                     RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
 
@@ -1493,6 +1493,7 @@ public class WorkFragment extends WorkorderFragment {
                 @Override
                 protected Object doInBackground(Object... params) {
                     try {
+                        Log.v(TAG, "onSignatureClick ");
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
