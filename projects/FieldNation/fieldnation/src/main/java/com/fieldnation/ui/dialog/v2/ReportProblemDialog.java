@@ -360,13 +360,13 @@ public class ReportProblemDialog extends SimpleDialog {
             case WILL_BE_LATE:
                 _timeframeSpinner.setVisibility(View.VISIBLE);
 
-                if (_timeframePosition == -1 || _timeframePosition == 3) {
+                if (_timeframePosition == -1 || _timeframePosition == 5) {
                     _okButton.setEnabled(false);
                 } else {
                     _okButton.setEnabled(true);
                 }
 
-                if (_timeframePosition == 3) {
+                if (_timeframePosition == 5) {
                     _timeframeLayout.setVisibility(View.VISIBLE);
                     if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
                         _okButton.setEnabled(false);
@@ -487,7 +487,7 @@ public class ReportProblemDialog extends SimpleDialog {
                     try {
                         int delayMin = 0;
 
-                        if (_timeframePosition == 3)
+                        if (_timeframePosition == 5)
                             delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
                         else
                             delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
@@ -583,13 +583,13 @@ public class ReportProblemDialog extends SimpleDialog {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             _timeframeSpinner.setVisibility(View.VISIBLE);
 
-            if (_timeframePosition == -1 || _timeframePosition == 3) {
+            if (_timeframePosition == -1 || _timeframePosition == 5) {
                 _okButton.setEnabled(false);
             } else {
                 _okButton.setEnabled(true);
             }
 
-            if (_timeframePosition == 3) {
+            if (_timeframePosition == 5) {
                 _timeframeLayout.setVisibility(View.VISIBLE);
                 if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
                     _okButton.setEnabled(false);

@@ -139,13 +139,13 @@ public class RunningLateDialog extends SimpleDialog {
             _timeframeSpinner.setAdapter(adapter);
         }
 
-        if (_timeframePosition == -1 || _timeframePosition == 3) {
+        if (_timeframePosition == -1 || _timeframePosition == 5) {
             _sendButton.setEnabled(false);
         } else {
             _sendButton.setEnabled(true);
         }
 
-        if (_timeframePosition == 3) {
+        if (_timeframePosition == 5) {
             _timeframeLayout.setVisibility(View.VISIBLE);
             if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
                 _sendButton.setEnabled(false);
@@ -186,7 +186,7 @@ public class RunningLateDialog extends SimpleDialog {
             try {
                 int delayMin = 0;
 
-                if (_timeframePosition == 3)
+                if (_timeframePosition == 5)
                     delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
                 else
                     delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
