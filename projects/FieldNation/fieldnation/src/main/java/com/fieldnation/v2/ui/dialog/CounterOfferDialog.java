@@ -17,7 +17,12 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.RefreshView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
@@ -55,6 +60,7 @@ public class CounterOfferDialog extends SimpleDialog {
     private Button _backButton;
     private Button _okButton;
     private HorizontalScrollView _tabScrollView;
+    private RefreshView _refreshView;
 
     private PaymentCoView _paymentView;
     private ScheduleCoView _scheduleView;
@@ -69,9 +75,11 @@ public class CounterOfferDialog extends SimpleDialog {
     private Schedule _counterSchedule;
     private String _counterReason;
     private long _expires = 0;
+    private WorkordersWebApi _workOrderApi;
+    private String _explanation;
 
     // Data
-    private boolean _tacAccpet;
+    private boolean _tacAccept;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -117,12 +125,17 @@ public class CounterOfferDialog extends SimpleDialog {
         _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
         _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
 
+        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
+
         return v;
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
+        _workOrderApi = new WorkordersWebApi(_workOrdersWebApi_listener);
+        _workOrderApi.connect(App.get());
 
         _okButton.setOnClickListener(_ok_onClick);
         _backButton.setOnClickListener(_back_onClick);
@@ -183,7 +196,7 @@ public class CounterOfferDialog extends SimpleDialog {
 
             _counterReason = coRequest.getCounterNotes();
             try {
-                _expires = coRequest.getExpires().getUtcLong();
+                _expires = coRequest.getExpires() == null ? 0 : coRequest.getExpires().getUtcLong();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -217,13 +230,16 @@ public class CounterOfferDialog extends SimpleDialog {
                 _expires = savedState.getLong(STATE_EXPIRES);
 
             if (savedState.containsKey(STATE_TAC))
-                _tacAccpet = savedState.getBoolean(STATE_TAC);
+                _tacAccept = savedState.getBoolean(STATE_TAC);
         }
         populateUi();
     }
 
     @Override
     public void onStop() {
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
+
         super.onStop();
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
@@ -235,7 +251,7 @@ public class CounterOfferDialog extends SimpleDialog {
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
         outState.putLong(STATE_EXPIRES, _expires);
-        outState.putBoolean(STATE_TAC, _tacAccpet);
+        outState.putBoolean(STATE_TAC, _tacAccept);
 
         if (_counterPay != null)
             outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
@@ -322,7 +338,7 @@ public class CounterOfferDialog extends SimpleDialog {
 
         @Override
         public void onTacChange(boolean isChecked) {
-            _tacAccpet = isChecked;
+            _tacAccept = isChecked;
         }
 
         @Override
@@ -416,6 +432,7 @@ public class CounterOfferDialog extends SimpleDialog {
         @Override
         public void onComplete(Pay pay, String explanation) {
             _counterPay = pay;
+            _explanation = explanation;
             populateUi();
         }
     };
@@ -443,39 +460,54 @@ public class CounterOfferDialog extends SimpleDialog {
             } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
                 setTabPos(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
-                if (!_tacAccpet) {
+                if (!_tacAccept) {
                     ToastClient.toast(App.get(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG);
                     return;
                 }
 
                 _counterReason = _reasonView.getReason();
 
-//                if (misc.isEmptyOrNull(_counterReason)) {
-//                    Toast.makeText(getActivity(), "Counter offer reason cannot be null. Please enter a reason.", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
-
-                // Todo need to do some data validation
-                Expense[] exp = new Expense[_expenses.size()];
-                for (int i = 0; i < _expenses.size(); i++) {
-                    exp[i] = _expenses.get(i);
-                }
-
-//                    int seconds = -1;
-//                    if (_expires) {
-//                        try {
-//                            seconds = (int) (ISO8601.toUtc(_expirationDate)
-//                                    - System.currentTimeMillis()) / 1000;
-//                        } catch (Exception ex) {
-//                            Log.v(TAG, ex);
-//                        }
-//                    }
-
                 Log.e(TAG, "_expireDuration: " + _expires);
 
-                _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
-                _tacAccpet = false;
-                dismiss(true);
+                if (_workOrder.getRequests().getOpenRequest() != null) {
+                    _refreshView.startRefreshing();
+                    WorkordersWebApi.deleteRequest(App.get(), _workOrder.getId(),
+                            _workOrder.getRequests().getOpenRequest().getId());
+                } else {
+                    _refreshView.startRefreshing();
+
+                    Expense[] exp = new Expense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
+                    }
+
+                    try {
+                        Request request = new Request();
+                        request.counter(true);
+
+                        if (!misc.isEmptyOrNull(_counterReason))
+                            request.counterNotes(_counterReason);
+
+                        if (_counterPay != null)
+                            request.pay(_counterPay);
+
+                        if (_counterSchedule != null)
+                            request.schedule(_counterSchedule);
+
+                        if (exp != null)
+                            request.expenses(exp);
+
+                        if (_expires > 0)
+                            request.expires(new Date(_expires));
+
+                        if (!misc.isEmptyOrNull(_explanation))
+                            request.setNotes(_explanation);
+
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
             }
         }
     };
@@ -493,6 +525,63 @@ public class CounterOfferDialog extends SimpleDialog {
 
         Controller.show(context, uid, CounterOfferDialog.class, params);
     }
+
+    private final WorkordersWebApi.Listener _workOrdersWebApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("request")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (success) {
+                    Expense[] exp = new Expense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
+                    }
+
+                    _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
+                    dismiss(true);
+                }
+                _refreshView.refreshComplete();
+            } else if (methodName.equals("deleteRequest")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (success) {
+                    Expense[] exp = new Expense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
+                    }
+                    try {
+                        Request request = new Request();
+                        request.counter(true);
+
+                        if (!misc.isEmptyOrNull(_counterReason))
+                            request.counterNotes(_counterReason);
+
+                        if (_counterPay != null)
+                            request.pay(_counterPay);
+
+                        if (_counterSchedule != null)
+                            request.schedule(_counterSchedule);
+
+                        if (exp != null)
+                            request.expenses(exp);
+
+                        if (_expires > 0)
+                            request.expires(new Date(_expires));
+
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                } else {
+                    _refreshView.refreshComplete();
+                }
+            }
+        }
+    };
 
     /*-**********************-*/
     /*-         Ok           -*/

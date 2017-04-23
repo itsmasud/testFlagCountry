@@ -139,13 +139,13 @@ public class RunningLateDialog extends SimpleDialog {
             _timeframeSpinner.setAdapter(adapter);
         }
 
-        if (_timeframePosition == -1 || _timeframePosition == 3) {
+        if (_timeframePosition == -1 || _timeframePosition == 5) {
             _sendButton.setEnabled(false);
         } else {
             _sendButton.setEnabled(true);
         }
 
-        if (_timeframePosition == 3) {
+        if (_timeframePosition == 5) {
             _timeframeLayout.setVisibility(View.VISIBLE);
             if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
                 _sendButton.setEnabled(false);
@@ -186,7 +186,7 @@ public class RunningLateDialog extends SimpleDialog {
             try {
                 int delayMin = 0;
 
-                if (_timeframePosition == 3)
+                if (_timeframePosition == 5)
                     delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
                 else
                     delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
@@ -196,10 +196,10 @@ public class RunningLateDialog extends SimpleDialog {
                                 .condition(new Condition()
                                         .estimatedDelay(delayMin * 60)
                                         .substatus(Condition.SubstatusEnum.DELAYED)));
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
 
                 ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                _onSendDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                _onSendDispatcher.dispatch(getUid(), _workOrder.getId());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);

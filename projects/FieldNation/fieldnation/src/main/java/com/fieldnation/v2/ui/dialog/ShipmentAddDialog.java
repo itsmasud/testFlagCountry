@@ -135,8 +135,6 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (_title != null) {
             _titleTextView.setText(_title);
         }
-
-        populateUi();
     }
 
     @Override
@@ -149,6 +147,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         _workOrder = payload.getParcelable("workOrder");
 
+        populateUi();
         super.show(payload, animate);
     }
 
@@ -202,7 +201,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         if (_shipmentDescription != null) {
             _descriptionEditText.setText(_shipmentDescription);
         } else if (_task != null) {
-            _descriptionEditText.setText(_task.getDescription());
+            _descriptionEditText.setText(_task.getLabel());
         }
 
         getDirectionSpinner();
@@ -415,7 +414,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
         if (miscFolder != null) {
             String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(), miscFolder.getId(), fileName, _scannedImagePath);
+            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getId(), miscFolder.getId(), fileName, _scannedImagePath);
         }
 
     }

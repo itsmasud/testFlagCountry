@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -77,17 +83,16 @@ public class Qualifications implements Parcelable {
 
     public SelectionRule getSelectionRule() {
         try {
-            if (_selectionRule != null)
-                return _selectionRule;
-
-            if (SOURCE.has("selection_rule") && SOURCE.get("selection_rule") != null)
+            if (_selectionRule == null && SOURCE.has("selection_rule") && SOURCE.get("selection_rule") != null)
                 _selectionRule = SelectionRule.fromJson(SOURCE.getJsonObject("selection_rule"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_selectionRule != null && _selectionRule.isSet())
         return _selectionRule;
+
+        return null;
     }
 
     public Qualifications selectionRule(SelectionRule selectionRule) throws ParseException {
@@ -100,6 +105,8 @@ public class Qualifications implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
+        @Json(name = "add")
+        ADD("add"),
         @Json(name = "edit")
         EDIT("edit");
 
@@ -155,7 +162,7 @@ public class Qualifications implements Parcelable {
         try {
             return new Qualifications(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -194,6 +201,10 @@ public class Qualifications implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
 
     public boolean isSet() {
         return true;

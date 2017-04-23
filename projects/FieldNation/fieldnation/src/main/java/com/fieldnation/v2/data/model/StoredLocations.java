@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -88,12 +92,8 @@ public class StoredLocations implements Parcelable {
 
     public ModeEnum getMode() {
         try {
-            if (_mode != null)
-                return _mode;
-
-            if (SOURCE.has("mode") && SOURCE.get("mode") != null)
+            if (_mode == null && SOURCE.has("mode") && SOURCE.get("mode") != null)
                 _mode = ModeEnum.fromString(SOURCE.getString("mode"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -141,12 +141,8 @@ public class StoredLocations implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -167,12 +163,8 @@ public class StoredLocations implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -282,7 +274,7 @@ public class StoredLocations implements Parcelable {
         try {
             return new StoredLocations(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -320,5 +312,13 @@ public class StoredLocations implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

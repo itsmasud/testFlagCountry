@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -22,12 +26,6 @@ public class PayIncreasesSum implements Parcelable {
 
     @Json(name = "all")
     private Double _all;
-
-    @Json(name = "charged")
-    private Double _charged;
-
-    @Json(name = "uncharged")
-    private Double _uncharged;
 
     @Source
     private JsonObject SOURCE;
@@ -47,12 +45,8 @@ public class PayIncreasesSum implements Parcelable {
 
     public Double getAll() {
         try {
-            if (_all != null)
-                return _all;
-
-            if (SOURCE.has("all") && SOURCE.get("all") != null)
+            if (_all == null && SOURCE.has("all") && SOURCE.get("all") != null)
                 _all = SOURCE.getDouble("all");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -63,58 +57,6 @@ public class PayIncreasesSum implements Parcelable {
     public PayIncreasesSum all(Double all) throws ParseException {
         _all = all;
         SOURCE.put("all", all);
-        return this;
-    }
-
-    public void setCharged(Double charged) throws ParseException {
-        _charged = charged;
-        SOURCE.put("charged", charged);
-    }
-
-    public Double getCharged() {
-        try {
-            if (_charged != null)
-                return _charged;
-
-            if (SOURCE.has("charged") && SOURCE.get("charged") != null)
-                _charged = SOURCE.getDouble("charged");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _charged;
-    }
-
-    public PayIncreasesSum charged(Double charged) throws ParseException {
-        _charged = charged;
-        SOURCE.put("charged", charged);
-        return this;
-    }
-
-    public void setUncharged(Double uncharged) throws ParseException {
-        _uncharged = uncharged;
-        SOURCE.put("uncharged", uncharged);
-    }
-
-    public Double getUncharged() {
-        try {
-            if (_uncharged != null)
-                return _uncharged;
-
-            if (SOURCE.has("uncharged") && SOURCE.get("uncharged") != null)
-                _uncharged = SOURCE.getDouble("uncharged");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _uncharged;
-    }
-
-    public PayIncreasesSum uncharged(Double uncharged) throws ParseException {
-        _uncharged = uncharged;
-        SOURCE.put("uncharged", uncharged);
         return this;
     }
 
@@ -141,7 +83,7 @@ public class PayIncreasesSum implements Parcelable {
         try {
             return new PayIncreasesSum(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -179,5 +121,13 @@ public class PayIncreasesSum implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

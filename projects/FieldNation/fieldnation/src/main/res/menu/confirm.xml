@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.ncns.ConfirmActivity">
-
     <item
         android:id="@+id/remindme_menuitem"
         android:enabled="true"
         android:orderInCategory="300"
         android:title="REMIND ME"
+        app:actionViewClass="com.fieldnation.ui.menu.RemindMeMenuButton"
         app:showAsAction="always" />
-
     <item
         android:id="@+id/done_menuitem"
         android:enabled="true"
         android:orderInCategory="400"
         android:title="DONE"
+        app:actionViewClass="com.fieldnation.ui.menu.DoneMenuButton"
         app:showAsAction="always" />
-
 </menu>

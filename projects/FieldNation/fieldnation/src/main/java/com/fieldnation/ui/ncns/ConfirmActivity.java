@@ -5,18 +5,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.menu.DoneMenuButton;
+import com.fieldnation.ui.menu.RemindMeMenuButton;
+import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.nav.NavActivity;
-import com.fieldnation.v2.ui.search.SearchResultScreen;
 
 /**
  * Created by Michael on 10/3/2016.
@@ -25,12 +31,19 @@ import com.fieldnation.v2.ui.search.SearchResultScreen;
 public class ConfirmActivity extends AuthSimpleActivity {
     private static final String TAG = "ConfirmActivity";
 
+    // Dialogs
+    private static final String DIALOG_REMIND_ME = TAG + ".remindMeDialog";
+
     // Ui
-    private SearchResultScreen _recyclerView;
+    private ConfirmResultScreen _recyclerView;
     private Toolbar _toolbar;
+    private Button _doneButton;
+    private Button _remindMeButton;
 
     // Data
     private SavedList _savedList;
+    private boolean _needsConfirm = false;
+    private GetWorkOrdersOptions _options = new GetWorkOrdersOptions().fFlightboardTomorrow(true);
 
     @Override
     public int getLayoutResource() {
@@ -45,14 +58,13 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
 
-        _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
+        _recyclerView = (ConfirmResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
-        setTitle("Tomorrow's Work");
+        setTitle("Confirm Work");
 
-        // TODO fill out _savedList;
         try {
-            _savedList = new SavedList().id("workorders_tomorrow");
+            _savedList = new SavedList().id("workorders_assignments");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -62,7 +74,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         Log.v(TAG, "onRestoreInstanceState");
         if (savedInstanceState != null) {
-            _recyclerView.startSearch(_savedList);
+            _recyclerView.startSearch(_savedList, _options);
         }
         super.onRestoreInstanceState(savedInstanceState);
     }
@@ -72,9 +84,22 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        _recyclerView.startSearch(_savedList);
+        _recyclerView.startSearch(_savedList, _options);
+    }
+
+    @Override
+    protected void onStop() {
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
+
+        super.onStop();
     }
 
     @Override
@@ -94,20 +119,13 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.confirm, menu);
+        _doneButton = ((DoneMenuButton) menu.findItem(R.id.done_menuitem).getActionView()).getButton();
+        _doneButton.setOnClickListener(_doneButton_onClick);
+        _doneButton.setEnabled(false);
+        _remindMeButton = ((RemindMeMenuButton) menu.findItem(R.id.remindme_menuitem).getActionView()).getButton();
+        _remindMeButton.setOnClickListener(_remindMeButton_onClick);
+        _remindMeButton.setEnabled(false);
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.remindme_menuitem:
-                break;
-            case R.id.done_menuitem:
-                App.get().setNeedsConfirmation(false);
-                NavActivity.startNew(App.get());
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -115,27 +133,55 @@ public class ConfirmActivity extends AuthSimpleActivity {
         // do nothing, you're stuck here.... muhahahah
     }
 
-    private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
+    private final ConfirmResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new ConfirmResultScreen.OnWorkOrderListReceivedListener() {
         @Override
-        public void OnWorkOrderListReceived(WorkOrders workOrders) {
+        public void OnWorkOrderListReceived(final WorkOrders workOrders) {
             if (workOrders == null
-                    || workOrders.getResults() != null
+                    || workOrders.getResults() == null
                     || workOrders.getResults().length == 0) {
                 return;
             }
-/*
-TODO            for (WorkOrder wo : workOrders.getResults()) {
-                Action[] actions = wo.getPrimaryActions();
-                if (actions != null) {
-                    for (Action a : actions) {
-                        if (a.getType() == Action.ActionType.READY) {
-                            _doneButton.setVisibility(View.GONE);
-                            return;
-                        }
+
+            _doneButton.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (workOrders.getActionsSet().contains(WorkOrders.ActionsEnum.REMIND)) {
+                        _doneButton.setEnabled(false);
+                        _remindMeButton.setEnabled(true);
+                    } else {
+                        _doneButton.setEnabled(true);
+                        _remindMeButton.setEnabled(false);
                     }
                 }
+            });
+        }
+    };
+
+    private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (!_needsConfirm) {
+                App.get().setNeedsConfirmation(false);
+                NavActivity.startNew(App.get());
+                finish();
+            } else {
+                ToastClient.toast(App.get(), "Please confirm and set ETAs before continuing", Toast.LENGTH_SHORT);
             }
-*/
+        }
+    };
+
+    private final View.OnClickListener _remindMeButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _remindMe_onOk = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary() {
+            NavActivity.startNew(App.get());
+            finish();
         }
     };
 

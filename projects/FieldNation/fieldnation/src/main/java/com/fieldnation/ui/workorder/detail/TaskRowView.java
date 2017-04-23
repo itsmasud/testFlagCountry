@@ -10,10 +10,14 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -30,7 +34,7 @@ public class TaskRowView extends RelativeLayout {
 
     // Data
     private WorkOrder _workOrder;
-    private WorkorderClient _workorderClient;
+    private WorkordersWebApi _workOrderApi;
     private Task _task;
     private Listener _listener = null;
 
@@ -62,9 +66,6 @@ public class TaskRowView extends RelativeLayout {
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _progressBar = (ProgressBar) findViewById(R.id.progress_view);
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-
         setOnClickListener(_checkbox_onClick);
 
         populateUi();
@@ -72,9 +73,11 @@ public class TaskRowView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-        _workorderClient = null;
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
+        _workOrderApi = null;
+
+
         super.onDetachedFromWindow();
     }
 
@@ -86,7 +89,7 @@ public class TaskRowView extends RelativeLayout {
         _task = task;
         _workOrder = workOrder;
 
-        if (_task.getFolderId() != null) {
+        if (_task.getAttachments() != null && _task.getAttachments().getId() != null) {
             subscribeUpload();
         }
 
@@ -118,14 +121,6 @@ public class TaskRowView extends RelativeLayout {
         if (_task == null)
             return;
 
-        setEnabled(hasAction());
-
-        if (hasAction()) {
-            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-        } else {
-            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-        }
-
         if (_uploadingFiles.size() > 0) {
 
             if (_uploadingFiles.size() == 1) {
@@ -155,10 +150,7 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
-        }
-
-        // TODO:  CustomField object is missing. Please see the comment in PA-623
-        else if (_task.getCustomField() != null) {
+        } else if (_task.getCustomField() != null) {
             _progressBar.setVisibility(GONE);
 
             boolean isDescriptionSet = false;
@@ -183,37 +175,23 @@ public class TaskRowView extends RelativeLayout {
         updateCheckBox();
     }
 
-    private boolean hasAction() {
-        if (_task == null && _task.getActionsSet() == null) return false;
-
-        return (_task.getActionsSet().contains(Task.ActionsEnum.CHECK_IN)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CHECK_OUT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CLOSING_NOTES)
-                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.CREATE_SHIPMENT)
-                || _task.getActionsSet().contains(Task.ActionsEnum.ETA)
-                || _task.getActionsSet().contains(Task.ActionsEnum.INCOMPLETE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.SIGNATURE)
-                || _task.getActionsSet().contains(Task.ActionsEnum.UPLOAD));
-    }
-
     private void updateCheckBox() {
-        if (hasAction()) {
-            if (_task.getCompleted().isSet()) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-                _iconView.setText(R.string.icon_task_done);
-            } else {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
-                _iconView.setText(R.string.icon_task);
-            }
+        if (_task != null && _task.getActionsSet() != null
+                && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
+                || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE))) {
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            setEnabled(true);
         } else {
-            if (_task.getCompleted().isSet()) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-                _iconView.setText(R.string.icon_task_done);
-            } else {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-                _iconView.setText(R.string.icon_task);
-            }
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            setEnabled(false);
+        }
+
+        if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+            _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+            _iconView.setText(R.string.icon_task_done);
+        } else {
+            _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
+            _iconView.setText(R.string.icon_task);
         }
     }
 
@@ -224,61 +202,116 @@ public class TaskRowView extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        if (_task == null || _task.getFolderId() == null)
-            return;
-
-        if (_workorderClient == null)
-            return;
-
-        if (!_workorderClient.isConnected())
-            return;
-
-        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _task.getFolderId());
-        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _task.getFolderId());
+        if (_workOrderApi == null || !_workOrderApi.isConnected()) {
+            _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+            _workOrderApi.connect(App.get());
+        }
     }
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            subscribeUpload();
-        }
-
-        @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            if (failed || isComplete) {
-                _uploadingFiles.remove(filename);
-                _uploadingProgress.put(filename, 100);
-
-                if (_uploadingFiles.size() == 0)
-                    _uploadingProgress.clear();
-            } else {
-                _uploadingFiles.add(filename);
-                if (!_uploadingProgress.containsKey(filename))
-                    _uploadingProgress.put(filename, 0);
-            }
-            populateUi();
-        }
-
-        @Override
-        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
-            Double percent = pos * 1.0 / size;
-            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
-            int prog = (int) (pos * 100 / size);
-            _uploadingProgress.put(filename, prog);
-            populateUi();
-        }
-    };
 
     private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             updateCheckBox();
 
-            if (_listener != null && hasAction()) {
+            if (_listener != null) {
                 _listener.onTaskClick(_task);
             }
         }
     };
+
+
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onQueued");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_QUEUED);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onPaused(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onPaused");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_PAUSED);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onProgress");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    Double percent = pos * 1.0 / size;
+                    Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, (int) (pos * 100 / size));
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onComplete");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _task.getAttachments().getId()) {
+                    _uploadingFiles.remove(name);
+                    _uploadingProgress.remove(name);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
+
 
     public interface Listener {
         void onTaskClick(Task task);

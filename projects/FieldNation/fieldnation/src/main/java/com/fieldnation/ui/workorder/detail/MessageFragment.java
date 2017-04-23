@@ -17,6 +17,7 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
@@ -87,7 +88,7 @@ public class MessageFragment extends WorkorderFragment {
 //        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
         if (_workorder != null) {
             _refreshView.startRefreshing();
-            WorkordersWebApi.getMessages(App.get(), _workorder.getWorkOrderId(), true, false);
+            WorkordersWebApi.getMessages(App.get(), _workorder.getId(), true, false);
         }
     }
 
@@ -103,7 +104,7 @@ public class MessageFragment extends WorkorderFragment {
             return;
 
         Log.v(TAG, "getMessages");
-        WorkordersWebApi.getMessages(App.get(), _workorder.getWorkOrderId(), true, false);
+        WorkordersWebApi.getMessages(App.get(), _workorder.getId(), false, false);
     }
 
     private void populateUi() {
@@ -172,7 +173,7 @@ public class MessageFragment extends WorkorderFragment {
                 try {
                     Message msg = new Message();
                     msg.setMessage(_inputView.getInputText());
-                    WorkordersWebApi.addMessage(App.get(), _workorder.getWorkOrderId(), msg);
+                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -193,13 +194,17 @@ public class MessageFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onGetMessages(Messages messages, boolean success, Error error) {
-            if (!success || error != null)
-                return;
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getMessages")) {
+                Messages messages = (Messages) successObject;
+                Error error = (Error) failObject;
+                if (!success || error != null)
+                    return;
 
-            _adapter.addObjects(messages.getMetadata().getPage(), messages.getResults());
+                _adapter.addObjects(messages.getMetadata().getPage(), messages.getResults());
 
-            rebuildList();
+                rebuildList();
+            }
         }
     };
 }

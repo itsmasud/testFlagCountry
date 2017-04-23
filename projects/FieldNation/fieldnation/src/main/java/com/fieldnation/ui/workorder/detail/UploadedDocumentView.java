@@ -30,6 +30,10 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
 
     private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
 
+    // Progress Constants
+    public static final int PROGRESS_QUEUED = -100;
+    public static final int PROGRESS_PAUSED = -200;
+
     // UI
     private IconFontTextView _fileTypeIconFont;
     private ImageView _picView;
@@ -136,9 +140,25 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         if (_progressBar == null)
             return;
 
-        if (progress == null)
+        if (progress == null) {
             _progressBar.setIndeterminate(true);
+            return;
+        }
 
+        if (progress == PROGRESS_PAUSED) {
+            _statusTextView.setText("Paused");
+            _progressBar.setIndeterminate(true);
+            return;
+        }
+
+        if (progress == PROGRESS_QUEUED) {
+            _statusTextView.setText("Queued");
+            _progressBar.setIndeterminate(true);
+            return;
+        }
+
+
+        _statusTextView.setText("Uploading...");
         _progressBar.setIndeterminate(false);
         _progressBar.setMax(100);
         _progressBar.setProgress(progress);
@@ -207,7 +227,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         if (_doc.getAuthor() != null) {
             String firstName = _doc.getAuthor().getFirstName();
             String lastName = _doc.getAuthor().getLastName();
-            _usernameTextView.setText(firstName == null ? "" : firstName + " " + lastName == null ? "" : lastName);
+            _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
         }
 
 

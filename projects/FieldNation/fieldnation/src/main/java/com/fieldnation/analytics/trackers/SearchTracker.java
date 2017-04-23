@@ -8,6 +8,7 @@ import com.fieldnation.analytics.contexts.SpSearchContext;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
+import com.fieldnation.v2.ui.search.FilterParams;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -106,8 +107,43 @@ public class SearchTracker {
                 });
     }
 
+    public static void onSearch(Context context, Item item, FilterParams filterParams) {
+        Item i = item.clone();
+        i.elementType = ElementType.LIST_ITEM;
+        TrackerBase.unstructuredEvent(context, item,
+                new EventContext[]{
+                        new SpSearchContext.Builder()
+                                .name("Location")
+                                .value(getLocationString(filterParams))
+                                .build(),
+                        new SpSearchContext.Builder()
+                                .name("Status")
+                                .value(filterParams.title)
+                                .build(),
+                        new SpSearchContext.Builder()
+                                .name("Distance")
+                                .value(filterParams.radius + "")
+                                .build()
+                });
+    }
+
     private static String getLocationString(SavedSearchParams savedSearchParams) {
         switch (savedSearchParams.uiLocationSpinner) {
+            case 0:
+                return "Profile";
+            case 1:
+                return "Current";
+            case 2:
+                return "Other";
+            case 3:
+                return "Remote";
+            default:
+                return "na";
+        }
+    }
+
+    private static String getLocationString(FilterParams filterParams) {
+        switch (filterParams.uiLocationSpinner) {
             case 0:
                 return "Profile";
             case 1:

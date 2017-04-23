@@ -22,7 +22,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
 
     private TextView _nameTextView;
     private StarView _starRating;
-    private TextView _locationTextView;
     private TextView _reviewsTextView;
     private TextView _newBuyerTextView;
     private RelativeLayout _detailsLayout;
@@ -60,7 +59,6 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
 
         _nameTextView = (TextView) findViewById(R.id.company_textview);
         _starRating = (StarView) findViewById(R.id.star_rating);
-        _locationTextView = (TextView) findViewById(R.id.location_textview);
         _reviewsTextView = (TextView) findViewById(R.id.reviews_textview);
         _newBuyerTextView = (TextView) findViewById(R.id.newBuyer_textview);
         _detailsLayout = (RelativeLayout) findViewById(R.id.details_layout);
@@ -95,59 +93,101 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
             _nameTextView.setText("Company Name Hidden");
         }
 
-        if (_workOrder.getManager() == null) {
-            _newBuyerTextView.setVisibility(VISIBLE);
-            _starRating.setStars(0);
-            _detailsLayout.setVisibility(GONE);
-            _locationTextView.setText("Location not available");
-            _reviewsTextView.setVisibility(GONE);
-        } else {
+
+/*        if (_workOrder.getRatings() != null
+                && _workOrder.getRatings().getBuyer() != null
+                && _workOrder.getRatings().getBuyer().getCompany() != null) {
             _newBuyerTextView.setVisibility(GONE);
             _detailsLayout.setVisibility(VISIBLE);
 
-            if (_workOrder.getManager().getApprovalDays() != null) {
+            RatingCompanyMine rating = _workOrder.getRating().getCompany().getMine();
+
+            if (rating.getAverageDaysToApproval() != null
+                    && rating.getAverageDaysToApproval() != 0) {
                 _daysTextView.setVisibility(VISIBLE);
-                _daysTextView.setText(_workOrder.getManager().getApprovalDays() + " Days");
+                _daysTextView.setText(rating.getAverageDaysToApproval() + " Days");
             } else {
                 _daysTextView.setText("");
                 _daysTextView.setVisibility(GONE);
             }
 
-            if (_workOrder.getManager().getRating() != null) {
-                _starRating.setStars(_workOrder.getManager().getRating().intValue());
+            if (rating.getStars() != null) {
+                _starRating.setStars(rating.getStars().intValue());
             } else {
                 _starRating.setStars(0);
             }
-/*
-TODO            if (rating.getClearExpectationRatingPercent() != null) {
-                _expectationsProgressBar.setProgress((int) (double) rating.getClearExpectationRatingPercent());
-                _expectationsTextView.setText(((int) (double) rating.getClearExpectationRatingPercent()) + "%");
+
+            if (rating.getClearExpectations() != null) {
+                _expectationsProgressBar.setProgress(rating.getClearExpectations());
+                _expectationsTextView.setText(rating.getClearExpectations() + "%");
             }
 
-            if (rating.getProfessionalismRatingPercent() != null) {
-                _professionalismProgressBar.setProgress((int) (double) rating.getProfessionalismRatingPercent());
-                _professionalismTextView.setText(((int) (double) rating.getProfessionalismRatingPercent()) + "%");
+            if (rating.getRespectRating() != null) {
+                _professionalismProgressBar.setProgress(rating.getRespectRating());
+                _professionalismTextView.setText(rating.getRespectRating() + "%");
             }
 
-            if (rating.getTotalRating() != null) {
-                if (misc.isEmptyOrNull(rating.getCity()) || misc.isEmptyOrNull(rating.getState())) {
-                    _locationTextView.setText("Location not available");
-                } else {
-                    _locationTextView.setText(rating.getCity() + ", " + rating.getState());
-                }
+            if (rating.getTotalRatings() != null) {
                 _reviewsTextView.setVisibility(VISIBLE);
-                _reviewsTextView.setText(rating.getTotalRating() + " Reviews");
+                _reviewsTextView.setText(rating.getTotalRatings() + " Reviews");
                 _newBuyerTextView.setVisibility(GONE);
             } else {
                 _newBuyerTextView.setVisibility(VISIBLE);
-                if (misc.isEmptyOrNull(rating.getCity()) || misc.isEmptyOrNull(rating.getState())) {
-                    _locationTextView.setText("Location not available");
-                } else {
-                    _locationTextView.setText(rating.getCity() + ", " + rating.getState());
-                }
                 _reviewsTextView.setVisibility(GONE);
             }
-            */
+
+
+        } else
+        if (_workOrder.getRatings() != null
+                && _workOrder.getRatings().getBuyer() != null
+                && _workOrder.getRatings().getBuyer().getOverall() != null) {
+
+            WorkOrderRatingsBuyerOverall overall = _workOrder.getRatings().getBuyer().getOverall();
+
+            if (overall.getApprovalDays() != null
+                    && overall.getApprovalDays() != 0
+                    && overall.getPercentApproval() != null) {
+                _daysTextView.setVisibility(VISIBLE);
+                _daysTextView.setText(overall.getAverageDaysToApproval() + " Days");
+            } else {
+                _daysTextView.setText("");
+                _daysTextView.setVisibility(GONE);
+            }
+
+            if (rating.getStars() != null) {
+                _starRating.setStars(rating.getStars().intValue());
+            } else {
+                _starRating.setStars(0);
+            }
+
+            if (rating.getClearExpectations() != null) {
+                _expectationsProgressBar.setProgress(rating.getClearExpectations());
+                _expectationsTextView.setText(rating.getClearExpectations() + "%");
+            }
+
+            if (rating.getRespectRating() != null) {
+                _professionalismProgressBar.setProgress(rating.getRespectRating());
+                _professionalismTextView.setText(rating.getRespectRating() + "%");
+            }
+
+            if (rating.getTotalRatings() != null) {
+                _reviewsTextView.setVisibility(VISIBLE);
+                _reviewsTextView.setText(rating.getTotalRatings() + " Reviews");
+                _newBuyerTextView.setVisibility(GONE);
+            } else {
+                _newBuyerTextView.setVisibility(VISIBLE);
+                _reviewsTextView.setVisibility(GONE);
+            }
+        } else {*/
+        _newBuyerTextView.setVisibility(VISIBLE);
+        _starRating.setStars(0);
+        _detailsLayout.setVisibility(GONE);
+        _reviewsTextView.setVisibility(GONE);
+        //}
+
+        if (_workOrder.getManager() == null) {
+        } else {
+            _newBuyerTextView.setVisibility(GONE);
         }
     }
 }

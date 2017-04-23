@@ -160,6 +160,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
         private void startActivityForResult(Bundle bundle) {
             getClient().clearStartActivityForResult();
+            Log.v(TAG, "startActivityForResult " + getActivity().getClass().getSimpleName());
             Intent intent = bundle.getParcelable(PARAM_INTENT);
             int requestCode = bundle.getInt(PARAM_REQUEST_CODE);
 
@@ -193,6 +194,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         }
 
         private void preOnActivityResult(Bundle bundle) {
+            Log.v(TAG, "preOnActivityResult");
             getClient().clearOnActivityResult(bundle.getInt(PARAM_REQUEST_CODE));
             onActivityResult(
                     bundle.getInt(PARAM_REQUEST_CODE),

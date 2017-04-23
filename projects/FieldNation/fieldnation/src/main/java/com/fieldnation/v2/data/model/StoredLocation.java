@@ -445,7 +445,7 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        return _notes;
+            return _notes;
     }
 
     public StoredLocation notes(LocationNote[] notes) throws ParseException {
@@ -607,7 +607,7 @@ public class StoredLocation implements Parcelable {
         try {
             return new StoredLocation(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

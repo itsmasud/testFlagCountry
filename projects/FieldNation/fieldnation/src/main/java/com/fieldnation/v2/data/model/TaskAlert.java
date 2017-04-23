@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -45,12 +51,8 @@ public class TaskAlert implements Parcelable {
 
     public String getEmail() {
         try {
-            if (_email != null)
-                return _email;
-
-            if (SOURCE.has("email") && SOURCE.get("email") != null)
+            if (_email == null && SOURCE.has("email") && SOURCE.get("email") != null)
                 _email = SOURCE.getString("email");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -71,12 +73,8 @@ public class TaskAlert implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -97,12 +95,8 @@ public class TaskAlert implements Parcelable {
 
     public String getSent() {
         try {
-            if (_sent != null)
-                return _sent;
-
-            if (SOURCE.has("sent") && SOURCE.get("sent") != null)
+            if (_sent == null && SOURCE.has("sent") && SOURCE.get("sent") != null)
                 _sent = SOURCE.getString("sent");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -139,7 +133,7 @@ public class TaskAlert implements Parcelable {
         try {
             return new TaskAlert(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -177,5 +171,13 @@ public class TaskAlert implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

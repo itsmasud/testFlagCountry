@@ -48,17 +48,16 @@ public class Date implements Parcelable {
 
     public Local getLocal() {
         try {
-        if (_local != null)
-            return _local;
-
-        if (SOURCE.has("local") && SOURCE.get("local") != null)
+            if (_local == null && SOURCE.has("local") && SOURCE.get("local") != null)
             _local = Local.fromJson(SOURCE.getJsonObject("local"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_local != null && _local.isSet())
         return _local;
+
+        return null;
     }
 
     public Date local(Local local) throws ParseException {
@@ -116,7 +115,7 @@ public class Date implements Parcelable {
         try {
             return new Date(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

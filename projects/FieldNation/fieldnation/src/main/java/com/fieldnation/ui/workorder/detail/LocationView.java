@@ -156,8 +156,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         _workOrder = workOrder;
 
         if (_gmapsClient != null && _gmapsClient.isConnected()) {
-            _gmapsClient.subStaticMapClassic(_workOrder.getWorkOrderId());
-            _gmapsClient.subDirections(_workOrder.getWorkOrderId());
+            _gmapsClient.subStaticMapClassic(_workOrder.getId());
+            _gmapsClient.subDirections(_workOrder.getId());
             lookupMap();
         }
         populateUi();
@@ -427,7 +427,7 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
             int width = (_mapImageView.getWidth() * 180) / _mapImageView.getHeight();
             int height = 180;
 
-            GmapsClient.getStaticMapClassic(App.get(), _workOrder.getWorkOrderId(), start, end,
+            GmapsClient.getStaticMapClassic(App.get(), _workOrder.getId(), start, end,
                     width, height);
         } else {
             _mapUnavailable = true;
@@ -460,7 +460,7 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkOrderActivity.startNew(getContext(), _workOrder.getWorkOrderId().intValue(), WorkOrderActivity.TAB_MESSAGE);
+                    WorkOrderActivity.startNew(getContext(), _workOrder.getId().intValue(), WorkOrderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {
@@ -525,8 +525,8 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
         @Override
         public void onConnected() {
             if (_workOrder != null) {
-                _gmapsClient.subStaticMapClassic(_workOrder.getWorkOrderId());
-                _gmapsClient.subDirections(_workOrder.getWorkOrderId());
+                _gmapsClient.subStaticMapClassic(_workOrder.getId());
+                _gmapsClient.subDirections(_workOrder.getId());
                 lookupMap();
             }
         }

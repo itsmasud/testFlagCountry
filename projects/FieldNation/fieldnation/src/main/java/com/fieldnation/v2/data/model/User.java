@@ -13,6 +13,9 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -907,7 +910,7 @@ public class User implements Parcelable {
         try {
             return new User(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

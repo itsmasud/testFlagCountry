@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -16,6 +15,8 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
@@ -63,6 +64,7 @@ public class SignOffActivity extends AuthSimpleActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
     }
@@ -114,7 +116,6 @@ public class SignOffActivity extends AuthSimpleActivity {
                     _workOrder = (WorkOrder) objects[0];
                     _taskId = (Integer) objects[1];
                     _completeWorkorder = (Boolean) objects[2];
-
                 }
             }.executeEx(extras);
 
@@ -213,13 +214,13 @@ public class SignOffActivity extends AuthSimpleActivity {
             if (_taskId != -1) {
                 signature.task(new Task().id(_taskId));
             }
-            WorkordersWebApi.addSignature(App.get(), _workOrder.getWorkOrderId(), signature);
+            WorkordersWebApi.addSignature(App.get(), _workOrder.getId(), signature);
 
             if (_completeWorkorder) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
-                        WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getWorkOrderId());
-                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getWorkOrderId());
-                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
+                        WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
+                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId());
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -277,7 +278,14 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
         @Override
         public void onDoneClick() {
-            setResult(RESULT_OK);
+            Log.v(TAG, "_thankyou_listener.onDone");
+            if (getParent() == null) {
+                Log.v(TAG, "no Parent");
+                setResult(RESULT_OK);
+            } else {
+                Log.v(TAG, "has parent");
+                getParent().setResult(RESULT_OK);
+            }
             finish();
         }
     };
@@ -285,7 +293,11 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
         @Override
         public void onDoneClick() {
-            setResult(RESULT_CANCELED);
+            if (getParent() == null) {
+                setResult(RESULT_CANCELED);
+            } else {
+                getParent().setResult(RESULT_CANCELED);
+            }
             finish();
         }
     };
@@ -314,17 +326,13 @@ public class SignOffActivity extends AuthSimpleActivity {
         if (markComplete)
             intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
 
-        if (!(context instanceof Activity))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        ActivityResultClient.startActivityForResult(context, intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
     }
 
     public static void startSignOff(Context context, WorkOrder workOrder, int taskId) {
         Intent intent = new Intent(context, SignOffActivity.class);
         intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
         intent.putExtra(INTENT_PARAM_TASK_ID, taskId);
-        if (!(context instanceof Activity))
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+        ActivityResultClient.startActivity(context, intent);
     }
 }

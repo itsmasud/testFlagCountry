@@ -40,6 +40,14 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         return this;
     }
 
+    public boolean isReasonSet() {
+        return _reason != null;
+    }
+
+    public String getReasonUrlParam() {
+        return "reason=" + _reason;
+    }
+
     public void setAsync(Boolean async) {
         _async = async;
     }
@@ -53,6 +61,14 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         return this;
     }
 
+    public boolean isAsyncSet() {
+        return _async != null;
+    }
+
+    public String getAsyncUrlParam() {
+        return "async=" + _async;
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -60,7 +76,7 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(IncompleteWorkOrderOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -73,7 +89,7 @@ public class IncompleteWorkOrderOptions implements Parcelable {
         try {
             return Serializer.serializeObject(incompleteWorkOrderOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

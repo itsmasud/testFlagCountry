@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class TechnicianW9Status implements Parcelable {
 
     public String getStatusName() {
         try {
-            if (_statusName != null)
-                return _statusName;
-
-            if (SOURCE.has("status_name") && SOURCE.get("status_name") != null)
+            if (_statusName == null && SOURCE.has("status_name") && SOURCE.get("status_name") != null)
                 _statusName = SOURCE.getString("status_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class TechnicianW9Status implements Parcelable {
 
     public Integer getTechnicianW9StatusId() {
         try {
-            if (_technicianW9StatusId != null)
-                return _technicianW9StatusId;
-
-            if (SOURCE.has("technician_w9_status_id") && SOURCE.get("technician_w9_status_id") != null)
+            if (_technicianW9StatusId == null && SOURCE.has("technician_w9_status_id") && SOURCE.get("technician_w9_status_id") != null)
                 _technicianW9StatusId = SOURCE.getInt("technician_w9_status_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -112,7 +108,7 @@ public class TechnicianW9Status implements Parcelable {
         try {
             return new TechnicianW9Status(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -150,5 +146,13 @@ public class TechnicianW9Status implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

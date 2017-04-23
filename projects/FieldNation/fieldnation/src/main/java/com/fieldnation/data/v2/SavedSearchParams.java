@@ -191,8 +191,10 @@ public class SavedSearchParams implements Parcelable {
             }
         }
 
+/*
         if (latitude != null && longitude != null)
             key += ":" + ((int) (latitude * 1000)) + ":" + ((int) (longitude * 1000));
+*/
 
         if (radius != null)
             key += ":" + ((int) (radius * 1000));

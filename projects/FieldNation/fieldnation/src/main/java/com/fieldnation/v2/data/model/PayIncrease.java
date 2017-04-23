@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -97,17 +101,16 @@ public class PayIncrease implements Parcelable {
 
     public User getAuthor() {
         try {
-            if (_author != null)
-                return _author;
-
-            if (SOURCE.has("author") && SOURCE.get("author") != null)
+            if (_author == null && SOURCE.has("author") && SOURCE.get("author") != null)
                 _author = User.fromJson(SOURCE.getJsonObject("author"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_author != null && _author.isSet())
         return _author;
+
+        return null;
     }
 
     public PayIncrease author(User author) throws ParseException {
@@ -123,17 +126,16 @@ public class PayIncrease implements Parcelable {
 
     public Date getCreated() {
         try {
-            if (_created != null)
-                return _created;
-
-            if (SOURCE.has("created") && SOURCE.get("created") != null)
+            if (_created == null && SOURCE.has("created") && SOURCE.get("created") != null)
                 _created = Date.fromJson(SOURCE.getJsonObject("created"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_created != null && _created.isSet())
         return _created;
+
+        return null;
     }
 
     public PayIncrease created(Date created) throws ParseException {
@@ -149,12 +151,8 @@ public class PayIncrease implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -175,12 +173,8 @@ public class PayIncrease implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -201,17 +195,16 @@ public class PayIncrease implements Parcelable {
 
     public Pay getPay() {
         try {
-            if (_pay != null)
-                return _pay;
-
-            if (SOURCE.has("pay") && SOURCE.get("pay") != null)
+            if (_pay == null && SOURCE.has("pay") && SOURCE.get("pay") != null)
                 _pay = Pay.fromJson(SOURCE.getJsonObject("pay"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_pay != null && _pay.isSet())
         return _pay;
+
+        return null;
     }
 
     public PayIncrease pay(Pay pay) throws ParseException {
@@ -227,12 +220,8 @@ public class PayIncrease implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -253,12 +242,8 @@ public class PayIncrease implements Parcelable {
 
     public String getStatusDescription() {
         try {
-            if (_statusDescription != null)
-                return _statusDescription;
-
-            if (SOURCE.has("status_description") && SOURCE.get("status_description") != null)
+            if (_statusDescription == null && SOURCE.has("status_description") && SOURCE.get("status_description") != null)
                 _statusDescription = SOURCE.getString("status_description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -315,8 +300,6 @@ public class PayIncrease implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "accept")
         ACCEPT("accept"),
-        @Json(name = "delete")
-        DELETE("delete"),
         @Json(name = "edit")
         EDIT("edit");
 
@@ -372,7 +355,7 @@ public class PayIncrease implements Parcelable {
         try {
             return new PayIncrease(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -410,5 +393,13 @@ public class PayIncrease implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

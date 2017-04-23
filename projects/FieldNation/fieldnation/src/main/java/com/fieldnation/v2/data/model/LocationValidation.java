@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -42,12 +48,8 @@ public class LocationValidation implements Parcelable {
 
     public Boolean getIsValid() {
         try {
-            if (_isValid != null)
-                return _isValid;
-
-            if (SOURCE.has("is_valid") && SOURCE.get("is_valid") != null)
+            if (_isValid == null && SOURCE.has("is_valid") && SOURCE.get("is_valid") != null)
                 _isValid = SOURCE.getBoolean("is_valid");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -120,7 +122,7 @@ public class LocationValidation implements Parcelable {
         try {
             return new LocationValidation(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -159,6 +161,10 @@ public class LocationValidation implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
 
     public boolean isSet() {
         return true;

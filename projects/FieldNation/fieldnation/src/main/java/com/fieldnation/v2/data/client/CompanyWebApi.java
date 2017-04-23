@@ -1,14 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -23,8 +21,14 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.CompanyFeatures;
+import com.fieldnation.v2.data.model.CompanyIntegrations;
+import com.fieldnation.v2.data.model.CompanyRating;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.FundTransaction;
+import com.fieldnation.v2.data.model.SavedCreditCards;
+import com.fieldnation.v2.data.model.Tag;
+import com.fieldnation.v2.data.model.Tags;
 
 /**
  * Created by dmgen from swagger.
@@ -34,9 +38,24 @@ public class CompanyWebApi extends TopicClient {
     private static final String STAG = "CompanyWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public CompanyWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -49,10 +68,93 @@ public class CompanyWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: addTag
+     * Adds a tag to a company for selection on a work order basis
+     *
+     * @param tag Tag
+     */
+    public static void addTag(Context context, Tag tag) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/company/tags");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/company/tags");
+
+            if (tag != null)
+                builder.body(tag.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            if (tag != null)
+                methodParams.put("tag", tag.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/company/tags")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "addTag", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: addTag
+     * Adds a tag to a company for selection on a work order basis
+     *
+     * @param tag   Tag
+     * @param async Async (Optional)
+     */
+    public static void addTag(Context context, Tag tag, Boolean async) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/company/tags?async=" + async);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/company/tags")
+                    .urlParams("?async=" + async);
+
+            if (tag != null)
+                builder.body(tag.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("async", async);
+            if (tag != null)
+                methodParams.put("tag", tag.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/company/tags")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "addTag", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getCompanyDetails
      * Get Company Details
      *
-     * @param companyId ID of company
+     * @param companyId    ID of company
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -64,6 +166,9 @@ public class CompanyWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/company/" + companyId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}")
                     .key(key)
@@ -71,7 +176,91 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getCompanyDetails"))
+                                    CompanyWebApi.class, "getCompanyDetails", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getCompanyUserCreditCards
+     * Get a list of all credit cards for a company user.
+     *
+     * @param accessToken  null
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getCompanyUserCreditCards(Context context, String accessToken, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/creditcards?access_token=" + accessToken);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/creditcards")
+                    .urlParams("?access_token=" + accessToken);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("accessToken", accessToken);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/creditcards")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getCompanyUserCreditCards", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getFeatures
+     * Get a list of all features for a company.
+     *
+     * @param accessToken  null
+     * @param status       Company feature status (enabled, disabled, requested, denied)
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getFeatures(Context context, String accessToken, String status, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/features?access_token=" + accessToken + "&status=" + status);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/features")
+                    .urlParams("?access_token=" + accessToken + "&status=" + status);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("accessToken", accessToken);
+            methodParams.put("status", status);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/features")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getFeatures", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -89,8 +278,8 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getIntegrations
      * Get a list of all company_integrations for a company.
      *
-     * @param companyId null
-     * @param accessToken null
+     * @param companyId    null
+     * @param accessToken  null
      * @param isBackground indicates that this call is low priority
      */
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean allowCacheResponse, boolean isBackground) {
@@ -103,6 +292,10 @@ public class CompanyWebApi extends TopicClient {
                     .path("/api/rest/v2/company/" + companyId + "/integrations")
                     .urlParams("?access_token=" + accessToken);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+            methodParams.put("accessToken", accessToken);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}/integrations")
                     .key(key)
@@ -110,7 +303,129 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getIntegrations"))
+                                    CompanyWebApi.class, "getIntegrations", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getManagedProviders
+     * Get Company Managed Providers
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getManagedProviders(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/managed-providers");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/managed-providers");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/managed-providers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getManagedProviders", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getManagedProviders
+     * Get Company Managed Providers
+     *
+     * @param getManagedProvidersOptions Additional optional parameters
+     * @param isBackground               indicates that this call is low priority
+     */
+    public static void getManagedProviders(Context context, GetManagedProvidersOptions getManagedProvidersOptions, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/managed-providers" + (getManagedProvidersOptions.getCompanyId() != null ? "?company_id=" + getManagedProvidersOptions.getCompanyId() : "")
+                    + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
+            );
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/managed-providers")
+                    .urlParams("" + (getManagedProvidersOptions.getCompanyId() != null ? "?company_id=" + getManagedProvidersOptions.getCompanyId() : "")
+                            + (getManagedProvidersOptions.getMarketplaceOn() != null ? "&marketplace_on=" + getManagedProvidersOptions.getMarketplaceOn() : "")
+                    );
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/managed-providers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getManagedProviders", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getPredefinedExpensesByWorkOrder
+     * Get a list of predefined expenses by work order.
+     *
+     * @param workOrderId  null
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/predefined-expenses/" + workOrderId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/predefined-expenses/{work_order_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getPredefinedExpenses", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -128,7 +443,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getRatingsByCompanyId
      * Get Rating Details of a Company
      *
-     * @param companyId Company ID
+     * @param companyId    Company ID
      * @param isBackground indicates that this call is low priority
      */
     public static void getRatings(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -140,6 +455,9 @@ public class CompanyWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/company/" + companyId + "/ratings");
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/company/{company_id}/ratings")
                     .key(key)
@@ -147,7 +465,162 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "getRatings"))
+                                    CompanyWebApi.class, "getRatings", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getSelectionRulesByCompany
+     * Returns a list of selection rules for company
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getSelectionRules(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/selection_rules");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/selection_rules");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/selection_rules")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getSelectionRules", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getSendRequestedFeatures
+     * Send a request to enable a feature of a company.
+     *
+     * @param featureId   Feature ID
+     * @param accessToken null
+     */
+    public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken) {
+        try {
+            String key = misc.md5("PUT//api/rest/v2/company/features/" + featureId + "?access_token=" + accessToken);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("PUT")
+                    .path("/api/rest/v2/company/features/" + featureId)
+                    .urlParams("?access_token=" + accessToken);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("featureId", featureId);
+            methodParams.put("accessToken", accessToken);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("PUT//api/rest/v2/company/features/{feature_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getSendRequestedFeatures", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getTags
+     * Gets tags/labels
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getTags(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/tags");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/tags");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/tags")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getTags", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getTagsByWorkOrder
+     * Gets available tags for a work order and the company it belongs to (provider friendly route)
+     *
+     * @param workOrderId  work order ID
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/tags/" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/tags/" + workOrderId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/tags/{work_order_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getTags", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -177,6 +650,10 @@ public class CompanyWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+            methodParams.put("financeId", financeId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")
                     .key(key)
@@ -184,7 +661,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "updateFund"))
+                                    CompanyWebApi.class, "updateFund", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -199,8 +676,8 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: updateFundByFund
      * Perform fund deposit
      *
-     * @param companyId ID of company
-     * @param financeId ID of finance account
+     * @param companyId       ID of company
+     * @param financeId       ID of finance account
      * @param fundTransaction Transaction attempting to be created (Optional)
      */
     public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
@@ -215,6 +692,12 @@ public class CompanyWebApi extends TopicClient {
             if (fundTransaction != null)
                 builder.body(fundTransaction.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("companyId", companyId);
+            methodParams.put("financeId", financeId);
+            if (fundTransaction != null)
+                methodParams.put("fundTransaction", fundTransaction.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/company/{company_id}/funds/{finance_id}")
                     .key(key)
@@ -222,7 +705,7 @@ public class CompanyWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
-                                    CompanyWebApi.class, "updateFund"))
+                                    CompanyWebApi.class, "updateFund", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -241,24 +724,54 @@ public class CompanyWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "queued": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onQueued(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onCompanyWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onQueued(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onGetCompanyDetails(boolean success, Error error) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onGetIntegrations(CompanyIntegrations companyIntegrations, boolean success, Error error) {
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onGetRatings(CompanyRating companyRating, boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
-        public void onUpdateFund(boolean success, Error error) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
         }
-
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -286,30 +799,62 @@ public class CompanyWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "getCompanyDetails":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getIntegrations":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "addTag":
+                            successObject = Tag.fromJson(new JsonObject(data));
+                            break;
+                        case "getCompanyUserCreditCards":
+                            successObject = SavedCreditCards.fromJson(new JsonObject(data));
+                            break;
+                        case "getTags":
+                            successObject = Tags.fromJson(new JsonObject(data));
+                            break;
+                        case "getSelectionRules":
+//                            successObject = SelectionRules.fromJson(new JsonObject(data));
+                            break;
+                        case "getFeatures":
+                            successObject = CompanyFeatures.fromJson(new JsonObject(data));
+                            break;
+                        case "getIntegrations":
                             successObject = CompanyIntegrations.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getRatings":
-                        if (success)
+                            break;
+                        case "getRatings":
                             successObject = CompanyRating.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        case "getPredefinedExpenses":
+//                            successObject = PredefinedExpenses.fromJson(new JsonObject(data));
+                            break;
+                        case "getCompanyDetails":
+                        case "getManagedProviders":
+                        case "getSendRequestedFeatures":
+                        case "updateFund":
+                            successObject = data;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addTag":
+                        case "getCompanyDetails":
+                        case "getCompanyUserCreditCards":
+                        case "getFeatures":
+                        case "getIntegrations":
+                        case "getManagedProviders":
+                        case "getPredefinedExpenses":
+                        case "getRatings":
+                        case "getSelectionRules":
+                        case "getSendRequestedFeatures":
+                        case "getTags":
+                        case "updateFund":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateFund":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -325,24 +870,7 @@ public class CompanyWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onCompanyWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "getCompanyDetails":
-                        listener.onGetCompanyDetails(success, (Error) failObject);
-                        break;
-                    case "getIntegrations":
-                        listener.onGetIntegrations((CompanyIntegrations) successObject, success, (Error) failObject);
-                        break;
-                    case "getRatings":
-                        listener.onGetRatings((CompanyRating) successObject, success, (Error) failObject);
-                        break;
-                    case "updateFund":
-                        listener.onUpdateFund(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

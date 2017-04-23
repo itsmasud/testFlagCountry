@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,12 +48,8 @@ public class CountryCity implements Parcelable {
 
     public String getLabel() {
         try {
-            if (_label != null)
-                return _label;
-
-            if (SOURCE.has("label") && SOURCE.get("label") != null)
+            if (_label == null && SOURCE.has("label") && SOURCE.get("label") != null)
                 _label = SOURCE.getString("label");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -70,12 +70,8 @@ public class CountryCity implements Parcelable {
 
     public Boolean getRequired() {
         try {
-            if (_required != null)
-                return _required;
-
-            if (SOURCE.has("required") && SOURCE.get("required") != null)
+            if (_required == null && SOURCE.has("required") && SOURCE.get("required") != null)
                 _required = SOURCE.getBoolean("required");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -112,7 +108,7 @@ public class CountryCity implements Parcelable {
         try {
             return new CountryCity(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -150,5 +146,13 @@ public class CountryCity implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

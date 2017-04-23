@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,12 +57,8 @@ public class Satisfaction implements Parcelable {
 
     public Integer getAverageDaysToApproval() {
         try {
-            if (_averageDaysToApproval != null)
-                return _averageDaysToApproval;
-
-            if (SOURCE.has("average_days_to_approval") && SOURCE.get("average_days_to_approval") != null)
+            if (_averageDaysToApproval == null && SOURCE.has("average_days_to_approval") && SOURCE.get("average_days_to_approval") != null)
                 _averageDaysToApproval = SOURCE.getInt("average_days_to_approval");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -79,12 +79,8 @@ public class Satisfaction implements Parcelable {
 
     public Integer getClearExpectation() {
         try {
-            if (_clearExpectation != null)
-                return _clearExpectation;
-
-            if (SOURCE.has("clear_expectation") && SOURCE.get("clear_expectation") != null)
+            if (_clearExpectation == null && SOURCE.has("clear_expectation") && SOURCE.get("clear_expectation") != null)
                 _clearExpectation = SOURCE.getInt("clear_expectation");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -105,12 +101,8 @@ public class Satisfaction implements Parcelable {
 
     public Integer getRespectRating() {
         try {
-            if (_respectRating != null)
-                return _respectRating;
-
-            if (SOURCE.has("respect_rating") && SOURCE.get("respect_rating") != null)
+            if (_respectRating == null && SOURCE.has("respect_rating") && SOURCE.get("respect_rating") != null)
                 _respectRating = SOURCE.getInt("respect_rating");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +123,8 @@ public class Satisfaction implements Parcelable {
 
     public Double getStars() {
         try {
-            if (_stars != null)
-                return _stars;
-
-            if (SOURCE.has("stars") && SOURCE.get("stars") != null)
+            if (_stars == null && SOURCE.has("stars") && SOURCE.get("stars") != null)
                 _stars = SOURCE.getDouble("stars");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,12 +145,8 @@ public class Satisfaction implements Parcelable {
 
     public Integer getTotalRatings() {
         try {
-            if (_totalRatings != null)
-                return _totalRatings;
-
-            if (SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
+            if (_totalRatings == null && SOURCE.has("total_ratings") && SOURCE.get("total_ratings") != null)
                 _totalRatings = SOURCE.getInt("total_ratings");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -199,7 +183,7 @@ public class Satisfaction implements Parcelable {
         try {
             return new Satisfaction(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -237,5 +221,13 @@ public class Satisfaction implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

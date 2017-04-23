@@ -19,11 +19,12 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.ListEnvelope;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.FilterDrawerDialog;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
 import com.fieldnation.v2.ui.worecycler.WorkOrderHolder;
@@ -35,6 +36,9 @@ import com.fieldnation.v2.ui.workorder.WorkOrderCard;
 public class SearchResultScreen extends RelativeLayout {
     private static final String TAG = "SearchResultScreen";
 
+    // Dialogs
+    private static final String DIALOG_FILTER_DRAWER = TAG + "filterDrawerDialog";
+
     //UI
     private OverScrollRecyclerView _workOrderList;
     private RefreshView _refreshView;
@@ -44,7 +48,9 @@ public class SearchResultScreen extends RelativeLayout {
     private WorkordersWebApi _workOrderClient;
 
     // Data
+    private GetWorkOrdersOptions _workOrdersOptions;
     private SavedList _savedList;
+    private FilterParams _filterParams;
     private Location _location;
     private OnClickListener _onClickListener;
     private OnWorkOrderListReceivedListener _onListReceivedListener;
@@ -92,15 +98,36 @@ public class SearchResultScreen extends RelativeLayout {
                 .start(App.get());
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
+        super.onAttachedToWindow();
+
+        FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
+
+        FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+
+        super.onDetachedFromWindow();
+    }
+
     private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
         public void onLocation(SimpleGps simpleGps, Location location) {
             _location = location;
-/*
-TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
-                _searchParams.location(_location.getLatitude(), _location.getLongitude());
+
+            if (_filterParams != null && _filterParams.uiLocationSpinner == 1 && _location != null) {
+                _filterParams.latitude = _location.getLatitude();
+                _filterParams.longitude = _location.getLongitude();
             }
-*/
             _simpleGps.stop();
         }
 
@@ -110,49 +137,40 @@ TODO            if (_searchParams != null && _searchParams.uiLocationSpinner == 
         }
     };
 
-    @Override
-    protected void onAttachedToWindow() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
-        super.onAttachedToWindow();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
-
-        super.onDetachedFromWindow();
+    public WoPagingAdapter getAdapter() {
+        return _adapter;
     }
 
     private void getPage(int page) {
-        if (_savedList == null)
+        if (_workOrdersOptions == null)
             return;
 
-        WorkordersWebApi.getWorkOrders(App.get(),
-                new GetWorkOrdersOptions()
-                        .list(_savedList.getId())
-                        .page(page),
-                true, false);
+        _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
+
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
         if (_refreshView != null)
             _refreshView.startRefreshing();
     }
 
     public void startSearch(SavedList savedList) {
+        startSearch(savedList, new GetWorkOrdersOptions());
+    }
+
+    public void startSearch(SavedList savedList, GetWorkOrdersOptions workOrdersOptions) {
         if (savedList == null) {
             return;
         }
 
+        _workOrdersOptions = workOrdersOptions;
+        _workOrdersOptions.setList(savedList.getId());
         _savedList = savedList;
+        _filterParams = FilterParams.load(savedList.getId());
 
-/*
-TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
-            _searchParams.location(_location.getLatitude(), _location.getLongitude());
+        if (_filterParams.uiLocationSpinner == 1 && _location != null) {
+            _filterParams.latitude = _location.getLatitude();
+            _filterParams.longitude = _location.getLongitude();
         }
-*/
 
         _adapter.clear();
         _adapter.refreshAll();
@@ -180,48 +198,48 @@ TODO        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
         }
 
         @Override
-        public void onGetWorkOrders(WorkOrders workOrders, boolean success, Error error) {
-/*
-TODO            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
-                return;
-*/
-            // TODO see if getList() is the list ID
-            if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
-                return;
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "onWorkordersWebApi: " + methodName);
+            if (methodName.equals("getWorkOrders")) {
+                WorkOrders workOrders = (WorkOrders) successObject;
+                // TODO see if getList() is the list ID
+                if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
+                    return;
 
-            if (_onListReceivedListener != null)
-                _onListReceivedListener.OnWorkOrderListReceived(workOrders);
+                if (_onListReceivedListener != null)
+                    _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
-            if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
+                if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
+                    _refreshView.refreshComplete();
+                    return;
+                }
+
+                ListEnvelope envelope = workOrders.getMetadata();
+
+                Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
+
+                if (envelope.getTotal() == 0) {
+                    _adapter.clear();
+                } else if (workOrders.getResults().length > 0
+                        && envelope.getPerPage() > 0
+                        && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
+                    _adapter.addObjects(envelope.getPage(), workOrders.getResults());
+                else
+                    _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
+
                 _refreshView.refreshComplete();
-                return;
             }
 
-            ListEnvelope envelope = workOrders.getMetadata();
-
-            Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-
-            if (envelope.getTotal() == 0) {
-                _adapter.clear();
-            } else if (workOrders.getResults().length > 0
-                    && envelope.getPerPage() > 0
-                    && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
-                _adapter.addObjects(envelope.getPage(), workOrders.getResults());
-            else
-                _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
-
-            _refreshView.refreshComplete();
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onWorkordersWebApi: " + methodName);
-
-            if (methodName.startsWith("get"))
+            if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                 return;
 
             _adapter.refreshAll();
-            _refreshView.startRefreshing();
+            post(new Runnable() {
+                @Override
+                public void run() {
+                    _refreshView.startRefreshing();
+                }
+            });
         }
     };
 
@@ -250,11 +268,7 @@ TODO            if (_searchParams == null || !_searchParams.toKey().equals(searc
 
         @Override
         public boolean useHeader() {
-/*
-TODO            if (_searchParams != null)
-                return _searchParams.canEdit;
-*/
-            return false;
+            return _savedList.getId().equals("workorders_available");
         }
 
         @Override
@@ -265,9 +279,10 @@ TODO            if (_searchParams != null)
 
         @Override
         public void onBindHeaderViewHolder(BaseHolder holder) {
-            ((HeaderView) holder.itemView).setSavedList(_savedList);
+            HeaderView view = (HeaderView) holder.itemView;
+            view.setFilterParams(_filterParams);
+            view.setOnClickListener(_header_onClick);
         }
-
 
         @Override
         public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
@@ -281,11 +296,33 @@ TODO            if (_searchParams != null)
         }
     };
 
+    private final View.OnClickListener _header_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _filterParams.listId);
+        }
+    };
+
+    private final FilterDrawerDialog.OnOkListener _filterDrawer_onOk = new FilterDrawerDialog.OnOkListener() {
+        @Override
+        public void onOk(FilterParams filterParams) {
+            _filterParams = filterParams;
+            _adapter.refreshAll();
+        }
+    };
+
     private final View.OnClickListener _card_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_onClickListener != null)
                 _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    private final WorkOrderCard.OnActionListener _workOrderCard_onAction = new WorkOrderCard.OnActionListener() {
+        @Override
+        public void onAction() {
+            _refreshView.startRefreshing();
         }
     };
 

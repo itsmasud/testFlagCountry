@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -20,8 +24,8 @@ import java.text.ParseException;
 public class Hold implements Parcelable {
     private static final String TAG = "Hold";
 
-    @Json(name = "acknowledged")
-    private Boolean _acknowledged;
+    @Json(name = "acknowledgment")
+    private Acknowledgment _acknowledgment;
 
     @Json(name = "actions")
     private ActionsEnum[] _actions;
@@ -29,11 +33,11 @@ public class Hold implements Parcelable {
     @Json(name = "id")
     private Integer _id;
 
-    @Json(name = "name")
-    private String _name;
-
     @Json(name = "reason")
     private String _reason;
+
+    @Json(name = "type")
+    private HoldType _type;
 
     @Source
     private JsonObject SOURCE;
@@ -46,29 +50,28 @@ public class Hold implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setAcknowledged(Boolean acknowledged) throws ParseException {
-        _acknowledged = acknowledged;
-        SOURCE.put("acknowledged", acknowledged);
+    public void setAcknowledgment(Acknowledgment acknowledgment) throws ParseException {
+        _acknowledgment = acknowledgment;
+        SOURCE.put("acknowledgment", acknowledgment.getJson());
     }
 
-    public Boolean getAcknowledged() {
+    public Acknowledgment getAcknowledgment() {
         try {
-            if (_acknowledged != null)
-                return _acknowledged;
-
-            if (SOURCE.has("acknowledged") && SOURCE.get("acknowledged") != null)
-                _acknowledged = SOURCE.getBoolean("acknowledged");
-
+            if (_acknowledgment == null && SOURCE.has("acknowledgment") && SOURCE.get("acknowledgment") != null)
+                _acknowledgment = Acknowledgment.fromJson(SOURCE.getJsonObject("acknowledgment"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        return _acknowledged;
+        if (_acknowledgment != null && _acknowledgment.isSet())
+            return _acknowledgment;
+
+        return null;
     }
 
-    public Hold acknowledged(Boolean acknowledged) throws ParseException {
-        _acknowledged = acknowledged;
-        SOURCE.put("acknowledged", acknowledged);
+    public Hold acknowledgment(Acknowledgment acknowledgment) throws ParseException {
+        _acknowledgment = acknowledgment;
+        SOURCE.put("acknowledgment", acknowledgment.getJson());
         return this;
     }
 
@@ -114,12 +117,8 @@ public class Hold implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -133,32 +132,6 @@ public class Hold implements Parcelable {
         return this;
     }
 
-    public void setName(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
-    }
-
-    public String getName() {
-        try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
-                _name = SOURCE.getString("name");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _name;
-    }
-
-    public Hold name(String name) throws ParseException {
-        _name = name;
-        SOURCE.put("name", name);
-        return this;
-    }
-
     public void setReason(String reason) throws ParseException {
         _reason = reason;
         SOURCE.put("reason", reason);
@@ -166,12 +139,8 @@ public class Hold implements Parcelable {
 
     public String getReason() {
         try {
-            if (_reason != null)
-                return _reason;
-
-            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+            if (_reason == null && SOURCE.has("reason") && SOURCE.get("reason") != null)
                 _reason = SOURCE.getString("reason");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -185,12 +154,41 @@ public class Hold implements Parcelable {
         return this;
     }
 
+    public void setType(HoldType type) throws ParseException {
+        _type = type;
+        SOURCE.put("type", type.getJson());
+    }
+
+    public HoldType getType() {
+        try {
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = HoldType.fromJson(SOURCE.getJsonObject("type"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_type != null && _type.isSet())
+            return _type;
+
+        return null;
+    }
+
+    public Hold type(HoldType type) throws ParseException {
+        _type = type;
+        SOURCE.put("type", type.getJson());
+        return this;
+    }
+
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
     public enum ActionsEnum {
-        @Json(name = "unkown")
-        UNKOWN("unkown");
+        @Json(name = "acknowledge")
+        ACKNOWLEDGE("acknowledge"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit");
 
         private String value;
 
@@ -244,7 +242,7 @@ public class Hold implements Parcelable {
         try {
             return new Hold(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -282,5 +280,13 @@ public class Hold implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

@@ -34,9 +34,24 @@ public class StaffWebApi extends TopicClient {
     private static final String STAG = "StaffWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public StaffWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -52,7 +67,7 @@ public class StaffWebApi extends TopicClient {
      * Swagger operationId: getEmailTemplates
      * Get email templates by category.
      *
-     * @param category email category
+     * @param category     email category
      * @param isBackground indicates that this call is low priority
      */
     public static void getEmailTemplates(Context context, String category, boolean allowCacheResponse, boolean isBackground) {
@@ -64,6 +79,9 @@ public class StaffWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/staff/email-templates/category/" + category);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("category", category);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/staff/email-templates/category/{category}")
                     .key(key)
@@ -71,7 +89,7 @@ public class StaffWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
-                                    StaffWebApi.class, "getEmailTemplates"))
+                                    StaffWebApi.class, "getEmailTemplates", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -100,6 +118,8 @@ public class StaffWebApi extends TopicClient {
                     .method("GET")
                     .path("/api/rest/v2/staff/robocalls");
 
+            JsonObject methodParams = new JsonObject();
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET//api/rest/v2/staff/robocalls")
                     .key(key)
@@ -107,7 +127,7 @@ public class StaffWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
-                                    StaffWebApi.class, "getRobocalls"))
+                                    StaffWebApi.class, "getRobocalls", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -126,7 +146,7 @@ public class StaffWebApi extends TopicClient {
      * Send recruitment email or robocalls
      *
      * @param workOrderId ID of work order
-     * @param body null
+     * @param body        null
      */
     public static void sendCommunication(Context context, Integer workOrderId, String body) {
         try {
@@ -140,6 +160,11 @@ public class StaffWebApi extends TopicClient {
             if (body != null)
                 builder.body(body);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+            if (body != null)
+                methodParams.put("body", body);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/staff/recruitment/send-communications/{work_order_id}")
                     .key(key)
@@ -147,7 +172,7 @@ public class StaffWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/StaffWebApi",
-                                    StaffWebApi.class, "sendCommunication"))
+                                    StaffWebApi.class, "sendCommunication", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -166,21 +191,54 @@ public class StaffWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "queued": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onQueued(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onStaffWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onQueued(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onGetEmailTemplates(EmailTemplates emailTemplates, boolean success, Error error) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onGetRobocalls(Robocalls robocalls, boolean success, Error error) {
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onSendCommunication(byte[] data, boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        }
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -208,28 +266,32 @@ public class StaffWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "getEmailTemplates":
-                        if (success)
-                            successObject = EmailTemplates.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "getRobocalls":
-                        if (success)
-                            successObject = Robocalls.fromJson(new JsonObject(data));
-                        else
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "sendCommunication":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "sendCommunication":
                             successObject = data;
-                        else
+                            break;
+                        case "getEmailTemplates":
+                            successObject = EmailTemplates.fromJson(new JsonObject(data));
+                            break;
+                        case "getRobocalls":
+                            successObject = Robocalls.fromJson(new JsonObject(data));
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "getEmailTemplates":
+                        case "getRobocalls":
+                        case "sendCommunication":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -245,21 +307,7 @@ public class StaffWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onStaffWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "getEmailTemplates":
-                        listener.onGetEmailTemplates((EmailTemplates) successObject, success, (Error) failObject);
-                        break;
-                    case "getRobocalls":
-                        listener.onGetRobocalls((Robocalls) successObject, success, (Error) failObject);
-                        break;
-                    case "sendCommunication":
-                        listener.onSendCommunication((byte[]) successObject, success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

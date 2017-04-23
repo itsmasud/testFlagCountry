@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,17 +57,16 @@ public class PricingInsightsRegion implements Parcelable {
 
     public PricingInsightsRegionAverageRate getAverageRate() {
         try {
-            if (_averageRate != null)
-                return _averageRate;
-
-            if (SOURCE.has("average_rate") && SOURCE.get("average_rate") != null)
+            if (_averageRate == null && SOURCE.has("average_rate") && SOURCE.get("average_rate") != null)
                 _averageRate = PricingInsightsRegionAverageRate.fromJson(SOURCE.getJsonObject("average_rate"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_averageRate != null && _averageRate.isSet())
         return _averageRate;
+
+        return null;
     }
 
     public PricingInsightsRegion averageRate(PricingInsightsRegionAverageRate averageRate) throws ParseException {
@@ -79,12 +82,8 @@ public class PricingInsightsRegion implements Parcelable {
 
     public Double getDistance() {
         try {
-            if (_distance != null)
-                return _distance;
-
-            if (SOURCE.has("distance") && SOURCE.get("distance") != null)
+            if (_distance == null && SOURCE.has("distance") && SOURCE.get("distance") != null)
                 _distance = SOURCE.getDouble("distance");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -105,12 +104,8 @@ public class PricingInsightsRegion implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +126,8 @@ public class PricingInsightsRegion implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,17 +148,16 @@ public class PricingInsightsRegion implements Parcelable {
 
     public PricingInsightsRegionProviders getProviders() {
         try {
-            if (_providers != null)
-                return _providers;
-
-            if (SOURCE.has("providers") && SOURCE.get("providers") != null)
+            if (_providers == null && SOURCE.has("providers") && SOURCE.get("providers") != null)
                 _providers = PricingInsightsRegionProviders.fromJson(SOURCE.getJsonObject("providers"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_providers != null && _providers.isSet())
         return _providers;
+
+        return null;
     }
 
     public PricingInsightsRegion providers(PricingInsightsRegionProviders providers) throws ParseException {
@@ -199,7 +189,7 @@ public class PricingInsightsRegion implements Parcelable {
         try {
             return new PricingInsightsRegion(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -237,5 +227,13 @@ public class PricingInsightsRegion implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

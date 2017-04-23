@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -65,12 +69,8 @@ public class LocationCoordinates implements Parcelable {
 
     public String getCity() {
         try {
-            if (_city != null)
-                return _city;
-
-            if (SOURCE.has("city") && SOURCE.get("city") != null)
+            if (_city == null && SOURCE.has("city") && SOURCE.get("city") != null)
                 _city = SOURCE.getString("city");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -91,12 +91,8 @@ public class LocationCoordinates implements Parcelable {
 
     public String getCountry() {
         try {
-            if (_country != null)
-                return _country;
-
-            if (SOURCE.has("country") && SOURCE.get("country") != null)
+            if (_country == null && SOURCE.has("country") && SOURCE.get("country") != null)
                 _country = SOURCE.getString("country");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -117,12 +113,8 @@ public class LocationCoordinates implements Parcelable {
 
     public Boolean getExact() {
         try {
-            if (_exact != null)
-                return _exact;
-
-            if (SOURCE.has("exact") && SOURCE.get("exact") != null)
+            if (_exact == null && SOURCE.has("exact") && SOURCE.get("exact") != null)
                 _exact = SOURCE.getBoolean("exact");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -143,12 +135,8 @@ public class LocationCoordinates implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -169,12 +157,8 @@ public class LocationCoordinates implements Parcelable {
 
     public Double getLatitude() {
         try {
-            if (_latitude != null)
-                return _latitude;
-
-            if (SOURCE.has("latitude") && SOURCE.get("latitude") != null)
+            if (_latitude == null && SOURCE.has("latitude") && SOURCE.get("latitude") != null)
                 _latitude = SOURCE.getDouble("latitude");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -195,12 +179,8 @@ public class LocationCoordinates implements Parcelable {
 
     public Double getLongitude() {
         try {
-            if (_longitude != null)
-                return _longitude;
-
-            if (SOURCE.has("longitude") && SOURCE.get("longitude") != null)
+            if (_longitude == null && SOURCE.has("longitude") && SOURCE.get("longitude") != null)
                 _longitude = SOURCE.getDouble("longitude");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -221,12 +201,8 @@ public class LocationCoordinates implements Parcelable {
 
     public String getState() {
         try {
-            if (_state != null)
-                return _state;
-
-            if (SOURCE.has("state") && SOURCE.get("state") != null)
+            if (_state == null && SOURCE.has("state") && SOURCE.get("state") != null)
                 _state = SOURCE.getString("state");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -247,12 +223,8 @@ public class LocationCoordinates implements Parcelable {
 
     public String getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = SOURCE.getString("type");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -273,12 +245,8 @@ public class LocationCoordinates implements Parcelable {
 
     public String getZip() {
         try {
-            if (_zip != null)
-                return _zip;
-
-            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+            if (_zip == null && SOURCE.has("zip") && SOURCE.get("zip") != null)
                 _zip = SOURCE.getString("zip");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -315,7 +283,7 @@ public class LocationCoordinates implements Parcelable {
         try {
             return new LocationCoordinates(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -353,5 +321,13 @@ public class LocationCoordinates implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

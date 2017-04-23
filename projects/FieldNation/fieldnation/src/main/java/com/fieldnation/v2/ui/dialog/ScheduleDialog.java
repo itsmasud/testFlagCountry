@@ -213,6 +213,10 @@ public class ScheduleDialog extends SimpleDialog {
         } catch (Exception e) {
             Log.v(TAG, e);
         }
+        if (_startCal.after(_endCal)) {
+            _okButton.setEnabled(false);
+        }
+
         setMode(_mode);
 
 
@@ -323,9 +327,15 @@ public class ScheduleDialog extends SimpleDialog {
                 }
                 _startIsSet = true;
 
+                _okButton.setEnabled(true);
+
                 if (_mode == MODE_EXACT) {
                     _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 } else {
+                    if (_startCal.after(_endCal)) {
+                        ToastClient.toast(App.get(), "Please pick a start time before the end time", Toast.LENGTH_SHORT);
+                        _okButton.setEnabled(false);
+                    }
                     _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 }
 
@@ -344,6 +354,12 @@ public class ScheduleDialog extends SimpleDialog {
                         }
                     }, 100);
                     return;
+                }
+
+                _okButton.setEnabled(true);
+                if (_startCal.after(_endCal)) {
+                    ToastClient.toast(App.get(), "Please pick an end time after the start time", Toast.LENGTH_SHORT);
+                    _okButton.setEnabled(false);
                 }
 
                 _endIsSet = true;

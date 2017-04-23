@@ -432,10 +432,24 @@ public class Attachment implements Parcelable {
     }
 
     public enum ActionsEnum {
+        @Json(name = "approve")
+        APPROVE("approve"),
         @Json(name = "delete")
         DELETE("delete"),
+        @Json(name = "deny")
+        DENY("deny"),
         @Json(name = "edit")
-        EDIT("edit");
+        EDIT("edit"),
+        @Json(name = "make_private")
+        MAKE_PRIVATE("make_private"),
+        @Json(name = "make_public")
+        MAKE_PUBLIC("make_public"),
+        @Json(name = "notes")
+        NOTES("notes"),
+        @Json(name = "reopen")
+        REOPEN("reopen"),
+        @Json(name = "visibility")
+        VISIBILITY("visibility");
 
         private String value;
 
@@ -489,7 +503,7 @@ public class Attachment implements Parcelable {
         try {
             return new Attachment(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

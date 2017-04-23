@@ -11,7 +11,8 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.ui.workorder.BundleDetailActivity;
+import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
@@ -173,9 +174,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _rightWhiteButton.setText(R.string.btn_confirm);
             setVisibility(View.VISIBLE);
 
+            // on my way
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
-            // on my way
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_running_late);
@@ -200,7 +201,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // Mark complete
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_COMPLETE)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.COMPLETE)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -229,7 +230,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // mark incomplete
-        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+        } else if (workOrderActions.contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -242,21 +243,18 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
             // view_bundle
         } else if (_workOrder.getBundle() != null
-                && _workOrder.getBundle().getId() != null
-                && _workOrder.getBundle().getId() > 0
-                && (_workOrder.getStatus().getId() == 2
-                || _workOrder.getStatus().getId() == 3)) {
+                && _workOrder.getBundle().getActionsSet().contains(Bundle.ActionsEnum.VIEW)) {
             inflate();
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
             _rightWhiteButton.setText(getResources().getString(R.string.btn_view_bundle_num,
-                    _workOrder.getBundle().getMetadata().getTotal()));
+                    _workOrder.getBundle().getMetadata().getTotal() + 1));
             setVisibility(View.VISIBLE);
 
             // accept
         } else if (_workOrder.getRoutes() != null
-                && _workOrder.getRoutes().getOpenRoute() != null
-                && _workOrder.getRoutes().getOpenRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                && _workOrder.getRoutes().getUserRoute() != null
+                && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setOnClickListener(_notInterested_onClick);
@@ -283,7 +281,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             // withdraw
         } else if (_workOrder.getRequests() != null
                 && _workOrder.getRequests().getOpenRequest() != null
-                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.REMOVE)) {
+                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setOnClickListener(_withdraw_onClick);
@@ -377,9 +375,9 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE,
-                    null, _workOrder.getWorkOrderId().intValue());
+                    null, _workOrder.getId());
 
-            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
+            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
         }
     };
 
@@ -396,7 +394,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
         }
@@ -405,7 +403,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
         public void onSend(long workOrderId) {
-            if (_workOrder.getWorkOrderId() == workOrderId)
+            if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                         WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
         }

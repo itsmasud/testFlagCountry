@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -50,12 +54,8 @@ public class Error implements Parcelable {
 
     public Integer getCode() {
         try {
-            if (_code != null)
-                return _code;
-
-            if (SOURCE.has("code") && SOURCE.get("code") != null)
+            if (_code == null && SOURCE.has("code") && SOURCE.get("code") != null)
                 _code = SOURCE.getInt("code");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -76,12 +76,8 @@ public class Error implements Parcelable {
 
     public String getFields() {
         try {
-            if (_fields != null)
-                return _fields;
-
-            if (SOURCE.has("fields") && SOURCE.get("fields") != null)
+            if (_fields == null && SOURCE.has("fields") && SOURCE.get("fields") != null)
                 _fields = SOURCE.getString("fields");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -102,12 +98,8 @@ public class Error implements Parcelable {
 
     public String getMessage() {
         try {
-            if (_message != null)
-                return _message;
-
-            if (SOURCE.has("message") && SOURCE.get("message") != null)
+            if (_message == null && SOURCE.has("message") && SOURCE.get("message") != null)
                 _message = SOURCE.getString("message");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -171,7 +163,7 @@ public class Error implements Parcelable {
         try {
             return new Error(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -209,5 +201,13 @@ public class Error implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

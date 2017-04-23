@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,12 +57,8 @@ public class CustomFieldCategory implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -79,17 +79,16 @@ public class CustomFieldCategory implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public CustomFieldCategory metadata(ListEnvelope metadata) throws ParseException {
@@ -105,12 +104,8 @@ public class CustomFieldCategory implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -158,12 +153,8 @@ public class CustomFieldCategory implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -200,7 +191,7 @@ public class CustomFieldCategory implements Parcelable {
         try {
             return new CustomFieldCategory(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -238,5 +229,13 @@ public class CustomFieldCategory implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

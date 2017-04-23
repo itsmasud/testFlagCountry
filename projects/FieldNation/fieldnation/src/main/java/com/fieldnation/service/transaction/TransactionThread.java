@@ -133,7 +133,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             return false;
         }
 
-        String handlerName = null;
+        String listenerName = trans.getListenerName();
         HttpResult result = null;
 
         int notifId = 0;
@@ -150,6 +150,8 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (auth == null) {
                 AuthTopicClient.requestCommand(ContextProvider.get());
                 trans.requeue(RETRY_SHORT);
+                if (!misc.isEmptyOrNull(listenerName))
+                    WebTransactionDispatcher.paused(_service, listenerName, trans);
                 return false;
             }
 
@@ -157,12 +159,16 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "accessToken is null");
                 AuthTopicClient.invalidateCommand(ContextProvider.get());
                 trans.requeue(RETRY_SHORT);
+                if (!misc.isEmptyOrNull(listenerName))
+                    WebTransactionDispatcher.paused(_service, listenerName, trans);
                 return false;
             }
 
             if (!_service.isAuthenticated()) {
                 Log.v(TAG, "skip no auth");
                 trans.requeue(RETRY_SHORT);
+                if (!misc.isEmptyOrNull(listenerName))
+                    WebTransactionDispatcher.paused(_service, listenerName, trans);
                 return false;
             }
 
@@ -188,10 +194,8 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
         Log.v(TAG, request.display());
 
-        handlerName = trans.getListenerName();
-
-        if (!misc.isEmptyOrNull(handlerName)) {
-            WebTransactionDispatcher.start(_service, handlerName, trans);
+        if (!misc.isEmptyOrNull(listenerName)) {
+            WebTransactionDispatcher.start(_service, listenerName, trans);
         }
 
         // **** perform request ****
@@ -206,7 +210,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
                 // this can cause OOM errors, only uncomment when trying to debug something
                 //if (!result.isFile() && result.getString() != null) {
-                Log.v(TAG, "Result: " + result.getString());
+                // Log.v(TAG, "Result: " + result.getString());
                 //}
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -238,6 +242,9 @@ class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "3");
                 generateNotification(notifId, notifRetry);
                 trans.requeue(RETRY_LONG);
+                if (!misc.isEmptyOrNull(listenerName))
+                    WebTransactionDispatcher.paused(_service, listenerName, trans);
+
                 break;
         }
         return true;

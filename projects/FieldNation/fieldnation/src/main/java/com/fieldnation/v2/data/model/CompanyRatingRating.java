@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,17 +51,16 @@ public class CompanyRatingRating implements Parcelable {
 
     public Satisfaction getMarketplace() {
         try {
-            if (_marketplace != null)
-                return _marketplace;
-
-            if (SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
                 _marketplace = Satisfaction.fromJson(SOURCE.getJsonObject("marketplace"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_marketplace != null && _marketplace.isSet())
         return _marketplace;
+
+        return null;
     }
 
     public CompanyRatingRating marketplace(Satisfaction marketplace) throws ParseException {
@@ -73,17 +76,16 @@ public class CompanyRatingRating implements Parcelable {
 
     public Satisfaction getMine() {
         try {
-            if (_mine != null)
-                return _mine;
-
-            if (SOURCE.has("mine") && SOURCE.get("mine") != null)
+            if (_mine == null && SOURCE.has("mine") && SOURCE.get("mine") != null)
                 _mine = Satisfaction.fromJson(SOURCE.getJsonObject("mine"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_mine != null && _mine.isSet())
         return _mine;
+
+        return null;
     }
 
     public CompanyRatingRating mine(Satisfaction mine) throws ParseException {
@@ -99,12 +101,8 @@ public class CompanyRatingRating implements Parcelable {
 
     public Boolean getToggleVisible() {
         try {
-            if (_toggleVisible != null)
-                return _toggleVisible;
-
-            if (SOURCE.has("toggle_visible") && SOURCE.get("toggle_visible") != null)
+            if (_toggleVisible == null && SOURCE.has("toggle_visible") && SOURCE.get("toggle_visible") != null)
                 _toggleVisible = SOURCE.getBoolean("toggle_visible");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -141,7 +139,7 @@ public class CompanyRatingRating implements Parcelable {
         try {
             return new CompanyRatingRating(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -179,5 +177,13 @@ public class CompanyRatingRating implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.DebugUtils;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -94,6 +95,7 @@ public class DialogManager extends FrameLayout implements Constants {
                 Bundle bundle = (Bundle) bundles[i];
                 Bundle dialogSavedState = bundle.getBundle("savedState");
                 String className = bundle.getString("className");
+                Log.v(TAG, "restoring " + className);
                 ClassLoader classLoader = bundle.getClassLoader();
                 Bundle params = bundle.getBundle("params");
                 String uid = bundle.getString("uid");

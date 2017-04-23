@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -59,17 +63,16 @@ public class Country implements Parcelable {
 
     public CountryAddress1 getAddress1() {
         try {
-            if (_address1 != null)
-                return _address1;
-
-            if (SOURCE.has("address1") && SOURCE.get("address1") != null)
+            if (_address1 == null && SOURCE.has("address1") && SOURCE.get("address1") != null)
                 _address1 = CountryAddress1.fromJson(SOURCE.getJsonObject("address1"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_address1 != null && _address1.isSet())
         return _address1;
+
+        return null;
     }
 
     public Country address1(CountryAddress1 address1) throws ParseException {
@@ -85,17 +88,16 @@ public class Country implements Parcelable {
 
     public CountryAddress2 getAddress2() {
         try {
-            if (_address2 != null)
-                return _address2;
-
-            if (SOURCE.has("address2") && SOURCE.get("address2") != null)
+            if (_address2 == null && SOURCE.has("address2") && SOURCE.get("address2") != null)
                 _address2 = CountryAddress2.fromJson(SOURCE.getJsonObject("address2"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_address2 != null && _address2.isSet())
         return _address2;
+
+        return null;
     }
 
     public Country address2(CountryAddress2 address2) throws ParseException {
@@ -111,17 +113,16 @@ public class Country implements Parcelable {
 
     public CountryCity getCity() {
         try {
-            if (_city != null)
-                return _city;
-
-            if (SOURCE.has("city") && SOURCE.get("city") != null)
+            if (_city == null && SOURCE.has("city") && SOURCE.get("city") != null)
                 _city = CountryCity.fromJson(SOURCE.getJsonObject("city"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_city != null && _city.isSet())
         return _city;
+
+        return null;
     }
 
     public Country city(CountryCity city) throws ParseException {
@@ -137,12 +138,8 @@ public class Country implements Parcelable {
 
     public String getIso() {
         try {
-            if (_iso != null)
-                return _iso;
-
-            if (SOURCE.has("iso") && SOURCE.get("iso") != null)
+            if (_iso == null && SOURCE.has("iso") && SOURCE.get("iso") != null)
                 _iso = SOURCE.getString("iso");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -163,12 +160,8 @@ public class Country implements Parcelable {
 
     public String getName() {
         try {
-            if (_name != null)
-                return _name;
-
-            if (SOURCE.has("name") && SOURCE.get("name") != null)
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
                 _name = SOURCE.getString("name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -189,17 +182,16 @@ public class Country implements Parcelable {
 
     public CountryState getState() {
         try {
-            if (_state != null)
-                return _state;
-
-            if (SOURCE.has("state") && SOURCE.get("state") != null)
+            if (_state == null && SOURCE.has("state") && SOURCE.get("state") != null)
                 _state = CountryState.fromJson(SOURCE.getJsonObject("state"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_state != null && _state.isSet())
         return _state;
+
+        return null;
     }
 
     public Country state(CountryState state) throws ParseException {
@@ -215,17 +207,16 @@ public class Country implements Parcelable {
 
     public CountryZip getZip() {
         try {
-            if (_zip != null)
-                return _zip;
-
-            if (SOURCE.has("zip") && SOURCE.get("zip") != null)
+            if (_zip == null && SOURCE.has("zip") && SOURCE.get("zip") != null)
                 _zip = CountryZip.fromJson(SOURCE.getJsonObject("zip"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_zip != null && _zip.isSet())
         return _zip;
+
+        return null;
     }
 
     public Country zip(CountryZip zip) throws ParseException {
@@ -257,7 +248,7 @@ public class Country implements Parcelable {
         try {
             return new Country(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -295,5 +286,13 @@ public class Country implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

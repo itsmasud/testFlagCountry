@@ -15,8 +15,11 @@ import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -180,7 +183,7 @@ public class ScheduleServiceWindow implements Parcelable {
         try {
             return new ScheduleServiceWindow(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -235,7 +238,7 @@ public class ScheduleServiceWindow implements Parcelable {
                 Calendar cal = null;
                 cal = getStart().getCalendar();
                 when = DateUtils.formatDateReallyLong(cal
-);
+                );
 
                 // Wednesday, Dec 4, 2056
                 if (!misc.isEmptyOrNull(getEnd().getUtc())) {

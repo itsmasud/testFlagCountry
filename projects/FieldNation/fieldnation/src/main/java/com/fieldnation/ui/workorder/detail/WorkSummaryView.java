@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -116,7 +116,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         _projectNameTextView.setText(_workOrder.getTitle());
 
-        _workorderIdTextView.setText("Work Order Id: " + _workOrder.getWorkOrderId());
+        _workorderIdTextView.setText("Work Order Id: " + _workOrder.getId());
 
         StringBuilder sb = new StringBuilder();
         if (_workOrder.getCustomFields() != null && _workOrder.getCustomFields().getResults() != null && _workOrder.getCustomFields().getResults().length > 0) {
@@ -201,7 +201,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
+            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
         }
     };
 

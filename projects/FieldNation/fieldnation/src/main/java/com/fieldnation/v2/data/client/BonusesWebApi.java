@@ -34,9 +34,24 @@ public class BonusesWebApi extends TopicClient {
     private static final String STAG = "BonusesWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public BonusesWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -66,6 +81,10 @@ public class BonusesWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/bonuses")
                     .key(key)
@@ -73,7 +92,7 @@ public class BonusesWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi",
-                                    BonusesWebApi.class, "addBonus"))
+                                    BonusesWebApi.class, "addBonus", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -85,12 +104,12 @@ public class BonusesWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: removeBonusByBonus
+     * Swagger operationId: deleteBonusByBonus
      * Removes a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
      * @param bonusId ID of Bonus
      */
-    public static void removeBonus(Context context, Integer bonusId) {
+    public static void deleteBonus(Context context, Integer bonusId) {
         try {
             String key = misc.md5("DELETE//api/rest/v2/bonuses/" + bonusId);
 
@@ -99,6 +118,9 @@ public class BonusesWebApi extends TopicClient {
                     .method("DELETE")
                     .path("/api/rest/v2/bonuses/" + bonusId);
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("bonusId", bonusId);
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/bonuses/{bonus_id}")
                     .key(key)
@@ -106,7 +128,7 @@ public class BonusesWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi",
-                                    BonusesWebApi.class, "removeBonus"))
+                                    BonusesWebApi.class, "deleteBonus", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -122,7 +144,7 @@ public class BonusesWebApi extends TopicClient {
      * Updates a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
      * @param bonusId Bonus ID
-     * @param json JSON Model
+     * @param json    JSON Model
      */
     public static void updateBonus(Context context, Integer bonusId, PayModifier json) {
         try {
@@ -136,6 +158,11 @@ public class BonusesWebApi extends TopicClient {
             if (json != null)
                 builder.body(json.getJson().toString());
 
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("bonusId", bonusId);
+            if (json != null)
+                methodParams.put("json", json.getJson());
+
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/bonuses/{bonus_id}")
                     .key(key)
@@ -143,7 +170,7 @@ public class BonusesWebApi extends TopicClient {
                     .listener(TransactionListener.class)
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/BonusesWebApi",
-                                    BonusesWebApi.class, "updateBonus"))
+                                    BonusesWebApi.class, "updateBonus", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -162,21 +189,54 @@ public class BonusesWebApi extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
-            new AsyncParser(this, (Bundle) payload);
+
+            String type = ((Bundle) payload).getString("type");
+            switch (type) {
+                case "queued": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onQueued(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "start": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "complete": {
+                    new AsyncParser(this, (Bundle) payload);
+                    break;
+                }
+            }
         }
 
-        public void onBonusesWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onQueued(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onAddBonus(IdResponse idResponse, boolean success, Error error) {
+        public void onStart(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onRemoveBonus(boolean success, Error error) {
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
-        public void onUpdateBonus(boolean success, Error error) {
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
         }
 
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+        }
     }
 
     private static class AsyncParser extends AsyncTaskEx<Object, Object, Object> {
@@ -204,24 +264,30 @@ public class BonusesWebApi extends TopicClient {
             Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
-                switch (transactionParams.apiFunction) {
-                    case "addBonus":
-                        if (success)
+                if (success) {
+                    switch (transactionParams.apiFunction) {
+                        case "deleteBonus":
+                        case "updateBonus":
+                            successObject = data;
+                            break;
+                        case "addBonus":
                             successObject = IdResponse.fromJson(new JsonObject(data));
-                        else
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
+                } else {
+                    switch (transactionParams.apiFunction) {
+                        case "addBonus":
+                        case "deleteBonus":
+                        case "updateBonus":
                             failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "removeBonus":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    case "updateBonus":
-                        if (!success)
-                            failObject = Error.fromJson(new JsonObject(data));
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
+                            break;
+                        default:
+                            Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
+                            break;
+                    }
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -237,21 +303,7 @@ public class BonusesWebApi extends TopicClient {
                 if (failObject != null && failObject instanceof Error) {
                     ToastClient.toast(App.get(), ((Error) failObject).getMessage(), Toast.LENGTH_SHORT);
                 }
-                listener.onBonusesWebApi(transactionParams.apiFunction, successObject, success, failObject);
-                switch (transactionParams.apiFunction) {
-                    case "addBonus":
-                        listener.onAddBonus((IdResponse) successObject, success, (Error) failObject);
-                        break;
-                    case "removeBonus":
-                        listener.onRemoveBonus(success, (Error) failObject);
-                        break;
-                    case "updateBonus":
-                        listener.onUpdateBonus(success, (Error) failObject);
-                        break;
-                    default:
-                        Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
-                        break;
-                }
+                listener.onComplete(transactionParams, transactionParams.apiFunction, successObject, success, failObject);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

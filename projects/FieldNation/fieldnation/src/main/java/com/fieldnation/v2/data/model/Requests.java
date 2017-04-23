@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -86,17 +89,16 @@ public class Requests implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public Requests metadata(ListEnvelope metadata) throws ParseException {
@@ -112,17 +114,16 @@ public class Requests implements Parcelable {
 
     public Request getOpenRequest() {
         try {
-            if (_openRequest != null)
-                return _openRequest;
-
-            if (SOURCE.has("open_request") && SOURCE.get("open_request") != null)
+            if (_openRequest == null && SOURCE.has("open_request") && SOURCE.get("open_request") != null)
                 _openRequest = Request.fromJson(SOURCE.getJsonObject("open_request"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_openRequest != null && _openRequest.isSet())
         return _openRequest;
+
+        return null;
     }
 
     public Requests openRequest(Request openRequest) throws ParseException {
@@ -219,7 +220,7 @@ public class Requests implements Parcelable {
         try {
             return new Requests(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -262,6 +263,11 @@ public class Requests implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
+    }
+
     public Request getCounterOffer() {
         if (getResults() == null || getResults().length == 0)
             return null;
@@ -282,9 +288,5 @@ public class Requests implements Parcelable {
             _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
-    }
-
-    public boolean isSet() {
-        return true;
     }
 }

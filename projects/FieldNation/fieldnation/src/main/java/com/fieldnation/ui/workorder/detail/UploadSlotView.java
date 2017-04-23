@@ -13,10 +13,12 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -46,7 +48,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
-    private WorkorderClient _workorderClient;
+    private WorkordersWebApi _workOrderApi;
     private ForLoopRunnable _docsRunnable = null;
 
     /*-*************************************-*/
@@ -78,26 +80,39 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
         _loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-
         populateUi();
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        if (_workOrderApi != null && _workOrderApi.isConnected())
+            _workOrderApi.disconnect(App.get());
+
         super.onDetachedFromWindow();
     }
 
     public void setData(WorkOrder workOrder, long profileId, AttachmentFolder slot, UploadedDocumentView.Listener listener) {
+        Log.v(TAG, "setData");
         _workOrder = workOrder;
         _slot = slot;
         _docListener = listener;
         _profileId = profileId;
 
-        subscribe();
+        if (_slot != null && _slot.getResults() != null) {
+            for (Attachment attachment : _slot.getResults()) {
+                _uploadingFiles.remove(attachment.getFile().getName());
+                _uploadingProgress.remove(attachment.getFile().getName());
+            }
+        }
+
         populateUi();
     }
 
@@ -112,8 +127,16 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
     }
 
-    private void populateDocs() {
-        final List<Object> files = new LinkedList();
+    private void populateUi() {
+        if (_titleTextView == null)
+            return;
+
+        if (_workOrder == null)
+            return;
+
+        _titleTextView.setText(_slot.getName().toUpperCase());
+
+        final List<Object> files = new LinkedList<>();
 
         Collections.addAll(files, _uploadingFiles.toArray());
 
@@ -132,19 +155,25 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             if (_docsList.getChildCount() == 0) {
                 _loadingProgressBar.setVisibility(VISIBLE);
             }
+
+            final List<View> fViews = new LinkedList<>();
+            for (int i = 0; i < _docsList.getChildCount(); i++) {
+                fViews.add(_docsList.getChildAt(i));
+            }
+
             _docsRunnable = new ForLoopRunnable(files.size(), new Handler(), 50) {
                 private final List<Object> _docs = files;
-                private final List<UploadedDocumentView> _views = new LinkedList();
                 private final String[] uploadingFileNames = _uploadingFiles.toArray(new String[_uploadingFiles.size()]);
+                private final List<View> buffer = new LinkedList<>();
+                private final List<View> views = fViews;
 
                 @Override
                 public void next(int i) throws Exception {
                     UploadedDocumentView v = null;
-                    if (i < _docsList.getChildCount()) {
-                        v = (UploadedDocumentView) _docsList.getChildAt(i);
+                    if (views.size() > 0) {
+                        v = (UploadedDocumentView) views.remove(0);
                     } else {
                         v = new UploadedDocumentView(getContext());
-                        //_docsList.addView(v);
                     }
                     if (_docs.get(i) instanceof Attachment) {
                         Attachment doc = (Attachment) _docs.get(i);
@@ -159,21 +188,22 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                             v.setProgress(null);
                         }
                     }
-                    _views.add(v);
+                    buffer.add(v);
                 }
 
                 @Override
                 public void finish(int count) throws Exception {
+                    Log.v(TAG, "finish");
                     _loadingProgressBar.setVisibility(GONE);
                     _docsList.removeAllViews();
-                    for (UploadedDocumentView v : _views) {
+                    for (View v : buffer) {
                         _docsList.addView(v);
                     }
                 }
             };
             post(_docsRunnable);
-            //}
         } else {
+            Log.v(TAG, "removeAllViews");
             _docsList.removeAllViews();
         }
 
@@ -185,67 +215,120 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
     }
 
-    private void populateUi() {
-        if (_titleTextView == null)
-            return;
-
-        if (_workOrder == null)
-            return;
-
-        _titleTextView.setText(_slot.getName().toUpperCase());
-
-        populateDocs();
-    }
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private void subscribe() {
-        if (_workOrder == null)
-            return;
-
-        if (_slot == null)
-            return;
-
-        if (!_workorderClient.isConnected())
-            return;
-
-        Log.v(TAG, "subscribe, " + _workOrder.getWorkOrderId() + ", " + _slot.getId());
-        _workorderClient.subDeliverableUpload(_workOrder.getWorkOrderId(), _slot.getId());
-        _workorderClient.subDeliverableProgress(_workOrder.getWorkOrderId(), _slot.getId());
-    }
-
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            Log.v(TAG, "onConnected()");
-            subscribe();
+            _workOrderApi.subWorkordersWebApi();
         }
 
         @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed + ")");
-            if (slotId == _slot.getId()) {
-                if (failed || isComplete) {
-                    _uploadingFiles.remove(filename);
-                    _uploadingProgress.remove(filename);
-                } else {
-                    _uploadingFiles.add(filename);
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onQueued");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_QUEUED);
                     populateUi();
                 }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
 
         @Override
-        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
-//            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + pos + "," + size + "," + time + ")");
+        public void onStart(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onStart");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
 
-            Double percent = pos * 1.0 / size;
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.remove(name);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
 
-            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
+        @Override
+        public void onPaused(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onStart");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
 
-            _uploadingProgress.put(filename, (int) (pos * 100 / size));
-            populateUi();
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, UploadedDocumentView.PROGRESS_PAUSED);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onProgress");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    Double percent = pos * 1.0 / size;
+                    Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+                    _uploadingFiles.add(name);
+                    _uploadingProgress.put(name, (int) (pos * 100 / size));
+
+                    if (_docsRunnable == null || !_docsRunnable.isRunning()) {
+                        populateUi();
+                    }
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onComplete");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                if (folderId == _slot.getId()) {
+                    _uploadingFiles.remove(name);
+                    _uploadingProgress.remove(name);
+                    populateUi();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 

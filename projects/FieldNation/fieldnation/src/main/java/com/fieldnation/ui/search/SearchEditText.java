@@ -25,7 +25,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.ArrayList;
@@ -164,7 +164,7 @@ public class SearchEditText extends RelativeLayout {
         try {
             _progressBar.setVisibility(VISIBLE);
             _lastLookup = Integer.parseInt(_searchTermEditText.getText().toString());
-            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, true, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, false, false);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -208,16 +208,18 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-            _progressBar.setVisibility(GONE);
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrder")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                _progressBar.setVisibility(GONE);
+                if (workOrder == null || !success)
+                    return;
 
-            if (workOrder == null || !success)
-                return;
-
-            if (_lastLookup != null && _listener != null
-                    && (int) workOrder.getWorkOrderId() == (int) _lastLookup) {
-                _listener.onLookupWorkOrder(workOrder.getWorkOrderId());
-                _lastLookup = null;
+                if (_lastLookup != null && _listener != null
+                        && (int) workOrder.getId() == (int) _lastLookup) {
+                    _listener.onLookupWorkOrder(workOrder.getId());
+                    _lastLookup = null;
+                }
             }
         }
     };

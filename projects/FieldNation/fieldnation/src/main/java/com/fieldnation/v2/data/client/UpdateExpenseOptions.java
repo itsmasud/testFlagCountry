@@ -40,6 +40,14 @@ public class UpdateExpenseOptions implements Parcelable {
         return this;
     }
 
+    public boolean isAsyncSet() {
+        return _async != null;
+    }
+
+    public String getAsyncUrlParam() {
+        return "async=" + _async;
+    }
+
     public void setExpense(Expense expense) {
         _expense = expense;
     }
@@ -60,7 +68,7 @@ public class UpdateExpenseOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(UpdateExpenseOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -73,7 +81,7 @@ public class UpdateExpenseOptions implements Parcelable {
         try {
             return Serializer.serializeObject(updateExpenseOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

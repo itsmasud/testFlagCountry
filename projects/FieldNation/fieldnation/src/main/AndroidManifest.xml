@@ -48,10 +48,6 @@
             android:exported="false"
             android:process=":frontside" />
         <activity
-            android:name=".ui.search.EditSearchActivity"
-            android:exported="false"
-            android:process=":frontside" />
-        <activity
             android:name=".v2.ui.nav.NavActivity"
             android:exported="false"
             android:process=":frontside" />
@@ -173,7 +169,7 @@
             android:label="@string/activity_payments_list_title"
             android:process=":frontside" />
         <activity
-            android:name=".ui.workorder.WorkorderBundleDetailActivity"
+            android:name=".ui.workorder.BundleDetailActivity"
             android:exported="false"
             android:label="@string/activity_bundle_detail_title"
             android:process=":frontside" />
@@ -215,13 +211,8 @@
             android:label="@string/activity_share_activity_title"
             android:process=":frontside" />
 
-        <activity
-            android:name=".ui.RateBuyerActivity"
-            android:exported="false"
-            android:process=":frontside" />
-
-        <activity
-            android:name=".v2.ui.RateBuyerActivity"
+        <service
+            android:name=".v2.data.client.AttachmentService"
             android:exported="false"
             android:process=":frontside" />
 

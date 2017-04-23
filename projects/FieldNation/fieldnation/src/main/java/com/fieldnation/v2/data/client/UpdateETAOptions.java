@@ -43,6 +43,14 @@ public class UpdateETAOptions implements Parcelable {
         return this;
     }
 
+    public boolean isConfirmSet() {
+        return _confirm != null;
+    }
+
+    public String getConfirmUrlParam() {
+        return "confirm=" + _confirm;
+    }
+
     public void setUpdateFromIvr(Boolean updateFromIvr) {
         _updateFromIvr = updateFromIvr;
     }
@@ -54,6 +62,14 @@ public class UpdateETAOptions implements Parcelable {
     public UpdateETAOptions updateFromIvr(Boolean updateFromIvr) {
         _updateFromIvr = updateFromIvr;
         return this;
+    }
+
+    public boolean isUpdateFromIvrSet() {
+        return _updateFromIvr != null;
+    }
+
+    public String getUpdateFromIvrUrlParam() {
+        return "update_from_ivr=" + _updateFromIvr;
     }
 
     public void setAsync(Boolean async) {
@@ -69,6 +85,14 @@ public class UpdateETAOptions implements Parcelable {
         return this;
     }
 
+    public boolean isAsyncSet() {
+        return _async != null;
+    }
+
+    public String getAsyncUrlParam() {
+        return "async=" + _async;
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -76,7 +100,7 @@ public class UpdateETAOptions implements Parcelable {
         try {
             return Unserializer.unserializeObject(UpdateETAOptions.class, obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -89,7 +113,7 @@ public class UpdateETAOptions implements Parcelable {
         try {
             return Serializer.serializeObject(updateETAOptions);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

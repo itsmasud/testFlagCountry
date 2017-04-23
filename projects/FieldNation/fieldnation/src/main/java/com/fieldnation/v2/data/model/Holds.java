@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -19,6 +23,9 @@ import java.text.ParseException;
 
 public class Holds implements Parcelable {
     private static final String TAG = "Holds";
+
+    @Json(name = "actions")
+    private String[] _actions;
 
     @Json(name = "metadata")
     private ListEnvelope _metadata;
@@ -37,6 +44,42 @@ public class Holds implements Parcelable {
         SOURCE = obj;
     }
 
+    public void setActions(String[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (String item : actions) {
+            ja.add(item);
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public String[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                JsonArray ja = SOURCE.getJsonArray("actions");
+                _actions = ja.toArray(new String[ja.size()]);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public Holds actions(String[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (String item : actions) {
+            ja.add(item);
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
+    }
+
     public void setMetadata(ListEnvelope metadata) throws ParseException {
         _metadata = metadata;
         SOURCE.put("metadata", metadata.getJson());
@@ -44,17 +87,16 @@ public class Holds implements Parcelable {
 
     public ListEnvelope getMetadata() {
         try {
-            if (_metadata != null)
-                return _metadata;
-
-            if (SOURCE.has("metadata") && SOURCE.get("metadata") != null)
+            if (_metadata == null && SOURCE.has("metadata") && SOURCE.get("metadata") != null)
                 _metadata = ListEnvelope.fromJson(SOURCE.getJsonObject("metadata"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_metadata != null && _metadata.isSet())
         return _metadata;
+
+        return null;
     }
 
     public Holds metadata(ListEnvelope metadata) throws ParseException {
@@ -113,7 +155,7 @@ public class Holds implements Parcelable {
         try {
             return new Holds(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -151,5 +193,13 @@ public class Holds implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

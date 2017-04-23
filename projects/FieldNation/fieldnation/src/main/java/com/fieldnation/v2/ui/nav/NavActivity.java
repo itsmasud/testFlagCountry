@@ -24,7 +24,7 @@ import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.nav.SearchToolbarView;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.ui.nav.SavedSearchList.OnSavedListChangeListener;
 import com.fieldnation.v2.ui.search.SearchResultScreen;
@@ -119,7 +119,6 @@ public class NavActivity extends AuthSimpleActivity {
     protected void onPause() {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
-
         super.onPause();
     }
 
@@ -243,11 +242,14 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onGetWorkOrderLists(SavedList[] savedList, boolean success, Error error) {
-            if (_savedList == null) {
-                _savedList = savedList[0];
-                _recyclerView.startSearch(_savedList);
-                NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrderLists")) {
+                SavedList[] savedList = (SavedList[]) successObject;
+                if (_savedList == null) {
+                    _savedList = savedList[0];
+                    _recyclerView.startSearch(_savedList);
+                    NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                }
             }
         }
     };

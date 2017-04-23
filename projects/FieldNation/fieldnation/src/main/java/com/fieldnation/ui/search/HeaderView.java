@@ -7,12 +7,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.dialog.v2.FilterDrawerDialog;
 
 /**
  * Created by mc on 12/22/16.
@@ -95,7 +93,7 @@ public class HeaderView extends RelativeLayout {
     private final View.OnClickListener _iconFontView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _savedSearchParams);
+//            FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _savedSearchParams);
         }
     };
 }

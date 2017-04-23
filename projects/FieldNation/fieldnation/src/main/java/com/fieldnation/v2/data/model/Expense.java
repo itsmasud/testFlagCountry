@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -19,6 +23,9 @@ import java.text.ParseException;
 
 public class Expense implements Parcelable {
     private static final String TAG = "Expense";
+
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
 
     @Json(name = "added")
     private Date _added;
@@ -64,6 +71,41 @@ public class Expense implements Parcelable {
         SOURCE = obj;
     }
 
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public Expense actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
+    }
+
     public void setAdded(Date added) throws ParseException {
         _added = added;
         SOURCE.put("added", added.getJson());
@@ -71,17 +113,16 @@ public class Expense implements Parcelable {
 
     public Date getAdded() {
         try {
-            if (_added != null)
-                return _added;
-
-            if (SOURCE.has("added") && SOURCE.get("added") != null)
+            if (_added == null && SOURCE.has("added") && SOURCE.get("added") != null)
                 _added = Date.fromJson(SOURCE.getJsonObject("added"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_added != null && _added.isSet())
         return _added;
+
+        return null;
     }
 
     public Expense added(Date added) throws ParseException {
@@ -97,12 +138,8 @@ public class Expense implements Parcelable {
 
     public Double getAmount() {
         try {
-            if (_amount != null)
-                return _amount;
-
-            if (SOURCE.has("amount") && SOURCE.get("amount") != null)
+            if (_amount == null && SOURCE.has("amount") && SOURCE.get("amount") != null)
                 _amount = SOURCE.getDouble("amount");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -123,17 +160,16 @@ public class Expense implements Parcelable {
 
     public User getAuthor() {
         try {
-            if (_author != null)
-                return _author;
-
-            if (SOURCE.has("author") && SOURCE.get("author") != null)
+            if (_author == null && SOURCE.has("author") && SOURCE.get("author") != null)
                 _author = User.fromJson(SOURCE.getJsonObject("author"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_author != null && _author.isSet())
         return _author;
+
+        return null;
     }
 
     public Expense author(User author) throws ParseException {
@@ -149,17 +185,16 @@ public class Expense implements Parcelable {
 
     public ExpenseCategory getCategory() {
         try {
-            if (_category != null)
-                return _category;
-
-            if (SOURCE.has("category") && SOURCE.get("category") != null)
+            if (_category == null && SOURCE.has("category") && SOURCE.get("category") != null)
                 _category = ExpenseCategory.fromJson(SOURCE.getJsonObject("category"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_category != null && _category.isSet())
         return _category;
+
+        return null;
     }
 
     public Expense category(ExpenseCategory category) throws ParseException {
@@ -175,17 +210,16 @@ public class Expense implements Parcelable {
 
     public ExpenseCompanyExpense getCompanyExpense() {
         try {
-            if (_companyExpense != null)
-                return _companyExpense;
-
-            if (SOURCE.has("company_expense") && SOURCE.get("company_expense") != null)
+            if (_companyExpense == null && SOURCE.has("company_expense") && SOURCE.get("company_expense") != null)
                 _companyExpense = ExpenseCompanyExpense.fromJson(SOURCE.getJsonObject("company_expense"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_companyExpense != null && _companyExpense.isSet())
         return _companyExpense;
+
+        return null;
     }
 
     public Expense companyExpense(ExpenseCompanyExpense companyExpense) throws ParseException {
@@ -201,12 +235,8 @@ public class Expense implements Parcelable {
 
     public String getDescription() {
         try {
-            if (_description != null)
-                return _description;
-
-            if (SOURCE.has("description") && SOURCE.get("description") != null)
+            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
                 _description = SOURCE.getString("description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -227,12 +257,8 @@ public class Expense implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -253,12 +279,8 @@ public class Expense implements Parcelable {
 
     public Integer getQuantity() {
         try {
-            if (_quantity != null)
-                return _quantity;
-
-            if (SOURCE.has("quantity") && SOURCE.get("quantity") != null)
+            if (_quantity == null && SOURCE.has("quantity") && SOURCE.get("quantity") != null)
                 _quantity = SOURCE.getInt("quantity");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -279,12 +301,8 @@ public class Expense implements Parcelable {
 
     public String getReason() {
         try {
-            if (_reason != null)
-                return _reason;
-
-            if (SOURCE.has("reason") && SOURCE.get("reason") != null)
+            if (_reason == null && SOURCE.has("reason") && SOURCE.get("reason") != null)
                 _reason = SOURCE.getString("reason");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -305,12 +323,8 @@ public class Expense implements Parcelable {
 
     public StatusEnum getStatus() {
         try {
-            if (_status != null)
-                return _status;
-
-            if (SOURCE.has("status") && SOURCE.get("status") != null)
+            if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
                 _status = StatusEnum.fromString(SOURCE.getString("status"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -331,12 +345,8 @@ public class Expense implements Parcelable {
 
     public String getStatusDescription() {
         try {
-            if (_statusDescription != null)
-                return _statusDescription;
-
-            if (SOURCE.has("status_description") && SOURCE.get("status_description") != null)
+            if (_statusDescription == null && SOURCE.has("status_description") && SOURCE.get("status_description") != null)
                 _statusDescription = SOURCE.getString("status_description");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -390,6 +400,47 @@ public class Expense implements Parcelable {
         }
     }
 
+    public enum ActionsEnum {
+        @Json(name = "approve")
+        APPROVE("approve"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "deny")
+        DENY("deny"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "reopen")
+        REOPEN("reopen");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -413,7 +464,7 @@ public class Expense implements Parcelable {
         try {
             return new Expense(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -451,5 +502,13 @@ public class Expense implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return getId() != null && getId() != 0;
     }
 }

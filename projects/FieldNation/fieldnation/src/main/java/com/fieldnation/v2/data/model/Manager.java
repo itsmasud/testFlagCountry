@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -17,9 +23,6 @@ import java.text.ParseException;
 
 public class Manager implements Parcelable {
     private static final String TAG = "Manager";
-
-    @Json(name = "approval_days")
-    private Integer _approvalDays;
 
     @Json(name = "email")
     private String _email;
@@ -36,15 +39,6 @@ public class Manager implements Parcelable {
     @Json(name = "phone")
     private String _phone;
 
-    @Json(name = "rating")
-    private Double _rating;
-
-    @Json(name = "ratings")
-    private Double _ratings;
-
-    @Json(name = "review_period_days")
-    private Integer _reviewPeriodDays;
-
     @Source
     private JsonObject SOURCE;
 
@@ -56,32 +50,6 @@ public class Manager implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setApprovalDays(Integer approvalDays) throws ParseException {
-        _approvalDays = approvalDays;
-        SOURCE.put("approval_days", approvalDays);
-    }
-
-    public Integer getApprovalDays() {
-        try {
-            if (_approvalDays != null)
-                return _approvalDays;
-
-            if (SOURCE.has("approval_days") && SOURCE.get("approval_days") != null)
-                _approvalDays = SOURCE.getInt("approval_days");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _approvalDays;
-    }
-
-    public Manager approvalDays(Integer approvalDays) throws ParseException {
-        _approvalDays = approvalDays;
-        SOURCE.put("approval_days", approvalDays);
-        return this;
-    }
-
     public void setEmail(String email) throws ParseException {
         _email = email;
         SOURCE.put("email", email);
@@ -89,12 +57,8 @@ public class Manager implements Parcelable {
 
     public String getEmail() {
         try {
-            if (_email != null)
-                return _email;
-
-            if (SOURCE.has("email") && SOURCE.get("email") != null)
+            if (_email == null && SOURCE.has("email") && SOURCE.get("email") != null)
                 _email = SOURCE.getString("email");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -115,12 +79,8 @@ public class Manager implements Parcelable {
 
     public String getFirstName() {
         try {
-            if (_firstName != null)
-                return _firstName;
-
-            if (SOURCE.has("first_name") && SOURCE.get("first_name") != null)
+            if (_firstName == null && SOURCE.has("first_name") && SOURCE.get("first_name") != null)
                 _firstName = SOURCE.getString("first_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -141,12 +101,8 @@ public class Manager implements Parcelable {
 
     public Integer getId() {
         try {
-            if (_id != null)
-                return _id;
-
-            if (SOURCE.has("id") && SOURCE.get("id") != null)
+            if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
                 _id = SOURCE.getInt("id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -167,12 +123,8 @@ public class Manager implements Parcelable {
 
     public String getLastName() {
         try {
-            if (_lastName != null)
-                return _lastName;
-
-            if (SOURCE.has("last_name") && SOURCE.get("last_name") != null)
+            if (_lastName == null && SOURCE.has("last_name") && SOURCE.get("last_name") != null)
                 _lastName = SOURCE.getString("last_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -193,12 +145,8 @@ public class Manager implements Parcelable {
 
     public String getPhone() {
         try {
-            if (_phone != null)
-                return _phone;
-
-            if (SOURCE.has("phone") && SOURCE.get("phone") != null)
+            if (_phone == null && SOURCE.has("phone") && SOURCE.get("phone") != null)
                 _phone = SOURCE.getString("phone");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -209,84 +157,6 @@ public class Manager implements Parcelable {
     public Manager phone(String phone) throws ParseException {
         _phone = phone;
         SOURCE.put("phone", phone);
-        return this;
-    }
-
-    public void setRating(Double rating) throws ParseException {
-        _rating = rating;
-        SOURCE.put("rating", rating);
-    }
-
-    public Double getRating() {
-        try {
-            if (_rating != null)
-                return _rating;
-
-            if (SOURCE.has("rating") && SOURCE.get("rating") != null)
-                _rating = SOURCE.getDouble("rating");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _rating;
-    }
-
-    public Manager rating(Double rating) throws ParseException {
-        _rating = rating;
-        SOURCE.put("rating", rating);
-        return this;
-    }
-
-    public void setRatings(Double ratings) throws ParseException {
-        _ratings = ratings;
-        SOURCE.put("ratings", ratings);
-    }
-
-    public Double getRatings() {
-        try {
-            if (_ratings != null)
-                return _ratings;
-
-            if (SOURCE.has("ratings") && SOURCE.get("ratings") != null)
-                _ratings = SOURCE.getDouble("ratings");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _ratings;
-    }
-
-    public Manager ratings(Double ratings) throws ParseException {
-        _ratings = ratings;
-        SOURCE.put("ratings", ratings);
-        return this;
-    }
-
-    public void setReviewPeriodDays(Integer reviewPeriodDays) throws ParseException {
-        _reviewPeriodDays = reviewPeriodDays;
-        SOURCE.put("review_period_days", reviewPeriodDays);
-    }
-
-    public Integer getReviewPeriodDays() {
-        try {
-            if (_reviewPeriodDays != null)
-                return _reviewPeriodDays;
-
-            if (SOURCE.has("review_period_days") && SOURCE.get("review_period_days") != null)
-                _reviewPeriodDays = SOURCE.getInt("review_period_days");
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _reviewPeriodDays;
-    }
-
-    public Manager reviewPeriodDays(Integer reviewPeriodDays) throws ParseException {
-        _reviewPeriodDays = reviewPeriodDays;
-        SOURCE.put("review_period_days", reviewPeriodDays);
         return this;
     }
 
@@ -313,7 +183,7 @@ public class Manager implements Parcelable {
         try {
             return new Manager(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -352,6 +222,10 @@ public class Manager implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
     }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
 
     public boolean isSet() {
         return getId() != null && getId() != 0;

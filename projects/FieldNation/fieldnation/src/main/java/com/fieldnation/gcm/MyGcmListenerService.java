@@ -131,16 +131,17 @@ public class MyGcmListenerService extends GcmListenerService {
                                 WorkOrderActivity.makeIntentConfirm(this, Integer.parseInt(action.getId())), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
-                    case "tomorrow": {
-                        App.get().setNeedsConfirmation(true);
-                        PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
-                                ConfirmActivity.startNewIntent(this), 0);
-                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
-                    }
                     default:
                         break;
                 }
                 break;
+            }
+
+            case CONFIRM_TOMORROW: {
+                App.get().setNeedsConfirmation(true);
+                PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
+                        ConfirmActivity.startNewIntent(this), 0);
+                return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
             }
         }
         return null;
@@ -149,15 +150,6 @@ public class MyGcmListenerService extends GcmListenerService {
     private void buildPushNotification(GcmMessage gcmMessage) {
         // TODO, need to finish implementing this once we figure out how to send the other data
         int id = 0;
-        switch (gcmMessage.category) {
-            case "CONFIRM_SCHEDULE":
-                id = CONFIRM_PUSH_NOTIFICATION;
-                break;
-            default:
-                id = App.secureRandom.nextInt();
-                break;
-        }
-
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);
         builder.setContentTitle(gcmMessage.title);
@@ -167,52 +159,23 @@ public class MyGcmListenerService extends GcmListenerService {
         // confirm or ready?
         PendingIntent primaryIntent = null;
         Action primaryAction = null;
-        PendingIntent secondaryIntent = null;
-        Action secondaryAction = null;
 
-        if (gcmMessage.actions != null) {
-            if (gcmMessage.actions.getPrimary() != null && gcmMessage.actions.getPrimary().length > 0) {
-                primaryAction = gcmMessage.actions.getPrimary()[0];
-                primaryIntent = getIntentFromAction(primaryAction, id);
-            }
-
-            if (gcmMessage.actions.getSecondary() != null && gcmMessage.actions.getSecondary().length > 0) {
-                secondaryAction = gcmMessage.actions.getSecondary()[0];
-                secondaryIntent = getIntentFromAction(secondaryAction, id);
-            }
+        if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
+            primaryAction = gcmMessage.actions[0];
+            primaryIntent = getIntentFromAction(primaryAction, id);
         }
 
+        if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
+            id = CONFIRM_PUSH_NOTIFICATION;
+        else
+            id = App.secureRandom.nextInt();
+
         // no buttons
-        if (primaryIntent == null && secondaryIntent == null) {
+        if (primaryIntent == null) {
 
             // primary only
-        } else if (primaryIntent != null && secondaryIntent == null) {
+        } else if (primaryIntent != null) {
             builder.setContentIntent(primaryIntent);
-
-            // secondary only
-        } else if (primaryIntent == null && secondaryIntent != null) {
-            builder.setContentIntent(secondaryIntent);
-
-        } else if (primaryIntent != null && secondaryIntent != null) {
-            // have both
-            // body
-            builder.setContentIntent(secondaryIntent);
-
-            // secondary button
-            builder.addAction(R.drawable.ic_notif_glass, "View", secondaryIntent);
-
-            // primary button
-            String primaryButtonText = "";
-            switch (primaryAction.getType()) {
-                case CONFIRM:
-                    primaryButtonText = "Confirm";
-                    break;
-                case READY:
-                    primaryButtonText = "Ready";
-                    break;
-            }
-
-            builder.addAction(R.drawable.ic_notif_check, primaryButtonText, primaryIntent);
         }
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();

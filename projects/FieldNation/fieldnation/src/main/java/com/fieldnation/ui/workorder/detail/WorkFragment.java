@@ -2,7 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ClipData;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,42 +24,39 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.ExpiresDialog;
-import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
+import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -73,10 +71,10 @@ import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.ShipmentTask;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -96,6 +94,7 @@ import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
@@ -104,7 +103,6 @@ import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.io.File;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -174,11 +172,9 @@ public class WorkFragment extends WorkorderFragment {
     private TermsScrollingDialog _termsScrollingDialog;
     private TwoButtonDialog _yesNoDialog;
     private ReportProblemDialog _reportProblemDialog;
-    private PhotoUploadDialog _photoUploadDialog;
 
     // Data
     private WorkordersWebApi _workOrderApi;
-    private FileCacheClient _fileCacheClient;
     private File _tempFile;
     private Uri _tempUri;
     private WorkOrder _workOrder;
@@ -306,6 +302,13 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                _refreshView.startRefreshing();
+            }
+        });
+
         populateUi();
     }
 
@@ -320,7 +323,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-
 
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
@@ -353,9 +355,9 @@ public class WorkFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2});
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, _workOrder.getId(), _currentTask);
         } else {
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1});
+            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, _workOrder.getId(), _currentTask);
         }
     }
 
@@ -366,13 +368,12 @@ public class WorkFragment extends WorkorderFragment {
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
 // TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
-        _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
-        AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
+
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -408,9 +409,6 @@ public class WorkFragment extends WorkorderFragment {
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
 
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
-
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
         }
@@ -420,9 +418,9 @@ public class WorkFragment extends WorkorderFragment {
     public void onDetach() {
         Log.v(TAG, "onDetach");
 
-        AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -458,9 +456,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_workOrderApi != null && _workOrderApi.isConnected())
             _workOrderApi.disconnect(App.get());
 
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
-
         super.onDetach();
     }
 
@@ -486,17 +481,8 @@ public class WorkFragment extends WorkorderFragment {
     public void setWorkOrder(WorkOrder workOrder) {
         Log.v(TAG, "setWorkOrder");
         _workOrder = workOrder;
-        requestTasks();
         populateUi();
     }
-
-/*
-TODO     private void setTasks(List<Task> tasks) {
-        _tasks = tasks;
-        _taskList.setData(_workorder, tasks);
-        setLoading(false);
-    }
-*/
 
     private void populateUi() {
         misc.hideKeyboard(getView());
@@ -541,17 +527,7 @@ TODO     private void setTasks(List<Task> tasks) {
 
         Log.v(TAG, "getData.startRefreshing");
         setLoading(true);
-        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
-    }
-
-    private void requestTasks() {
-        if (_workOrder == null)
-            return;
-
-        if (getActivity() == null)
-            return;
-
-// TODO        WorkorderClient.listTasks(App.get(), _workOrder.getWorkOrderId(), false);
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
     }
 
     @Override
@@ -578,12 +554,11 @@ TODO     private void setTasks(List<Task> tasks) {
             } else if (_currentLocation != null) {
                 doCheckin();
             } else if (_locationFailed) {
-
+                LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_IN, false);
             }
             setLoading(true);
         }
     };
-
 
     private void doCheckin() {
 //        setLoading(true);
@@ -591,14 +566,21 @@ TODO     private void setTasks(List<Task> tasks) {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-
         }
     }
 
     private final CheckInOutDialog.OnCheckInListener _checkInOutDialog_onCheckIn = new CheckInOutDialog.OnCheckInListener() {
         @Override
-        public void onCheckIn(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, (int) workOrderId);
+        public void onCheckIn(int workOrderId) {
+            setLoading(false);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
+        }
+    };
+
+    private final CheckInOutDialog.OnCancelListener _checkInOutDialog_onCancel = new CheckInOutDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
+            setLoading(false);
         }
     };
 
@@ -642,6 +624,7 @@ TODO     private void setTasks(List<Task> tasks) {
                 doCheckOut();
             } else if (_locationFailed) {
                 // location failed
+                LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_OUT, false);
             }
             setLoading(true);
         }
@@ -672,8 +655,9 @@ TODO     private void setTasks(List<Task> tasks) {
 
     private final CheckInOutDialog.OnCheckOutListener _checkInOutDialog_onCheckOut = new CheckInOutDialog.OnCheckOutListener() {
         @Override
-        public void onCheckOut(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, (int) workOrderId);
+        public void onCheckOut(int workOrderId) {
+            setLoading(false);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
         }
     };
 
@@ -742,64 +726,14 @@ TODO     private void setTasks(List<Task> tasks) {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
             Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
 
-            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK
-                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
-                    && resultCode == Activity.RESULT_OK) {
-
-                _fileCacheClient.subDeliverableCache();
-
-                setLoading(true);
-
-                if (data == null) {
-                    Log.e(TAG, "uploading an image using camera");
-                    _tempUri = null;
-                    _photoUploadDialog.show(_workOrder.getWorkOrderId(), _tempFile.getName());
-                    _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                        ClipData clipData = data.getClipData();
-
-                        if (clipData != null) {
-                            int count = clipData.getItemCount();
-                            Intent intent = new Intent();
-                            Uri uri = null;
-
-                            if (count == 1) {
-                                _tempUri = data.getData();
-                                _tempFile = null;
-                                _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                                FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
-                            } else {
-                                for (int i = 0; i < count; ++i) {
-                                    uri = clipData.getItemAt(i).getUri();
-                                    if (uri != null) {
-// TODO                                        WorkorderClient.uploadDeliverable(App.get(), _workOrder.getWorkOrderId(), _currentTask.getSlotId(), intent.setData(uri));
-                                    }
-                                }
-                            }
-                        } else {
-                            Log.v(TAG, "Single local/ non-local file upload");
-                            _tempUri = data.getData();
-                            _tempFile = null;
-                            _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
-                        }
-                    } else {
-                        Log.v(TAG, "Android version is pre-4.3");
-                        _tempUri = data.getData();
-                        _tempFile = null;
-                        _photoUploadDialog.show(_workOrder.getWorkOrderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
-                    }
-                }
-
-            } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+            if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                Log.v(TAG, "signature response");
                 requestWorkorder();
-/*
-TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
-                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workorder, _workorder.getCompanyName());
+
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
-*/
+
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 _startCheckIn.run();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
@@ -823,7 +757,9 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
+//            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
+            ConfirmActivity.startNew(App.get());
+//            _actionbartop_listener.onMyWay();
         }
     };
 
@@ -831,7 +767,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onCheckOut() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             _startCheckOut.run();
         }
@@ -839,7 +775,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onCheckIn() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             _startCheckIn.run();
         }
@@ -847,7 +783,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onCheckInAgain() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             _startCheckIn.run();
         }
@@ -855,14 +791,14 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onAcknowledgeHold() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
-                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getWorkOrderId());
+                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
 
             try {
                 Hold unAck = _workOrder.getUnAcknowledgedHold();
                 Hold param = new Hold();
-                param.acknowledged(true);
+                param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 param.id(unAck.getId());
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getWorkOrderId(), unAck.getId(), param);
+                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -872,27 +808,33 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onMarkIncomplete() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
-            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrder.getWorkOrderId());
+            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMPLETE, _workOrder.getId());
         }
 
         @Override
         public void onViewPayment() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workOrder.getId());
             PaymentListActivity.startNew(App.get());
         }
 
         @Override
         public void onReportProblem() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getWorkOrderId());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
         }
 
         @Override
         public void onMyWay() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getWorkOrderId());
+            if (!App.get().isLocationEnabled()) {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN, intent, PendingIntent.FLAG_ONE_SHOT);
+                ToastClient.snackbar(App.get(), "We would like to use your location to provide more accurate status information to the buyer.", "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+            }
+
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
                 if (_currentLocation != null)
@@ -902,7 +844,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                 ETA eta = new ETA();
                 eta.status(etaStatus);
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -911,33 +853,34 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            setLoading(true);
         }
 
         @Override
         public void onEta() {
-
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
 
         @Override
         public void onNotInterested() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
 
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null) {
                 DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
-                        _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
+                        _workOrder.getId(), _workOrder.getCompany().getId());
             } else {
-                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getWorkOrderId(), _workOrder.getCompany().getId());
+                DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getId(), _workOrder.getCompany().getId());
             }
         }
 
         @Override
         public void onRequest() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
 
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_REQUEST);
+                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
             }
@@ -946,12 +889,12 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onAccept() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getWorkOrderId(), AcceptBundleDialog.TYPE_ACCEPT);
+                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
             }
@@ -959,51 +902,53 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void onWithdraw() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
 
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getWorkOrderId(), _workOrder.getRequests().getOpenRequest().getId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getId(), _workOrder.getRequests().getOpenRequest().getId());
         }
 
         @Override
         public void onViewCounter() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workOrder.getId());
             CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
 
         @Override
         public void onReadyToGo() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getId());
 
             try {
                 ETA eta = new ETA()
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.READYTOGO));
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            setLoading(true);
         }
 
         @Override
         public void onConfirm() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             try {
                 ETA eta = new ETA()
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.CONFIRMED));
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getWorkOrderId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+            setLoading(true);
         }
 
         @Override
         public void onEnterClosingNotes() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             showClosingNotesDialog();
         }
@@ -1011,7 +956,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onMarkComplete() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
-                    null, _workOrder.getWorkOrderId());
+                    null, _workOrder.getId());
 
             MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workOrder);
         }
@@ -1037,7 +982,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         }
     };
 
-
     private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
@@ -1060,7 +1004,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkordersWebApi.removeTimeLog(App.get(), _workOrder.getWorkOrderId(), (int) timeLogId);
+                            WorkordersWebApi.deleteTimeLog(App.get(), _workOrder.getId(), (int) timeLogId);
                             setLoading(true);
                         }
 
@@ -1075,7 +1019,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             _yesNoDialog.show();
         }
     };
-
 
     private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
@@ -1100,24 +1043,26 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void onCustomField(Task task) {
-            // TODO task.getCustomField() is null. Please see the comment of PA-623
             CustomFieldDialog.show(App.get(), DIALOG_CUSTOM_FIELD, task.getCustomField());
         }
 
         @Override
         public void onDownload(Task task) {
-            Attachment doc = task.getAttachment();
+            AttachmentFolder folder = task.getAttachments();
 
-            if (doc != null) {
+            if (folder != null && folder.getResults() != null && folder.getResults().length > 0) {
+                Attachment doc = folder.getResults()[0];
                 if (doc != null && doc.getId() != null) {
                     Log.v(TAG, "docid: " + doc.getId());
-                    // task completed here
-                    if (!task.getCompleted().isSet()) {
-                        WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+                    if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                        try {
+                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
                     }
-// TODO: file link is not coming as part of File object. See comment in PA-623
-//                        FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
-//                                doc.getFile().getName(), doc.getFile().getMime());
+                    FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
+                            doc.getFile().getName(), doc.getFile().getMime());
                 }
             }
         }
@@ -1129,20 +1074,23 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             intent.setData(Uri.parse("mailto:" + email));
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
-            if (!task.getCompleted().isSet()) {
-                WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+            try {
+                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             setLoading(true);
         }
 
         @Override
         public void onPhone(Task task) {
+            if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
+                try {
+                    WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
-            if (!task.getCompleted().isSet()) {
-                WorkorderClient.actionCompleteTask(App.get(),
-                        _workOrder.getWorkOrderId(), task.getId());
-                setLoading(true);
-            }
             try {
                 if (task.getPhone() != null) {
                     // Todo, need to figure out if there is a phone number here
@@ -1192,7 +1140,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         @Override
         public void onShipment(Task task) {
             Shipment[] shipments = _workOrder.getShipments().getResults();
-            if (shipments == null) {
+            if (shipments == null || shipments.length == 0) {
                 ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
             } else {
                 TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
@@ -1220,10 +1168,16 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
 
         @Override
         public void onUniqueTask(Task task) {
-            if (task.getCompleted().isSet())
+            if (task.getStatus() != null && task.getStatus().equals(Task.StatusEnum.COMPLETE))
                 return;
-            WorkordersWebApi.completeTask(App.get(), _workOrder.getWorkOrderId(), task.getId());
+
+            try {
+                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             setLoading(true);
+
         }
     };
 
@@ -1249,7 +1203,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-                            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getWorkOrderId(), shipment.getId());
+                            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getId(), shipment.getId());
                             setLoading(true);
                         }
 
@@ -1301,7 +1255,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-                            WorkordersWebApi.deleteSignature(App.get(), _workOrder.getWorkOrderId(), signature.getId());
+                            WorkordersWebApi.deleteSignature(App.get(), _workOrder.getId(), signature.getId());
                         }
 
                         @Override
@@ -1316,7 +1270,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             return true;
         }
     };
-
 
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
@@ -1343,14 +1296,12 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         }
     };
 
-
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
             CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
     };
-
 
     private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
         @Override
@@ -1372,7 +1323,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-                            WorkordersWebApi.deleteExpense(App.get(), _workOrder.getWorkOrderId(), expense.getId());
+                            WorkordersWebApi.deleteExpense(App.get(), _workOrder.getId(), expense.getId());
                         }
 
                         @Override
@@ -1386,7 +1337,6 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
             _yesNoDialog.show();
         }
     };
-
 
     private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
         @Override
@@ -1408,7 +1358,7 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkordersWebApi.removeDiscount(App.get(), _workOrder.getWorkOrderId(), discount.getId());
+                            WorkordersWebApi.deleteDiscount(App.get(), _workOrder.getId(), discount.getId());
                         }
 
                         @Override
@@ -1423,11 +1373,10 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
         }
     };
 
-
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getWorkOrderId(), _workOrder.getBundle().getId());
+            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
             setLoading(true);
         }
     };
@@ -1437,25 +1386,8 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     /*-*********************************-*/
     private void showClosingNotesDialog() {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
-            ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrder.getWorkOrderId(), _workOrder.getClosingNotes());
+            ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrder.getId(), _workOrder.getClosingNotes());
     }
-
-    private final AppPickerDialog.OnOkListener _appPicker_onOk = new AppPickerDialog.OnOkListener() {
-        @Override
-        public void onOk(Intent pack) {
-            if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + pack.toString());
-                startActivityForResult(pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
-            } else {
-                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
-                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-                _tempFile = temppath;
-                pack.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(pack, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
-            }
-            setLoading(true);
-        }
-    };
 
     private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
@@ -1474,39 +1406,11 @@ TODO                if (App.get().getProfile().canRequestWorkOnMarketplace() && 
     private final ClosingNotesDialog.OnOkListener _closingNotes_onOk = new ClosingNotesDialog.OnOkListener() {
         @Override
         public void onOk(String message) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getWorkOrderId(), true, false);
             setLoading(true);
         }
     };
-
-
-/*
-TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            try {
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionAcceptAssignment(App.get(),
-                        _workOrder.getWorkOrderId(), startDate, ISO8601.fromUTC(end), null, false);
-                setLoading(true);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            TermsDialog.show(App.get(), DIALOG_TERMS, getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
-        }
-    };
-*/
 
     private final CounterOfferDialog.OnOkListener _counterOfferDialog_onOk = new CounterOfferDialog.OnOkListener() {
         @Override
@@ -1514,32 +1418,7 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                          Expense[] expenses) {
 
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
-                    WorkOrderTracker.Action.COUNTER_OFFER, workorder.getWorkOrderId());
-
-            try {
-                Request request = new Request();
-                request.counter(true);
-
-                if (!misc.isEmptyOrNull(reason))
-                    request.counterNotes(reason);
-
-                if (pay != null)
-                    request.pay(pay);
-
-                if (schedule != null)
-                    request.schedule(schedule);
-
-                if (expenses != null)
-                    request.expenses(expenses);
-
-                if (expires > 0)
-                    request.expires(new Date(expires));
-
-                WorkordersWebApi.request(App.get(), workorder.getWorkOrderId(), request);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            setLoading(true);
+                    WorkOrderTracker.Action.COUNTER_OFFER, workorder.getId());
         }
     };
 
@@ -1549,7 +1428,7 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
             try {
                 CustomField cf = new CustomField();
                 cf.setValue(value);
-                WorkordersWebApi.updateCustomField(App.get(), _workOrder.getWorkOrderId(), field.getId(), cf);
+                WorkordersWebApi.updateCustomField(App.get(), _workOrder.getId(), field.getId(), cf);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1560,7 +1439,7 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
     private final DeclineDialog.OnDeclinedListener _declineDialog_onDecline = new DeclineDialog.OnDeclinedListener() {
         @Override
         public void onDeclined(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workOrder.getId());
         }
     };
 
@@ -1572,7 +1451,7 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                 PayModifier discount = new PayModifier();
                 discount.setAmount(amount);
                 discount.setDescription(description);
-                WorkordersWebApi.addDiscount(App.get(), _workOrder.getWorkOrderId(), discount);
+                WorkordersWebApi.addDiscount(App.get(), _workOrder.getId(), discount);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1611,31 +1490,13 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                 expense.description(description);
                 expense.amount(amount);
                 expense.category(category);
-                WorkordersWebApi.addExpense(App.get(), _workOrder.getWorkOrderId(), expense);
+                WorkordersWebApi.addExpense(App.get(), _workOrder.getId(), expense);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
             setLoading(true);
         }
     };
-
-    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String dateTime) {
-            long seconds = -1;
-            if (dateTime != null) {
-                try {
-                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
-            }
-
-            WorkorderClient.actionRequest(App.get(), _workOrder.getWorkOrderId(), seconds);
-            setLoading(true);
-        }
-    };
-
 
     private final MarkCompleteDialog.OnSignatureClickListener _markCompleteDialog_onSignature = new MarkCompleteDialog.OnSignatureClickListener() {
         @Override
@@ -1644,13 +1505,11 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
                 @Override
                 protected Object doInBackground(Object... params) {
                     try {
+                        Log.v(TAG, "onSignatureClick ");
                         Context context = (Context) params[0];
                         WorkOrder workOrder = (WorkOrder) params[1];
 
-                        Intent intent = new Intent(context, SignOffActivity.class);
-// TODO                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
-                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+                        SignOffActivity.startSignOff(App.get(), workOrder, true);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -1665,8 +1524,8 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
     private final MarkCompleteDialog.OnContinueClickListener _markCompleteDialog_onContinue = new MarkCompleteDialog.OnContinueClickListener() {
         @Override
         public void onContinueClick() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getWorkOrderId());
-            WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
+            WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId());
             setLoading(true);
         }
     };
@@ -1674,8 +1533,8 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
     private final MarkIncompleteWarningDialog.OnMarkIncompleteListener _markIncompleteDialog_markIncomplete = new MarkIncompleteWarningDialog.OnMarkIncompleteListener() {
         @Override
         public void onMarkIncomplete(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getWorkOrderId());
-            WorkorderClient.actionIncomplete(App.get(), _workOrder.getWorkOrderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getId());
+            WorkordersWebApi.incompleteWorkOrder(App.get(), _workOrder.getId());
             setLoading(true);
         }
     };
@@ -1684,49 +1543,12 @@ TODO    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialo
         @Override
         public void onComplete(Pay pay, String explanation) {
             try {
-                WorkordersWebApi.addIncrease(App.get(), _workOrder.getWorkOrderId(),
+                WorkordersWebApi.addIncrease(App.get(), _workOrder.getId(),
                         new PayIncrease().pay(pay).description(explanation));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
             populateUi();
-        }
-    };
-
-    private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
-        @Override
-        public void onOk(long workOrderId, String filename, String photoDescription) {
-            Log.e(TAG, "uploading an image using camera");
-/*
-TODO            if (_tempFile != null) {
-                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
-                        filename, _tempFile.getAbsolutePath(), photoDescription);
-            } else if (_tempUri != null) {
-                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
-                        filename, _tempUri, photoDescription);
-            }
-*/
-        }
-
-        @Override
-        public void onImageClick() {
-            Intent intent;
-            if (_tempUri == null) {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
-
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            try {
-                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
         }
     };
 
@@ -1740,7 +1562,7 @@ TODO            if (_tempFile != null) {
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
         public void onSend(long workorderId, String explanation, ReportProblemType type) {
-            if (_workOrder.getWorkOrderId() == workorderId)
+            if (_workOrder.getId() == workorderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
         }
     };
@@ -1762,7 +1584,10 @@ TODO            if (_tempFile != null) {
                 shipment.name(description);
                 shipment.direction(direction);
 
-                WorkordersWebApi.addShipment(App.get(), _workOrder.getWorkOrderId(), shipment);
+                if (taskId > 0)
+                    shipment.task(new ShipmentTask().id(taskId));
+
+                WorkordersWebApi.addShipment(App.get(), _workOrder.getId(), shipment);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -1784,7 +1609,7 @@ TODO            if (_tempFile != null) {
         @Override
         public void onDelete(WorkOrder workorder, Shipment shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkOrderId(), shipment.getId());
+            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getId(), shipment.getId());
             setLoading(true);
         }
     };
@@ -1792,7 +1617,7 @@ TODO            if (_tempFile != null) {
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
         public void onWithdraw(long workOrderId) {
-            if (_workOrder.getWorkOrderId() == workOrderId)
+            if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
         }
     };
@@ -1812,11 +1637,11 @@ TODO            if (_tempFile != null) {
             }
             if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), newTimeLog);
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog);
 
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), newTimeLog);
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog);
             }
             setLoading(true);
         }
@@ -1827,19 +1652,6 @@ TODO            if (_tempFile != null) {
     /*-				Web				-*/
     /*-*****************************-*/
 
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
-        @Override
-        public void onConnected() {
-        }
-
-        @Override
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
-            _tempUri = uri;
-            _tempFile = null;
-            _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
-        }
-    };
-
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -1847,7 +1659,7 @@ TODO            if (_tempFile != null) {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
 
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
@@ -1857,5 +1669,3 @@ TODO            if (_tempFile != null) {
         }
     };
 }
-
-

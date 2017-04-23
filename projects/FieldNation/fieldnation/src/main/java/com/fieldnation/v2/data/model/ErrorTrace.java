@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -86,12 +90,8 @@ public class ErrorTrace implements Parcelable {
 
     public String getClazz() {
         try {
-            if (_class != null)
-                return _class;
-
-            if (SOURCE.has("class") && SOURCE.get("class") != null)
+            if (_class == null && SOURCE.has("class") && SOURCE.get("class") != null)
                 _class = SOURCE.getString("class");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -112,12 +112,8 @@ public class ErrorTrace implements Parcelable {
 
     public String getFile() {
         try {
-            if (_file != null)
-                return _file;
-
-            if (SOURCE.has("file") && SOURCE.get("file") != null)
+            if (_file == null && SOURCE.has("file") && SOURCE.get("file") != null)
                 _file = SOURCE.getString("file");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -138,12 +134,8 @@ public class ErrorTrace implements Parcelable {
 
     public String getFunction() {
         try {
-            if (_function != null)
-                return _function;
-
-            if (SOURCE.has("function") && SOURCE.get("function") != null)
+            if (_function == null && SOURCE.has("function") && SOURCE.get("function") != null)
                 _function = SOURCE.getString("function");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -164,12 +156,8 @@ public class ErrorTrace implements Parcelable {
 
     public Integer getLine() {
         try {
-            if (_line != null)
-                return _line;
-
-            if (SOURCE.has("line") && SOURCE.get("line") != null)
+            if (_line == null && SOURCE.has("line") && SOURCE.get("line") != null)
                 _line = SOURCE.getInt("line");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -190,17 +178,16 @@ public class ErrorTrace implements Parcelable {
 
     public ErrorTraceObject getObject() {
         try {
-            if (_object != null)
-                return _object;
-
-            if (SOURCE.has("object") && SOURCE.get("object") != null)
+            if (_object == null && SOURCE.has("object") && SOURCE.get("object") != null)
                 _object = ErrorTraceObject.fromJson(SOURCE.getJsonObject("object"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_object != null && _object.isSet())
         return _object;
+
+        return null;
     }
 
     public ErrorTrace object(ErrorTraceObject object) throws ParseException {
@@ -216,12 +203,8 @@ public class ErrorTrace implements Parcelable {
 
     public String getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = SOURCE.getString("type");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -258,7 +241,7 @@ public class ErrorTrace implements Parcelable {
         try {
             return new ErrorTrace(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -296,5 +279,13 @@ public class ErrorTrace implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

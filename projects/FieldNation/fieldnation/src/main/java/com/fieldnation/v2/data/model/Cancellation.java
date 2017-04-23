@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -22,6 +26,12 @@ public class Cancellation implements Parcelable {
 
     @Json(name = "cancel_reason")
     private Integer _cancelReason;
+
+    @Json(name = "cancel_request_not_charge")
+    private Boolean _cancelRequestNotCharge;
+
+    @Json(name = "message_to_provider")
+    private String _messageToProvider;
 
     @Json(name = "notes")
     private String _notes;
@@ -44,12 +54,8 @@ public class Cancellation implements Parcelable {
 
     public Integer getCancelReason() {
         try {
-            if (_cancelReason != null)
-                return _cancelReason;
-
-            if (SOURCE.has("cancel_reason") && SOURCE.get("cancel_reason") != null)
+            if (_cancelReason == null && SOURCE.has("cancel_reason") && SOURCE.get("cancel_reason") != null)
                 _cancelReason = SOURCE.getInt("cancel_reason");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -63,6 +69,50 @@ public class Cancellation implements Parcelable {
         return this;
     }
 
+    public void setCancelRequestNotCharge(Boolean cancelRequestNotCharge) throws ParseException {
+        _cancelRequestNotCharge = cancelRequestNotCharge;
+        SOURCE.put("cancel_request_not_charge", cancelRequestNotCharge);
+    }
+
+    public Boolean getCancelRequestNotCharge() {
+        try {
+            if (_cancelRequestNotCharge == null && SOURCE.has("cancel_request_not_charge") && SOURCE.get("cancel_request_not_charge") != null)
+                _cancelRequestNotCharge = SOURCE.getBoolean("cancel_request_not_charge");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _cancelRequestNotCharge;
+    }
+
+    public Cancellation cancelRequestNotCharge(Boolean cancelRequestNotCharge) throws ParseException {
+        _cancelRequestNotCharge = cancelRequestNotCharge;
+        SOURCE.put("cancel_request_not_charge", cancelRequestNotCharge);
+        return this;
+    }
+
+    public void setMessageToProvider(String messageToProvider) throws ParseException {
+        _messageToProvider = messageToProvider;
+        SOURCE.put("message_to_provider", messageToProvider);
+    }
+
+    public String getMessageToProvider() {
+        try {
+            if (_messageToProvider == null && SOURCE.has("message_to_provider") && SOURCE.get("message_to_provider") != null)
+                _messageToProvider = SOURCE.getString("message_to_provider");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _messageToProvider;
+    }
+
+    public Cancellation messageToProvider(String messageToProvider) throws ParseException {
+        _messageToProvider = messageToProvider;
+        SOURCE.put("message_to_provider", messageToProvider);
+        return this;
+    }
+
     public void setNotes(String notes) throws ParseException {
         _notes = notes;
         SOURCE.put("notes", notes);
@@ -70,12 +120,8 @@ public class Cancellation implements Parcelable {
 
     public String getNotes() {
         try {
-            if (_notes != null)
-                return _notes;
-
-            if (SOURCE.has("notes") && SOURCE.get("notes") != null)
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
                 _notes = SOURCE.getString("notes");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -112,7 +158,7 @@ public class Cancellation implements Parcelable {
         try {
             return new Cancellation(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -150,5 +196,13 @@ public class Cancellation implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

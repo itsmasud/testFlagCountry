@@ -25,6 +25,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
@@ -32,6 +33,7 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.Date;
@@ -348,8 +350,11 @@ public class CheckInOutDialog extends FullScreenDialog {
                     if (_location != null) {
                         cio.coords(new Coords(_location));
                     }
-                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getWorkOrderId(), new TimeLog().in(cio));
-                    _onCheckInDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), new TimeLog().in(cio));
+
+                    GpsTrackingService.stop(App.get());
+
+                    _onCheckInDispatcher.dispatch(getUid(), _workOrder.getId());
 
                 } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                     boolean callMade = false;
@@ -365,7 +370,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                                 timeLog.devices((double) _itemSelectedPosition);
                             }
                             timeLog.out(cio);
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getWorkOrderId(), timeLog.getId(), timeLog);
+                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog);
                             callMade = true;
                             break;
                         }
@@ -375,7 +380,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                         Log.v(TAG, "break!");
                     }
 
-                    _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getWorkOrderId());
+                    _onCheckOutDispatcher.dispatch(getUid(), _workOrder.getId());
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -410,7 +415,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("addTimeLog") || methodName.equals("updateTimeLog")) {
                 setLoading(false);
                 if (success) {
@@ -471,13 +476,13 @@ public class CheckInOutDialog extends FullScreenDialog {
     /*-         Check In           -*/
     /*-****************************-*/
     public interface OnCheckInListener {
-        void onCheckIn(long workOrderId);
+        void onCheckIn(int workOrderId);
     }
 
     private static KeyedDispatcher<OnCheckInListener> _onCheckInDispatcher = new KeyedDispatcher<OnCheckInListener>() {
         @Override
         public void onDispatch(OnCheckInListener listener, Object... parameters) {
-            listener.onCheckIn((Long) parameters[0]);
+            listener.onCheckIn((Integer) parameters[0]);
         }
     };
 
@@ -497,13 +502,13 @@ public class CheckInOutDialog extends FullScreenDialog {
     /*-         Check Out           -*/
     /*-*****************************-*/
     public interface OnCheckOutListener {
-        void onCheckOut(long workOrderId);
+        void onCheckOut(int workOrderId);
     }
 
     private static KeyedDispatcher<OnCheckOutListener> _onCheckOutDispatcher = new KeyedDispatcher<OnCheckOutListener>() {
         @Override
         public void onDispatch(OnCheckOutListener listener, Object... parameters) {
-            listener.onCheckOut((Long) parameters[0]);
+            listener.onCheckOut((Integer) parameters[0]);
         }
     };
 
@@ -518,4 +523,31 @@ public class CheckInOutDialog extends FullScreenDialog {
     public static void removeAllOnCheckOutListener(String uid) {
         _onCheckOutDispatcher.removeAll(uid);
     }
+
+    /*-**************************-*/
+    /*-         Cancel           -*/
+    /*-**************************-*/
+    public interface OnCancelListener {
+        void onCancel();
+    }
+
+    private static KeyedDispatcher<CheckInOutDialog.OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<CheckInOutDialog.OnCancelListener>() {
+        @Override
+        public void onDispatch(CheckInOutDialog.OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, CheckInOutDialog.OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, CheckInOutDialog.OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
+
 }

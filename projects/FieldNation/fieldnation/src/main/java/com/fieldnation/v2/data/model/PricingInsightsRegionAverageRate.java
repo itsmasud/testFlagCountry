@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -47,12 +51,8 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
 
     public Double getFirstQuartile() {
         try {
-            if (_firstQuartile != null)
-                return _firstQuartile;
-
-            if (SOURCE.has("first_quartile") && SOURCE.get("first_quartile") != null)
+            if (_firstQuartile == null && SOURCE.has("first_quartile") && SOURCE.get("first_quartile") != null)
                 _firstQuartile = SOURCE.getDouble("first_quartile");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -73,12 +73,8 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
 
     public Double getMedian() {
         try {
-            if (_median != null)
-                return _median;
-
-            if (SOURCE.has("median") && SOURCE.get("median") != null)
+            if (_median == null && SOURCE.has("median") && SOURCE.get("median") != null)
                 _median = SOURCE.getDouble("median");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -99,12 +95,8 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
 
     public Double getThirdQuartile() {
         try {
-            if (_thirdQuartile != null)
-                return _thirdQuartile;
-
-            if (SOURCE.has("third_quartile") && SOURCE.get("third_quartile") != null)
+            if (_thirdQuartile == null && SOURCE.has("third_quartile") && SOURCE.get("third_quartile") != null)
                 _thirdQuartile = SOURCE.getDouble("third_quartile");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -141,7 +133,7 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
         try {
             return new PricingInsightsRegionAverageRate(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -179,5 +171,13 @@ public class PricingInsightsRegionAverageRate implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

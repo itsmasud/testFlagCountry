@@ -10,7 +10,6 @@ import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Request;
 
 /**
  * Created by mc on 11/7/16.
@@ -33,9 +32,7 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
             int requestId = bundle.getInt("requestId");
 
             try {
-                Request request = new Request();
-                request.id(requestId);
-                WorkordersWebApi.removeRequest(App.get(), workOrderId, request);
+                WorkordersWebApi.deleteRequest(App.get(), workOrderId, requestId);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

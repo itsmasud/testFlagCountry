@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -21,7 +25,7 @@ public class ShipmentTask implements Parcelable {
     private static final String TAG = "ShipmentTask";
 
     @Json(name = "id")
-    private Double _id;
+    private Integer _id;
 
     @Source
     private JsonObject SOURCE;
@@ -34,15 +38,15 @@ public class ShipmentTask implements Parcelable {
         SOURCE = obj;
     }
 
-    public void setId(Double id) throws ParseException {
+    public void setId(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
     }
 
-    public Double getId() {
+    public Integer getId() {
         try {
             if (_id == null && SOURCE.has("id") && SOURCE.get("id") != null)
-                _id = SOURCE.getDouble("id");
+                _id = SOURCE.getInt("id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -50,7 +54,7 @@ public class ShipmentTask implements Parcelable {
         return _id;
     }
 
-    public ShipmentTask id(Double id) throws ParseException {
+    public ShipmentTask id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
         return this;
@@ -79,7 +83,7 @@ public class ShipmentTask implements Parcelable {
         try {
             return new ShipmentTask(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

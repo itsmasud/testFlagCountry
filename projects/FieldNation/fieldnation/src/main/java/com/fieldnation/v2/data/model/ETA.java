@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -31,7 +34,7 @@ public class ETA implements Parcelable {
     private Double _hourEstimate;
 
     @Json(name = "mode")
-    private Boolean _mode;
+    private ModeEnum _mode;
 
     @Json(name = "start")
     private Date _start;
@@ -135,15 +138,15 @@ public class ETA implements Parcelable {
         return this;
     }
 
-    public void setMode(Boolean mode) throws ParseException {
+    public void setMode(ModeEnum mode) throws ParseException {
         _mode = mode;
-        SOURCE.put("mode", mode);
+        SOURCE.put("mode", mode.toString());
     }
 
-    public Boolean getMode() {
+    public ModeEnum getMode() {
         try {
             if (_mode == null && SOURCE.has("mode") && SOURCE.get("mode") != null)
-                _mode = SOURCE.getBoolean("mode");
+                _mode = ModeEnum.fromString(SOURCE.getString("mode"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -151,9 +154,9 @@ public class ETA implements Parcelable {
         return _mode;
     }
 
-    public ETA mode(Boolean mode) throws ParseException {
+    public ETA mode(ModeEnum mode) throws ParseException {
         _mode = mode;
-        SOURCE.put("mode", mode);
+        SOURCE.put("mode", mode.toString());
         return this;
     }
 
@@ -235,6 +238,43 @@ public class ETA implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
+    public enum ModeEnum {
+        @Json(name = "between")
+        BETWEEN("between"),
+        @Json(name = "exact")
+        EXACT("exact"),
+        @Json(name = "hours")
+        HOURS("hours");
+
+        private String value;
+
+        ModeEnum(String value) {
+            this.value = value;
+        }
+
+        public static ModeEnum fromString(String value) {
+            ModeEnum[] values = values();
+            for (ModeEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ModeEnum[] fromJsonArray(JsonArray jsonArray) {
+            ModeEnum[] list = new ModeEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     public enum ActionsEnum {
         @Json(name = "add")
         ADD("add"),
@@ -244,12 +284,12 @@ public class ETA implements Parcelable {
         EDIT("edit"),
         @Json(name = "mark_ready_to_go")
         MARK_READY_TO_GO("mark_ready_to_go"),
-
         @Json(name = "on_my_way")
         ON_MY_WAY("on_my_way"),
-
         @Json(name = "running_late")
-        RUNNING_LATE("running_late");
+        RUNNING_LATE("running_late"),
+        @Json(name = "set_eta")
+        SET_ETA("set_eta");
 
         private String value;
 
@@ -303,7 +343,7 @@ public class ETA implements Parcelable {
         try {
             return new ETA(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }

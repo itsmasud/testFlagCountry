@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,17 +48,16 @@ public class CompanyIntegrations implements Parcelable {
 
     public ListEnvelope getEnvelope() {
         try {
-            if (_envelope != null)
-                return _envelope;
-
-            if (SOURCE.has("envelope") && SOURCE.get("envelope") != null)
+            if (_envelope == null && SOURCE.has("envelope") && SOURCE.get("envelope") != null)
                 _envelope = ListEnvelope.fromJson(SOURCE.getJsonObject("envelope"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_envelope != null && _envelope.isSet())
         return _envelope;
+
+        return null;
     }
 
     public CompanyIntegrations envelope(ListEnvelope envelope) throws ParseException {
@@ -113,7 +116,7 @@ public class CompanyIntegrations implements Parcelable {
         try {
             return new CompanyIntegrations(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -151,5 +154,13 @@ public class CompanyIntegrations implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -53,12 +57,8 @@ public class CreditCard implements Parcelable {
 
     public String getCardNumber() {
         try {
-            if (_cardNumber != null)
-                return _cardNumber;
-
-            if (SOURCE.has("card_number") && SOURCE.get("card_number") != null)
+            if (_cardNumber == null && SOURCE.has("card_number") && SOURCE.get("card_number") != null)
                 _cardNumber = SOURCE.getString("card_number");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -79,12 +79,8 @@ public class CreditCard implements Parcelable {
 
     public String getCardholderName() {
         try {
-            if (_cardholderName != null)
-                return _cardholderName;
-
-            if (SOURCE.has("cardholder_name") && SOURCE.get("cardholder_name") != null)
+            if (_cardholderName == null && SOURCE.has("cardholder_name") && SOURCE.get("cardholder_name") != null)
                 _cardholderName = SOURCE.getString("cardholder_name");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -105,12 +101,8 @@ public class CreditCard implements Parcelable {
 
     public String getCvv() {
         try {
-            if (_cvv != null)
-                return _cvv;
-
-            if (SOURCE.has("cvv") && SOURCE.get("cvv") != null)
+            if (_cvv == null && SOURCE.has("cvv") && SOURCE.get("cvv") != null)
                 _cvv = SOURCE.getString("cvv");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -131,12 +123,8 @@ public class CreditCard implements Parcelable {
 
     public String getExpDate() {
         try {
-            if (_expDate != null)
-                return _expDate;
-
-            if (SOURCE.has("exp_date") && SOURCE.get("exp_date") != null)
+            if (_expDate == null && SOURCE.has("exp_date") && SOURCE.get("exp_date") != null)
                 _expDate = SOURCE.getString("exp_date");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -157,12 +145,8 @@ public class CreditCard implements Parcelable {
 
     public TypeEnum getType() {
         try {
-            if (_type != null)
-                return _type;
-
-            if (SOURCE.has("type") && SOURCE.get("type") != null)
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
                 _type = TypeEnum.fromString(SOURCE.getString("type"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -245,7 +229,7 @@ public class CreditCard implements Parcelable {
         try {
             return new CreditCard(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -283,5 +267,13 @@ public class CreditCard implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

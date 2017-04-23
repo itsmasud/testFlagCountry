@@ -28,6 +28,7 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
@@ -58,6 +59,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private Button _forgotButton;
     private View _stiltView;
     private TextView _versionTextView;
+    private DialogManager _dialogManager;
 
     // data
     private String _username;
@@ -118,6 +120,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
 
+        _dialogManager = (DialogManager) findViewById(R.id.dialogManager);
+
         _authcomplete = false;
 
         Handler handler = new Handler();
@@ -135,6 +139,13 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        _dialogManager.onStart();
+    }
+
+    @Override
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
@@ -142,6 +153,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _globalClient.connect(App.get());
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
+
+        _dialogManager.onResume();
     }
 
     @Override
@@ -154,7 +167,16 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
 
+        _dialogManager.onPause();
+
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        _dialogManager.onStop();
     }
 
     @Override
@@ -166,7 +188,13 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
+
+        if (_dialogManager.onBackPressed()) {
+            return;
+        }
+
         GlobalTopicClient.appShutdown(this);
+
         super.onBackPressed();
     }
 

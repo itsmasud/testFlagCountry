@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -56,12 +60,8 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public Integer getCompanyId() {
         try {
-            if (_companyId != null)
-                return _companyId;
-
-            if (SOURCE.has("company_id") && SOURCE.get("company_id") != null)
+            if (_companyId == null && SOURCE.has("company_id") && SOURCE.get("company_id") != null)
                 _companyId = SOURCE.getInt("company_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -82,12 +82,8 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public Integer getGroupId() {
         try {
-            if (_groupId != null)
-                return _groupId;
-
-            if (SOURCE.has("group_id") && SOURCE.get("group_id") != null)
+            if (_groupId == null && SOURCE.has("group_id") && SOURCE.get("group_id") != null)
                 _groupId = SOURCE.getInt("group_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -108,12 +104,8 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public String getRole() {
         try {
-            if (_role != null)
-                return _role;
-
-            if (SOURCE.has("role") && SOURCE.get("role") != null)
+            if (_role == null && SOURCE.has("role") && SOURCE.get("role") != null)
                 _role = SOURCE.getString("role");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -134,12 +126,8 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public String getRoute() {
         try {
-            if (_route != null)
-                return _route;
-
-            if (SOURCE.has("route") && SOURCE.get("route") != null)
+            if (_route == null && SOURCE.has("route") && SOURCE.get("route") != null)
                 _route = SOURCE.getString("route");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -160,12 +148,8 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public Integer getUserId() {
         try {
-            if (_userId != null)
-                return _userId;
-
-            if (SOURCE.has("user_id") && SOURCE.get("user_id") != null)
+            if (_userId == null && SOURCE.has("user_id") && SOURCE.get("user_id") != null)
                 _userId = SOURCE.getInt("user_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -186,12 +170,8 @@ public class UpdateModelMetadataData implements Parcelable {
 
     public Integer getWorkOrderId() {
         try {
-            if (_workOrderId != null)
-                return _workOrderId;
-
-            if (SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
                 _workOrderId = SOURCE.getInt("work_order_id");
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -228,7 +208,7 @@ public class UpdateModelMetadataData implements Parcelable {
         try {
             return new UpdateModelMetadataData(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -266,5 +246,13 @@ public class UpdateModelMetadataData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }

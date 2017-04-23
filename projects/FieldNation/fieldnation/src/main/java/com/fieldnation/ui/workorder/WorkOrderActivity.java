@@ -23,7 +23,7 @@ import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.List;
@@ -264,7 +264,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         if (_tabview == null)
             return;
 
-        setTitle("WO: " + _workOrder.getWorkOrderId());
+        setTitle("WO: " + _workOrder.getId());
         if (_workOrder.getMessages() != null
                 && _workOrder.getMessages().getMetadata() != null
                 && _workOrder.getMessages().getMetadata().getTotal() != null) {
@@ -284,12 +284,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
     }
 
-    public void getData() {
-        Log.v(TAG, "getData");
-        setLoading(true);
-        WorkordersWebApi.getWorkOrder(this, _workOrderId, true, false);
-    }
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -307,6 +301,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+        Log.v(TAG, "onActivityResult " + arg0 + ", " + arg1);
         if (_fragments != null) {
             for (Fragment fragment : _fragments) {
                 if (fragment != null)
@@ -381,32 +376,35 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         public void onConnected() {
             Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
             _workOrderApi.subWorkordersWebApi();
-            getData();
+            setLoading(true);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         @Override
-        public void onGetWorkOrder(WorkOrder workOrder, boolean success, Error error) {
-            Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
-            if (workOrder == null || !success) {
-                setLoading(false);
-                return;
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
+                if (workOrder == null || !success) {
+                    setLoading(false);
+                    return;
+                }
+
+                if (_workOrderId == (int) workOrder.getId()) {
+                    Debug.setLong("last_workorder", workOrder.getId());
+                    _workOrder = workOrder;
+                    populateUi();
+                }
+            } else if (!methodName.startsWith("get")) {
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
             }
 
-            if (_workOrderId == (int) workOrder.getWorkOrderId()) {
-                Debug.setLong("last_workorder", workOrder.getWorkOrderId());
-                _workOrder = workOrder;
-                populateUi();
-            }
-        }
-
-        @Override
-        public void onWorkordersWebApi(String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.startsWith("get") || !success)
                 return;
 
             Log.v(TAG, "onWorkordersWebApi " + methodName);
 
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 
@@ -436,7 +434,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static Intent makeIntentShow(Context context, int workOrderId) {
         Intent intent = new Intent(context, WorkOrderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(/*Intent.FLAG_ACTIVITY_CLEAR_TOP |*/ Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
         return intent;

@@ -10,8 +10,12 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,17 +48,16 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
 
     public EventUpdateScheduleByWorkOrderNew getNew() {
         try {
-            if (_new != null)
-                return _new;
-
-            if (SOURCE.has("new") && SOURCE.get("new") != null)
+            if (_new == null && SOURCE.has("new") && SOURCE.get("new") != null)
                 _new = EventUpdateScheduleByWorkOrderNew.fromJson(SOURCE.getJsonObject("new"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_new != null && _new.isSet())
         return _new;
+
+        return null;
     }
 
     public EventUpdateScheduleByWorkOrder neww(EventUpdateScheduleByWorkOrderNew neww) throws ParseException {
@@ -70,17 +73,16 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
 
     public EventUpdateScheduleByWorkOrderOld getOld() {
         try {
-            if (_old != null)
-                return _old;
-
-            if (SOURCE.has("old") && SOURCE.get("old") != null)
+            if (_old == null && SOURCE.has("old") && SOURCE.get("old") != null)
                 _old = EventUpdateScheduleByWorkOrderOld.fromJson(SOURCE.getJsonObject("old"));
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
+        if (_old != null && _old.isSet())
         return _old;
+
+        return null;
     }
 
     public EventUpdateScheduleByWorkOrder old(EventUpdateScheduleByWorkOrderOld old) throws ParseException {
@@ -112,7 +114,7 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
         try {
             return new EventUpdateScheduleByWorkOrder(obj);
         } catch (Exception ex) {
-            Log.v(TAG, TAG, ex);
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -150,5 +152,13 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getJson(), flags);
+    }
+
+    /*-*****************************-*/
+    /*-         Human Code          -*/
+    /*-*****************************-*/
+
+    public boolean isSet() {
+        return true;
     }
 }
