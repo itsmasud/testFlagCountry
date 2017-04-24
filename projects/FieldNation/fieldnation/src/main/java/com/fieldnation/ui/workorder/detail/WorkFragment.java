@@ -81,6 +81,7 @@ import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
+import com.fieldnation.v2.ui.dialog.BundleEtaDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
@@ -758,8 +759,9 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-            ConfirmActivity.startNew(App.get());
+//            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
+            BundleEtaDialog.show(App.get(), "BundleEtaDialog", _workOrder.getBundle().getId());
         }
     };
 

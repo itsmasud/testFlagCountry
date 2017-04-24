@@ -959,8 +959,6 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             ConfirmActivity.startNew(App.get());
             //_onMyWay_onClick.onClick(v);
-            BundleEtaDialog.show(App.get(), "BundleEtaDialog");
-
         }
     };
 
