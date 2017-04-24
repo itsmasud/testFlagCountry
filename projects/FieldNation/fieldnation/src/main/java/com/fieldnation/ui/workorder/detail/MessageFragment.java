@@ -86,7 +86,7 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-        App.get().spUiContext.page = WorkOrderTracker.Tab.MESSAGES.name();
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
         if (_workorder != null) {
             _refreshView.startRefreshing();
             WorkordersWebApi.getMessages(App.get(), _workorder.getId(), true, false);

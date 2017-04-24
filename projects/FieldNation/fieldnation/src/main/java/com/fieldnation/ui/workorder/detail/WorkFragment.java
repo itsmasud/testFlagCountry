@@ -473,7 +473,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void update() {
-        App.get().spUiContext.page = WorkOrderTracker.Tab.DETAILS.name();
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.DETAILS.name());
     }
 
     @Override
@@ -798,9 +798,6 @@ public class WorkFragment extends WorkorderFragment {
                 param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 param.id(unAck.getId());
 
-                App.get().spUiContext.elementAction = WorkOrderTracker.Action.ACKNOWLEDGE_HOLD.action();
-                App.get().spUiContext.elementIdentity = WorkOrderTracker.Identity.ACKNOWLEDGE_HOLD_ACTION_BUTTON.identity();
-                App.get().spUiContext.elementType = WorkOrderTracker.Identity.ACKNOWLEDGE_HOLD_ACTION_BUTTON.elementType().elementType;
                 WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -847,9 +844,6 @@ public class WorkFragment extends WorkorderFragment {
                 ETA eta = new ETA();
                 eta.status(etaStatus);
 
-                App.get().spUiContext.elementAction = WorkOrderTracker.Action.ON_MY_WAY.action();
-                App.get().spUiContext.elementIdentity = WorkOrderTracker.Identity.ON_MY_WAY_ACTION_BUTTON.identity();
-                App.get().spUiContext.elementType = WorkOrderTracker.Identity.ON_MY_WAY_ACTION_BUTTON.elementType().elementType;
                 WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -1643,11 +1637,11 @@ public class WorkFragment extends WorkorderFragment {
             }
             if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog);
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog, null); // TODO snowplow
 
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog);
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog, null); // TODO snowplow
             }
             setLoading(true);
         }

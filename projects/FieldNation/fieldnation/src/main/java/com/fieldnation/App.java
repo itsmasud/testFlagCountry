@@ -93,7 +93,7 @@ public class App extends Application {
     private boolean _hasInteracted = false;
 
     // UI context hack
-    public SpUIContext spUiContext = new SpUIContext();
+    private SpUIContext _spUiContext = new SpUIContext();
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
@@ -122,6 +122,10 @@ public class App extends Application {
         });
         Tracker.addTrackerWrapper(new SnowplowWrapper());
         Tracker.addTrackerWrapper(new AnswersWrapper());
+    }
+
+    public SpUIContext getSpUiContext() {
+        return _spUiContext;
     }
 
     @Override

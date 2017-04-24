@@ -6,8 +6,6 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -160,14 +158,6 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getCompanyDetails")
-                .label(companyId + "")
-                .category("company")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/company/" + companyId);
 
@@ -293,14 +283,6 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getIntegrations(Context context, String companyId, String accessToken, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getIntegrations")
-                .label(companyId + "")
-                .category("company")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/integrations?access_token=" + accessToken);
 
@@ -425,14 +407,6 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getPredefinedExpensesByWorkOrder")
-                .label(workOrderId + "")
-                .category("company")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId);
 
@@ -473,14 +447,6 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getRatings(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getRatingsByCompanyId")
-                .label(companyId + "")
-                .category("company")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/company/" + companyId + "/ratings");
 
@@ -559,14 +525,6 @@ public class CompanyWebApi extends TopicClient {
      * @param accessToken null
      */
     public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getSendRequestedFeatures")
-                .label(featureId + "")
-                .category("company")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/company/features/" + featureId + "?access_token=" + accessToken);
 
@@ -644,14 +602,6 @@ public class CompanyWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getTagsByWorkOrder")
-                .label(workOrderId + "")
-                .category("company")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/company/tags/" + workOrderId);
 
@@ -692,16 +642,6 @@ public class CompanyWebApi extends TopicClient {
      * @param financeId ID of finance account
      */
     public static void updateFund(Context context, Integer companyId, Integer financeId) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateFundByFund")
-                .label(companyId + "")
-                .category("funds")
-                .addContext(App.get().spUiContext)
-                .property("finance_id")
-                .value(financeId)
-                .build()
-        );
-
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -741,16 +681,6 @@ public class CompanyWebApi extends TopicClient {
      * @param fundTransaction Transaction attempting to be created (Optional)
      */
     public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateFundByFund")
-                .label(companyId + "")
-                .category("funds")
-                .addContext(App.get().spUiContext)
-                .property("finance_id")
-                .value(financeId)
-                .build()
-        );
-
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 

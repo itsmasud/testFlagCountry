@@ -1,17 +1,12 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -20,15 +15,15 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.EmailTemplates;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.Robocalls;
 
 /**
  * Created by dmgen from swagger.
@@ -75,14 +70,6 @@ public class StaffWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getEmailTemplates(Context context, String category, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getEmailTemplates")
-                .label(category + "")
-                .category("emailTemplate")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/staff/email-templates/category/" + category);
 
@@ -161,14 +148,6 @@ public class StaffWebApi extends TopicClient {
      * @param body        null
      */
     public static void sendCommunication(Context context, Integer workOrderId, String body) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("sendCommunicationByWorkOrder")
-                .label(workOrderId + "")
-                .category("recruitment")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("POST//api/rest/v2/staff/recruitment/send-communications/" + workOrderId);
 

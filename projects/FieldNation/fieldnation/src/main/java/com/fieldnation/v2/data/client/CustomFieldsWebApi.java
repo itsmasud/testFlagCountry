@@ -114,14 +114,6 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param customFieldId Custom field id
      */
     public static void deleteCustomField(Context context, Integer customFieldId) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deleteCustomField")
-                .label(customFieldId + "")
-                .category("customfield")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -197,14 +189,6 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param json          JSON Model
      */
     public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateCustomField")
-                .label(customFieldId + "")
-                .category("customfield")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -247,14 +231,6 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateCustomFieldVisibility")
-                .label(customFieldId + "")
-                .category("customfield")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
 
@@ -294,16 +270,6 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateCustomFieldVisibilityByClient")
-                .label(customFieldId + "")
-                .category("customfield")
-                .addContext(App.get().spUiContext)
-                .property("client_id")
-                .value(clientId)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
 
@@ -344,16 +310,6 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param visibility    Visibility (visible or hidden)
      */
     public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateCustomFieldVisibilityByProject")
-                .label(customFieldId + "")
-                .category("customfield")
-                .addContext(App.get().spUiContext)
-                .property("project_id")
-                .value(projectId)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 

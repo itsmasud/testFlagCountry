@@ -76,17 +76,6 @@ public class LocationsWebApi extends TopicClient {
      * @param json       JSON Model
      */
     public static void addAttribute(Context context, Integer locationId, Integer attribute, LocationAttribute json) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("addAttributeByLocationAndAttribute")
-                .label(locationId + "")
-                .category("workorder")
-                .addContext(App.get().spUiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(locationId).build())
-                .property("attribute")
-                .value(attribute)
-                .build()
-        );
-
         try {
             String key = misc.md5("POST//api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
 
@@ -170,14 +159,6 @@ public class LocationsWebApi extends TopicClient {
      * @param json       Notes
      */
     public static void addNotes(Context context, Integer locationId, LocationNote json) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("addNotesByLocation")
-                .label(locationId + "")
-                .category("location")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("POST//api/rest/v2/locations/" + locationId + "/notes");
 
@@ -220,17 +201,6 @@ public class LocationsWebApi extends TopicClient {
      * @param attribute  Attribute
      */
     public static void deleteAttribute(Context context, Integer locationId, Integer attribute) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deleteAttributeByLocationAndAttribute")
-                .label(locationId + "")
-                .category("workorder")
-                .addContext(App.get().spUiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(locationId).build())
-                .property("attribute")
-                .value(attribute)
-                .build()
-        );
-
         try {
             String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/attributes/" + attribute);
 
@@ -268,14 +238,6 @@ public class LocationsWebApi extends TopicClient {
      * @param locationId Location id
      */
     public static void deleteLocation(Context context, Integer locationId) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deleteLocation")
-                .label(locationId + "")
-                .category("location")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId);
 
@@ -313,16 +275,6 @@ public class LocationsWebApi extends TopicClient {
      * @param noteId     Location note id
      */
     public static void deleteNote(Context context, Integer locationId, Integer noteId) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deleteNoteByLocation")
-                .label(locationId + "")
-                .category("location")
-                .addContext(App.get().spUiContext)
-                .property("note_id")
-                .value(noteId)
-                .build()
-        );
-
         try {
             String key = misc.md5("DELETE//api/rest/v2/locations/" + locationId + "/notes/" + noteId);
 
@@ -437,14 +389,6 @@ public class LocationsWebApi extends TopicClient {
      * @param isBackground indicates that this call is low priority
      */
     public static void getProviders(Context context, Integer locationId, boolean allowCacheResponse, boolean isBackground) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("getProvidersByLocationId")
-                .label(locationId + "")
-                .category("location")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("GET//api/rest/v2/locations/" + locationId + "/providers");
 
@@ -485,14 +429,6 @@ public class LocationsWebApi extends TopicClient {
      * @param json       JSON payload
      */
     public static void updateLocation(Context context, Integer locationId, StoredLocation json) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateLocation")
-                .label(locationId + "")
-                .category("location")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/locations/" + locationId);
 
@@ -536,16 +472,6 @@ public class LocationsWebApi extends TopicClient {
      * @param json       Notes
      */
     public static void updateNote(Context context, Integer locationId, Integer noteId, LocationNote json) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updateNoteByLocation")
-                .label(locationId + "")
-                .category("location")
-                .addContext(App.get().spUiContext)
-                .property("note_id")
-                .value(noteId)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/locations/" + locationId + "/notes/" + noteId);
 

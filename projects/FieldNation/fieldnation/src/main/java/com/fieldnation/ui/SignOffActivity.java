@@ -65,7 +65,7 @@ public class SignOffActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
-        App.get().spUiContext.page = "Collect Signature";
+        App.get().getSpUiContext().page = "Collect Signature";
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
     }

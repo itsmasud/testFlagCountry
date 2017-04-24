@@ -493,10 +493,6 @@ public class ReportProblemDialog extends SimpleDialog {
                         else
                             delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
 
-                        App.get().spUiContext.elementAction = WorkOrderTracker.Action.RUNNING_LATE.action();
-                        App.get().spUiContext.elementIdentity = WorkOrderTracker.Identity.RUNNING_LATE_ACTION_BUTTON.identity();
-                        App.get().spUiContext.elementType = WorkOrderTracker.Identity.RUNNING_LATE_ACTION_BUTTON.elementType().elementType;
-
                         ETA eta = new ETA()
                                 .status(new ETAStatus()
                                         .condition(new Condition()

@@ -215,7 +215,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void update() {
-        App.get().spUiContext.page = WorkOrderTracker.Tab.ATTACHMENTS.name();
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.ATTACHMENTS.name());
         checkMedia();
     }
 

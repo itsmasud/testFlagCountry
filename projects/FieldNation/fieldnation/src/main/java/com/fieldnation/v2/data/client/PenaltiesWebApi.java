@@ -108,14 +108,6 @@ public class PenaltiesWebApi extends TopicClient {
      * @param penaltyId Penalty ID
      */
     public static void deletePenalty(Context context, Integer penaltyId) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("deletePenaltyByPenalty")
-                .label(penaltyId + "")
-                .category("penalty")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("DELETE//api/rest/v2/penalties/" + penaltyId);
 
@@ -153,14 +145,6 @@ public class PenaltiesWebApi extends TopicClient {
      * @param json      JSON Model
      */
     public static void updatePenalty(Context context, String penaltyId, PayModifier json) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("updatePenaltyByPenalty")
-                .label(penaltyId + "")
-                .category("penalty")
-                .addContext(App.get().spUiContext)
-                .build()
-        );
-
         try {
             String key = misc.md5("PUT//api/rest/v2/penalties/" + penaltyId);
 
