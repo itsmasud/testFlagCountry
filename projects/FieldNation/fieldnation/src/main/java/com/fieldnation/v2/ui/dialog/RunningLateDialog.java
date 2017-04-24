@@ -191,6 +191,11 @@ public class RunningLateDialog extends SimpleDialog {
                 else
                     delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
 
+                if (delayMin <= 0) {
+                    ToastClient.toast(App.get(), "Please enter a delay greater than 0", Toast.LENGTH_LONG);
+                    return;
+                }
+
                 ETA eta = new ETA()
                         .status(new ETAStatus()
                                 .condition(new Condition()
