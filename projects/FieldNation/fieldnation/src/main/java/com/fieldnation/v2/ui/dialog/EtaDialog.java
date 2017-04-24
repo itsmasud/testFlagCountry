@@ -771,9 +771,9 @@ public class EtaDialog extends FullScreenDialog {
                         if (_etaSwitch.isChecked()) {
                             ETA eta = new ETA();
                             eta.setStart(new Date(_etaStart));
-                            eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                            eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                             eta.setUser(new User().id((int) App.getProfileId()));
-                            eta.setHourEstimate(_durationMilliseconds / 3600.0);
+                            eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                             request.setEta(eta);
                         }
                         WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
