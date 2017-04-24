@@ -12,6 +12,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
@@ -96,6 +100,16 @@ public class CancelWarningDialog extends FullScreenDialog {
     private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId((int) _workOrderId).build())
+                    .addContext(new SpUIContext.Builder()
+                            .elementAction("Click")
+                            .elementIdentity("Abort Cancel Work Order")
+                            .elementType("Button")
+                            .page("Cancel Warning Dialog")
+                            .build())
+                    .build()
+            );
             dismiss(true);
         }
     };

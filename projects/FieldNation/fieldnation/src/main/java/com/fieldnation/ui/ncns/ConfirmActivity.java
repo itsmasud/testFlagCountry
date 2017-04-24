@@ -11,7 +11,12 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpScreenDisplayUiContext;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -158,6 +163,16 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final View.OnClickListener _remindMeButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpScreenDisplayUiContext.Builder().page("Confirm Work Screen").build())
+                    .addContext(new SpUIContext.Builder()
+                            .elementAction("Click")
+                            .elementIdentity("Remind Me Action")
+                            .elementType("Button")
+                            .page("Confirm Work Screen")
+                            .build())
+                    .build()
+            );
             NavActivity.startNew(App.get());
             finish();
         }
