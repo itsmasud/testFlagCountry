@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -471,8 +472,11 @@ public class CounterOfferDialog extends SimpleDialog {
 
                 if (_workOrder.getRequests().getOpenRequest() != null) {
                     _refreshView.startRefreshing();
+
+                    SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                    uiContext.page += " - Counter Offer Dialog";
                     WorkordersWebApi.deleteRequest(App.get(), _workOrder.getId(),
-                            _workOrder.getRequests().getOpenRequest().getId());
+                            _workOrder.getRequests().getOpenRequest().getId(), uiContext);
                 } else {
                     _refreshView.startRefreshing();
 
@@ -503,7 +507,9 @@ public class CounterOfferDialog extends SimpleDialog {
                         if (!misc.isEmptyOrNull(_explanation))
                             request.setNotes(_explanation);
 
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Counter Offer Dialog";
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
@@ -572,7 +578,9 @@ public class CounterOfferDialog extends SimpleDialog {
                         if (_expires > 0)
                             request.expires(new Date(_expires));
 
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Counter Offer Dialog";
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }

@@ -105,7 +105,7 @@ public class SpUIContext implements EventContext, SpContext, Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public Object clone() {
         SpUIContext n = new SpUIContext();
         n.page = page;
         n.elementType = elementType;

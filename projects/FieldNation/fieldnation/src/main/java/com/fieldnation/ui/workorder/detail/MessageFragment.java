@@ -174,7 +174,7 @@ public class MessageFragment extends WorkorderFragment {
                 try {
                     Message msg = new Message();
                     msg.setMessage(_inputView.getInputText());
-                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg);
+                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg, App.get().getSpUiContext());
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

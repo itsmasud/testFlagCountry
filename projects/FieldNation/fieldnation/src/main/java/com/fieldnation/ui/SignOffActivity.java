@@ -9,6 +9,7 @@ import android.view.Window;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
@@ -216,12 +217,14 @@ public class SignOffActivity extends AuthSimpleActivity {
                 signature.task(new Task().id(_taskId));
             }
 
-            WorkordersWebApi.addSignature(App.get(), _workOrder.getId(), signature);
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Collect Signature";
+            WorkordersWebApi.addSignature(App.get(), _workOrder.getId(), signature, uiContext);
 
             if (_completeWorkorder) {
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                         WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
-                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId());
+                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId(), uiContext);
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
             }
         } catch (Exception ex) {

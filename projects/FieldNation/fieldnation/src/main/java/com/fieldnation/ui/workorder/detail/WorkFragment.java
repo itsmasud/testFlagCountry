@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fngps.SimpleGps;
@@ -798,7 +799,7 @@ public class WorkFragment extends WorkorderFragment {
                 param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
                 param.id(unAck.getId());
 
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param);
+                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -844,7 +845,7 @@ public class WorkFragment extends WorkorderFragment {
                 ETA eta = new ETA();
                 eta.status(etaStatus);
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -922,7 +923,7 @@ public class WorkFragment extends WorkorderFragment {
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.READYTOGO));
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -938,7 +939,7 @@ public class WorkFragment extends WorkorderFragment {
                 ETA eta = new ETA()
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.CONFIRMED));
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1004,7 +1005,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkordersWebApi.deleteTimeLog(App.get(), _workOrder.getId(), (int) timeLogId);
+                            WorkordersWebApi.deleteTimeLog(App.get(), _workOrder.getId(), (int) timeLogId, App.get().getSpUiContext());
                             setLoading(true);
                         }
 
@@ -1056,7 +1057,7 @@ public class WorkFragment extends WorkorderFragment {
                     Log.v(TAG, "docid: " + doc.getId());
                     if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                         try {
-                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                         } catch (Exception ex) {
                             Log.v(TAG, ex);
                         }
@@ -1075,7 +1076,7 @@ public class WorkFragment extends WorkorderFragment {
             startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
             try {
-                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1086,7 +1087,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onPhone(Task task) {
             if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE))
                 try {
-                    WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                    WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -1172,7 +1173,7 @@ public class WorkFragment extends WorkorderFragment {
                 return;
 
             try {
-                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE));
+                WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1203,7 +1204,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-                            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getId(), shipment.getId());
+                            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getId(), shipment.getId(), App.get().getSpUiContext());
                             setLoading(true);
                         }
 
@@ -1255,7 +1256,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-                            WorkordersWebApi.deleteSignature(App.get(), _workOrder.getId(), signature.getId());
+                            WorkordersWebApi.deleteSignature(App.get(), _workOrder.getId(), signature.getId(), App.get().getSpUiContext());
                         }
 
                         @Override
@@ -1323,7 +1324,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-                            WorkordersWebApi.deleteExpense(App.get(), _workOrder.getId(), expense.getId());
+                            WorkordersWebApi.deleteExpense(App.get(), _workOrder.getId(), expense.getId(), App.get().getSpUiContext());
                         }
 
                         @Override
@@ -1358,7 +1359,7 @@ public class WorkFragment extends WorkorderFragment {
                         @Override
                         public void onPositive() {
                             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkordersWebApi.deleteDiscount(App.get(), _workOrder.getId(), discount.getId());
+                            WorkordersWebApi.deleteDiscount(App.get(), _workOrder.getId(), discount.getId(), App.get().getSpUiContext());
                         }
 
                         @Override
@@ -1428,7 +1429,11 @@ public class WorkFragment extends WorkorderFragment {
             try {
                 CustomField cf = new CustomField();
                 cf.setValue(value);
-                WorkordersWebApi.updateCustomField(App.get(), _workOrder.getId(), field.getId(), cf);
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Custom Field Dialog";
+
+                WorkordersWebApi.updateCustomField(App.get(), _workOrder.getId(), field.getId(), cf, uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1451,7 +1456,11 @@ public class WorkFragment extends WorkorderFragment {
                 PayModifier discount = new PayModifier();
                 discount.setAmount(amount);
                 discount.setDescription(description);
-                WorkordersWebApi.addDiscount(App.get(), _workOrder.getId(), discount);
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Discount Dialog";
+
+                WorkordersWebApi.addDiscount(App.get(), _workOrder.getId(), discount, uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1490,7 +1499,11 @@ public class WorkFragment extends WorkorderFragment {
                 expense.description(description);
                 expense.amount(amount);
                 expense.category(category);
-                WorkordersWebApi.addExpense(App.get(), _workOrder.getId(), expense);
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Expense Dialog";
+
+                WorkordersWebApi.addExpense(App.get(), _workOrder.getId(), expense, uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1525,7 +1538,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onContinueClick() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
-            WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId());
+
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Mark Complete Dialog";
+            WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId(), uiContext);
             setLoading(true);
         }
     };
@@ -1534,7 +1550,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onMarkIncomplete(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workOrder.getId());
-            WorkordersWebApi.incompleteWorkOrder(App.get(), _workOrder.getId());
+
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Mark Incomplete Dialog";
+            WorkordersWebApi.incompleteWorkOrder(App.get(), _workOrder.getId(), uiContext);
             setLoading(true);
         }
     };
@@ -1543,8 +1562,12 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onComplete(Pay pay, String explanation) {
             try {
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Pay Dialog";
+
                 WorkordersWebApi.addIncrease(App.get(), _workOrder.getId(),
-                        new PayIncrease().pay(pay).description(explanation));
+                        new PayIncrease().pay(pay).description(explanation), uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -1587,7 +1610,9 @@ public class WorkFragment extends WorkorderFragment {
                 if (taskId > 0)
                     shipment.task(new ShipmentTask().id(taskId));
 
-                WorkordersWebApi.addShipment(App.get(), _workOrder.getId(), shipment);
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Shipment Add Dialog";
+                WorkordersWebApi.addShipment(App.get(), _workOrder.getId(), shipment, uiContext);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -1609,7 +1634,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onDelete(WorkOrder workorder, Shipment shipment) {
             WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
-            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getId(), shipment.getId());
+
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Task Shipment Add Dialog";
+            WorkordersWebApi.deleteShipment(App.get(), _workOrder.getId(), shipment.getId(), uiContext);
             setLoading(true);
         }
     };

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
@@ -217,6 +218,9 @@ public class DeclineDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Decline Dialog";
+
             if (_declinePosition != -1
                     && _declineReasonIds[_declinePosition] == DECLINE_REASON_OTHER
                     && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
@@ -232,7 +236,7 @@ public class DeclineDialog extends SimpleDialog {
 
                 // TODO implement decline reason stuff
                 if (_declinePosition == -1) {
-                    WorkordersWebApi.decline(App.get(), _workOrderId);
+                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     ProfileClient.actionBlockCompany(
                             App.get(),
                             App.get().getProfile().getUserId(),
@@ -242,7 +246,7 @@ public class DeclineDialog extends SimpleDialog {
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-                    WorkordersWebApi.decline(App.get(), _workOrderId);
+                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     ProfileClient.actionBlockCompany(
                             App.get(),
                             App.get().getProfile().getUserId(),
@@ -254,11 +258,11 @@ public class DeclineDialog extends SimpleDialog {
                 }
             } else {
                 if (_declinePosition == -1) {
-                    WorkordersWebApi.decline(App.get(), _workOrderId);
+                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-                    WorkordersWebApi.decline(App.get(), _workOrderId);
+                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -112,7 +113,11 @@ public class ClosingNotesDialog extends SimpleDialog {
             try {
                 WorkOrder workOrder = new WorkOrder();
                 workOrder.closingNotes(_editText.getText().toString());
-                WorkordersWebApi.updateWorkOrder(App.get(), _workOrderId, workOrder);
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Closing Notes Dialog";
+
+                WorkordersWebApi.updateWorkOrder(App.get(), _workOrderId, workOrder, uiContext);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -776,7 +777,10 @@ public class EtaDialog extends FullScreenDialog {
                             eta.setHourEstimate(_durationMilliseconds / 3600.0);
                             request.setEta(eta);
                         }
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
 
                         dismiss(true);
                         break;
@@ -787,7 +791,11 @@ public class EtaDialog extends FullScreenDialog {
 
                         Assignee assignee = new Assignee();
                         assignee.setUser(new User().id((int) App.getProfileId()));
-                        WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+
+                        WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee, uiContext);
 
                         break;
                     }
@@ -799,7 +807,11 @@ public class EtaDialog extends FullScreenDialog {
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                         eta.setUser(new User().id((int) App.getProfileId()));
                         eta.setHourEstimate(_durationMilliseconds / 3600.0);
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
                         dismiss(true);
                         break;
                     }
@@ -827,7 +839,11 @@ public class EtaDialog extends FullScreenDialog {
                         eta.setStart(new Date(_etaStart));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
                         eta.setUser(new User().id((int) App.getProfileId()));
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
                         eta.setHourEstimate(_durationMilliseconds / 3600.0);
                         dismiss(true);
                     } catch (Exception ex) {
