@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -85,7 +86,7 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-//        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
         if (_workorder != null) {
             _refreshView.startRefreshing();
             WorkordersWebApi.getMessages(App.get(), _workorder.getId(), true, false);
@@ -173,7 +174,7 @@ public class MessageFragment extends WorkorderFragment {
                 try {
                     Message msg = new Message();
                     msg.setMessage(_inputView.getInputText());
-                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg);
+                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg, App.get().getSpUiContext());
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

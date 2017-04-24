@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
@@ -214,6 +215,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void update() {
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.ATTACHMENTS.name());
         checkMedia();
     }
 
@@ -427,7 +429,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId);
+                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId, App.get().getSpUiContext());
                             setLoading(true);
                         }
 

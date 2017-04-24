@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -25,58 +29,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Assignee;
-import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
-import com.fieldnation.v2.data.model.AttachmentFolders;
-import com.fieldnation.v2.data.model.Cancellation;
-import com.fieldnation.v2.data.model.Contact;
-import com.fieldnation.v2.data.model.Contacts;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
-import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.EtaMassAccept;
-import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
-import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.Hold;
-import com.fieldnation.v2.data.model.Holds;
-import com.fieldnation.v2.data.model.Location;
-import com.fieldnation.v2.data.model.Message;
-import com.fieldnation.v2.data.model.Messages;
-import com.fieldnation.v2.data.model.Milestones;
-import com.fieldnation.v2.data.model.Pay;
-import com.fieldnation.v2.data.model.PayIncrease;
-import com.fieldnation.v2.data.model.PayIncreases;
-import com.fieldnation.v2.data.model.PayModifier;
-import com.fieldnation.v2.data.model.PayModifiers;
-import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.Problems;
-import com.fieldnation.v2.data.model.Qualifications;
-import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.SavedList;
-import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
-import com.fieldnation.v2.data.model.Signature;
-import com.fieldnation.v2.data.model.Signatures;
-import com.fieldnation.v2.data.model.SwapResponse;
-import com.fieldnation.v2.data.model.Tag;
-import com.fieldnation.v2.data.model.Tags;
-import com.fieldnation.v2.data.model.Task;
-import com.fieldnation.v2.data.model.TaskAlert;
-import com.fieldnation.v2.data.model.Tasks;
-import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
-import com.fieldnation.v2.data.model.Users;
-import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.data.model.WorkOrderOverview;
-import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
-import com.fieldnation.v2.data.model.WorkOrderRatings;
-import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -122,7 +76,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param increaseId  ID of work order increase
      */
-    public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId) {
+    public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("acceptIncreaseByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("increase_id")
+                .value(increaseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/accept");
 
@@ -187,6 +152,51 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: acknowledgeDelayByWorkOrder
+     * Acknowledges a provider's delay on a work order
+     *
+     * @param workOrderId ID of work order
+     */
+    public static void acknowledgeDelay(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("acknowledgeDelayByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/provider/delay");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/provider/delay");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/provider/delay")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "acknowledgeDelay", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: addAlertToWorkOrderAndTask
      * Sets up an alert to be fired upon the completion of a task associated with a work order
      *
@@ -194,7 +204,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param taskId      Task id
      * @param json        JSON Model
      */
-    public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json) {
+    public static void addAlertToWorkOrderAndTask(Context context, Integer workOrderId, Integer taskId, TaskAlert json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addAlertToWorkOrderAndTask")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("task_id")
+                .value(taskId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/alerts");
 
@@ -239,7 +260,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachment  Folder
      * @param file        File
      */
-    static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addAttachmentByWorkOrderAndFolder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             //String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -285,7 +317,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachment  Folder
      */
     static void addAttachment(Context context, Integer workOrderId, Integer folderId,
-                              Attachment attachment, String filename, StoredObject storedObject) {
+                              Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addAttachmentByWorkOrderAndFolder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             //String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -332,7 +375,7 @@ public class WorkordersWebApi extends TopicClient {
      * @param file        File
      * @param async       Async (Optional)
      */
-    static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, Boolean async) {
+    public static void addAttachment(Context context, Integer workOrderId, Integer folderId, Attachment attachment, java.io.File file, Boolean async) {
         try {
             // String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async);
 
@@ -378,7 +421,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param bonusId     Bonus ID
      */
-    public static void addBonus(Context context, Integer workOrderId, Integer bonusId) {
+    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addBonusByWorkOrderAndBonus")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("bonus_id")
+                .value(bonusId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
@@ -417,7 +471,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param bonusId     Bonus ID
      * @param bonus       Bonus (Optional)
      */
-    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
+    public static void addBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addBonusByWorkOrderAndBonus")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("bonus_id")
+                .value(bonusId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
@@ -460,7 +525,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param contact     JSON Model
      */
-    public static void addContact(Context context, Integer workOrderId, Contact contact) {
+    public static void addContact(Context context, Integer workOrderId, Contact contact, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addContactByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/contacts");
 
@@ -502,7 +576,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param json        Payload of the discount
      */
-    public static void addDiscount(Context context, Integer workOrderId, PayModifier json) {
+    public static void addDiscount(Context context, Integer workOrderId, PayModifier json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addDiscountByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/discounts");
 
@@ -544,7 +627,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param expense     Expense
      */
-    public static void addExpense(Context context, Integer workOrderId, Expense expense) {
+    public static void addExpense(Context context, Integer workOrderId, Expense expense, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addExpenseByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/expenses");
 
@@ -587,7 +679,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param expense     Expense
      * @param async       Asynchroneous (Optional)
      */
-    public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async) {
+    public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addExpenseByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/expenses?async=" + async);
 
@@ -631,7 +732,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param folder      Folder
      */
-    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder) {
+    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addFolderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments");
 
@@ -674,7 +784,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param folder      Folder
      * @param async       Async (Optional)
      */
-    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async) {
+    public static void addFolder(Context context, Integer workOrderId, AttachmentFolder folder, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addFolderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/attachments?async=" + async);
 
@@ -718,7 +837,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param hold        Hold object with updates
      */
-    public static void addHold(Context context, Integer workOrderId, Hold hold) {
+    public static void addHold(Context context, Integer workOrderId, Hold hold, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addHoldByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/holds");
 
@@ -761,7 +889,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param hold        Hold object with updates
      * @param async       Async (Optional)
      */
-    public static void addHold(Context context, Integer workOrderId, Hold hold, Boolean async) {
+    public static void addHold(Context context, Integer workOrderId, Hold hold, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addHoldByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/holds?async=" + async);
 
@@ -805,7 +942,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param increase    Increase structure for update
      */
-    public static void addIncrease(Context context, Integer workOrderId, PayIncrease increase) {
+    public static void addIncrease(Context context, Integer workOrderId, PayIncrease increase, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addIncreaseByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/increases");
 
@@ -848,7 +994,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param increase    Increase structure for update
      * @param async       Async (Optional)
      */
-    public static void addIncrease(Context context, Integer workOrderId, PayIncrease increase, Boolean async) {
+    public static void addIncrease(Context context, Integer workOrderId, PayIncrease increase, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addIncreaseByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/increases?async=" + async);
 
@@ -892,7 +1047,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param json        JSON payload
      */
-    public static void addMessage(Context context, Integer workOrderId, Message json) {
+    public static void addMessage(Context context, Integer workOrderId, Message json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addMessageByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages");
 
@@ -935,7 +1099,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param json        JSON payload
      * @param async       Async (Optional)
      */
-    public static void addMessage(Context context, Integer workOrderId, Message json, Boolean async) {
+    public static void addMessage(Context context, Integer workOrderId, Message json, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addMessageByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages?async=" + async);
 
@@ -979,7 +1152,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work Order ID
      * @param penaltyId   Penalty ID
      */
-    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId) {
+    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addPenaltyByWorkOrderAndPenalty")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("penalty_id")
+                .value(penaltyId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
@@ -1018,7 +1202,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param penaltyId   Penalty ID
      * @param penalty     Penalty (Optional)
      */
-    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
+    public static void addPenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addPenaltyByWorkOrderAndPenalty")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("penalty_id")
+                .value(penaltyId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
@@ -1061,7 +1256,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param problem     Problem
      */
-    public static void addProblem(Context context, Integer workOrderId, Problem problem) {
+    public static void addProblem(Context context, Integer workOrderId, Problem problem, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addProblemByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/problems");
 
@@ -1104,7 +1308,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param problem     Problem
      * @param async       Async (Optional)
      */
-    public static void addProblem(Context context, Integer workOrderId, Problem problem, Boolean async) {
+    public static void addProblem(Context context, Integer workOrderId, Problem problem, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addProblemByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/problems?async=" + async);
 
@@ -1148,7 +1361,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId    ID of work order
      * @param qualifications Qualification information
      */
-    public static void addQualification(Context context, Integer workOrderId, Qualifications qualifications) {
+    public static void addQualification(Context context, Integer workOrderId, Qualifications qualifications, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addQualificationByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/qualifications");
 
@@ -1190,7 +1412,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param shipment    Shipment
      */
-    public static void addShipment(Context context, Integer workOrderId, Shipment shipment) {
+    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addShipmentByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/shipments");
 
@@ -1233,7 +1464,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param shipment    Shipment
      * @param async       Async (Optional)
      */
-    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async) {
+    public static void addShipment(Context context, Integer workOrderId, Shipment shipment, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addShipmentByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/shipments?async=" + async);
 
@@ -1277,7 +1517,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param signature   Signature JSON
      */
-    public static void addSignature(Context context, Integer workOrderId, Signature signature) {
+    public static void addSignature(Context context, Integer workOrderId, Signature signature, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addSignatureByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/signatures");
 
@@ -1320,7 +1569,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param signature   Signature JSON
      * @param async       async (Optional)
      */
-    public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async) {
+    public static void addSignature(Context context, Integer workOrderId, Signature signature, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addSignatureByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/signatures?async=" + async);
 
@@ -1364,7 +1622,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param tag         Tag
      */
-    public static void addTag(Context context, Integer workOrderId, Tag tag) {
+    public static void addTag(Context context, Integer workOrderId, Tag tag, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addTagByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tags");
 
@@ -1407,7 +1674,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param tag         Tag
      * @param async       Async (Optional)
      */
-    public static void addTag(Context context, Integer workOrderId, Tag tag, Boolean async) {
+    public static void addTag(Context context, Integer workOrderId, Tag tag, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addTagByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tags?async=" + async);
 
@@ -1451,7 +1727,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param json        JSON Model
      */
-    public static void addTask(Context context, Integer workOrderId, Task json) {
+    public static void addTask(Context context, Integer workOrderId, Task json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addTaskByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/tasks");
 
@@ -1493,7 +1778,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param timeLog     Check in information
      */
-    public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog) {
+    public static void addTimeLog(Context context, Integer workOrderId, TimeLog timeLog, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/time_logs");
 
@@ -1574,7 +1868,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void approveWorkOrder(Context context, Integer workOrderId) {
+    public static void approveWorkOrder(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("approveWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/approve");
 
@@ -1611,7 +1914,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param async       Async (Optional)
      */
-    public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async) {
+    public static void approveWorkOrder(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("approveWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/approve?async=" + async);
 
@@ -1650,7 +1962,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param assignee    JSON Model
      */
-    public static void assignUser(Context context, Integer workOrderId, Assignee assignee) {
+    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("assignUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/assignee");
 
@@ -1693,7 +2014,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param assignee    JSON Model
      * @param async       Async (Optional)
      */
-    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
+    public static void assignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("assignUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/assignee?async=" + async);
 
@@ -1733,6 +2063,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: cancelSwapRequest
      * Cancel work order swap request.
+     *
      */
     public static void cancelSwapRequest(Context context) {
         try {
@@ -1769,7 +2100,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void completeWorkOrder(Context context, Integer workOrderId) {
+    public static void completeWorkOrder(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("completeWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/complete");
 
@@ -1806,7 +2146,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param async       Async (Optional)
      */
-    public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async) {
+    public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("completeWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/complete?async=" + async);
 
@@ -1844,7 +2193,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId Work order id
      */
-    public static void decline(Context context, Integer workOrderId) {
+    public static void decline(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("declineByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/declines");
 
@@ -1881,7 +2239,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param async       Async (Optional)
      */
-    public static void decline(Context context, Integer workOrderId, Boolean async) {
+    public static void decline(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("declineByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/declines?async=" + async);
 
@@ -1920,7 +2287,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param userId      User id
      */
-    public static void declineRequest(Context context, Integer workOrderId, Integer userId) {
+    public static void declineRequest(Context context, Integer workOrderId, Integer userId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("declineRequestByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("user_id")
+                .value(userId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/declines/" + userId);
 
@@ -1959,7 +2337,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param userId      User id
      * @param async       Async (Optional)
      */
-    public static void declineRequest(Context context, Integer workOrderId, Integer userId, Boolean async) {
+    public static void declineRequest(Context context, Integer workOrderId, Integer userId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("declineRequestByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("user_id")
+                .value(userId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/declines/" + userId + "?async=" + async);
 
@@ -1995,6 +2384,7 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: declineSwapRequest
      * Decline work order swap request.
+     *
      */
     public static void declineSwapRequest(Context context) {
         try {
@@ -2111,7 +2501,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param folderId     Folder id
      * @param attachmentId File id
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
 
@@ -2152,7 +2553,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachmentId File id
      * @param async        Async (Optional)
      */
-    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async) {
+    public static void deleteAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteAttachmentByWorkOrderAndFolderAndAttachment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + "?async=" + async);
 
@@ -2193,7 +2605,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work Order ID
      * @param bonusId     Bonus ID
      */
-    public static void deleteBonus(Context context, Integer workOrderId, Integer bonusId) {
+    public static void deleteBonus(Context context, Integer workOrderId, Integer bonusId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteBonusByWorkOrderAndBonus")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("bonus_id")
+                .value(bonusId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
@@ -2231,7 +2654,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param contactId   Contact id
      */
-    public static void deleteContact(Context context, Integer workOrderId, Integer contactId) {
+    public static void deleteContact(Context context, Integer workOrderId, Integer contactId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteContactByWorkOrderAndContact")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("contact_id")
+                .value(contactId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId);
 
@@ -2269,7 +2703,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param discountId  ID of the discount
      */
-    public static void deleteDiscount(Context context, Integer workOrderId, Integer discountId) {
+    public static void deleteDiscount(Context context, Integer workOrderId, Integer discountId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteDiscountByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("discount_id")
+                .value(discountId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
 
@@ -2307,7 +2752,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param expenseId   ID of expense
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId) {
+    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteExpenseByWorkOrderAndExpense")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("expense_id")
+                .value(expenseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
 
@@ -2346,7 +2802,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param expenseId   ID of expense
      * @param async       Asynchroneous (Optional)
      */
-    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async) {
+    public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteExpenseByWorkOrderAndExpense")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("expense_id")
+                .value(expenseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "?async=" + async);
 
@@ -2386,7 +2853,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param folderId    Folder id
      */
-    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId) {
+    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteFolderByWorkOrderAndFolder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -2425,7 +2903,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param folderId    Folder id
      * @param async       Async (Optional)
      */
-    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async) {
+    public static void deleteFolder(Context context, Integer workOrderId, Integer folderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteFolderByWorkOrderAndFolder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async);
 
@@ -2465,7 +2954,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param holdId      ID of hold to update
      */
-    public static void deleteHold(Context context, Integer workOrderId, Integer holdId) {
+    public static void deleteHold(Context context, Integer workOrderId, Integer holdId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteHoldByWorkOrderAndHold")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("hold_id")
+                .value(holdId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
 
@@ -2504,7 +3004,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param holdId      ID of hold to update
      * @param async       Async (Optional)
      */
-    public static void deleteHold(Context context, Integer workOrderId, Integer holdId, Boolean async) {
+    public static void deleteHold(Context context, Integer workOrderId, Integer holdId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteHoldByWorkOrderAndHold")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("hold_id")
+                .value(holdId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
 
@@ -2544,7 +3055,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param increaseId  ID of work order increase
      */
-    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId) {
+    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteIncreaseByWorkOrderAndIncrease")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("increase_id")
+                .value(increaseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
 
@@ -2583,7 +3105,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param increaseId  ID of work order increase
      * @param async       Async (Optional)
      */
-    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async) {
+    public static void deleteIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteIncreaseByWorkOrderAndIncrease")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("increase_id")
+                .value(increaseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
 
@@ -2623,7 +3156,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param messageId   ID of work order message
      */
-    public static void deleteMessage(Context context, Integer workOrderId, Integer messageId) {
+    public static void deleteMessage(Context context, Integer workOrderId, Integer messageId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteMessageByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("message_id")
+                .value(messageId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
 
@@ -2661,7 +3205,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of Work Order
      * @param penaltyId   Penalty ID
      */
-    public static void deletePenalty(Context context, Integer workOrderId, Integer penaltyId) {
+    public static void deletePenalty(Context context, Integer workOrderId, Integer penaltyId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deletePenaltyByWorkOrderAndPenalty")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("penalty_id")
+                .value(penaltyId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
@@ -2699,7 +3254,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param problemId   ID of work order
      */
-    public static void deleteProblem(Context context, Integer workOrderId, Integer problemId) {
+    public static void deleteProblem(Context context, Integer workOrderId, Integer problemId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteProblemByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("problem_id")
+                .value(problemId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId);
 
@@ -2738,7 +3304,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param problemId   ID of work order
      * @param async       Async (Optional)
      */
-    public static void deleteProblem(Context context, Integer workOrderId, Integer problemId, Boolean async) {
+    public static void deleteProblem(Context context, Integer workOrderId, Integer problemId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteProblemByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("problem_id")
+                .value(problemId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId + "?async=" + async);
 
@@ -2778,7 +3355,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param requestId   ID of work order request/counter offer
      */
-    public static void deleteRequest(Context context, Integer workOrderId, Integer requestId) {
+    public static void deleteRequest(Context context, Integer workOrderId, Integer requestId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteRequestByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("request_id")
+                .value(requestId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
 
@@ -2817,7 +3405,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param requestId   ID of work order request/counter offer
      * @param async       Async (Optional)
      */
-    public static void deleteRequest(Context context, Integer workOrderId, Integer requestId, Boolean async) {
+    public static void deleteRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteRequestByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("request_id")
+                .value(requestId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
 
@@ -2857,7 +3456,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param shipmentId  Shipment id
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId) {
+    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteShipmentByWorkOrderAndShipment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("shipment_id")
+                .value(shipmentId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
 
@@ -2896,7 +3506,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param shipmentId  Shipment id
      * @param async       Async (Optional)
      */
-    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async) {
+    public static void deleteShipment(Context context, Integer workOrderId, Integer shipmentId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteShipmentByWorkOrderAndShipment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("shipment_id")
+                .value(shipmentId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId + "?async=" + async);
 
@@ -2936,7 +3557,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param signatureId ID of signature
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId) {
+    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteSignatureByWorkOrderAndSignature")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("signature_id")
+                .value(signatureId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
 
@@ -2975,7 +3607,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param signatureId ID of signature
      * @param async       async (Optional)
      */
-    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async) {
+    public static void deleteSignature(Context context, Integer workOrderId, Integer signatureId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteSignatureByWorkOrderAndSignature")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("signature_id")
+                .value(signatureId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId + "?async=" + async);
 
@@ -3015,7 +3658,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param tagId       ID of work order
      */
-    public static void deleteTag(Context context, Integer workOrderId, Integer tagId) {
+    public static void deleteTag(Context context, Integer workOrderId, Integer tagId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteTagByWorkOrderAndTag")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("tag_id")
+                .value(tagId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
 
@@ -3054,7 +3708,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param tagId       ID of work order
      * @param async       Async (Optional)
      */
-    public static void deleteTag(Context context, Integer workOrderId, Integer tagId, Boolean async) {
+    public static void deleteTag(Context context, Integer workOrderId, Integer tagId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteTagByWorkOrderAndTag")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("tag_id")
+                .value(tagId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId + "?async=" + async);
 
@@ -3094,7 +3759,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param taskId      Task id
      */
-    public static void deleteTask(Context context, Integer workOrderId, Integer taskId) {
+    public static void deleteTask(Context context, Integer workOrderId, Integer taskId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteTaskByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("task_id")
+                .value(taskId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
 
@@ -3132,7 +3808,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
      */
-    public static void deleteTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
+    public static void deleteTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("workorder_hours_id")
+                .value(workorderHoursId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId);
 
@@ -3171,7 +3858,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workorderHoursId ID of work order hour
      * @param async            Return the model in the response (slower) (Optional)
      */
-    public static void deleteTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
+    public static void deleteTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("workorder_hours_id")
+                .value(workorderHoursId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "?async=" + async);
 
@@ -3211,7 +3909,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId  ID of work order
      * @param cancellation Cancellation reasons
      */
-    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation) {
+    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId);
 
@@ -3254,7 +3961,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param cancellation Cancellation reasons
      * @param async        Async (Optional)
      */
-    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async) {
+    public static void deleteWorkOrder(Context context, Integer workOrderId, Cancellation cancellation, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "?async=" + async);
 
@@ -3298,7 +4014,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param increaseId  ID of work order increase
      */
-    public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId) {
+    public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("denyIncreaseByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("increase_id")
+                .value(increaseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/deny");
 
@@ -5457,6 +6184,7 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
                     + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                     + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                    + (getWorkOrdersOptions.getFWorkOrderId() != null ? "&f_work_order_id=" + getWorkOrdersOptions.getFWorkOrderId() : "")
                     + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
                     + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
                     + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
@@ -5518,6 +6246,7 @@ public class WorkordersWebApi extends TopicClient {
                             + (getWorkOrdersOptions.getFFlightboardTomorrow() != null ? "&f_flightboard_tomorrow=" + getWorkOrdersOptions.getFFlightboardTomorrow() : "")
                             + (getWorkOrdersOptions.getFRequests() != null ? "&f_requests=" + getWorkOrdersOptions.getFRequests() : "")
                             + (getWorkOrdersOptions.getFCounterOffers() != null ? "&f_counter_offers=" + getWorkOrdersOptions.getFCounterOffers() : "")
+                            + (getWorkOrdersOptions.getFWorkOrderId() != null ? "&f_work_order_id=" + getWorkOrdersOptions.getFWorkOrderId() : "")
                             + (getWorkOrdersOptions.getFHourly() != null ? "&f_hourly=" + getWorkOrdersOptions.getFHourly() : "")
                             + (getWorkOrdersOptions.getFFixed() != null ? "&f_fixed=" + getWorkOrdersOptions.getFFixed() : "")
                             + (getWorkOrdersOptions.getFDevice() != null ? "&f_device=" + getWorkOrdersOptions.getFDevice() : "")
@@ -5593,7 +6322,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param group       New group
      * @param destination beginning or end (position in new group)
      */
-    public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination) {
+    public static void groupTask(Context context, Integer workOrderId, Integer taskId, String group, String destination, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("groupTaskByWorkOrderAndTask")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("task_id")
+                .value(taskId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + "/group/" + group + "/" + destination);
 
@@ -5632,7 +6372,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void incompleteWorkOrder(Context context, Integer workOrderId) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("incompleteWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete");
 
@@ -5669,7 +6418,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId                ID of work order
      * @param incompleteWorkOrderOptions Additional optional parameters
      */
-    public static void incompleteWorkOrder(Context context, Integer workOrderId, IncompleteWorkOrderOptions incompleteWorkOrderOptions) {
+    public static void incompleteWorkOrder(Context context, Integer workOrderId, IncompleteWorkOrderOptions incompleteWorkOrderOptions, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("incompleteWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/complete" + (incompleteWorkOrderOptions.getReason() != null ? "?reason=" + incompleteWorkOrderOptions.getReason() : "")
                     + (incompleteWorkOrderOptions.getAsync() != null ? "&async=" + incompleteWorkOrderOptions.getAsync() : "")
@@ -5833,7 +6591,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void publish(Context context, Integer workOrderId) {
+    public static void publish(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("publishByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish");
 
@@ -5870,7 +6637,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param async       Async (Optional)
      */
-    public static void publish(Context context, Integer workOrderId, Boolean async) {
+    public static void publish(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("publishByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async);
 
@@ -5903,13 +6679,69 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: removeProviderByWorkOrder
+     * Unassigns and removes a provider for a work order
+     *
+     * @param workOrderId ID of work order
+     */
+    public static void removeProvider(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("removeProviderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
+        try {
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/provider/cancel");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/provider/cancel");
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/workorders/{work_order_id}/provider/cancel")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
+                                    WorkordersWebApi.class, "removeProvider", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: removeQualificationByWorkOrder
      * Remove qualification work order
      *
      * @param workOrderId     ID of work order
      * @param qualificationId ID of qualification
      */
-    public static void removeQualification(Context context, Integer workOrderId, Integer qualificationId) {
+    public static void removeQualification(Context context, Integer workOrderId, Integer qualificationId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("removeQualificationByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("qualification_id")
+                .value(qualificationId)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/qualifications/" + qualificationId);
 
@@ -5990,7 +6822,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param messageId   ID of work order message
      * @param json        JSON payload
      */
-    public static void replyMessage(Context context, Integer workOrderId, Integer messageId, Message json) {
+    public static void replyMessage(Context context, Integer workOrderId, Integer messageId, Message json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("replyMessageByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("message_id")
+                .value(messageId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
 
@@ -6035,7 +6878,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param json        JSON payload
      * @param async       Async (Optional)
      */
-    public static void replyMessage(Context context, Integer workOrderId, Integer messageId, Message json, Boolean async) {
+    public static void replyMessage(Context context, Integer workOrderId, Integer messageId, Message json, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("replyMessageByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("message_id")
+                .value(messageId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId + "?async=" + async);
 
@@ -6080,7 +6934,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param request     JSON Model
      */
-    public static void request(Context context, Integer workOrderId, Request request) {
+    public static void request(Context context, Integer workOrderId, Request request, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("requestByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/requests");
 
@@ -6123,7 +6986,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param request     JSON Model
      * @param async       Async (Optional)
      */
-    public static void request(Context context, Integer workOrderId, Request request, Boolean async) {
+    public static void request(Context context, Integer workOrderId, Request request, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("requestByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/requests?async=" + async);
 
@@ -6166,7 +7038,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void revertWorkOrderToDraft(Context context, Integer workOrderId) {
+    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("revertWorkOrderToDraftByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/draft");
 
@@ -6203,7 +7084,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param async       Async (Optional)
      */
-    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async) {
+    public static void revertWorkOrderToDraft(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("revertWorkOrderToDraftByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/draft?async=" + async);
 
@@ -6242,7 +7132,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param route       JSON Model
      */
-    public static void routeUser(Context context, Integer workOrderId, Route route) {
+    public static void routeUser(Context context, Integer workOrderId, Route route, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("routeUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/route");
 
@@ -6285,7 +7184,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param route       JSON Model
      * @param async       Async (Optional)
      */
-    public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async) {
+    public static void routeUser(Context context, Integer workOrderId, Route route, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("routeUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/route?async=" + async);
 
@@ -6328,7 +7236,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void unapproveWorkOrder(Context context, Integer workOrderId) {
+    public static void unapproveWorkOrder(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unapproveWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/approve");
 
@@ -6365,7 +7282,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param async       Async (Optional)
      */
-    public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async) {
+    public static void unapproveWorkOrder(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unapproveWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/approve?async=" + async);
 
@@ -6404,7 +7330,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param assignee    JSON Model
      */
-    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee) {
+    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unassignUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/assignee");
 
@@ -6447,7 +7382,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param assignee    JSON Model
      * @param async       Async (Optional)
      */
-    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async) {
+    public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unassignUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/assignee?async=" + async);
 
@@ -6490,7 +7434,16 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      */
-    public static void unpublish(Context context, Integer workOrderId) {
+    public static void unpublish(Context context, Integer workOrderId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unpublishByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/publish");
 
@@ -6527,7 +7480,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param async       Async (Optional)
      */
-    public static void unpublish(Context context, Integer workOrderId, Boolean async) {
+    public static void unpublish(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unpublishByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async);
 
@@ -6566,7 +7528,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param route       JSON Model
      */
-    public static void unRouteUser(Context context, Integer workOrderId, Route route) {
+    public static void unRouteUser(Context context, Integer workOrderId, Route route, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unRouteUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/route");
 
@@ -6609,7 +7580,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param route       JSON Model
      * @param async       Async (Optional)
      */
-    public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async) {
+    public static void unRouteUser(Context context, Integer workOrderId, Route route, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("unRouteUserByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/workorders/" + workOrderId + "/route?async=" + async);
 
@@ -6653,7 +7633,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param timeLog     Check in information
      */
-    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog) {
+    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateAllTimeLogsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs");
 
@@ -6696,7 +7685,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param timeLog     Check in information
      * @param async       Return the model in the response (slower) (Optional)
      */
-    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async) {
+    public static void updateAllTimeLogs(Context context, Integer workOrderId, TimeLog timeLog, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateAllTimeLogsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs?async=" + async);
 
@@ -6742,7 +7740,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachmentId File id
      * @param attachment   Attachment
      */
-    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment) {
+    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateAttachmentByWorkOrderAndFolderAndAttachment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
 
@@ -6789,7 +7798,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param attachment   Attachment
      * @param async        Async (Optional)
      */
-    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async) {
+    public static void updateAttachment(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, Attachment attachment, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateAttachmentByWorkOrderAndFolderAndAttachment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + "?async=" + async);
 
@@ -6836,7 +7856,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param bonusId     Bonus ID
      * @param bonus       Bonus
      */
-    public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus) {
+    public static void updateBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateBonusByWorkOrderAndBonus")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("bonus_id")
+                .value(bonusId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
 
@@ -6880,7 +7911,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param contactId   Contact id
      * @param contact     JSON Model
      */
-    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact contact) {
+    public static void updateContact(Context context, Integer workOrderId, Integer contactId, Contact contact, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateContactByWorkOrderAndContact")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("contact_id")
+                .value(contactId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/contacts/" + contactId);
 
@@ -6924,7 +7966,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param customFieldId Custom field ID
      * @param customField   Custom field
      */
-    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField) {
+    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldByWorkOrderAndCustomField")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("custom_field_id")
+                .value(customFieldId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
 
@@ -6969,7 +8022,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param customField   Custom field
      * @param async         Async (Optional)
      */
-    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async) {
+    public static void updateCustomField(Context context, Integer workOrderId, Integer customFieldId, CustomField customField, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldByWorkOrderAndCustomField")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("custom_field_id")
+                .value(customFieldId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId + "?async=" + async);
 
@@ -7015,7 +8079,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param discountId  ID of the discount
      * @param json        Payload of the discount
      */
-    public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json) {
+    public static void updateDiscount(Context context, Integer workOrderId, Integer discountId, PayModifier json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateDiscountByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("discount_id")
+                .value(discountId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/discounts/" + discountId);
 
@@ -7058,7 +8133,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param eta         JSON Payload
      */
-    public static void updateETA(Context context, Integer workOrderId, ETA eta) {
+    public static void updateETA(Context context, Integer workOrderId, ETA eta, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateETAByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/eta");
 
@@ -7101,7 +8185,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param eta              JSON Payload
      * @param updateETAOptions Additional optional parameters
      */
-    public static void updateETA(Context context, Integer workOrderId, ETA eta, UpdateETAOptions updateETAOptions) {
+    public static void updateETA(Context context, Integer workOrderId, ETA eta, UpdateETAOptions updateETAOptions, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateETAByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/eta" + (updateETAOptions.getConfirm() != null ? "?confirm=" + updateETAOptions.getConfirm() : "")
                     + (updateETAOptions.getUpdateFromIvr() != null ? "&update_from_ivr=" + updateETAOptions.getUpdateFromIvr() : "")
@@ -7150,7 +8243,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param expenseId   ID of expense
      */
-    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId) {
+    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateExpenseByWorkOrderAndExpense")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("expense_id")
+                .value(expenseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId);
 
@@ -7189,7 +8293,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param expenseId            ID of expense
      * @param updateExpenseOptions Additional optional parameters
      */
-    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions) {
+    public static void updateExpense(Context context, Integer workOrderId, Integer expenseId, UpdateExpenseOptions updateExpenseOptions, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateExpenseByWorkOrderAndExpense")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("expense_id")
+                .value(expenseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/expenses/" + expenseId + "" + (updateExpenseOptions.getAsync() != null ? "?async=" + updateExpenseOptions.getAsync() : "")
             );
@@ -7236,7 +8351,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param folderId    Folder id
      * @param folder      Folder
      */
-    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder) {
+    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFolderByWorkOrderAndFolder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
 
@@ -7281,7 +8407,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param folder      Folder
      * @param async       Async (Optional)
      */
-    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async) {
+    public static void updateFolder(Context context, Integer workOrderId, Integer folderId, AttachmentFolder folder, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFolderByWorkOrderAndFolder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("folder_id")
+                .value(folderId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "?async=" + async);
 
@@ -7327,7 +8464,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param holdId      ID of hold to update
      * @param hold        Hold object with updates
      */
-    public static void updateHold(Context context, Integer workOrderId, Integer holdId, Hold hold) {
+    public static void updateHold(Context context, Integer workOrderId, Integer holdId, Hold hold, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateHoldByWorkOrderAndHold")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("hold_id")
+                .value(holdId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
 
@@ -7372,7 +8520,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param hold        Hold object with updates
      * @param async       Async (Optional)
      */
-    public static void updateHold(Context context, Integer workOrderId, Integer holdId, Hold hold, Boolean async) {
+    public static void updateHold(Context context, Integer workOrderId, Integer holdId, Hold hold, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateHoldByWorkOrderAndHold")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("hold_id")
+                .value(holdId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
 
@@ -7418,7 +8577,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param increaseId  ID of work order increase
      * @param increase    Increase structure for update
      */
-    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase) {
+    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateIncreaseByWorkOrderAndIncrease")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("increase_id")
+                .value(increaseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
 
@@ -7463,7 +8633,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param increase    Increase structure for update
      * @param async       Async (Optional)
      */
-    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async) {
+    public static void updateIncrease(Context context, Integer workOrderId, Integer increaseId, PayIncrease increase, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateIncreaseByWorkOrderAndIncrease")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("increase_id")
+                .value(increaseId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
 
@@ -7508,7 +8689,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param location    JSON Payload
      */
-    public static void updateLocation(Context context, Integer workOrderId, Location location) {
+    public static void updateLocation(Context context, Integer workOrderId, Location location, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateLocationByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/location");
 
@@ -7551,7 +8741,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param location    JSON Payload
      * @param async       Async (Optional)
      */
-    public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async) {
+    public static void updateLocation(Context context, Integer workOrderId, Location location, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateLocationByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/location?async=" + async);
 
@@ -7596,7 +8795,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param messageId   ID of work order message
      * @param json        JSON payload
      */
-    public static void updateMessage(Context context, Integer workOrderId, Integer messageId, Message json) {
+    public static void updateMessage(Context context, Integer workOrderId, Integer messageId, Message json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateMessageByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("message_id")
+                .value(messageId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/messages/" + messageId);
 
@@ -7639,7 +8849,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param pay         Pay
      */
-    public static void updatePay(Context context, Integer workOrderId, Pay pay) {
+    public static void updatePay(Context context, Integer workOrderId, Pay pay, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePayByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/pay");
 
@@ -7682,7 +8901,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param pay         Pay
      * @param async       Async (Optional)
      */
-    public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async) {
+    public static void updatePay(Context context, Integer workOrderId, Pay pay, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePayByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/pay?async=" + async);
 
@@ -7726,7 +8954,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work Order ID
      * @param penaltyId   Penalty ID
      */
-    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId) {
+    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePenaltyByWorkOrderAndPenalty")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("penalty_id")
+                .value(penaltyId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
@@ -7765,7 +9004,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param penaltyId   Penalty ID
      * @param penalty     Penalty (Optional)
      */
-    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty) {
+    public static void updatePenalty(Context context, Integer workOrderId, Integer penaltyId, PayModifier penalty, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePenaltyByWorkOrderAndPenalty")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("penalty_id")
+                .value(penaltyId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
 
@@ -7809,7 +9059,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param problemId   ID of work order
      * @param problem     Problem
      */
-    public static void updateProblem(Context context, Integer workOrderId, Integer problemId, Problem problem) {
+    public static void updateProblem(Context context, Integer workOrderId, Integer problemId, Problem problem, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateProblemByWorkOrderAndProblem")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("problem_id")
+                .value(problemId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId);
 
@@ -7854,7 +9115,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param problem     Problem
      * @param async       Async (Optional)
      */
-    public static void updateProblem(Context context, Integer workOrderId, Integer problemId, Problem problem, Boolean async) {
+    public static void updateProblem(Context context, Integer workOrderId, Integer problemId, Problem problem, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateProblemByWorkOrderAndProblem")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("problem_id")
+                .value(problemId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId + "?async=" + async);
 
@@ -7899,7 +9171,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId    ID of work order
      * @param qualifications Qualification information
      */
-    public static void updateQualification(Context context, Integer workOrderId, Qualifications qualifications) {
+    public static void updateQualification(Context context, Integer workOrderId, Qualifications qualifications, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateQualificationByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/qualifications");
 
@@ -7941,7 +9222,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param ratings     rating_json
      */
-    public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings) {
+    public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateRatingsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/ratings");
 
@@ -7984,7 +9274,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param ratings     rating_json
      * @param async       Async (Optional)
      */
-    public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings, Boolean async) {
+    public static void updateRatings(Context context, Integer workOrderId, WorkOrderRatings ratings, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateRatingsByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/ratings?async=" + async);
 
@@ -8028,7 +9327,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param schedule    JSON Payload
      */
-    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateScheduleByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule");
 
@@ -8071,7 +9379,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param schedule    JSON Payload
      * @param async       Async (Optional)
      */
-    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async) {
+    public static void updateSchedule(Context context, Integer workOrderId, Schedule schedule, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateScheduleByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/schedule?async=" + async);
 
@@ -8116,7 +9433,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param shipmentId  Shipment id
      * @param shipment    Shipment
      */
-    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment) {
+    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateShipmentByWorkOrderAndShipment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("shipment_id")
+                .value(shipmentId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId);
 
@@ -8161,7 +9489,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param shipment    Shipment
      * @param async       Async (Optional)
      */
-    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async) {
+    public static void updateShipment(Context context, Integer workOrderId, Integer shipmentId, Shipment shipment, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateShipmentByWorkOrderAndShipment")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("shipment_id")
+                .value(shipmentId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/shipments/" + shipmentId + "?async=" + async);
 
@@ -8207,7 +9546,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param tagId       ID of work order
      * @param tag         Tag
      */
-    public static void updateTag(Context context, Integer workOrderId, Integer tagId, Tag tag) {
+    public static void updateTag(Context context, Integer workOrderId, Integer tagId, Tag tag, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTagByWorkOrderAndProblem")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("tag_id")
+                .value(tagId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
 
@@ -8252,7 +9602,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param tag         Tag
      * @param async       Async (Optional)
      */
-    public static void updateTag(Context context, Integer workOrderId, Integer tagId, Tag tag, Boolean async) {
+    public static void updateTag(Context context, Integer workOrderId, Integer tagId, Tag tag, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTagByWorkOrderAndProblem")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("tag_id")
+                .value(tagId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId + "?async=" + async);
 
@@ -8298,7 +9659,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param taskId      Task id
      * @param json        JSON Model
      */
-    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json) {
+    public static void updateTask(Context context, Integer workOrderId, Integer taskId, Task json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTaskByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("task_id")
+                .value(taskId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
 
@@ -8342,7 +9714,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workorderHoursId ID of work order hour
      * @param timeLog          Check in information
      */
-    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog) {
+    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("workorder_hours_id")
+                .value(workorderHoursId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId);
 
@@ -8387,7 +9770,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param timeLog          Check in information
      * @param async            Return the model in the response (slower) (Optional)
      */
-    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async) {
+    public static void updateTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, TimeLog timeLog, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("workorder_hours_id")
+                .value(workorderHoursId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "?async=" + async);
 
@@ -8432,7 +9826,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param workOrder   Work order model
      */
-    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId);
 
@@ -8475,7 +9878,16 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrder   Work order model
      * @param async       Asynchroneous (Optional)
      */
-    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async) {
+    public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateWorkOrderByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "?async=" + async);
 
@@ -8519,7 +9931,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId      ID of work order
      * @param workorderHoursId ID of work order hour
      */
-    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId) {
+    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("verifyTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("workorder_hours_id")
+                .value(workorderHoursId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify");
 
@@ -8558,7 +9981,18 @@ public class WorkordersWebApi extends TopicClient {
      * @param workorderHoursId ID of work order hour
      * @param async            Return the model in the response (slower) (Optional)
      */
-    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async) {
+    public static void verifyTimeLog(Context context, Integer workOrderId, Integer workorderHoursId, Boolean async, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("verifyTimeLogByWorkOrder")
+                .label(workOrderId + "")
+                .category("workorder")
+                .addContext(uiContext)
+                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
+                .property("workorder_hours_id")
+                .value(workorderHoursId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/time_logs/" + workorderHoursId + "/verify?async=" + async);
 
@@ -8708,8 +10142,10 @@ public class WorkordersWebApi extends TopicClient {
                         case "getSignatures":
                             successObject = Signatures.fromJson(new JsonObject(data));
                             break;
+                        case "acknowledgeDelay":
                         case "MassAcceptWorkOrder":
                         case "massRequests":
+                        case "removeProvider":
                             successObject = data;
                             break;
                         case "getWorkOrderLists":
@@ -8904,6 +10340,7 @@ public class WorkordersWebApi extends TopicClient {
                     switch (transactionParams.apiFunction) {
                         case "acceptIncrease":
                         case "acceptSwapRequest":
+                        case "acknowledgeDelay":
                         case "addAlertToWorkOrderAndTask":
                         case "addAttachment":
                         case "addBonus":
@@ -9001,6 +10438,7 @@ public class WorkordersWebApi extends TopicClient {
                         case "MassAcceptWorkOrder":
                         case "massRequests":
                         case "publish":
+                        case "removeProvider":
                         case "removeQualification":
                         case "reorderTask":
                         case "replyMessage":

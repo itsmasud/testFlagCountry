@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -350,7 +351,10 @@ public class CheckInOutDialog extends FullScreenDialog {
                     if (_location != null) {
                         cio.coords(new Coords(_location));
                     }
-                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), new TimeLog().in(cio));
+
+                    SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                    uiContext.page += "- Check In Dialog";
+                    WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), new TimeLog().in(cio), uiContext);
 
                     GpsTrackingService.stop(App.get());
 
@@ -370,7 +374,9 @@ public class CheckInOutDialog extends FullScreenDialog {
                                 timeLog.devices((double) _itemSelectedPosition);
                             }
                             timeLog.out(cio);
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog);
+                            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                            uiContext.page += " - Check Out Dialog";
+                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
                         }

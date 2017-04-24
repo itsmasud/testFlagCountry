@@ -630,7 +630,7 @@ public class WorkOrderCard extends RelativeLayout {
             try {
                 Hold unAckHold = _workOrder.getUnAcknowledgedHold();
                 Hold ackHold = new Hold().id(unAckHold.getId()).acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAckHold.getId(), ackHold);
+                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAckHold.getId(), ackHold, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -747,7 +747,7 @@ public class WorkOrderCard extends RelativeLayout {
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.CONFIRMED));
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -811,7 +811,7 @@ public class WorkOrderCard extends RelativeLayout {
                 ETA eta = new ETA();
                 eta.status(etaStatus);
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -842,7 +842,7 @@ public class WorkOrderCard extends RelativeLayout {
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.READYTOGO));
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

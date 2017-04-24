@@ -811,7 +811,7 @@ public class CompanyWebApi extends TopicClient {
                             successObject = Tags.fromJson(new JsonObject(data));
                             break;
                         case "getSelectionRules":
-//                            successObject = SelectionRules.fromJson(new JsonObject(data));
+                            //successObject = SelectionRules.fromJson(new JsonObject(data));
                             break;
                         case "getFeatures":
                             successObject = CompanyFeatures.fromJson(new JsonObject(data));
@@ -823,7 +823,7 @@ public class CompanyWebApi extends TopicClient {
                             successObject = CompanyRating.fromJson(new JsonObject(data));
                             break;
                         case "getPredefinedExpenses":
-//                            successObject = PredefinedExpenses.fromJson(new JsonObject(data));
+                            //successObject = PredefinedExpenses.fromJson(new JsonObject(data));
                             break;
                         case "getCompanyDetails":
                         case "getManagedProviders":

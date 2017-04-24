@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
@@ -502,7 +503,11 @@ public class ReportProblemDialog extends SimpleDialog {
                                         .condition(new Condition()
                                                 .estimatedDelay(delayMin * 60)
                                                 .substatus(Condition.SubstatusEnum.DELAYED)));
-                        WorkordersWebApi.updateETA(App.get(), (int) _workOrderId, eta);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Report Problem Dialog";
+
+                        WorkordersWebApi.updateETA(App.get(), (int) _workOrderId, eta, uiContext);
 
                         ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
                         _onSendDispatcher.dispatch(getUid(), _workOrderId);

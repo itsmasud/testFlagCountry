@@ -25,6 +25,7 @@ import android.text.TextUtils;
 
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
@@ -91,6 +92,9 @@ public class App extends Application {
     private OAuth _auth = null;
     private boolean _hasInteracted = false;
 
+    // UI context hack
+    private SpUIContext _spUiContext = new SpUIContext();
+
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
 
@@ -118,6 +122,10 @@ public class App extends Application {
         });
         Tracker.addTrackerWrapper(new SnowplowWrapper());
         Tracker.addTrackerWrapper(new AnswersWrapper());
+    }
+
+    public SpUIContext getSpUiContext() {
+        return _spUiContext;
     }
 
     @Override

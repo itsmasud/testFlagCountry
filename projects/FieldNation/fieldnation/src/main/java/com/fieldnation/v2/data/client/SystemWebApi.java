@@ -325,7 +325,7 @@ public class SystemWebApi extends TopicClient {
                             successObject = UpdateModel.fromJson(new JsonObject(data));
                             break;
                         case "getBanners":
-//                            successObject = Banner.fromJson(new JsonObject(data));
+                            //successObject = Banner.fromJson(new JsonObject(data));
                             break;
                         default:
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

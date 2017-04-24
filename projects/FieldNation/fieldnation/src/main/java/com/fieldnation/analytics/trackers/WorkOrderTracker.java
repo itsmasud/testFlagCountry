@@ -452,9 +452,9 @@ public class WorkOrderTracker {
         }
     }
 
-    public static void onShow(Context context, Tab tab, long workOrderId) {
+    public static void onShow(Context context, Tab tab, int workOrderId) {
         TrackerBase.show(context, tab.tab, new SpWorkOrderContext.Builder()
-                .workOrderId(workOrderId)
+                .workOrderId((int) workOrderId)
                 .build());
     }
 
@@ -579,7 +579,7 @@ public class WorkOrderTracker {
     }
 
 
-    public static void onEvent(Context context, Identity identity, Action action, long workOrderId) {
+    public static void onEvent(Context context, Identity identity, Action action, int workOrderId) {
         TrackerBase.event(context,
                 identity,
                 action,
@@ -631,7 +631,7 @@ public class WorkOrderTracker {
 
         for (Identity identity : Identity.values()) {
             for (Action action : Action.values()) {
-                onEvent(context, identity, action, 1L);
+                onEvent(context, identity, action, 1);
             }
         }
     }
