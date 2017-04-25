@@ -209,6 +209,9 @@ public class ConfirmResultScreen extends RelativeLayout {
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
                     return;
 
+                if (workOrders.getMetadata().getPerPage() != 65)
+                    return;
+
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
