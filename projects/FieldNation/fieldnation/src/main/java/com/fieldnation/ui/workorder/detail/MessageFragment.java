@@ -196,7 +196,7 @@ public class MessageFragment extends WorkorderFragment {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("getMessages")) {
+            if (successObject instanceof Messages) {
                 Messages messages = (Messages) successObject;
                 Error error = (Error) failObject;
                 if (!success || error != null)
