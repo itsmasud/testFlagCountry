@@ -151,7 +151,6 @@ public class FilePickerScreen extends FrameLayout {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            // TODO, do a thing
             if (item.getItemId() == R.id.send_menuitem) {
                 Log.d(TAG, "onMenuItemClick");
 

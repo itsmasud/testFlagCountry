@@ -148,7 +148,6 @@ public class MyGcmListenerService extends GcmListenerService {
     }
 
     private void buildPushNotification(GcmMessage gcmMessage) {
-        // TODO, need to finish implementing this once we figure out how to send the other data
         int id = 0;
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);

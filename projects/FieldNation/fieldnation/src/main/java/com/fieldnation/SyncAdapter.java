@@ -4,10 +4,11 @@ import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.os.Bundle;
 
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.crawler.WebCrawlerService;
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String TAG = "SyncAdapter";
@@ -19,8 +20,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     @Override
     public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider,
                               SyncResult syncResult) {
-        // TODO Method Stub: onPerformSync()
-        Log.v(TAG, "Method Stub: onPerformSync()");
+        getContext().startService(new Intent(getContext(), WebCrawlerService.class));
     }
 
 }

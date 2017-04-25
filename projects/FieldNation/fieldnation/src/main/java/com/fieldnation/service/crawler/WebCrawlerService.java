@@ -127,7 +127,7 @@ public class WebCrawlerService extends Service {
             protected Object doInBackground(Object... params) {
                 Log.v(TAG, "Flushing logs");
                 DebugUtils.flushLogs(WebCrawlerService.this, 86400000); // 1 day
-                Log.v(TAG, "flushing data");
+                Log.v(TAG, "Flushing data");
                 StoredObject.flush(App.get(), 604800000); // 1 week
                 //StoredObject.flush(1000); // 1 week
 
