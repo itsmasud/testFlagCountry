@@ -850,7 +850,7 @@ public class WorkFragment extends WorkorderFragment {
                 Log.v(TAG, ex);
             }
             try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
