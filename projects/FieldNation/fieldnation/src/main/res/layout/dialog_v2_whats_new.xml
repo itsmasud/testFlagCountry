@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/new_textview"
                 android:layout_marginLeft="0dp"
-                android:layout_marginRight="24dp"
+                android:layout_marginRight="0dp"
                 android:background="#FF00FF00"
                 android:minHeight="16dp"
                 android:text=""
@@ -64,7 +64,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fixed_textview"
                 android:layout_marginLeft="0dp"
-                android:layout_marginRight="24dp"
+                android:layout_marginRight="0dp"
                 android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
@@ -86,7 +86,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/next_textview"
                 android:layout_marginLeft="0dp"
-                android:layout_marginRight="24dp"
+                android:layout_marginRight="0dp"
                 android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
