@@ -28,7 +28,6 @@ import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -90,10 +89,8 @@ import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
-import com.fieldnation.v2.ui.dialog.LocationDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
-import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
@@ -121,9 +118,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_DISCOUNT = TAG + ".discountDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
-    private static final String DIALOG_LOCATION_DIALOG_CHECK_IN = TAG + ".locationDialogCheckIn";
-    private static final String DIALOG_LOCATION_DIALOG_CHECK_OUT = TAG + ".locationDialogCheckOut";
-    private static final String DIALOG_LOCATION_LOADING = TAG + ".locationLoadingDialog";
     private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteDialog";
     private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
@@ -393,17 +387,6 @@ public class WorkFragment extends WorkorderFragment {
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
-        OneButtonDialog.addOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
-        OneButtonDialog.addOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
-
-        LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
-        LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
-        LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onNotNowCheckIn);
-
-        LocationDialog.addOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onOkCheckOut);
-        LocationDialog.addOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onCancelCheckOut);
-        LocationDialog.addOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
-
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
@@ -439,17 +422,6 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-
-        OneButtonDialog.removeOnPrimaryListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onOk);
-        OneButtonDialog.removeOnCanceledListener(DIALOG_LOCATION_LOADING, _locationLoadingDialog_onCancel);
-
-        LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onOkCheckIn);
-        LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onCancelCheckIn);
-        LocationDialog.removeOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_IN, _locationDialog_onNotNowCheckIn);
-
-        LocationDialog.removeOnOkListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onOkCheckOut);
-        LocationDialog.removeOnCancelListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onCancelCheckOut);
-        LocationDialog.removeOnNotNowListener(DIALOG_LOCATION_DIALOG_CHECK_OUT, _locationDialog_onNotNowCheckOut);
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
@@ -544,24 +516,8 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
     /*-				Check In Process				-*/
     /*-*********************************************-*/
-    private final Runnable _startCheckIn = new Runnable() {
-        @Override
-        public void run() {
-            if (_currentLocation == null && !_locationFailed) {
-                OneButtonDialog.show(App.get(), DIALOG_LOCATION_LOADING,
-                        R.string.dialog_location_loading_title, R.string.dialog_location_loading_body,
-                        R.string.dialog_location_loading_button, true);
-            } else if (_currentLocation != null) {
-                doCheckin();
-            } else if (_locationFailed) {
-                LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_IN, false);
-            }
-            setLoading(true);
-        }
-    };
 
     private void doCheckin() {
-//        setLoading(true);
         if (_currentLocation != null) {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workOrder, _currentLocation, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
@@ -584,52 +540,9 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final LocationDialog.OnOkListener _locationDialog_onOkCheckIn = new LocationDialog.OnOkListener() {
-        @Override
-        public void onOk() {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
-        }
-    };
-
-    private final LocationDialog.OnNotNowListener _locationDialog_onNotNowCheckIn = new LocationDialog.OnNotNowListener() {
-        @Override
-        public void onNotNow() {
-            doCheckin();
-            setLoading(false);
-        }
-    };
-
-    private final LocationDialog.OnCancelListener _locationDialog_onCancelCheckIn = new LocationDialog.OnCancelListener() {
-        @Override
-        public void onCancel() {
-            setLoading(false);
-        }
-    };
-
     /*-*********************************************-*/
     /*-				Check Out Process				-*/
     /*-*********************************************-*/
-    private final Runnable _startCheckOut = new Runnable() {
-        @Override
-        public void run() {
-            if (_currentLocation == null && !_locationFailed) {
-                // waiting for response
-                OneButtonDialog.show(App.get(), DIALOG_LOCATION_LOADING,
-                        R.string.dialog_location_loading_title, R.string.dialog_location_loading_body,
-                        R.string.dialog_location_loading_button, true);
-                _gpsRunnable = _startCheckOut;
-            } else if (_currentLocation != null) {
-                // have location
-                doCheckOut();
-            } else if (_locationFailed) {
-                // location failed
-                LocationDialog.show(App.get(), DIALOG_LOCATION_DIALOG_CHECK_OUT, false);
-            }
-            setLoading(true);
-        }
-    };
-
     private void doCheckOut() {
 //        setLoading(true);
 
@@ -661,50 +574,21 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final LocationDialog.OnOkListener _locationDialog_onOkCheckOut = new LocationDialog.OnOkListener() {
-        @Override
-        public void onOk() {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
-        }
-    };
-
-    private final LocationDialog.OnNotNowListener _locationDialog_onNotNowCheckOut = new LocationDialog.OnNotNowListener() {
-        @Override
-        public void onNotNow() {
-            doCheckOut();
-            setLoading(false);
-        }
-    };
-
-    private final LocationDialog.OnCancelListener _locationDialog_onCancelCheckOut = new LocationDialog.OnCancelListener() {
-        @Override
-        public void onCancel() {
-            setLoading(false);
-        }
-    };
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private Runnable _gpsRunnable = null;
-
     private final SimpleGps.Listener _simpleGps_listener = new SimpleGps.Listener() {
         @Override
         public void onLocation(SimpleGps simpleGps, Location location) {
-            simpleGps.stop();
             _currentLocation = location;
             _locationFailed = false;
-            if (_gpsRunnable != null) _gpsRunnable.run();
-            Controller.dismiss(App.get(), DIALOG_LOCATION_LOADING);
+            simpleGps.stop();
         }
 
         @Override
         public void onFail(SimpleGps simpleGps) {
             _locationFailed = true;
             simpleGps.stop();
-            if (_gpsRunnable != null) _gpsRunnable.run();
-            Controller.dismiss(App.get(), DIALOG_LOCATION_LOADING);
         }
     };
 
@@ -733,11 +617,6 @@ public class WorkFragment extends WorkorderFragment {
                 if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                     RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workOrder, _workOrder.getCompany().getName());
                 }
-
-            } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
-                _startCheckIn.run();
-            } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-                _startCheckOut.run();
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -769,7 +648,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
                     null, _workOrder.getId());
 
-            _startCheckOut.run();
+            doCheckOut();
         }
 
         @Override
@@ -777,7 +656,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
                     null, _workOrder.getId());
 
-            _startCheckIn.run();
+            doCheckin();
         }
 
         @Override
@@ -785,7 +664,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
                     null, _workOrder.getId());
 
-            _startCheckIn.run();
+            doCheckin();
         }
 
         @Override
@@ -831,7 +710,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onMyWay() {
             if (!App.get().isLocationEnabled()) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN, intent, PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
                 ToastClient.snackbar(App.get(), "We would like to use your location to provide more accurate status information to the buyer.", "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
             }
 
@@ -1024,12 +903,12 @@ public class WorkFragment extends WorkorderFragment {
     private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onCheckin(Task task) {
-            _startCheckIn.run();
+            doCheckin();
         }
 
         @Override
         public void onCheckout(Task task) {
-            _startCheckOut.run();
+            doCheckOut();
         }
 
         @Override
@@ -1389,20 +1268,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
             ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrder.getId(), _workOrder.getClosingNotes());
     }
-
-    private final OneButtonDialog.OnPrimaryListener _locationLoadingDialog_onOk = new OneButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary() {
-            setLoading(false);
-        }
-    };
-
-    private final OneButtonDialog.OnCanceledListener _locationLoadingDialog_onCancel = new OneButtonDialog.OnCanceledListener() {
-        @Override
-        public void onCanceled() {
-            setLoading(false);
-        }
-    };
 
     private final ClosingNotesDialog.OnOkListener _closingNotes_onOk = new ClosingNotesDialog.OnOkListener() {
         @Override
