@@ -14,7 +14,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.contexts.SpScreenDisplayUiContext;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
@@ -127,8 +126,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         @Override
         public void OnWorkOrderListReceived(final WorkOrders workOrders) {
             if (workOrders == null
-                    || workOrders.getResults() == null
-                    || workOrders.getResults().length == 0) {
+                    || workOrders.getResults() == null) {
                 return;
             }
 
