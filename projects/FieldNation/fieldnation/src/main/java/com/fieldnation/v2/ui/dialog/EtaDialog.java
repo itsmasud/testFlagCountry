@@ -441,8 +441,8 @@ public class EtaDialog extends FullScreenDialog {
                 ecal.set(Calendar.DAY_OF_MONTH, scal.get(Calendar.DAY_OF_MONTH));
 
                 // if too early, then bump a day
-                if (arrival.getTimeInMillis() < scal.getTimeInMillis()
-                        && arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
+                if (arrival.getTimeInMillis() <= scal.getTimeInMillis()
+                        && arrival.getTimeInMillis() >= ecal.getTimeInMillis()) {
                     return false;
                 } else {
                     return true;
