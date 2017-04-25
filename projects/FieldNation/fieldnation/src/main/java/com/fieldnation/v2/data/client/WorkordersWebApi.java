@@ -70,57 +70,9 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: acceptIncreaseByWorkOrder
-     * Accept pay increase for assigned work order.
-     *
-     * @param workOrderId ID of work order
-     * @param increaseId  ID of work order increase
-     */
-    public static void acceptIncrease(Context context, Integer workOrderId, Integer increaseId, EventContext uiContext) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("acceptIncreaseByWorkOrder")
-                .label(workOrderId + "")
-                .category("workorder")
-                .addContext(uiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
-                .property("increase_id")
-                .value(increaseId)
-                .build()
-        );
-
-        try {
-            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/accept");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/accept");
-
-            JsonObject methodParams = new JsonObject();
-            methodParams.put("workOrderId", workOrderId);
-            methodParams.put("increaseId", increaseId);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}/accept")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "acceptIncrease", methodParams))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
+     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -677,7 +629,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param expense     Expense
-     * @param async       Asynchroneous (Optional)
+     * @param async Asynchronous (Optional)
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -2800,7 +2752,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param expenseId   ID of expense
-     * @param async       Asynchroneous (Optional)
+     * @param async Asynchronous (Optional)
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -3997,55 +3949,6 @@ public class WorkordersWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
                                     WorkordersWebApi.class, "deleteWorkOrder", methodParams))
-                    .useAuth(true)
-                    .request(builder)
-                    .build();
-
-            WebTransactionService.queueTransaction(context, transaction);
-        } catch (Exception ex) {
-            Log.v(STAG, ex);
-        }
-    }
-
-    /**
-     * Swagger operationId: denyIncreaseByWorkOrder
-     * Deny pay increase for assigned work order.
-     *
-     * @param workOrderId ID of work order
-     * @param increaseId  ID of work order increase
-     */
-    public static void denyIncrease(Context context, Integer workOrderId, Integer increaseId, EventContext uiContext) {
-        Tracker.event(context, new SimpleEvent.Builder()
-                .action("denyIncreaseByWorkOrder")
-                .label(workOrderId + "")
-                .category("workorder")
-                .addContext(uiContext)
-                .addContext(new SpWorkOrderContext.Builder().workOrderId(workOrderId).build())
-                .property("increase_id")
-                .value(increaseId)
-                .build()
-        );
-
-        try {
-            String key = misc.md5("PUT//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/deny");
-
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("PUT")
-                    .path("/api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "/deny");
-
-            JsonObject methodParams = new JsonObject();
-            methodParams.put("workOrderId", workOrderId);
-            methodParams.put("increaseId", increaseId);
-
-            WebTransaction transaction = new WebTransaction.Builder()
-                    .timingKey("PUT//api/rest/v2/workorders/{work_order_id}/increases/{increase_id}/deny")
-                    .key(key)
-                    .priority(Priority.HIGH)
-                    .listener(TransactionListener.class)
-                    .listenerParams(
-                            TransactionListener.params("TOPIC_ID_WEB_API_V2/WorkordersWebApi",
-                                    WorkordersWebApi.class, "denyIncrease", methodParams))
                     .useAuth(true)
                     .request(builder)
                     .build();
@@ -7324,7 +7227,7 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: unassignUserByWorkOrder
+     * Swagger operationId: unassignUserByWorkOrderAndUser
      * Unassign user from a work order
      *
      * @param workOrderId Work order id
@@ -7332,7 +7235,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
-                .action("unassignUserByWorkOrder")
+                .action("unassignUserByWorkOrderAndUser")
                 .label(workOrderId + "")
                 .category("workorder")
                 .addContext(uiContext)
@@ -7375,7 +7278,7 @@ public class WorkordersWebApi extends TopicClient {
     }
 
     /**
-     * Swagger operationId: unassignUserByWorkOrder
+     * Swagger operationId: unassignUserByWorkOrderAndUser
      * Unassign user from a work order
      *
      * @param workOrderId Work order id
@@ -7384,7 +7287,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void unassignUser(Context context, Integer workOrderId, Assignee assignee, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
-                .action("unassignUserByWorkOrder")
+                .action("unassignUserByWorkOrderAndUser")
                 .label(workOrderId + "")
                 .category("workorder")
                 .addContext(uiContext)
@@ -9876,7 +9779,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param workOrder   Work order model
-     * @param async       Asynchroneous (Optional)
+     * @param async Asynchronous (Optional)
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -10199,7 +10102,6 @@ public class WorkordersWebApi extends TopicClient {
                         case "getQualifications":
                             successObject = Qualifications.fromJson(new JsonObject(data));
                             break;
-                        case "acceptIncrease":
                         case "addAlertToWorkOrderAndTask":
                         case "addAttachment":
                         case "addBonus":
@@ -10244,7 +10146,6 @@ public class WorkordersWebApi extends TopicClient {
                         case "deleteTask":
                         case "deleteTimeLog":
                         case "deleteWorkOrder":
-                        case "denyIncrease":
                         case "getWorkOrder":
                         case "groupTask":
                         case "incompleteWorkOrder":
@@ -10338,7 +10239,6 @@ public class WorkordersWebApi extends TopicClient {
                     }
                 } else {
                     switch (transactionParams.apiFunction) {
-                        case "acceptIncrease":
                         case "acceptSwapRequest":
                         case "acknowledgeDelay":
                         case "addAlertToWorkOrderAndTask":
@@ -10387,7 +10287,6 @@ public class WorkordersWebApi extends TopicClient {
                         case "deleteTask":
                         case "deleteTimeLog":
                         case "deleteWorkOrder":
-                        case "denyIncrease":
                         case "getAssignee":
                         case "getAttachments":
                         case "getBonus":

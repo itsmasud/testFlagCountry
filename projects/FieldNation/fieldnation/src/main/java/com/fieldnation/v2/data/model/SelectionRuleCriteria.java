@@ -431,8 +431,6 @@ public class SelectionRuleCriteria implements Parcelable {
     public enum StatusEnum {
         @Json(name = "match")
         MATCH("match"),
-        @Json(name = "no_match")
-        NO_MATCH("no_match"),
         @Json(name = "no_match_optional")
         NO_MATCH_OPTIONAL("no_match_optional"),
         @Json(name = "no_match_required")

@@ -9,6 +9,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;

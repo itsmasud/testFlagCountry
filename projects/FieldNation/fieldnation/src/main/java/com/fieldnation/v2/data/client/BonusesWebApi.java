@@ -1,12 +1,18 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -15,14 +21,15 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
-import com.fieldnation.v2.data.model.PayModifier;
 
 /**
  * Created by dmgen from swagger.
@@ -65,9 +72,9 @@ public class BonusesWebApi extends TopicClient {
      * Swagger operationId: addBonus
      * Adds a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
-     * @param json JSON Model
+     * @param bonus JSON Model
      */
-    public static void addBonus(Context context, PayModifier json) {
+    public static void addBonus(Context context, PayModifier bonus) {
         try {
             String key = misc.md5("POST//api/rest/v2/bonuses");
 
@@ -76,12 +83,12 @@ public class BonusesWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/bonuses");
 
-            if (json != null)
-                builder.body(json.getJson().toString());
+            if (bonus != null)
+                builder.body(bonus.getJson().toString());
 
             JsonObject methodParams = new JsonObject();
-            if (json != null)
-                methodParams.put("json", json.getJson());
+            if (bonus != null)
+                methodParams.put("bonus", bonus.getJson());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/bonuses")
@@ -107,7 +114,15 @@ public class BonusesWebApi extends TopicClient {
      *
      * @param bonusId ID of Bonus
      */
-    public static void deleteBonus(Context context, Integer bonusId) {
+    public static void deleteBonus(Context context, Integer bonusId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteBonusByBonus")
+                .label(bonusId + "")
+                .category("bonus")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/bonuses/" + bonusId);
 
@@ -142,9 +157,17 @@ public class BonusesWebApi extends TopicClient {
      * Updates a bonus that can be applied to a work order to increase the amount paid upon a condition being met
      *
      * @param bonusId Bonus ID
-     * @param json    JSON Model
+     * @param json JSON Model
      */
-    public static void updateBonus(Context context, Integer bonusId, PayModifier json) {
+    public static void updateBonus(Context context, Integer bonusId, PayModifier json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateBonusByBonus")
+                .label(bonusId + "")
+                .category("bonus")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/bonuses/" + bonusId);
 

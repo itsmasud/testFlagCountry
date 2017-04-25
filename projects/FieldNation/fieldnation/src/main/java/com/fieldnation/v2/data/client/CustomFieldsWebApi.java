@@ -1,17 +1,15 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -20,15 +18,16 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.IdResponse;
 
 /**
  * Created by dmgen from swagger.
@@ -113,7 +112,15 @@ public class CustomFieldsWebApi extends TopicClient {
      *
      * @param customFieldId Custom field id
      */
-    public static void deleteCustomField(Context context, Integer customFieldId) {
+    public static void deleteCustomField(Context context, Integer customFieldId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteCustomField")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -188,7 +195,15 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param customFieldId Custom field id
      * @param json          JSON Model
      */
-    public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
+    public static void updateCustomField(Context context, Integer customFieldId, CustomField json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomField")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -230,7 +245,15 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param customFieldId Custom field id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibility")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
 
@@ -269,7 +292,17 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param clientId      Client id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibilityByClient")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .property("client_id")
+                .value(clientId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
 
@@ -309,7 +342,17 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param projectId     Project id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibilityByProject")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .property("project_id")
+                .value(projectId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 

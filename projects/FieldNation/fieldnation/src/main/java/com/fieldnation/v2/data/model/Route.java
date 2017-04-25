@@ -238,8 +238,8 @@ public class Route implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "accept")
         ACCEPT("accept"),
-        @Json(name = "decline")
-        DECLINE("decline");
+        @Json(name = "deny")
+        DENY("deny");
 
         private String value;
 
