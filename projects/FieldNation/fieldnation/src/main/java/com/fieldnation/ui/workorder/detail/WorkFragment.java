@@ -366,7 +366,6 @@ public class WorkFragment extends WorkorderFragment {
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-// TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
@@ -1534,11 +1533,11 @@ public class WorkFragment extends WorkorderFragment {
             }
             if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog, null); // TODO snowplow
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog, App.get().getSpUiContext());
 
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog, null); // TODO snowplow
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
             setLoading(true);
         }
