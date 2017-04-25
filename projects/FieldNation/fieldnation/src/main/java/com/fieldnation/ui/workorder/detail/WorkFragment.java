@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
@@ -281,6 +282,9 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
+
+        if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
+            _testButton.setVisibility(View.GONE);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {

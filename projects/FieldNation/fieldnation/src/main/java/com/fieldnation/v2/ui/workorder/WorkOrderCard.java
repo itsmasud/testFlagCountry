@@ -143,7 +143,7 @@ public class WorkOrderCard extends RelativeLayout {
         _testButton.setOnClickListener(_test_onClick);
 
         // Just in case we forget to hide this button when building a release version
-        if (!BuildConfig.DEBUG)
+        if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(GONE);
 
         DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
