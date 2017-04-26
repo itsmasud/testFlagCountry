@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
@@ -282,6 +283,9 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
 
+        if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
+            _testButton.setVisibility(View.GONE);
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -362,7 +366,6 @@ public class WorkFragment extends WorkorderFragment {
 //        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-// TODO        _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
@@ -717,12 +720,13 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
-                if (_currentLocation != null)
-                    etaStatus.condition(new Condition()
-                            .coords(new Coords(_currentLocation.getLatitude(), _currentLocation.getLongitude())));
 
                 ETA eta = new ETA();
                 eta.status(etaStatus);
+
+                if (_currentLocation != null)
+                    eta.condition(new Condition()
+                            .coords(new Coords(_currentLocation.getLatitude(), _currentLocation.getLongitude())));
 
                 WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
@@ -1530,11 +1534,11 @@ public class WorkFragment extends WorkorderFragment {
             }
             if (timeLog == null) {
                 WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog, null); // TODO snowplow
+                WorkordersWebApi.addTimeLog(App.get(), _workOrder.getId(), newTimeLog, App.get().getSpUiContext());
 
             } else {
                 WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog, null); // TODO snowplow
+                WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), newTimeLog, App.get().getSpUiContext());
             }
             setLoading(true);
         }

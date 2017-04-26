@@ -27,6 +27,9 @@ public class User implements Parcelable {
     @Json(name = "address")
     private String _address;
 
+    @Json(name = "assigned")
+    private Boolean _assigned;
+
     @Json(name = "background_checks")
     private BackgroundCheck[] _backgroundChecks;
 
@@ -72,6 +75,9 @@ public class User implements Parcelable {
     @Json(name = "managed")
     private Boolean _managed;
 
+    @Json(name = "marketplace")
+    private Boolean _marketplace;
+
     @Json(name = "notes")
     private String _notes;
 
@@ -80,6 +86,12 @@ public class User implements Parcelable {
 
     @Json(name = "preferred_groups")
     private UserPreferredGroups[] _preferredGroups;
+
+    @Json(name = "previous_assignment")
+    private UserPreviousAssignment _previousAssignment;
+
+    @Json(name = "previous_request")
+    private UserPreviousRequest _previousRequest;
 
     @Json(name = "protec")
     private Boolean _protec;
@@ -93,6 +105,9 @@ public class User implements Parcelable {
     @Json(name = "role")
     private String _role;
 
+    @Json(name = "routable")
+    private Boolean _routable;
+
     @Json(name = "route")
     private Route _route;
 
@@ -104,6 +119,9 @@ public class User implements Parcelable {
 
     @Json(name = "time_zone")
     private TimeZone _timeZone;
+
+    @Json(name = "unassignable")
+    private Boolean _unassignable;
 
     @Json(name = "upcoming_schedule")
     private UserUpcomingSchedule[] _upcomingSchedule;
@@ -150,6 +168,28 @@ public class User implements Parcelable {
     public User address(String address) throws ParseException {
         _address = address;
         SOURCE.put("address", address);
+        return this;
+    }
+
+    public void setAssigned(Boolean assigned) throws ParseException {
+        _assigned = assigned;
+        SOURCE.put("assigned", assigned);
+    }
+
+    public Boolean getAssigned() {
+        try {
+            if (_assigned == null && SOURCE.has("assigned") && SOURCE.get("assigned") != null)
+                _assigned = SOURCE.getBoolean("assigned");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _assigned;
+    }
+
+    public User assigned(Boolean assigned) throws ParseException {
+        _assigned = assigned;
+        SOURCE.put("assigned", assigned);
         return this;
     }
 
@@ -513,6 +553,28 @@ public class User implements Parcelable {
         return this;
     }
 
+    public void setMarketplace(Boolean marketplace) throws ParseException {
+        _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
+    }
+
+    public Boolean getMarketplace() {
+        try {
+            if (_marketplace == null && SOURCE.has("marketplace") && SOURCE.get("marketplace") != null)
+                _marketplace = SOURCE.getBoolean("marketplace");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _marketplace;
+    }
+
+    public User marketplace(Boolean marketplace) throws ParseException {
+        _marketplace = marketplace;
+        SOURCE.put("marketplace", marketplace);
+        return this;
+    }
+
     public void setNotes(String notes) throws ParseException {
         _notes = notes;
         SOURCE.put("notes", notes);
@@ -581,6 +643,56 @@ public class User implements Parcelable {
     public User preferredGroups(UserPreferredGroups[] preferredGroups) throws ParseException {
         _preferredGroups = preferredGroups;
         SOURCE.put("preferred_groups", UserPreferredGroups.toJsonArray(preferredGroups), true);
+        return this;
+    }
+
+    public void setPreviousAssignment(UserPreviousAssignment previousAssignment) throws ParseException {
+        _previousAssignment = previousAssignment;
+        SOURCE.put("previous_assignment", previousAssignment.getJson());
+    }
+
+    public UserPreviousAssignment getPreviousAssignment() {
+        try {
+            if (_previousAssignment == null && SOURCE.has("previous_assignment") && SOURCE.get("previous_assignment") != null)
+                _previousAssignment = UserPreviousAssignment.fromJson(SOURCE.getJsonObject("previous_assignment"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_previousAssignment != null && _previousAssignment.isSet())
+            return _previousAssignment;
+
+        return null;
+    }
+
+    public User previousAssignment(UserPreviousAssignment previousAssignment) throws ParseException {
+        _previousAssignment = previousAssignment;
+        SOURCE.put("previous_assignment", previousAssignment.getJson());
+        return this;
+    }
+
+    public void setPreviousRequest(UserPreviousRequest previousRequest) throws ParseException {
+        _previousRequest = previousRequest;
+        SOURCE.put("previous_request", previousRequest.getJson());
+    }
+
+    public UserPreviousRequest getPreviousRequest() {
+        try {
+            if (_previousRequest == null && SOURCE.has("previous_request") && SOURCE.get("previous_request") != null)
+                _previousRequest = UserPreviousRequest.fromJson(SOURCE.getJsonObject("previous_request"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_previousRequest != null && _previousRequest.isSet())
+            return _previousRequest;
+
+        return null;
+    }
+
+    public User previousRequest(UserPreviousRequest previousRequest) throws ParseException {
+        _previousRequest = previousRequest;
+        SOURCE.put("previous_request", previousRequest.getJson());
         return this;
     }
 
@@ -678,6 +790,28 @@ public class User implements Parcelable {
         return this;
     }
 
+    public void setRoutable(Boolean routable) throws ParseException {
+        _routable = routable;
+        SOURCE.put("routable", routable);
+    }
+
+    public Boolean getRoutable() {
+        try {
+            if (_routable == null && SOURCE.has("routable") && SOURCE.get("routable") != null)
+                _routable = SOURCE.getBoolean("routable");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _routable;
+    }
+
+    public User routable(Boolean routable) throws ParseException {
+        _routable = routable;
+        SOURCE.put("routable", routable);
+        return this;
+    }
+
     public void setRoute(Route route) throws ParseException {
         _route = route;
         SOURCE.put("route", route.getJson());
@@ -769,6 +903,28 @@ public class User implements Parcelable {
     public User timeZone(TimeZone timeZone) throws ParseException {
         _timeZone = timeZone;
         SOURCE.put("time_zone", timeZone.getJson());
+        return this;
+    }
+
+    public void setUnassignable(Boolean unassignable) throws ParseException {
+        _unassignable = unassignable;
+        SOURCE.put("unassignable", unassignable);
+    }
+
+    public Boolean getUnassignable() {
+        try {
+            if (_unassignable == null && SOURCE.has("unassignable") && SOURCE.get("unassignable") != null)
+                _unassignable = SOURCE.getBoolean("unassignable");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _unassignable;
+    }
+
+    public User unassignable(Boolean unassignable) throws ParseException {
+        _unassignable = unassignable;
+        SOURCE.put("unassignable", unassignable);
         return this;
     }
 

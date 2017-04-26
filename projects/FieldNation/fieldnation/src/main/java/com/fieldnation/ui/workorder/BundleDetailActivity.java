@@ -20,6 +20,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
@@ -59,6 +60,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     // Services
     private BundlesWebApi _bundlesApi;
     private SimpleGps _simpleGps;
+    private WorkorderClient _workOrderClient;
 
     @Override
     public int getLayoutResource() {
@@ -124,12 +126,18 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
         _bundlesApi.connect(App.get());
+
+        _workOrderClient = new WorkorderClient(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
     }
 
     @Override
     protected void onPause() {
         if (_bundlesApi != null && _bundlesApi.isConnected())
             _bundlesApi.disconnect(App.get());
+
+        if (_workOrderClient != null && _workOrderClient.isConnected())
+            _workOrderClient.disconnect(App.get());
 
         AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
@@ -167,26 +175,23 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-/*
-TODO                AcceptBundleDialog.show(
+                AcceptBundleDialog.show(
                         App.get(),
                         UID_DIALOG_ACCEPT_BUNDLE,
-                        _woBundle.getBundleId(),
-                        _woBundle.getWorkorder().length,
-                        wo.getWorkorderId(),
-                        AcceptBundleDialog.TYPE_REQUEST);
-*/
+                        _bundleId,
+                        _adapter.getItemCount(),
+                        workOrder.getId(),
+                        AcceptBundleDialog.TYPE_ACCEPT);
+
             } else if (workOrder.getRequests() != null
                     && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-/*
-TODO                AcceptBundleDialog.show(
+                AcceptBundleDialog.show(
                         App.get(),
                         UID_DIALOG_ACCEPT_BUNDLE,
-                        _woBundle.getBundleId(),
-                        _woBundle.getWorkorder().length,
-                        wo.getWorkorderId(),
-                        AcceptBundleDialog.TYPE_ACCEPT);
-*/
+                        _bundleId,
+                        _adapter.getItemCount(),
+                        workOrder.getId(),
+                        AcceptBundleDialog.TYPE_REQUEST);
             }
         }
     };
@@ -194,12 +199,11 @@ TODO                AcceptBundleDialog.show(
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-/*
-TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
-                    _woBundle.getWorkorder().length,
-                    _woBundle.getWorkorder()[0].getWorkorderId().intValue(),
-                    _woBundle.getWorkorder()[0].getCompanyId());
-*/
+            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
+                    _adapter.getItemCount(),
+                    ((WorkOrder) _adapter.getObject(0)).getId(),
+                    ((WorkOrder) _adapter.getObject(0)).getCompany().getId());
+
         }
     };
 
@@ -245,6 +249,18 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
         }
     };
 
+    private final WorkorderClient.Listener _workOrderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderClient.subActions();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            _adapter.refreshAll();
+        }
+    };
+
     private final BundlesWebApi.Listener _bundlesWebApi_listener = new BundlesWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -267,12 +283,16 @@ TODO            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
                     if (workOrder.getRoutes() != null
                             && workOrder.getRoutes().getUserRoute() != null
                             && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                        _buttonToolbar.setVisibility(View.VISIBLE);
                         _okButton.setText(R.string.btn_accept);
                         break;
                     } else if (workOrder.getRequests() != null
                             && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                        _buttonToolbar.setVisibility(View.VISIBLE);
                         _okButton.setText(R.string.btn_request);
                         break;
+                    } else {
+                        _buttonToolbar.setVisibility(View.GONE);
                     }
                 }
             }

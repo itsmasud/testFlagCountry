@@ -273,7 +273,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             new FutureWaitAsyncTask(_futureWaitAsync_account).execute(future);
 
         } else if (accounts.length >= 1) {
-            //TODO  always gets the first account, should probbaly present a picker of some kind
+            //TODO  always gets the first account, should probably present a picker of some kind
             // have an account, now ask for the auth token
             _account = accounts[0];
             requestAuthTokenFromAccountManager();

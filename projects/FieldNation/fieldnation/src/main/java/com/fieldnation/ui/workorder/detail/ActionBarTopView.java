@@ -321,7 +321,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         } else if (timeLogsActions.contains(TimeLogs.ActionsEnum.ADD)
                 && workOrderActions.contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
             inflate();
-            // TODO figure out the check in again logic
             _leftWhiteButton.setVisibility(VISIBLE);
             if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
                 _leftWhiteButton.setText(R.string.btn_check_in_again);
@@ -402,10 +401,10 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
-        public void onSend(long workOrderId) {
+        public void onSend(int workOrderId) {
             if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                        WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
+                        WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
         }
     };
 

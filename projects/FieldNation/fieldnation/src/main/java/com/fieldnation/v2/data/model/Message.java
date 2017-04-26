@@ -40,7 +40,7 @@ public class Message implements Parcelable {
     private Integer _msgId;
 
     @Json(name = "parent_id")
-    private Boolean _parentId;
+    private Integer _parentId;
 
     @Json(name = "read")
     private Boolean _read;
@@ -195,15 +195,15 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setParentId(Boolean parentId) throws ParseException {
+    public void setParentId(Integer parentId) throws ParseException {
         _parentId = parentId;
         SOURCE.put("parent_id", parentId);
     }
 
-    public Boolean getParentId() {
+    public Integer getParentId() {
         try {
             if (_parentId == null && SOURCE.has("parent_id") && SOURCE.get("parent_id") != null)
-                _parentId = SOURCE.getBoolean("parent_id");
+                _parentId = SOURCE.getInt("parent_id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -211,7 +211,7 @@ public class Message implements Parcelable {
         return _parentId;
     }
 
-    public Message parentId(Boolean parentId) throws ParseException {
+    public Message parentId(Integer parentId) throws ParseException {
         _parentId = parentId;
         SOURCE.put("parent_id", parentId);
         return this;

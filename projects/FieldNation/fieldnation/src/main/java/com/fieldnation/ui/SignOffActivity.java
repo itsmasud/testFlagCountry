@@ -331,7 +331,10 @@ public class SignOffActivity extends AuthSimpleActivity {
         if (markComplete)
             intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
 
-        ActivityResultClient.startActivityForResult(context, intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+        if (markComplete)
+            ActivityResultClient.startActivityForResult(context, intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+        else
+            ActivityResultClient.startActivity(context, intent);
     }
 
     public static void startSignOff(Context context, WorkOrder workOrder, int taskId) {

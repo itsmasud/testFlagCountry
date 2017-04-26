@@ -143,7 +143,7 @@ public class WorkOrderCard extends RelativeLayout {
         _testButton.setOnClickListener(_test_onClick);
 
         // Just in case we forget to hide this button when building a release version
-        if (!BuildConfig.DEBUG)
+        if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(GONE);
 
         DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
@@ -804,12 +804,13 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
-                if (_location != null)
-                    etaStatus.condition(new Condition()
-                            .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
 
                 ETA eta = new ETA();
                 eta.status(etaStatus);
+
+                if (_location != null)
+                    eta.condition(new Condition()
+                            .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
 
                 WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
@@ -921,7 +922,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
-        public void onSend(long workOrderId) {
+        public void onSend(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)

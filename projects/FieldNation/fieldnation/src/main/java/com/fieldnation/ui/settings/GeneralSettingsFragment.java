@@ -1,6 +1,5 @@
 package com.fieldnation.ui.settings;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -28,14 +27,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Share
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        //TODO need to call
-//        _releaseNoteDialog = ReleaseNoteDialog.getInstance( getSupportFragmentManager(), TAG);
-    }
-
 
     @Override
     public void onResume() {
@@ -67,7 +58,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Share
 
     @Override
     public void onPause() {
-        super.onResume();
+        super.onPause();
         // Unregister the listener whenever a key changes
         getPreferenceScreen().getSharedPreferences()
                 .unregisterOnSharedPreferenceChangeListener(this);
@@ -94,7 +85,6 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Share
         }
 
     }
-
 
     private Preference.OnPreferenceClickListener preference_onClick_listener = new Preference.OnPreferenceClickListener() {
 

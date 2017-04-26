@@ -267,14 +267,21 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         if (reviewSlot != null) {
-            final Attachment[] docs = reviewSlot.getResults();
-            if (docs != null && docs.length > 0) {
-                if (_reviewList.getChildCount() != docs.length) {
+            Attachment[] rawDocs = reviewSlot.getResults();
+
+            final List<Attachment> docs = new LinkedList<>();
+            for (Attachment attachment : rawDocs) {
+                if (attachment.getShowBeforeAssignment())
+                    docs.add(attachment);
+            }
+
+            if (docs.size() > 0) {
+                if (_reviewList.getChildCount() != docs.size()) {
                     if (_reviewRunnable != null)
                         _reviewRunnable.cancel();
 
-                    _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
-                        private final Attachment[] _docs = docs;
+                    _reviewRunnable = new ForLoopRunnable(docs.size(), new Handler()) {
+                        private final Attachment[] _docs = docs.toArray(new Attachment[docs.size()]);
                         private final List<DocumentView> _views = new LinkedList<>();
 
                         @Override
@@ -357,7 +364,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _actionButton.setVisibility(View.GONE);
         for (AttachmentFolder f : slots) {
-            if (f.getType() == AttachmentFolder.TypeEnum.SLOT)
+            if (f.getType() == AttachmentFolder.TypeEnum.SLOT && f.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD))
                 _actionButton.setVisibility(View.VISIBLE);
         }
 

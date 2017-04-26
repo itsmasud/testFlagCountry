@@ -283,7 +283,6 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
     private boolean allowSync() {
         synchronized (SYNC_LOCK) {
-            // TODO calculate by collecting config information and compare to phone state
             if (_syncCheckCoolDown < System.currentTimeMillis()) {
                 Log.v(TAG, "Running allowSync");
                 _allowSync = true;

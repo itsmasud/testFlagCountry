@@ -358,25 +358,25 @@ public class ReportProblemDialog extends SimpleDialog {
                 misc.showKeyboard(_explanationEditText);
                 break;
 
-            case WILL_BE_LATE:
-                _timeframeSpinner.setVisibility(View.VISIBLE);
-
-                if (_timeframePosition == -1 || _timeframePosition == 5) {
-                    _okButton.setEnabled(false);
-                } else {
-                    _okButton.setEnabled(true);
-                }
-
-                if (_timeframePosition == 5) {
-                    _timeframeLayout.setVisibility(View.VISIBLE);
-                    if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
-                        _okButton.setEnabled(false);
-                    }
-                } else {
-                    _timeframeLayout.setVisibility(View.GONE);
-                }
-
-                break;
+//            case WILL_BE_LATE:
+//                _timeframeSpinner.setVisibility(View.VISIBLE);
+//
+//                if (_timeframePosition == -1 || _timeframePosition == 5) {
+//                    _okButton.setEnabled(false);
+//                } else {
+//                    _okButton.setEnabled(true);
+//                }
+//
+//                if (_timeframePosition == 5) {
+//                    _timeframeLayout.setVisibility(View.VISIBLE);
+//                    if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
+//                        _okButton.setEnabled(false);
+//                    }
+//                } else {
+//                    _timeframeLayout.setVisibility(View.GONE);
+//                }
+//
+//                break;
 
             case DO_NOT_HAVE_SHIPMENT:
             case DO_NOT_HAVE_INFO:
@@ -484,38 +484,38 @@ public class ReportProblemDialog extends SimpleDialog {
                     CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getWorkorderId(), explanation);
                     break;
 
-                case WILL_BE_LATE:
-                    try {
-                        int delayMin = 0;
-
-                        if (_timeframePosition == 5)
-                            delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
-                        else
-                            delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
-
-                        if (delayMin <= 0) {
-                            ToastClient.toast(App.get(), "Please enter a delay greater than 0", Toast.LENGTH_LONG);
-                            return;
-                        }
-
-                        ETA eta = new ETA()
-                                .status(new ETAStatus()
-                                        .condition(new Condition()
-                                                .estimatedDelay(delayMin * 60)
-                                                .substatus(Condition.SubstatusEnum.DELAYED)));
-
-                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                        uiContext.page += " - Report Problem Dialog";
-
-                        WorkordersWebApi.updateETA(App.get(), (int) _workOrderId, eta, uiContext);
-
-                        ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                        _onSendDispatcher.dispatch(getUid(), _workOrderId);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                        ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
-                    }
-                    break;
+//                case WILL_BE_LATE:
+//                    try {
+//                        int delayMin = 0;
+//
+//                        if (_timeframePosition == 5)
+//                            delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
+//                        else
+//                            delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
+//
+//                        if (delayMin <= 0) {
+//                            ToastClient.toast(App.get(), "Please enter a delay greater than 0", Toast.LENGTH_LONG);
+//                            return;
+//                        }
+//
+//                        ETA eta = new ETA()
+//                                .status(new ETAStatus()
+//                                        .condition(new Condition()
+//                                                .estimatedDelay(delayMin * 60)
+//                                                .substatus(Condition.SubstatusEnum.DELAYED)));
+//
+//                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+//                        uiContext.page += " - Report Problem Dialog";
+//
+//                        WorkordersWebApi.updateETA(App.get(), (int) _workOrderId, eta, uiContext);
+//
+//                        ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
+//                        _onSendDispatcher.dispatch(getUid(), _workOrderId);
+//                    } catch (Exception ex) {
+//                        Log.v(TAG, ex);
+//                        ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
+//                    }
+//                    break;
 
                 case SCOPE_OF_WORK:
                 case SITE_NOT_READY_CONTACT:
