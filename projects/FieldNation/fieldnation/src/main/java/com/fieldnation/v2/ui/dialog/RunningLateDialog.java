@@ -198,10 +198,11 @@ public class RunningLateDialog extends SimpleDialog {
                 }
 
                 ETA eta = new ETA()
-                        .status(new ETAStatus()
-                                .condition(new Condition()
+                        .condition(new Condition()
                                         .estimatedDelay(delayMin * 60)
-                                        .substatus(Condition.SubstatusEnum.DELAYED)));
+                                        .substatus(Condition.SubstatusEnum.DELAYED));
+
+                Log.e(TAG, "eta: " + eta.getJson());
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Running Late Dialog";
@@ -255,13 +256,13 @@ public class RunningLateDialog extends SimpleDialog {
     /*-         Send           -*/
     /*-************************-*/
     public interface OnSendListener {
-        void onSend(long workOrderId);
+        void onSend(int workOrderId);
     }
 
     private static KeyedDispatcher<OnSendListener> _onSendDispatcher = new KeyedDispatcher<OnSendListener>() {
         @Override
         public void onDispatch(OnSendListener listener, Object... parameters) {
-            listener.onSend((Long) parameters[0]);
+            listener.onSend((Integer) parameters[0]);
         }
     };
 

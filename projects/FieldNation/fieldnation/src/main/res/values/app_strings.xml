@@ -914,7 +914,7 @@
     <!-- If you change any of these, make sure you update
         com.fieldnation.service.data.workorder.ReportProblemType -->
     <string name="i_cant_make_my_assignment">I can\'t make my assignment</string>
-    <string name="im_going_to_be_late">I\'m going to be late</string>
+    <!--<string name="im_going_to_be_late">I\'m going to be late</string>-->
     <string name="buyer_unresponsive">Buyer unresponsive</string>
     <string name="scope_of_work">Scope of work</string>
     <string name="site_not_ready">Site is not ready</string>

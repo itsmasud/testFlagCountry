@@ -720,12 +720,13 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
-                if (_currentLocation != null)
-                    etaStatus.condition(new Condition()
-                            .coords(new Coords(_currentLocation.getLatitude(), _currentLocation.getLongitude())));
 
                 ETA eta = new ETA();
                 eta.status(etaStatus);
+
+                if (_currentLocation != null)
+                    eta.condition(new Condition()
+                            .coords(new Coords(_currentLocation.getLatitude(), _currentLocation.getLongitude())));
 
                 WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
