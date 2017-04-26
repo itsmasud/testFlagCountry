@@ -25,15 +25,8 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.AaaaPlaceholder;
-import com.fieldnation.v2.data.model.Coords;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.PPNs;
-import com.fieldnation.v2.data.model.ProfileAndWorkHistory;
-import com.fieldnation.v2.data.model.TypesOfWork;
-import com.fieldnation.v2.data.model.User;
-import com.fieldnation.v2.data.model.UserTaxInfo;
-import com.fieldnation.v2.data.model.UserTaxInfoUpdate;
 
 /**
  * Created by dmgen from swagger.
