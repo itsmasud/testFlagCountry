@@ -9,8 +9,11 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrderRatings;
+import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
@@ -67,7 +70,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _professionalismTextView = (TextView) findViewById(R.id.professionalism_textView);
         _daysTextView = (TextView) findViewById(R.id.days_textview);
 
-        setVisibility(GONE);
+//        setVisibility(GONE);
     }
 
     @Override
@@ -77,22 +80,22 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     }
 
     public void populateUi() {
-/*
+
         if (_nameTextView == null)
             return;
 
-        if (_workOrder == null || _workOrder.getCompany() == null)
+        if (_workOrder == null || _workOrder.getCompany() == null || _workOrder.getRatings() == null)
             setVisibility(GONE);
         else {
             setVisibility(VISIBLE);
         }
+
 
         if (!misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
             _nameTextView.setText(_workOrder.getCompany().getName());
         } else {
             _nameTextView.setText("Company Name Hidden");
         }
-*/
 
 
 /*        if (_workOrder.getRatings() != null
@@ -137,8 +140,8 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                 _reviewsTextView.setVisibility(GONE);
             }
 
-
         } else
+        */
         if (_workOrder.getRatings() != null
                 && _workOrder.getRatings().getBuyer() != null
                 && _workOrder.getRatings().getBuyer().getOverall() != null) {
@@ -149,50 +152,48 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                     && overall.getApprovalDays() != 0
                     && overall.getPercentApproval() != null) {
                 _daysTextView.setVisibility(VISIBLE);
-                _daysTextView.setText(overall.getAverageDaysToApproval() + " Days");
+                _daysTextView.setText(overall.getApprovalDays() + " Days");
             } else {
                 _daysTextView.setText("");
                 _daysTextView.setVisibility(GONE);
             }
 
-            if (rating.getStars() != null) {
-                _starRating.setStars(rating.getStars().intValue());
+            if (overall.getStars() != null) {
+                _starRating.setStars(overall.getStars().intValue());
             } else {
                 _starRating.setStars(0);
             }
 
-            if (rating.getClearExpectations() != null) {
-                _expectationsProgressBar.setProgress(rating.getClearExpectations());
-                _expectationsTextView.setText(rating.getClearExpectations() + "%");
+            if (overall.getPercentClearExpectations() != null) {
+                _expectationsProgressBar.setProgress(overall.getPercentClearExpectations());
+                _expectationsTextView.setText(overall.getPercentClearExpectations() + "%");
             }
 
-            if (rating.getRespectRating() != null) {
-                _professionalismProgressBar.setProgress(rating.getRespectRating());
-                _professionalismTextView.setText(rating.getRespectRating() + "%");
+            if (overall.getPercentRespectful() != null) {
+                _professionalismProgressBar.setProgress(overall.getPercentRespectful());
+                _professionalismTextView.setText(overall.getPercentRespectful() + "%");
             }
 
-            if (rating.getTotalRatings() != null) {
+            if (overall.getRatings() != null) {
                 _reviewsTextView.setVisibility(VISIBLE);
-                _reviewsTextView.setText(rating.getTotalRatings() + " Reviews");
+                _reviewsTextView.setText(overall.getRatings() + " Reviews");
                 _newBuyerTextView.setVisibility(GONE);
             } else {
                 _newBuyerTextView.setVisibility(VISIBLE);
                 _reviewsTextView.setVisibility(GONE);
             }
-        } else {*/
-/*
-        _newBuyerTextView.setVisibility(VISIBLE);
-        _starRating.setStars(0);
-        _detailsLayout.setVisibility(GONE);
-        _reviewsTextView.setVisibility(GONE);
-*/
-        //}
+        } else {
+            _newBuyerTextView.setVisibility(VISIBLE);
+            _starRating.setStars(0);
+            _detailsLayout.setVisibility(GONE);
+            _reviewsTextView.setVisibility(GONE);
 
-/*
+        }
+
         if (_workOrder.getManager() == null) {
         } else {
             _newBuyerTextView.setVisibility(GONE);
         }
-*/
+
     }
 }
