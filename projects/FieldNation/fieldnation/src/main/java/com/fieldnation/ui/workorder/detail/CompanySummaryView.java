@@ -183,14 +183,12 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                 _reviewsTextView.setVisibility(GONE);
             }
         } else {
-
             _newBuyerTextView.setVisibility(VISIBLE);
             _starRating.setStars(0);
             _detailsLayout.setVisibility(GONE);
             _reviewsTextView.setVisibility(GONE);
 
         }
-
 
         if (_workOrder.getManager() == null) {
         } else {
