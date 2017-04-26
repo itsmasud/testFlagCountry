@@ -267,6 +267,8 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param folderId    Folder id
      * @param attachment  Folder
+     * @param file File
+     * @param async Async (Optional)
      */
     static void addAttachment(Context context, Integer workOrderId, Integer folderId,
                               Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
@@ -10111,7 +10113,6 @@ public class WorkordersWebApi extends TopicClient {
                         case "addFolder":
                         case "addHold":
                         case "addIncrease":
-                        case "addMessage":
                         case "addPenalty":
                         case "addProblem":
                         case "addQualification":
@@ -10152,7 +10153,6 @@ public class WorkordersWebApi extends TopicClient {
                         case "publish":
                         case "removeQualification":
                         case "reorderTask":
-                        case "replyMessage":
                         case "request":
                         case "revertWorkOrderToDraft":
                         case "routeUser":
@@ -10208,7 +10208,9 @@ public class WorkordersWebApi extends TopicClient {
                         case "getLocation":
                             successObject = Location.fromJson(new JsonObject(data));
                             break;
+                        case "addMessage":
                         case "getMessages":
+                        case "replyMessage":
                             successObject = Messages.fromJson(new JsonObject(data));
                             break;
                         case "getSignature":
