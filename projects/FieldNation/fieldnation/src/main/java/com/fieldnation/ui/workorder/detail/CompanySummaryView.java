@@ -14,6 +14,7 @@ import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
+import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverallPercentApproval;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
@@ -32,6 +33,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     private TextView _expectationsTextView;
     private TextView _professionalismTextView;
     private TextView _daysTextView;
+    private TextView _percentageApprovalTextView;
 
 
     private WorkOrder _workOrder;
@@ -69,6 +71,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _expectationsTextView = (TextView) findViewById(R.id.expectations_textView);
         _professionalismTextView = (TextView) findViewById(R.id.professionalism_textView);
         _daysTextView = (TextView) findViewById(R.id.days_textview);
+        _percentageApprovalTextView = (TextView) findViewById(R.id.percentageApproval_textview);
 
 //        setVisibility(GONE);
     }
@@ -182,6 +185,17 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                 _newBuyerTextView.setVisibility(VISIBLE);
                 _reviewsTextView.setVisibility(GONE);
             }
+
+            if (overall.getPercentApproval() != null) {
+                _percentageApprovalTextView.setVisibility(VISIBLE);
+                for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
+                    if (ob.getDays() == overall.getApprovalDays()) {
+                        _percentageApprovalTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
+                        break;
+                    }
+                }
+            } else _percentageApprovalTextView.setVisibility(GONE);
+
         } else {
             _newBuyerTextView.setVisibility(VISIBLE);
             _starRating.setStars(0);
