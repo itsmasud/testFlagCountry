@@ -378,6 +378,7 @@
     <string name="collect_a_sign_off_signature">Collect a sign off signature</string>
     <string name="commercial">Commercial</string>
     <string name="company_information">COMPANY INFORMATION</string>
+    <string name="company_percentage_approval">%1$d%% of their work orders</string>
     <string name="company_name_hidden">Company Name Hidden</string>
     <string name="completed_work">Completed work</string>
     <string name="confirm_schedule">Confirm schedule</string>
