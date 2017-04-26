@@ -30,6 +30,9 @@ public class Task implements Parcelable {
     @Json(name = "alerts")
     private TaskAlert[] _alerts;
 
+    @Json(name = "attachment")
+    private Attachment _attachment;
+
     @Json(name = "attachments")
     private AttachmentFolder _attachments;
 
@@ -157,6 +160,31 @@ public class Task implements Parcelable {
     public Task alerts(TaskAlert[] alerts) throws ParseException {
         _alerts = alerts;
         SOURCE.put("alerts", TaskAlert.toJsonArray(alerts), true);
+        return this;
+    }
+
+    public void setAttachment(Attachment attachment) throws ParseException {
+        _attachment = attachment;
+        SOURCE.put("attachment", attachment.getJson());
+    }
+
+    public Attachment getAttachment() {
+        try {
+            if (_attachment == null && SOURCE.has("attachment") && SOURCE.get("attachment") != null)
+                _attachment = Attachment.fromJson(SOURCE.getJsonObject("attachment"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_attachment != null && _attachment.isSet())
+            return _attachment;
+
+        return null;
+    }
+
+    public Task attachment(Attachment attachment) throws ParseException {
+        _attachment = attachment;
+        SOURCE.put("attachment", attachment.getJson());
         return this;
     }
 

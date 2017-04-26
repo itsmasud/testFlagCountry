@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
@@ -37,6 +36,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -57,7 +57,6 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Attachment;
-import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Coords;
@@ -932,22 +931,24 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDownload(Task task) {
-            AttachmentFolder folder = task.getAttachments();
+            Attachment doc = null;
 
-            if (folder != null && folder.getResults() != null && folder.getResults().length > 0) {
-                Attachment doc = folder.getResults()[0];
-                if (doc != null && doc.getId() != null) {
-                    Log.v(TAG, "docid: " + doc.getId());
-                    if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
-                        try {
-                            WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
-                        } catch (Exception ex) {
-                            Log.v(TAG, ex);
-                        }
+            if (task.getAttachment() != null) {
+                doc = task.getAttachment();
+            }
+
+            if (doc != null && doc.getId() != null) {
+                Log.v(TAG, "docid: " + doc.getId());
+                if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+                    try {
+                        WorkordersWebApi.updateTask(App.get(), _workOrder.getId(), task.getId(), new Task().status(Task.StatusEnum.COMPLETE), App.get().getSpUiContext());
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
                     }
-                    FileHelper.viewOrDownloadFile(getActivity(), doc.getFile().getLink(),
-                            doc.getFile().getName(), doc.getFile().getMime());
                 }
+
+                DocumentClient.downloadDocument(App.get(), doc.getId(),
+                        doc.getFile().getLink(), doc.getFile().getName(), false);
             }
         }
 
