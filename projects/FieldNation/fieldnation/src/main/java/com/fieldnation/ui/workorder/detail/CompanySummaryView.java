@@ -12,7 +12,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.data.model.WorkOrderRatings;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
 import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverallPercentApproval;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
@@ -73,7 +72,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _daysTextView = (TextView) findViewById(R.id.days_textview);
         _percentageApprovalTextView = (TextView) findViewById(R.id.percentageApproval_textview);
 
-//        setVisibility(GONE);
+        setVisibility(GONE);
     }
 
     @Override
