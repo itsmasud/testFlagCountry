@@ -225,13 +225,13 @@ public class EtaDialog extends FullScreenDialog {
         Log.v(TAG, "Show");
         _workOrder = params.getParcelable(PARAM_WORKORDER);
 
-        if (_workOrder.getRequests() != null
-                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-            _dialogType = PARAM_DIALOG_TYPE_REQUEST;
-        } else if (_workOrder.getRoutes() != null
+        if (_workOrder.getRoutes() != null
                 && _workOrder.getRoutes().getUserRoute() != null
                 && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             _dialogType = PARAM_DIALOG_TYPE_ACCEPT;
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            _dialogType = PARAM_DIALOG_TYPE_REQUEST;
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             _dialogType = PARAM_DIALOG_TYPE_ADD;
