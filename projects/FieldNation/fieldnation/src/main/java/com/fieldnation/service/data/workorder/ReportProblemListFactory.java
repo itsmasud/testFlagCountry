@@ -26,7 +26,7 @@ public class ReportProblemListFactory {
      */
     private static final ReportProblemType[] RPT_ASSIGNED = new ReportProblemType[]{
             ReportProblemType.CANNOT_MAKE_ASSIGNMENT,
-            ReportProblemType.WILL_BE_LATE,
+//            ReportProblemType.WILL_BE_LATE,
             ReportProblemType.MISSING, // + DO_NOT_HAVE_SHIPMENT + DO_NOT_HAVE_INFO + DO_NOT_HAVE_RESPONSE + OTHER
             ReportProblemType.BUYER_UNRESPONSIVE,
             ReportProblemType.SCOPE_OF_WORK,

@@ -27,6 +27,9 @@ public class ETA implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "condition")
+    private Condition _condition;
+
     @Json(name = "end")
     private Date _end;
 
@@ -88,6 +91,31 @@ public class ETA implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
+        return this;
+    }
+
+    public void setCondition(Condition condition) throws ParseException {
+        _condition = condition;
+        SOURCE.put("condition", condition.getJson());
+    }
+
+    public Condition getCondition() {
+        try {
+            if (_condition == null && SOURCE.has("condition") && SOURCE.get("condition") != null)
+                _condition = Condition.fromJson(SOURCE.getJsonObject("condition"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_condition != null && _condition.isSet())
+            return _condition;
+
+        return null;
+    }
+
+    public ETA condition(Condition condition) throws ParseException {
+        _condition = condition;
+        SOURCE.put("condition", condition.getJson());
         return this;
     }
 
