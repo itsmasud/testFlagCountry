@@ -767,7 +767,7 @@ public class EtaDialog extends FullScreenDialog {
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
                         if (_expiresCheckBox.isChecked())
-                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds * 1000));
+                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds));
 
                         if (_etaSwitch.isChecked()) {
                             ETA eta = new ETA();
@@ -804,9 +804,9 @@ public class EtaDialog extends FullScreenDialog {
                         _onEtaDispatcher.dispatch(getUid(), _workOrder.getId());
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
-                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
-                        eta.setHourEstimate(_durationMilliseconds / 3600.0);
+                        eta.setHourEstimate(_durationMilliseconds / 3600000.0);
 
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
@@ -837,14 +837,14 @@ public class EtaDialog extends FullScreenDialog {
                     try {
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
-                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
+                        eta.setHourEstimate(_durationMilliseconds / 3600000.0);
 
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
-                        eta.setHourEstimate(_durationMilliseconds / 3600.0);
                         dismiss(true);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
