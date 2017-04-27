@@ -8,7 +8,7 @@
 
     <string name="activity_message_list_title">Messages</string>
     <string name="activity_message_list_empty_message_headline">No Message History</string>
-    <string name="activity_message_list_empty_message_sub_headline">Tap to chat</string>
+    <string name="activity_message_list_empty_message_sub_headline">Write a message to start the conversation</string>
 
     <string name="activity_payments_list_title">Payments</string>
 
