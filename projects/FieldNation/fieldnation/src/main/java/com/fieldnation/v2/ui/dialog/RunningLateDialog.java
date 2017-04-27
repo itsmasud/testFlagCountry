@@ -200,7 +200,7 @@ public class RunningLateDialog extends SimpleDialog {
                 ETA eta = new ETA()
                         .condition(new Condition()
                                         .estimatedDelay(delayMin * 60)
-                                        .substatus(Condition.SubstatusEnum.DELAYED));
+                                        .status(Condition.StatusEnum.DELAYED));
 
                 Log.e(TAG, "eta: " + eta.getJson());
 
