@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 
 import java.net.URLEncoder;
 
@@ -81,8 +82,8 @@ public class ContactTileView extends RelativeLayout {
 
         _nameTextView.setText(_name);
 
-        if (_phone != null) {
-            _phoneTextView.setText(_phone + (_phoneExt == null ? "" : " x" + _phoneExt));
+        if (!misc.isEmptyOrNull(_phone)) {
+            _phoneTextView.setText(_phone + (misc.isEmptyOrNull(_phoneExt) ? "" : " x" + _phoneExt));
             _phoneTextView.setVisibility(VISIBLE);
         } else {
             _phoneTextView.setVisibility(GONE);
@@ -99,7 +100,7 @@ public class ContactTileView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_phone != null) {
+            if (!misc.isEmptyOrNull(_phone)) {
                 try {
 /*
                     // TODO Save this for when we upgrade to Android 6+
@@ -112,7 +113,7 @@ public class ContactTileView extends RelativeLayout {
                     if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
                         getContext().startActivity(callIntent);
                     } else {
-                        ToastClient.toast(getContext(), "Couldn't call number: " + _phone + (_phoneExt == null ? "" : " x" + _phoneExt), Toast.LENGTH_LONG);
+                        ToastClient.toast(getContext(), "Couldn't call number: " + _phone + (misc.isEmptyOrNull(_phoneExt)? "" : " x" + _phoneExt), Toast.LENGTH_LONG);
                     }
 
                 } catch (Exception ex) {
