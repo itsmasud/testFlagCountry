@@ -29,7 +29,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="Signee Name" />
+        android:text="@string/signee_name" />
 
     <TextView
         android:id="@+id/date_textview"

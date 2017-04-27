@@ -39,8 +39,8 @@
             android:id="@+id/expires_checkbox"
             style="?attr/tileCheckBoxStyle"
             android:layout_width="wrap_content"
-            android:text="Offer expires"
-            android:visibility="visible"/>
+            android:text="@string/offer_expires"
+            android:visibility="visible" />
 
         <com.fieldnation.ui.HintSpinner
             android:id="@+id/expire_duration_spinner"

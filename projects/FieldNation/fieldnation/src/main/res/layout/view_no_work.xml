@@ -13,5 +13,5 @@
         style="@style/Text_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No work found" />
+        android:text="@string/no_work_found" />
 </LinearLayout>

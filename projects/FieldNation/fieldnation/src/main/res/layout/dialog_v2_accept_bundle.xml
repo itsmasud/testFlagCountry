@@ -9,7 +9,7 @@
         style="@style/DialogTitle.v3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Accept Bundle" />
+        android:text="@string/accept_bundle" />
 
     <TextView
         android:id="@+id/body_textview"
@@ -29,7 +29,7 @@
         android:layout_below="@+id/body_textview"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="Request expires" />
+        android:text="@string/request_expires" />
 
     <LinearLayout
         android:id="@+id/expire_layout"
@@ -45,7 +45,7 @@
             android:id="@+id/expires_checkbox"
             style="?attr/tileCheckBoxStyle"
             android:layout_width="wrap_content"
-            android:text="Request expires"
+            android:text="@string/request_expires"
             android:visibility="visible" />
 
         <com.fieldnation.ui.HintSpinner

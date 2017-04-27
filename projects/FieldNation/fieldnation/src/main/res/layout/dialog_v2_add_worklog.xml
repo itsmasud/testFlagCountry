@@ -42,7 +42,7 @@
                 <Button
                     android:id="@+id/start_spinner"
                     style="@style/SpinnerButton"
-                    android:hint="Please Select" />
+                    android:hint="@string/please_select" />
 
                 <View
                     style="@style/DividerSpinnerFull"
@@ -70,7 +70,7 @@
                 <Button
                     android:id="@+id/end_spinner"
                     style="@style/SpinnerButton"
-                    android:hint="Please Select" />
+                    android:hint="@string/please_select" />
 
                 <View
                     style="@style/DividerSpinnerFull"

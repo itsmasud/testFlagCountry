@@ -3,4 +3,4 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="16dp"
-    android:text="Failure to confirm by noon may result in the buyer removing you from a work order." />
+    android:text="@string/failure_to_confirm_by_noon" />

@@ -41,9 +41,11 @@
     <string name="btn_add_discount">ADD DISCOUNT</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
     <string name="btn_add_signature">ADD SIGNATURE</string>
+    <string name="btn_apply">APPLY</string>
     <string name="btn_back">BACK</string>
     <string name="btn_back_to_review">BACK TO REVIEW</string>
     <string name="btn_call">CALL US</string>
+    <string name="btn_call_buyer">CALL BUYER</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_change_counter">CHANGE COUNTER</string>
     <string name="btn_change_pay">CHANGE PAY</string>
@@ -71,6 +73,7 @@
     <string name="btn_incomplete">INCOMPLETE</string>
     <string name="btn_later">LATER</string>
     <string name="btn_login">LOGIN</string>
+    <string name="btn_love_it">LOVE IT</string>
     <string name="btn_mark_complete">MARK COMPLETE</string>
     <string name="btn_mark_incomplete">MARK INCOMPLETE</string>
     <string name="btn_never">NEVER</string>
@@ -81,10 +84,12 @@
     <string name="btn_no_thanks">NO THANKS</string>
     <string name="btn_not_interested">NOT INTERESTED</string>
     <string name="btn_not_now">NOT NOW</string>
+    <string name="btn_not_really">NOT REALLY</string>
     <string name="btn_ok">OK</string>
     <string name="btn_on_hold">ON HOLD</string>
     <string name="btn_on_my_way">ON MY WAY</string>
     <string name="btn_payments">PAYMENTS</string>
+    <string name="btn_pending_approval">PENDING APPROVAL</string>
     <string name="btn_read_less">READ LESS</string>
     <string name="btn_read_more">READ MORE</string>
     <string name="btn_ready">READY</string>
@@ -106,6 +111,7 @@
     <string name="btn_send_counter">SEND COUNTER</string>
     <string name="btn_set_eta">SET ETA</string>
     <string name="btn_setup_account">SETUP ACCOUNT</string>
+    <string name="btn_signatures">SIGNATURES</string>
     <string name="btn_sign_off">SIGN OFF</string>
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
@@ -339,11 +345,15 @@
 
     <string name="aborted">Aborted</string>
     <string name="accept_bundle">Accept Bundle</string>
+    <string name="accept_penalty_and_cancel">Accept penalty and cancel job</string>
     <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
     <string name="add_profile">Add Profile</string>
     <string name="add_time">Add Time</string>
+    <string name="address">Address</string>
+    <string name="address_1">Address 1</string>
+    <string name="address_2">Address 2</string>
     <string name="amount">Amount</string>
     <string name="and">and</string>
     <string name="app_version">App Version</string>
@@ -364,7 +374,10 @@
     <string name="buyers_offer">Buyer\'s Offer</string>
     <string name="buyers_suggestion">Buyer\'s Suggestion</string>
     <string name="by">by</string>
+    <string name="by_accepting_this_bundle">By accepting this bundle you are agreeing to our</string>
     <string name="by_signing_this_work_order_notice">By signing this work order you acknowledge that the work has been satisfactorily completed</string>
+    <string name="cancel_work_order">Cancel work order</string>
+    <string name="canceling_this_job_may">Canceling this job may lead to a penalty. Please review our Provider Quality and Assurance Program before deciding to cancel.</string>
     <string name="cannot_display_distance">Cannot display distance</string>
     <string name="cant_upload_to_work_order_no_slots">Can\'t upload to this work order (no available upload slots)</string>
     <string name="category">Category</string>
@@ -373,6 +386,7 @@
     <string name="change_pay">Change Pay</string>
     <string name="check_our_marketplace_for_new_work">Check our marketplace for new work</string>
     <string name="check_your_gps_settings">Check your GPS settings or location\'s address</string>
+    <string name="city">City</string>
     <string name="clear_expectations">Clear Expectations</string>
     <string name="closing_notes">Closing Notes</string>
     <string name="collect_a_sign_off_signature">Collect a sign off signature</string>
@@ -383,6 +397,7 @@
     <string name="completed_work">Completed work</string>
     <string name="confirm_schedule">Confirm schedule</string>
     <string name="contact_us">Contact Us</string>
+    <string name="contact">Contact</string>
     <string name="could_not_download_file">Could not download file</string>
     <string name="could_not_get_gps_location">Could not get GPS location</string>
     <string name="counter_offer">Counter Offer</string>
@@ -399,6 +414,7 @@
     <string name="devices">Devices</string>
     <string name="direction">Direction</string>
     <string name="discounts_caps">DISCOUNTS</string>
+    <string name="distance">Distance</string>
     <string name="documents_to_review">DOCUMENTS TO REVIEW</string>
     <string name="done">Done</string>
     <string name="dont_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
@@ -407,6 +423,7 @@
     <string name="edit_your_profile">Edit your profile</string>
     <string name="educational">Educational</string>
     <string name="end_time">End Time</string>
+    <string name="enter_city_state_zip">Enter City, State or zip code</string>
     <string name="enter_closing_notes_here">Enter closing notes here…</string>
     <string name="enter_feedback_here">Enter feedback here</string>
     <string name="enter_your_name">Enter your name</string>
@@ -418,6 +435,8 @@
     <string name="expenses">Expenses</string>
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
+    <string name="ext">Ext</string>
+    <string name="failure_to_confirm_by_noon">Failure to confirm by noon may result in the buyer removing you from a work order.</string>
     <string name="feedback">Feedback</string>
     <string name="dialog_release_note_title">What\'s new in Field Nation</string>
     <string name="feature_header_added_new">What we added</string>
@@ -427,6 +446,7 @@
     <string name="fetching_distance">Fetching distance...</string>
     <string name="file_name">File name</string>
     <string name="file_description">File Description</string>
+    <string name="filters">Filters</string>
     <string name="first_time_hours">First %1$s hrs</string>
     <string name="fixed">Fixed</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>
@@ -437,8 +457,10 @@
     <string name="government">Government</string>
     <string name="cant_calc_miles">Cannot calculate miles</string>
     <string name="check_gps_settings">Check your GPS settings</string>
+    <string name="location">Location</string>
     <string name="location_hidden">Location hidden until assigned</string>
     <string name="help">Help</string>
+    <string name="hours">hour(s)</string>
     <string name="hourly">Hourly</string>
     <string name="hourly_after">Hourly after</string>
     <string name="hourly_rate">Hourly Rate</string>
@@ -468,8 +490,11 @@
     <string name="marketplace_suspension">Marketplace suspension</string>
     <string name="max_devices">Max Devices</string>
     <string name="max_hours">Max Hours</string>
+    <string name="menu">Menu</string>
+    <string name="mins">mins</string>
     <string name="name_cap">Name</string>
     <string name="need_some_help">Need some help?</string>
+    <string name="nevermind_ill_do_the_work">Nevermind, I\'ll do the work</string>
     <string name="new_buyer">NEW BUYER</string>
     <string name="no_assigned_work">No assigned work</string>
     <string name="no_available_work">No available work</string>
@@ -481,10 +506,14 @@
     <string name="no_location_work_is_done_remotely">No Location, work is done remotely.</string>
     <string name="no_messages">No Messages</string>
     <string name="no_notifications">No Notifications</string>
+    <string name="no_payments">No Payments</string>
+    <string name="no_signatures">No Signatures associated with this work order.</string>
     <string name="no_routed_work">No routed work</string>
     <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
     <string name="no_work_available">No work available</string>
+    <string name="no_work_found">No work found</string>
     <string name="not_available">Not available</string>
+    <string name="not_interested">Not Interested</string>
     <string name="nothing_to_worry_about">Nothing to worry about</string>
     <string name="number_of_devices">Number of Devices</string>
     <string name="num_failed">%1$d failed</string>
@@ -543,7 +572,6 @@
     <string name="payment_type_blended">+ $%1$d /HR (%2$d)</string>
     <string name="payment_type_device">/ DEVICE (%1$d)</string>
 
-
     <plurals name="num_other_payments">
         <item quantity="one">and 1 other payment</item>
         <item quantity="other">and %1$s other payments</item>
@@ -553,9 +581,11 @@
         <item quantity="other">%1$s Work Orders</item>
     </plurals>
 
+    <string name="offer_expires">Offer expires</string>
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>
+    <string name="optional">Optional</string>
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
@@ -567,12 +597,15 @@
     <string name="pending">Pending</string>
     <string name="per_device">Per Device</string>
     <string name="per_device_rate">Per Device Rate</string>
+    <string name="phone">Phone</string>
+    <string name="phone_no">Phone No</string>
     <string name="please_accept_the_terms_and_conditions_to_continue">Please accept the terms and conditions to continue</string>
     <string name="please_enter_a_value_greater_than">Please enter a value greater than $0.10.</string>
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
     <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>
     <string name="please_select_fewer_than_num_files">Please select fewer than %1$d files</string>
+    <string name="please_select">Please Select</string>
     <string name="post_visit">Post Visit</string>
     <string name="pre_visit">Pre Visit</string>
     <string name="preparing_files">Preparing files...</string>
@@ -586,15 +619,24 @@
     <string name="processing_">Processing </string>
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
+    <string name="report_issue">Report Issue</string>
     <string name="disclaimer_to_counter_offer">Only the counter offer terms previously selected can be enforced. Terms added within this field will be ignored.</string>
     <string name="reason_for_request">Reason (optional)</string>
     <string name="remote_work">Remote Work</string>
-    <string name="request_workorder">Request Work Order</string>
+    <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
+    <string name="request_expires">Request expires</string>
+    <string name="request_reschedule">Request reschedule</string>
+    <string name="request_workorder">Request Work Order</string>
+    <string name="requested_new_pay">Requested New Pay</string>
     <string name="requested_work">Requested work</string>
     <string name="residential">Residential</string>
     <string name="review">Review</string>
     <string name="review_and_sign">Review &amp; Sign</string>
+    <string name="running_late">Running Late</string>
+    <string name="search">Search</string>
+    <string name="search_by_wo_id">Search by work order id</string>
+    <string name="send">Send</string>
     <string name="schedule">Schedule</string>
     <string name="schedule_caps">SCHEDULE</string>
     <string name="schedule_business_hours_format1">%1$s - %2$s</string>
@@ -607,6 +649,7 @@
     <string name="select_a_task">Select a task</string>
     <string name="select_a_work_order">Select a work order</string>
     <string name="select_files">Select files</string>
+    <string name="select_the_issue_type">Select the issue type:</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="send_num">Send (%1$d)</string>
     <string name="send_debug_log">Send Debug Log</string>
@@ -614,10 +657,13 @@
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
     <string name="shipment_description">Shipment Description</string>
+    <string name="shipping_to_site">Shipping to site</string>
     <string name="sign">Sign</string>
+    <string name="signee_name">Signee Name</string>
     <string name="sorry_to_hear_that">Sorry to hear that</string>
     <string name="sorry_to_hear_that_you_have_been_removed">Sorry to hear that. You have been removed from this work order.</string>
     <string name="start_time">Start Time</string>
+    <string name="state">State</string>
     <string name="support">Support</string>
     <string name="support_has_been_notified">Support has been notified. You may be contacted for follow up.</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
@@ -632,6 +678,7 @@
     <string name="time_to_approval">Time to approval</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+    <string name="touch_me">Touch Me</string>
     <string name="tracking_number">Tracking number</string>
     <string name="try_adding_to_your_profile">Try adding to your profile</string>
     <string name="update_your_payment_info">Update your payment info</string>
@@ -645,6 +692,7 @@
     <string name="view_company_policies_and_procedures">View Company Policies and Procedures</string>
     <string name="view_field_nation_terms">View Field Nation Terms</string>
     <string name="waiting_for_approval">Waiting for Approval</string>
+    <string name="warning">Warning!</string>
     <string name="were_there_clear_expectations">Were there clear expectations?</string>
     <string name="were_they_professional">Were they professional?</string>
     <string name="what_are_you_missing">What are you missing?</string>
@@ -671,8 +719,11 @@
     <string name="you_havent_completed_work_yet">You haven\'t completed a work order yet</string>
     <string name="you_currently_have_no_requested_work_orders">You currently have no requested work orders</string>
     <string name="your_account_is_pending_verification">Your account is pending verification. Try again later</string>
+    <string name="you_did_not_receive_any_payments">You did not receive any payments</string>
     <string name="you_are_currently_suspended">You are currently suspended</string>
     <string name="wo_num_file_upload_has_failed">WO %1$d file upload has failed</string>
+    <string name="zipcode">Zipcode</string>
+    <string name="zip_code">ZIP code</string>
     <string name="profile_photo_num_upload_has_failed">Profile %1$d file upload has failed</string>
     <!-- /general strings -->
 

@@ -35,14 +35,14 @@
             style="@style/Text_Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Shipment Description" />
+            android:text="@string/shipment_description" />
 
         <TextView
             android:id="@+id/direction_textview"
             style="@style/Text_Caption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Shipping to site" />
+            android:text="@string/shipping_to_site" />
     </LinearLayout>
 
     <TextView
@@ -51,5 +51,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:text="Carrier Name" />
+        android:text="@string/carrier_name" />
 </RelativeLayout>

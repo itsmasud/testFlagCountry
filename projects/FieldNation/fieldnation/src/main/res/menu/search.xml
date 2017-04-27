@@ -7,7 +7,7 @@
         android:id="@+id/inbox_menuitem"
         android:enabled="true"
         android:orderInCategory="200"
-        android:title="Inbox"
+        android:title="@string/inbox"
         app:actionViewClass="com.fieldnation.ui.menu.InboxMenuButton"
         app:showAsAction="always" />
 

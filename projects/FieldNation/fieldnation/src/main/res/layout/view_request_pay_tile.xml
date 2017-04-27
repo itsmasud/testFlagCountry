@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="Requestsed New Pay" />
+            android:text="@string/requested_new_pay" />
 
         <TextView
             android:id="@+id/requestPayStatus_textview"
@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:text="PENDING APPROVAL" />
+            android:text="@string/btn_pending_approval" />
 
     </RelativeLayout>
 
@@ -51,7 +51,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/requestPayIcon_textview"
-            android:text="Hourly Rate" />
+            android:text="@string/hourly_rate" />
 
         <TextView
             android:id="@+id/requestPayCaption_textview"
