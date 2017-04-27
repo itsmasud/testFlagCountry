@@ -85,7 +85,7 @@ public class OneButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        _onPrimaryDispatcher.dispatch(getUid(), null);
+        _onPrimaryDispatcher.dispatch(getUid());
         super.cancel();
 
         if (onCancel())
@@ -96,7 +96,7 @@ public class OneButtonDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_primaryButton_onClick");
-            _onCanceledDispatcher.dispatch(getUid(), null);
+            _onCanceledDispatcher.dispatch(getUid());
             if (onPrimaryClick())
                 dismiss(true);
         }

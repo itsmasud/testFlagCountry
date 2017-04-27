@@ -188,7 +188,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
             if (overall.getPercentApproval() != null) {
                 _percentageApprovalTextView.setVisibility(VISIBLE);
                 for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
-                    if (ob.getDays() == overall.getApprovalDays()) {
+                    if (ob.getDays().equals(overall.getApprovalDays())) {
                         _percentageApprovalTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
                         break;
                     }

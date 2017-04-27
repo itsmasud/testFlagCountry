@@ -163,7 +163,7 @@ public class DurationDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onCanceledDispatcher.dispatch(getUid(), null);
+            _onCanceledDispatcher.dispatch(getUid());
             dismiss(true);
         }
     };

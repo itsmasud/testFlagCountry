@@ -70,7 +70,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
     private static class MyProgressListener implements HttpJson.ProgressListener {
         public WebTransaction trans;
 
-        public void MyProgressListener() {
+        public MyProgressListener() {
         }
 
         @Override
