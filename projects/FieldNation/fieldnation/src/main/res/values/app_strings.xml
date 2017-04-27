@@ -648,6 +648,7 @@
     <string name="schedule_original">Original Schedule</string>
     <string name="select_a_task">Select a task</string>
     <string name="select_a_work_order">Select a work order</string>
+    <string name="select_upload_slot">Select Upload Slot</string>
     <string name="select_files">Select files</string>
     <string name="select_the_issue_type">Select the issue type:</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>

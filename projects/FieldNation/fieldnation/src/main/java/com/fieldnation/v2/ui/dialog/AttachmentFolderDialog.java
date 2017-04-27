@@ -60,7 +60,7 @@ public class AttachmentFolderDialog extends SimpleDialog {
             folders[i] = (AttachmentFolder) parcels[i];
         }
 
-        _titleTextView.setText("Select Upload Slot");
+        _titleTextView.setText(R.string.select_upload_slot);
 
         _items.setAdapter(_adapter);
     }

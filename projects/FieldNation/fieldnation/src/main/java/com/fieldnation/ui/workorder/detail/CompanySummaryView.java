@@ -96,7 +96,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         if (!misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
             _nameTextView.setText(_workOrder.getCompany().getName());
         } else {
-            _nameTextView.setText("Company Name Hidden");
+            _nameTextView.setText(R.string.company_name_hidden);
         }
 
 
