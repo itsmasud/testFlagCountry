@@ -405,9 +405,11 @@ public class EtaDialog extends FullScreenDialog {
 //                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
 //                    }
 //                }
-//                if (_workOrder.getEta() != null && _workOrder.getEta().getHourEstimate() != null) {
-//                    _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
-//                }
+                if (_workOrder.getEta() != null
+                        && _workOrder.getEta().getHourEstimate() != null
+                        && _workOrder.getEta().getHourEstimate() > 0) {
+                    _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
+                }
             }
         } catch (Exception e) {
         }
