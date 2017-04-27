@@ -405,13 +405,17 @@ public class EtaDialog extends FullScreenDialog {
 //                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
 //                    }
 //                }
-                if (_workOrder.getEta() != null && _workOrder.getEta().getHourEstimate() != null) {
-                    _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
-                }
+//                if (_workOrder.getEta() != null && _workOrder.getEta().getHourEstimate() != null) {
+//                    _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
+//                }
             }
         } catch (Exception e) {
         }
-        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        if (_durationMilliseconds == INVALID_NUMBER) {
+            _durationButton.setText("");
+        } else {
+            _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        }
     }
 
     private boolean isValidEta(final Calendar arrival) {
