@@ -26,6 +26,8 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.MessagePagingAdapter;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class MessageFragment extends WorkorderFragment {
@@ -55,7 +57,7 @@ public class MessageFragment extends WorkorderFragment {
         Log.v(TAG, "onViewCreated");
 
         _messagesList = (OverScrollRecyclerView) view.findViewById(R.id.messages_listview);
-        _messagesList.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, true));
+        _messagesList.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         _messagesList.setAdapter(_adapter);
 
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
@@ -143,7 +145,6 @@ public class MessageFragment extends WorkorderFragment {
         _refreshView.refreshComplete();
     }
 
-
     private final MessagePagingAdapter _adapter = new MessagePagingAdapter() {
         @Override
         public void requestPage(int page, boolean allowCache) {
@@ -205,7 +206,7 @@ public class MessageFragment extends WorkorderFragment {
 
                 List<Message> results = Arrays.asList(messages.getResults());
 
-  /*              Collections.sort(results, new Comparator<Message>() {
+                Collections.sort(results, new Comparator<Message>() {
                     @Override
                     public int compare(Message lhs, Message rhs) {
                         try {
@@ -215,7 +216,7 @@ public class MessageFragment extends WorkorderFragment {
                         }
                     }
                 });
-*/
+
                 _adapter.addObjects(messages.getMetadata().getPage(), results);
 
                 rebuildList();
