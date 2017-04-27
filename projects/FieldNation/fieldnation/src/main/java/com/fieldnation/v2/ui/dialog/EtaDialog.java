@@ -396,15 +396,6 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-//                if (_schedule.getRange() != null) {
-//                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
-//                            || _schedule.getRange().getType() == Range.Type.RANGE) {
-//                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
-//                                - ISO8601.toUtc(_schedule.getRange().getBegin());
-//                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
-//                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
-//                    }
-//                }
                 if (_workOrder.getEta() != null
                         && _workOrder.getEta().getHourEstimate() != null
                         && _workOrder.getEta().getHourEstimate() > 0) {
