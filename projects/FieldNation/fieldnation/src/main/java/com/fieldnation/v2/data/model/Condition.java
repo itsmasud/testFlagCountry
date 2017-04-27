@@ -40,10 +40,7 @@ public class Condition implements Parcelable {
     private Integer _estimatedDelay;
 
     @Json(name = "status")
-    private String _status;
-
-    @Json(name = "substatus")
-    private SubstatusEnum _substatus;
+    private StatusEnum _status;
 
     @Json(name = "user")
     private User _user;
@@ -175,15 +172,15 @@ public class Condition implements Parcelable {
         return this;
     }
 
-    public void setStatus(String status) throws ParseException {
+    public void setStatus(StatusEnum status) throws ParseException {
         _status = status;
-        SOURCE.put("status", status);
+        SOURCE.put("status", status.toString());
     }
 
-    public String getStatus() {
+    public StatusEnum getStatus() {
         try {
             if (_status == null && SOURCE.has("status") && SOURCE.get("status") != null)
-                _status = SOURCE.getString("status");
+                _status = StatusEnum.fromString(SOURCE.getString("status"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -191,31 +188,9 @@ public class Condition implements Parcelable {
         return _status;
     }
 
-    public Condition status(String status) throws ParseException {
+    public Condition status(StatusEnum status) throws ParseException {
         _status = status;
-        SOURCE.put("status", status);
-        return this;
-    }
-
-    public void setSubstatus(SubstatusEnum substatus) throws ParseException {
-        _substatus = substatus;
-        SOURCE.put("substatus", substatus.toString());
-    }
-
-    public SubstatusEnum getSubstatus() {
-        try {
-            if (_substatus == null && SOURCE.has("substatus") && SOURCE.get("substatus") != null)
-                _substatus = SubstatusEnum.fromString(SOURCE.getString("substatus"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _substatus;
-    }
-
-    public Condition substatus(SubstatusEnum substatus) throws ParseException {
-        _substatus = substatus;
-        SOURCE.put("substatus", substatus.toString());
+        SOURCE.put("status", status.toString());
         return this;
     }
 
@@ -247,27 +222,27 @@ public class Condition implements Parcelable {
     /*-******************************-*/
     /*-             Enums            -*/
     /*-******************************-*/
-    public enum SubstatusEnum {
+    public enum StatusEnum {
         @Json(name = "delayed")
         DELAYED("delayed");
 
         private String value;
 
-        SubstatusEnum(String value) {
+        StatusEnum(String value) {
             this.value = value;
         }
 
-        public static SubstatusEnum fromString(String value) {
-            SubstatusEnum[] values = values();
-            for (SubstatusEnum v : values) {
+        public static StatusEnum fromString(String value) {
+            StatusEnum[] values = values();
+            for (StatusEnum v : values) {
                 if (v.value.equals(value))
                     return v;
             }
             return null;
         }
 
-        public static SubstatusEnum[] fromJsonArray(JsonArray jsonArray) {
-            SubstatusEnum[] list = new SubstatusEnum[jsonArray.size()];
+        public static StatusEnum[] fromJsonArray(JsonArray jsonArray) {
+            StatusEnum[] list = new StatusEnum[jsonArray.size()];
             for (int i = 0; i < list.length; i++) {
                 list[i] = fromString(jsonArray.getString(i));
             }
