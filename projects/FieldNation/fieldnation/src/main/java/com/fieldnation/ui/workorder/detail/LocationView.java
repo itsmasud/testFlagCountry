@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -287,15 +289,13 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         }
 
         // display location notes
-/*
-TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
+        if (misc.isEmptyOrNull(loc.getNotes())) {
             _noteTextView.setVisibility(GONE);
         } else {
             _noteTextView.setVisibility(VISIBLE);
             _noteTextView.setText(misc.linkifyHtml(loc.getNotes(), Linkify.ALL));
             _noteTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
-*/
     }
 
     private void populateMap() {
