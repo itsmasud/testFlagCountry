@@ -267,21 +267,15 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         if (reviewSlot != null) {
-            Attachment[] rawDocs = reviewSlot.getResults();
+            final Attachment[] docs = reviewSlot.getResults();
 
-            final List<Attachment> docs = new LinkedList<>();
-            for (Attachment attachment : rawDocs) {
-                if (attachment.getShowBeforeAssignment())
-                    docs.add(attachment);
-            }
-
-            if (docs.size() > 0) {
-                if (_reviewList.getChildCount() != docs.size()) {
+            if (docs != null && docs.length > 0) {
+                if (_reviewList.getChildCount() != docs.length) {
                     if (_reviewRunnable != null)
                         _reviewRunnable.cancel();
 
-                    _reviewRunnable = new ForLoopRunnable(docs.size(), new Handler()) {
-                        private final Attachment[] _docs = docs.toArray(new Attachment[docs.size()]);
+                    _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
+                        private final Attachment[] _docs = docs;
                         private final List<DocumentView> _views = new LinkedList<>();
 
                         @Override
