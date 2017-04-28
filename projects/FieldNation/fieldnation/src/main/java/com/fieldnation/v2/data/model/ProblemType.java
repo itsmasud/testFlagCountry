@@ -39,6 +39,9 @@ public class ProblemType implements Parcelable {
     @Json(name = "performance_event")
     private Boolean _performanceEvent;
 
+    @Json(name = "show_pqap_warning")
+    private Boolean _showPqapWarning;
+
     @Source
     private JsonObject SOURCE;
 
@@ -206,6 +209,28 @@ public class ProblemType implements Parcelable {
     public ProblemType performanceEvent(Boolean performanceEvent) throws ParseException {
         _performanceEvent = performanceEvent;
         SOURCE.put("performance_event", performanceEvent);
+        return this;
+    }
+
+    public void setShowPqapWarning(Boolean showPqapWarning) throws ParseException {
+        _showPqapWarning = showPqapWarning;
+        SOURCE.put("show_pqap_warning", showPqapWarning);
+    }
+
+    public Boolean getShowPqapWarning() {
+        try {
+            if (_showPqapWarning == null && SOURCE.has("show_pqap_warning") && SOURCE.get("show_pqap_warning") != null)
+                _showPqapWarning = SOURCE.getBoolean("show_pqap_warning");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _showPqapWarning;
+    }
+
+    public ProblemType showPqapWarning(Boolean showPqapWarning) throws ParseException {
+        _showPqapWarning = showPqapWarning;
+        SOURCE.put("show_pqap_warning", showPqapWarning);
         return this;
     }
 

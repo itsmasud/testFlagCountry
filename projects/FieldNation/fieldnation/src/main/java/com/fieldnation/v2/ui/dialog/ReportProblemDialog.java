@@ -25,6 +25,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.dialog.v2.CancelWarningDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.ProblemType;
@@ -392,10 +393,6 @@ public class ReportProblemDialog extends SimpleDialog {
                 explanation = _explanationEditText.getText().toString();
             }
 
-            // TODO need to read a flag before showing this
-            //CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getWorkorderId(), explanation);
-
-
             Problem problem = new Problem();
             try {
                 problem.setComments(explanation);
@@ -405,9 +402,12 @@ public class ReportProblemDialog extends SimpleDialog {
                     problem.setType((ProblemType) getPrimaryAdapter().getItem(_primaryPosition));
                 }
 
-                WorkordersWebApi.addProblem(App.get(), _workOrder.getId(), problem, App.get().getSpUiContext());
-
-                ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                if (problem.getType().getShowPqapWarning()) {
+                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getId(), problem);
+                } else {
+                    WorkordersWebApi.addProblem(App.get(), _workOrder.getId(), problem, App.get().getSpUiContext());
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
