@@ -398,7 +398,8 @@ public class EtaDialog extends FullScreenDialog {
             if (_durationMilliseconds == INVALID_NUMBER) {
                 if (_workOrder.getEta() != null
                         && _workOrder.getEta().getHourEstimate() != null
-                        && _workOrder.getEta().getHourEstimate() > 0) {
+                        && _workOrder.getEta().getHourEstimate() > 0
+                        && _dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
                     _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
                 }
             }
