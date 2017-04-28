@@ -26,9 +26,7 @@ import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.gmaps.Position;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
@@ -43,6 +41,8 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.ProblemType;
+import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
@@ -54,6 +54,7 @@ import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 
@@ -544,8 +545,8 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // report a problem
-        if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.REPORT_A_PROBLEM)) {
+        if (_workOrder.getProblems() != null
+                && _workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_problem_solid);
             button.setOnClickListener(_reportProblem_onClick);
@@ -852,17 +853,17 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder);
         }
     };
 
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
-        public void onSend(long workorderId, String explanation, ReportProblemType type) {
+        public void onSend(int workOrderId, String explanation, ProblemType type) {
             if (_onActionListener != null) _onActionListener.onAction();
 
-            if (_workOrder.getId() == workorderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, (int) workorderId);
+            if (_workOrder.getId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workOrderId);
         }
     };
 
