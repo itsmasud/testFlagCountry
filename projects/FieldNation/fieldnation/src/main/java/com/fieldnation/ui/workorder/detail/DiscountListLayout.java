@@ -84,7 +84,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
             return;
 
 
-        if (_workOrder.getStatus().getId() == 2 /*TODO   || _workorder.getPay().hidePay() */) {
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
             setVisibility(GONE);
             return;
         } else {

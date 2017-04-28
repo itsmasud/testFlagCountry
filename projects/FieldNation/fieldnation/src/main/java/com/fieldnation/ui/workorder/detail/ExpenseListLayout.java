@@ -14,7 +14,6 @@ import com.fieldnation.R;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.Expenses;
-import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
@@ -86,7 +85,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
         if (_workOrder.getPay() == null)
             return;
 
-        if (_workOrder.getStatus().getId() == 2) {
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
             setVisibility(GONE);
             return;
         } else {
