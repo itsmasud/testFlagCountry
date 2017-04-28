@@ -140,7 +140,7 @@ public class MessageFragment extends WorkorderFragment {
         // debug testing
         Log.v(TAG, "rebuildList");
 
-        _messagesList.scrollToPosition(0);
+        _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
 
         _refreshView.refreshComplete();
     }
