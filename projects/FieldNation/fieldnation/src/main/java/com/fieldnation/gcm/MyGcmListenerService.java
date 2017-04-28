@@ -66,8 +66,7 @@ public class MyGcmListenerService extends GcmListenerService {
 
     /**
      * Called when message is received.
-     *
-     * @param from SenderID of the sender.
+     ** @param from SenderID of the sender.
      * @param data Data bundle containing message data as key/value pairs.
      *             For Set of keys use data.keySet().
      */
@@ -100,7 +99,7 @@ public class MyGcmListenerService extends GcmListenerService {
                         Intent workorderIntent = new Intent(this, WorkOrderActivity.class);
                         workorderIntent.setAction("DUMMY");
                         workorderIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
+                        workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, Integer.parseInt(action.getId()));
                         workorderIntent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
