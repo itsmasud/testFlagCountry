@@ -402,7 +402,7 @@ public class ReportProblemDialog extends SimpleDialog {
                     problem.setType((ProblemType) getPrimaryAdapter().getItem(_primaryPosition));
                 }
 
-                if (problem.getType().getShowPqapWarning()) {
+                if (problem.getType().getShowPqapWarning() != null && problem.getType().getShowPqapWarning()) {
                     CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getId(), problem);
                 } else {
                     WorkordersWebApi.addProblem(App.get(), _workOrder.getId(), problem, App.get().getSpUiContext());
