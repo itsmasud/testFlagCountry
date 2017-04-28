@@ -454,8 +454,6 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setText(R.string.btn_check_in);
                 button.setOnClickListener(_checkIn_onClick);
             }
-            button.setOnClickListener(_checkIn_onClick);
-            button.setText(R.string.btn_check_in);
 
             // mark incomplete
         } else if (_workOrder.getActionsSet() != null
