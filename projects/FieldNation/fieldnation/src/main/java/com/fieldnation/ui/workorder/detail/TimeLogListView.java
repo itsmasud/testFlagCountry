@@ -76,7 +76,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     }
 
     public void ppulateUi() {
-        if (_workOrder == null)
+        if (_workOrder == null || _workOrder.getTimeLogs() == null)
             return;
 
         final TimeLog[] logs = _workOrder.getTimeLogs().getResults();

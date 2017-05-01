@@ -23,6 +23,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer {
@@ -116,8 +117,15 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
 
     private void populateButtons() {
         Log.v(TAG, "populateButtons");
-        Set<WorkOrder.ActionsEnum> workOrderActions = _workOrder.getActionsSet();
-        Set<TimeLogs.ActionsEnum> timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
+        Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
+        if (_workOrder.getActionsSet() != null) {
+            workOrderActions = _workOrder.getActionsSet();
+        }
+
+        Set<TimeLogs.ActionsEnum> timeLogsActions = new HashSet<>();
+        if (_workOrder.getTimeLogs() != null && _workOrder.getTimeLogs().getActionsSet() != null) {
+            timeLogsActions = _workOrder.getTimeLogs().getActionsSet();
+        }
 
         if (false) {
 
@@ -188,7 +196,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // check_out
-        } else if (_workOrder.getTimeLogs().getOpenTimeLog() != null
+        } else if (_workOrder.getTimeLogs() != null
+                && _workOrder.getTimeLogs().getOpenTimeLog() != null
                 && _workOrder.getTimeLogs().getOpenTimeLog().getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
@@ -295,7 +304,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // View payments
-        } else if (_workOrder.getStatus().getId() == 6) {
+        } else if (_workOrder.getStatus() != null
+                && _workOrder.getStatus().getId() == 6) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);
@@ -307,7 +317,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             setVisibility(View.VISIBLE);
 
             // View fees
-        } else if (_workOrder.getStatus().getId() == 7) {
+        } else if (_workOrder.getStatus() != null
+                && _workOrder.getStatus().getId() == 7) {
             inflate();
             _leftWhiteButton.setVisibility(VISIBLE);
             _leftWhiteButton.setText(R.string.btn_report_a_problem);

@@ -73,7 +73,9 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
-        _tasks = Arrays.asList(workOrder.getTasks().getResults());
+
+        if (workOrder.getTasks() != null && workOrder.getTasks().getResults() != null)
+            _tasks = Arrays.asList(workOrder.getTasks().getResults());
 
         populateUi();
     }

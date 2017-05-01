@@ -62,7 +62,7 @@ public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer 
     }
 
     private void populateUi() {
-        if (_workOrder == null) {
+        if (_workOrder == null || _workOrder.getActionsSet() == null) {
             setVisibility(View.GONE);
             return;
         }

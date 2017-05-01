@@ -166,10 +166,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     }
 
     private void populateUi() {
-        if (_workOrder == null)
-            return;
-
-        if (_mapImageView == null)
+        if (_workOrder == null || _mapImageView == null || _workOrder == null || _workOrder.getLocation() == null)
             return;
 
         setVisibility(VISIBLE);
@@ -185,8 +182,10 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     private void calculateAddressTileVisibility() {
         if (_invalidAddress) return;
 
-        if (_workOrder.getLocation() == null || _workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE)
+        if (_workOrder.getLocation() == null) {
             _actionButton.setVisibility(GONE);
+            return;
+        }
 
         // hide stuff that shouldn't be seen
         if (_workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE) {
@@ -372,7 +371,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
             return;
 
         Log.v(TAG, "lookupMap - 4");
-        if (_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0) {
+        if ((_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0)
+                && (_workOrder != null && _workOrder.getLocation() != null)) {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {

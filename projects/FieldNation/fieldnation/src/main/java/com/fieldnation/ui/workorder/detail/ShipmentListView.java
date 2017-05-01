@@ -70,6 +70,9 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
 
 
     private void populateUi() {
+        if (_workOrder.getShipments() == null)
+            return;
+        
         final Shipment[] shipments = _workOrder.getShipments().getResults();
 
         if ((shipments == null || shipments.length == 0) && !_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {

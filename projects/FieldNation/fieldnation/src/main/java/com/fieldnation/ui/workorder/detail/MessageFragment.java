@@ -204,6 +204,11 @@ public class MessageFragment extends WorkorderFragment {
                 if (!success || error != null)
                     return;
 
+                if (messages == null || messages.getResults() == null) {
+                    _refreshView.refreshComplete();
+                    return;
+                }
+
                 List<Message> results = Arrays.asList(messages.getResults());
 
                 Collections.sort(results, new Comparator<Message>() {
