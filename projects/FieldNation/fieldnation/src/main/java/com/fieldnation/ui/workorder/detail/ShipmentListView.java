@@ -21,7 +21,6 @@ import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class ShipmentListView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ShipmentListView";
@@ -72,6 +71,11 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
 
     private void populateUi() {
         final Shipment[] shipments = _workOrder.getShipments().getResults();
+
+        if ((shipments == null || shipments.length == 0) && !_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+            setVisibility(GONE);
+            return;
+        }
 
         if (_workOrder.getShipments() != null
                 && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
