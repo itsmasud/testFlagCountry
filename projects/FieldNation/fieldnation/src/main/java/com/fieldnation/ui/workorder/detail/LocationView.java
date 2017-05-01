@@ -166,7 +166,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     }
 
     private void populateUi() {
-        if (_workOrder == null || _mapImageView == null || _workOrder == null || _workOrder.getLocation() == null)
+        if (_workOrder == null || _mapImageView == null || _workOrder.getLocation() == null)
             return;
 
         setVisibility(VISIBLE);
@@ -460,7 +460,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkOrderActivity.startNew(getContext(), _workOrder.getId().intValue(), WorkOrderActivity.TAB_MESSAGE);
+                    WorkOrderActivity.startNew(getContext(), _workOrder.getId(), WorkOrderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {
