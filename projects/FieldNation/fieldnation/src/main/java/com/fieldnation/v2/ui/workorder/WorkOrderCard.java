@@ -447,7 +447,7 @@ public class WorkOrderCard extends RelativeLayout {
         } else if (_workOrder.getTimeLogs() != null
                 && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
-            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() >= 1) {
                 button.setText(R.string.btn_check_in_again);
                 button.setOnClickListener(_checkInAgain_onClick);
             } else {
