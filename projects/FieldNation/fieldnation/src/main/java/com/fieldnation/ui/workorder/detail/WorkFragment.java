@@ -47,7 +47,6 @@ import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
@@ -71,6 +70,7 @@ import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
@@ -93,6 +93,7 @@ import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
+import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
@@ -705,7 +706,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onReportProblem() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
 
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder);
         }
 
         @Override
@@ -1454,7 +1455,7 @@ public class WorkFragment extends WorkorderFragment {
 
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
-        public void onSend(long workorderId, String explanation, ReportProblemType type) {
+        public void onSend(int workorderId, String explanation, ProblemType type) {
             if (_workOrder.getId() == workorderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
         }

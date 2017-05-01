@@ -5,17 +5,11 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -44,6 +38,9 @@ public class ProblemType implements Parcelable {
 
     @Json(name = "performance_event")
     private Boolean _performanceEvent;
+
+    @Json(name = "show_pqap_warning")
+    private Boolean _showPqapWarning;
 
     @Source
     private JsonObject SOURCE;
@@ -215,6 +212,28 @@ public class ProblemType implements Parcelable {
         return this;
     }
 
+    public void setShowPqapWarning(Boolean showPqapWarning) throws ParseException {
+        _showPqapWarning = showPqapWarning;
+        SOURCE.put("show_pqap_warning", showPqapWarning);
+    }
+
+    public Boolean getShowPqapWarning() {
+        try {
+            if (_showPqapWarning == null && SOURCE.has("show_pqap_warning") && SOURCE.get("show_pqap_warning") != null)
+                _showPqapWarning = SOURCE.getBoolean("show_pqap_warning");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _showPqapWarning;
+    }
+
+    public ProblemType showPqapWarning(Boolean showPqapWarning) throws ParseException {
+        _showPqapWarning = showPqapWarning;
+        SOURCE.put("show_pqap_warning", showPqapWarning);
+        return this;
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -284,5 +303,10 @@ public class ProblemType implements Parcelable {
 
     public boolean isSet() {
         return getId() != null && getId() != 0;
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }

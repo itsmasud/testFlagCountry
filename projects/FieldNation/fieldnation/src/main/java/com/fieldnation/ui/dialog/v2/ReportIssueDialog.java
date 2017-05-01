@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fndialog.Controller;
@@ -83,7 +82,7 @@ public class ReportIssueDialog extends SimpleDialog {
     private final View.OnClickListener _reportOther_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
+// TODO hook up to V2            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
         }
     };
 

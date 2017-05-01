@@ -22,7 +22,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _list;
 
     @Json(name = "columns")
-    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests,eta,routes";
+    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests,eta,routes,problems";
 
     @Json(name = "page")
     private Integer _page;
