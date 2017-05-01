@@ -33,6 +33,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
     private TextView _professionalismTextView;
     private TextView _daysTextView;
     private TextView _percentageApprovalTextView;
+    private RelativeLayout _timeToApprovalLayout;
 
 
     private WorkOrder _workOrder;
@@ -70,6 +71,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         _expectationsTextView = (TextView) findViewById(R.id.expectations_textView);
         _professionalismTextView = (TextView) findViewById(R.id.professionalism_textView);
         _daysTextView = (TextView) findViewById(R.id.days_textview);
+        _timeToApprovalLayout = (RelativeLayout) findViewById(R.id.timeToApproval_layout);
         _percentageApprovalTextView = (TextView) findViewById(R.id.percentageApproval_textview);
 
         setVisibility(GONE);
@@ -166,14 +168,19 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
                 _starRating.setStars(0);
             }
 
-            if (overall.getPercentClearExpectations() != null) {
-                _expectationsProgressBar.setProgress(overall.getPercentClearExpectations());
-                _expectationsTextView.setText(overall.getPercentClearExpectations() + "%");
-            }
+            if (overall.getRatings() != 0) {
+                _detailsLayout.setVisibility(VISIBLE);
+                if (overall.getPercentClearExpectations() != null) {
+                    _expectationsProgressBar.setProgress(overall.getPercentClearExpectations());
+                    _expectationsTextView.setText(overall.getPercentClearExpectations() + "%");
+                }
 
-            if (overall.getPercentRespectful() != null) {
-                _professionalismProgressBar.setProgress(overall.getPercentRespectful());
-                _professionalismTextView.setText(overall.getPercentRespectful() + "%");
+                if (overall.getPercentRespectful() != null) {
+                    _professionalismProgressBar.setProgress(overall.getPercentRespectful());
+                    _professionalismTextView.setText(overall.getPercentRespectful() + "%");
+                }
+            } else {
+                _detailsLayout.setVisibility(GONE);
             }
 
             if (overall.getRatings() != null) {
@@ -187,13 +194,24 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
 
             if (overall.getPercentApproval() != null) {
                 _percentageApprovalTextView.setVisibility(VISIBLE);
+                _timeToApprovalLayout.setVisibility(VISIBLE);
+                boolean found = false;
                 for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
                     if (ob.getDays().equals(overall.getApprovalDays())) {
                         _percentageApprovalTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
+                        found = true;
                         break;
                     }
                 }
-            } else _percentageApprovalTextView.setVisibility(GONE);
+
+                if (!found) {
+                    _percentageApprovalTextView.setVisibility(GONE);
+                    _timeToApprovalLayout.setVisibility(GONE);
+                }
+            } else {
+                _timeToApprovalLayout.setVisibility(GONE);
+                _percentageApprovalTextView.setVisibility(GONE);
+            }
 
         } else {
             _newBuyerTextView.setVisibility(VISIBLE);
