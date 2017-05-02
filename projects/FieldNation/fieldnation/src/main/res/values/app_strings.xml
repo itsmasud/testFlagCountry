@@ -158,6 +158,8 @@
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
 
+    <string name="toast_eta_success_message">Success! Eta updated successfully.</string>
+
     <string name="view_title_location">LOCATION</string>
 
     <string name="spinner_custom_field_default">Select an option</string>

@@ -1565,6 +1565,13 @@ public class WorkFragment extends WorkorderFragment {
                 ToastClient.toast(App.get(), "Error: " + ((Error) failObject).getMessage(), Toast.LENGTH_LONG);
                 setLoading(false);
             }
+
+            if (methodName.contains("updateETA") && success) {
+                Log.v(TAG, "onWorkordersWebApi");
+                ToastClient.toast(App.get(), getString(R.string.toast_eta_success_message), Toast.LENGTH_LONG);
+                setLoading(false);
+            }
+
         }
     };
 }
