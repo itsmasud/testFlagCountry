@@ -25,9 +25,9 @@ import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.MessagePagingAdapter;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 public class MessageFragment extends WorkorderFragment {
@@ -209,9 +209,32 @@ public class MessageFragment extends WorkorderFragment {
                     return;
                 }
 
-                List<Message> results = Arrays.asList(messages.getResults());
+                // flatten the tree with a depth first search
+                // first create a stack to store nodes that need to be searched
+                // push the messages into the stack
+                List<Message> stack = new LinkedList<>();
+                for (Message message : messages.getResults()) {
+                    stack.add(message);
+                }
 
-                Collections.sort(results, new Comparator<Message>() {
+                List<Message> flatList = new LinkedList<>();
+                while (stack.size() > 0) {
+                    // pop the first item
+                    Message message = stack.remove(0);
+                    // add it to the list
+                    flatList.add(message);
+
+                    // get the replies and add them to the stack
+                    if (message.getReplies() != null
+                            && message.getReplies().length > 0) {
+                        Message[] replies = message.getReplies();
+                        for (int i = replies.length - 1; i >= 0; i--) {
+                            stack.add(replies[i]);
+                        }
+                    }
+                }
+
+                Collections.sort(flatList, new Comparator<Message>() {
                     @Override
                     public int compare(Message lhs, Message rhs) {
                         try {
@@ -222,7 +245,7 @@ public class MessageFragment extends WorkorderFragment {
                     }
                 });
 
-                _adapter.addObjects(messages.getMetadata().getPage(), results);
+                _adapter.addObjects(messages.getMetadata().getPage(), flatList);
 
                 rebuildList();
             } else if (successObject instanceof Message) {
