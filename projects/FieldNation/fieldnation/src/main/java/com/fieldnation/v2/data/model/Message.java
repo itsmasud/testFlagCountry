@@ -46,7 +46,7 @@ public class Message implements Parcelable {
     private Boolean _read;
 
     @Json(name = "replies")
-    private Messages _replies;
+    private Message[] _replies;
 
     @Json(name = "role")
     private String _role;
@@ -239,28 +239,30 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setReplies(Messages replies) throws ParseException {
+    public void setReplies(Message[] replies) throws ParseException {
         _replies = replies;
-        SOURCE.put("replies", replies.getJson());
+        SOURCE.put("replies", Message.toJsonArray(replies));
     }
 
-    public Messages getReplies() {
+    public Message[] getReplies() {
         try {
-            if (_replies == null && SOURCE.has("replies") && SOURCE.get("replies") != null)
-                _replies = Messages.fromJson(SOURCE.getJsonObject("replies"));
+            if (_replies != null)
+                return _replies;
+
+            if (SOURCE.has("replies") && SOURCE.get("replies") != null) {
+                _replies = Message.fromJsonArray(SOURCE.getJsonArray("replies"));
+            }
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_replies != null && _replies.isSet())
         return _replies;
-
-        return null;
     }
 
-    public Message replies(Messages replies) throws ParseException {
+    public Message replies(Message[] replies) throws ParseException {
         _replies = replies;
-        SOURCE.put("replies", replies.getJson());
+        SOURCE.put("replies", Message.toJsonArray(replies), true);
         return this;
     }
 
