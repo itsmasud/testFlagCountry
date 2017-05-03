@@ -219,43 +219,44 @@ public class MessageFragment extends WorkorderFragment {
                         return;
                     }
 
-                // flatten the tree with a depth first search
-                // first create a stack to store nodes that need to be searched
-                // push the messages into the stack
-                List<Message> stack = new LinkedList<>();
-                for (Message message : messages.getResults()) {
-                    stack.add(message);
-                }
+                    // flatten the tree with a depth first search
+                    // first create a stack to store nodes that need to be searched
+                    // push the messages into the stack
+                    List<Message> stack = new LinkedList<>();
+                    for (Message message : messages.getResults()) {
+                        stack.add(message);
+                    }
 
-                List<Message> flatList = new LinkedList<>();
-                while (stack.size() > 0) {
-                    // pop the first item
-                    Message message = stack.remove(0);
-                    // add it to the list
-                    flatList.add(message);
+                    List<Message> flatList = new LinkedList<>();
+                    while (stack.size() > 0) {
+                        // pop the first item
+                        Message message = stack.remove(0);
+                        // add it to the list
+                        flatList.add(message);
 
-                    // get the replies and add them to the stack
-                    if (message.getReplies() != null
-                            && message.getReplies().length > 0) {
-                        Message[] replies = message.getReplies();
-                        for (int i = replies.length - 1; i >= 0; i--) {
-                            stack.add(replies[i]);
+                        // get the replies and add them to the stack
+                        if (message.getReplies() != null
+                                && message.getReplies().length > 0) {
+                            Message[] replies = message.getReplies();
+                            for (int i = replies.length - 1; i >= 0; i--) {
+                                stack.add(replies[i]);
+                            }
                         }
                     }
-                }
 
-                Collections.sort(flatList, new Comparator<Message>() {
-                    @Override
-                    public int compare(Message lhs, Message rhs) {
-                        try {
-                            return (int) (lhs.getCreated().getUtcLong() - rhs.getCreated().getUtcLong());
-                        } catch (Exception ex) {
-                            return 0;
+                    Collections.sort(flatList, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message lhs, Message rhs) {
+                            try {
+                                return (int) (lhs.getCreated().getUtcLong() - rhs.getCreated().getUtcLong());
+                            } catch (Exception ex) {
+                                return 0;
 
+                            }
                         }
                     });
 
-                _adapter.addObjects(messages.getMetadata().getPage(), flatList);
+                    _adapter.addObjects(messages.getMetadata().getPage(), flatList);
 
                     rebuildList();
                 } else if (successObject instanceof Message) {
