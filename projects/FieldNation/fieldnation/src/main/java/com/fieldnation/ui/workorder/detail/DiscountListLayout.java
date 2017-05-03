@@ -60,6 +60,8 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
 
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
+
+        setVisibility(GONE);
     }
 
     @Override
