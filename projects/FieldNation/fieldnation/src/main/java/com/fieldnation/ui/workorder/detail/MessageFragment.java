@@ -10,6 +10,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -198,16 +199,25 @@ public class MessageFragment extends WorkorderFragment {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (successObject instanceof Messages) {
-                Messages messages = (Messages) successObject;
-                Error error = (Error) failObject;
-                if (!success || error != null)
-                    return;
+            try {
+                if (successObject instanceof Messages) {
+                    Messages messages = (Messages) successObject;
+                    Error error = (Error) failObject;
+                    if (!success || error != null)
+                        return;
 
-                if (messages == null || messages.getResults() == null) {
-                    _refreshView.refreshComplete();
-                    return;
-                }
+                    JsonObject methodParams = new JsonObject(transactionParams.methodParams);
+
+                    if (methodParams.has("workOrderId") && _workorder != null
+                            && methodParams.getInt("workOrderId") != _workorder.getId()) {
+                        Log.v(TAG, "not my work order!");
+                        return;
+                    }
+
+                    if (messages == null || messages.getResults() == null || _workorder == null) {
+                        _refreshView.refreshComplete();
+                        return;
+                    }
 
                 // flatten the tree with a depth first search
                 // first create a stack to store nodes that need to be searched
@@ -241,15 +251,18 @@ public class MessageFragment extends WorkorderFragment {
                             return (int) (lhs.getCreated().getUtcLong() - rhs.getCreated().getUtcLong());
                         } catch (Exception ex) {
                             return 0;
+
                         }
-                    }
-                });
+                    });
 
                 _adapter.addObjects(messages.getMetadata().getPage(), flatList);
 
-                rebuildList();
-            } else if (successObject instanceof Message) {
-                rebuildList();
+                    rebuildList();
+                } else if (successObject instanceof Message) {
+                    rebuildList();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     };
