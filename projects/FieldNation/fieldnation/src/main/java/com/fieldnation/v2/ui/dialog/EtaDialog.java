@@ -779,8 +779,6 @@ public class EtaDialog extends FullScreenDialog {
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
                         WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-
-                        dismiss(true);
                         break;
                     }
 
@@ -794,7 +792,6 @@ public class EtaDialog extends FullScreenDialog {
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee, uiContext);
-
                         break;
                     }
                     case PARAM_DIALOG_TYPE_ADD:  // add eta
@@ -810,7 +807,6 @@ public class EtaDialog extends FullScreenDialog {
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
-                        dismiss(true);
                         break;
                     }
                 }
@@ -843,11 +839,23 @@ public class EtaDialog extends FullScreenDialog {
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
-                        dismiss(true);
+                        // TODO dismiss(true);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
                 }
+            }
+
+            if (methodName.contains("updateETA") && success) {
+                Log.v(TAG, "updateETA");
+                ToastClient.toast(App.get(), R.string.toast_eta_success_message, Toast.LENGTH_LONG);
+                dismiss(true);
+            }
+
+            if (methodName.contains("request") && success) {
+                Log.v(TAG, "request");
+                ToastClient.toast(App.get(), "Work order requested", Toast.LENGTH_LONG);
+                dismiss(true);
             }
         }
     };
