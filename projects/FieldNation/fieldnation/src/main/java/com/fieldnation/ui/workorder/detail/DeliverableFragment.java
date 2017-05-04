@@ -280,8 +280,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
                         @Override
                         public void next(int i) throws Exception {
-                            DocumentView v = new DocumentView(getActivity());
                             Attachment doc = _docs[i];
+                            DocumentView v = new DocumentView(getActivity());
                             v.setListener(_document_listener);
                             v.setData(_workOrder, doc);
                             _views.add(v);
