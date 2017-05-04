@@ -202,7 +202,6 @@ public class SearchResultScreen extends RelativeLayout {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
                 WorkOrders workOrders = (WorkOrders) successObject;
-                // TODO see if getList() is the list ID
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
                     return;
 
@@ -230,7 +229,7 @@ public class SearchResultScreen extends RelativeLayout {
                 _refreshView.refreshComplete();
             }
 
-            if (methodName.startsWith("get"))
+            if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                 return;
 
             _adapter.refreshAll();

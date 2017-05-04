@@ -123,9 +123,9 @@ public class RequestNewPayTile extends RelativeLayout {
                 case ACCEPTED: // approved
                     setVisibility(GONE);
                     break;
-                case DECLINED: // denied
+                case DENIED: // denied
                     setVisibility(VISIBLE);
-                    _statusTextView.setText("DECLINED");
+                    _statusTextView.setText("DENIED");
                     _statusTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
                     _iconTextView.setText(R.string.icon_circle_delete);

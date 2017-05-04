@@ -47,9 +47,9 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
             return BaseHolder.TYPE_EMPTY;
         } else if (obj instanceof Message) {
             if (((Message) obj).getFrom().getId().equals((int) App.getProfileId())) {
-                return BaseHolder.TYPE_RCVD;
-            } else {
                 return BaseHolder.TYPE_SEND;
+            } else {
+                return BaseHolder.TYPE_RCVD;
             }
         }
 

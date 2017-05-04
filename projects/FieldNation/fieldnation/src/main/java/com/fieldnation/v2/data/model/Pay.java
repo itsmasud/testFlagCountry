@@ -5,12 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -57,6 +62,9 @@ public class Pay implements Parcelable {
 
     @Json(name = "labor_sum")
     private Double _laborSum;
+
+    @Json(name = "max_pay")
+    private Double _maxPay;
 
     @Json(name = "number_of_devices")
     private Double _numberOfDevices;
@@ -427,6 +435,28 @@ public class Pay implements Parcelable {
     public Pay laborSum(Double laborSum) throws ParseException {
         _laborSum = laborSum;
         SOURCE.put("labor_sum", laborSum);
+        return this;
+    }
+
+    public void setMaxPay(Double maxPay) throws ParseException {
+        _maxPay = maxPay;
+        SOURCE.put("max_pay", maxPay);
+    }
+
+    public Double getMaxPay() {
+        try {
+            if (_maxPay == null && SOURCE.has("max_pay") && SOURCE.get("max_pay") != null)
+                _maxPay = SOURCE.getDouble("max_pay");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _maxPay;
+    }
+
+    public Pay maxPay(Double maxPay) throws ParseException {
+        _maxPay = maxPay;
+        SOURCE.put("max_pay", maxPay);
         return this;
     }
 

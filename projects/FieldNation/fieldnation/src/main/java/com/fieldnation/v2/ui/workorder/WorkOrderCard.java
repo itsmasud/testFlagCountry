@@ -26,9 +26,7 @@ import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.gmaps.Position;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
@@ -43,6 +41,8 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.ProblemType;
+import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
@@ -54,6 +54,7 @@ import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
+import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 
@@ -143,7 +144,7 @@ public class WorkOrderCard extends RelativeLayout {
         _testButton.setOnClickListener(_test_onClick);
 
         // Just in case we forget to hide this button when building a release version
-        if (!BuildConfig.DEBUG)
+        if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(GONE);
 
         DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDeclined);
@@ -447,19 +448,17 @@ public class WorkOrderCard extends RelativeLayout {
         } else if (_workOrder.getTimeLogs() != null
                 && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
-            if (_workOrder.getTimeLogs().getMetadata().getTotal() > 1) {
+            if (_workOrder.getTimeLogs().getMetadata().getTotal() >= 1) {
                 button.setText(R.string.btn_check_in_again);
                 button.setOnClickListener(_checkInAgain_onClick);
             } else {
                 button.setText(R.string.btn_check_in);
                 button.setOnClickListener(_checkIn_onClick);
             }
-            button.setOnClickListener(_checkIn_onClick);
-            button.setText(R.string.btn_check_in);
 
             // mark incomplete
         } else if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.MARK_INCOMPLETE)) {
+                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_incomplete_onClick);
             button.setText(R.string.btn_incomplete);
@@ -546,8 +545,8 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // report a problem
-        if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.REPORT_A_PROBLEM)) {
+        if (_workOrder.getProblems() != null
+                && _workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_problem_solid);
             button.setOnClickListener(_reportProblem_onClick);
@@ -630,7 +629,7 @@ public class WorkOrderCard extends RelativeLayout {
             try {
                 Hold unAckHold = _workOrder.getUnAcknowledgedHold();
                 Hold ackHold = new Hold().id(unAckHold.getId()).acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAckHold.getId(), ackHold);
+                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAckHold.getId(), ackHold, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -747,7 +746,7 @@ public class WorkOrderCard extends RelativeLayout {
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.CONFIRMED));
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -797,26 +796,27 @@ public class WorkOrderCard extends RelativeLayout {
 
             if (!App.get().isLocationEnabled()) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN, intent, PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
                 ToastClient.snackbar(App.get(), "We would like to use your location to provide more accurate status information to the buyer.", "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
             }
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workOrder.getId());
             try {
                 ETAStatus etaStatus = new ETAStatus().name(ETAStatus.NameEnum.ONMYWAY);
-                if (_location != null)
-                    etaStatus.condition(new Condition()
-                            .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
 
                 ETA eta = new ETA();
                 eta.status(etaStatus);
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                if (_location != null)
+                    eta.condition(new Condition()
+                            .coords(new Coords(_location.getLatitude(), _location.getLongitude())));
+
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
             try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -842,7 +842,7 @@ public class WorkOrderCard extends RelativeLayout {
                         .status(new ETAStatus()
                                 .name(ETAStatus.NameEnum.READYTOGO));
 
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -853,17 +853,17 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder);
         }
     };
 
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
-        public void onSend(long workorderId, String explanation, ReportProblemType type) {
+        public void onSend(int workOrderId, String explanation, ProblemType type) {
             if (_onActionListener != null) _onActionListener.onAction();
 
-            if (_workOrder.getId() == workorderId)
-                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, (int) workorderId);
+            if (_workOrder.getId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workOrderId);
         }
     };
 
@@ -921,7 +921,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final RunningLateDialog.OnSendListener _runningLateDialog_onSend = new RunningLateDialog.OnSendListener() {
         @Override
-        public void onSend(long workOrderId) {
+        public void onSend(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)

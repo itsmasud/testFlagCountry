@@ -239,7 +239,7 @@
 
                         <TextView
                             style="@style/OptionsMenuTitle"
-                            android:text="Touch Me" />
+                            android:text="@string/touch_me" />
 
                     </LinearLayout>
                 </RelativeLayout>

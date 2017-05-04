@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 9/23/2016.
@@ -41,6 +42,7 @@ public class WhatsNewDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_whats_new, container, false);
 
         _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
@@ -59,10 +61,12 @@ public class WhatsNewDialog extends FullScreenDialog {
 
     @Override
     public void onStart() {
+        Log.v(TAG, "onStart");
         super.onStart();
         final Context context = _root.getContext();
 
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _root.addOnAttachStateChangeListener(root_onAttachState);
 
         final int fontSize = context.getResources().getInteger(R.integer.textSizeReleaseNote);
         WebSettings webSettings = null;
@@ -107,17 +111,22 @@ public class WhatsNewDialog extends FullScreenDialog {
         }
     }
 
-    @Override
-    public void dismiss(boolean animate) {
-        super.dismiss(animate);
-    }
+    private View.OnAttachStateChangeListener root_onAttachState = new View.OnAttachStateChangeListener() {
+        @Override
+        public void onViewAttachedToWindow(View v) {
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(View v) {
+            WebStorage.getInstance().deleteAllData();
+            _fixedWebView.destroy();
+            _newWebView.destroy();
+            _nextWebView.destroy();
+        }
+    };
 
     @Override
     public void onStop() {
-        WebStorage.getInstance().deleteAllData();
-        _fixedWebView.destroy();
-        _newWebView.destroy();
-        _nextWebView.destroy();
         super.onStop();
     }
 

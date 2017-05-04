@@ -28,7 +28,7 @@
             style="?attr/buttonWhiteStyle"
             android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:text="NOT REALLY" />
+            android:text="@string/btn_not_really" />
 
         <View
             android:layout_width="16dp"
@@ -39,6 +39,6 @@
             style="?attr/buttonWhiteStyle"
             android:layout_width="wrap_content"
             android:layout_weight="1"
-            android:text="LOVE IT" />
+            android:text="@string/btn_love_it" />
     </LinearLayout>
 </LinearLayout>

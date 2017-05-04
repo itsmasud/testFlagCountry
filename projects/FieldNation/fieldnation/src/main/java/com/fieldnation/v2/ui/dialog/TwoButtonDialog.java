@@ -95,7 +95,7 @@ public class TwoButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        _onCanceledDispatcher.dispatch(getUid(), null);
+        _onCanceledDispatcher.dispatch(getUid());
         super.cancel();
 
         if (onCancel())
@@ -105,7 +105,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _primary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onPrimaryDispatcher.dispatch(getUid(), null);
+            _onPrimaryDispatcher.dispatch(getUid());
             if (onPrimaryClick())
                 dismiss(true);
         }
@@ -114,7 +114,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _secondary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onSecondaryDispatcher.dispatch(getUid(), null);
+            _onSecondaryDispatcher.dispatch(getUid());
             if (onSecondaryClick())
                 dismiss(true);
         }

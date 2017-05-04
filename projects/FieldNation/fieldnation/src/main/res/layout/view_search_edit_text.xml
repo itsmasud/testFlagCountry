@@ -28,7 +28,7 @@
         android:layout_toLeftOf="@+id/right_textview"
         android:layout_toRightOf="@+id/left_textview"
         android:background="@null"
-        android:hint="Search by work order id"
+        android:hint="@string/search_by_wo_id"
         android:imeOptions="actionSearch"
         android:inputType="number" />
 

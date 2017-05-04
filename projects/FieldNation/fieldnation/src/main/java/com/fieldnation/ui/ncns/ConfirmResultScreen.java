@@ -147,8 +147,10 @@ public class ConfirmResultScreen extends RelativeLayout {
             return;
 
         _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
+        _workOrdersOptions.setPerPage(65);
 
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
+        // this is locked down so that we don't have multiple pages
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(1), true, false);
 
         if (_refreshView != null)
             _refreshView.startRefreshing();
@@ -202,9 +204,11 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
-                // TODO see if getList() is the list ID
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
+                    return;
+
+                if (workOrders.getMetadata().getPerPage() != 65)
                     return;
 
                 if (_onListReceivedListener != null)
@@ -223,10 +227,12 @@ public class ConfirmResultScreen extends RelativeLayout {
                     _adapter.clear();
                 } else if (workOrders.getResults().length > 0
                         && envelope.getPerPage() > 0
-                        && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
-                    _adapter.addObjects(envelope.getPage(), workOrders.getResults());
-                else
-                    _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
+                        && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1) {
+                    _adapter.addObjects(1, workOrders.getResults());
+                    _adapter.addObjects(2, (WorkOrder[]) null);
+                } else {
+                    _adapter.addObjects(1, (WorkOrder[]) null);
+                }
 
                 _refreshView.refreshComplete();
             }

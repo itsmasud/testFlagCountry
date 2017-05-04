@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -224,13 +225,13 @@ public class EtaDialog extends FullScreenDialog {
         Log.v(TAG, "Show");
         _workOrder = params.getParcelable(PARAM_WORKORDER);
 
-        if (_workOrder.getRequests() != null
-                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-            _dialogType = PARAM_DIALOG_TYPE_REQUEST;
-        } else if (_workOrder.getRoutes() != null
+        if (_workOrder.getRoutes() != null
                 && _workOrder.getRoutes().getUserRoute() != null
                 && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             _dialogType = PARAM_DIALOG_TYPE_ACCEPT;
+        } else if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            _dialogType = PARAM_DIALOG_TYPE_REQUEST;
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             _dialogType = PARAM_DIALOG_TYPE_ADD;
@@ -395,22 +396,20 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-//                if (_schedule.getRange() != null) {
-//                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
-//                            || _schedule.getRange().getType() == Range.Type.RANGE) {
-//                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
-//                                - ISO8601.toUtc(_schedule.getRange().getBegin());
-//                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
-//                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
-//                    }
-//                }
-                if (_workOrder.getEta() != null && _workOrder.getEta().getHourEstimate() != null) {
+                if (_workOrder.getEta() != null
+                        && _workOrder.getEta().getHourEstimate() != null
+                        && _workOrder.getEta().getHourEstimate() > 0
+                        && _dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
                     _durationMilliseconds = (long) (_workOrder.getEta().getHourEstimate() * 60 * 60 * 1000);
                 }
             }
         } catch (Exception e) {
         }
-        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        if (_durationMilliseconds == INVALID_NUMBER) {
+            _durationButton.setText("");
+        } else {
+            _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        }
     }
 
     private boolean isValidEta(final Calendar arrival) {
@@ -441,7 +440,7 @@ public class EtaDialog extends FullScreenDialog {
 
                 // if too early, then bump a day
                 if (arrival.getTimeInMillis() < scal.getTimeInMillis()
-                        && arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
+                        && arrival.getTimeInMillis() >= ecal.getTimeInMillis()) {
                     return false;
                 } else {
                     return true;
@@ -461,7 +460,7 @@ public class EtaDialog extends FullScreenDialog {
                 ecal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
 
                 if (arrival.getTimeInMillis() >= scal.getTimeInMillis()
-                        && arrival.getTimeInMillis() <= ecal.getTimeInMillis())
+                        && arrival.getTimeInMillis() < ecal.getTimeInMillis())
                     return true;
             }
         } catch (Exception ex) {
@@ -766,17 +765,20 @@ public class EtaDialog extends FullScreenDialog {
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
                         if (_expiresCheckBox.isChecked())
-                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds * 1000));
+                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds));
 
                         if (_etaSwitch.isChecked()) {
                             ETA eta = new ETA();
                             eta.setStart(new Date(_etaStart));
-                            eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                            eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                             eta.setUser(new User().id((int) App.getProfileId()));
-                            eta.setHourEstimate(_durationMilliseconds / 3600.0);
+                            eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                             request.setEta(eta);
                         }
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
 
                         dismiss(true);
                         break;
@@ -787,7 +789,11 @@ public class EtaDialog extends FullScreenDialog {
 
                         Assignee assignee = new Assignee();
                         assignee.setUser(new User().id((int) App.getProfileId()));
-                        WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+
+                        WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee, uiContext);
 
                         break;
                     }
@@ -796,10 +802,14 @@ public class EtaDialog extends FullScreenDialog {
                         _onEtaDispatcher.dispatch(getUid(), _workOrder.getId());
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
-                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
-                        eta.setHourEstimate(_durationMilliseconds / 3600.0);
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                        eta.setHourEstimate(_durationMilliseconds / 3600000.0);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
                         dismiss(true);
                         break;
                     }
@@ -825,10 +835,14 @@ public class EtaDialog extends FullScreenDialog {
                     try {
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
-                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds * 1000));
+                        eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
-                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
-                        eta.setHourEstimate(_durationMilliseconds / 3600.0);
+                        eta.setHourEstimate(_durationMilliseconds / 3600000.0);
+
+                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                        uiContext.page += " - Eta Dialog";
+
+                        WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
                         dismiss(true);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);

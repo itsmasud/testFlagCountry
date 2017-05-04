@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -17,6 +21,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -34,9 +39,24 @@ public class PenaltiesWebApi extends TopicClient {
     private static final String STAG = "PenaltiesWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public PenaltiesWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -52,8 +72,9 @@ public class PenaltiesWebApi extends TopicClient {
      * Swagger operationId: addPenalty
      * Add a penalty which can be added as an option to a work order and applied during the approval process to lower the amount paid to the provider pending a condition is met.
      *
+     * @param penalty JSON Model
      */
-    public static void addPenalty(Context context) {
+    public static void addPenalty(Context context, PayModifier penalty) {
         try {
             String key = misc.md5("POST//api/rest/v2/penalties");
 
@@ -62,7 +83,12 @@ public class PenaltiesWebApi extends TopicClient {
                     .method("POST")
                     .path("/api/rest/v2/penalties");
 
+            if (penalty != null)
+                builder.body(penalty.getJson().toString());
+
             JsonObject methodParams = new JsonObject();
+            if (penalty != null)
+                methodParams.put("penalty", penalty.getJson());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/penalties")
@@ -88,7 +114,15 @@ public class PenaltiesWebApi extends TopicClient {
      *
      * @param penaltyId Penalty ID
      */
-    public static void deletePenalty(Context context, Integer penaltyId) {
+    public static void deletePenalty(Context context, Integer penaltyId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deletePenaltyByPenalty")
+                .label(penaltyId + "")
+                .category("penalty")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/penalties/" + penaltyId);
 
@@ -125,7 +159,15 @@ public class PenaltiesWebApi extends TopicClient {
      * @param penaltyId Penalty ID
      * @param json      JSON Model
      */
-    public static void updatePenalty(Context context, String penaltyId, PayModifier json) {
+    public static void updatePenalty(Context context, String penaltyId, PayModifier json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePenaltyByPenalty")
+                .label(penaltyId + "")
+                .category("penalty")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/penalties/" + penaltyId);
 
@@ -171,16 +213,28 @@ public class PenaltiesWebApi extends TopicClient {
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
-                case "progress": {
+                case "queued": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -190,7 +244,13 @@ public class PenaltiesWebApi extends TopicClient {
             }
         }
 
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+        }
+
         public void onStart(TransactionParams transactionParams, String methodName) {
+        }
+
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {

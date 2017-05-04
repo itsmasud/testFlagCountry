@@ -12,7 +12,7 @@
             android:id="@+id/title_textview"
             style="?attr/dialogTitleStyle"
             android:layout_centerHorizontal="true"
-            android:text="Warning!"
+            android:text="@string/warning"
             android:textColor="@color/fn_red"
             android:textStyle="bold" />
 
@@ -26,7 +26,7 @@
             android:gravity="center"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="Canceling this job may lead to a penalty. Please review our Provider Quality and Assurance Program before deciding to cancel." />
+            android:text="@string/canceling_this_job_may" />
 
         <ImageView
             android:id="@+id/toc_imageview"
@@ -53,7 +53,7 @@
             style="@style/DialogButton.v3"
             android:layout_width="match_parent"
             android:layout_below="@id/review_tos_button"
-            android:text="Accept penalty and cancel job" />
+            android:text="@string/accept_penalty_and_cancel" />
 
         <Button
             android:id="@+id/accept_button"
@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_alignParentRight="true"
             android:layout_below="@id/cancelWork_button"
-            android:text="Nevermind, I'll do the work" />
+            android:text="@string/nevermind_ill_do_the_work" />
 
     </RelativeLayout>
 </ScrollView>

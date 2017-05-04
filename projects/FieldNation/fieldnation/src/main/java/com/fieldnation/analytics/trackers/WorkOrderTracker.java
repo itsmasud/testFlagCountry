@@ -341,7 +341,7 @@ public class WorkOrderTracker {
         CHECK_IN, CHECK_IN_AGAIN, CHECK_OUT, VIEW_COUNTER_OFFER, COUNTER_OFFER, CLOSING_NOTES,
         CONFIRM, ETA, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
         MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW, RUNNING_LATE, ON_MY_WAY, VIEW_BUNDLE,
-        CALL_BUYER, VIEW_MESSAGES, DIRECTIONS;
+        CALL_BUYER, VIEW_MESSAGES, DIRECTIONS, WARNING;
 
         public Identity getIdentity() {
             switch (this) {
@@ -452,9 +452,9 @@ public class WorkOrderTracker {
         }
     }
 
-    public static void onShow(Context context, Tab tab, long workOrderId) {
+    public static void onShow(Context context, Tab tab, int workOrderId) {
         TrackerBase.show(context, tab.tab, new SpWorkOrderContext.Builder()
-                .workOrderId(workOrderId)
+                .workOrderId((int) workOrderId)
                 .build());
     }
 
@@ -579,7 +579,7 @@ public class WorkOrderTracker {
     }
 
 
-    public static void onEvent(Context context, Identity identity, Action action, long workOrderId) {
+    public static void onEvent(Context context, Identity identity, Action action, int workOrderId) {
         TrackerBase.event(context,
                 identity,
                 action,
@@ -631,7 +631,7 @@ public class WorkOrderTracker {
 
         for (Identity identity : Identity.values()) {
             for (Action action : Action.values()) {
-                onEvent(context, identity, action, 1L);
+                onEvent(context, identity, action, 1);
             }
         }
     }

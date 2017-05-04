@@ -7,7 +7,7 @@
         android:id="@+id/search_menuitem"
         android:enabled="true"
         android:orderInCategory="300"
-        android:title="Search"
+        android:title="@string/search"
         app:actionViewClass="com.fieldnation.ui.menu.SearchMenuButton"
         app:showAsAction="always" />
 
@@ -15,7 +15,7 @@
         android:id="@+id/inbox_menuitem"
         android:enabled="true"
         android:orderInCategory="400"
-        android:title="Inbox"
+        android:title="@string/inbox"
         app:actionViewClass="com.fieldnation.ui.menu.InboxMenuButton"
         app:showAsAction="always" />
 
@@ -23,7 +23,7 @@
         android:id="@+id/menu_menuitem"
         android:enabled="true"
         android:orderInCategory="500"
-        android:title="Menu"
+        android:title="@string/menu"
         app:actionViewClass="com.fieldnation.ui.menu.AdditionalOptionsMenuButton"
         app:showAsAction="always" />
 

@@ -1,14 +1,15 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -23,8 +24,10 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.IdResponse;
 
 /**
  * Created by dmgen from swagger.
@@ -34,9 +37,24 @@ public class CustomFieldsWebApi extends TopicClient {
     private static final String STAG = "CustomFieldsWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public CustomFieldsWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -94,7 +112,15 @@ public class CustomFieldsWebApi extends TopicClient {
      *
      * @param customFieldId Custom field id
      */
-    public static void deleteCustomField(Context context, Integer customFieldId) {
+    public static void deleteCustomField(Context context, Integer customFieldId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("deleteCustomField")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -169,7 +195,15 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param customFieldId Custom field id
      * @param json          JSON Model
      */
-    public static void updateCustomField(Context context, Integer customFieldId, CustomField json) {
+    public static void updateCustomField(Context context, Integer customFieldId, CustomField json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomField")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId);
 
@@ -211,7 +245,15 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param customFieldId Custom field id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, String visibility, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibility")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
 
@@ -250,7 +292,17 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param clientId      Client id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility) {
+    public static void updateCustomFieldVisibility(Context context, Integer customFieldId, Integer clientId, String visibility, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibilityByClient")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .property("client_id")
+                .value(clientId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
 
@@ -290,7 +342,17 @@ public class CustomFieldsWebApi extends TopicClient {
      * @param projectId     Project id
      * @param visibility    Visibility (visible or hidden)
      */
-    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility) {
+    public static void updateCustomFieldVisibilityByProjectId(Context context, Integer customFieldId, Integer projectId, String visibility, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateCustomFieldVisibilityByProject")
+                .label(customFieldId + "")
+                .category("customfield")
+                .addContext(uiContext)
+                .property("project_id")
+                .value(projectId)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
 
@@ -333,16 +395,28 @@ public class CustomFieldsWebApi extends TopicClient {
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
-                case "progress": {
+                case "queued": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -352,7 +426,13 @@ public class CustomFieldsWebApi extends TopicClient {
             }
         }
 
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+        }
+
         public void onStart(TransactionParams transactionParams, String methodName) {
+        }
+
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {

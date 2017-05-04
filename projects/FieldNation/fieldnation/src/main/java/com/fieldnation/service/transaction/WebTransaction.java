@@ -598,7 +598,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
 
         public WebTransaction build() {
-            // TODO add the transforms list
             if (transforms.size() > 0) {
                 Parcelable[] parcels = transforms.toArray(new Parcelable[transforms.size()]);
                 params.putParcelableArray(PARAM_TRANSFORM_LIST, parcels);

@@ -55,7 +55,7 @@ public class TypesOfWork implements Parcelable {
         }
 
         if (_metadata != null && _metadata.isSet())
-        return _metadata;
+            return _metadata;
 
         return null;
     }

@@ -55,7 +55,7 @@ public class UpdateModelMetadata implements Parcelable {
         }
 
         if (_data != null && _data.isSet())
-        return _data;
+            return _data;
 
         return null;
     }
@@ -80,7 +80,7 @@ public class UpdateModelMetadata implements Parcelable {
         }
 
         if (_universalContext != null && _universalContext.isSet())
-        return _universalContext;
+            return _universalContext;
 
         return null;
     }

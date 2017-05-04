@@ -17,7 +17,6 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
@@ -128,7 +127,7 @@ public class AcceptBundleDialog extends SimpleDialog {
     private void populateUi() {
         switch (_type) {
             case TYPE_ACCEPT: {
-                _titleTextView.setText("Accept Bundle");
+                _titleTextView.setText(R.string.accept_bundle);
                 _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(false);
                 _okButton.setText(R.string.btn_accept);
@@ -141,7 +140,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                 break;
             }
             case TYPE_REQUEST: {
-                _titleTextView.setText("Request Bundle");
+                _titleTextView.setText(R.string.request_bundle);
                 _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you request this bundle you are requesting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(true);
                 _okButton.setText(R.string.btn_request);
@@ -211,7 +210,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                     break;
                 case TYPE_REQUEST:
                     if (_expires && _expiringDurationSeconds > -1) {
-                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds );
+                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds);
                     } else {
                         WorkorderClient.actionRequest(App.get(), _workOrderId, -1);
                     }

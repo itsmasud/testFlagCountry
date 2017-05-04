@@ -7,8 +7,10 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -34,9 +36,24 @@ public class UsersWebApi extends TopicClient {
     private static final String STAG = "UsersWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public UsersWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -49,12 +66,62 @@ public class UsersWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: addCoordsByUser
+     * Stores user's current location during on my way reporting
+     *
+     * @param userId user id of user to store coordinates for
+     * @param coords coordinate data. Only need latitude and longitude fields
+     */
+    public static void addCoords(Context context, Integer userId, Coords coords) {
+        try {
+            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/coords");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v2/users/" + userId + "/coords");
+
+            if (coords != null)
+                builder.body(coords.getJson().toString());
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("userId", userId);
+            if (coords != null)
+                methodParams.put("coords", coords.getJson());
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST//api/rest/v2/users/{user_id}/coords")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/UsersWebApi",
+                                    UsersWebApi.class, "addCoords", methodParams))
+                    .useAuth(true)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: addPayByUser
      * Submit individual updates to the tour state as a user onboards the site.
      *
      * @param userId User ID
      */
-    public static void addPay(Context context, Integer userId) {
+    public static void addPay(Context context, Integer userId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addPayByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/pay");
 
@@ -91,7 +158,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param json   JSON model
      */
-    public static void addTypesOfWork(Context context, Integer userId, String json) {
+    public static void addTypesOfWork(Context context, Integer userId, String json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("addTypesOfWork")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/types-of-work");
 
@@ -537,7 +612,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param json   JSON Payload
      */
-    public static void sendAccountActivationLink(Context context, Integer userId, String json) {
+    public static void sendAccountActivationLink(Context context, Integer userId, String json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendAccountActivationLink")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email");
 
@@ -579,7 +662,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param json   JSON Payload
      */
-    public static void sendVerificationCodeViaSms(Context context, Integer userId, String json) {
+    public static void sendVerificationCodeViaSms(Context context, Integer userId, String json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendVerificationCodeViaSms")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/text");
 
@@ -621,7 +712,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param json   JSON Payload
      */
-    public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json) {
+    public static void sendVerificationCodeViaVoiceCall(Context context, Integer userId, String json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendVerificationCodeViaVoiceCall")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone");
 
@@ -664,7 +763,15 @@ public class UsersWebApi extends TopicClient {
      * @param preference Preference Key
      * @param json       JSON Model
      */
-    public static void setUserPreference(Context context, Integer userId, String preference, String json) {
+    public static void setUserPreference(Context context, Integer userId, String preference, String json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("setUserPreference")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference);
 
@@ -707,7 +814,17 @@ public class UsersWebApi extends TopicClient {
      * @param userId         User ID
      * @param notificationId Notification ID
      */
-    public static void swipNotification(Context context, Integer userId, Integer notificationId) {
+    public static void swipNotification(Context context, Integer userId, Integer notificationId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("swipNotification")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .property("notification_id")
+                .value(notificationId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/notifications/" + notificationId);
 
@@ -784,7 +901,15 @@ public class UsersWebApi extends TopicClient {
      *
      * @param userId User ID
      */
-    public static void updatePay(Context context, Integer userId) {
+    public static void updatePay(Context context, Integer userId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updatePayByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/pay");
 
@@ -820,7 +945,15 @@ public class UsersWebApi extends TopicClient {
      *
      * @param userId User ID
      */
-    public static void updateSettings(Context context, Integer userId) {
+    public static void updateSettings(Context context, Integer userId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateSettingsByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/settings");
 
@@ -857,7 +990,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param json   Json User tax info object for updating
      */
-    public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json) {
+    public static void updateTax(Context context, Integer userId, UserTaxInfoUpdate json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTaxByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/tax");
 
@@ -898,7 +1039,15 @@ public class UsersWebApi extends TopicClient {
      *
      * @param userId User ID
      */
-    public static void updateTour(Context context, Integer userId) {
+    public static void updateTour(Context context, Integer userId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateTourByUser")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour");
 
@@ -935,7 +1084,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param file   Photo to upload
      */
-    public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file) {
+    public static void uploadProfilePhoto(Context context, Integer userId, java.io.File file, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("uploadProfilePhoto")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar");
 
@@ -974,7 +1131,15 @@ public class UsersWebApi extends TopicClient {
      * @param userId User ID
      * @param json   Json Payload
      */
-    public static void verifyAccount(Context context, Integer userId, String json) {
+    public static void verifyAccount(Context context, Integer userId, String json, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("verifyAccount")
+                .label(userId + "")
+                .category("user")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/2fa");
 
@@ -1020,16 +1185,28 @@ public class UsersWebApi extends TopicClient {
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
-                case "progress": {
+                case "queued": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -1039,7 +1216,13 @@ public class UsersWebApi extends TopicClient {
             }
         }
 
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+        }
+
         public void onStart(TransactionParams transactionParams, String methodName) {
+        }
+
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
@@ -1076,6 +1259,7 @@ public class UsersWebApi extends TopicClient {
             try {
                 if (success) {
                     switch (transactionParams.apiFunction) {
+                        case "addCoords":
                         case "addTypesOfWork":
                         case "sendAccountActivationLink":
                         case "sendVerificationCodeViaSms":
@@ -1122,6 +1306,7 @@ public class UsersWebApi extends TopicClient {
                     }
                 } else {
                     switch (transactionParams.apiFunction) {
+                        case "addCoords":
                         case "addPay":
                         case "addTypesOfWork":
                         case "getPay":

@@ -36,14 +36,14 @@ public class RateBuyerYesNoDialog extends TwoButtonDialog {
 
     @Override
     public boolean onPrimaryClick() {
-        _onContinueDispatcher.dispatch(getUid(), null);
+        _onContinueDispatcher.dispatch(getUid());
         RateBuyerDialog.show(App.get(), DIALOG_RATE_BUYER, _workOrder);
         return super.onPrimaryClick();
     }
 
     @Override
     public boolean onSecondaryClick() {
-        _onLaterDispatcher.dispatch(getUid(), null);
+        _onLaterDispatcher.dispatch(getUid());
         return super.onSecondaryClick();
     }
 

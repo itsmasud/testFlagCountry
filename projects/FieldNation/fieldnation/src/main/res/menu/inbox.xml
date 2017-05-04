@@ -7,7 +7,7 @@
         android:id="@+id/search_menuitem"
         android:enabled="true"
         android:orderInCategory="300"
-        android:title="Search"
+        android:title="@string/search"
         app:actionViewClass="com.fieldnation.ui.menu.SearchMenuButton"
         app:showAsAction="always" />
 </menu>

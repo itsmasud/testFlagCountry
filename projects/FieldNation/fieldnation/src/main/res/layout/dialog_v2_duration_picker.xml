@@ -54,7 +54,7 @@
                 android:layout_gravity="center"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:text="hour(s)" />
+                android:text="@string/hours" />
 
 
             <com.fieldnation.ui.FnNumberPicker
@@ -70,7 +70,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:paddingRight="10dp"
-                android:text="mins" />
+                android:text="@string/mins" />
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

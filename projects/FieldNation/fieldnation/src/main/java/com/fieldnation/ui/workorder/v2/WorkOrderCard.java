@@ -29,7 +29,6 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -134,7 +133,7 @@ public class WorkOrderCard extends RelativeLayout {
 //        EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING,
                 _markIncompleteWarningDialog_onMarkIncomplete);
-        ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+//        ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
 //        RunningLateDialog.addOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
 
@@ -151,7 +150,7 @@ public class WorkOrderCard extends RelativeLayout {
 //        EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirm);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE_WARNING,
                 _markIncompleteWarningDialog_onMarkIncomplete);
-        ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+//        ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
 //        RunningLateDialog.removeOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
 
@@ -703,10 +702,11 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
-            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
+//            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
         }
     };
 
+/*
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
         public void onSend(long workorderId, String explanation, ReportProblemType type) {
@@ -714,6 +714,7 @@ public class WorkOrderCard extends RelativeLayout {
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
         }
     };
+*/
 
     private final View.OnClickListener _phone_onClick = new OnClickListener() {
         @Override

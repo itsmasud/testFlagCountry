@@ -89,7 +89,6 @@ public class ExpenseView extends LinearLayout {
             return;
 
         _descriptionTextView.setText(_expense.getDescription());
-        // TODO need to map the ID to a real string
         _categoryTextView.setVisibility(View.GONE);
         if (_categories != null && _expense.getId() != null) {
             for (ExpenseCategory _category : _categories) {
@@ -100,7 +99,6 @@ public class ExpenseView extends LinearLayout {
                 }
             }
         }
-        // TODO, need to get quantity and price per item numbers
         _costTextView.setText(misc.toCurrency(_expense.getAmount()));
 
     }

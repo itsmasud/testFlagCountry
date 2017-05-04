@@ -21,42 +21,70 @@ import java.util.Set;
  * Created by dmgen from swagger.
  */
 
-public class SelectionRules implements Parcelable {
-    private static final String TAG = "SelectionRules";
+public class UserPreviousRequest implements Parcelable {
+    private static final String TAG = "UserPreviousRequest";
+
+    @Json(name = "at")
+    private Date _at;
 
     @Source
     private JsonObject SOURCE;
 
-    public SelectionRules() {
+    public UserPreviousRequest() {
         SOURCE = new JsonObject();
     }
 
-    public SelectionRules(JsonObject obj) {
+    public UserPreviousRequest(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setAt(Date at) throws ParseException {
+        _at = at;
+        SOURCE.put("at", at.getJson());
+    }
+
+    public Date getAt() {
+        try {
+            if (_at == null && SOURCE.has("at") && SOURCE.get("at") != null)
+                _at = Date.fromJson(SOURCE.getJsonObject("at"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_at != null && _at.isSet())
+            return _at;
+
+        return null;
+    }
+
+    public UserPreviousRequest at(Date at) throws ParseException {
+        _at = at;
+        SOURCE.put("at", at.getJson());
+        return this;
     }
 
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
-    public static JsonArray toJsonArray(SelectionRules[] array) {
+    public static JsonArray toJsonArray(UserPreviousRequest[] array) {
         JsonArray list = new JsonArray();
-        for (SelectionRules item : array) {
+        for (UserPreviousRequest item : array) {
             list.add(item.getJson());
         }
         return list;
     }
 
-    public static SelectionRules[] fromJsonArray(JsonArray array) {
-        SelectionRules[] list = new SelectionRules[array.size()];
+    public static UserPreviousRequest[] fromJsonArray(JsonArray array) {
+        UserPreviousRequest[] list = new UserPreviousRequest[array.size()];
         for (int i = 0; i < array.size(); i++) {
             list[i] = fromJson(array.getJsonObject(i));
         }
         return list;
     }
 
-    public static SelectionRules fromJson(JsonObject obj) {
+    public static UserPreviousRequest fromJson(JsonObject obj) {
         try {
-            return new SelectionRules(obj);
+            return new UserPreviousRequest(obj);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -70,12 +98,12 @@ public class SelectionRules implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<SelectionRules> CREATOR = new Parcelable.Creator<SelectionRules>() {
+    public static final Parcelable.Creator<UserPreviousRequest> CREATOR = new Parcelable.Creator<UserPreviousRequest>() {
 
         @Override
-        public SelectionRules createFromParcel(Parcel source) {
+        public UserPreviousRequest createFromParcel(Parcel source) {
             try {
-                return SelectionRules.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return UserPreviousRequest.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -83,8 +111,8 @@ public class SelectionRules implements Parcelable {
         }
 
         @Override
-        public SelectionRules[] newArray(int size) {
-            return new SelectionRules[size];
+        public UserPreviousRequest[] newArray(int size) {
+            return new UserPreviousRequest[size];
         }
     };
 

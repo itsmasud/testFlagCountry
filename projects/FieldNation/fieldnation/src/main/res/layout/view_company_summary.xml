@@ -158,6 +158,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/timeToApproval_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -177,10 +178,11 @@
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/percentageApproval_textview"
                 style="@style/Text_Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="90% of their work orders" />
+                android:text="@string/company_percentage_approval" />
 
         </LinearLayout>
     </LinearLayout>

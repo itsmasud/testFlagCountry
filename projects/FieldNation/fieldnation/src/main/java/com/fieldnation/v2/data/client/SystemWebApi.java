@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -17,6 +21,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -34,9 +39,24 @@ public class SystemWebApi extends TopicClient {
     private static final String STAG = "SystemWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public SystemWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -91,21 +111,21 @@ public class SystemWebApi extends TopicClient {
      * Get a list of all banners.
      *
      * @param getBannersOptions Additional optional parameters
-     * @param isBackground indicates that this call is low priority
+     * @param isBackground      indicates that this call is low priority
      */
     public static void getBanners(Context context, GetBannersOptions getBannersOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
             String key = misc.md5("GET//api/rest/v2/system/banners" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
-                                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
-                                   );
+                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
                     .path("/api/rest/v2/system/banners")
                     .urlParams("" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
-                                    + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
-                                   );
+                            + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
+                    );
 
             JsonObject methodParams = new JsonObject();
 
@@ -233,16 +253,28 @@ public class SystemWebApi extends TopicClient {
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
-                case "progress": {
+                case "queued": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -252,7 +284,13 @@ public class SystemWebApi extends TopicClient {
             }
         }
 
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+        }
+
         public void onStart(TransactionParams transactionParams, String methodName) {
+        }
+
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
@@ -293,7 +331,7 @@ public class SystemWebApi extends TopicClient {
                             successObject = UpdateModel.fromJson(new JsonObject(data));
                             break;
                         case "getBanners":
-                            successObject = Banner.fromJson(new JsonObject(data));
+                            //successObject = Banner.fromJson(new JsonObject(data));
                             break;
                         default:
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);

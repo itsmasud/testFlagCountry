@@ -1,12 +1,18 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -15,21 +21,15 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CompanyFeatures;
-import com.fieldnation.v2.data.model.CompanyIntegrations;
-import com.fieldnation.v2.data.model.CompanyRating;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.FundTransaction;
-import com.fieldnation.v2.data.model.SavedCreditCards;
-import com.fieldnation.v2.data.model.SelectionRules;
-import com.fieldnation.v2.data.model.Tag;
-import com.fieldnation.v2.data.model.Tags;
 
 /**
  * Created by dmgen from swagger.
@@ -39,9 +39,24 @@ public class CompanyWebApi extends TopicClient {
     private static final String STAG = "CompanyWebApi";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static int connectCount = 0;
 
     public CompanyWebApi(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public void connect(Context context) {
+        super.connect(context);
+        connectCount++;
+        Log.v(STAG + ".state", "connect " + connectCount);
+    }
+
+    @Override
+    public void disconnect(Context context) {
+        super.disconnect(context);
+        connectCount--;
+        Log.v(STAG + ".state", "disconnect " + connectCount);
     }
 
     @Override
@@ -97,7 +112,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: addTag
      * Adds a tag to a company for selection on a work order basis
      *
-     * @param tag   Tag
+     * @param tag Tag
      * @param async Async (Optional)
      */
     public static void addTag(Context context, Tag tag, Boolean async) {
@@ -140,7 +155,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getCompanyDetails
      * Get Company Details
      *
-     * @param companyId    ID of company
+     * @param companyId ID of company
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -163,6 +178,44 @@ public class CompanyWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyDetails", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getCompanyManagers
+     * Gets a list of company managers
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getCompanyManagers(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/managers");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/managers");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/managers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getCompanyManagers", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -386,6 +439,46 @@ public class CompanyWebApi extends TopicClient {
     }
 
     /**
+     * Swagger operationId: getPredefinedExpensesByWorkOrder
+     * Get a list of predefined expenses by work order.
+     *
+     * @param workOrderId  null
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getPredefinedExpenses(Context context, String workOrderId, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/predefined-expenses/" + workOrderId);
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/predefined-expenses/" + workOrderId);
+
+            JsonObject methodParams = new JsonObject();
+            methodParams.put("workOrderId", workOrderId);
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/predefined-expenses/{work_order_id}")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getPredefinedExpenses", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
      * Swagger operationId: getRatingsByCompanyId
      * Get Rating Details of a Company
      *
@@ -470,7 +563,15 @@ public class CompanyWebApi extends TopicClient {
      * @param featureId   Feature ID
      * @param accessToken null
      */
-    public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken) {
+    public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getSendRequestedFeatures")
+                .label(featureId + "")
+                .category("company")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/company/features/" + featureId + "?access_token=" + accessToken);
 
@@ -587,7 +688,17 @@ public class CompanyWebApi extends TopicClient {
      * @param companyId ID of company
      * @param financeId ID of finance account
      */
-    public static void updateFund(Context context, Integer companyId, Integer financeId) {
+    public static void updateFund(Context context, Integer companyId, Integer financeId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFundByFund")
+                .label(companyId + "")
+                .category("funds")
+                .addContext(uiContext)
+                .property("finance_id")
+                .value(financeId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -626,7 +737,17 @@ public class CompanyWebApi extends TopicClient {
      * @param financeId       ID of finance account
      * @param fundTransaction Transaction attempting to be created (Optional)
      */
-    public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
+    public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFundByFund")
+                .label(companyId + "")
+                .category("funds")
+                .addContext(uiContext)
+                .property("finance_id")
+                .value(financeId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -662,6 +783,7 @@ public class CompanyWebApi extends TopicClient {
         }
     }
 
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
@@ -672,16 +794,28 @@ public class CompanyWebApi extends TopicClient {
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
-                case "progress": {
+                case "queued": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
-                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
                     Bundle bundle = (Bundle) payload;
                     TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
+                    break;
+                }
+                case "progress": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
+                    break;
+                }
+                case "paused": {
+                    Bundle bundle = (Bundle) payload;
+                    TransactionParams transactionParams = bundle.getParcelable("params");
+                    onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
@@ -691,7 +825,13 @@ public class CompanyWebApi extends TopicClient {
             }
         }
 
+        public void onQueued(TransactionParams transactionParams, String methodName) {
+        }
+
         public void onStart(TransactionParams transactionParams, String methodName) {
+        }
+
+        public void onPaused(TransactionParams transactionParams, String methodName) {
         }
 
         public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
@@ -728,32 +868,36 @@ public class CompanyWebApi extends TopicClient {
             try {
                 if (success) {
                     switch (transactionParams.apiFunction) {
-                        case "getTags":
-                            successObject = Tags.fromJson(new JsonObject(data));
-                            break;
-                        case "getCompanyDetails":
-                        case "getManagedProviders":
-                        case "getSendRequestedFeatures":
-                        case "updateFund":
-                            successObject = data;
-                            break;
-                        case "getIntegrations":
-                            successObject = CompanyIntegrations.fromJson(new JsonObject(data));
+                        case "addTag":
+                            successObject = Tag.fromJson(new JsonObject(data));
                             break;
                         case "getCompanyUserCreditCards":
                             successObject = SavedCreditCards.fromJson(new JsonObject(data));
                             break;
-                        case "getRatings":
-                            successObject = CompanyRating.fromJson(new JsonObject(data));
+                        case "getTags":
+                            successObject = Tags.fromJson(new JsonObject(data));
+                            break;
+                        case "getSelectionRules":
+                            //successObject = SelectionRules.fromJson(new JsonObject(data));
                             break;
                         case "getFeatures":
                             successObject = CompanyFeatures.fromJson(new JsonObject(data));
                             break;
-                        case "addTag":
-                            successObject = Tag.fromJson(new JsonObject(data));
+                        case "getIntegrations":
+                            successObject = CompanyIntegrations.fromJson(new JsonObject(data));
                             break;
-                        case "getSelectionRules":
-                            successObject = SelectionRules.fromJson(new JsonObject(data));
+                        case "getRatings":
+                            successObject = CompanyRating.fromJson(new JsonObject(data));
+                            break;
+                        case "getPredefinedExpenses":
+                            //successObject = PredefinedExpenses.fromJson(new JsonObject(data));
+                            break;
+                        case "getCompanyDetails":
+                        case "getCompanyManagers":
+                        case "getManagedProviders":
+                        case "getSendRequestedFeatures":
+                        case "updateFund":
+                            successObject = data;
                             break;
                         default:
                             Log.v(TAG, "Don't know how to handle " + transactionParams.apiFunction);
@@ -763,10 +907,12 @@ public class CompanyWebApi extends TopicClient {
                     switch (transactionParams.apiFunction) {
                         case "addTag":
                         case "getCompanyDetails":
+                        case "getCompanyManagers":
                         case "getCompanyUserCreditCards":
                         case "getFeatures":
                         case "getIntegrations":
                         case "getManagedProviders":
+                        case "getPredefinedExpenses":
                         case "getRatings":
                         case "getSelectionRules":
                         case "getSendRequestedFeatures":

@@ -27,8 +27,14 @@ public class Assignee implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "comment")
+    private String _comment;
+
     @Json(name = "correlation_id")
     private String _correlationId;
+
+    @Json(name = "reason_id")
+    private Integer _reasonId;
 
     @Json(name = "role")
     private String _role;
@@ -88,6 +94,28 @@ public class Assignee implements Parcelable {
         return this;
     }
 
+    public void setComment(String comment) throws ParseException {
+        _comment = comment;
+        SOURCE.put("comment", comment);
+    }
+
+    public String getComment() {
+        try {
+            if (_comment == null && SOURCE.has("comment") && SOURCE.get("comment") != null)
+                _comment = SOURCE.getString("comment");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _comment;
+    }
+
+    public Assignee comment(String comment) throws ParseException {
+        _comment = comment;
+        SOURCE.put("comment", comment);
+        return this;
+    }
+
     public void setCorrelationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
         SOURCE.put("correlation_id", correlationId);
@@ -107,6 +135,28 @@ public class Assignee implements Parcelable {
     public Assignee correlationId(String correlationId) throws ParseException {
         _correlationId = correlationId;
         SOURCE.put("correlation_id", correlationId);
+        return this;
+    }
+
+    public void setReasonId(Integer reasonId) throws ParseException {
+        _reasonId = reasonId;
+        SOURCE.put("reason_id", reasonId);
+    }
+
+    public Integer getReasonId() {
+        try {
+            if (_reasonId == null && SOURCE.has("reason_id") && SOURCE.get("reason_id") != null)
+                _reasonId = SOURCE.getInt("reason_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _reasonId;
+    }
+
+    public Assignee reasonId(Integer reasonId) throws ParseException {
+        _reasonId = reasonId;
+        SOURCE.put("reason_id", reasonId);
         return this;
     }
 
