@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -314,6 +315,14 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_doc == null)
+                return;
+
+            if (!_doc.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
+                ToastClient.toast(App.get(), "File not available for download.", Toast.LENGTH_LONG);
+                return;
+            }
+
             if (!App.get().isFreeSpaceAvailable()) {
                 Toast.makeText(getContext(), getResources().getString(R.string.toast_no_disk_space), Toast.LENGTH_LONG).show();
                 return;

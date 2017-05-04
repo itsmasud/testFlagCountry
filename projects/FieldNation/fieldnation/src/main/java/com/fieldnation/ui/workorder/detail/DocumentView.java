@@ -286,7 +286,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
             }
 
             if (!_attachment.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
-                ToastClient.toast(App.get(), "File not yet available for download.", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), "File not available for download.", Toast.LENGTH_LONG);
                 return;
             }
 
