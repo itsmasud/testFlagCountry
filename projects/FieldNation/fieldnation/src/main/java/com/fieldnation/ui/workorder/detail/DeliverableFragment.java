@@ -281,8 +281,6 @@ public class DeliverableFragment extends WorkorderFragment {
                         @Override
                         public void next(int i) throws Exception {
                             Attachment doc = _docs[i];
-                            if (!doc.getShowBeforeAssignment())
-                                return;
                             DocumentView v = new DocumentView(getActivity());
                             v.setListener(_document_listener);
                             v.setData(_workOrder, doc);

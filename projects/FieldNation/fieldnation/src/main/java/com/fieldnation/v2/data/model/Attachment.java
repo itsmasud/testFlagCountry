@@ -445,6 +445,8 @@ public class Attachment implements Parcelable {
         NOTES("notes"),
         @Json(name = "reopen")
         REOPEN("reopen"),
+        @Json(name = "view")
+        VIEW("view"),
         @Json(name = "visibility")
         VISIBILITY("visibility");
 
