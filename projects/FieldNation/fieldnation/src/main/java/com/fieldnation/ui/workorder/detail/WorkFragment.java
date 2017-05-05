@@ -37,7 +37,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -1559,19 +1558,11 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-
             if (methodName.contains("TimeLog") && !success) {
                 Log.v(TAG, "onWorkordersWebApi");
                 ToastClient.toast(App.get(), "Error: " + ((Error) failObject).getMessage(), Toast.LENGTH_LONG);
                 setLoading(false);
             }
-
-            if (methodName.contains("updateETA") && success) {
-                Log.v(TAG, "onWorkordersWebApi");
-                ToastClient.toast(App.get(), getString(R.string.toast_eta_success_message), Toast.LENGTH_LONG);
-                setLoading(false);
-            }
-
         }
     };
 }

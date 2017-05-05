@@ -35,6 +35,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -106,6 +107,8 @@ public class EtaDialog extends FullScreenDialog {
     private Button _durationButton;
     private EditText _noteEditText;
 
+    private RefreshView _refreshView;
+
     // Dialogs
     private DatePickerDialog _etaStartDatePicker;
     private TimePickerDialog _etaStartTimePicker;
@@ -161,6 +164,8 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartTimeButton = (Button) v.findViewById(R.id.etaStartTime_button);
         _durationButton = (Button) v.findViewById(R.id.duration_button);
         _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
+
+        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
 
         _durations = _expirationLayout.getContext().getResources().getIntArray(R.array.expire_duration_values);
 
@@ -374,7 +379,6 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaLayout.setVisibility(View.VISIBLE);
             _termsWarningTextView.setVisibility(View.GONE);
-
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -761,6 +765,7 @@ public class EtaDialog extends FullScreenDialog {
                 switch (_dialogType) {
                     case PARAM_DIALOG_TYPE_REQUEST: {
                         _onRequestedDispatcher.dispatch(getUid(), _workOrder.getId());
+                        _refreshView.startRefreshing();
 
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
@@ -779,13 +784,12 @@ public class EtaDialog extends FullScreenDialog {
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
                         WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-
-                        dismiss(true);
                         break;
                     }
 
                     case PARAM_DIALOG_TYPE_ACCEPT: {
                         _onAcceptedDispatcher.dispatch(getUid(), _workOrder.getId());
+                        _refreshView.startRefreshing();
 
                         Assignee assignee = new Assignee();
                         assignee.setUser(new User().id((int) App.getProfileId()));
@@ -794,12 +798,12 @@ public class EtaDialog extends FullScreenDialog {
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.assignUser(App.get(), _workOrder.getId(), assignee, uiContext);
-
                         break;
                     }
                     case PARAM_DIALOG_TYPE_ADD:  // add eta
                     case PARAM_DIALOG_TYPE_EDIT: {
                         _onEtaDispatcher.dispatch(getUid(), _workOrder.getId());
+                        _refreshView.startRefreshing();
                         ETA eta = new ETA();
                         eta.setStart(new Date(_etaStart));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
@@ -810,7 +814,6 @@ public class EtaDialog extends FullScreenDialog {
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
-                        dismiss(true);
                         break;
                     }
                 }
@@ -843,11 +846,40 @@ public class EtaDialog extends FullScreenDialog {
                         uiContext.page += " - Eta Dialog";
 
                         WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
-                        dismiss(true);
+                        // TODO dismiss(true);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
                 }
+            }
+
+            // Add/edit accept rout "assign user"
+            if (methodName.contains("updateETA") && success) {
+                Log.v(TAG, "updateETA");
+                switch (_dialogType) {
+                    case PARAM_DIALOG_TYPE_ACCEPT:
+                        ToastClient.toast(App.get(), "Work Order Accepted", Toast.LENGTH_LONG);
+                        break;
+                    case PARAM_DIALOG_TYPE_ADD:
+                        ToastClient.toast(App.get(), "ETA created successfully.", Toast.LENGTH_LONG);
+                        break;
+                    case PARAM_DIALOG_TYPE_EDIT:
+                        ToastClient.toast(App.get(), "ETA updated successfully.", Toast.LENGTH_LONG);
+                        break;
+                }
+                _refreshView.refreshComplete();
+                dismiss(true);
+            }
+
+            if (methodName.contains("request") && success) {
+                Log.v(TAG, "request");
+                ToastClient.toast(App.get(), "Work Order requested", Toast.LENGTH_LONG);
+                _refreshView.refreshComplete();
+                dismiss(true);
+            }
+
+            if (!success) {
+                _refreshView.refreshComplete();
             }
         }
     };
