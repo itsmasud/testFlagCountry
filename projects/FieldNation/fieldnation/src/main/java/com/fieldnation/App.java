@@ -45,6 +45,7 @@ import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -143,6 +144,13 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+
+        try {
+            ProviderInstaller.installIfNeeded(this);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        
         HttpJson.setTempFolder(getTempFolder());
 
         Stopwatch mwatch = new Stopwatch(true);
