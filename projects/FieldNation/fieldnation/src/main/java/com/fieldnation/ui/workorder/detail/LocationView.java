@@ -288,12 +288,15 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         }
 
         // display location notes
-        if (misc.isEmptyOrNull(loc.getNotes())) {
-            _noteTextView.setVisibility(GONE);
-        } else {
+        if (loc.getNotes() != null
+                && loc.getNotes().length > 0
+                && loc.getNotes()[0] != null
+                && !misc.isEmptyOrNull(loc.getNotes()[0].getText())) {
             _noteTextView.setVisibility(VISIBLE);
-            _noteTextView.setText(misc.linkifyHtml(loc.getNotes(), Linkify.ALL));
+            _noteTextView.setText(misc.linkifyHtml(loc.getNotes()[0].getText(), Linkify.ALL));
             _noteTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            _noteTextView.setVisibility(GONE);
         }
     }
 
