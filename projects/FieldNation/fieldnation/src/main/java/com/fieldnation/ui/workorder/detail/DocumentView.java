@@ -106,7 +106,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_docClient != null && _docClient.isConnected()) {
+        if (_docClient != null) {
             _docClient.disconnect(App.get());
             _docClient = null;
         }

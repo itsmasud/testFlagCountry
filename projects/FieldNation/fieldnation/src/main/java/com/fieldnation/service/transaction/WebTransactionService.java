@@ -79,11 +79,9 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(ContextProvider.get());
+        if (_authTopicClient != null) _authTopicClient.disconnect(ContextProvider.get());
 
-        if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(ContextProvider.get());
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(ContextProvider.get());
 
         _manager.shutdown();
         super.onDestroy();

@@ -108,11 +108,10 @@ public class SearchEditText extends RelativeLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        if (_activityResultClient != null && _activityResultClient.isConnected())
+        if (_activityResultClient != null)
             _activityResultClient.disconnect(App.get());
 
-        if (_workOrderApi != null && _workOrderApi.isConnected())
-            _workOrderApi.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
     }
 
     private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {

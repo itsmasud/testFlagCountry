@@ -213,8 +213,7 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         super.onPause();
         DurationPickerDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationPickerDialog_onOk);

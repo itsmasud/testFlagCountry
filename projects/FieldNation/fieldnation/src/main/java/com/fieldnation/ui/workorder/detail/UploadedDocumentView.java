@@ -109,7 +109,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_docClient != null && _docClient.isConnected()) {
+        if (_docClient != null) {
             _docClient.disconnect(App.get());
             _docClient = null;
         }

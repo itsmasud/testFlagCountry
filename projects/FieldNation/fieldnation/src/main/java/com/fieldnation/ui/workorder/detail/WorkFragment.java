@@ -37,7 +37,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.SignOffActivity;
@@ -428,8 +427,7 @@ public class WorkFragment extends WorkorderFragment {
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
-        if (_workOrderApi != null && _workOrderApi.isConnected())
-            _workOrderApi.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
         super.onDetach();
     }

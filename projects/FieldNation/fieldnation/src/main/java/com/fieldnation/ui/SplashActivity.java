@@ -118,8 +118,7 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         try {
-            if (_authClient != null && _authClient.isConnected())
-                _authClient.disconnect(App.get());
+            if (_authClient != null) _authClient.disconnect(App.get());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

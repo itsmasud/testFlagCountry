@@ -29,9 +29,9 @@ import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
-import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
+import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -161,10 +161,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(App.get());
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(App.get());
+        if (_photoClient != null) _photoClient.disconnect(App.get());
+        if (_profileClient != null) _profileClient.disconnect(App.get());
 
 
         super.onDetachedFromWindow();

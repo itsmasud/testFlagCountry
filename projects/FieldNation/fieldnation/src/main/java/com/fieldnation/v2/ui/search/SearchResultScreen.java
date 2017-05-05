@@ -111,8 +111,7 @@ public class SearchResultScreen extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
 

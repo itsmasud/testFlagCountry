@@ -87,9 +87,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workorderClient != null && _workorderClient.isConnected()) {
-            _workorderClient.disconnect(App.get());
-        }
+        if (_workorderClient != null) _workorderClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 

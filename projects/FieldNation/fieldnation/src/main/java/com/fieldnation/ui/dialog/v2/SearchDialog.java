@@ -50,8 +50,7 @@ public class SearchDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        if (_workorderClient != null) _workorderClient.disconnect(App.get());
 
         super.onStop();
     }

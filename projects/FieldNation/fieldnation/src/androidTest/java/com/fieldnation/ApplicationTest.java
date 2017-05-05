@@ -22,7 +22,7 @@ public class ApplicationTest extends ApplicationTestCase<App> {
     protected void tearDown() throws Exception {
         super.tearDown();
 
-        if (_client != null && _client.isConnected())
+        if (_client != null)
             _client.disconnect(App.get());
     }
 
