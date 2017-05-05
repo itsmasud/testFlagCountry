@@ -39,6 +39,9 @@ public class ETA implements Parcelable {
     @Json(name = "mode")
     private ModeEnum _mode;
 
+    @Json(name = "notes")
+    private String _notes;
+
     @Json(name = "start")
     private Date _start;
 
@@ -188,6 +191,28 @@ public class ETA implements Parcelable {
         return this;
     }
 
+    public void setNotes(String notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", notes);
+    }
+
+    public String getNotes() {
+        try {
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _notes;
+    }
+
+    public ETA notes(String notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", notes);
+        return this;
+    }
+
     public void setStart(Date start) throws ParseException {
         _start = start;
         SOURCE.put("start", start.getJson());
@@ -306,6 +331,8 @@ public class ETA implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "add")
         ADD("add"),
+        @Json(name = "cancel")
+        CANCEL("cancel"),
         @Json(name = "confirm")
         CONFIRM("confirm"),
         @Json(name = "edit")

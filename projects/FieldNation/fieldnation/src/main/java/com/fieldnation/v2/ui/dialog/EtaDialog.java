@@ -778,6 +778,7 @@ public class EtaDialog extends FullScreenDialog {
                             eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                             eta.setUser(new User().id((int) App.getProfileId()));
                             eta.setHourEstimate(_durationMilliseconds / 3600000.0);
+                            eta.setNotes(_noteEditText.getText().toString().trim());
                             request.setEta(eta);
                         }
 
@@ -809,6 +810,7 @@ public class EtaDialog extends FullScreenDialog {
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
                         eta.setHourEstimate(_durationMilliseconds / 3600000.0);
+                        eta.setNotes(_noteEditText.getText().toString().trim());
 
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
@@ -841,6 +843,7 @@ public class EtaDialog extends FullScreenDialog {
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
                         eta.setHourEstimate(_durationMilliseconds / 3600000.0);
+                        eta.setNotes(_noteEditText.getText().toString().trim());
 
                         SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                         uiContext.page += " - Eta Dialog";
