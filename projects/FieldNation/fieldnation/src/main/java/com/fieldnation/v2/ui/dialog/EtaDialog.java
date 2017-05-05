@@ -374,7 +374,6 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaLayout.setVisibility(View.VISIBLE);
             _termsWarningTextView.setVisibility(View.GONE);
-
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -846,15 +845,26 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
 
+            // Add/edit accept rout "assign user"
             if (methodName.contains("updateETA") && success) {
                 Log.v(TAG, "updateETA");
-                ToastClient.toast(App.get(), R.string.toast_eta_success_message, Toast.LENGTH_LONG);
+                switch (_dialogType) {
+                    case PARAM_DIALOG_TYPE_ACCEPT:
+                        ToastClient.toast(App.get(), "Work Order Accepted", Toast.LENGTH_LONG);
+                        break;
+                    case PARAM_DIALOG_TYPE_ADD:
+                        ToastClient.toast(App.get(), "ETA created successfully.", Toast.LENGTH_LONG);
+                        break;
+                    case PARAM_DIALOG_TYPE_EDIT:
+                        ToastClient.toast(App.get(), "ETA updated successfully.", Toast.LENGTH_LONG);
+                        break;
+                }
                 dismiss(true);
             }
 
             if (methodName.contains("request") && success) {
                 Log.v(TAG, "request");
-                ToastClient.toast(App.get(), "Work order requested", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), "Work Order requested", Toast.LENGTH_LONG);
                 dismiss(true);
             }
         }
