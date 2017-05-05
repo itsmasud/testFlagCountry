@@ -765,7 +765,7 @@ public class EtaDialog extends FullScreenDialog {
                         Request request = new Request();
                         request.setNotes(_noteEditText.getText().toString().trim());
                         if (_expiresCheckBox.isChecked())
-                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds));
+                            request.setExpires(new Date(System.currentTimeMillis() + _expiringDurationSeconds * 1000));
 
                         if (_etaSwitch.isChecked()) {
                             ETA eta = new ETA();
