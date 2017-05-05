@@ -877,6 +877,10 @@ public class EtaDialog extends FullScreenDialog {
                 _refreshView.refreshComplete();
                 dismiss(true);
             }
+
+            if (!success) {
+                _refreshView.refreshComplete();
+            }
         }
     };
 
