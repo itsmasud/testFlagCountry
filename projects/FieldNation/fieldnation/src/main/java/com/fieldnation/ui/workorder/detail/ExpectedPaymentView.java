@@ -141,16 +141,16 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         PayModifier[] fees = pay.getFees();
         for (PayModifier fee : fees) {
             if (fee.getName().equals("provider")) {
-                _feeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _feeTextView.setText(misc.toCurrency(fee.getAmount()));
                 _feePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_fee_percentage),
                         (float) (fee.getModifier() * 100)));
 
                 _feeTextView.setVisibility(VISIBLE);
                 _feePercentTextView.setVisibility(VISIBLE);
-                sum -= Math.round(fee.getModifier() * pay.getTotal() * 100.0) / 100.0;
+                sum -= Math.round(fee.getAmount() * 100.0) / 100.0;
             } else if (fee.getName().equals("insurance")) {
-                _insuranceFeeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _insuranceFeeTextView.setText(misc.toCurrency(fee.getAmount()));
                 _insurancePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_insurance_percentage),
                         (float) (fee.getModifier() * 100)));
@@ -158,7 +158,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
                 _insuranceFeeTextView.setVisibility(VISIBLE);
                 _insurancePercentTextView.setVisibility(VISIBLE);
 
-                sum -= Math.round(fee.getModifier() * pay.getTotal() * 100.0) / 100.0;
+                sum -= Math.round(fee.getAmount() * 100.0) / 100.0;
             }
         }
 
