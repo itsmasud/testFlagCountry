@@ -148,7 +148,7 @@ public class CounterOfferDialog extends SimpleDialog {
         _tabHost.setOnTabChangedListener(_tab_changeListener);
 
         for (int i = 0; i < 4; i++) {
-            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(true);
+            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(false);
         }
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
