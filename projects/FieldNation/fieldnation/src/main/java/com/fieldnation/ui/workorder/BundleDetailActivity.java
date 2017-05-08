@@ -133,11 +133,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
-        if (_bundlesApi != null && _bundlesApi.isConnected())
-            _bundlesApi.disconnect(App.get());
+        if (_bundlesApi != null) _bundlesApi.disconnect(App.get());
 
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);

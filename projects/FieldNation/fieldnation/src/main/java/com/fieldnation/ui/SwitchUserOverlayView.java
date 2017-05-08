@@ -70,8 +70,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 

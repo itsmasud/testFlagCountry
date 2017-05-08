@@ -73,8 +73,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

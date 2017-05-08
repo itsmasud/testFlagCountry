@@ -133,17 +133,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(App.get());
+        if (_globalClient != null) _globalClient.disconnect(App.get());
 
-        if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(App.get());
+        if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
 
-        if (_toastClient != null && _toastClient.isConnected())
-            _toastClient.disconnect(App.get());
+        if (_toastClient != null) _toastClient.disconnect(App.get());
 
-        if (_activityResultClient != null && _activityResultClient.isConnected())
-            _activityResultClient.disconnect(App.get());
+        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();

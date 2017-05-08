@@ -93,8 +93,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderApi != null && _workOrderApi.isConnected())
-            _workOrderApi.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

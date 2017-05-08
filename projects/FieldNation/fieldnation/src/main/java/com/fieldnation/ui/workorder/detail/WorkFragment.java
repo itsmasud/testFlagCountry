@@ -427,8 +427,7 @@ public class WorkFragment extends WorkorderFragment {
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
 
-        if (_workOrderApi != null && _workOrderApi.isConnected())
-            _workOrderApi.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
         super.onDetach();
     }

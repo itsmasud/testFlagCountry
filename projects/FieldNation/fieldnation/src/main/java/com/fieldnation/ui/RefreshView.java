@@ -80,8 +80,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(App.get());
+        if (_globalClient != null) _globalClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

@@ -147,9 +147,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_gmapsClient != null && _gmapsClient.isConnected()) {
-            _gmapsClient.disconnect(App.get());
-        }
+        if (_gmapsClient != null) _gmapsClient.disconnect(App.get());
         _simpleGps.stop();
         super.onDetachedFromWindow();
     }

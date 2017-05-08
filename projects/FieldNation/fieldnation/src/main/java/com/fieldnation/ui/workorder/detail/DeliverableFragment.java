@@ -176,11 +176,10 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach");
-        if (_docClient != null && _docClient.isConnected())
-            _docClient.disconnect(App.get());
+        if (_docClient != null) _docClient.disconnect(App.get());
 
-        if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(App.get());
+        if (_photoClient != null) _photoClient.disconnect(App.get());
+        
         super.onDetach();
     }
 

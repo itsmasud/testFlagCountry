@@ -238,8 +238,7 @@ public class CounterOfferDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
-        if (_workOrderApi != null && _workOrderApi.isConnected())
-            _workOrderApi.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
         super.onStop();
 

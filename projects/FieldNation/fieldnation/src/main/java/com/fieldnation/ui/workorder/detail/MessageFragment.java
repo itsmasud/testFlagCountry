@@ -80,7 +80,7 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        if (_workOrderApi != null && _workOrderApi.isConnected()) {
+        if (_workOrderApi != null) {
             _workOrderApi.disconnect(App.get());
             _workOrderApi = null;
         }

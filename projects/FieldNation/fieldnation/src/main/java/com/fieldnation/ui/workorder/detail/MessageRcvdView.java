@@ -65,8 +65,7 @@ public class MessageRcvdView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_photos != null && _photos.isConnected())
-            _photos.disconnect(App.get());
+        if (_photos != null) _photos.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 

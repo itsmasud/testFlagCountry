@@ -134,8 +134,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
 
         super.onStop();
     }

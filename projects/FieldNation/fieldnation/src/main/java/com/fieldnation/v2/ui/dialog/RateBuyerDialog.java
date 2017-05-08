@@ -209,9 +209,7 @@ public class RateBuyerDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         Log.v(TAG, "onPause");
-        if (_photos != null && _photos.isConnected()) {
-            _photos.disconnect(App.get());
-        }
+        if (_photos != null) _photos.disconnect(App.get());
         super.onPause();
     }
 

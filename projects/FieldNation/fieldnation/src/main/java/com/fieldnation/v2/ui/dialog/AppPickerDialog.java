@@ -92,7 +92,7 @@ public class AppPickerDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null && _activityResultClient.isConnected()) {
+        if (_activityResultClient != null) {
             _activityResultClient.disconnect(App.get());
         }
         super.onPause();
