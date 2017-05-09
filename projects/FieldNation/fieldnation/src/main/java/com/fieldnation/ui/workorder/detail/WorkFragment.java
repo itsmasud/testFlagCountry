@@ -1358,7 +1358,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
         @Override
         public void onOk(String description, double amount, ExpenseCategory category) {
@@ -1519,7 +1518,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     private final WorkLogDialog.OnOkListener _worklogDialog_listener = new WorkLogDialog.OnOkListener() {
         @Override
         public void onOk(TimeLog timeLog, Calendar start, Calendar end, int deviceCount) {
@@ -1544,11 +1542,9 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
