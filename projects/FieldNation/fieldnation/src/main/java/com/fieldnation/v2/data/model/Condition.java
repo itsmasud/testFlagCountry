@@ -223,6 +223,8 @@ public class Condition implements Parcelable {
     /*-             Enums            -*/
     /*-******************************-*/
     public enum StatusEnum {
+        @Json(name = "cancelled")
+        CANCELLED("cancelled"),
         @Json(name = "delayed")
         DELAYED("delayed");
 

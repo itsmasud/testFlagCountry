@@ -27,6 +27,9 @@ public class BillingAddress implements Parcelable {
     @Json(name = "address")
     private String _address;
 
+    @Json(name = "address2")
+    private String _address2;
+
     @Json(name = "city")
     private String _city;
 
@@ -75,6 +78,28 @@ public class BillingAddress implements Parcelable {
     public BillingAddress address(String address) throws ParseException {
         _address = address;
         SOURCE.put("address", address);
+        return this;
+    }
+
+    public void setAddress2(String address2) throws ParseException {
+        _address2 = address2;
+        SOURCE.put("address2", address2);
+    }
+
+    public String getAddress2() {
+        try {
+            if (_address2 == null && SOURCE.has("address2") && SOURCE.get("address2") != null)
+                _address2 = SOURCE.getString("address2");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _address2;
+    }
+
+    public BillingAddress address2(String address2) throws ParseException {
+        _address2 = address2;
+        SOURCE.put("address2", address2);
         return this;
     }
 

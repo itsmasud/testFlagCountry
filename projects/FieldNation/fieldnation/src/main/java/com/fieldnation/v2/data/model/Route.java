@@ -42,8 +42,8 @@ public class Route implements Parcelable {
     @Json(name = "routed")
     private User _routed;
 
-    @Json(name = "tecnichian")
-    private User _tecnichian;
+    @Json(name = "technician")
+    private User _technician;
 
     @Source
     private JsonObject SOURCE;
@@ -207,28 +207,28 @@ public class Route implements Parcelable {
         return this;
     }
 
-    public void setTecnichian(User tecnichian) throws ParseException {
-        _tecnichian = tecnichian;
-        SOURCE.put("tecnichian", tecnichian.getJson());
+    public void setTechnician(User technician) throws ParseException {
+        _technician = technician;
+        SOURCE.put("technician", technician.getJson());
     }
 
-    public User getTecnichian() {
+    public User getTechnician() {
         try {
-            if (_tecnichian == null && SOURCE.has("tecnichian") && SOURCE.get("tecnichian") != null)
-                _tecnichian = User.fromJson(SOURCE.getJsonObject("tecnichian"));
+            if (_technician == null && SOURCE.has("technician") && SOURCE.get("technician") != null)
+                _technician = User.fromJson(SOURCE.getJsonObject("technician"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_tecnichian != null && _tecnichian.isSet())
-            return _tecnichian;
+        if (_technician != null && _technician.isSet())
+            return _technician;
 
         return null;
     }
 
-    public Route tecnichian(User tecnichian) throws ParseException {
-        _tecnichian = tecnichian;
-        SOURCE.put("tecnichian", tecnichian.getJson());
+    public Route technician(User technician) throws ParseException {
+        _technician = technician;
+        SOURCE.put("technician", technician.getJson());
         return this;
     }
 
