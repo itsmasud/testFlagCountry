@@ -119,13 +119,13 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
 
         // Discounts
-        _discountsTextView.setText(misc.toCurrency(pay.getDiscounts().getSum().getAll()));
+        _discountsTextView.setText(misc.toCurrency(-pay.getDiscounts().getSum().getAll()));
 
         // Bonus
         _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
 
         // Penalty
-        _penaltyTextView.setText(misc.toCurrency(pay.getPenalties().getSum().getCharged()));
+        _penaltyTextView.setText(misc.toCurrency(-pay.getPenalties().getSum().getCharged()));
 
 
         // Insurance and Field Nation fees
@@ -136,7 +136,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         PayModifier[] fees = pay.getFees();
         for (PayModifier fee : fees) {
             if (fee.getName().equals("provider")) {
-                _feeTextView.setText(misc.toCurrency(fee.getAmount()));
+                _feeTextView.setText(misc.toCurrency(-fee.getAmount()));
                 _feePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_fee_percentage),
                         (float) (fee.getModifier() * 100)));
@@ -144,7 +144,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
                 _feeTextView.setVisibility(VISIBLE);
                 _feePercentTextView.setVisibility(VISIBLE);
             } else if (fee.getName().equals("insurance")) {
-                _insuranceFeeTextView.setText(misc.toCurrency(fee.getAmount()));
+                _insuranceFeeTextView.setText(misc.toCurrency(-fee.getAmount()));
                 _insurancePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_insurance_percentage),
                         (float) (fee.getModifier() * 100)));
