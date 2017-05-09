@@ -511,4 +511,14 @@ public class Expense implements Parcelable {
     public boolean isSet() {
         return getId() != null && getId() != 0;
     }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
+    }
 }

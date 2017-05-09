@@ -159,10 +159,10 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
     private final View.OnLongClickListener _expense_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
+            Expense expense = ((ExpenseView) v).getExpense();
             if (_listener != null
-                    && _workOrder.getPay() != null
-                    && _workOrder.getPay().getExpenses() != null
-                    && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
+                    && expense != null
+                    && expense.getActionsSet().contains(Expense.ActionsEnum.DELETE)) {
                 _listener.expenseLongClick(((ExpenseView) v).getExpense());
                 return true;
             }
