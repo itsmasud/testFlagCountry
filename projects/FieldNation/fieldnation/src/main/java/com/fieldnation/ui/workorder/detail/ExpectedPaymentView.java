@@ -24,7 +24,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
     private TextView _bonusTextView;
     private TextView _penaltyTextView;
     private TextView _discountsTextView;
-    private TextView _expectedTotalTextView;
     private TextView _feePercentTextView;
     private TextView _feeTextView;
     private TextView _insurancePercentTextView;
@@ -60,7 +59,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _bonusTextView = (TextView) findViewById(R.id.bonus_textview);
         _penaltyTextView = (TextView) findViewById(R.id.penalty_textview);
         _discountsTextView = (TextView) findViewById(R.id.discounts_textview);
-        _expectedTotalTextView = (TextView) findViewById(R.id.expectedtotal_textview);
 
         _feePercentTextView = (TextView) findViewById(R.id.feePercentage_textview);
         _feeTextView = (TextView) findViewById(R.id.fee_textview);
@@ -119,22 +117,16 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
         // Expenses approved
         _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
-        expectedSum += pay.getExpenses().getSum().getCharged();
 
         // Discounts
         _discountsTextView.setText(misc.toCurrency(pay.getDiscounts().getSum().getAll()));
-        expectedSum -= pay.getDiscounts().getSum().getAll();
 
         // Bonus
         _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
-        expectedSum += pay.getBonuses().getSum().getCharged();
 
         // Penalty
         _penaltyTextView.setText(misc.toCurrency(pay.getPenalties().getSum().getCharged()));
-        expectedSum -= pay.getPenalties().getSum().getCharged();
 
-        // Expected Total
-        _expectedTotalTextView.setText(misc.toCurrency(expectedSum));
 
         // Insurance and Field Nation fees
         _feePercentTextView.setVisibility(GONE);
