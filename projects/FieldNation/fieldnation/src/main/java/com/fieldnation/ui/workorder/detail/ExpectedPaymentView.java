@@ -112,26 +112,29 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             return;
         }
 
+        Double expectedSum = pay.getLaborSum();
 
         // Labor
         _laborTextView.setText(misc.toCurrency(pay.getLaborSum()));
 
         // Expenses approved
         _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
+        expectedSum += pay.getExpenses().getSum().getCharged();
 
         // Discounts
         _discountsTextView.setText(misc.toCurrency(pay.getDiscounts().getSum().getAll()));
+        expectedSum -= pay.getDiscounts().getSum().getAll();
 
         // Bonus
         _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
+        expectedSum += pay.getBonuses().getSum().getCharged();
 
         // Penalty
         _penaltyTextView.setText(misc.toCurrency(pay.getPenalties().getSum().getCharged()));
+        expectedSum -= pay.getPenalties().getSum().getCharged();
 
-        // Total
-        _expectedTotalTextView.setText(misc.toCurrency(pay.getTotal()));
-
-        Double sum = pay.getTotal();
+        // Expected Total
+        _expectedTotalTextView.setText(misc.toCurrency(expectedSum));
 
         // Insurance and Field Nation fees
         _feePercentTextView.setVisibility(GONE);
@@ -148,7 +151,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
                 _feeTextView.setVisibility(VISIBLE);
                 _feePercentTextView.setVisibility(VISIBLE);
-                sum -= Math.round(fee.getAmount() * 100.0) / 100.0;
             } else if (fee.getName().equals("insurance")) {
                 _insuranceFeeTextView.setText(misc.toCurrency(fee.getAmount()));
                 _insurancePercentTextView.setText(String.format(
@@ -157,12 +159,11 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
                 _insuranceFeeTextView.setVisibility(VISIBLE);
                 _insurancePercentTextView.setVisibility(VISIBLE);
-
-                sum -= Math.round(fee.getAmount() * 100.0) / 100.0;
             }
         }
 
-        _totalTextView.setText(misc.toCurrency(sum));
+        _totalTextView.setText(misc.toCurrency(pay.getTotal()));
+
         if (_workOrder.getStatus().getId() == 5) {
             _payStatusTextView.setText("Pending");
         } else if (pay.getPayment() != null
