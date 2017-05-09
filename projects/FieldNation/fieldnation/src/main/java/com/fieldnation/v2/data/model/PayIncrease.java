@@ -263,8 +263,8 @@ public class PayIncrease implements Parcelable {
     public enum StatusEnum {
         @Json(name = "accepted")
         ACCEPTED("accepted"),
-        @Json(name = "declined")
-        DECLINED("declined"),
+        @Json(name = "denied")
+        DENIED("denied"),
         @Json(name = "pending")
         PENDING("pending");
 
@@ -300,6 +300,10 @@ public class PayIncrease implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "accept")
         ACCEPT("accept"),
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "deny")
+        DENY("deny"),
         @Json(name = "edit")
         EDIT("edit");
 

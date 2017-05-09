@@ -260,7 +260,7 @@ public class PayDialog extends SimpleDialog {
             int _no = Integer.parseInt(_noStr);
             return _no;
         } catch (Exception ex) {
-            return 0;
+            return getDouble(_noStr).intValue();
         }
     }
 

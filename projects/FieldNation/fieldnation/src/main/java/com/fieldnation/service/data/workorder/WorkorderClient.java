@@ -215,13 +215,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 */
 
+/*
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
         WorkorderTransactionBuilder.actionCompleteTask(context, workorderId, taskId);
     }
+*/
 
+/*
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type, null);
     }
+*/
 
 /*
     public static void actionRunningLate(Context context, long workorderId, String explanation, Integer delayInSeconds) {
@@ -352,12 +356,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             Ratings               -*/
     /*-*************************************-*/
+/*
     public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,
                                   int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
         context.startService(
                 WorkorderTransactionBuilder.actionPostRatingIntent(context, workorderId, satisfactionRating, scopeRating,
                         respectRating, respectComment, recommendBuyer, otherComments));
     }
+*/
 
     public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,
                                   int respectRating, String otherComments) {
@@ -497,9 +503,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
+/*
     public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds, startTime, endTime, note);
     }
+*/
 
     public static void actionAcceptAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
         WorkorderTransactionBuilder.actionAccept(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
@@ -560,10 +568,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*****************************************-*/
     /*-             workorder bundle            -*/
     /*-*****************************************-*/
+/*
     public static void getBundle(Context context, long bundleId) {
         getBundle(context, bundleId, true, false);
     }
+*/
 
+/*
     public static void getBundle(Context context, long bundleId, boolean allowCache, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
@@ -572,7 +583,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
+*/
 
+/*
     public boolean subBundle() {
         return subBundle(false);
     }
@@ -586,6 +599,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
         return register(topicId);
     }
+*/
 
     /*-*************************************-*/
     /*-             deliverables            -*/

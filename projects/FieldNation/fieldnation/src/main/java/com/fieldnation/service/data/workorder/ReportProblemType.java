@@ -10,7 +10,7 @@ public enum ReportProblemType {
     // 1 I can't make it to my assignment
     CANNOT_MAKE_ASSIGNMENT("CANNOT_MAKE_ASSIGNMENT", R.string.i_cant_make_my_assignment),
     // 2 I'm going to be late
-    WILL_BE_LATE("WILL_BE_LATE", R.string.im_going_to_be_late),
+//    WILL_BE_LATE("WILL_BE_LATE", R.string.im_going_to_be_late),
 
     // 4 A Shipment
     DO_NOT_HAVE_SHIPMENT("DO_NOT_HAVE_SHIPMENT", R.string.a_shipment),

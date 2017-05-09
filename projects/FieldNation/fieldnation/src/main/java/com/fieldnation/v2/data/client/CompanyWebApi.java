@@ -1,12 +1,18 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -15,20 +21,15 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CompanyFeatures;
-import com.fieldnation.v2.data.model.CompanyIntegrations;
-import com.fieldnation.v2.data.model.CompanyRating;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.FundTransaction;
-import com.fieldnation.v2.data.model.SavedCreditCards;
-import com.fieldnation.v2.data.model.Tag;
-import com.fieldnation.v2.data.model.Tags;
 
 /**
  * Created by dmgen from swagger.
@@ -111,7 +112,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: addTag
      * Adds a tag to a company for selection on a work order basis
      *
-     * @param tag   Tag
+     * @param tag Tag
      * @param async Async (Optional)
      */
     public static void addTag(Context context, Tag tag, Boolean async) {
@@ -154,7 +155,7 @@ public class CompanyWebApi extends TopicClient {
      * Swagger operationId: getCompanyDetails
      * Get Company Details
      *
-     * @param companyId    ID of company
+     * @param companyId ID of company
      * @param isBackground indicates that this call is low priority
      */
     public static void getCompanyDetails(Context context, Integer companyId, boolean allowCacheResponse, boolean isBackground) {
@@ -177,6 +178,44 @@ public class CompanyWebApi extends TopicClient {
                     .listenerParams(
                             TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
                                     CompanyWebApi.class, "getCompanyDetails", methodParams))
+                    .useAuth(true)
+                    .isSyncCall(isBackground)
+                    .request(builder)
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
+
+            if (allowCacheResponse) new CacheDispatcher(context, key);
+        } catch (Exception ex) {
+            Log.v(STAG, ex);
+        }
+    }
+
+    /**
+     * Swagger operationId: getCompanyManagers
+     * Gets a list of company managers
+     *
+     * @param isBackground indicates that this call is low priority
+     */
+    public static void getCompanyManagers(Context context, boolean allowCacheResponse, boolean isBackground) {
+        try {
+            String key = misc.md5("GET//api/rest/v2/company/managers");
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v2/company/managers");
+
+            JsonObject methodParams = new JsonObject();
+
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET//api/rest/v2/company/managers")
+                    .key(key)
+                    .priority(Priority.HIGH)
+                    .listener(TransactionListener.class)
+                    .listenerParams(
+                            TransactionListener.params("TOPIC_ID_WEB_API_V2/CompanyWebApi",
+                                    CompanyWebApi.class, "getCompanyManagers", methodParams))
                     .useAuth(true)
                     .isSyncCall(isBackground)
                     .request(builder)
@@ -524,7 +563,15 @@ public class CompanyWebApi extends TopicClient {
      * @param featureId   Feature ID
      * @param accessToken null
      */
-    public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken) {
+    public static void getSendRequestedFeatures(Context context, Integer featureId, String accessToken, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("getSendRequestedFeatures")
+                .label(featureId + "")
+                .category("company")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("PUT//api/rest/v2/company/features/" + featureId + "?access_token=" + accessToken);
 
@@ -641,7 +688,17 @@ public class CompanyWebApi extends TopicClient {
      * @param companyId ID of company
      * @param financeId ID of finance account
      */
-    public static void updateFund(Context context, Integer companyId, Integer financeId) {
+    public static void updateFund(Context context, Integer companyId, Integer financeId, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFundByFund")
+                .label(companyId + "")
+                .category("funds")
+                .addContext(uiContext)
+                .property("finance_id")
+                .value(financeId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -680,7 +737,17 @@ public class CompanyWebApi extends TopicClient {
      * @param financeId       ID of finance account
      * @param fundTransaction Transaction attempting to be created (Optional)
      */
-    public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction) {
+    public static void updateFund(Context context, Integer companyId, Integer financeId, FundTransaction fundTransaction, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("updateFundByFund")
+                .label(companyId + "")
+                .category("funds")
+                .addContext(uiContext)
+                .property("finance_id")
+                .value(financeId)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/company/" + companyId + "/funds/" + financeId);
 
@@ -811,7 +878,7 @@ public class CompanyWebApi extends TopicClient {
                             successObject = Tags.fromJson(new JsonObject(data));
                             break;
                         case "getSelectionRules":
-//                            successObject = SelectionRules.fromJson(new JsonObject(data));
+                            //successObject = SelectionRules.fromJson(new JsonObject(data));
                             break;
                         case "getFeatures":
                             successObject = CompanyFeatures.fromJson(new JsonObject(data));
@@ -823,9 +890,10 @@ public class CompanyWebApi extends TopicClient {
                             successObject = CompanyRating.fromJson(new JsonObject(data));
                             break;
                         case "getPredefinedExpenses":
-//                            successObject = PredefinedExpenses.fromJson(new JsonObject(data));
+                            //successObject = PredefinedExpenses.fromJson(new JsonObject(data));
                             break;
                         case "getCompanyDetails":
+                        case "getCompanyManagers":
                         case "getManagedProviders":
                         case "getSendRequestedFeatures":
                         case "updateFund":
@@ -839,6 +907,7 @@ public class CompanyWebApi extends TopicClient {
                     switch (transactionParams.apiFunction) {
                         case "addTag":
                         case "getCompanyDetails":
+                        case "getCompanyManagers":
                         case "getCompanyUserCreditCards":
                         case "getFeatures":
                         case "getIntegrations":

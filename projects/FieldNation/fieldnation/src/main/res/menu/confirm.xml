@@ -7,14 +7,14 @@
         android:id="@+id/remindme_menuitem"
         android:enabled="true"
         android:orderInCategory="300"
-        android:title="REMIND ME"
+        android:title="@string/btn_remind_me"
         app:actionViewClass="com.fieldnation.ui.menu.RemindMeMenuButton"
         app:showAsAction="always" />
     <item
         android:id="@+id/done_menuitem"
         android:enabled="true"
         android:orderInCategory="400"
-        android:title="DONE"
+        android:title="@string/btn_done"
         app:actionViewClass="com.fieldnation.ui.menu.DoneMenuButton"
         app:showAsAction="always" />
 </menu>

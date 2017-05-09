@@ -74,8 +74,7 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     protected void onPause() {
         super.onPause();
 
-        if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
     }
 
     private final AdditionalOptionsScreen.Listener _screen_listener = new AdditionalOptionsScreen.Listener() {

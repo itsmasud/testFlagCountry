@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
             android:gravity="center_horizontal"
-            android:text="Edit your profile"
+            android:text="@string/edit_your_profile"
             android:textColor="@color/white" />
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_marginLeft="18dp"
             android:layout_marginRight="18dp"
             android:gravity="center_horizontal"
-            android:text="Currently to edit your profile you will need to visit app.fieldnation.com"
+            android:text="@string/currently_to_edit_your"
             android:textColor="@color/white"
             android:textStyle="bold" />
 

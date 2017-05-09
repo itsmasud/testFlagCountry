@@ -11,7 +11,11 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpScreenDisplayUiContext;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -21,7 +25,6 @@ import com.fieldnation.ui.menu.RemindMeMenuButton;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
 import com.fieldnation.v2.data.model.SavedList;
 import com.fieldnation.v2.data.model.WorkOrders;
-import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
@@ -30,9 +33,6 @@ import com.fieldnation.v2.ui.nav.NavActivity;
 
 public class ConfirmActivity extends AuthSimpleActivity {
     private static final String TAG = "ConfirmActivity";
-
-    // Dialogs
-    private static final String DIALOG_REMIND_ME = TAG + ".remindMeDialog";
 
     // Ui
     private ConfirmResultScreen _recyclerView;
@@ -63,6 +63,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
         setTitle("Confirm Work");
 
+        App.get().getSpUiContext().page = "Confirm Work";
+
         try {
             _savedList = new SavedList().id("workorders_assignments");
         } catch (Exception ex) {
@@ -84,22 +86,9 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        TwoButtonDialog.addOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         _recyclerView.startSearch(_savedList, _options);
-    }
-
-    @Override
-    protected void onStop() {
-        TwoButtonDialog.removeOnPrimaryListener(DIALOG_REMIND_ME, _remindMe_onOk);
-
-        super.onStop();
     }
 
     @Override
@@ -137,8 +126,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         @Override
         public void OnWorkOrderListReceived(final WorkOrders workOrders) {
             if (workOrders == null
-                    || workOrders.getResults() == null
-                    || workOrders.getResults().length == 0) {
+                    || workOrders.getResults() == null) {
                 return;
             }
 
@@ -173,13 +161,16 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final View.OnClickListener _remindMeButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            TwoButtonDialog.show(App.get(), DIALOG_REMIND_ME, "Remind Me", "You will be reminded in 30 minutes to confirm your work orders.", "OK", "CANCEL", true, null);
-        }
-    };
-
-    private final TwoButtonDialog.OnPrimaryListener _remindMe_onOk = new TwoButtonDialog.OnPrimaryListener() {
-        @Override
-        public void onPrimary() {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpScreenDisplayUiContext.Builder().page("Confirm Work Screen").build())
+                    .addContext(new SpUIContext.Builder()
+                            .elementAction("Click")
+                            .elementIdentity("Remind Me Action")
+                            .elementType("Button")
+                            .page("Confirm Work Screen")
+                            .build())
+                    .build()
+            );
             NavActivity.startNew(App.get());
             finish();
         }

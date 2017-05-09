@@ -28,5 +28,5 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/body_textview"
         android:layout_marginRight="8dp"
-        android:text="OK" />
+        android:text="@string/btn_ok" />
 </RelativeLayout>

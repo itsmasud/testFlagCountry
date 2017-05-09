@@ -28,7 +28,7 @@
         android:layout_below="@+id/body_textview"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:text="OK" />
+        android:text="@string/btn_ok" />
 
     <Button
         android:id="@+id/secondary_button"
@@ -36,6 +36,6 @@
         android:layout_below="@+id/body_textview"
         android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/primary_button"
-        android:text="CANCEL" />
+        android:text="@string/btn_cancel" />
 
 </RelativeLayout>

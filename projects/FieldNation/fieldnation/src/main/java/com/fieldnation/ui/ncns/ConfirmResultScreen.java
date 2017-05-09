@@ -112,8 +112,7 @@ public class ConfirmResultScreen extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
 
@@ -204,9 +203,11 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
-                // TODO see if getList() is the list ID
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
+                    return;
+
+                if (workOrders.getMetadata().getPerPage() != 65)
                     return;
 
                 if (_onListReceivedListener != null)

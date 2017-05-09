@@ -120,10 +120,8 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     public void onDetach() {
         Log.v(TAG, "onDetach()");
 
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(App.get());
-        if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(App.get());
+        if (_profileClient != null) _profileClient.disconnect(App.get());
+        if (_photoClient != null) _photoClient.disconnect(App.get());
         _picCache.clear();
 
         super.onDetach();

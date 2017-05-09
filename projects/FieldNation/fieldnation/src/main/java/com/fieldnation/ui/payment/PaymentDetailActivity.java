@@ -92,8 +92,7 @@ public class PaymentDetailActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
-        if (_paymentClient != null && _paymentClient.isConnected())
-            _paymentClient.disconnect(App.get());
+        if (_paymentClient != null) _paymentClient.disconnect(App.get());
         super.onPause();
     }
 

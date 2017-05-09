@@ -93,6 +93,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "policy_and_procedures")
     private RichText _policyAndProcedures;
 
+    @Json(name = "problems")
+    private Problems _problems;
+
     @Json(name = "project")
     private Project _project;
 
@@ -770,6 +773,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder policyAndProcedures(RichText policyAndProcedures) throws ParseException {
         _policyAndProcedures = policyAndProcedures;
         SOURCE.put("policy_and_procedures", policyAndProcedures.getJson());
+        return this;
+    }
+
+    public void setProblems(Problems problems) throws ParseException {
+        _problems = problems;
+        SOURCE.put("problems", problems.getJson());
+    }
+
+    public Problems getProblems() {
+        try {
+            if (_problems == null && SOURCE.has("problems") && SOURCE.get("problems") != null)
+                _problems = Problems.fromJson(SOURCE.getJsonObject("problems"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_problems != null && _problems.isSet())
+            return _problems;
+
+        return null;
+    }
+
+    public WorkOrder problems(Problems problems) throws ParseException {
+        _problems = problems;
+        SOURCE.put("problems", problems.getJson());
         return this;
     }
 

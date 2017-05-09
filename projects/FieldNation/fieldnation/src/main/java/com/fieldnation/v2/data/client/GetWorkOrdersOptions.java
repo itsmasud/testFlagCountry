@@ -22,7 +22,7 @@ public class GetWorkOrdersOptions implements Parcelable {
     private String _list;
 
     @Json(name = "columns")
-    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests,eta,routes";
+    private String _columns = "work_order_id,title,type_of_work,company,location,bundle,pay,schedule,actions,time_logs,status,requests,eta,routes,problems";
 
     @Json(name = "page")
     private Integer _page;
@@ -59,6 +59,9 @@ public class GetWorkOrdersOptions implements Parcelable {
 
     @Json(name = "fCounterOffers")
     private Boolean _fCounterOffers;
+
+    @Json(name = "fWorkOrderId")
+    private String _fWorkOrderId;
 
     @Json(name = "fHourly")
     private String _fHourly;
@@ -472,6 +475,27 @@ public class GetWorkOrdersOptions implements Parcelable {
 
     public String getFCounterOffersUrlParam() {
         return "f_counter_offers=" + _fCounterOffers;
+    }
+
+    public void setFWorkOrderId(String fWorkOrderId) {
+        _fWorkOrderId = fWorkOrderId;
+    }
+
+    public String getFWorkOrderId() {
+        return _fWorkOrderId;
+    }
+
+    public GetWorkOrdersOptions fWorkOrderId(String fWorkOrderId) {
+        _fWorkOrderId = fWorkOrderId;
+        return this;
+    }
+
+    public boolean isFWorkOrderIdSet() {
+        return _fWorkOrderId != null;
+    }
+
+    public String getFWorkOrderIdUrlParam() {
+        return "f_work_order_id=" + _fWorkOrderId;
     }
 
     public void setFHourly(String fHourly) {

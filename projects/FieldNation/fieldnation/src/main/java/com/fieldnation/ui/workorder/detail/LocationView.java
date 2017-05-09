@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -145,9 +147,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_gmapsClient != null && _gmapsClient.isConnected()) {
-            _gmapsClient.disconnect(App.get());
-        }
+        if (_gmapsClient != null) _gmapsClient.disconnect(App.get());
         _simpleGps.stop();
         super.onDetachedFromWindow();
     }
@@ -164,10 +164,7 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     }
 
     private void populateUi() {
-        if (_workOrder == null)
-            return;
-
-        if (_mapImageView == null)
+        if (_workOrder == null || _mapImageView == null || _workOrder.getLocation() == null)
             return;
 
         setVisibility(VISIBLE);
@@ -183,8 +180,10 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
     private void calculateAddressTileVisibility() {
         if (_invalidAddress) return;
 
-        if (_workOrder.getLocation() == null || _workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE)
+        if (_workOrder.getLocation() == null) {
             _actionButton.setVisibility(GONE);
+            return;
+        }
 
         // hide stuff that shouldn't be seen
         if (_workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE) {
@@ -287,15 +286,16 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         }
 
         // display location notes
-/*
-TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
-            _noteTextView.setVisibility(GONE);
-        } else {
+        if (loc.getNotes() != null
+                && loc.getNotes().length > 0
+                && loc.getNotes()[0] != null
+                && !misc.isEmptyOrNull(loc.getNotes()[0].getText())) {
             _noteTextView.setVisibility(VISIBLE);
-            _noteTextView.setText(misc.linkifyHtml(loc.getNotes(), Linkify.ALL));
+            _noteTextView.setText(misc.linkifyHtml(loc.getNotes()[0].getText(), Linkify.ALL));
             _noteTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            _noteTextView.setVisibility(GONE);
         }
-*/
     }
 
     private void populateMap() {
@@ -372,7 +372,8 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
             return;
 
         Log.v(TAG, "lookupMap - 4");
-        if (_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0) {
+        if ((_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0)
+                && (_workOrder != null && _workOrder.getLocation() != null)) {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -460,7 +461,7 @@ TODO        if (misc.isEmptyOrNull(loc.getNotes())) {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkOrderActivity.startNew(getContext(), _workOrder.getId().intValue(), WorkOrderActivity.TAB_MESSAGE);
+                    WorkOrderActivity.startNew(getContext(), _workOrder.getId(), WorkOrderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {

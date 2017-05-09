@@ -95,10 +95,14 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
 10    Deleted
          */
 
-        if (_workOrder.getStatus() != null
-                && _workOrder.getStatus().getId() != null
-                && _workOrder.getStatus().getId() == 3) {
+        if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             _editEtaButton.setVisibility(VISIBLE);
+            _editEtaButton.setText(R.string.btn_set_eta);
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+            _editEtaButton.setVisibility(VISIBLE);
+            _editEtaButton.setText(R.string.btn_edit_eta);
         } else {
             _editEtaButton.setVisibility(GONE);
         }

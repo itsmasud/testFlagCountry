@@ -40,13 +40,13 @@ public class Message implements Parcelable {
     private Integer _msgId;
 
     @Json(name = "parent_id")
-    private Boolean _parentId;
+    private Integer _parentId;
 
     @Json(name = "read")
     private Boolean _read;
 
     @Json(name = "replies")
-    private Messages _replies;
+    private Message[] _replies;
 
     @Json(name = "role")
     private String _role;
@@ -195,15 +195,15 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setParentId(Boolean parentId) throws ParseException {
+    public void setParentId(Integer parentId) throws ParseException {
         _parentId = parentId;
         SOURCE.put("parent_id", parentId);
     }
 
-    public Boolean getParentId() {
+    public Integer getParentId() {
         try {
             if (_parentId == null && SOURCE.has("parent_id") && SOURCE.get("parent_id") != null)
-                _parentId = SOURCE.getBoolean("parent_id");
+                _parentId = SOURCE.getInt("parent_id");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -211,7 +211,7 @@ public class Message implements Parcelable {
         return _parentId;
     }
 
-    public Message parentId(Boolean parentId) throws ParseException {
+    public Message parentId(Integer parentId) throws ParseException {
         _parentId = parentId;
         SOURCE.put("parent_id", parentId);
         return this;
@@ -239,28 +239,30 @@ public class Message implements Parcelable {
         return this;
     }
 
-    public void setReplies(Messages replies) throws ParseException {
+    public void setReplies(Message[] replies) throws ParseException {
         _replies = replies;
-        SOURCE.put("replies", replies.getJson());
+        SOURCE.put("replies", Message.toJsonArray(replies));
     }
 
-    public Messages getReplies() {
+    public Message[] getReplies() {
         try {
-            if (_replies == null && SOURCE.has("replies") && SOURCE.get("replies") != null)
-                _replies = Messages.fromJson(SOURCE.getJsonObject("replies"));
+            if (_replies != null)
+                return _replies;
+
+            if (SOURCE.has("replies") && SOURCE.get("replies") != null) {
+                _replies = Message.fromJsonArray(SOURCE.getJsonArray("replies"));
+            }
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_replies != null && _replies.isSet())
         return _replies;
-
-        return null;
     }
 
-    public Message replies(Messages replies) throws ParseException {
+    public Message replies(Message[] replies) throws ParseException {
         _replies = replies;
-        SOURCE.put("replies", replies.getJson());
+        SOURCE.put("replies", Message.toJsonArray(replies), true);
         return this;
     }
 

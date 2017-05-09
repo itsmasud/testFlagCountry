@@ -7,6 +7,10 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
@@ -17,6 +21,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -148,7 +153,15 @@ public class StaffWebApi extends TopicClient {
      * @param workOrderId ID of work order
      * @param body        null
      */
-    public static void sendCommunication(Context context, Integer workOrderId, String body) {
+    public static void sendCommunication(Context context, Integer workOrderId, String body, EventContext uiContext) {
+        Tracker.event(context, new SimpleEvent.Builder()
+                .action("sendCommunicationByWorkOrder")
+                .label(workOrderId + "")
+                .category("recruitment")
+                .addContext(uiContext)
+                .build()
+        );
+
         try {
             String key = misc.md5("POST//api/rest/v2/staff/recruitment/send-communications/" + workOrderId);
 

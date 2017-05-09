@@ -28,7 +28,7 @@ public class DurationPickerDialog extends SimpleDialog {
     private static final String STATE_HOUR = "STATE_HOUR";
     private static final String STATE_MINUTE = "STATE_MINUTE";
 
-    private static final int DEFAULT_MINUTE_SELECTION = 1;
+    private static final int DEFAULT_MINUTE_SELECTION = 0;
 
     // Ui
     private FnNumberPicker _hourFnNumberPicker;

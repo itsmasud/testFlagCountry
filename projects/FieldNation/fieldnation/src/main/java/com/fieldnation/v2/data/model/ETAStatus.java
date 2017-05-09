@@ -24,9 +24,6 @@ import java.util.Set;
 public class ETAStatus implements Parcelable {
     private static final String TAG = "ETAStatus";
 
-    @Json(name = "condition")
-    private Condition _condition;
-
     @Json(name = "name")
     private NameEnum _name;
 
@@ -42,31 +39,6 @@ public class ETAStatus implements Parcelable {
 
     public ETAStatus(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setCondition(Condition condition) throws ParseException {
-        _condition = condition;
-        SOURCE.put("condition", condition.getJson());
-    }
-
-    public Condition getCondition() {
-        try {
-            if (_condition == null && SOURCE.has("condition") && SOURCE.get("condition") != null)
-                _condition = Condition.fromJson(SOURCE.getJsonObject("condition"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (_condition != null && _condition.isSet())
-            return _condition;
-
-        return null;
-    }
-
-    public ETAStatus condition(Condition condition) throws ParseException {
-        _condition = condition;
-        SOURCE.put("condition", condition.getJson());
-        return this;
     }
 
     public void setName(NameEnum name) throws ParseException {

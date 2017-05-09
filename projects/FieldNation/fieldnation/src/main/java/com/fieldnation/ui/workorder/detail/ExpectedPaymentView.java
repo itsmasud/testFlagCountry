@@ -24,7 +24,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
     private TextView _bonusTextView;
     private TextView _penaltyTextView;
     private TextView _discountsTextView;
-    private TextView _expectedTotalTextView;
     private TextView _feePercentTextView;
     private TextView _feeTextView;
     private TextView _insurancePercentTextView;
@@ -60,7 +59,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _bonusTextView = (TextView) findViewById(R.id.bonus_textview);
         _penaltyTextView = (TextView) findViewById(R.id.penalty_textview);
         _discountsTextView = (TextView) findViewById(R.id.discounts_textview);
-        _expectedTotalTextView = (TextView) findViewById(R.id.expectedtotal_textview);
 
         _feePercentTextView = (TextView) findViewById(R.id.feePercentage_textview);
         _feeTextView = (TextView) findViewById(R.id.fee_textview);
@@ -112,6 +110,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             return;
         }
 
+        Double expectedSum = pay.getLaborSum();
 
         // Labor
         _laborTextView.setText(misc.toCurrency(pay.getLaborSum()));
@@ -120,18 +119,14 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
 
         // Discounts
-        _discountsTextView.setText(misc.toCurrency(pay.getDiscounts().getSum().getAll()));
+        _discountsTextView.setText(misc.toCurrency(-pay.getDiscounts().getSum().getAll()));
 
         // Bonus
         _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
 
         // Penalty
-        _penaltyTextView.setText(misc.toCurrency(pay.getPenalties().getSum().getCharged()));
+        _penaltyTextView.setText(misc.toCurrency(-pay.getPenalties().getSum().getCharged()));
 
-        // Total
-        _expectedTotalTextView.setText(misc.toCurrency(pay.getTotal()));
-
-        Double sum = pay.getTotal();
 
         // Insurance and Field Nation fees
         _feePercentTextView.setVisibility(GONE);
@@ -141,31 +136,31 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         PayModifier[] fees = pay.getFees();
         for (PayModifier fee : fees) {
             if (fee.getName().equals("provider")) {
-                _feeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _feeTextView.setText(misc.toCurrency(-fee.getAmount()));
                 _feePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_fee_percentage),
                         (float) (fee.getModifier() * 100)));
 
                 _feeTextView.setVisibility(VISIBLE);
                 _feePercentTextView.setVisibility(VISIBLE);
-                sum -= Math.round(fee.getModifier() * pay.getTotal() * 100.0) / 100.0;
             } else if (fee.getName().equals("insurance")) {
-                _insuranceFeeTextView.setText(misc.toCurrency(fee.getModifier() * pay.getTotal()));
+                _insuranceFeeTextView.setText(misc.toCurrency(-fee.getAmount()));
                 _insurancePercentTextView.setText(String.format(
                         getContext().getString(R.string.fieldnation_expected_insurance_percentage),
                         (float) (fee.getModifier() * 100)));
 
                 _insuranceFeeTextView.setVisibility(VISIBLE);
                 _insurancePercentTextView.setVisibility(VISIBLE);
-
-                sum -= Math.round(fee.getModifier() * pay.getTotal() * 100.0) / 100.0;
             }
         }
 
-        _totalTextView.setText(misc.toCurrency(sum));
+        _totalTextView.setText(misc.toCurrency(pay.getTotal()));
+
         if (_workOrder.getStatus().getId() == 5) {
             _payStatusTextView.setText("Pending");
-        } else if (pay.getPayment().getCharged()) {
+        } else if (pay.getPayment() != null
+                && pay.getPayment().getCharged() != null
+                && pay.getPayment().getCharged()) {
             _payStatusTextView.setText("Paid");
         } else {
             _payStatusTextView.setText("Unpaid");

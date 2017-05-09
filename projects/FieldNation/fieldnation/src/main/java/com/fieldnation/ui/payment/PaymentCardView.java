@@ -86,7 +86,6 @@ public class PaymentCardView extends RelativeLayout {
             _paymentTextView.setText("NA");
         }
         try {
-            // TODO create string resources.
             if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
                 _subTitleTextView.setText(getResources().getString(R.string.num_workorders_and_payments,
                         getResources().getQuantityString(

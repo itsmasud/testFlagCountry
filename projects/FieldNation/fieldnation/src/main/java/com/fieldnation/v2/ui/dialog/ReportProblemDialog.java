@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog.v2;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -17,22 +17,20 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.workorder.ReportProblemListFactory;
-import com.fieldnation.service.data.workorder.ReportProblemType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.dialog.v2.CancelWarningDialog;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Condition;
-import com.fieldnation.v2.data.model.ETA;
-import com.fieldnation.v2.data.model.ETAStatus;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.ProblemType;
+import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael on 10/5/2016.
@@ -44,7 +42,6 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
 
     // State keys
-    private static final String PARAM_WORKORDER_ID = "workOrderId";
     private static final String PARAM_WORKORDER = "workOrder";
 
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -70,17 +67,15 @@ public class ReportProblemDialog extends SimpleDialog {
     private Button _okButton;
 
     // Data
-    private ReportProblemType[] _primaryList = null;
-    private ReportProblemType[] _secondaryList = null;
-    private long _workOrderId;
-    private WorkorderClient _workorderClient;
+    private ProblemType[] _parentTypes = null;
+    private ProblemType[] _childTypes = null;
+    private WorkOrder _workOrder;
 
     // Saved Data
-    private Workorder _workorder;
     private int _primaryPosition = -1;
     private int _secondaryPosition = -1;
     private int _timeframePosition = -1;
-    private ReportProblemType _selectedProblem = null;
+    private ProblemType _selectedProblem = null;
     private boolean _clear = false;
 
     public ReportProblemDialog(Context context, ViewGroup container) {
@@ -122,15 +117,8 @@ public class ReportProblemDialog extends SimpleDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         setLoading(true);
-        _workorder = null;
-        _workOrderId = payload.getLong(PARAM_WORKORDER_ID);
-
         if (payload.containsKey(PARAM_WORKORDER)) {
-            _workorder = (Workorder) payload.getParcelable(PARAM_WORKORDER);
-        } else {
-            _workorderClient = new WorkorderClient(_workorderClient_listener);
-            _workorderClient.connect(App.get());
-            WorkorderClient.get(App.get(), _workOrderId, false);
+            _workOrder = payload.getParcelable(PARAM_WORKORDER);
         }
 
         populateUi();
@@ -165,8 +153,6 @@ public class ReportProblemDialog extends SimpleDialog {
 
     @Override
     public void dismiss(boolean animate) {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
 
         super.dismiss(animate);
     }
@@ -185,28 +171,30 @@ public class ReportProblemDialog extends SimpleDialog {
             _secondaryPosition = savedState.getInt(STATE_SECONDARY_POS);
 
         if (savedState.containsKey(STATE_WORKORDER))
-            _workorder = savedState.getParcelable(STATE_WORKORDER);
+            _workOrder = savedState.getParcelable(STATE_WORKORDER);
 
         if (savedState.containsKey(STATE_SELECTED_PROBLEM))
-            _selectedProblem = ReportProblemType.values()[savedState.getInt(STATE_SELECTED_PROBLEM)];
+            _selectedProblem = savedState.getParcelable(STATE_SELECTED_PROBLEM);
 
         if (savedState.containsKey(STATE_OK_ENABLED))
             _okButton.setEnabled(savedState.getBoolean(STATE_OK_ENABLED));
 
-        if (_workorder != null) {
-            _primaryList = ReportProblemListFactory.getPrimaryList(_workorder);
-            if (_primaryList != null) {
+        if (_workOrder != null) {
+            Problems problems = _workOrder.getProblems();
+
+            if (problems != null && problems.getTypes() != null && problems.getTypes().length > 0) {
                 getPrimaryAdapter().clear();
-                getPrimaryAdapter().addAll((Object[]) _primaryList);
+                getPrimaryAdapter().addAll((Object[]) problems.getTypes());
 
                 if (_primaryPosition != -1) {
                     getPrimarySpinner().setSelection(_primaryPosition);
-                    _secondaryList = ReportProblemListFactory.getSecondaryList(_workorder, _primaryList[_primaryPosition]);
-                    if (_secondaryList != null) {
+
+                    _childTypes = problems.getTypes()[_primaryPosition].getChildren();
+                    if (_childTypes != null && _childTypes.length > 0) {
                         getSecondaryAdapter().clear();
-                        getSecondaryAdapter().addAll((Object[]) _secondaryList);
+                        getSecondaryAdapter().addAll((Object[]) _childTypes);
                     }
-                    if (_secondaryPosition != -1 && _secondaryList != null) {
+                    if (_secondaryPosition != -1 && _childTypes != null && _childTypes.length > 0) {
                         getSecondarySpinner().setSelection(_secondaryPosition);
                     } else {
                         getSecondarySpinner().clearSelection();
@@ -227,10 +215,10 @@ public class ReportProblemDialog extends SimpleDialog {
     public void onSaveDialogState(Bundle outState) {
         outState.putInt(STATE_PRIMARY_POS, _primaryPosition);
         outState.putInt(STATE_SECONDARY_POS, _secondaryPosition);
-        if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_workOrder != null)
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
         if (_selectedProblem != null)
-            outState.putInt(STATE_SELECTED_PROBLEM, _selectedProblem.ordinal());
+            outState.putParcelable(STATE_SELECTED_PROBLEM, _selectedProblem);
         if (_okButton != null)
             outState.putBoolean(STATE_OK_ENABLED, _okButton.isEnabled());
 
@@ -240,10 +228,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private HintSpinner getPrimarySpinner() {
         if (_primarySpinner != null && _primarySpinner.getAdapter() == null) {
             HintArrayAdapter adapter = new HintArrayAdapter(getView().getContext(), R.layout.view_spinner_item);
-
-            adapter.setDropDownViewResource(
-                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
+            adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
             _primarySpinner.setAdapter(adapter);
         }
         return _primarySpinner;
@@ -256,10 +241,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private HintSpinner getSecondarySpinner() {
         if (_secondarySpinner != null && _secondarySpinner.getAdapter() == null) {
             HintArrayAdapter adapter = new HintArrayAdapter(getView().getContext(), R.layout.view_spinner_item);
-
-            adapter.setDropDownViewResource(
-                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
+            adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
             _secondarySpinner.setAdapter(adapter);
         }
         return _secondarySpinner;
@@ -271,12 +253,8 @@ public class ReportProblemDialog extends SimpleDialog {
 
     private HintSpinner getTimeFrameSpinner() {
         if (_timeframeSpinner != null && _timeframeSpinner.getAdapter() == null) {
-            HintArrayAdapter adapter = HintArrayAdapter.createFromArray(getView().getContext(),
-                    TIMEFRAMES, R.layout.view_spinner_item);
-
-            adapter.setDropDownViewResource(
-                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
+            HintArrayAdapter adapter = HintArrayAdapter.createFromArray(getView().getContext(), TIMEFRAMES, R.layout.view_spinner_item);
+            adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
             _timeframeSpinner.setAdapter(adapter);
         }
         return _timeframeSpinner;
@@ -290,22 +268,22 @@ public class ReportProblemDialog extends SimpleDialog {
         if (_noteTextView == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         setLoading(false);
 
         { // put in a block to limit the scope of pList
-            ReportProblemType[] pList = ReportProblemListFactory.getPrimaryList(_workorder);
+            ProblemType[] types = _workOrder.getProblems().getTypes();
 
-            if (pList == null) {
-                _primaryList = null;
+            if (types == null || types.length == 0) {
+                _parentTypes = null;
                 getPrimaryAdapter().clear();
                 getPrimarySpinner().clearSelection();
-            } else if (pList != _primaryList) {
-                _primaryList = pList;
+            } else if (types != _parentTypes) {
+                _parentTypes = types;
                 getPrimaryAdapter().clear();
-                getPrimaryAdapter().addAll((Object[]) _primaryList);
+                getPrimaryAdapter().addAll((Object[]) _parentTypes);
                 getPrimarySpinner().clearSelection();
             }
         }
@@ -315,26 +293,27 @@ public class ReportProblemDialog extends SimpleDialog {
         _noteTextView.setVisibility(View.GONE);
         _timeframeSpinner.setVisibility(View.GONE);
 
-        if (_primaryList == null) {
+        if (_parentTypes == null) {
             return;
         }
 
         if (_primaryPosition >= 0) {
-            ReportProblemType[] sList = ReportProblemListFactory.getSecondaryList(_workorder, _primaryList[_primaryPosition]);
+            ProblemType[] childTypes = _workOrder.getProblems().getTypes()[_primaryPosition].getChildren();
 
-            if (sList == null) {
-                _secondaryList = null;
+            if (childTypes == null || childTypes.length == 0) {
+                _childTypes = null;
+                _secondaryPosition = -1;
                 getSecondarySpinner().setVisibility(View.GONE);
                 getSecondaryAdapter().clear();
-            } else if (sList != _secondaryList) {
-                _secondaryList = sList;
+            } else if (childTypes != _childTypes) {
+                _childTypes = childTypes;
                 getSecondaryAdapter().clear();
-                getSecondaryAdapter().addAll((Object[]) _secondaryList);
+                getSecondaryAdapter().addAll((Object[]) _childTypes);
                 getSecondarySpinner().clearSelection();
             }
         }
 
-        if (_secondaryList != null) {
+        if (_childTypes != null) {
             getSecondarySpinner().setVisibility(View.VISIBLE);
             getSecondarySpinner().clearFocus();
         }
@@ -349,79 +328,15 @@ public class ReportProblemDialog extends SimpleDialog {
             return;
         }
 
-        switch (_selectedProblem) {
-            case CANNOT_MAKE_ASSIGNMENT:
-                _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
-                _noteTextView.setVisibility(View.VISIBLE);
-                _explanationEditText.requestFocus();
-                misc.showKeyboard(_explanationEditText);
-                break;
-
-            case WILL_BE_LATE:
-                _timeframeSpinner.setVisibility(View.VISIBLE);
-
-                if (_timeframePosition == -1 || _timeframePosition == 5) {
-                    _okButton.setEnabled(false);
-                } else {
-                    _okButton.setEnabled(true);
-                }
-
-                if (_timeframePosition == 5) {
-                    _timeframeLayout.setVisibility(View.VISIBLE);
-                    if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
-                        _okButton.setEnabled(false);
-                    }
-                } else {
-                    _timeframeLayout.setVisibility(View.GONE);
-                }
-
-                break;
-
-            case DO_NOT_HAVE_SHIPMENT:
-            case DO_NOT_HAVE_INFO:
-            case DO_NOT_HAVE_RESPONSE:
-            case DO_NOT_HAVE_OTHER:
-            case BUYER_UNRESPONSIVE:
-            case SCOPE_OF_WORK:
-            case SITE_NOT_READY_CONTACT:
-            case SITE_NOT_READY_PRIOR_WORK:
-            case SITE_NOT_READY_ACCESS:
-            case SITE_NOT_READY_OTHER:
-            case OTHER:
-            case APPROVAL_NOT_YET:
-            case APPROVAL_DISAGREEMENT:
-            case PAYMENT_NOT_RECEIVED:
-            case PAYMENT_NOT_ACCURATE:
-            case APPROVAL:
-                _explanationEditText.requestFocus();
-                misc.showKeyboard(_explanationEditText);
-                break;
-
-            case SITE_NOT_READY:
-                getSecondarySpinner().setHint(R.string.what_about_site);
-                getSecondarySpinner().clearSelection();
-                _okButton.setEnabled(false);
-                break;
-
-            case MISSING:
-                getSecondarySpinner().setHint(R.string.what_are_you_missing);
-                getSecondarySpinner().clearSelection();
-                _okButton.setEnabled(false);
-                break;
-
-            default: {
-                _okButton.setEnabled(false);
-                getSecondarySpinner().setVisibility(View.GONE);
-                break;
-            }
-        }
+        _explanationEditText.requestFocus();
+        misc.showKeyboard(_explanationEditText);
     }
 
     private final AdapterView.OnItemSelectedListener _problem1_onItemClick = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _primaryPosition = position;
-            _selectedProblem = (ReportProblemType) getPrimaryAdapter().getItem(position);
+            _selectedProblem = (ProblemType) getPrimaryAdapter().getItem(position);
             _textEditText_watcherListener.onTextChanged(
                     _explanationEditText.getText().toString(),
                     0, _explanationEditText.getText().toString().length(),
@@ -439,7 +354,7 @@ public class ReportProblemDialog extends SimpleDialog {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _secondaryPosition = position;
             misc.showKeyboard(_explanationEditText);
-            _selectedProblem = (ReportProblemType) getSecondaryAdapter().getItem(position);
+            _selectedProblem = (ProblemType) getSecondaryAdapter().getItem(position);
             _textEditText_watcherListener.onTextChanged(
                     _explanationEditText.getText().toString(),
                     0, _explanationEditText.getText().toString().length(),
@@ -478,71 +393,26 @@ public class ReportProblemDialog extends SimpleDialog {
                 explanation = _explanationEditText.getText().toString();
             }
 
-            switch (_selectedProblem) {
-                case CANNOT_MAKE_ASSIGNMENT:
-                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getWorkorderId(), explanation);
-                    break;
+            Problem problem = new Problem();
+            try {
+                problem.setComments(explanation);
+                if (_secondaryPosition != -1) {
+                    problem.setType((ProblemType) getSecondaryAdapter().getItem(_secondaryPosition));
+                } else {
+                    problem.setType((ProblemType) getPrimaryAdapter().getItem(_primaryPosition));
+                }
 
-                case WILL_BE_LATE:
-                    try {
-                        int delayMin = 0;
-
-                        if (_timeframePosition == 5)
-                            delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
-                        else
-                            delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
-
-                        ETA eta = new ETA()
-                                .status(new ETAStatus()
-                                        .condition(new Condition()
-                                                .estimatedDelay(delayMin * 60)
-                                                .substatus(Condition.SubstatusEnum.DELAYED)));
-                        WorkordersWebApi.updateETA(App.get(), (int) _workOrderId, eta);
-
-                        ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-                        _onSendDispatcher.dispatch(getUid(), _workOrderId);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                        ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
-                    }
-                    break;
-
-                case SCOPE_OF_WORK:
-                case SITE_NOT_READY_CONTACT:
-                case SITE_NOT_READY_PRIOR_WORK:
-                case SITE_NOT_READY_ACCESS:
-                case SITE_NOT_READY_OTHER:
-                case OTHER:
-                case APPROVAL_NOT_YET:
-                case APPROVAL_DISAGREEMENT:
-                case PAYMENT_NOT_ACCURATE:
-                case DO_NOT_HAVE_SHIPMENT:
-                case DO_NOT_HAVE_INFO:
-                case DO_NOT_HAVE_RESPONSE:
-                case DO_NOT_HAVE_OTHER:
+                if (problem.getType().getShowPqapWarning() != null && problem.getType().getShowPqapWarning()) {
+                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getId(), problem);
+                } else {
+                    WorkordersWebApi.addProblem(App.get(), _workOrder.getId(), problem, App.get().getSpUiContext());
                     ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                    WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
-                    break;
-
-                case BUYER_UNRESPONSIVE:
-                    ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
-                    WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
-                    break;
-
-                case PAYMENT_NOT_RECEIVED:
-                    ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
-                    WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
-                    break;
-
-                case SITE_NOT_READY:
-                    break;
-                case MISSING:
-                    break;
-                case APPROVAL:
-                    break;
-                default:
-                    break;
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
+
+            _onSendDispatcher.dispatch(getUid(), _workOrder.getId(), explanation, problem.getType());
 
             dismiss(true);
         }
@@ -612,28 +482,8 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            _workorderClient.subGet(_workOrderId, false);
-        }
-
-        @Override
-        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
-            _workorder = workorder;
-            populateUi();
-        }
-    };
-
-    public static void show(Context context, String uid, long workOrderId) {
+    public static void show(Context context, String uid, WorkOrder workorder) {
         Bundle params = new Bundle();
-        params.putLong(PARAM_WORKORDER_ID, workOrderId);
-        Controller.show(context, uid, ReportProblemDialog.class, params);
-    }
-
-    public static void show(Context context, String uid, Workorder workorder) {
-        Bundle params = new Bundle();
-        params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
         params.putParcelable(PARAM_WORKORDER, workorder);
         Controller.show(context, uid, ReportProblemDialog.class, params);
     }
@@ -642,13 +492,13 @@ public class ReportProblemDialog extends SimpleDialog {
     /*-         Send           -*/
     /*-************************-*/
     public interface OnSendListener {
-        void onSend(long workorderId, String explanation, ReportProblemType type);
+        void onSend(int workOrderId, String explanation, ProblemType type);
     }
 
     private static KeyedDispatcher<OnSendListener> _onSendDispatcher = new KeyedDispatcher<OnSendListener>() {
         @Override
         public void onDispatch(OnSendListener listener, Object... parameters) {
-            listener.onSend((Long) parameters[0], (String) parameters[1], (ReportProblemType) parameters[2]);
+            listener.onSend((Integer) parameters[0], (String) parameters[1], (ProblemType) parameters[2]);
         }
     };
 

@@ -54,6 +54,9 @@ public class Location implements Parcelable {
     @Json(name = "mode")
     private ModeEnum _mode;
 
+    @Json(name = "notes")
+    private LocationNotes[] _notes;
+
     @Json(name = "role")
     private String _role;
 
@@ -339,6 +342,33 @@ public class Location implements Parcelable {
     public Location mode(ModeEnum mode) throws ParseException {
         _mode = mode;
         SOURCE.put("mode", mode.toString());
+        return this;
+    }
+
+    public void setNotes(LocationNotes[] notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", LocationNotes.toJsonArray(notes));
+    }
+
+    public LocationNotes[] getNotes() {
+        try {
+            if (_notes != null)
+                return _notes;
+
+            if (SOURCE.has("notes") && SOURCE.get("notes") != null) {
+                _notes = LocationNotes.fromJsonArray(SOURCE.getJsonArray("notes"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _notes;
+    }
+
+    public Location notes(LocationNotes[] notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", LocationNotes.toJsonArray(notes), true);
         return this;
     }
 

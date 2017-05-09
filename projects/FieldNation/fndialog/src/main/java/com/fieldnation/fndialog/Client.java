@@ -61,7 +61,7 @@ class Client extends TopicClient implements Constants {
 
         @Override
         public void onConnected() {
-            // TODO probably need to make the filter more precice
+            // TODO probably need to make the filter more precise
             getClient().register(TOPIC_ID_DIALOG_COMPLETE + "/" + getDialogClass().getName());
         }
 

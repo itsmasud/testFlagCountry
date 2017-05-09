@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:gravity="center_horizontal"
-        android:text="No Payments" />
+        android:text="@string/no_payments" />
 
     <TextView
         style="@style/Text_Caption"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center_horizontal"
-        android:text="You did not receive any payments" />
+        android:text="@string/you_did_not_receive_any_payments" />
 
     <View
         style="@style/DividerFull"

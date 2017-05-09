@@ -72,7 +72,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         // Log.v(TAG, "onDetachedFromWindow");
-        if (_photoClient != null && _photoClient.isConnected())
+        if (_photoClient != null)
             _photoClient.disconnect(App.get());
 
         super.onDetachedFromWindow();

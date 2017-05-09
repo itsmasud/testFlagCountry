@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -191,12 +192,21 @@ public class RunningLateDialog extends SimpleDialog {
                 else
                     delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
 
+                if (delayMin <= 0) {
+                    ToastClient.toast(App.get(), "Please enter a delay greater than 0", Toast.LENGTH_LONG);
+                    return;
+                }
+
                 ETA eta = new ETA()
-                        .status(new ETAStatus()
-                                .condition(new Condition()
+                        .condition(new Condition()
                                         .estimatedDelay(delayMin * 60)
-                                        .substatus(Condition.SubstatusEnum.DELAYED)));
-                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta);
+                                        .status(Condition.StatusEnum.DELAYED));
+
+                Log.e(TAG, "eta: " + eta.getJson());
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Running Late Dialog";
+                WorkordersWebApi.updateETA(App.get(), _workOrder.getId(), eta, uiContext);
 
                 ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
                 _onSendDispatcher.dispatch(getUid(), _workOrder.getId());
@@ -246,13 +256,13 @@ public class RunningLateDialog extends SimpleDialog {
     /*-         Send           -*/
     /*-************************-*/
     public interface OnSendListener {
-        void onSend(long workOrderId);
+        void onSend(int workOrderId);
     }
 
     private static KeyedDispatcher<OnSendListener> _onSendDispatcher = new KeyedDispatcher<OnSendListener>() {
         @Override
         public void onDispatch(OnSendListener listener, Object... parameters) {
-            listener.onSend((Long) parameters[0]);
+            listener.onSend((Integer) parameters[0]);
         }
     };
 

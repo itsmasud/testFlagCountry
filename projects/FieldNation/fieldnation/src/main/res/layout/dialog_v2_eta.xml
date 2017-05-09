@@ -35,7 +35,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginTop="16dp"
-                android:text="By accepting this bundle you are agreeing to our" />
+                android:text="@string/by_accepting_this_bundle" />
 
             <RelativeLayout
                 android:id="@+id/request_layout"
@@ -66,7 +66,7 @@
                         android:id="@+id/expires_checkbox"
                         style="?attr/tileCheckBoxStyle"
                         android:layout_width="wrap_content"
-                        android:text="Request expires"
+                        android:text="@string/request_expires"
                         android:visibility="visible" />
 
                     <com.fieldnation.ui.HintSpinner
@@ -114,7 +114,7 @@
                 android:layout_below="@+id/schedule_textview"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Set an ETA" />
+                android:text="@string/switch_text_set_eta" />
 
             <Switch
                 android:id="@+id/eta_switch"
@@ -220,4 +220,12 @@
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
 </RelativeLayout>

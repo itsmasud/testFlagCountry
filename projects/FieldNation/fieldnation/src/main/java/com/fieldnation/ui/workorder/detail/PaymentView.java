@@ -89,7 +89,10 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         if (_actionButton == null)
             return;
 
-        if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
+
+        if (_workOrder.getPay() != null
+                && _workOrder.getPay().getIncreases() != null
+                && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
             getRequestNewPayTile().setVisibility(VISIBLE);
             getRequestNewPayTile().setData(_workOrder);
 

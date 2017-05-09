@@ -14,8 +14,8 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 /**
  * Created by Michael on 8/31/2016.
@@ -83,8 +83,7 @@ public class FooterBarView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(App.get());
+        if (_profileClient != null) _profileClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

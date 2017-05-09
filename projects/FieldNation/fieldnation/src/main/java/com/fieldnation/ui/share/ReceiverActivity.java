@@ -134,8 +134,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
 
         super.onStop();
     }
@@ -231,7 +230,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onSlotSelected(UploadSlot uploadSlot) {
             _selectedUploadSlot = uploadSlot;
-            // TODO if file list == 1, then start upload and redirect to work order details
+            // if file list == 1, then start upload and redirect to work order details
             if (_sharedFiles.length == 1) {
                 WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
                         _selectedUploadSlot.getSlotId(), _sharedFiles[0].getFileName(),

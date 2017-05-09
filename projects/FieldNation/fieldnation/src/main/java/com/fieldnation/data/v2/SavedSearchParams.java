@@ -208,7 +208,6 @@ public class SavedSearchParams implements Parcelable {
         return key;
     }
 
-    // TODO make this better
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof SavedSearchParams))

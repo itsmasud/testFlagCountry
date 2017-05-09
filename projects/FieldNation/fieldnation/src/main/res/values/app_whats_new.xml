@@ -2,18 +2,18 @@
 <resources>
 
     <string name="added_new_feature">
-&lt;center&gt;&lt;h3&gt;Introducing Flightboard&lt;/h3&gt; An update to our current confirmation process to help optimize communication and insight between you and Buyers.&lt;br/&gt;&lt;br/&gt;&lt;/center&gt;
-&lt;b&gt;What\'s included:&lt;/b&gt;
+&lt;center&gt;&lt;h3&gt;Introducing Flightboard&lt;/h3&gt;We have updated our confirmation process to optimize communication between Buyer and Provider.&lt;br/&gt;&lt;br/&gt;&lt;/center&gt;
+&lt;b&gt;What\'s included with Flightboard:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;At 6am you will receive a notification to confirm your work for tomorrow by noon.&lt;/li&gt;
-&lt;li&gt;Before leaving to the site, you can now mark a work order as on my way, informing the Buyer of your location.&lt;/li&gt;
-&lt;li&gt;You can now inform the Buyer that you are running late and when they should be expecting you.&lt;/li&gt;
+&lt;li&gt;The day before an assigned work order you will get a notification at 6am to confirm your work.&lt;/li&gt;
+&lt;li&gt;For each assigned work order, you will be required to tap \"Confirm\" by noon. Failure to confirm work may result in removal from that work order.&lt;/li&gt;
+&lt;li&gt;The day of the work order you can mark \"On My Way\" when heading to the job to inform Buyer of your location. You may also mark \"Running Late\" if necessary.&lt;/li&gt;
 &lt;/ul&gt;
 
-For all the details, please visit: &lt;a href="https://www.fieldnation.com/flightboard/flightboard-learn-more-tech"&gt;Learn more about Flightboard&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
+&lt;a href="https://www.fieldnation.com/flightboard/flightboard-is-coming-serviceprovider"&gt;Learn more about Flightboard&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
 
-&lt;b&gt;Note:&lt;/b&gt;&lt;br/&gt;
-To take advantage of this process update and potentially avoid calls from a dispatcher, we highly encourage you to enable GPS while using the Field Nation App. Your location will only be shared with a Buyer when you hit "On My Way" and will stop once you tap "Check In".
+&lt;b&gt;GPS&lt;/b&gt;&lt;br/&gt;
+We highly encourage you to enable GPS to take advantage of the new process and potentially avoid dispatcher calls. We will only send your location to the Buyer after you tap \"On My Way\" and will stop once you tap \"Check In\".
     </string>
 
     <string name="bugs_fixed">

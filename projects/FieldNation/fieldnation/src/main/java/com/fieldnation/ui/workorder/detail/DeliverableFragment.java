@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
@@ -175,11 +176,10 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach");
-        if (_docClient != null && _docClient.isConnected())
-            _docClient.disconnect(App.get());
+        if (_docClient != null) _docClient.disconnect(App.get());
 
-        if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(App.get());
+        if (_photoClient != null) _photoClient.disconnect(App.get());
+        
         super.onDetach();
     }
 
@@ -214,6 +214,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void update() {
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.ATTACHMENTS.name());
         checkMedia();
     }
 
@@ -266,6 +267,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (reviewSlot != null) {
             final Attachment[] docs = reviewSlot.getResults();
+
             if (docs != null && docs.length > 0) {
                 if (_reviewList.getChildCount() != docs.length) {
                     if (_reviewRunnable != null)
@@ -277,8 +279,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
                         @Override
                         public void next(int i) throws Exception {
-                            DocumentView v = new DocumentView(getActivity());
                             Attachment doc = _docs[i];
+                            DocumentView v = new DocumentView(getActivity());
                             v.setListener(_document_listener);
                             v.setData(_workOrder, doc);
                             _views.add(v);
@@ -355,7 +357,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _actionButton.setVisibility(View.GONE);
         for (AttachmentFolder f : slots) {
-            if (f.getType() == AttachmentFolder.TypeEnum.SLOT)
+            if (f.getType() == AttachmentFolder.TypeEnum.SLOT && f.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD))
                 _actionButton.setVisibility(View.VISIBLE);
         }
 
@@ -427,7 +429,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId);
+                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId, App.get().getSpUiContext());
                             setLoading(true);
                         }
 

@@ -9,7 +9,6 @@ import android.widget.FrameLayout;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
-import com.fieldnation.fntools.DebugUtils;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -204,7 +203,7 @@ public class DialogManager extends FrameLayout implements Constants {
     public void onResume() {
         Log.v(TAG, "onResume");
         _lastState = STATE_RESUME;
-        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+        if (_dialogReceiver != null) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
         _dialogReceiver = new Server(_dialogReceiver_listener);
@@ -222,7 +221,7 @@ public class DialogManager extends FrameLayout implements Constants {
             holder.dialog.onPause();
         }
 
-        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+        if (_dialogReceiver != null) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
     }
@@ -260,7 +259,7 @@ public class DialogManager extends FrameLayout implements Constants {
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+        if (_dialogReceiver != null) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
 

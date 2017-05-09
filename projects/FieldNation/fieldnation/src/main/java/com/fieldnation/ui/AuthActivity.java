@@ -161,11 +161,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
 
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(App.get());
+        if (_globalClient != null) _globalClient.disconnect(App.get());
 
-        if (_activityResultClient != null && _activityResultClient.isConnected())
-            _activityResultClient.disconnect(App.get());
+        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         _dialogManager.onPause();
 

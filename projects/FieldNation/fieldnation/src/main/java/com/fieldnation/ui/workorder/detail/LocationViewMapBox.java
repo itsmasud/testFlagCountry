@@ -144,9 +144,7 @@ public class LocationViewMapBox extends LinearLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_mapboxClient != null && _mapboxClient.isConnected()) {
-            _mapboxClient.disconnect(App.get());
-        }
+        if (_mapboxClient != null) _mapboxClient.disconnect(App.get());
         _simpleGps.stop();
         super.onDetachedFromWindow();
     }

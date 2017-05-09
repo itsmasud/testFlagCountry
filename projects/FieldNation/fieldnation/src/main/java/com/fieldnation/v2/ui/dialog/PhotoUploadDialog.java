@@ -155,9 +155,7 @@ public class PhotoUploadDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
-        if (_fileCacheClient != null && _fileCacheClient.isConnected()) {
-            _fileCacheClient.disconnect(App.get());
-        }
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
         super.onPause();
     }
 

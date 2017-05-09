@@ -27,6 +27,9 @@ public class ETA implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "condition")
+    private Condition _condition;
+
     @Json(name = "end")
     private Date _end;
 
@@ -35,6 +38,9 @@ public class ETA implements Parcelable {
 
     @Json(name = "mode")
     private ModeEnum _mode;
+
+    @Json(name = "notes")
+    private String _notes;
 
     @Json(name = "start")
     private Date _start;
@@ -88,6 +94,31 @@ public class ETA implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
+        return this;
+    }
+
+    public void setCondition(Condition condition) throws ParseException {
+        _condition = condition;
+        SOURCE.put("condition", condition.getJson());
+    }
+
+    public Condition getCondition() {
+        try {
+            if (_condition == null && SOURCE.has("condition") && SOURCE.get("condition") != null)
+                _condition = Condition.fromJson(SOURCE.getJsonObject("condition"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_condition != null && _condition.isSet())
+            return _condition;
+
+        return null;
+    }
+
+    public ETA condition(Condition condition) throws ParseException {
+        _condition = condition;
+        SOURCE.put("condition", condition.getJson());
         return this;
     }
 
@@ -157,6 +188,28 @@ public class ETA implements Parcelable {
     public ETA mode(ModeEnum mode) throws ParseException {
         _mode = mode;
         SOURCE.put("mode", mode.toString());
+        return this;
+    }
+
+    public void setNotes(String notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", notes);
+    }
+
+    public String getNotes() {
+        try {
+            if (_notes == null && SOURCE.has("notes") && SOURCE.get("notes") != null)
+                _notes = SOURCE.getString("notes");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _notes;
+    }
+
+    public ETA notes(String notes) throws ParseException {
+        _notes = notes;
+        SOURCE.put("notes", notes);
         return this;
     }
 
@@ -278,6 +331,8 @@ public class ETA implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "add")
         ADD("add"),
+        @Json(name = "cancel")
+        CANCEL("cancel"),
         @Json(name = "confirm")
         CONFIRM("confirm"),
         @Json(name = "edit")

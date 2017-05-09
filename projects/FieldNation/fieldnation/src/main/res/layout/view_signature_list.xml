@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="SIGNATURES" />
+        android:text="@string/btn_signatures" />
 
     <TextView
         android:id="@+id/nodata_textview"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="No Signatures associated with this work order." />
+        android:text="@string/no_signatures" />
 
     <LinearLayout
         android:id="@+id/listview"

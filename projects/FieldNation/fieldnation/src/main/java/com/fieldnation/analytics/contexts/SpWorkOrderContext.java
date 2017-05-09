@@ -23,7 +23,7 @@ public class SpWorkOrderContext implements EventContext, SpContext {
     @Json
     public String tag = TAG;
     @Json
-    public Long workOrderId;
+    public Integer workOrderId;
 
     public SpWorkOrderContext() {
     }
@@ -64,7 +64,7 @@ public class SpWorkOrderContext implements EventContext, SpContext {
     }
 
     public static class Builder {
-        private Long workOrderId;
+        private Integer workOrderId;
 
         public Builder() {
         }
@@ -73,7 +73,7 @@ public class SpWorkOrderContext implements EventContext, SpContext {
             return new SpWorkOrderContext(this);
         }
 
-        public Builder workOrderId(Long workOrderId) {
+        public Builder workOrderId(Integer workOrderId) {
             this.workOrderId = workOrderId;
             return this;
         }

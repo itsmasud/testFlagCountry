@@ -94,7 +94,7 @@ public class MarkCompleteDialog extends SimpleDialog {
     private final View.OnClickListener _signature_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onSignatureClickDispatcher.dispatch(getUid(), null);
+            _onSignatureClickDispatcher.dispatch(getUid());
             dismiss(true);
         }
     };
@@ -109,7 +109,7 @@ public class MarkCompleteDialog extends SimpleDialog {
     private final View.OnClickListener _continue_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _onContinueClickDispatcher.dispatch(getUid(), null);
+            _onContinueClickDispatcher.dispatch(getUid());
             dismiss(true);
 
 

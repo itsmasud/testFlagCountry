@@ -59,12 +59,12 @@ public class AttachmentService extends MultiThreadedService {
                     cache = StoredObject.put(this, App.getProfileId(), "TempFile", uri.toString(),
                             this.getContentResolver().openInputStream(uri), filename);
                 }
-                WorkordersWebApi.addAttachment(this, workOrderId, attachment.getFolderId(), attachment, filename, cache);
+                WorkordersWebApi.addAttachment(this, workOrderId, attachment.getFolderId(), attachment, filename, cache, App.get().getSpUiContext());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
         } else
-            WorkordersWebApi.addAttachment(this, workOrderId, attachment.getFolderId(), attachment, new File(filePath));
+            WorkordersWebApi.addAttachment(this, workOrderId, attachment.getFolderId(), attachment, new File(filePath), App.get().getSpUiContext());
     }
 
 

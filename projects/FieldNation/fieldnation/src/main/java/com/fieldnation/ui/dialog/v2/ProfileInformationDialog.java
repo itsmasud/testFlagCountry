@@ -167,14 +167,12 @@ public class ProfileInformationDialog extends FullScreenDialog {
     public void onPause() {
         super.onPause();
         Log.v(TAG, "onPause");
-        if (_photos != null && _photos.isConnected())
-            _photos.disconnect(App.get());
+        if (_photos != null) _photos.disconnect(App.get());
 
-        if (_activityResultClient != null && _activityResultClient.isConnected())
+        if (_activityResultClient != null)
             _activityResultClient.disconnect(App.get());
 
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
 
         AppPickerDialog.removeOnOkListener(UID_APP_PICKER_DIALOG, _appPickerDialog_onOk);
     }

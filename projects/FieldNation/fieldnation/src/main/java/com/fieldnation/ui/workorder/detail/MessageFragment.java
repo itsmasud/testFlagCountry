@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -23,6 +25,11 @@ import com.fieldnation.v2.data.model.Message;
 import com.fieldnation.v2.data.model.Messages;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.MessagePagingAdapter;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class MessageFragment extends WorkorderFragment {
     private static final String TAG = "MessageFragment";
@@ -73,7 +80,7 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        if (_workOrderApi != null && _workOrderApi.isConnected()) {
+        if (_workOrderApi != null) {
             _workOrderApi.disconnect(App.get());
             _workOrderApi = null;
         }
@@ -85,7 +92,7 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-//        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
+        App.get().getSpUiContext().page(WorkOrderTracker.Tab.MESSAGES.name());
         if (_workorder != null) {
             _refreshView.startRefreshing();
             WorkordersWebApi.getMessages(App.get(), _workorder.getId(), true, false);
@@ -139,11 +146,9 @@ public class MessageFragment extends WorkorderFragment {
         _refreshView.refreshComplete();
     }
 
-
     private final MessagePagingAdapter _adapter = new MessagePagingAdapter() {
         @Override
         public void requestPage(int page, boolean allowCache) {
-
         }
     };
 
@@ -169,11 +174,10 @@ public class MessageFragment extends WorkorderFragment {
 
                 //_messages.add(new Message(_workorder.getWorkorderId(), User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));``
 
-
                 try {
                     Message msg = new Message();
                     msg.setMessage(_inputView.getInputText());
-                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg);
+                    WorkordersWebApi.addMessage(App.get(), _workorder.getId(), msg, App.get().getSpUiContext());
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -195,15 +199,71 @@ public class MessageFragment extends WorkorderFragment {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            if (methodName.equals("getMessages")) {
-                Messages messages = (Messages) successObject;
-                Error error = (Error) failObject;
-                if (!success || error != null)
-                    return;
+            try {
+                if (successObject instanceof Messages) {
+                    Messages messages = (Messages) successObject;
+                    Error error = (Error) failObject;
+                    if (!success || error != null)
+                        return;
 
-                _adapter.addObjects(messages.getMetadata().getPage(), messages.getResults());
+                    JsonObject methodParams = new JsonObject(transactionParams.methodParams);
 
-                rebuildList();
+                    if (methodParams.has("workOrderId") && _workorder != null
+                            && methodParams.getInt("workOrderId") != _workorder.getId()) {
+                        Log.v(TAG, "not my work order!");
+                        return;
+                    }
+
+                    if (messages == null || messages.getResults() == null || _workorder == null) {
+                        _refreshView.refreshComplete();
+                        return;
+                    }
+
+                    // flatten the tree with a depth first search
+                    // first create a stack to store nodes that need to be searched
+                    // push the messages into the stack
+                    List<Message> stack = new LinkedList<>();
+                    for (Message message : messages.getResults()) {
+                        stack.add(message);
+                    }
+
+                    List<Message> flatList = new LinkedList<>();
+                    while (stack.size() > 0) {
+                        // pop the first item
+                        Message message = stack.remove(0);
+                        // add it to the list
+                        flatList.add(message);
+
+                        // get the replies and add them to the stack
+                        if (message.getReplies() != null
+                                && message.getReplies().length > 0) {
+                            Message[] replies = message.getReplies();
+                            for (int i = replies.length - 1; i >= 0; i--) {
+                                stack.add(replies[i]);
+                            }
+                        }
+                    }
+
+                    Collections.sort(flatList, new Comparator<Message>() {
+                        @Override
+                        public int compare(Message lhs, Message rhs) {
+                            try {
+                                return (int) (lhs.getCreated().getUtcLong() - rhs.getCreated().getUtcLong());
+                            } catch (Exception ex) {
+                                return 0;
+
+                            }
+                        }
+                    });
+
+                    _adapter.addObjects(messages.getMetadata().getPage(), flatList);
+
+                    rebuildList();
+                } else if (successObject instanceof Message) {
+                    rebuildList();
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     };

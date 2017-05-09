@@ -115,11 +115,9 @@ public class SearchResultScreen extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
-        if (_workorderClientV1 != null && _workorderClientV1.isConnected())
-            _workorderClientV1.disconnect(App.get());
+        if (_workorderClientV1 != null) _workorderClientV1.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

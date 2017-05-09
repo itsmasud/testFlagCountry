@@ -11,10 +11,12 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
@@ -104,7 +106,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_docClient != null && _docClient.isConnected()) {
+        if (_docClient != null) {
             _docClient.disconnect(App.get());
             _docClient = null;
         }
@@ -280,6 +282,11 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
         @Override
         public void onClick(View v) {
             if (_attachment == null) {
+                return;
+            }
+
+            if (!_attachment.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
+                ToastClient.toast(App.get(), "File not available for download.", Toast.LENGTH_LONG);
                 return;
             }
 
