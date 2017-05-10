@@ -92,6 +92,7 @@ public class InboxActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void onProfile(Profile profile) {
+        
     }
 
     @Override

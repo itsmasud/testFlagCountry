@@ -21,6 +21,8 @@ import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -41,6 +43,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     // Data
     private ProfileClient _profileClient;
     private PhotoClient _photoClient;
+    private WorkordersWebApi _workOrderApi;
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
     /*-*************************************-*/
@@ -114,6 +117,8 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         _profileClient.connect(App.get());
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
     }
 
     @Override
@@ -230,6 +235,21 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     /*-*****************************-*/
     /*-             WEB             -*/
     /*-*****************************-*/
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("deleteMessage")) {
+                _adapter.refreshPages();
+                ProfileClient.get(App.get());
+            }
+        }
+    };
+
     private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {

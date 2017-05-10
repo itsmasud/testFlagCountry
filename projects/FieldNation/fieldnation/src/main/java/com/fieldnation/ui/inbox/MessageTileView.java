@@ -3,15 +3,18 @@ package com.fieldnation.ui.inbox;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
@@ -27,6 +30,7 @@ public class MessageTileView extends RelativeLayout {
     private TextView _timeTextView;
     private TextView _workorderTextView;
     private TextView _messageBodyTextView;
+    private RelativeLayout _bodyLayout;
 
     private Message _message;
     private Listener _listener;
@@ -56,12 +60,16 @@ public class MessageTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _bodyLayout = (RelativeLayout) findViewById(R.id.body_layout);
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _timeBoldTextView = (TextView) findViewById(R.id.timebold_textview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
         _workorderTextView = (TextView) findViewById(R.id.workorder_textview);
         _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
+
+        findViewById(R.id.deleteLeft_textview).setOnClickListener(_delete_onClick);
+        findViewById(R.id.deleteRight_textview).setOnClickListener(_delete_onClick);
 
         setOnClickListener(_this_onClick);
 
@@ -166,9 +174,22 @@ public class MessageTileView extends RelativeLayout {
         }
     }
 
+    @Override
+    public boolean onDragEvent(DragEvent event) {
+        Log.v(TAG, "onDragEvent");
+        return super.onDragEvent(event);
+    }
+
     public Message getMessage() {
         return _message;
     }
+
+    private final View.OnClickListener _delete_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ToastClient.toast(App.get(), "TODO, need to delete the message?", Toast.LENGTH_SHORT);
+        }
+    };
 
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
