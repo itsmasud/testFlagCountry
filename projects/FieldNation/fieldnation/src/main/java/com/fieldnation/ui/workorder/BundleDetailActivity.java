@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
@@ -26,9 +27,14 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Date;
+import com.fieldnation.v2.data.model.Declines;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
+import com.fieldnation.v2.data.model.User;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -61,6 +67,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private BundlesWebApi _bundlesApi;
     private SimpleGps _simpleGps;
     private WorkorderClient _workOrderClient;
+    private WorkordersWebApi _workOrdersApiClient;
+
 
     @Override
     public int getLayoutResource() {
@@ -127,6 +135,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
         _bundlesApi.connect(App.get());
 
+        _workOrdersApiClient = new WorkordersWebApi(_workOrdersApiClient_listener);
+        _workOrdersApiClient.connect(App.get());
+
         _workOrderClient = new WorkorderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
     }
@@ -136,6 +147,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         if (_bundlesApi != null) _bundlesApi.disconnect(App.get());
 
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+
+        if (_workOrdersApiClient != null) _workOrdersApiClient.disconnect(App.get());
 
         AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
@@ -157,7 +170,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             _okButton.setEnabled(false);
         } else {
             _refreshView.refreshComplete();
-            _notInterestedButton.setEnabled(true);
+//            _notInterestedButton.setEnabled(true);
             _okButton.setEnabled(true);
         }
     }
@@ -278,6 +291,12 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 _adapter.addObjects(1, workOrders.getResults());
 
                 for (WorkOrder workOrder : workOrders.getResults()) {
+                    if (workOrder.getDeclines() != null
+                            && workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
+                        _notInterestedButton.setEnabled(true);
+                    }
+
+
                     if (workOrder.getRoutes() != null
                             && workOrder.getRoutes().getUserRoute() != null
                             && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
@@ -296,6 +315,24 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             }
         }
     };
+
+
+    private final WorkordersWebApi.Listener _workOrdersApiClient_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrdersApiClient.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.contains("decline") && success) {
+                _adapter.refreshAll();
+                ToastClient.toast(App.get(), "Bundle declined successfully", Toast.LENGTH_LONG);
+            }
+        }
+
+    };
+
 
     private final WoPagingAdapter _adapter = new WoPagingAdapter() {
         @Override
