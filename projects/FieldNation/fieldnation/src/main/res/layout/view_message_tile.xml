@@ -1,115 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/deleteLeft_textview"
-        android:layout_width="70dp"
-        android:layout_height="0dp"
-        android:layout_alignBottom="@+id/body_layout"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/fn_light_text_25"
-        android:gravity="center"
-        android:text="@string/icon_trash"
-        android:textColor="@color/fn_dark_text_50"
-        android:textSize="20sp" />
+    <com.fieldnation.ui.ProfilePicView
+        android:id="@+id/pic_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp" />
 
-    <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/deleteRight_textview"
-        android:layout_width="70dp"
-        android:layout_height="0dp"
-        android:layout_alignBottom="@+id/body_layout"
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toLeftOf="@+id/time_textview"
+        android:layout_toRightOf="@+id/pic_view"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="@string/placeholder_phrase" />
+
+    <TextView
+        android:id="@+id/timebold_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@color/fn_light_text_25"
-        android:gravity="center"
-        android:text="@string/icon_trash"
-        android:textColor="@color/fn_dark_text_50"
-        android:textSize="20sp" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:singleLine="true"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_brandcolor"
+        android:textStyle="bold" />
 
-    <RelativeLayout
-        android:id="@+id/body_layout"
-        style="?attr/tileStyle"
+    <TextView
+        android:id="@+id/time_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:singleLine="true"
+        android:text="@string/placeholder_word" />
+
+    <TextView
+        android:id="@+id/workorder_textview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/pic_view"
+        android:text="WO 1234456789" />
 
-        <com.fieldnation.ui.ProfilePicView
-            android:id="@+id/pic_view"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="16dp" />
+    <TextView
+        android:id="@+id/messagebody_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/workorder_textview"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toRightOf="@+id/pic_view"
+        android:ellipsize="end"
+        android:maxLines="2"
+        android:text="@string/placeholder_paragraph" />
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="@style/Text_Subhead"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_toLeftOf="@+id/time_textview"
-            android:layout_toRightOf="@+id/pic_view"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:text="@string/placeholder_phrase" />
-
-        <TextView
-            android:id="@+id/timebold_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:singleLine="true"
-            android:text="@string/placeholder_word"
-            android:textColor="@color/fn_brandcolor"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/time_textview"
-            style="@style/Text_Body_1_Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
-            android:singleLine="true"
-            android:text="@string/placeholder_word" />
-
-        <TextView
-            android:id="@+id/workorder_textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title_textview"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_toRightOf="@+id/pic_view"
-            android:text="WO 1234456789" />
-
-        <TextView
-            android:id="@+id/messagebody_textview"
-            style="@style/Text_Body_1_Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/workorder_textview"
-            android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_toRightOf="@+id/pic_view"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="@string/placeholder_paragraph" />
-
-        <View
-            style="?attr/tileDividerStyle"
-            android:layout_below="@+id/messagebody_textview"
-            android:layout_marginLeft="16dp"
-            android:layout_toRightOf="@+id/pic_view" />
-    </RelativeLayout>
-
+    <View
+        style="?attr/tileDividerStyle"
+        android:layout_below="@+id/messagebody_textview"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/pic_view" />
 </RelativeLayout>
