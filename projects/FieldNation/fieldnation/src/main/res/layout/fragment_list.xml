@@ -3,16 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fieldnation.ui.OverScrollListView
+    <com.fieldnation.ui.OverScrollRecyclerView
         android:id="@+id/listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:animateLayoutChanges="true"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:smoothScrollbar="true" />
+        android:scrollbars="vertical" />
 
     <com.fieldnation.ui.UnavailableCardView
         android:id="@+id/empty_view"

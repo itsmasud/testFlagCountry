@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +17,14 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.OverScrollListView;
-import com.fieldnation.ui.PagingAdapter;
+import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
+import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.ui.worecycler.BaseHolder;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -36,7 +38,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
-    private OverScrollListView _listView;
+    private OverScrollRecyclerView _listView;
     private RefreshView _loadingView;
     private UnavailableCardView _emptyView;
 
@@ -80,12 +82,11 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
 
-        _adapter.setOnLoadingCompleteListener(_adapterListener);
-
-        _listView = (OverScrollListView) view.findViewById(R.id.listview);
-        _listView.setDivider(null);
-        _listView.setOnOverScrollListener(_loadingView);
+        _listView = (OverScrollRecyclerView) view.findViewById(R.id.listview);
+        _listView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         _listView.setAdapter(_adapter);
+        _listView.setOnOverScrollListener(_loadingView);
+        //_listView.addOnItemTouchListener(_onItemTouchListener);
 
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
     }
@@ -103,7 +104,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         Log.v(TAG, "onResume");
 
         if (_profileClient != null && _profileClient.isConnected())
-            _adapter.refreshPages();
+            _adapter.refreshAll();
 
         setLoading(true);
     }
@@ -150,14 +151,12 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
 
     public void update() {
         Log.v(TAG, "update()");
-        _adapter.refreshPages();
+        _adapter.refreshAll();
     }
 
     private void requestList(int page, boolean allowCache) {
         Log.v(TAG, "requestList " + page);
-        if (page == 0)
-            setLoading(true);
-
+        setLoading(true);
         ProfileClient.listMessages(App.get(), page, false, allowCache);
     }
 
@@ -170,10 +169,8 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
             _emptyView.setVisibility(View.GONE);
         }
 
-        if (list != null && list.size() == 0) {
-            _adapter.setNoMorePages();
-        }
-        _adapter.setPage(page, list);
+        _adapter.addObjects(page, list);
+        setLoading(false);
     }
 
     /*-*************************************-*/
@@ -184,10 +181,11 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         @Override
         public void onStartRefresh() {
             Log.v(TAG, "_refreshViewListener.onStartRefresh()");
-            _adapter.refreshPages();
+            _adapter.refreshAll();
         }
     };
 
+/*
     private final PagingAdapter<Message> _adapter = new PagingAdapter<Message>() {
         @Override
         public View getView(Message object, View convertView, ViewGroup parent) {
@@ -210,12 +208,57 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
             requestList(page, allowCache);
         }
     };
+*/
 
-    private final PagingAdapter.OnLoadingCompleteListener _adapterListener = new PagingAdapter.OnLoadingCompleteListener() {
+    /*
+        private final PagingAdapter.OnLoadingCompleteListener _adapterListener = new PagingAdapter.OnLoadingCompleteListener() {
+            @Override
+            public void onLoadingComplete() {
+    //            Log.v(TAG, "_adapterListener.onLoadingComplete");
+                setLoading(false);
+            }
+        };
+    */
+    private final PagingAdapter<Message> _adapter = new PagingAdapter<Message>(Message.class) {
         @Override
-        public void onLoadingComplete() {
-//            Log.v(TAG, "_adapterListener.onLoadingComplete");
-            setLoading(false);
+        public void requestPage(int page, boolean allowCache) {
+            requestList(page, allowCache);
+        }
+
+        @Override
+        public BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType) {
+            MessageTileView v = new MessageTileView(parent.getContext());
+            return new BaseHolder(v, viewType);
+        }
+
+        @Override
+        public void onBindObjectViewHolder(BaseHolder holder, Message object) {
+            MessageTileView v = (MessageTileView) holder.itemView;
+            v.setData(object, _messageCard_listener);
+        }
+
+        @Override
+        public boolean useHeader() {
+            return false;
+        }
+
+        @Override
+        public BaseHolder onCreateHeaderViewHolder(ViewGroup parent) {
+            return null;
+        }
+
+        @Override
+        public void onBindHeaderViewHolder(BaseHolder holder) {
+        }
+
+        @Override
+        public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
+            return new BaseHolder(v, BaseHolder.TYPE_EMPTY);
+        }
+
+        @Override
+        public void onBindEmptyViewHolder(BaseHolder holder) {
         }
     };
 
@@ -244,7 +287,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("deleteMessage")) {
-                _adapter.refreshPages();
+                _adapter.refreshAll();
                 ProfileClient.get(App.get());
             }
         }
@@ -269,7 +312,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         @Override
         public void onConnected() {
             _profileClient.subListMessages();
-            _adapter.refreshPages();
+            _adapter.refreshAll();
         }
 
         @Override

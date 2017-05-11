@@ -15,6 +15,8 @@ import com.fieldnation.ui.TabActionBarFragmentActivity;
 
 import java.util.List;
 
+// http://stackoverflow.com/questions/32227482/recyclerview-swipe-with-a-view-below-it
+
 public class InboxActivity extends TabActionBarFragmentActivity {
     private static final String TAG = "InboxActivity";
 
