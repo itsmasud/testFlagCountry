@@ -522,7 +522,9 @@ public class WorkOrderCard extends RelativeLayout {
         Button button = _secondaryButtons[buttonId];
 
         // decline
-        if (_workOrder.getRequests() != null
+        if (_workOrder.getBundle() != null
+                && _workOrder.getBundle().getId() > 0
+                && _workOrder.getRequests() != null
                 && (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)
                 || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))) {
             button.setVisibility(VISIBLE);
