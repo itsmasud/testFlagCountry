@@ -1,12 +1,18 @@
 package com.fieldnation.ui.inbox;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,7 +24,6 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.SwipeableRecyclerViewTouchListener;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.worecycler.PagingAdapter;
@@ -40,6 +45,8 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
 
     // Data
     private ProfileClient _profileClient;
+
+    private Paint p = new Paint();
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -79,9 +86,10 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         _listView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         _listView.setAdapter(_adapter);
         _listView.setOnOverScrollListener(_loadingView);
-        _listView.addOnItemTouchListener(new SwipeableRecyclerViewTouchListener(view.getContext(), _listView,_swipeListener));
+        new ItemTouchHelper(_itemTouchHelper).attachToRecyclerView(_listView);
 
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
+
     }
 
     @Override
@@ -172,28 +180,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         }
     };
 
-    /*
-        private final PagingAdapter<Notification> _adapter = new PagingAdapter<Notification>() {
-            @Override
-            public View getView(Notification object, View convertView, ViewGroup parent) {
-                NotificationTileView v = null;
-                if (convertView == null) {
-                    v = new NotificationTileView(parent.getContext());
-                } else if (convertView instanceof NotificationTileView) {
-                    v = (NotificationTileView) convertView;
-                } else {
-                    v = new NotificationTileView(parent.getContext());
-                }
-                v.setData(object);
-                return v;
-            }
-
-            @Override
-            public void requestPage(int page, boolean allowCache) {
-                requestList(page, allowCache);
-            }
-        };
-    */
     private final PagingAdapter<Notification> _adapter = new PagingAdapter<Notification>(Notification.class) {
         @Override
         public void requestPage(int page, boolean allowCache) {
@@ -237,62 +223,76 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         }
     };
 
-    private final SwipeableRecyclerViewTouchListener.SwipeListener _swipeListener = new SwipeableRecyclerViewTouchListener.SwipeListener() {
+    private final ItemTouchHelper.Callback _itemTouchHelper2 = new ItemTouchHelper.Callback() {
         @Override
-        public boolean canSwipe(int position) {
-            return true;
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            return 0;
         }
 
         @Override
-        public void onDismissedBySwipe(RecyclerView recyclerView, int[] reverseSortedPositions) {
-
-        }
-
-/*
-        @Override
-        public void onDismissedBySwipeLeft(RecyclerView recyclerView, int[] reverseSortedPositions) {
-            for (int position : reverseSortedPositions) {
-                //change some data if you swipe left
-            }
-            _adapter.notifyDataSetChanged();
-        }
-
-        @Override
-        public void onDismissedBySwipeRight(RecyclerView recyclerView, int[] reverseSortedPositions) {
-            for (int position : reverseSortedPositions) {
-                //change some data if you swipe right
-            }
-            _adapter.notifyDataSetChanged();
-        }
-*/
-    };
-
-    private final RecyclerView.OnItemTouchListener _onItemTouchListener = new RecyclerView.OnItemTouchListener() {
-        @Override
-        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
             return false;
         }
 
         @Override
-        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
+        }
+    }
+
+    private final ItemTouchHelper.SimpleCallback _itemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
         }
 
         @Override
-        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            Log.v(TAG, "onSwiped");
         }
-    };
 
-/*
-    private final PagingAdapter.OnLoadingCompleteListener _adapterListener = new PagingAdapter.OnLoadingCompleteListener() {
         @Override
-        public void onLoadingComplete() {
-//            Log.v(TAG, "_adapterListener.onLoadingComplete");
-            setLoading(false);
+        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+            Bitmap icon;
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+
+                View itemView = viewHolder.itemView;
+                float height = (float) itemView.getBottom() - (float) itemView.getTop();
+                float width = height / 3;
+
+                if (dX > 0) {
+                    p.setColor(Color.parseColor("#388E3C"));
+                    RectF background = new RectF((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom());
+                    c.drawRect(background, p);
+                    icon = BitmapFactory.decodeResource(getResources(), R.drawable.fn_logo);
+                    RectF icon_dest = new RectF(
+                            (float) itemView.getLeft() + width,
+                            (float) itemView.getTop() + width,
+                            (float) itemView.getLeft() + 2 * width,
+                            (float) itemView.getBottom() - width);
+                    c.drawBitmap(icon, null, icon_dest, p);
+
+                } else {
+                    p.setColor(Color.parseColor("#D32F2F"));
+                    RectF background = new RectF(
+                            (float) itemView.getRight() + dX,
+                            (float) itemView.getTop(),
+                            (float) itemView.getRight(),
+                            (float) itemView.getBottom());
+                    c.drawRect(background, p);
+                    icon = BitmapFactory.decodeResource(getResources(), R.drawable.fn_logo);
+                    RectF icon_dest = new RectF(
+                            (float) itemView.getRight() - 2 * width,
+                            (float) itemView.getTop() + width,
+                            (float) itemView.getRight() - width,
+                            (float) itemView.getBottom() - width);
+                    c.drawBitmap(icon, null, icon_dest, p);
+                }
+            }
+            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
         }
     };
-*/
 
     /*-*****************************-*/
     /*-             WEB             -*/
@@ -310,4 +310,3 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         }
     };
 }
-
