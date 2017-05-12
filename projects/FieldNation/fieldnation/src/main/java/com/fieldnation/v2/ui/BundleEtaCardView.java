@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -51,7 +52,7 @@ public class BundleEtaCardView extends RelativeLayout {
             return;
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _dateTextView = (TextView) findViewById(R.id.schedule_textview);
         _addressTextView = (TextView) findViewById(R.id.address_textview);
         _locationTextView = (TextView) findViewById(R.id.location_textview);
 
@@ -83,21 +84,21 @@ public class BundleEtaCardView extends RelativeLayout {
 
 
         if (_workOrder.getLocation() != null) {
-            _addressTextView.setVisibility((_workOrder.getLocation().getAddress1() != null || _workOrder.getLocation().getAddress2() != null) ? VISIBLE : GONE);
+            _addressTextView.setVisibility((misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) || misc.isEmptyOrNull(_workOrder.getLocation().getAddress2())) ? VISIBLE : GONE);
             _addressTextView.setText(
-                    (_workOrder.getLocation().getAddress1() == null ? "" : _workOrder.getLocation().getAddress1() + ", ")
-                            + (_workOrder.getLocation().getAddress2() == null ? "" : _workOrder.getLocation().getAddress2()));
+                    (misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) ? "" : _workOrder.getLocation().getAddress1() + ", ")
+                            + (misc.isEmptyOrNull(_workOrder.getLocation().getAddress2()) ? "" : _workOrder.getLocation().getAddress2()));
         } else {
             _addressTextView.setVisibility(GONE);
         }
 
         if (_workOrder.getLocation() != null) {
-            _locationTextView.setVisibility((_workOrder.getLocation().getCity() != null || _workOrder.getLocation().getState() != null) ? VISIBLE : GONE);
+            _locationTextView.setVisibility((misc.isEmptyOrNull(_workOrder.getLocation().getCity()) || misc.isEmptyOrNull(_workOrder.getLocation().getState())) ? VISIBLE : GONE);
             _locationTextView.setText(
                     (_workOrder.getLocation().getCity() == null ? "" : _workOrder.getLocation().getCity() + ", ")
                             + (_workOrder.getLocation().getState() == null ? "" : _workOrder.getLocation().getState() + " ")
                             + (_workOrder.getLocation().getZip() == null ? "" : _workOrder.getLocation().getZip()));
-        }else {
+        } else {
             _locationTextView.setVisibility(GONE);
         }
 

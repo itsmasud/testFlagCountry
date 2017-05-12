@@ -641,7 +641,6 @@ public class WorkFragment extends WorkorderFragment {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
-            BundleEtaDialog.show(App.get(), "BundleEtaDialog", _workOrder.getBundle().getId());
         }
     };
 

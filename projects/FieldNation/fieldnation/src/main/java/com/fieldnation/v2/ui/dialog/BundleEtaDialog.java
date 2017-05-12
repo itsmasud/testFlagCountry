@@ -14,18 +14,18 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.BundleEtaCardView;
 
+import java.util.Hashtable;
 import java.util.Random;
 
 /**
@@ -34,11 +34,12 @@ import java.util.Random;
 
 public class BundleEtaDialog extends FullScreenDialog {
     private static final String TAG = "BundleEtaDialog";
-    private static final String DIALOG_ETA = TAG + ".etaDialog";
+
+    // Dialogs
+    private static final String UID_DIALOG_ETA = TAG + ".etaDialog";
 
     // Ui
     private Toolbar _toolbar;
-    private RefreshView _refreshView;
     private ActionMenuItemView _finishMenu;
 
     private RelativeLayout _incompleteLayout;
@@ -50,9 +51,10 @@ public class BundleEtaDialog extends FullScreenDialog {
     private BundlesWebApi _bundlesApi;
 
     // Data
+    private final Hashtable<Integer, ETA> _incompleteWorkOrders = new Hashtable<>();
+    private final Hashtable<Integer, ETA> _completeWorkOrders = new Hashtable<>();
     private int _bundleId = 0;
     private WorkOrders _workOrders;
-
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -86,7 +88,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
-        EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
+        EtaDialog.addOnBundleEtaListener(UID_DIALOG_ETA, _etaDialog_onBundleEta);
 
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
@@ -101,6 +103,9 @@ public class BundleEtaDialog extends FullScreenDialog {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
     }
 
     @Override
@@ -110,14 +115,12 @@ public class BundleEtaDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
-        if (_bundlesApi != null && _bundlesApi.isConnected())
+        EtaDialog.removeOnBundleEtaListener(UID_DIALOG_ETA, _etaDialog_onBundleEta);
+        if (_bundlesApi != null )
             _bundlesApi.disconnect(App.get());
 
         super.onStop();
-
-        EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
     }
-
 
     @Override
     public void show(Bundle params, boolean animate) {
@@ -148,15 +151,15 @@ public class BundleEtaDialog extends FullScreenDialog {
         _incompleteLayout.setVisibility(visibility == true ? View.VISIBLE : View.INVISIBLE);
     }
 
-    private void setLoading(boolean loading) {
-        if (loading) {
-            _toolbar.setEnabled(false);
-            _refreshView.startRefreshing();
-        } else {
-            _toolbar.setEnabled(true);
-            _refreshView.refreshComplete();
-        }
-    }
+//    private void setLoading(boolean loading) {
+//        if (loading) {
+//            _toolbar.setEnabled(false);
+//            _refreshView.startRefreshing();
+//        } else {
+//            _toolbar.setEnabled(true);
+//            _refreshView.refreshComplete();
+//        }
+//    }
 
 
     /*-********************************************-*/
@@ -167,13 +170,16 @@ public class BundleEtaDialog extends FullScreenDialog {
             return;
 
         if (_workOrders == null) {
-            Log.e(TAG, "_workOrders is null");
             return;
         }
 
 
         _toolbar.setTitle("Set ETAs");
         _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+
+
+        Log.e(TAG, "bundle id: " + _bundleId);
+        Log.e(TAG, "number of wos: " + _workOrders.getResults().length);
 
         ForLoopRunnable r = new ForLoopRunnable(_workOrders.getResults().length, new Handler()) {
             private final WorkOrder[] workOrders = _workOrders.getResults();
@@ -236,20 +242,23 @@ public class BundleEtaDialog extends FullScreenDialog {
     };
 
 
+    private final EtaDialog.OnBundleEtaListener _etaDialog_onBundleEta = new EtaDialog.OnBundleEtaListener() {
+        @Override
+        public void onBundleEta(ETA eta, int workOrderId) {
+
+            if (!_completeWorkOrders.contains(workOrderId)){
+                _completeWorkOrders.put(workOrderId, eta);
+
+            }
+        }
+    };
+
     private final BundleEtaCardView.OnClickListener _summaryListener = new BundleEtaCardView.OnClickListener() {
         @Override
         public void onClick(BundleEtaCardView view, WorkOrder workOrder) {
-            EtaDialog.show(App.get(), DIALOG_ETA, workOrder);
+            EtaDialog.show(App.get(), UID_DIALOG_ETA, workOrder);
         }
     };
-
-    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
-        @Override
-        public void onAccepted(int workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
-        }
-    };
-
 
     private final BundlesWebApi.Listener _bundlesWebApi_listener = new BundlesWebApi.Listener() {
         @Override
@@ -277,6 +286,5 @@ public class BundleEtaDialog extends FullScreenDialog {
         params.putInt("bundleId", bundleId);
         Controller.show(context, uid, BundleEtaDialog.class, params);
     }
-
 
 }

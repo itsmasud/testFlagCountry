@@ -31,6 +31,7 @@ import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.BundleEtaDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
@@ -45,6 +46,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     // Dialog tags
     private static final String UID_DIALOG_DECLINE = TAG + ".DeclineDialog";
     private static final String UID_DIALOG_ACCEPT_BUNDLE = TAG + ".AcceptBundleDialog";
+    private static final String UID_DIALOG_BUNDLE_ETA = TAG + ".bundleEtaDialog";
 
     // UI
     private LinearLayout _buttonToolbar;
@@ -173,13 +175,15 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-                AcceptBundleDialog.show(
-                        App.get(),
-                        UID_DIALOG_ACCEPT_BUNDLE,
-                        _bundleId,
-                        _adapter.getItemCount(),
-                        workOrder.getId(),
-                        AcceptBundleDialog.TYPE_ACCEPT);
+//                AcceptBundleDialog.show(
+//                        App.get(),
+//                        UID_DIALOG_ACCEPT_BUNDLE,
+//                        _bundleId,
+//                        _adapter.getItemCount(),
+//                        workOrder.getId(),
+//                        AcceptBundleDialog.TYPE_ACCEPT);
+
+                BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
 
             } else if (workOrder.getRequests() != null
                     && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
