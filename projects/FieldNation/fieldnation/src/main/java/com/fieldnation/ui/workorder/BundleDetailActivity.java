@@ -170,7 +170,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             _okButton.setEnabled(false);
         } else {
             _refreshView.refreshComplete();
-//            _notInterestedButton.setEnabled(true);
             _okButton.setEnabled(true);
         }
     }
@@ -326,8 +325,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
-                _adapter.refreshAll();
-                ToastClient.toast(App.get(), "Bundle declined successfully", Toast.LENGTH_LONG);
+                finish();
             }
         }
 
