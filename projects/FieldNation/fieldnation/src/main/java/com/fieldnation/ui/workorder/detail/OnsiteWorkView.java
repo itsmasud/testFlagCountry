@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
-public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
+public class OnsiteWorkView extends LinearLayout {
     private static final String TAG = "ui.workorder.detail.OnsiteWorkView";
 
     // UI
@@ -18,7 +18,7 @@ public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
-	/*-*************************************-*/
+    /*-*************************************-*/
 
     public OnsiteWorkView(Context context) {
         this(context, null);
@@ -37,7 +37,6 @@ public class OnsiteWorkView extends LinearLayout implements WorkorderRenderer {
 	/*-				Mutators				-*/
 	/*-*************************************-*/
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();

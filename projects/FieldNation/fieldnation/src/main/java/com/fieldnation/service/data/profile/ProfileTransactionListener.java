@@ -1,6 +1,7 @@
 package com.fieldnation.service.data.profile;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpResult;
@@ -8,7 +9,9 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
@@ -77,6 +80,46 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         }
     }
 
+    public static byte[] pUploadPhoto(long profileId, String filename) {
+        try {
+            JsonObject obj = new JsonObject("action", "pUploadPhoto");
+            obj.put("profileId", profileId);
+            obj.put("filename", filename);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
+    /*-***********************************-*/
+    /*-             onStart               -*/
+    /*-***********************************-*/
+    @Override
+    public void onStart(Context context, WebTransaction transaction) {
+        try {
+            JsonObject params = new JsonObject(transaction.getListenerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadPhoto":
+                    onStartUploadPhoto(context, transaction, params);
+                    break;
+
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private void onStartUploadPhoto(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        Log.v(TAG, "onStartUploadPhoto");
+        UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
+    }
+
+    /*-**************************************-*/
+    /*-             onComplete               -*/
+    /*-**************************************-*/
+
     @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Log.v(TAG, "onComplete");
@@ -94,6 +137,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
                     return onSwitchUser(context, result, transaction, params, httpResult, throwable);
                 case "pAction":
                     return onAction(context, result, transaction, params, httpResult, throwable);
+                case "pUploadPhoto":
+                    return onUploadPhoto(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -177,11 +222,6 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             ProfileClient.get(context, false);
             ProfileClient.listMessages(context, 0, false, false);
             ProfileClient.listNotifications(context, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
-            WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
 
             ProfileDispatch.switchUser(context, userId, false);
 
@@ -212,4 +252,34 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             return Result.RETRY;
         }
     }
+
+
+    private Result onUploadPhoto(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        long providerId = params.getLong("profileId");
+        String filename = params.getString("filename");
+
+        if (result == Result.CONTINUE) {
+            ProfileDispatch.uploadProfilePhoto(context, filename, true, false);
+            ProfileClient.get(context, false);
+            UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), null);
+
+            if (haveErrorMessage(httpResult)) {
+                ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+            } else if (throwable != null && throwable instanceof SecurityException) {
+                ToastClient.toast(context, "Failed to upload file. " + filename + " Read permission denied. Please try again", Toast.LENGTH_LONG);
+            } else {
+                ToastClient.toast(context, "Failed to upload file. " + filename + " Please try again", Toast.LENGTH_LONG);
+            }
+            ProfileDispatch.uploadProfilePhoto(context, filename, false, true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
+        }
+    }
+
 }

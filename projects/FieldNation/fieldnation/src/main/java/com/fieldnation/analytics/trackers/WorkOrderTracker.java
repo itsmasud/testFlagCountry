@@ -7,9 +7,9 @@ import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
+import com.fieldnation.v2.data.model.TaskType;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +42,7 @@ public class WorkOrderTracker {
         public static final Action COUNTER_OFFER = new Action("Counter Offer", true);
         public static final Action CLOSING_NOTES = new Action("Closing Notes", true);
         public static final Action CONFIRM = new Action("Confirm", true);
+        public static final Action ETA = new Action("Eta", true);
         public static final Action ACCEPT_WORK = new Action("Accept Work", true);
         public static final Action REQUEST = new Action("Request", true);
         public static final Action NOT_INTERESTED = new Action("Not Interested", true);
@@ -103,6 +104,7 @@ public class WorkOrderTracker {
         public static final Identity COUNTER_OFFER_ACTION_BUTTON = new Identity("Counter Offer Action", ElementType.BUTTON, true);
         public static final Identity CLOSING_NOTE_ACTION_BUTTON = new Identity("Closing Note Action", ElementType.BUTTON, true);
         public static final Identity CONFIRM_ACTION_BUTTON = new Identity("Confirm Action", ElementType.BUTTON, true);
+        public static final Identity ETA_ACTION_BUTTON = new Identity("Eta Action", ElementType.BUTTON, true);
         public static final Identity ACKNOWLEDGE_HOLD_ACTION_BUTTON = new Identity("Acknowledge Hold Action", ElementType.BUTTON, true);
         public static final Identity MARK_COMPLETE_ACTION_BUTTON = new Identity("Mark Complete Action", ElementType.BUTTON, true);
         public static final Identity MARK_INCOMPLETE_ACTION_BUTTON = new Identity("Mark Incomplete Action", ElementType.BUTTON, true);
@@ -213,32 +215,32 @@ public class WorkOrderTracker {
         }
 
         public static Identity fromTaskType(TaskType taskType) {
-            switch (taskType) {
-                case CONFIRM_ASSIGNMENT:
+            switch (taskType.getId()) {
+                case 1:
                     return CONFIRM_TASK;
-                case CLOSE_OUT_NOTES:
+                case 2:
                     return CLOSING_NOTE_TASK;
-                case CHECKIN:
+                case 3:
                     return CHECK_IN_TASK;
-                case CHECKOUT:
+                case 4:
                     return CHECK_OUT_TASK;
-                case UPLOAD_FILE:
+                case 5:
                     return UPLOAD_DOCUMENT_TASK;
-                case UPLOAD_PICTURE:
+                case 6:
                     return UPLOAD_PICTURE_TASK;
-                case CUSTOM_FIELD:
+                case 7:
                     return CUSTOM_FIELD_TASK;
-                case PHONE:
+                case 8:
                     return CALL_NUMBER_TASK;
-                case EMAIL:
+                case 9:
                     return SEND_EMAIL_TASK;
-                case UNIQUE_TASK:
+                case 10:
                     return UNIQUE_TASK;
-                case SIGNATURE:
+                case 11:
                     return COLLECT_SIGNATURE_TASK;
-                case SHIPMENT_TRACKING:
+                case 12:
                     return COLLECT_SHIPMENT_TASK;
-                case DOWNLOAD:
+                case 13:
                     return DOWNLOAD_FILE_TASK;
             }
             return null;
@@ -337,9 +339,9 @@ public class WorkOrderTracker {
 
     public enum ActionButton {
         CHECK_IN, CHECK_IN_AGAIN, CHECK_OUT, VIEW_COUNTER_OFFER, COUNTER_OFFER, CLOSING_NOTES,
-        CONFIRM, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
+        CONFIRM, ETA, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
         MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW, RUNNING_LATE, ON_MY_WAY, VIEW_BUNDLE,
-        CALL_BUYER, VIEW_MESSAGES, DIRECTIONS;
+        CALL_BUYER, VIEW_MESSAGES, DIRECTIONS, WARNING;
 
         public Identity getIdentity() {
             switch (this) {
@@ -357,6 +359,8 @@ public class WorkOrderTracker {
                     return Identity.CLOSING_NOTE_ACTION_BUTTON;
                 case CONFIRM:
                     return Identity.CONFIRM_ACTION_BUTTON;
+                case ETA:
+                    return Identity.ETA_ACTION_BUTTON;
                 case ACCEPT_WORK:
                     return Identity.ACCEPT_ACTION_BUTTON;
                 case REQUEST:
@@ -409,6 +413,8 @@ public class WorkOrderTracker {
                     return Action.CLOSING_NOTES;
                 case CONFIRM:
                     return Action.CONFIRM;
+                case ETA:
+                    return Action.ETA;
                 case ACCEPT_WORK:
                     return Action.ACCEPT_WORK;
                 case REQUEST:
@@ -446,9 +452,9 @@ public class WorkOrderTracker {
         }
     }
 
-    public static void onShow(Context context, Tab tab, long workOrderId) {
+    public static void onShow(Context context, Tab tab, int workOrderId) {
         TrackerBase.show(context, tab.tab, new SpWorkOrderContext.Builder()
-                .workOrderId(workOrderId)
+                .workOrderId((int) workOrderId)
                 .build());
     }
 
@@ -476,11 +482,19 @@ public class WorkOrderTracker {
         });
     }
 
-    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Long workOrderId) {
+    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Integer workOrderId) {
         onActionButtonEvent(context, null, actionButton, action, workOrderId);
     }
 
+    public static void onActionButtonEvent(Context context, ActionButton actionButton, Action action, Long workOrderId) {
+        onActionButtonEvent(context, null, actionButton, action, workOrderId.intValue());
+    }
+
     public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton, Action action, Long workOrderId) {
+        onActionButtonEvent(context, searchTitle, actionButton, action, workOrderId.intValue());
+    }
+
+    public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton, Action action, Integer workOrderId) {
         Identity identity = actionButton.getIdentity();
         if (identity != null) {
             if (action != null && workOrderId != null) {
@@ -516,11 +530,11 @@ public class WorkOrderTracker {
         navigationEvent(context, Tab.DETAILS, modalType.getIdentity());
     }
 
-    public static void onTaskEvent(Context context, TaskType taskType, Long workOrderId) {
+    public static void onTaskEvent(Context context, TaskType taskType, Integer workOrderId) {
         Identity identity = Identity.fromTaskType(taskType);
 
         if (identity != null) {
-            if (taskType == TaskType.UNIQUE_TASK && workOrderId != null) {
+            if (taskType.getId() == 10 && workOrderId != null) {
                 onEvent(context, identity, Action.UNIQUE_TASK, workOrderId);
             } else {
                 navigationEvent(context, Tab.DETAILS, identity);
@@ -565,7 +579,7 @@ public class WorkOrderTracker {
     }
 
 
-    public static void onEvent(Context context, Identity identity, Action action, long workOrderId) {
+    public static void onEvent(Context context, Identity identity, Action action, int workOrderId) {
         TrackerBase.event(context,
                 identity,
                 action,
@@ -590,11 +604,11 @@ public class WorkOrderTracker {
         }
 
         for (ActionButton ab : ActionButton.values()) {
-            onActionButtonEvent(context, ab, ab.getAction(), 1L);
-            onActionButtonEvent(context, ab, null, 1L);
+            onActionButtonEvent(context, ab, ab.getAction(), 1);
+            onActionButtonEvent(context, ab, null, 1);
             for (SavedSearchParams p : list) {
-                onActionButtonEvent(context, p.title, ab, ab.getAction(), 1L);
-                onActionButtonEvent(context, p.title, ab, null, 1L);
+                onActionButtonEvent(context, p.title, ab, ab.getAction(), 1);
+                onActionButtonEvent(context, p.title, ab, null, 1);
             }
         }
 
@@ -608,15 +622,16 @@ public class WorkOrderTracker {
             onDescriptionModalEvent(context, mt);
         }
 
-        for (TaskType tt : TaskType.values()) {
-            onTaskEvent(context, tt, 1L);
-        }
+        // TODO
+//        for (TaskType tt : TaskType.values()) {
+//            onTaskEvent(context, tt, 1L);
+//        }
 
         directionsEvent(context);
 
         for (Identity identity : Identity.values()) {
             for (Action action : Action.values()) {
-                onEvent(context, identity, action, 1L);
+                onEvent(context, identity, action, 1);
             }
         }
     }

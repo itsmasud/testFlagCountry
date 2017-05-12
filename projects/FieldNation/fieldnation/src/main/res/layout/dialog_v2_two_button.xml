@@ -3,7 +3,8 @@
     style="@style/Dialog.v3"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_centerInParent="true">
+    android:layout_centerInParent="true"
+    android:paddingBottom="4dp">
 
     <TextView
         android:id="@+id/title_textview"
@@ -23,18 +24,18 @@
     <Button
         android:id="@+id/primary_button"
         style="@style/DialogButton.v3"
-        android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/body_textview"
-        android:layout_marginRight="8dp"
-        android:text="OK" />
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_ok" />
 
     <Button
         android:id="@+id/secondary_button"
         style="@style/DialogButton.v3"
-        android:layout_width="wrap_content"
         android:layout_below="@+id/body_textview"
+        android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/primary_button"
-        android:text="CANCEL" />
+        android:text="@string/btn_cancel" />
 
 </RelativeLayout>

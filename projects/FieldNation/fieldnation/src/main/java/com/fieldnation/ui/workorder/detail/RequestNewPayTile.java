@@ -7,11 +7,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.IncreaseRequestInfo;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael on 6/3/2016.
@@ -27,7 +27,7 @@ public class RequestNewPayTile extends RelativeLayout {
     private TextView _payTextView;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public RequestNewPayTile(Context context) {
         super(context);
@@ -59,75 +59,82 @@ public class RequestNewPayTile extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Workorder workorder) {
-        _workorder = workorder;
+    public void setData(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
     private void populateUi() {
         setVisibility(GONE);
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_payTextView == null)
             return;
 
-        IncreaseRequestInfo info = _workorder.getIncreaseRequestInfo();
+        if (_workOrder.getPay() == null || _workOrder.getPay().getIncreases() == null)
+            return;
 
-        if (info == null || info.getPay() == null) {
+        PayIncrease increase = _workOrder.getPay().getIncreases().getLastIncrease();
+
+        if (increase == null || increase.getPay() == null) {
             return;
         }
 
-        Pay pay = info.getPay();
-        if (pay.isBlendedRate()) {
-            _basisTextView.setText("Blended Rate");
-            _captionTextView.setVisibility(VISIBLE);
-            _captionTextView.setText(
-                    misc.toCurrency(pay.getBlendedStartRate()) + " fixed for first " + ((int) (double) pay.getBlendedFirstHours()) + " hours\n"
-                            + misc.toCurrency(pay.getBlendedAdditionalRate()) + " per hour after for up to " + ((int) (double) pay.getBlendedAdditionalHours()) + " hours");
-            _payTextView.setText(misc.toCurrency(pay.getBlendedStartRate() + pay.getBlendedAdditionalRate() * pay.getBlendedAdditionalHours()));
-
-        } else if (pay.isFixedRate()) {
-            _basisTextView.setText("Fixed Rate");
-            _captionTextView.setVisibility(GONE);
-            _payTextView.setText(misc.toCurrency(pay.getFixedAmount()));
-
-        } else if (pay.isHourlyRate()) {
-            _basisTextView.setText("Hourly Rate");
-            _captionTextView.setVisibility(VISIBLE);
-            _captionTextView.setText("For up to " + ((int) (double) pay.getMaxHour()) + " hours");
-            _payTextView.setText(misc.toCurrency(pay.getPerHour() * pay.getMaxHour()));
-
-        } else if (pay.isPerDeviceRate()) {
-            _basisTextView.setText("Per Device");
-            _captionTextView.setVisibility(VISIBLE);
-            _captionTextView.setText("For up to " + ((int) (double) pay.getMaxDevice()) + " devices");
-            _payTextView.setText(misc.toCurrency(pay.getPerDevice() * pay.getMaxDevice()));
+        Pay pay = increase.getPay();
+        switch (pay.getType()) {
+            case BLENDED:
+                _basisTextView.setText("Blended Rate");
+                _captionTextView.setVisibility(VISIBLE);
+                _captionTextView.setText(
+                        misc.toCurrency(pay.getBase().getAmount()) + " fixed for first " + ((int) (double) pay.getBase().getUnits()) + " hours\n"
+                                + misc.toCurrency(pay.getAdditional().getAmount()) + " per hour after for up to " + ((int) (double) pay.getAdditional().getUnits()) + " hours");
+                _payTextView.setText(misc.toCurrency(pay.getBase().getAmount() + pay.getAdditional().getAmount() * pay.getAdditional().getUnits()));
+                break;
+            case DEVICE:
+                _basisTextView.setText("Per Device");
+                _captionTextView.setVisibility(VISIBLE);
+                _captionTextView.setText("For up to " + ((int) (double) pay.getBase().getUnits()) + " devices");
+                _payTextView.setText(misc.toCurrency(pay.getBase().getAmount() * pay.getBase().getUnits()));
+                break;
+            case FIXED:
+                _basisTextView.setText("Fixed Rate");
+                _captionTextView.setVisibility(GONE);
+                _payTextView.setText(misc.toCurrency(pay.getBase().getAmount()));
+                break;
+            case HOURLY:
+                _basisTextView.setText("Hourly Rate");
+                _captionTextView.setVisibility(VISIBLE);
+                _captionTextView.setText("For up to " + ((int) (double) pay.getBase().getUnits()) + " hours");
+                _payTextView.setText(misc.toCurrency(pay.getBase().getAmount() * pay.getBase().getUnits()));
+                break;
         }
 
-        switch (info.getStatus()) {
-            case 0: // pending
-                setVisibility(VISIBLE);
-                _statusTextView.setText("PENDING APPROVAL");
-                _statusTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+        if (increase.getStatus() != null) {
+            switch (increase.getStatus()) {
+                case PENDING: // pending
+                    setVisibility(VISIBLE);
+                    _statusTextView.setText("PENDING APPROVAL");
+                    _statusTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
 
-                _iconTextView.setText(R.string.icon_circle_pending);
-                _iconTextView.setTextColor(getResources().getColor(R.color.fn_yellow));
-                break;
-            case 1: // approved
-                setVisibility(GONE);
-                break;
-            case 2: // denied
-                setVisibility(VISIBLE);
-                _statusTextView.setText("DECLINED");
-                _statusTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                    _iconTextView.setText(R.string.icon_circle_pending);
+                    _iconTextView.setTextColor(getResources().getColor(R.color.fn_yellow));
+                    break;
+                case ACCEPTED: // approved
+                    setVisibility(GONE);
+                    break;
+                case DENIED: // denied
+                    setVisibility(VISIBLE);
+                    _statusTextView.setText("DENIED");
+                    _statusTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
-                _iconTextView.setText(R.string.icon_circle_delete);
-                _iconTextView.setTextColor(getResources().getColor(R.color.fn_red));
-                break;
-            default:
-                setVisibility(GONE);
-                break;
+                    _iconTextView.setText(R.string.icon_circle_delete);
+                    _iconTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                    break;
+                default:
+                    setVisibility(GONE);
+                    break;
+            }
         }
     }
 }

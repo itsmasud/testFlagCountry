@@ -10,20 +10,20 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.ScheduleServiceWindow;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class ScheduleSummaryView extends LinearLayout implements WorkorderRenderer {
+public class ScheduleSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ScheduleSummaryView";
 
     private static final String DIALOG_ETA = TAG + ".etaDialog";
@@ -33,10 +33,10 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     private TextView _date1TextView;
     private TextView _type2TextView;
     private TextView _date2TextView;
-    private Button _addButton;
+    private Button _editEtaButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -62,8 +62,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         _date1TextView = (TextView) findViewById(R.id.date1_textview);
         _type2TextView = (TextView) findViewById(R.id.type2_textview);
         _date2TextView = (TextView) findViewById(R.id.date2_textview);
-        _addButton = (Button) findViewById(R.id.add_button);
-        _addButton.setOnClickListener(_add_onClick);
+        _editEtaButton = (Button) findViewById(R.id.add_button);
+        _editEtaButton.setOnClickListener(_editEta_onClick);
 
         setVisibility(View.GONE);
     }
@@ -72,54 +72,71 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     /*-				Mutators				-*/
     /*-*************************************-*/
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         refresh();
     }
 
     private void refresh() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
         setVisibility(View.VISIBLE);
 
-        if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED
-                && _workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
-            _addButton.setVisibility(VISIBLE);
+        /*
+1    Created
+2    Published
+3    Assigned
+4    Work Done
+5    Approved
+6    Paid
+7    Cancelled
+8    Postponed
+9    Routed
+10    Deleted
+         */
 
+        if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
+            _editEtaButton.setVisibility(VISIBLE);
+            _editEtaButton.setText(R.string.btn_set_eta);
+        } else if (_workOrder.getEta() != null
+                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+            _editEtaButton.setVisibility(VISIBLE);
+            _editEtaButton.setText(R.string.btn_edit_eta);
         } else {
-            _addButton.setVisibility(GONE);
+            _editEtaButton.setVisibility(GONE);
         }
 
-        Schedule schedule = _workorder.getSchedule();
-
-        if (_workorder.getEstimatedSchedule() != null) {
-            schedule = _workorder.getEstimatedSchedule();
-        }
+        Schedule schedule = _workOrder.getSchedule();
 
         try {
-            Calendar sCal = null;
-            Calendar eCal = null;
+            DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+            symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
 
-            try {
-                if (schedule != null && !misc.isEmptyOrNull(schedule.getStartTime()))
-                    sCal = ISO8601.toCalendar(schedule.getStartTime());
-            } catch (Exception ex) {
-            }
-
-            try {
-                if (schedule != null && !misc.isEmptyOrNull(schedule.getEndTime()))
-                    eCal = ISO8601.toCalendar(schedule.getEndTime());
-            } catch (Exception ex) {
-            }
-
-            if (sCal == null) {
+            if (schedule == null) {
                 setVisibility(GONE);
                 return;
             }
 
-            DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-            symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
-            if (!misc.isEmptyOrNull(schedule.getEndTime()) && schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
+            if (_workOrder.getEta() != null && _workOrder.getEta().getUser() != null
+                    && _workOrder.getEta().getUser().getId() > 0) {
+
+                Log.v(TAG, "ETA!!");
+                ETA eta = _workOrder.getEta();
+                Calendar sCal = eta.getStart().getCalendar();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
+                sdf.setDateFormatSymbols(symbols);
+
+                _type1TextView.setText(R.string.exactly_on);
+                _date1TextView.setText(sdf.format(sCal.getTime()));
+                _type2TextView.setVisibility(GONE);
+                _date2TextView.setVisibility(GONE);
+
+            } else if (schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
+                Calendar sCal = schedule.getServiceWindow().getStart().getCalendar();
+                Calendar eCal = schedule.getServiceWindow().getEnd().getCalendar();
+
                 SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
                 SimpleDateFormat sdf2 = new SimpleDateFormat("E, MMM dd, yyyy", Locale.getDefault());
@@ -135,12 +152,13 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
                 _type2TextView.setVisibility(VISIBLE);
                 _date2TextView.setVisibility(VISIBLE);
-                _date2TextView.setText(
-                        getContext().getString(R.string.schedule_business_hours_format2,
-                                sdf1.format(sCal.getTime()),
-                                sdf1.format(eCal.getTime())));
+                _date2TextView.setText(getContext().getString(R.string.schedule_business_hours_format2,
+                        sdf1.format(sCal.getTime()), sdf1.format(eCal.getTime())));
 
-            } else if (!misc.isEmptyOrNull(schedule.getEndTime()) && schedule.getType() == Schedule.Type.OPEN_RAGE) {
+            } else if (schedule.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+                Calendar sCal = schedule.getServiceWindow().getStart().getCalendar();
+                Calendar eCal = schedule.getServiceWindow().getEnd().getCalendar();
+
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
                 _type1TextView.setText(R.string.between);
@@ -152,6 +170,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                 _type2TextView.setVisibility(GONE);
                 _date2TextView.setVisibility(GONE);
             } else { //if (schedule.getType() == Schedule.Type.EXACT) {
+                Calendar sCal = schedule.getServiceWindow().getStart().getCalendar();
+
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
 
@@ -165,11 +185,10 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         }
     }
 
-    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _editEta_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
-                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
         }
     };
 }

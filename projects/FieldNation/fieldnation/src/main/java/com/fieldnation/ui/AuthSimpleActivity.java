@@ -25,8 +25,8 @@ import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.v2.UpdateDialog;
-import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
+import com.fieldnation.v2.ui.dialog.UpdateDialog;
+import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -133,17 +133,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(App.get());
+        if (_globalClient != null) _globalClient.disconnect(App.get());
 
-        if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(App.get());
+        if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
 
-        if (_toastClient != null && _toastClient.isConnected())
-            _toastClient.disconnect(App.get());
+        if (_toastClient != null) _toastClient.disconnect(App.get());
 
-        if (_activityResultClient != null && _activityResultClient.isConnected())
-            _activityResultClient.disconnect(App.get());
+        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
@@ -231,6 +227,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v(TAG, "onActivityResult " + requestCode + ", " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
     }

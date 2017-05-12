@@ -19,7 +19,7 @@ public class Serializer {
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    public static JsonObject serializeObject(Object source) throws ParseException, IllegalArgumentException, IllegalAccessException {
+    public static JsonObject serializeObject(Object source) throws ParseException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException {
         JsonObject dest = new JsonObject();
         // get the source object's fields
         Field[] fields = source.getClass().getDeclaredFields();
@@ -42,7 +42,7 @@ public class Serializer {
         return dest;
     }
 
-    private static Object serialize(Object source) throws IllegalArgumentException, IllegalAccessException, ParseException {
+    private static Object serialize(Object source) throws IllegalArgumentException, IllegalAccessException, ParseException, NoSuchFieldException {
         if (source == null)
             return source;
 
@@ -62,11 +62,24 @@ public class Serializer {
         if (ReflectionUtils.isArray(clazz)) {
             return serializeArray((Object[]) source);
         }
+        if (ReflectionUtils.isEnum(clazz)) {
+            return serializeEnum((Enum) source);
+        }
 
         return serializeObject(source);
     }
 
-    private static JsonArray serializeCollection(Collection<Object> collection) throws IllegalArgumentException, IllegalAccessException, ParseException {
+    private static String serializeEnum(Enum source) throws NoSuchFieldException {
+        Field field = source.getDeclaringClass().getField(source.name());
+
+        Json annotation = ReflectionUtils.getAnnotation(field, Json.class);
+        if (annotation == null)
+            return source.name();
+
+        return annotation.name();
+    }
+
+    private static JsonArray serializeCollection(Collection<Object> collection) throws IllegalArgumentException, IllegalAccessException, ParseException, NoSuchFieldException {
         JsonArray dest = new JsonArray();
 
         Iterator<Object> iter = collection.iterator();
@@ -76,7 +89,7 @@ public class Serializer {
         return dest;
     }
 
-    private static JsonArray serializeArray(Object[] array) throws IllegalArgumentException, IllegalAccessException, ParseException {
+    private static JsonArray serializeArray(Object[] array) throws IllegalArgumentException, IllegalAccessException, ParseException, NoSuchFieldException {
         JsonArray dest = new JsonArray();
 
         for (int i = 0; i < array.length; i++) {

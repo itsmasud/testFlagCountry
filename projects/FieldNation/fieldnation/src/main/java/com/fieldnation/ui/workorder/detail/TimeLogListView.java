@@ -11,13 +11,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.List;
 
-public class TimeLogListView extends RelativeLayout implements WorkorderRenderer {
+public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "TimeLoggedView";
 
     // Ui
@@ -28,7 +32,8 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
+    private ForLoopRunnable _forLoop;
 
     public TimeLogListView(Context context) {
         super(context);
@@ -65,12 +70,20 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
+        ppulateUi();
+    }
 
-        final LoggedWork[] logs = _workorder.getLoggedWork();
+    public void ppulateUi() {
+        if (_workOrder == null || _workOrder.getTimeLogs() == null)
+            return;
 
-        if (_workorder.canModifyTimeLog()) {
+        final TimeLog[] logs = _workOrder.getTimeLogs().getResults();
+
+        if (_workOrder.getTimeLogs() != null
+                && _workOrder.getTimeLogs().getActionsSet() != null
+                && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             _logTimeButton.setVisibility(View.VISIBLE);
         } else {
             if (logs == null || logs.length == 0) {
@@ -84,55 +97,63 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
         if (logs == null || logs.length == 0) {
             _noTimeTextView.setVisibility(View.VISIBLE);
+            _logList.removeAllViews();
         } else {
+            _logList.setVisibility(VISIBLE);
             _noTimeTextView.setVisibility(View.GONE);
         }
 
-
-        if (logs == null || logs.length == 0) {
-            _logList.removeAllViews();
-        } else if (_logList.getChildCount() > logs.length) {
-            _logList.removeViews(logs.length - 1, _logList.getChildCount() - logs.length);
+        if (_forLoop != null) {
+            _forLoop.cancel();
+            _forLoop = null;
         }
 
         if (logs != null && logs.length > 0) {
-            ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
-                private final LoggedWork[] _logs = logs;
+            _forLoop = new ForLoopRunnable(logs.length, new Handler()) {
+                private final TimeLog[] _logs = logs;
+                private List<View> _views = new LinkedList();
 
                 @Override
                 public void next(int i) throws Exception {
-                    TimeLogRowView v = null;
-                    if (i < _logList.getChildCount()) {
-                        v = (TimeLogRowView) _logList.getChildAt(i);
-                    } else {
-                        v = new TimeLogRowView(getContext());
+                    TimeLogRowView v = new TimeLogRowView(getContext());
+                    _views.add(v);
+                    TimeLog log = _logs[i];
+                    v.setListener(_timeLog_listener);
+                    v.setData(_workOrder, log);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _logList.removeAllViews();
+                    for (View v : _views) {
                         _logList.addView(v);
                     }
-                    LoggedWork log = _logs[i];
-                    v.setListener(_scheduleDetailView_listener);
-                    v.setData(_workorder, log);
                 }
             };
-            postDelayed(r, new Random().nextInt(1000));
+            postDelayed(_forLoop, 100);
         }
     }
 
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
+    private final TimeLogRowView.Listener _timeLog_listener = new TimeLogRowView.Listener() {
         @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            if (_workorder.canModifyTimeLog()) {
-                if (_listener != null)
-                    _listener.editWorklog(workorder, loggedWork, showDeviceCount);
+        public void editTimeLog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
+            if (_listener != null
+                    && timeLog.getActionsSet() != null
+                    && timeLog.getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
+                _listener.editWorklog(workOrder, timeLog, showDeviceCount);
             }
         }
 
         @Override
-        public void deleteWorklog(final TimeLogRowView view, final Workorder workorder, final LoggedWork loggedWork) {
-            if (_listener != null)
-                _listener.deleteWorklog(workorder, loggedWork);
+        public void deleteTimeLog(final TimeLogRowView view, final WorkOrder workOrder, final TimeLog timeLog) {
+            if (_listener != null
+                    && timeLog.getActionsSet() != null
+                    && timeLog.getActionsSet().contains(TimeLog.ActionsEnum.DELETE)) {
+                _listener.deleteWorklog(workOrder, timeLog);
+            }
         }
     };
 
@@ -141,23 +162,26 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         public void onClick(View v) {
             boolean showdevices = false;
             try {
-                showdevices = _workorder.getPay().isPerDeviceRate();
+                showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
             } catch (Exception ex) {
             }
 
-            if (_workorder.canModifyTimeLog()) {
-                if (_listener != null)
-                    _listener.addWorklog(showdevices);
+            if (_listener != null
+                    && _workOrder.getTimeLogs() != null
+                    && _workOrder.getTimeLogs().getActionsSet() != null
+                    && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
+                _listener.addWorklog(showdevices);
             }
         }
     };
 
+
     public interface Listener {
         void addWorklog(boolean showdevice);
 
-        void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+        void editWorklog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount);
 
-        void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
+        void deleteWorklog(WorkOrder workOrder, TimeLog timeLog);
 
     }
 }

@@ -23,7 +23,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 import java.util.ArrayList;
 
@@ -134,8 +134,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        if (_fileCacheClient != null && _fileCacheClient.isConnected())
-            _fileCacheClient.disconnect(App.get());
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
 
         super.onStop();
     }
@@ -231,7 +230,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onSlotSelected(UploadSlot uploadSlot) {
             _selectedUploadSlot = uploadSlot;
-            // TODO if file list == 1, then start upload and redirect to work order details
+            // if file list == 1, then start upload and redirect to work order details
             if (_sharedFiles.length == 1) {
                 WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
                         _selectedUploadSlot.getSlotId(), _sharedFiles[0].getFileName(),
@@ -271,8 +270,8 @@ public class ReceiverActivity extends AuthSimpleActivity {
     };
 
     private void startWorkOrderDetails() {
-        Intent intent = WorkorderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId());
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
+        Intent intent = WorkOrderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId().intValue());
+        intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DELIVERABLES);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

@@ -7,7 +7,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
@@ -17,12 +16,14 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
 import java.io.File;
 import java.io.InputStream;
@@ -301,7 +302,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionComplete(Context context, long workorderId) {
-        action(context, workorderId, "complete", null, null, null);
+        context.startService(
+                action(context, workorderId, "POST", "complete", null, null, null,
+                        WorkorderTransactionListener.class,
+                        WorkorderTransactionListener.pComplete(workorderId)));
     }
 
     // returns the entire work order details
@@ -848,6 +852,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .setWifiRequired(App.get().onlyUploadWithWifi())
                     .setTrack(true)
+                    .setTrackType(TrackerEnum.DELIVERABLES)
                     .build();
 
             WebTransactionService.queueTransaction(context, transaction);

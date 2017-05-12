@@ -9,7 +9,7 @@
         style="@style/DialogTitle.v3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Report Issue" />
+        android:text="@string/report_issue" />
 
     <TextView
         android:id="@+id/body_textview"
@@ -19,7 +19,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="Select the issue type:" />
+        android:text="@string/select_the_issue_type" />
 
     <Button
         android:id="@+id/reschedule_button"
@@ -28,7 +28,7 @@
         android:layout_below="@+id/body_textview"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="Request reschedule"
+        android:text="@string/request_reschedule"
         android:visibility="gone" />
 
     <Button
@@ -38,7 +38,7 @@
         android:layout_below="@id/reschedule_button"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="Cancel work order" />
+        android:text="@string/cancel_work_order" />
 
     <Button
         android:id="@+id/reportother_button"
@@ -47,7 +47,7 @@
         android:layout_below="@+id/cancelWork_button"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="Report other issue" />
+        android:text="@string/report_other_issue" />
 
     <Button
         android:id="@+id/cancel_button"

@@ -11,18 +11,19 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -43,8 +44,8 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     private TextView _statusTextView;
 
     // Data
-    private Workorder _workorder;
-    private Document _document;
+    private WorkOrder _workOrder;
+    private Attachment _attachment;
     private DocumentClient _docClient;
 
     private boolean _isLoading = false;
@@ -105,7 +106,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_docClient != null && _docClient.isConnected()) {
+        if (_docClient != null) {
             _docClient.disconnect(App.get());
             _docClient = null;
         }
@@ -118,17 +119,21 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     @Override
     public void setPhoto(String url, Drawable photo) {
         Log.v(TAG, "setPhoto");
-        if (_document != null && _document.getThumbNail() != null && _document.getThumbNail().startsWith(url)) {
+        if (_attachment != null
+                && _attachment.getFile() != null
+                && _attachment.getFile().getThumbnail() != null
+// TODO               && _attachment.getThumbNail().startsWith(url)
+                ) {
             _picView.setImageDrawable(photo);
             _hasImage = true;
             updateThumb();
         }
     }
 
-    public void setData(Workorder workorder, Document document) {
+    public void setData(WorkOrder workOrder, Attachment attachment) {
         setLoading(false, R.string.uploading);
-        _document = document;
-        _workorder = workorder;
+        _attachment = attachment;
+        this._workOrder = workOrder;
         populateUi();
     }
 
@@ -175,18 +180,20 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     }
 
     private void populateUi() {
-        if (_document == null)
+        if (_attachment == null)
             return;
 
-        _filenameTextView.setText(_document.getFileName());
+        _filenameTextView.setText(_attachment.getFile().getName());
         try {
-            _dateTextView.setText(DateUtils.formatDateLong(ISO8601.toCalendar(_document.getLastUpdated())));
+            _dateTextView.setText(DateUtils.formatDateLong(_attachment.getCreated().getCalendar()));
         } catch (Exception e) {
             Log.v(TAG, e);
         }
 
-        if (_document.getUpdatedBy() != null) {
-            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+        if (_attachment.getAuthor() != null) {
+            String firstName = _attachment.getAuthor().getFirstName();
+            String lastName = _attachment.getAuthor().getLastName();
+            _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
             _byTextView.setVisibility(VISIBLE);
         } else {
             _byTextView.setVisibility(GONE);
@@ -194,7 +201,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
         }
 
         try {
-            String ext = _document.getFileName();
+            String ext = _attachment.getFile().getName();
             ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
             if (_ICFN_FILES.containsKey(ext)) {
                 _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
@@ -202,10 +209,12 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
                     case "png":
                     case "jpg":
                     case "jpeg":
-                        if (_listener != null && !misc.isEmptyOrNull(_document.getThumbNail())) {
-                            Drawable result = _listener.getPhoto(this, _document.getThumbNail(), true);
+                        if (_listener != null
+                                && _attachment.getFile() != null
+                                && !misc.isEmptyOrNull(_attachment.getFile().getThumbnail())) {
+                            Drawable result = _listener.getPhoto(this, _attachment.getFile().getThumbnail(), true);
                             if (result != null) {
-                                setPhoto(_document.getThumbNail(), result);
+                                setPhoto(_attachment.getFile().getThumbnail(), result);
                             } else {
                                 _hasImage = false;
                             }
@@ -249,14 +258,14 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
 
         @Override
         public void onDownload(long documentId, File file, int state) {
-            if (_document == null)
+            if (_attachment == null)
                 return;
 
-            if (_document.getDocumentId() == null || _document.getDocumentId() != documentId)
+            if (_attachment.getId() == null || _attachment.getId() != documentId)
                 return;
 
             if (state == DocumentConstants.PARAM_STATE_START) {
-                setDownloading(_document.getFileName());
+                setDownloading(_attachment.getFile().getName());
             } else {
                 postDelayed(new Runnable() {
                     @Override
@@ -272,16 +281,23 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_document == null) {
+            if (_attachment == null) {
                 return;
             }
 
-            if (!misc.isEmptyOrNull(_document.getFileType()) && _document.getFileType().equals("url")) {
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
+            if (!_attachment.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
+                ToastClient.toast(App.get(), "File not available for download.", Toast.LENGTH_LONG);
+                return;
+            }
+
+            if (_attachment.getFile() != null
+                    && _attachment.getFile().getType() != null
+                    && _attachment.getFile().getType().equals(com.fieldnation.v2.data.model.File.TypeEnum.LINK)) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_attachment.getFile().getLink()));
                 getContext().startActivity(intent);
-            } else if (_document.getDocumentId() != null) {
-                DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
-                        _document.getFilePath(), _document.getFileName(), false);
+            } else if (_attachment.getId() != null) {
+                DocumentClient.downloadDocument(getContext(), _attachment.getId(),
+                        _attachment.getFile().getLink(), _attachment.getFile().getName(), false);
             }
         }
     };

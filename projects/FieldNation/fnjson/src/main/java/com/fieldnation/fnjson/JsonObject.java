@@ -136,6 +136,15 @@ public class JsonObject implements Parcelable {
         return this;
     }
 
+    public JsonObject put(String key, Object value, boolean ignoreException) {
+        try {
+            return put(key, value);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return this;
+    }
+
     protected JsonObject put(List<String> directions, Object value) throws ParseException {
         if (directions.size() == 0) {
             throw new ParseException("Invalid path", 0);

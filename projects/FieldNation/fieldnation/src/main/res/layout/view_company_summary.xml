@@ -61,15 +61,6 @@
                 android:layout_marginBottom="8dp">
 
                 <TextView
-                    android:id="@+id/location_textview"
-                    style="@style/Text_Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@+id/reviews_textview"
-                    android:text="Minneapolis, MN" />
-
-                <TextView
                     android:id="@+id/reviews_textview"
                     style="@style/Text_Caption"
                     android:layout_width="wrap_content"
@@ -84,16 +75,13 @@
                     android:layout_alignParentRight="true"
                     android:text="@string/new_buyer"
                     android:textColor="@color/fn_accent_color" />
-
             </RelativeLayout>
-
 
             <RelativeLayout
                 android:id="@+id/details_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp">
-
 
                 <TextView
                     android:id="@+id/textview_1"
@@ -170,6 +158,7 @@
             </RelativeLayout>
 
             <RelativeLayout
+                android:id="@+id/timeToApproval_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -189,10 +178,11 @@
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/percentageApproval_textview"
                 style="@style/Text_Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="90% of their work orders" />
+                android:text="@string/company_percentage_approval" />
 
         </LinearLayout>
     </LinearLayout>

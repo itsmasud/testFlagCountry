@@ -9,7 +9,6 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/footer_view"
         android:layout_alignParentTop="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
@@ -22,53 +21,20 @@
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                style="@style/toolbarConfirmStyle"
+                style="?attr/fnToolbarStyle"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:theme="@style/FieldNation.Material.ToolBar.Blue">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Please confirm tomorrow's work orders"
-                    android:textColor="#FFFFFFFF"
-                    android:textSize="18sp" />
-
-            </android.support.v7.widget.Toolbar>
+                app:theme="@style/FieldNation.Material.ToolBar"></android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
-        <com.fieldnation.ui.search.SearchResultScreen
+        <com.fieldnation.ui.ncns.ConfirmResultScreen
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </android.support.design.widget.CoordinatorLayout>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/footer_view"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/fn_menu_bg">
-
-        <View
-            style="@style/DividerFull"
-            android:layout_width="match_parent"
-            android:layout_alignParentTop="true" />
-
-        <Button
-            android:id="@+id/done_button"
-            style="?attr/buttonGreenStyle"
-            android:layout_width="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:text="@string/btn_done"
-            android:visibility="visible" />
-
-    </RelativeLayout>
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"

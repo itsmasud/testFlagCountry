@@ -12,6 +12,7 @@ import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
@@ -37,6 +38,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private long _queueTime;
     private boolean _wifiRequired;
     private boolean _track;
+    private TrackerEnum _trackType;
     private String _timingKey;
 
     private int _notifId = -1;
@@ -73,6 +75,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = cursor.getString(Column.KEY.getIndex());
         _wifiRequired = cursor.getInt(Column.WIFI_REQUIRED.getIndex()) == 1;
         _track = cursor.getInt(Column.TRACK.getIndex()) == 1;
+        _trackType = TrackerEnum.values()[cursor.getInt(Column.TRACK_TYPE.getIndex())];
         _timingKey = cursor.getString(Column.TIMING_KEY.getIndex());
 
         _notifId = cursor.getInt(Column.NOTIF_ID.getIndex());
@@ -99,6 +102,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = bundle.getString(PARAM_KEY);
         _wifiRequired = bundle.getBoolean(PARAM_WIFI_REQUIRED);
         _track = bundle.getBoolean(PARAM_TRACK);
+        _trackType = TrackerEnum.values()[bundle.getInt(PARAM_TRACK_ENUM)];
         _timingKey = bundle.getString(PARAM_TIMING_KEY);
 
         _notifId = bundle.getInt(PARAM_NOTIFICATION_ID);
@@ -132,6 +136,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
         bundle.putBoolean(PARAM_WIFI_REQUIRED, _wifiRequired);
         bundle.putBoolean(PARAM_TRACK, _track);
+        bundle.putInt(PARAM_TRACK_ENUM, _trackType.ordinal());
 
         if (_timingKey != null)
             bundle.putString(PARAM_TIMING_KEY, _timingKey);
@@ -239,6 +244,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return _track;
     }
 
+    public TrackerEnum getTrackType() {
+        return _trackType;
+    }
+
+    public void setTrackType(TrackerEnum trackType) {
+        _trackType = trackType;
+    }
+
     public String getTimingKey() {
         return _timingKey;
     }
@@ -291,10 +304,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         setState(State.IDLE);
         setQueueTime(System.currentTimeMillis() + retryTime);
         save();
-
-        if (isTracked())
-            UploadTrackerClient.uploadRequeued(ContextProvider.get());
-
     }
 
     public WebTransaction save() {
@@ -448,6 +457,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.QUEUE_TIME.getName(), obj._queueTime);
         v.put(Column.WIFI_REQUIRED.getName(), obj._wifiRequired ? 1 : 0);
         v.put(Column.TRACK.getName(), obj._track ? 1 : 0);
+        v.put(Column.TRACK_TYPE.getName(), obj._trackType.ordinal());
         v.put(Column.TIMING_KEY.getName(), obj._timingKey);
 
         v.put(Column.NOTIF_ID.getName(), obj._notifId);
@@ -579,6 +589,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putBoolean(PARAM_IS_SYNC, false);
             params.putBoolean(PARAM_WIFI_REQUIRED, false);
             params.putBoolean(PARAM_TRACK, false);
+            params.putInt(PARAM_TRACK_ENUM, 0);
             params.putInt(PARAM_NOTIFICATION_ID, -1);
             params.putByteArray(PARAM_NOTIFICATION_START, (byte[]) null);
             params.putByteArray(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
@@ -587,7 +598,6 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
 
         public WebTransaction build() {
-            // TODO add the transforms list
             if (transforms.size() > 0) {
                 Parcelable[] parcels = transforms.toArray(new Parcelable[transforms.size()]);
                 params.putParcelableArray(PARAM_TRANSFORM_LIST, parcels);
@@ -624,6 +634,11 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
         public Builder setTrack(boolean track) {
             params.putBoolean(PARAM_TRACK, track);
+            return this;
+        }
+
+        public Builder setTrackType(TrackerEnum trackerEnum) {
+            params.putInt(PARAM_TRACK_ENUM, trackerEnum.ordinal());
             return this;
         }
 

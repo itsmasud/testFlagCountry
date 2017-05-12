@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -10,14 +9,19 @@ import android.view.Window;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by michael.carver on 12/2/2014.
@@ -55,12 +59,14 @@ public class SignOffActivity extends AuthSimpleActivity {
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
     private String _signatureSvg;
-    private Workorder _workorder;
-    private long _taskId = -1;
+    private WorkOrder _workOrder;
+    private int _taskId = -1;
     private boolean _completeWorkorder = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
+        App.get().getSpUiContext().page = "Collect Signature";
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
     }
@@ -91,15 +97,15 @@ public class SignOffActivity extends AuthSimpleActivity {
                 @Override
                 protected Object[] doInBackground(Bundle... params) {
                     Bundle extras = params[0];
-                    Workorder workorder = null;
-                    Long taskId = _taskId;
+                    WorkOrder workorder = null;
+                    Integer taskId = _taskId;
                     Boolean completeWorkorder = _completeWorkorder;
 
                     if (extras.containsKey(INTENT_PARAM_WORKORDER))
                         workorder = extras.getParcelable(INTENT_PARAM_WORKORDER);
 
                     if (extras.containsKey(INTENT_PARAM_TASK_ID))
-                        taskId = extras.getLong(INTENT_PARAM_TASK_ID);
+                        taskId = extras.getInt(INTENT_PARAM_TASK_ID);
 
                     if (extras.containsKey(INTENT_COMPLETE_WORKORDER))
                         completeWorkorder = extras.getBoolean(INTENT_COMPLETE_WORKORDER);
@@ -109,10 +115,9 @@ public class SignOffActivity extends AuthSimpleActivity {
 
                 @Override
                 protected void onPostExecute(Object[] objects) {
-                    _workorder = (Workorder) objects[0];
-                    _taskId = (Long) objects[1];
+                    _workOrder = (WorkOrder) objects[0];
+                    _taskId = (Integer) objects[1];
                     _completeWorkorder = (Boolean) objects[2];
-
                 }
             }.executeEx(extras);
 
@@ -128,8 +133,8 @@ public class SignOffActivity extends AuthSimpleActivity {
                     int displayMode = _displayMode;
                     String name = _name;
                     String signatureSvg = _signatureSvg;
-                    Workorder workorder = _workorder;
-                    Long taskId = _taskId;
+                    WorkOrder workOrder = _workOrder;
+                    Integer taskId = _taskId;
                     Boolean completeWorkorder = _completeWorkorder;
 
                     if (savedInstanceState.containsKey(STATE_DISPLAY_MODE))
@@ -142,14 +147,14 @@ public class SignOffActivity extends AuthSimpleActivity {
                         signatureSvg = savedInstanceState.getString(STATE_SIGNATURE);
 
                     if (savedInstanceState.containsKey(STATE_WORKORDER))
-                        workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+                        workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
 
                     if (savedInstanceState.containsKey(STATE_TASK_ID))
-                        taskId = savedInstanceState.getLong(STATE_TASK_ID);
+                        taskId = savedInstanceState.getInt(STATE_TASK_ID);
 
                     if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
                         completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
-                    return new Object[]{displayMode, name, signatureSvg, workorder, taskId, completeWorkorder};
+                    return new Object[]{displayMode, name, signatureSvg, workOrder, taskId, completeWorkorder};
                 }
 
                 @Override
@@ -158,8 +163,8 @@ public class SignOffActivity extends AuthSimpleActivity {
                     _displayMode = (Integer) objects[0];
                     _name = (String) objects[1];
                     _signatureSvg = (String) objects[2];
-                    _workorder = (Workorder) objects[3];
-                    _taskId = (Long) objects[4];
+                    _workOrder = (WorkOrder) objects[3];
+                    _taskId = (int) objects[4];
                     _completeWorkorder = (Boolean) objects[5];
                 }
             }.executeEx(savedInstanceState);
@@ -191,8 +196,8 @@ public class SignOffActivity extends AuthSimpleActivity {
         if (_signatureSvg != null)
             outState.putString(STATE_SIGNATURE, _signatureSvg);
 
-        if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_workOrder != null)
+            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         super.onSaveInstanceState(outState);
         Log.v(TAG, "onSave time " + stopwatch.finish());
@@ -203,20 +208,28 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     private void sendSignature() {
-        // not a task
-        if (_taskId == -1) {
-            WorkorderClient.addSignatureSvg(this, _workorder.getWorkorderId(), _name, _signatureSvg);
-        } else {
-            // is a task
-            WorkorderClient.addSignatureSvgTask(this, _workorder.getWorkorderId(), _taskId, _name, _signatureSvg);
-        }
+        try {
+            Signature signature = new Signature();
+            signature.name(_name);
+            signature.format("svg");
+            signature.data(_signatureSvg);
+            if (_taskId != -1) {
+                signature.task(new Task().id(_taskId));
+            }
 
-        if (_completeWorkorder) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workorder.getWorkorderId());
-            WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
-            WorkorderClient.get(this, _workorder.getWorkorderId(), false);
-        }
+            SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+            uiContext.page += " - Collect Signature";
+            WorkordersWebApi.addSignature(App.get(), _workOrder.getId(), signature, uiContext);
 
+            if (_completeWorkorder) {
+                WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
+                        WorkOrderTracker.Action.MARK_COMPLETE, _workOrder.getId());
+                WorkordersWebApi.completeWorkOrder(App.get(), _workOrder.getId(), uiContext);
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
         _thankYouFrag.setUploadComplete();
     }
 
@@ -270,7 +283,14 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
         @Override
         public void onDoneClick() {
-            setResult(RESULT_OK);
+            Log.v(TAG, "_thankyou_listener.onDone");
+            if (getParent() == null) {
+                Log.v(TAG, "no Parent");
+                setResult(RESULT_OK);
+            } else {
+                Log.v(TAG, "has parent");
+                getParent().setResult(RESULT_OK);
+            }
             finish();
         }
     };
@@ -278,7 +298,11 @@ public class SignOffActivity extends AuthSimpleActivity {
     private final SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
         @Override
         public void onDoneClick() {
-            setResult(RESULT_CANCELED);
+            if (getParent() == null) {
+                setResult(RESULT_CANCELED);
+            } else {
+                getParent().setResult(RESULT_CANCELED);
+            }
             finish();
         }
     };
@@ -297,54 +321,26 @@ public class SignOffActivity extends AuthSimpleActivity {
         super.onBackPressed();
     }
 
-    public static void startSignOff(Context context, Workorder workorder) {
-        startSignOff(context, workorder, false);
+    public static void startSignOff(Context context, WorkOrder workOrder) {
+        startSignOff(context, workOrder, false);
     }
 
-    public static void startSignOff(Context context, Workorder workorder, boolean markComplete) {
-        new AsyncTaskEx<Object, Object, Intent>() {
-            private Context context;
+    public static void startSignOff(Context context, WorkOrder workOrder, boolean markComplete) {
+        Intent intent = new Intent(context, SignOffActivity.class);
+        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workOrder);
+        if (markComplete)
+            intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
 
-            @Override
-            protected Intent doInBackground(Object... params) {
-                context = (Context) params[0];
-                Workorder workorder = (Workorder) params[1];
-                Boolean markComplete = (Boolean) params[2];
-
-                Intent intent = new Intent(context, SignOffActivity.class);
-                intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
-                if (markComplete)
-                    intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
-
-                if (!(context instanceof Activity))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                return intent;
-            }
-
-            @Override
-            protected void onPostExecute(Intent intent) {
-                super.onPostExecute(intent);
-                context.startActivity(intent);
-            }
-        }.executeEx(context, workorder, markComplete);
+        if (markComplete)
+            ActivityResultClient.startActivityForResult(context, intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+        else
+            ActivityResultClient.startActivity(context, intent);
     }
 
-    public static void startSignOff(Context context, Workorder workorder, long taskId) {
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                Workorder workorder = (Workorder) params[1];
-                Long taskId = (Long) params[2];
-
-                Intent intent = new Intent(context, SignOffActivity.class);
-                intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
-                intent.putExtra(INTENT_PARAM_TASK_ID, taskId);
-                if (!(context instanceof Activity))
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startActivity(intent);
-                return null;
-            }
-        }.executeEx(context, workorder, taskId);
+    public static void startSignOff(Context context, WorkOrder workOrder, int taskId) {
+        Intent intent = new Intent(context, SignOffActivity.class);
+        intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
+        intent.putExtra(INTENT_PARAM_TASK_ID, taskId);
+        ActivityResultClient.startActivity(context, intent);
     }
 }

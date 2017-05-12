@@ -7,10 +7,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Expense;
-import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.ExpenseCategories;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 
 /**
  * Created by Michael Carver on 7/24/2015.
@@ -81,12 +81,12 @@ public class ExpenseCounterOfferView extends RelativeLayout {
             return;
 
         _descriptionTextView.setText(_expense.getDescription());
-        _costTextView.setText(misc.toCurrency(_expense.getPrice()));
+        _costTextView.setText(misc.toCurrency(_expense.getAmount()));
 
         _categoryTextView.setVisibility(GONE);
-        if (_expense.getCategoryId() != null) {
+        if (_expense.getCategory()!=null && _expense.getCategory().getId() != null) {
             for (ExpenseCategory category : _categories) {
-                if (category.getId().equals(_expense.getCategoryId())) {
+                if (category.getId().equals(_expense.getCategory().getId())) {
                     _categoryTextView.setText(category.getName());
                     _categoryTextView.setVisibility(VISIBLE);
                 }

@@ -13,7 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.search.SearchEditText;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 /**
  * Created by mc on 12/27/16.
@@ -107,15 +107,14 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
 
     private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
         @Override
-        public void onLookupWorkOrder(final long workOrderId) {
+        public void onLookupWorkOrder(final int workOrderId) {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     ActivityResultClient.startActivity(
                             App.get(),
-                            WorkorderActivity.makeIntentShow(App.get(), workOrderId),
-                            R.anim.activity_slide_in_right,
-                            R.anim.activity_slide_out_left);
+                            WorkOrderActivity.makeIntentShow(App.get(), workOrderId),
+                            R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
                 }
             }, 100);
             hide();

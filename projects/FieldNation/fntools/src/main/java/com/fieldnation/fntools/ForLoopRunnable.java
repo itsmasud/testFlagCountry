@@ -30,6 +30,10 @@ public abstract class ForLoopRunnable implements Runnable {
         this(count, handler, 100);
     }
 
+    public boolean isRunning() {
+        return _run;
+    }
+
     public void cancel() {
         _run = false;
     }
@@ -44,6 +48,7 @@ public abstract class ForLoopRunnable implements Runnable {
                 next(i);
             } else {
                 finish(count);
+                _run = false;
                 return;
             }
             i++;

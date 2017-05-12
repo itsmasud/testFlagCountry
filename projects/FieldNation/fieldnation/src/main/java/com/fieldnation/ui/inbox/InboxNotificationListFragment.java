@@ -92,8 +92,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         super.onResume();
         Log.v(TAG, "onResume");
 
-        if (_profileClient != null && _profileClient.isConnected())
-            _adapter.refreshPages();
+        if (_profileClient != null) _adapter.refreshPages();
 
         setLoading(true);
     }
@@ -111,8 +110,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     public void onDetach() {
         Log.v(TAG, "onDetach()");
 
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(App.get());
+        if (_profileClient != null) _profileClient.disconnect(App.get());
 
         super.onDetach();
     }

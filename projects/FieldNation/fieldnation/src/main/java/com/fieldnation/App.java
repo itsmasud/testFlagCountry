@@ -25,8 +25,8 @@ import android.text.TextUtils;
 
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
@@ -45,6 +45,7 @@ import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -92,6 +93,9 @@ public class App extends Application {
     private OAuth _auth = null;
     private boolean _hasInteracted = false;
 
+    // UI context hack
+    private SpUIContext _spUiContext = new SpUIContext();
+
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
 
@@ -121,6 +125,10 @@ public class App extends Application {
         Tracker.addTrackerWrapper(new AnswersWrapper());
     }
 
+    public SpUIContext getSpUiContext() {
+        return _spUiContext;
+    }
+
     @Override
     public void onCreate() {
         // enable when trying to find ANRs and other weird bugs
@@ -136,6 +144,13 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+
+        try {
+            ProviderInstaller.installIfNeeded(this);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        
         HttpJson.setTempFolder(getTempFolder());
 
         Stopwatch mwatch = new Stopwatch(true);
@@ -182,9 +197,6 @@ public class App extends Application {
         // load the icon fonts
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
         Log.v(TAG, "load iconfont time: " + watch.finishAndRestart());
-
-        // read in exepense categories
-        new ExpenseCategories(this);
 
         watch.finishAndRestart();
         // in pre FROYO keepalive = true is buggy. disable for those versions

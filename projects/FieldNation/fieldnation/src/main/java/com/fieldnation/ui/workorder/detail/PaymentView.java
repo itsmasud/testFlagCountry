@@ -10,12 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class PaymentView extends LinearLayout implements WorkorderRenderer {
+public class PaymentView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ui.workorder.detail.PaymentView";
 
     // UI
@@ -27,7 +29,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private RequestNewPayTile _requestNewPayTile = null;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
 
 	/*-*************************************-*/
@@ -70,8 +72,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         refresh();
     }
 
@@ -87,15 +89,17 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         if (_actionButton == null)
             return;
 
-        if (_workorder.getIncreaseRequestInfo() != null) {
+
+        if (_workOrder.getPay() != null && _workOrder.getPay().getIncreases() != null) {
             getRequestNewPayTile().setVisibility(VISIBLE);
-            getRequestNewPayTile().setData(_workorder);
-        } else if (_requestNewPayTile != null) {
-            _requestNewPayTile.setVisibility(GONE);
+            getRequestNewPayTile().setData(_workOrder);
+
+        } else {
+            getRequestNewPayTile().setVisibility(GONE);
         }
 
-        Pay pay = _workorder.getPay();
-        if (pay != null && !pay.hidePay()) {
+        Pay pay = _workOrder.getPay();
+        if (pay != null  /* TODO && !pay.hidePay() */) {
             _termsTextView.setVisibility(VISIBLE);
             String[] paytext = pay.toDisplayStringLong();
             String data = "";
@@ -124,14 +128,26 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setEnabled(true);
-        if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
+
+        // can counter offer
+        if (_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
             _actionButton.setText(R.string.btn_counter_offer);
-        } else if (_workorder.canRequestPayIncrease()) {
+
+            // can request pay increase
+        } else if (_workOrder.getPay() != null
+                && _workOrder.getPay().getIncreases() != null
+                && _workOrder.getPay().getIncreases().getActionsSet() != null
+                && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
             _actionButton.setText(R.string.btn_request_new_pay);
-        } else if (!_workorder.canCounterOffer() &&
-                (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
-                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED
-                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE)) {
+
+            // counter offers disabled and in the marketplace
+        } else if (!(_workOrder.getRequests() != null
+                && _workOrder.getRequests().getActionsSet() != null
+                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
+                && _workOrder.getRequests().getCounterOffer() == null
+                && (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)) {
             _actionButton.setEnabled(false);
             _actionButton.setText(R.string.btn_counter_disabled);
         } else {
@@ -145,30 +161,19 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _action_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
-/*
-                Tracker.event(App.get(),
-                        new Event.Builder()
-                                .category(EventCategory.WORK_ORDER)
-                                .action(EventAction.COUNTER_OFFER)
-                                .property(EventProperty.WORK_ORDER_ID)
-                                .label(_workorder.getWorkorderId() + "")
-                                .addContext(new SpUIContext.Builder()
-                                        .page(ScreenName.workOrderDetailsWork().name)
-                                        .elementAction(ElementAction.CLICK)
-                                        .elementType(ElementType.BUTTON)
-                                        .elementIdentity(ElementIdentity.COUNTER_OFFER)
-                                        .build())
-                                .addContext(new SpWorkOrderContext.Builder()
-                                        .workOrderId(_workorder.getWorkorderId())
-                                        .build())
-                                .build());
-*/
-                if (_listener != null)
-                    _listener.onCounterOffer(_workorder);
-            } else if (_workorder.canRequestPayIncrease()) {
-                if (_listener != null)
-                    _listener.onRequestNewPay(_workorder);
+            if (_listener != null) {
+                if (_workOrder.getRequests() != null
+                        && _workOrder.getRequests().getActionsSet() != null
+                        && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)
+                        && _workOrder.getRequests() != null
+                        && _workOrder.getRequests().getCounterOffer() == null) {
+                    _listener.onCounterOffer(_workOrder);
+                } else if (_workOrder.getPay() != null
+                        && _workOrder.getPay().getIncreases() != null
+                        && _workOrder.getPay().getIncreases().getActionsSet() != null
+                        && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
+                    _listener.onRequestNewPay(_workOrder);
+                }
             }
         }
     };
@@ -177,26 +182,29 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.onShowTerms(_workorder);
+                _listener.onShowTerms(_workOrder);
         }
     };
 
     private final View.OnClickListener _requestNewPay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_workorder.canRequestPayIncrease()) {
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getIncreases() != null
+                    && _workOrder.getPay().getIncreases().getActionsSet() != null
+                    && _workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
                 if (_listener != null) {
-                    _listener.onRequestNewPay(_workorder);
+                    _listener.onRequestNewPay(_workOrder);
                 }
             }
         }
     };
 
     public interface Listener {
-        void onCounterOffer(Workorder workorder);
+        void onCounterOffer(WorkOrder workOrder);
 
-        void onRequestNewPay(Workorder workorder);
+        void onRequestNewPay(WorkOrder workOrder);
 
-        void onShowTerms(Workorder workorder);
+        void onShowTerms(WorkOrder workOrder);
     }
 }

@@ -59,9 +59,11 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         WorkOrderTransactionBuilder.actionEta(context, workOrderId, startTime, endTime, note);
     }
 
+/*
     public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
         WorkOrderTransactionBuilder.actionOnMyWay(context, workOrderId, lat, lon);
     }
+*/
 
     public boolean subActions() {
         return register(TOPIC_ID_ACTION_COMPLETE);
@@ -92,6 +94,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         }
 
         private void preOnSearch(Bundle payload) {
+            Log.v(STAG, "preOnSearch");
             new AsyncTaskEx<Bundle, Object, List<WorkOrder>>() {
                 SavedSearchParams searchParams;
                 ListEnvelope envelope;
@@ -99,6 +102,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
 
                 @Override
                 protected List<WorkOrder> doInBackground(Bundle... params) {
+                    Log.v(STAG, "preOnSearch.doInBackground");
                     try {
                         Bundle payload = params[0];
 
@@ -120,12 +124,15 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
                         return list;
                     } catch (Exception ex) {
                         Log.v(STAG, ex);
+                    } finally {
+                        Log.v(STAG, "preOnSearch.doInBackground: done");
                     }
                     return null;
                 }
 
                 @Override
                 protected void onPostExecute(List<WorkOrder> o) {
+                    Log.v(STAG, "preOnSearch.onPostExecute");
                     onSearch(searchParams, envelope, o, failed);
                 }
             }.executeEx(payload);

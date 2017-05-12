@@ -35,7 +35,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginTop="16dp"
-                android:text="By accepting this bundle you are agreeing to our" />
+                android:text="@string/by_accepting_this_bundle" />
 
             <RelativeLayout
                 android:id="@+id/request_layout"
@@ -56,20 +56,32 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/when_does_this_request_expire" />
 
-                <Button
-                    android:id="@+id/expiration_button"
-                    style="@style/SpinnerButton"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/requestExpire_textview"
-                    android:text="@string/btn_never" />
+                    android:orientation="horizontal">
 
-                <View
-                    android:id="@+id/divider"
-                    style="@style/DividerSpinnerFull"
-                    android:layout_below="@+id/expiration_button"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_material_spinner_bottom_line" />
+                    <CheckBox
+                        android:id="@+id/expires_checkbox"
+                        style="?attr/tileCheckBoxStyle"
+                        android:layout_width="wrap_content"
+                        android:text="@string/request_expires"
+                        android:visibility="visible" />
+
+                    <com.fieldnation.ui.HintSpinner
+                        android:id="@+id/expire_duration_spinner"
+                        style="@style/Widget.AppCompat.Spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="@+id/expires_checkbox"
+                        android:layout_below="@+id/requestExpire_textview"
+                        android:layout_gravity="center_vertical"
+                        android:hint="30 mins"
+                        android:visibility="visible" />
+
+                </LinearLayout>
+
             </RelativeLayout>
 
             <TextView
@@ -102,7 +114,7 @@
                 android:layout_below="@+id/schedule_textview"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Set an ETA" />
+                android:text="@string/switch_text_set_eta" />
 
             <Switch
                 android:id="@+id/eta_switch"
@@ -208,4 +220,12 @@
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
 </RelativeLayout>

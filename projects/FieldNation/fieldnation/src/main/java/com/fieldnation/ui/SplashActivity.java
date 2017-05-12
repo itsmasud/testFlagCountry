@@ -17,7 +17,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.nav.NavActivity;
+import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
  * Created by michael.carver on 12/18/2014.
@@ -118,8 +118,7 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         try {
-            if (_authClient != null && _authClient.isConnected())
-                _authClient.disconnect(App.get());
+            if (_authClient != null) _authClient.disconnect(App.get());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

@@ -4,16 +4,16 @@ import android.content.Context;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Location;
-import com.fieldnation.data.workorder.User;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderContacts;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -22,11 +22,11 @@ import java.util.List;
 /**
  * Created by Michael Carver on 5/26/2015.
  */
-public class ContactListView extends RelativeLayout {
+public class ContactListView extends RelativeLayout implements WorkOrderRenderer {
 
     private LinearLayout _listLayout;
 
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private ForLoopRunnable _contactsRunnable = null;
 
 
@@ -56,77 +56,71 @@ public class ContactListView extends RelativeLayout {
         setVisibility(GONE);
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
     private void populateUi() {
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_listLayout == null)
             return;
 
-        _listLayout.removeAllViews();
+        final List<View> views = new LinkedList<>();
 
         boolean addedContact = false;
-        final List<WorkorderContacts> contactList = new LinkedList<>();
+        final List<Contact> contactList = new LinkedList<>();
 
+        if (_workOrder.getLocation() != null
+                && _workOrder.getLocation().getSavedLocation() != null
+                && _workOrder.getLocation().getSavedLocation().getContact() != null) {
 
-        if (_workorder.getWorkorderManagerInfo() != null) {
-            User user = _workorder.getWorkorderManagerInfo();
-
-            if (!misc.isEmptyOrNull(user.getFullName()) || !misc.isEmptyOrNull(user.getPhone())) {
+            Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
+            if (misc.isEmptyOrNull(contact.getName()) && misc.isEmptyOrNull(contact.getPhone())) {
                 ContactTileView tileView = new ContactTileView(getContext());
-                tileView.setData(user.getFullName(), user.getPhone(), null, "Work Order Manager");
+                tileView.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                 addedContact = true;
-                _listLayout.addView(tileView);
+                views.add(tileView);
             }
         }
 
-        if (_workorder.getLocation() != null) {
-            Location location = _workorder.getLocation();
-            String phone = location.getContactPhone();
-            if (!misc.isEmptyOrNull(location.getContactName()) || !misc.isEmptyOrNull(phone)) {
-                ContactTileView tileView = new ContactTileView(getContext());
-                addedContact = true;
-                tileView.setData(location.getContactName(), location.getContactPhone(), location.getContactPhoneExt(), "Location Contact");
-                _listLayout.addView(tileView);
-            }
-        }
-
-        if (_workorder.getWorkorderContacts() != null)
-            Collections.addAll(contactList, _workorder.getWorkorderContacts());
+        if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null)
+            Collections.addAll(contactList, _workOrder.getContacts().getResults());
 
         if (contactList.size() > 0) {
             if (_contactsRunnable != null)
                 _contactsRunnable.cancel();
 
-            if (_listLayout != null) {
-                addedContact = true;
-                _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
-                    private final List<ContactTileView> _views = new LinkedList<>();
-                    WorkorderContacts contact = null;
+            addedContact = true;
+            _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
+                Contact contact = null;
 
-                    @Override
-                    public void next(int i) throws Exception {
-                        ContactTileView v = new ContactTileView(getContext());
-                        if (contactList.get(i) instanceof WorkorderContacts) {
-                            contact = contactList.get(i);
-                            v.setData(contact.getName(), contact.getPhoneNumber(), contact.getPhoneExt(), contact.getRole());
-                        }
-                        _views.add(v);
+                @Override
+                public void next(int i) throws Exception {
+                    ContactTileView v = new ContactTileView(getContext());
+                    if (contactList.get(i) instanceof Contact) {
+                        contact = contactList.get(i);
+                        v.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                     }
+                    views.add(v);
+                }
 
-                    @Override
-                    public void finish(int count) throws Exception {
-                        for (ContactTileView v : _views) {
-                            _listLayout.addView(v);
-                        }
+                @Override
+                public void finish(int count) throws Exception {
+                    _listLayout.removeAllViews();
+                    for (View v : views) {
+                        _listLayout.addView(v);
                     }
-                };
-                post(_contactsRunnable);
+                }
+            };
+            postDelayed(_contactsRunnable, 100);
+        } else {
+            _listLayout.removeAllViews();
+            for (View v : views) {
+                _listLayout.addView(v);
             }
         }
         if (addedContact) {

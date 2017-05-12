@@ -11,17 +11,18 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 import java.util.Random;
 
 /**
  * Created by Michael Carver on 6/5/2015.
  */
-public class DiscountListLayout extends RelativeLayout implements WorkorderRenderer {
+public class DiscountListLayout extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "DiscountListLayout";
 
     // UI
@@ -31,7 +32,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public DiscountListLayout(Context context) {
         super(context);
@@ -59,11 +60,13 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
 
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_add_onClick);
+
+        setVisibility(GONE);
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
 
         populateUi();
     }
@@ -76,42 +79,49 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         if (_addButton == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
-        if (_workorder.getPay() == null)
+        if (_workOrder.getPay() == null)
             return;
 
-        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
-                || _workorder.getPay().hidePay()) {
+
+        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
 
-        if (_workorder.canChangeDiscounts()) {
+        if (_workOrder.getPay() != null
+                && _workOrder.getPay().getDiscounts() != null
+                && _workOrder.getPay().getDiscounts().getActionsSet() != null
+                && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
         }
 
-        final Discount[] list = _workorder.getDiscounts();
+
+        final PayModifier[] list = _workOrder.getPay().getDiscounts().getResults();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
             return;
         }
 
+
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
+
 
         if (_listView.getChildCount() > list.length) {
             _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
         }
 
+
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
-            private final Discount[] _list = list;
+            private final PayModifier[] _list = list;
 
             @Override
             public void next(int i) throws Exception {
@@ -122,13 +132,14 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
                     v = new DiscountView(getContext());
                     _listView.addView(v);
                 }
-                Discount discount = _list[i];
+                PayModifier discount = _list[i];
                 v.setDiscount(discount);
                 v.setOnClickListener(_discount_onClick);
                 v.setOnLongClickListener(_discount_onLongClick);
             }
         };
         postDelayed(r, new Random().nextInt(1000));
+
     }
 
     /*-*********************************-*/
@@ -137,17 +148,23 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
     private final OnClickListener _discount_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeDiscounts()) {
-                _listener.discountOnClick(((DiscountView) v).getDiscount());
-            }
+
+//TODO            if (_listener != null && _workorder.canChangeDiscounts()) {
+//                _listener.discountOnClick(((DiscountView) v).getDiscount());
+//            }
+
         }
     };
 
     private final OnLongClickListener _discount_onLongClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            if (_listener != null && _workorder.canChangeDiscounts()) {
-                _listener.discountLongClick(((DiscountView) v).getDiscount());
+            PayModifier payModifier = ((DiscountView) v).getDiscount();
+            if (_listener != null
+                    && payModifier != null
+                    && payModifier.getActionsSet() != null
+                    && payModifier.getActionsSet().contains(PayModifier.ActionsEnum.DELETE)) {
+                _listener.discountLongClick(payModifier);
                 return true;
             }
             return false;
@@ -157,7 +174,11 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
     private final OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeDiscounts()) {
+            if (_listener != null
+                    && _workOrder.getPay() != null
+                    && _workOrder.getPay().getDiscounts() != null
+                    && _workOrder.getPay().getDiscounts().getActionsSet() != null
+                    && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
                 _listener.addDiscount();
             }
         }
@@ -167,8 +188,8 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
     public interface Listener {
         void addDiscount();
 
-        void discountOnClick(Discount discount);
+        void discountOnClick(PayModifier discount);
 
-        void discountLongClick(Discount discount);
+        void discountLongClick(PayModifier discount);
     }
 }

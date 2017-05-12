@@ -12,12 +12,16 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.CustomEvent;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.workorder.ReportProblemType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Problem;
 
 /**
  * Created by Michael on 10/5/2016.
@@ -26,8 +30,8 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 public class CancelWarningDialog extends FullScreenDialog {
     private static final String TAG = "CancelWarningDialog";
 
-    private static final String PARAM_WORKORDER_ID = "workOrder";
-    private static final String PARAM_EXPLANATION = "eplanation";
+    private static final String PARAM_PROBLEM = "problem";
+    private static final String PARAM_WORKORDER_ID = "workOrderId";
 
     // Ui
     private Button _reviewTosButton;
@@ -35,8 +39,8 @@ public class CancelWarningDialog extends FullScreenDialog {
     private Button _acceptButton;
 
     // Data
-    private long _workOrderId;
-    private String _explanation;
+    private int _workOrderId;
+    private Problem _problem;
 
     public CancelWarningDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -64,8 +68,8 @@ public class CancelWarningDialog extends FullScreenDialog {
 
     @Override
     public void show(Bundle params, boolean animate) {
-        _workOrderId = params.getLong(PARAM_WORKORDER_ID);
-        _explanation = params.getString(PARAM_EXPLANATION);
+        _workOrderId = params.getInt(PARAM_WORKORDER_ID);
+        _problem = params.getParcelable(PARAM_PROBLEM);
 
         super.show(params, animate);
     }
@@ -88,7 +92,8 @@ public class CancelWarningDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             ToastClient.toast(App.get(), "Cancel notification sent", Toast.LENGTH_SHORT);
-            WorkorderClient.actionReportProblem(App.get(), _workOrderId, _explanation, ReportProblemType.CANNOT_MAKE_ASSIGNMENT);
+
+            WorkordersWebApi.addProblem(App.get(), _workOrderId, _problem, App.get().getSpUiContext());
             dismiss(true);
         }
     };
@@ -96,14 +101,24 @@ public class CancelWarningDialog extends FullScreenDialog {
     private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new CustomEvent.Builder()
+                    .addContext(new SpWorkOrderContext.Builder().workOrderId((int) _workOrderId).build())
+                    .addContext(new SpUIContext.Builder()
+                            .elementAction("Click")
+                            .elementIdentity("Abort Cancel Work Order")
+                            .elementType("Button")
+                            .page("Cancel Warning Dialog")
+                            .build())
+                    .build()
+            );
             dismiss(true);
         }
     };
 
-    public static void show(Context context, String uid, long workOrderId, String explanation) {
+    public static void show(Context context, String uid, int workOrderId, Problem problem) {
         Bundle params = new Bundle();
-        params.putLong(PARAM_WORKORDER_ID, workOrderId);
-        params.putString(PARAM_EXPLANATION, explanation);
+        params.putInt(PARAM_WORKORDER_ID, workOrderId);
+        params.putParcelable(PARAM_PROBLEM, problem);
         Controller.show(context, uid, CancelWarningDialog.class, params);
     }
 }

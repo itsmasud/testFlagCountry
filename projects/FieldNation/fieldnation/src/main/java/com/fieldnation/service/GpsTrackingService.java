@@ -8,7 +8,8 @@ import com.fieldnation.App;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.service.data.v2.profile.ProfileTransactionBuilder;
+import com.fieldnation.v2.data.client.UsersWebApi;
+import com.fieldnation.v2.data.model.Coords;
 
 /**
  * Created by Michael on 9/29/2016.
@@ -83,14 +84,17 @@ public class GpsTrackingService extends MultiThreadedService {
 
     private SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(Location location) {
+        public void onLocation(SimpleGps simpleGps, Location location) {
             Log.v(TAG, location.toString());
-            ProfileTransactionBuilder.geo(App.get(), location.getLatitude(), location.getLongitude());
+            try {
+                UsersWebApi.addCoords(App.get(), (int) App.getProfileId(), new Coords(location.getLatitude(), location.getLongitude()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
         @Override
-        public void onFail() {
-            _expirationTime = 0;
+        public void onFail(SimpleGps simpleGps) {
         }
     };
 

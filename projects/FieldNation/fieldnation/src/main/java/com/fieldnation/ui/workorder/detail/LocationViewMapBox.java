@@ -32,9 +32,9 @@ import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
-public class LocationViewMapBox extends LinearLayout implements WorkorderRenderer {
+public class LocationViewMapBox extends LinearLayout {
     private static final String TAG = "LocationViewMapBox";
 
     private static final int ACTION_NAVIGATE = 0;
@@ -144,14 +144,11 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_mapboxClient != null && _mapboxClient.isConnected()) {
-            _mapboxClient.disconnect(App.get());
-        }
+        if (_mapboxClient != null) _mapboxClient.disconnect(App.get());
         _simpleGps.stop();
         super.onDetachedFromWindow();
     }
 
-    @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
@@ -451,7 +448,7 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId(), WorkorderActivity.TAB_MESSAGE);
+                    WorkOrderActivity.startNew(getContext(), _workorder.getWorkorderId().intValue(), WorkOrderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {
@@ -495,7 +492,7 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
 
     private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(android.location.Location location) {
+        public void onLocation(SimpleGps simpleGps, android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
             _actionButton.setText(R.string.icon_car);
@@ -506,7 +503,7 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };

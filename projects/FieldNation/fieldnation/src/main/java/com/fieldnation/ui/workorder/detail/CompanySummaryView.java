@@ -8,21 +8,22 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.BuyerRating;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.StarView;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverall;
+import com.fieldnation.v2.data.model.WorkOrderRatingsBuyerOverallPercentApproval;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
 /**
  * Created by Michael Carver on 5/22/2015.
  */
-public class CompanySummaryView extends RelativeLayout {
+public class CompanySummaryView extends RelativeLayout implements WorkOrderRenderer {
     private static final String TAG = "CompanySummaryView";
 
     private TextView _nameTextView;
     private StarView _starRating;
-    private TextView _locationTextView;
     private TextView _reviewsTextView;
     private TextView _newBuyerTextView;
     private RelativeLayout _detailsLayout;
@@ -31,9 +32,11 @@ public class CompanySummaryView extends RelativeLayout {
     private TextView _expectationsTextView;
     private TextView _professionalismTextView;
     private TextView _daysTextView;
+    private TextView _percentageApprovalTextView;
+    private RelativeLayout _timeToApprovalLayout;
 
 
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
 
     public CompanySummaryView(Context context) {
         super(context);
@@ -60,7 +63,6 @@ public class CompanySummaryView extends RelativeLayout {
 
         _nameTextView = (TextView) findViewById(R.id.company_textview);
         _starRating = (StarView) findViewById(R.id.star_rating);
-        _locationTextView = (TextView) findViewById(R.id.location_textview);
         _reviewsTextView = (TextView) findViewById(R.id.reviews_textview);
         _newBuyerTextView = (TextView) findViewById(R.id.newBuyer_textview);
         _detailsLayout = (RelativeLayout) findViewById(R.id.details_layout);
@@ -69,79 +71,160 @@ public class CompanySummaryView extends RelativeLayout {
         _expectationsTextView = (TextView) findViewById(R.id.expectations_textView);
         _professionalismTextView = (TextView) findViewById(R.id.professionalism_textView);
         _daysTextView = (TextView) findViewById(R.id.days_textview);
+        _timeToApprovalLayout = (RelativeLayout) findViewById(R.id.timeToApproval_layout);
+        _percentageApprovalTextView = (TextView) findViewById(R.id.percentageApproval_textview);
 
         setVisibility(GONE);
     }
 
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    @Override
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         populateUi();
     }
 
     public void populateUi() {
+
         if (_nameTextView == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null || _workOrder.getCompany() == null || _workOrder.getRatings() == null)
             setVisibility(GONE);
         else {
             setVisibility(VISIBLE);
         }
 
-        if (misc.isEmptyOrNull(_workorder.getCompanyName())) {
-            _nameTextView.setText("Company Name Hidden");
+
+        if (_workOrder.getCompany() != null && !misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
+            _nameTextView.setText(_workOrder.getCompany().getName());
         } else {
-            _nameTextView.setText(_workorder.getCompanyName());
+            _nameTextView.setText(R.string.company_name_hidden);
         }
 
-        BuyerRating rating = _workorder.getBuyerRatingInfo();
 
-        if (rating == null || rating.getTotalRating() == null) {
-            _newBuyerTextView.setVisibility(VISIBLE);
-            _starRating.setStars(0);
-            _detailsLayout.setVisibility(GONE);
-            _locationTextView.setText("Location not available");
-            _reviewsTextView.setVisibility(GONE);
-        } else {
+/*        if (_workOrder.getRatings() != null
+                && _workOrder.getRatings().getBuyer() != null
+                && _workOrder.getRatings().getBuyer().getCompany() != null) {
             _newBuyerTextView.setVisibility(GONE);
             _detailsLayout.setVisibility(VISIBLE);
 
-            _daysTextView.setText(rating.getTimeToApproval() + " Days");
+            RatingCompanyMine rating = _workOrder.getRating().getCompany().getMine();
 
-            if (rating.getAvgRating() != null) {
-                _starRating.setStars((int) (double) rating.getAvgRating());
+            if (rating.getAverageDaysToApproval() != null
+                    && rating.getAverageDaysToApproval() != 0) {
+                _daysTextView.setVisibility(VISIBLE);
+                _daysTextView.setText(rating.getAverageDaysToApproval() + " Days");
+            } else {
+                _daysTextView.setText("");
+                _daysTextView.setVisibility(GONE);
+            }
+
+            if (rating.getStars() != null) {
+                _starRating.setStars(rating.getStars().intValue());
             } else {
                 _starRating.setStars(0);
             }
 
-            if (rating.getClearExpectationRatingPercent() != null) {
-                _expectationsProgressBar.setProgress((int) (double) rating.getClearExpectationRatingPercent());
-                _expectationsTextView.setText(((int) (double) rating.getClearExpectationRatingPercent()) + "%");
+            if (rating.getClearExpectations() != null) {
+                _expectationsProgressBar.setProgress(rating.getClearExpectations());
+                _expectationsTextView.setText(rating.getClearExpectations() + "%");
             }
 
-            if (rating.getProfessionalismRatingPercent() != null) {
-                _professionalismProgressBar.setProgress((int) (double) rating.getProfessionalismRatingPercent());
-                _professionalismTextView.setText(((int) (double) rating.getProfessionalismRatingPercent()) + "%");
+            if (rating.getRespectRating() != null) {
+                _professionalismProgressBar.setProgress(rating.getRespectRating());
+                _professionalismTextView.setText(rating.getRespectRating() + "%");
             }
 
-            if (rating.getTotalRating() != null) {
-                if (misc.isEmptyOrNull(rating.getCity()) || misc.isEmptyOrNull(rating.getState())) {
-                    _locationTextView.setText("Location not available");
-                } else {
-                    _locationTextView.setText(rating.getCity() + ", " + rating.getState());
-                }
+            if (rating.getTotalRatings() != null) {
                 _reviewsTextView.setVisibility(VISIBLE);
-                _reviewsTextView.setText(rating.getTotalRating() + " Reviews");
+                _reviewsTextView.setText(rating.getTotalRatings() + " Reviews");
                 _newBuyerTextView.setVisibility(GONE);
             } else {
                 _newBuyerTextView.setVisibility(VISIBLE);
-                if (misc.isEmptyOrNull(rating.getCity()) || misc.isEmptyOrNull(rating.getState())) {
-                    _locationTextView.setText("Location not available");
-                } else {
-                    _locationTextView.setText(rating.getCity() + ", " + rating.getState());
-                }
                 _reviewsTextView.setVisibility(GONE);
             }
+
+        } else
+        */
+        if (_workOrder.getRatings() != null
+                && _workOrder.getRatings().getBuyer() != null
+                && _workOrder.getRatings().getBuyer().getOverall() != null) {
+
+            WorkOrderRatingsBuyerOverall overall = _workOrder.getRatings().getBuyer().getOverall();
+
+            if (overall.getApprovalDays() != null
+                    && overall.getApprovalDays() != 0
+                    && overall.getPercentApproval() != null) {
+                _daysTextView.setVisibility(VISIBLE);
+                _daysTextView.setText(overall.getApprovalDays() + " Days");
+            } else {
+                _daysTextView.setText("");
+                _daysTextView.setVisibility(GONE);
+            }
+
+            if (overall.getStars() != null) {
+                _starRating.setStars(overall.getStars().intValue());
+            } else {
+                _starRating.setStars(0);
+            }
+
+            if (overall.getRatings() != 0) {
+                _detailsLayout.setVisibility(VISIBLE);
+                if (overall.getPercentClearExpectations() != null) {
+                    _expectationsProgressBar.setProgress(overall.getPercentClearExpectations());
+                    _expectationsTextView.setText(overall.getPercentClearExpectations() + "%");
+                }
+
+                if (overall.getPercentRespectful() != null) {
+                    _professionalismProgressBar.setProgress(overall.getPercentRespectful());
+                    _professionalismTextView.setText(overall.getPercentRespectful() + "%");
+                }
+            } else {
+                _detailsLayout.setVisibility(GONE);
+            }
+
+            if (overall.getRatings() != null) {
+                _reviewsTextView.setVisibility(VISIBLE);
+                _reviewsTextView.setText(overall.getRatings() + " Reviews");
+                _newBuyerTextView.setVisibility(GONE);
+            } else {
+                _newBuyerTextView.setVisibility(VISIBLE);
+                _reviewsTextView.setVisibility(GONE);
+            }
+
+            if (overall.getPercentApproval() != null) {
+                _percentageApprovalTextView.setVisibility(VISIBLE);
+                _timeToApprovalLayout.setVisibility(VISIBLE);
+                boolean found = false;
+                for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
+                    if (ob.getDays().equals(overall.getApprovalDays())) {
+                        _percentageApprovalTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    _percentageApprovalTextView.setVisibility(GONE);
+                    _timeToApprovalLayout.setVisibility(GONE);
+                }
+            } else {
+                _timeToApprovalLayout.setVisibility(GONE);
+                _percentageApprovalTextView.setVisibility(GONE);
+            }
+
+        } else {
+            _newBuyerTextView.setVisibility(VISIBLE);
+            _starRating.setStars(0);
+            _detailsLayout.setVisibility(GONE);
+            _reviewsTextView.setVisibility(GONE);
+
         }
+
+        if (_workOrder.getManager() == null) {
+        } else {
+            _newBuyerTextView.setVisibility(GONE);
+        }
+
     }
 }

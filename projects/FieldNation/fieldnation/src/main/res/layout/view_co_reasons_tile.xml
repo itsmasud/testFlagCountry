@@ -39,13 +39,18 @@
             android:id="@+id/expires_checkbox"
             style="?attr/tileCheckBoxStyle"
             android:layout_width="wrap_content"
-            android:text="@string/valid_until" />
+            android:text="@string/offer_expires"
+            android:visibility="visible" />
 
-        <Button
-            android:id="@+id/expires_button"
-            style="?attr/buttonFlatStyle"
-            android:layout_width="wrap_content"
-            android:text="@string/placeholder_date_long" />
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/expire_duration_spinner"
+            style="@style/Widget.AppCompat.Spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:hint="30 mins"
+            android:visibility="visible" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -62,6 +67,7 @@
         <Button
             android:id="@+id/tac_button"
             style="?attr/buttonFlatStyle"
+            android:layout_gravity="center_vertical"
             android:text="@string/terms_and_conditions" />
     </LinearLayout>
 

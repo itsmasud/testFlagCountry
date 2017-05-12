@@ -3,6 +3,8 @@ package com.fieldnation.ui.worecycler;
 import android.view.View;
 
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
+import com.fieldnation.v2.ui.worecycler.BaseHolder;
+
 
 /**
  * Created by Michael on 3/11/2016.

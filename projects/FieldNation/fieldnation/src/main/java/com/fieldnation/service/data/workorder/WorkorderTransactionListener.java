@@ -21,7 +21,7 @@ import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.text.ParseException;
@@ -61,6 +61,17 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             JsonObject obj = new JsonObject("action", "pAction");
             obj.put("workorderId", workorderId);
             obj.put("param", action);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static byte[] pComplete(long workOrderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pComplete");
+            obj.put("workorderId", workOrderId);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -318,13 +329,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
     }
 
     private void onStartUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        Log.v(TAG, "onStartUploadDeliverable");
         long workorderId = params.getLong("workorderId");
         long slotId = params.getLong("slotId");
         String filename = params.getString("filename");
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
-        UploadTrackerClient.uploadStarted(context);
+        UploadTrackerClient.uploadStarted(context, transaction.getTrackType());
     }
     /*-**************************************-*/
     /*-             onProgress               -*/
@@ -372,6 +384,8 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     return onGetSignature(context, result, transaction, params, httpResult, throwable);
                 case "pAction":
                     return onAction(context, result, transaction, params, httpResult, throwable);
+                case "pComplete":
+                    return onMarkComplete(context, result, transaction, params, httpResult, throwable);
                 case "pTimeLog":
                     return onTimeLog(context, result, transaction, params, httpResult, throwable);
                 case "pCheckIn":
@@ -495,6 +509,73 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
+    private Result onMarkComplete(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onMarkComplete");
+        long workorderId = params.getLong("workorderId");
+
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "complete", false);
+//            WorkorderClient.listTasks(context, workorderId, false);
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
+            WorkorderDispatch.action(context, workorderId, "complete", true);
+            WorkorderClient.get(context, workorderId, true, false);
+
+            if (haveErrorMessage(httpResult)) {
+                try {
+                    JsonObject error = httpResult.getJsonObject();
+
+                    JsonArray requirements = error.getJsonArray("requirements");
+
+                    if (requirements.size() > 0) {
+                        String first = requirements.getString(0);
+
+                        switch (first) {
+                            case "COMPLETION_STEP_CUSTOMFIELDS. ":
+                                ToastClient.toast(context, "Can't complete, must enter custom fields", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_DOCUMENTSUPLOAD. ":
+                                ToastClient.toast(context, "Can't complete, must upload a document", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_LOGTIME. ":
+                                ToastClient.toast(context, "Can't complete, must log time", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_LOGDEVICE. ":
+                                ToastClient.toast(context, "Can't complete, must log a device", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CHECKOUT. ":
+                                ToastClient.toast(context, "Can't complete, must check out", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CLOSINGNOTE. ":
+                                ToastClient.toast(context, "Can't complete, must enter closing", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CLOSEOUTREQUIREMENT. ":
+                                ToastClient.toast(context, "Can't complete, must complete close out requirements", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_TASKLISTS. ":
+                                ToastClient.toast(context, "Can't complete, must complete tasks", Toast.LENGTH_LONG);
+                                break;
+                            default:
+                                ToastClient.toast(context, "Can't complete, must finish work order", Toast.LENGTH_LONG);
+                                break;
+                        }
+                    } else {
+                        ToastClient.toast(context, "Can't complete, must finish work order", Toast.LENGTH_LONG);
+                    }
+                } catch (Exception ex) {
+                    ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+                }
+            } else {
+                ToastClient.toast(context, "Could not mark complete.", Toast.LENGTH_LONG);
+            }
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
+        }
+    }
+
     private Result onAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onAction");
         long workorderId = params.getLong("workorderId");
@@ -502,15 +583,12 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             WorkorderDispatch.action(context, workorderId, action, false);
-            WorkorderClient.listTasks(context, workorderId, false);
+//            WorkorderClient.listTasks(context, workorderId, false);
 
             if (action.equals("acknowledge-hold")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("closing-notes")) {
-                return onDetails(context, result, transaction, params, httpResult, throwable);
-
-            } else if (action.equals("complete")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("decline")) {
@@ -526,7 +604,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("messages/new")) {
-                WorkorderClient.listMessages(context, workorderId, false, false);
+//                WorkorderClient.listMessages(context, workorderId, false, false);
 
             } else if (action.equals("pay-change")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
@@ -564,9 +642,9 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return onDetails(context, result, transaction, params, httpResult, throwable);
 
         } else if (result == Result.DELETE) {
-            Intent intent = new Intent(context, WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+            Intent intent = new Intent(context, WorkOrderActivity.class);
+            intent.putExtra(WorkOrderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
+            intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             if (intent != null) {
                 PendingIntent pi = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), intent, 0);
@@ -591,13 +669,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             try {
                 WorkorderDispatch.action(context, workorderId, "checkin", false);
-                WorkorderClient.listTasks(context, workorderId, false);
+//                WorkorderClient.listTasks(context, workorderId, false);
                 return onDetails(context, result, transaction, params, httpResult, throwable);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 WorkorderClient.get(context, workorderId, false);
                 try {
-                    Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                    Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                     ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
@@ -626,14 +704,14 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             try {
-                WorkorderClient.listTasks(context, workorderId, false);
+//                WorkorderClient.listTasks(context, workorderId, false);
                 WorkorderDispatch.action(context, workorderId, "checkout", false);
                 return onDetails(context, result, transaction, params, httpResult, throwable);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 WorkorderClient.get(context, workorderId, false);
                 try {
-                    Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                    Intent intent = WorkOrderActivity.makeIntentShow(context, (int) workorderId);
                     PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                     ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
@@ -789,11 +867,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         if (result == Result.CONTINUE) {
             WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
             WorkorderClient.get(context, workorderId, false);
-            UploadTrackerClient.uploadSuccess(context);
+            UploadTrackerClient.uploadSuccess(context, transaction.getTrackType());
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            UploadTrackerClient.uploadFailed(context, workorderId);
+            Intent workorderIntent = WorkOrderActivity.makeIntentShow(App.get(), (int) workorderId);
+            PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
+            UploadTrackerClient.uploadFailed(context, transaction.getTrackType(), pendingIntent);
 
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
@@ -920,7 +1000,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
             WorkorderClient.get(context, workorderId, false);
-            WorkorderClient.listTasks(context, workorderId, false);
+//            WorkorderClient.listTasks(context, workorderId, false);
 
             return Result.CONTINUE;
 

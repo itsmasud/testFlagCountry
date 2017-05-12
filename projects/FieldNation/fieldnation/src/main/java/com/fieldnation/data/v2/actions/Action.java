@@ -97,6 +97,7 @@ public class Action {
         CHECK_IN("check_in"),
         CHECK_OUT("check_out"),
         CONFIRM("confirm"),
+        CONFIRM_TOMORROW("confirm_tomorrow"),
         DECLINE("decline"),
         MAP("map"),
         MARK_COMPLETE("mark_complete"),

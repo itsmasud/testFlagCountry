@@ -615,7 +615,7 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_withdraw_request);
+                _rightWhiteButton.setText(R.string.btn_withdraw);
                 _rightWhiteButton.setEnabled(true);
                 break;
             case Workorder.BUTTON_ACTION_READY_TO_GO:
@@ -633,7 +633,7 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case Workorder.BUTTON_ACTION_RECOGNIZE_HOLD:
                 _rightOrangeButton.setVisibility(VISIBLE);
-                _rightOrangeButton.setText(R.string.brn_recognize_hold);
+                _rightOrangeButton.setText(R.string.btn_recognize_hold);
                 break;
             case Workorder.BUTTON_ACTION_CHECKOUT:
                 _rightGreenButton.setVisibility(VISIBLE);

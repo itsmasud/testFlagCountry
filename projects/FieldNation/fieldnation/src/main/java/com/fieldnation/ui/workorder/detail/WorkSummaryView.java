@@ -15,12 +15,14 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CustomDisplayFields;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.ui.workorder.BundleDetailActivity;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFieldCategory;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
+public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "WorkSummaryView";
 
     // UI
@@ -44,7 +46,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Boolean _isEllipsis = null;
 
 	/*-*************************************-*/
@@ -104,68 +106,76 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
         refresh();
     }
 
     private void refresh() {
         setVisibility(View.VISIBLE);
 
-        _projectNameTextView.setText(_workorder.getTitle());
+        _projectNameTextView.setText(_workOrder.getTitle());
 
-        _workorderIdTextView.setText("Work Order Id: " + _workorder.getWorkorderId());
+        _workorderIdTextView.setText("Work Order Id: " + _workOrder.getId());
 
-        if (_workorder.getCustomDisplayFields() != null && _workorder.getCustomDisplayFields().length > 0) {
-            StringBuilder sb = new StringBuilder();
-
-            CustomDisplayFields[] cdfs = _workorder.getCustomDisplayFields();
-            for (CustomDisplayFields cdf : cdfs) {
-                sb.append(cdf.getLabel()).append(": ").append(cdf.getValue()).append("\n");
+        StringBuilder sb = new StringBuilder();
+        if (_workOrder.getCustomFields() != null && _workOrder.getCustomFields().getResults() != null && _workOrder.getCustomFields().getResults().length > 0) {
+            // we have fields, find the buyer fields
+            CustomFieldCategory[] categories = _workOrder.getCustomFields().getResults();
+            for (CustomFieldCategory category : categories) {
+                if (category.getRole().equals("buyer")) {
+                    if (category.getResults() != null && category.getResults().length > 0) {
+                        CustomField[] fields = category.getResults();
+                        for (CustomField field : fields) {
+                            sb.append(field.getName() + ": " + field.getValue() + "\n");
+                        }
+                    }
+                }
             }
-            _customDisplayFieldsTextView.setText(sb.toString().trim());
         }
+        _customDisplayFieldsTextView.setText(sb.toString().trim());
 
-        _worktypeTextView.setText(_workorder.getTypeOfWork());
+        if (_workOrder.getTypeOfWork() != null && !misc.isEmptyOrNull(_workOrder.getTypeOfWork().getName()))
+            _worktypeTextView.setText(_workOrder.getTypeOfWork().getName().toUpperCase());
+        else
+            _worktypeTextView.setText("");
 
-        if (_workorder.getBundleId() != null && _workorder.getBundleId() > 0) {
+
+        if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);
         } else {
             _bundleWarningTextView.setVisibility(View.GONE);
         }
 
-        if (misc.isEmptyOrNull(_workorder.getFullWorkDescription())) {
+        if (_workOrder.getDescription() == null || misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
             _descriptionContainer.setVisibility(GONE);
         } else {
             _descriptionContainer.setVisibility(VISIBLE);
-//            _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
-//            _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
-
             int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
             WebSettings _webSettings = _descriptionWebView.getSettings();
             _webSettings.setDefaultFontSize(fontSize);
 
-            _descriptionWebView.loadData(_workorder.getFullWorkDescription(), "text/html", "utf-8");
-            _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription().trim(), Linkify.ALL));
+            _descriptionWebView.loadData(_workOrder.getDescription().getHtml(), "text/html", "utf-8");
+            _descriptionShortTextView.setText(misc.linkifyHtml(_workOrder.getDescription().getHtml().trim(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        if (!misc.isEmptyOrNull(_workorder.getCustomerPoliciesProcedures())) {
-            _policiesTextView.setVisibility(View.VISIBLE);
-        } else {
+        if (_workOrder.getPolicyAndProcedures() == null || misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesTextView.setVisibility(View.GONE);
+        } else {
+            _policiesTextView.setVisibility(View.VISIBLE);
         }
 
-        if (!misc.isEmptyOrNull(_workorder.getConfidentialInformation())) {
-            _confidentialTextView.setVisibility(View.VISIBLE);
-        } else {
+        if (_workOrder.getConfidential() == null || misc.isEmptyOrNull(_workOrder.getConfidential().getHtml())) {
             _confidentialTextView.setVisibility(View.GONE);
+        } else {
+            _confidentialTextView.setVisibility(View.VISIBLE);
         }
 
-        if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
-            _standardInstructionTextView.setVisibility(VISIBLE);
-        } else {
+        if (_workOrder.getStandardInstructions() == null || misc.isEmptyOrNull(_workOrder.getStandardInstructions().getHtml())) {
             _standardInstructionTextView.setVisibility(GONE);
+        } else {
+            _standardInstructionTextView.setVisibility(VISIBLE);
         }
     }
 
@@ -191,7 +201,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
+            BundleDetailActivity.startNew(App.get(), _workOrder.getBundle().getId());
         }
     };
 
@@ -199,7 +209,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.showConfidentialInfo(_workorder.getConfidentialInformation());
+                _listener.showConfidentialInfo(_workOrder.getConfidential().getHtml());
         }
     };
 
@@ -207,7 +217,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.showCustomerPolicies(_workorder.getCustomerPoliciesProcedures());
+                _listener.showCustomerPolicies(_workOrder.getPolicyAndProcedures().getHtml());
         }
     };
 
@@ -215,7 +225,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.showStandardInstructions(_workorder.getStandardInstruction());
+                _listener.showStandardInstructions(_workOrder.getStandardInstructions().getHtml());
         }
     };
 

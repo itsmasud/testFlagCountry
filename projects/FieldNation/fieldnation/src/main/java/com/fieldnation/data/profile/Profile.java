@@ -19,12 +19,18 @@ public class Profile implements Parcelable {
     private Boolean _canViewPayments;
     @Json(name = "city")
     private String _city;
+    @Json(name = "companyId")
+    private Integer _companyId;
+    @Json(name = "companyName")
+    private String _companyName;
     @Json(name = "description")
     private String _description;
     @Json(name = "email")
     private String _email;
     @Json(name = "firstname")
     private String _firstname;
+    @Json(name = "iCalUrl")
+    private String _iCalUrl;
     @Json(name = "hasValidCOI")
     private Boolean _hasValidCoi;
     @Json(name = "insurancePercent")
@@ -35,9 +41,11 @@ public class Profile implements Parcelable {
     private String _lastname;
     @Json(name = "managedProviders")
     private Profile[] _managedProviders;
+    @Json(name = "marketplaceStatusExplanation")
+    private String _marketplaceStatusExplanation;
     @Json(name = "marketplaceStatusOn")
     private Boolean _marketplaceStatusOn;
-    @Json(name = "marketplaceStatusReason ")
+    @Json(name = "marketplaceStatusReason")
     private String _marketplaceStatusReason;
     @Json(name = "newNotificationCount")
     private Integer _newNotificationCount;
@@ -67,6 +75,8 @@ public class Profile implements Parcelable {
     private Integer _unreadMessageCount;
     @Json(name = "userId")
     private Long _userId;
+    @Json(name = "webCalUrl")
+    private String _webCalUrl;
     @Json(name = "workordersTotal")
     private Integer _workordersTotal;
     @Json(name = "canRequestWorkOnMarketplace")
@@ -87,6 +97,14 @@ public class Profile implements Parcelable {
         return _city;
     }
 
+    public Integer getCompanyId() {
+        return _companyId;
+    }
+
+    public String getCompanyName() {
+        return _companyName;
+    }
+
     public String getDescription() {
         return _description;
     }
@@ -97,6 +115,10 @@ public class Profile implements Parcelable {
 
     public String getFirstname() {
         return _firstname;
+    }
+
+    public String getICalUrl() {
+        return _iCalUrl;
     }
 
     public Boolean hasValidCoi() {
@@ -123,6 +145,10 @@ public class Profile implements Parcelable {
 
     public Profile[] getManagedProviders() {
         return _managedProviders;
+    }
+
+    public String getMarketplaceStatusExplanation() {
+        return _marketplaceStatusExplanation;
     }
 
     public Boolean getMarketplaceStatusOn() {
@@ -190,6 +216,10 @@ public class Profile implements Parcelable {
 
     public Long getUserId() {
         return _userId;
+    }
+
+    public String getWebCalUrl() {
+        return _webCalUrl;
     }
 
     public Integer getWorkordersTotal() {

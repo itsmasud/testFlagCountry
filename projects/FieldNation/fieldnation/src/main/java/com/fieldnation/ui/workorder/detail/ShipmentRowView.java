@@ -8,8 +8,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ShipmentTracking;
-import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.ShipmentCarrier;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 public class ShipmentRowView extends RelativeLayout {
     private static final String TAG = "ShipmentRowView";
@@ -21,8 +25,8 @@ public class ShipmentRowView extends RelativeLayout {
     private TextView _directionTextView;
 
     // Data
-    private Workorder _workorder;
-    private ShipmentTracking _shipment;
+    private WorkOrder _workOrder;
+    private Shipment _shipment;
     private Listener _listener;
     private boolean _taskMode = false;
 
@@ -68,9 +72,9 @@ public class ShipmentRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Workorder workorder, ShipmentTracking shipment) {
+    public void setData(WorkOrder workOrder, Shipment shipment) {
         _shipment = shipment;
-        _workorder = workorder;
+        _workOrder = workOrder;
 
         populateUi();
     }
@@ -82,24 +86,39 @@ public class ShipmentRowView extends RelativeLayout {
         if (_trackingIdTextView == null)
             return;
 
-        if (_shipment.getTrackingId() != null) {
+        if (_shipment.getCarrier() != null && _shipment.getCarrier().getTracking() != null) {
             _trackingIdTextView.setVisibility(VISIBLE);
-            _trackingIdTextView.setText(_shipment.getTrackingId());
-        }else {
+            _trackingIdTextView.setText(_shipment.getCarrier().getTracking());
+        } else {
             _trackingIdTextView.setVisibility(GONE);
         }
 
-        String carrier = _shipment.getCarrier();
-        if (carrier == null) {
-            carrier = _shipment.getCarrierOther();
+        ShipmentCarrier.NameEnum carrier;
+        if (_shipment.getCarrier() != null && (carrier = _shipment.getCarrier().getName()) != null) {
+            switch (carrier) {
+                case USPS:
+                    _carrierTextView.setText(carrier.toString().toUpperCase());
+                    break;
+                case UPS:
+                    _carrierTextView.setText(carrier.toString().toUpperCase());
+                    break;
+                case FEDEX:
+                    _carrierTextView.setText(misc.capitalize(carrier.toString()));
+                    break;
+                case OTHER:
+                    _carrierTextView.setText(misc.capitalize(carrier.toString()));
+                    break;
+            }
         }
-        _carrierTextView.setText(carrier);
 
         _descTextView.setText(_shipment.getName());
-        boolean toSite = _shipment.getDirection().equals("to_site");
-        _directionTextView.setText(toSite ? "To Site" : "From Site");
+        if (_shipment.getDirection() != null && _shipment.getDirection() == Shipment.DirectionEnum.TO_SITE) {
+            _directionTextView.setText("To Site");
+        } else {
+            _directionTextView.setText("From Site");
+        }
 
-        setEnabled(_workorder.canChangeShipments());
+        setEnabled(_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD));
     }
 
     /*-*********************************-*/
@@ -126,8 +145,8 @@ public class ShipmentRowView extends RelativeLayout {
     };
 
     public interface Listener {
-        void onDelete(ShipmentTracking shipment);
+        void onDelete(Shipment shipment);
 
-        void onEdit(ShipmentTracking shipment);
+        void onEdit(Shipment shipment);
     }
 }

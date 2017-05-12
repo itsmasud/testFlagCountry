@@ -86,6 +86,10 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         TopicService.dispatchEvent(context, TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode, payload, Sticky.TEMP);
     }
 
+    public boolean subOnActivityResult() {
+        return register(TOPIC_ID_ON_ACTIVITY_RESULT);
+    }
+
     /**
      * Subscribes to an activity result
      *
@@ -98,6 +102,10 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
     public void clearOnActivityResult(int requestCode) {
         clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
+    }
+
+    public void clearOnActivityResult() {
+        clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT);
     }
 
     /*-**********************************-*/
@@ -152,6 +160,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
         private void startActivityForResult(Bundle bundle) {
             getClient().clearStartActivityForResult();
+            Log.v(TAG, "startActivityForResult " + getActivity().getClass().getSimpleName());
             Intent intent = bundle.getParcelable(PARAM_INTENT);
             int requestCode = bundle.getInt(PARAM_REQUEST_CODE);
 
@@ -185,6 +194,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         }
 
         private void preOnActivityResult(Bundle bundle) {
+            Log.v(TAG, "preOnActivityResult");
             getClient().clearOnActivityResult(bundle.getInt(PARAM_REQUEST_CODE));
             onActivityResult(
                     bundle.getInt(PARAM_REQUEST_CODE),

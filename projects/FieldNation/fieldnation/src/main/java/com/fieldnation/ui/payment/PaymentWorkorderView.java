@@ -11,7 +11,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
 
 public class PaymentWorkorderView extends RelativeLayout {
     private static final String TAG = "PaymentWorkorderView";
@@ -77,7 +77,7 @@ public class PaymentWorkorderView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId());
+            WorkOrderActivity.startNew(getContext(), (int) _workorder.getWorkorderId());
         }
     };
 

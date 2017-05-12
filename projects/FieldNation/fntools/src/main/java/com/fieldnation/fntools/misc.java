@@ -20,6 +20,9 @@ import com.fieldnation.fnlog.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -86,7 +89,7 @@ public class misc {
     }
 
     public static String toCurrency(double money) {
-        return _currencyFormat.format(money);
+        return _currencyFormat.format(Math.round(money * 100.0) / 100.0);
     }
 
     public static String toShortCurrency(double money) {
@@ -613,9 +616,7 @@ public class misc {
                 || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
                 || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {
             return 0; // test with any 12 digit
-        }
-
-        else if (Pattern.compile("/\\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\\dT]\\d\\d\\d ?\\d\\d\\d\\d ?\\d\\d\\d|\\d{22})\\b/i").matcher(trackingId).matches()
+        } else if (Pattern.compile("/\\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\\dT]\\d\\d\\d ?\\d\\d\\d\\d ?\\d\\d\\d|\\d{22})\\b/i").matcher(trackingId).matches()
                 || Pattern.compile("1Z\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{2}\\s*?[0-9A-Z]{4}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]").matcher(trackingId).matches()
                 || Pattern.compile("[\\dT]\\d\\d\\d\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d").matcher(trackingId).matches()
                 || Pattern.compile("\\d{22}").matcher(trackingId).matches()) {
@@ -623,5 +624,21 @@ public class misc {
         }
 
         return 3;
+    }
+
+    public static String md5(String message) {
+        MessageDigest mdEnc = null;
+        try {
+            mdEnc = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            System.out.println("Exception while encrypting to md5");
+            e.printStackTrace();
+        } // Encryption algorithm
+        mdEnc.update(message.getBytes(), 0, message.length());
+        String md5 = new BigInteger(1, mdEnc.digest()).toString(16);
+        while (md5.length() < 32) {
+            md5 = "0" + md5;
+        }
+        return md5;
     }
 }

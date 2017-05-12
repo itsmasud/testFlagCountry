@@ -67,8 +67,7 @@ public class UnavailableCardView extends FrameLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(App.get());
+        if (_profileClient != null) _profileClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

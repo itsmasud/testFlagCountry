@@ -1,14 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/fn_primary"
-    android:orientation="vertical">
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:theme="@style/FieldNation.Material.ToolBar">
 
-    <com.fieldnation.ui.search.SearchEditScreen
-        android:id="@+id/searchEditScreen"
+    <RelativeLayout
+        android:id="@+id/topbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/icon_view" />
+        android:layout_marginBottom="32dp">
 
-</LinearLayout>
+        <TextView
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/filters" />
+
+        <com.fieldnation.ui.IconFontButton
+            android:id="@+id/close_button"
+            style="@style/Material.Button.Flat"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="right|center_vertical"
+            android:text="@string/icon_x"
+            android:textColor="@color/fn_white_text" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/buttonbar"
+        android:layout_below="@+id/topbar">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/location_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="@string/location" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/location_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/location_textview"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/otherLocation_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/location_spinner"
+                android:layout_marginBottom="16dp"
+                android:hint="@string/enter_city_state_zip"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/distance_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/otherLocation_edittext"
+                android:layout_marginLeft="4dp"
+                android:text="@string/distance" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/distance_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/distance_textview"
+                android:layout_marginBottom="16dp" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/buttonbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:id="@+id/clear_button"
+            style="@style/Material.Button.Flat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/apply_button"
+            android:text="@string/btn_clear"
+            android:textColor="@color/fn_white_text" />
+
+        <Button
+            android:id="@+id/apply_button"
+            style="@style/Material.Button.Flat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="@string/btn_apply"
+            android:textColor="@color/fn_white_text" />
+    </RelativeLayout>
+</RelativeLayout>

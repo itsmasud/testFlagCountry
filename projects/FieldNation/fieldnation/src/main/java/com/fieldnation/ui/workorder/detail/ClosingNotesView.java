@@ -9,10 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
+public class ClosingNotesView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ClosingNotesView";
 
     // UI
@@ -21,7 +22,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private Button _addButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
 
 	/*-*************************************-*/
@@ -46,6 +47,8 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_notes_onClick);
+
+        setVisibility(View.GONE);
     }
 
     public void setListener(Listener listener) {
@@ -53,27 +56,32 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     }
 
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
-        refresh();
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
+        populateUi();
     }
 
-    private void refresh() {
-        if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
-            _notesTextView.setText(_workorder.getClosingNotes());
+    private void populateUi() {
+        if (_workOrder == null || _workOrder.getActionsSet() == null) {
+            setVisibility(View.GONE);
+            return;
+        }
+
+        if (!misc.isEmptyOrNull(_workOrder.getClosingNotes())) {
+            _notesTextView.setText(_workOrder.getClosingNotes());
             _notesTextView.setVisibility(VISIBLE);
             _noNotesTextView.setVisibility(GONE);
         } else {
             _notesTextView.setVisibility(GONE);
             _noNotesTextView.setVisibility(VISIBLE);
-            if (!_workorder.canChangeClosingNotes()) {
+            if (!_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
                 setVisibility(View.GONE);
                 return;
             }
         }
         setVisibility(View.VISIBLE);
 
-        if (_workorder.canChangeClosingNotes()) {
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
             _addButton.setVisibility(View.VISIBLE);
             _notesTextView.setClickable(true);
         } else {
@@ -89,8 +97,8 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private final View.OnClickListener _notes_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null && _workorder.canChangeClosingNotes()) {
-                _listener.onChangeClosingNotes(_workorder.getClosingNotes());
+            if (_listener != null && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES)) {
+                _listener.onChangeClosingNotes(_workOrder.getClosingNotes());
             }
         }
     };

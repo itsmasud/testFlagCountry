@@ -8,16 +8,20 @@ import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 /**
  * Created by mc on 10/27/16.
@@ -26,11 +30,10 @@ import com.fieldnation.ui.KeyedDispatcher;
 public class AcceptBundleDialog extends SimpleDialog {
     private static final String TAG = "AcceptBundleDialog";
 
-    // Dialog TAGs
-    private static final String DIALOG_DURATION = TAG + ".durationDialog";
-
     // State
-    private static final String STATE_EXPIRATION = "expiration";
+    private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
+
+    private final static int INVALID_NUMBER = -1;
 
     // Type
     private static final String PARAM_TYPE = "type";
@@ -45,7 +48,8 @@ public class AcceptBundleDialog extends SimpleDialog {
     private TextView _titleTextView;
     private TextView _bodyTextView;
     private TextView _expiresTextView;
-    private Button _expirationButton;
+    private CheckBox _expiresCheckBox;
+    private HintSpinner _expireSpinner;
     private View _dividerView;
     private TextView _termsWarningTextView;
     private Button _cancelButton;
@@ -57,7 +61,10 @@ public class AcceptBundleDialog extends SimpleDialog {
     private int _bundleSize = 0;
     private long _workOrderId = 0;
 
-    private long _expiration = -1;
+    private int _currentPosition = 1;
+    private long _expiringDurationSeconds = -1;
+    private int[] _durations;
+    private boolean _expires;
 
     public AcceptBundleDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -71,23 +78,29 @@ public class AcceptBundleDialog extends SimpleDialog {
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
         _expiresTextView = (TextView) v.findViewById(R.id.expires_textview);
         _dividerView = v.findViewById(R.id.divider);
-        _expirationButton = (Button) v.findViewById(R.id.expiration_button);
+        _expiresCheckBox = (CheckBox) v.findViewById(R.id.expires_checkbox);
+        _expireSpinner = (HintSpinner) v.findViewById(R.id.expire_duration_spinner);
         _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _okButton = (Button) v.findViewById(R.id.ok_button);
+
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getView().getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _expireSpinner.setAdapter(adapter);
+
+        _durations = getView().getContext().getResources().getIntArray(R.array.expire_duration_values);
 
         return v;
     }
 
     @Override
     public void onResume() {
-        DurationDialog.addOnOkListener(DIALOG_DURATION, _durationDialog_onOk);
-
         super.onResume();
 
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
-        _expirationButton.setOnClickListener(_expiration_okClick);
+        _expiresCheckBox.setOnClickListener(_expires_onClick);
+        _expireSpinner.setOnItemSelectedListener(_expireSpinner_selected);
 
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -106,15 +119,15 @@ public class AcceptBundleDialog extends SimpleDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        _expiration = savedState.getLong(STATE_EXPIRATION);
+        if (savedState.containsKey(STATE_SPINNER_POSITION))
+            _currentPosition = savedState.getInt(STATE_SPINNER_POSITION);
         super.onRestoreDialogState(savedState);
-        populateUi();
     }
 
     private void populateUi() {
         switch (_type) {
             case TYPE_ACCEPT: {
-                _titleTextView.setText("Accept Bundle");
+                _titleTextView.setText(R.string.accept_bundle);
                 _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(false);
                 _okButton.setText(R.string.btn_accept);
@@ -127,7 +140,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                 break;
             }
             case TYPE_REQUEST: {
-                _titleTextView.setText("Request Bundle");
+                _titleTextView.setText(R.string.request_bundle);
                 _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you request this bundle you are requesting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(true);
                 _okButton.setText(R.string.btn_request);
@@ -137,11 +150,11 @@ public class AcceptBundleDialog extends SimpleDialog {
                 _termsWarningTextView.setText(spanned);
                 _termsWarningTextView.setVisibility(View.VISIBLE);
 
-                if (_expiration > 0) {
-                    _expirationButton.setText(misc.convertMsToHuman(_expiration));
-                } else {
-                    _expirationButton.setText("NEVER");
+                if (_currentPosition != INVALID_NUMBER) {
+                    _expiringDurationSeconds = _durations[_currentPosition];
+                    _expireSpinner.setSelection(_currentPosition);
                 }
+
                 break;
             }
         }
@@ -149,7 +162,7 @@ public class AcceptBundleDialog extends SimpleDialog {
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        outState.putLong(STATE_EXPIRATION, _expiration);
+        outState.putInt(STATE_SPINNER_POSITION, _currentPosition);
 
         super.onSaveDialogState(outState);
     }
@@ -157,13 +170,11 @@ public class AcceptBundleDialog extends SimpleDialog {
     @Override
     public void onPause() {
         super.onPause();
-
-        DurationDialog.removeOnOkListener(getUid(), _durationDialog_onOk);
     }
 
     private void setExpirationVisibility(boolean visible) {
-        _expirationButton.setVisibility(visible ? View.VISIBLE : View.GONE);
-        _dividerView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        _expiresCheckBox.setVisibility(visible ? View.VISIBLE : View.GONE);
+        _expireSpinner.setVisibility(visible ? View.VISIBLE : View.GONE);
         _expiresTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
@@ -198,10 +209,10 @@ public class AcceptBundleDialog extends SimpleDialog {
                     _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
                     break;
                 case TYPE_REQUEST:
-                    if (_expiration > -1) {
-                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiration / 1000);
+                    if (_expires && _expiringDurationSeconds > -1) {
+                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds);
                     } else {
-                        WorkorderClient.actionRequest(App.get(), _workOrderId, _expiration);
+                        WorkorderClient.actionRequest(App.get(), _workOrderId, -1);
                     }
                     _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
                     break;
@@ -210,20 +221,30 @@ public class AcceptBundleDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _expiration_okClick = new View.OnClickListener() {
+    private final AdapterView.OnItemSelectedListener _expireSpinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onClick(View v) {
-            DurationDialog.show(App.get(), DIALOG_DURATION);
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            _currentPosition = position;
+            _expiringDurationSeconds = _durations[position];
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            _currentPosition = 1;
         }
     };
 
-    private final DurationDialog.OnOkListener _durationDialog_onOk = new DurationDialog.OnOkListener() {
+    private final View.OnClickListener _expires_onClick = new View.OnClickListener() {
         @Override
-        public void onOk(long milliseconds) {
-            _expiration = milliseconds;
-            populateUi();
+        public void onClick(View v) {
+            _expires = _expiresCheckBox.isChecked();
+
+            if (!_expires) {
+                _expiringDurationSeconds = INVALID_NUMBER;
+            }
         }
     };
+
 
     /**
      * @param context     Application context

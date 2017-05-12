@@ -2,6 +2,7 @@ package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.fnanalytics.EventContext;
@@ -18,7 +19,7 @@ import java.util.Map;
 /**
  * Created by Michael on 9/14/2016.
  */
-public class SpUIContext implements EventContext, SpContext {
+public class SpUIContext implements EventContext, SpContext, Cloneable {
     public static final String TAG = "SpUIContext";
 
     @Json
@@ -40,6 +41,26 @@ public class SpUIContext implements EventContext, SpContext {
         this.elementType = builder.elementType;
         this.elementAction = builder.elementAction;
         this.elementIdentity = builder.elementIdentity;
+    }
+
+    public SpUIContext page(String page) {
+        this.page = page;
+        return this;
+    }
+
+    public SpUIContext elementType(String elementType) {
+        this.elementType = elementType;
+        return this;
+    }
+
+    public SpUIContext elementAction(String elementAction) {
+        this.elementAction = elementAction;
+        return this;
+    }
+
+    public SpUIContext elementIdentity(String elementIdentity) {
+        this.elementIdentity = elementIdentity;
+        return this;
     }
 
     @Override
@@ -83,6 +104,23 @@ public class SpUIContext implements EventContext, SpContext {
         return null;
     }
 
+    @Override
+    public Object clone() {
+        SpUIContext n = new SpUIContext();
+        n.page = page;
+        n.elementType = elementType;
+        n.elementIdentity = elementIdentity;
+        n.elementAction = elementAction;
+        return n;
+    }
+
+    public void copyTo(SpUIContext spUIContext) {
+        spUIContext.elementAction = elementAction;
+        spUIContext.elementIdentity = elementIdentity;
+        spUIContext.elementType = elementType;
+        spUIContext.page = page;
+    }
+
     public static class Builder {
         private String page;
         private String elementType;
@@ -93,7 +131,9 @@ public class SpUIContext implements EventContext, SpContext {
         }
 
         public SpUIContext build() {
-            return new SpUIContext(this);
+            SpUIContext n = new SpUIContext(this);
+            n.copyTo(App.get().getSpUiContext());
+            return n;
         }
 
         public Builder page(String page) {

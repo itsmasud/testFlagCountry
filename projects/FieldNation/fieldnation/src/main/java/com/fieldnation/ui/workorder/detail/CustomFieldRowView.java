@@ -8,10 +8,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by michael.carver on 10/29/2014.
@@ -27,7 +27,7 @@ public class CustomFieldRowView extends RelativeLayout {
 
     // Data
     private Listener _listener;
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private CustomField _customField;
 
     /*-*********************************-*/
@@ -64,10 +64,10 @@ public class CustomFieldRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Workorder workorder, CustomField customField, Listener listener) {
+    public void setData(WorkOrder workOrder, CustomField customField, Listener listener) {
         _customField = customField;
         _listener = listener;
-        _workorder = workorder;
+        _workOrder = workOrder;
         populateUi();
     }
 
@@ -75,26 +75,28 @@ public class CustomFieldRowView extends RelativeLayout {
         if (_iconView == null)
             return;
 
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         if (_customField == null)
             return;
 
 
-        setEnabled(_workorder.canChangeCustomFields());
-        if (_workorder.canChangeCustomFields()) {
+        setEnabled(_customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT));
+        if (_customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT)) {
             _customFieldNameTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            _optionalTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
         } else {
             _customFieldNameTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            _optionalTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         }
 
         if (misc.isEmptyOrNull(_customField.getValue())) {
-            _customFieldNameTextView.setText(_customField.getLabel().trim());
+            _customFieldNameTextView.setText(_customField.getName().trim());
         } else {
-            _customFieldNameTextView.setText((_customField.getLabel() + "\n" + _customField.getValue()).trim());
+            _customFieldNameTextView.setText((_customField.getName() + "\n" + _customField.getValue()).trim());
         }
 
         if (misc.isEmptyOrNull(_customField.getTip())) {
@@ -104,7 +106,7 @@ public class CustomFieldRowView extends RelativeLayout {
             _descriptionTextView.setVisibility(VISIBLE);
         }
 
-        if (_customField.getRequired()) {
+        if (_customField.getFlagsSet().contains(CustomField.FlagsEnum.REQUIRED)) {
             _optionalTextView.setVisibility(View.GONE);
         } else {
             _optionalTextView.setVisibility(View.VISIBLE);
@@ -114,7 +116,7 @@ public class CustomFieldRowView extends RelativeLayout {
     }
 
     private void updateCheckBox() {
-        if (_workorder.canChangeCustomFields()) {
+        if (_customField.getActionsSet().contains(CustomField.ActionsEnum.EDIT)) {
             // set enabled
             if (misc.isEmptyOrNull(_customField.getValue())) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
@@ -149,5 +151,4 @@ public class CustomFieldRowView extends RelativeLayout {
     public interface Listener {
         void onClick(CustomFieldRowView view, CustomField field);
     }
-
 }

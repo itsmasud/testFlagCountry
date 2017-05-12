@@ -1,5 +1,6 @@
 package com.fieldnation.fntools;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,6 +8,31 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtils {
+
+    private static final SimpleDateFormat V2_DATE_FORMAT_PARSE = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss z");
+    private static final SimpleDateFormat V2_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+
+    static {
+        V2_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
+
+    public static Calendar v2UtcToCalendar(String utc) throws ParseException {
+        Calendar c = Calendar.getInstance();
+        c.setTime(V2_DATE_FORMAT_PARSE.parse(utc + " UTC"));
+        return c;
+    }
+
+    public static long v2UtcToLong(String utc) throws ParseException {
+        return V2_DATE_FORMAT_PARSE.parse(utc + " UTC").getTime();
+    }
+
+    public static String v2LongToUtc(long value) {
+        return V2_DATE_FORMAT.format(new Date(value));
+    }
+
+    public static String v2CalToUtc(Calendar calendar) {
+        return V2_DATE_FORMAT.format(calendar.getTime());
+    }
 
     public static String humanReadableAge(Calendar past) {
         long now = System.currentTimeMillis();

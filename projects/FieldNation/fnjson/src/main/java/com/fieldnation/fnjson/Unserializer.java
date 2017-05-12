@@ -2,11 +2,16 @@ package com.fieldnation.fnjson;
 
 import com.fieldnation.fnjson.annotations.CollectionParameterType;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnjson.annotations.Source;
+import com.fieldnation.fnlog.Log;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Created by Michael on 3/29/2016.
@@ -14,6 +19,8 @@ import java.util.Collection;
  * This is a static class used to unserialize JsonObjects into real Java objects
  */
 public class Unserializer {
+    private static final String TAG = "Unserializer";
+
     /**
      * Instantiates targetClass and populates the fields within that class based on the contents of
      * the JsonObject.
@@ -32,6 +39,42 @@ public class Unserializer {
 
         // Read all of its fields
         Field[] targetFields = targetClazz.getDeclaredFields();
+
+        if (BuildConfig.DEBUG) {
+            Set<String> fieldNames = new HashSet<>();
+            for (Field field : targetFields) {
+                Json targetFieldAnnotation = ReflectionUtils.getAnnotation(field, Json.class);
+                if (targetFieldAnnotation == null)
+                    continue;
+
+                // generate the name of the field as it would appear in the JSON
+                String targetFieldJsonName = ReflectionUtils.getFieldName(field, targetFieldAnnotation.name());
+
+                fieldNames.add(targetFieldJsonName);
+            }
+            Iterator<String> keys = source.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (!fieldNames.contains(key)) {
+                    System.out.println("FieldCheck! Field not found: " + targetClazz.getName() + ":" + key);
+                }
+            }
+        }
+
+        Field sourceField = null;
+        for (Field field : targetFields) {
+            Source anno = ReflectionUtils.getAnnotation(field, Source.class);
+            if (anno != null) {
+                sourceField = field;
+                break;
+            }
+        }
+
+        if (sourceField != null) {
+            sourceField.setAccessible(true);
+            sourceField.set(dest, source);
+            sourceField.setAccessible(false);
+        }
 
         for (Field targetField : targetFields) {
             targetField.setAccessible(true);
@@ -87,6 +130,9 @@ public class Unserializer {
      * @throws Exception
      */
     private static Object unserialize(Class<?> targetClass, Object source, Object defaultValue, Class<?> collectionType) throws Exception {
+        if (ReflectionUtils.isEnum(targetClass)) {
+            return unserializeEnum((Class<Enum>) targetClass, source.toString());
+        }
         if (ReflectionUtils.isPrimitive(targetClass)) {
             return unserializePrimitive(targetClass, source.toString());
         }
@@ -109,6 +155,33 @@ public class Unserializer {
 
         // this object is none of the above. try unserializing the object it represents
         return unserializeObject(targetClass, (JsonObject) source);
+    }
+
+    private static Enum unserializeEnum(Class<Enum> targetClazz, String source) throws Exception {
+        if (source == null)
+            return null;
+
+        if (source.equals(""))
+            return null;
+
+        Enum[] constants = targetClazz.getEnumConstants();
+        for (Enum constant : constants) {
+            Field field = targetClazz.getField(constant.name());
+
+            Json annotation = ReflectionUtils.getAnnotation(field, Json.class);
+            if (annotation == null)
+                continue;
+
+            if (annotation.name().equals(source))
+                return constant;
+        }
+
+        if (BuildConfig.DEBUG)
+            throw new Exception("unserializeEnum no constant for " + targetClazz.getName() + ":" + source);
+        else {
+            Log.v(TAG, "unserializeEnum no constant for " + targetClazz.getName() + ":" + source);
+            return null;
+        }
     }
 
     /**
@@ -209,3 +282,4 @@ public class Unserializer {
         return defaultValue;
     }
 }
+

@@ -5,6 +5,15 @@
     android:layout_height="match_parent"
     android:background="@color/fn_primary_bg">
 
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp"
+        android:elevation="0dp" />
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         style="?attr/fnToolbarStyle"
@@ -63,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_id_textview"
                 android:layout_marginLeft="4dp"
-                android:text="Contact"
+                android:text="@string/contact"
                 android:textColor="@color/fn_accent_color_dark"
                 android:textStyle="bold" />
 
@@ -83,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="3dp"
                     android:layout_marginLeft="8dp"
-                    android:text="Phone" />
+                    android:text="@string/phone" />
 
                 <LinearLayout
 
@@ -103,7 +112,7 @@
                             style="@style/EditText"
                             android:layout_width="match_parent"
                             android:enabled="false"
-                            android:hint="Phone No"
+                            android:hint="@string/phone_no"
                             android:textSize="16dp" />
 
                     </LinearLayout>
@@ -119,7 +128,7 @@
                             style="@style/EditText"
                             android:layout_width="match_parent"
                             android:enabled="false"
-                            android:hint="Ext"
+                            android:hint="@string/ext"
                             android:textSize="16dp" />
 
                     </LinearLayout>
@@ -134,7 +143,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/phone_layout"
                 android:layout_marginLeft="4dp"
-                android:text="Address"
+                android:text="@string/address"
                 android:textColor="@color/fn_accent_color_dark"
                 android:textStyle="bold" />
 
@@ -154,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="3dp"
                     android:layout_marginLeft="8dp"
-                    android:text="Address 1" />
+                    android:text="@string/address_1" />
 
                 <EditText
                     android:id="@+id/address_1_edittext"
@@ -162,7 +171,7 @@
                     android:layout_width="match_parent"
                     android:layout_below="@+id/address_1_textview"
                     android:enabled="false"
-                    android:hint="Address"
+                    android:hint="@string/address"
                     android:textSize="16dp" />
 
                 <TextView
@@ -174,7 +183,7 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="10dp"
-                    android:text="Address 2" />
+                    android:text="@string/address_2" />
 
                 <EditText
                     android:id="@+id/address_2_edittext"
@@ -182,7 +191,7 @@
                     android:layout_width="match_parent"
                     android:layout_below="@+id/address_2_textview"
                     android:enabled="false"
-                    android:hint="Optional"
+                    android:hint="@string/optional"
                     android:textSize="16dp" />
 
                 <TextView
@@ -194,7 +203,7 @@
                     android:layout_marginBottom="3dp"
                     android:layout_marginLeft="8dp"
                     android:layout_marginTop="10dp"
-                    android:text="City" />
+                    android:text="@string/city" />
 
                 <EditText
                     android:id="@+id/city_edittext"
@@ -202,7 +211,7 @@
                     android:layout_width="match_parent"
                     android:layout_below="@+id/city_textview"
                     android:enabled="false"
-                    android:hint="City"
+                    android:hint="@string/city"
                     android:textSize="16dp" />
 
                 <LinearLayout
@@ -226,7 +235,7 @@
                             android:layout_below="@+id/address_2_edittext"
                             android:layout_marginLeft="4dp"
                             android:layout_marginTop="10dp"
-                            android:text="State" />
+                            android:text="@string/state" />
 
                         <Button
                             android:id="@+id/state_button"
@@ -260,7 +269,7 @@
                             android:layout_marginBottom="3dp"
                             android:layout_marginLeft="8dp"
                             android:layout_marginTop="10dp"
-                            android:text="Zipcode" />
+                            android:text="@string/zipcode" />
 
                         <EditText
                             android:id="@+id/zip_code_edittext"
@@ -268,7 +277,7 @@
                             android:layout_width="match_parent"
                             android:layout_below="@+id/city_textview"
                             android:enabled="false"
-                            android:hint="ZIP code"
+                            android:hint="@string/zip_code"
                             android:textSize="16dp" />
 
                     </LinearLayout>

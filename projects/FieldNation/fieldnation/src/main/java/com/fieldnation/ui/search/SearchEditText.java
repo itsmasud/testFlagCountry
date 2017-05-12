@@ -19,13 +19,14 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.ArrayList;
 
@@ -43,8 +44,9 @@ public class SearchEditText extends RelativeLayout {
 
     // Data
     private ActivityResultClient _activityResultClient;
-    private WorkorderClient _workorderClient;
+    private WorkordersWebApi _workOrderApi;
     private Listener _listener;
+    private Integer _lastLookup = null;
 
     public SearchEditText(Context context) {
         super(context);
@@ -82,8 +84,8 @@ public class SearchEditText extends RelativeLayout {
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
 
         _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
     }
@@ -106,11 +108,10 @@ public class SearchEditText extends RelativeLayout {
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
 
-        if (_activityResultClient != null && _activityResultClient.isConnected())
+        if (_activityResultClient != null)
             _activityResultClient.disconnect(App.get());
 
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
     }
 
     private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {
@@ -123,7 +124,7 @@ public class SearchEditText extends RelativeLayout {
                             Long.parseLong(_searchTermEditText.getText().toString()));
                 } catch (Exception ex) {
                 }
-                doWorkorderLookup();
+                doWorkOrderLookup();
                 return true;
             }
             return false;
@@ -154,16 +155,15 @@ public class SearchEditText extends RelativeLayout {
                         Long.parseLong(_searchTermEditText.getText().toString()));
             } catch (Exception ex) {
             }
-            doWorkorderLookup();
+            doWorkOrderLookup();
         }
     };
 
-    private void doWorkorderLookup() {
+    private void doWorkOrderLookup() {
         try {
             _progressBar.setVisibility(VISIBLE);
-            long workOrderId = Long.parseLong(_searchTermEditText.getText().toString());
-            _workorderClient.subGet(workOrderId);
-            WorkorderClient.get(App.get(), workOrderId, false);
+            _lastLookup = Integer.parseInt(_searchTermEditText.getText().toString());
+            WorkordersWebApi.getWorkOrder(App.get(), _lastLookup, false, false);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -200,24 +200,30 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
         }
 
         @Override
-        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
-            _progressBar.setVisibility(GONE);
-            _workorderClient.unsubGet(workorderId);
-            if (workorder == null || failed) {
-            } else {
-                if (_listener != null)
-                    _listener.onLookupWorkOrder(workorderId);
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("getWorkOrder")) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                _progressBar.setVisibility(GONE);
+                if (workOrder == null || !success)
+                    return;
+
+                if (_lastLookup != null && _listener != null
+                        && (int) workOrder.getId() == (int) _lastLookup) {
+                    _listener.onLookupWorkOrder(workOrder.getId());
+                    _lastLookup = null;
+                }
             }
         }
     };
 
     public interface Listener {
-        void onLookupWorkOrder(long workOrderId);
+        void onLookupWorkOrder(int workOrderId);
     }
 }

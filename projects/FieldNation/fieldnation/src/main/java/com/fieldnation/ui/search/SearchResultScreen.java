@@ -22,10 +22,10 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
+import com.fieldnation.v2.ui.worecycler.BaseHolder;
 
 import java.util.List;
 
@@ -99,7 +99,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(Location location) {
+        public void onLocation(SimpleGps simpleGps, Location location) {
             _location = location;
             if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
                 _searchParams.location(_location.getLatitude(), _location.getLongitude());
@@ -108,18 +108,16 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderClient != null && _workOrderClient.isConnected())
-            _workOrderClient.disconnect(App.get());
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
-        if (_workorderClientV1 != null && _workorderClientV1.isConnected())
-            _workorderClientV1.disconnect(App.get());
+        if (_workorderClientV1 != null) _workorderClientV1.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

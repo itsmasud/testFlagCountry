@@ -24,9 +24,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.gmaps.GmapsDirections;
 import com.fieldnation.data.gmaps.GmapsRoute;
-import com.fieldnation.data.workorder.Geo;
-import com.fieldnation.data.workorder.Location;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -35,9 +32,13 @@ import com.fieldnation.service.data.gmaps.GmapsClient;
 import com.fieldnation.service.data.gmaps.Marker;
 import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.data.model.Coords;
+import com.fieldnation.v2.data.model.Location;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-public class LocationView extends LinearLayout implements WorkorderRenderer {
+public class LocationView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "LocationView";
 
     private static final int ACTION_NAVIGATE = 0;
@@ -69,7 +70,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private Button _actionButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private android.location.Location _userLocation = null;
     private Bitmap _map = null;
     private boolean _mapUnavailable = false;
@@ -146,30 +147,24 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_gmapsClient != null && _gmapsClient.isConnected()) {
-            _gmapsClient.disconnect(App.get());
-        }
+        if (_gmapsClient != null) _gmapsClient.disconnect(App.get());
         _simpleGps.stop();
         super.onDetachedFromWindow();
     }
 
-    @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
 
         if (_gmapsClient != null && _gmapsClient.isConnected()) {
-            _gmapsClient.subStaticMapClassic(_workorder.getWorkorderId());
-            _gmapsClient.subDirections(_workorder.getWorkorderId());
+            _gmapsClient.subStaticMapClassic(_workOrder.getId());
+            _gmapsClient.subDirections(_workOrder.getId());
             lookupMap();
         }
         populateUi();
     }
 
     private void populateUi() {
-        if (_workorder == null)
-            return;
-
-        if (_mapImageView == null)
+        if (_workOrder == null || _mapImageView == null || _workOrder.getLocation() == null)
             return;
 
         setVisibility(VISIBLE);
@@ -185,11 +180,13 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private void calculateAddressTileVisibility() {
         if (_invalidAddress) return;
 
-        if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
+        if (_workOrder.getLocation() == null) {
             _actionButton.setVisibility(GONE);
+            return;
+        }
 
         // hide stuff that shouldn't be seen
-        if (_workorder.getIsRemoteWork()) {
+        if (_workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE) {
             _actionButton.setVisibility(GONE);
             _mapLayout.setVisibility(GONE);
             _noLocationTextView.setVisibility(VISIBLE);
@@ -201,17 +198,19 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private void populateAddressTile() {
         if (_invalidAddress) return;
         // Address info
-        Location loc = _workorder.getLocation();
+        Location loc = _workOrder.getLocation();
         if (loc == null)
             return;
 
         // set site title
         String title = "";
-        if (!misc.isEmptyOrNull(loc.getGroupName())) {
-            title = loc.getGroupName().trim() + "/";
-        }
-        if (!misc.isEmptyOrNull(loc.getName())) {
-            title += loc.getName();
+        if (loc.getSavedLocation() != null) {
+            if (loc.getSavedLocation().getGroup() != null && !misc.isEmptyOrNull(loc.getSavedLocation().getGroup().getName())) {
+                title = loc.getSavedLocation().getGroup().getName().trim() + "/";
+            }
+            if (!misc.isEmptyOrNull(loc.getSavedLocation().getName())) {
+                title += loc.getSavedLocation().getName().trim();
+            }
         }
         if (!misc.isEmptyOrNull(title)) {
             _siteTitleTextView.setText(title);
@@ -229,11 +228,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         // set location type
-        if (loc.getType() == null) {
+        if (loc.getType() == null || misc.isEmptyOrNull(loc.getType().getName())) {
             _locationTypeLayout.setVisibility(GONE);
         } else {
             _locationTypeLayout.setVisibility(VISIBLE);
-            switch (loc.getType()) {
+            switch (loc.getType().getName()) {
                 case "Commercial":
                     _locationIconTextView.setText(R.string.icon_commercial);
                     _locationTypeTextView.setText(R.string.commercial);
@@ -267,9 +266,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 miles += route.getDistanceMi();
             }
             _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
-        } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude() != null && loc.getGeo().getLatitude() != null) {
+        } else if (_userLocation != null && loc.getCoordinates() != null && loc.getCoordinates().getLongitude() != null && loc.getCoordinates().getLatitude() != null) {
             try {
-                Position siteLoc = new Position(loc.getGeo().getLatitude(), loc.getGeo().getLongitude());
+                Position siteLoc = new Position(loc.getCoordinates().getLatitude(), loc.getCoordinates().getLongitude());
                 Position myLoc = new Position(_userLocation.getLatitude(), _userLocation.getLongitude());
 
                 _distanceTextView.setText(getResources().getString(R.string.num_mi_straight_line, misc.to2Decimal(myLoc.distanceTo(siteLoc))));
@@ -278,7 +277,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _distanceTextView.setText(R.string.cannot_display_distance);
             }
 
-        } else if (loc.getGeo() == null) {
+        } else if (loc.getCoordinates() == null) {
             _distanceTextView.setText(R.string.cannot_display_distance);
         } else if (_invalidAddress) {
             _distanceTextView.setText(R.string.cant_calc_miles);
@@ -287,12 +286,15 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         // display location notes
-        if (misc.isEmptyOrNull(loc.getNotes())) {
-            _noteTextView.setVisibility(GONE);
-        } else {
+        if (loc.getNotes() != null
+                && loc.getNotes().length > 0
+                && loc.getNotes()[0] != null
+                && !misc.isEmptyOrNull(loc.getNotes()[0].getText())) {
             _noteTextView.setVisibility(VISIBLE);
-            _noteTextView.setText(misc.linkifyHtml(loc.getNotes(), Linkify.ALL));
+            _noteTextView.setText(misc.linkifyHtml(loc.getNotes()[0].getText(), Linkify.ALL));
             _noteTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            _noteTextView.setVisibility(GONE);
         }
     }
 
@@ -304,7 +306,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
         }
 
-        if (_workorder.getIsRemoteWork()) {
+        if (_workOrder.getLocation() == null || _workOrder.getLocation().getMode() == Location.ModeEnum.REMOTE) {
 //        remote work
             _noMapLayout.setVisibility(GONE);
             _actionButton.setVisibility(GONE);
@@ -320,7 +322,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
 
-        } else if (_workorder.getLocation() == null || _workorder.getLocation().getGeo() == null) {
+        } else if (_workOrder.getLocation() == null || _workOrder.getLocation().getCoordinates() == null) {
 //        no geo data - ie bad address - _workorder.getLocation() == null || _workord
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
@@ -358,7 +360,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
 
         Log.v(TAG, "lookupMap - 1");
-        if (_workorder == null)
+        if (_workOrder == null)
             return;
 
         Log.v(TAG, "lookupMap - 2");
@@ -370,7 +372,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
 
         Log.v(TAG, "lookupMap - 4");
-        if (_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0) {
+        if ((_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0)
+                && (_workOrder != null && _workOrder.getLocation() != null)) {
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -387,20 +390,20 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         Marker end = null;
         Position endPos = null;
-        Location loc = _workorder.getLocation();
+        Location loc = _workOrder.getLocation();
         if (loc != null) {
-            Geo geo = loc.getGeo();
+            Coords geo = loc.getCoordinates();
             if (geo != null && geo.getLongitude() != null && geo.getLatitude() != null) {
                 _invalidAddress = false;
                 endPos = new Position(geo.getLatitude(), geo.getLongitude());
-                if (geo.getObfuscated() || !geo.getPrecise()) {
-                    end = new Marker(geo.getLatitude(), geo.getLongitude(),
-                            getContext().getString(R.string.gmap_inpreciseMarkerUrl));
-                } else {
+// TODO               if (geo.getObfuscated() || !geo.getPrecise()) {
+//                    end = new Marker(geo.getLatitude(), geo.getLongitude(),
+//                            getContext().getString(R.string.gmap_inpreciseMarkerUrl));
+//                } else {
 //                    GmapsClient.getDirections(App.get(), _workorder.getWorkorderId(), startPos, endPos);
-                    end = new Marker(geo.getLatitude(), geo.getLongitude(),
-                            getContext().getString(R.string.gmap_endMarkerUrl));
-                }
+                end = new Marker(geo.getLatitude(), geo.getLongitude(),
+                        getContext().getString(R.string.gmap_endMarkerUrl));
+//                }
             } else {
                 // invalid location
                 _invalidAddress = true;
@@ -425,7 +428,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             int width = (_mapImageView.getWidth() * 180) / _mapImageView.getHeight();
             int height = 180;
 
-            GmapsClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
+            GmapsClient.getStaticMapClassic(App.get(), _workOrder.getId(), start, end,
                     width, height);
         } else {
             _mapUnavailable = true;
@@ -458,12 +461,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId(), WorkorderActivity.TAB_MESSAGE);
+                    WorkOrderActivity.startNew(getContext(), _workOrder.getId(), WorkOrderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {
-                    if (_workorder != null && !_workorder.getIsRemoteWork()) {
-                        Location location = _workorder.getLocation();
+                    if (_workOrder != null && _workOrder.getLocation() != null && _workOrder.getLocation().getMode() != Location.ModeEnum.REMOTE) {
+                        Location location = _workOrder.getLocation();
                         if (location != null) {
                             try {
                                 String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
@@ -485,8 +488,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_map_onClick");
-            if (_workorder != null && !_workorder.getIsRemoteWork() && !_invalidAddress && !_mapUnavailable) {
-                Location location = _workorder.getLocation();
+            if (_workOrder != null
+                    && _workOrder.getLocation() != null
+                    && _workOrder.getLocation().getMode() != Location.ModeEnum.REMOTE
+                    && !_invalidAddress && !_mapUnavailable) {
+
+                Location location = _workOrder.getLocation();
                 if (location != null) {
                     try {
                         String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
@@ -502,7 +509,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
         @Override
-        public void onLocation(android.location.Location location) {
+        public void onLocation(SimpleGps simpleGps, android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
             lookupMap();
@@ -510,7 +517,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         @Override
-        public void onFail() {
+        public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
@@ -518,9 +525,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private final GmapsClient.Listener _gmapsClient_listener = new GmapsClient.Listener() {
         @Override
         public void onConnected() {
-            if (_workorder != null) {
-                _gmapsClient.subStaticMapClassic(_workorder.getWorkorderId());
-                _gmapsClient.subDirections(_workorder.getWorkorderId());
+            if (_workOrder != null) {
+                _gmapsClient.subStaticMapClassic(_workOrder.getId());
+                _gmapsClient.subDirections(_workOrder.getId());
                 lookupMap();
             }
         }

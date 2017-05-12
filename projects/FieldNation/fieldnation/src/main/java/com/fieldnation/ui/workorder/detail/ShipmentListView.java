@@ -8,15 +8,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.ShipmentTracking;
-import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.util.Random;
+import java.util.LinkedList;
+import java.util.List;
 
-public class ShipmentListView extends LinearLayout implements WorkorderRenderer {
+public class ShipmentListView extends LinearLayout implements WorkOrderRenderer {
     private static final String TAG = "ShipmentListView";
 
     // UI
@@ -25,8 +31,9 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
     private Button _addButton;
 
     // Data
-    private Workorder _workorder;
+    private WorkOrder _workOrder;
     private Listener _listener;
+    private ForLoopRunnable _forLoop;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -54,29 +61,36 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
         _listener = listener;
     }
 
+
     @Override
-    public void setWorkorder(Workorder workorder) {
-        _workorder = workorder;
-        refresh();
+    public void setWorkOrder(WorkOrder workOrder) {
+        _workOrder = workOrder;
+        populateUi();
     }
 
-    private void refresh() {
-        final ShipmentTracking[] shipments = _workorder.getShipmentTracking();
 
-        if (_workorder.canChangeShipments()) {
-            _addButton.setVisibility(View.VISIBLE);
-        } else {
-            _addButton.setVisibility(View.GONE);
-        }
+    private void populateUi() {
+        if (_workOrder.getShipments() == null)
+            return;
+        
+        final Shipment[] shipments = _workOrder.getShipments().getResults();
 
-        if ((shipments == null || shipments.length == 0) && !_workorder.canChangeShipments()) {
-            setVisibility(View.GONE);
+        if ((shipments == null || shipments.length == 0) && !_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+            setVisibility(GONE);
             return;
         }
+
+        if (_workOrder.getShipments() != null
+                && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+            _addButton.setVisibility(VISIBLE);
+        } else {
+            _addButton.setVisibility(GONE);
+        }
+
         setVisibility(View.VISIBLE);
 
         if (shipments == null || shipments.length == 0) {
-            _shipmentsLayout.setVisibility(GONE);
+            _shipmentsLayout.removeAllViews();
             _noShipmentsTextView.setVisibility(VISIBLE);
             return;
         } else {
@@ -84,27 +98,35 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
             _noShipmentsTextView.setVisibility(GONE);
         }
 
-        if (_shipmentsLayout.getChildCount() > shipments.length) {
-            _shipmentsLayout.removeViews(shipments.length - 1, _shipmentsLayout.getChildCount() - shipments.length);
+
+        if (_forLoop != null) {
+            _forLoop.cancel();
+            _forLoop = null;
         }
 
-        ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
-            private final ShipmentTracking[] _shipments = shipments;
+        if (shipments != null && shipments.length > 0) {
+            _forLoop = new ForLoopRunnable(shipments.length, new Handler()) {
+                Shipment[] _shipments = shipments;
+                List<View> views = new LinkedList();
 
-            @Override
-            public void next(int i) throws Exception {
-                ShipmentRowView v = null;
-                if (i < _shipmentsLayout.getChildCount()) {
-                    v = (ShipmentRowView) _shipmentsLayout.getChildAt(i);
-                } else {
-                    v = new ShipmentRowView(getContext());
-                    _shipmentsLayout.addView(v);
+                @Override
+                public void next(int i) throws Exception {
+                    ShipmentRowView v = new ShipmentRowView(getContext());
+                    views.add(v);
+                    v.setData(_workOrder, _shipments[i]);
+                    v.setListener(_summaryListener);
                 }
-                v.setData(_workorder, _shipments[i]);
-                v.setListener(_summaryListener);
-            }
-        };
-        postDelayed(r, new Random().nextInt(1000));
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _shipmentsLayout.removeAllViews();
+                    for (View view : views) {
+                        _shipmentsLayout.addView(view);
+                    }
+                }
+            };
+            postDelayed(_forLoop, 100);
+        }
     }
 
     /*-*********************************-*/
@@ -113,35 +135,47 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
+            if (_listener != null
+                    && _workOrder.getShipments() != null
+                    && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
                 _listener.addShipment();
+            }
         }
+
+
     };
 
     private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
-        public void onDelete(ShipmentTracking shipment) {
-            if (_listener != null && _workorder.canChangeShipments()) {
-                _listener.onDelete(_workorder, shipment);
+        public void onDelete(Shipment shipment) {
+            if (_listener != null
+                    && shipment != null
+                    && shipment.getActionsSet() != null
+                    && shipment.getActionsSet().contains(Shipment.ActionsEnum.DELETE)) {
+                _listener.onDelete(_workOrder, shipment);
+            } else {
+                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
+                return;
             }
         }
 
         @Override
-        public void onEdit(ShipmentTracking shipment) {
-            // TODO need to show an edit dialog
-            if (_listener != null && _workorder.canChangeShipments()) {
-                _listener.onAssign(_workorder, shipment);
+        public void onEdit(Shipment shipment) {
+            if (_listener != null
+                    && shipment != null
+                    && shipment.getActionsSet() != null
+                    && shipment.getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+                _listener.onAssign(_workOrder, shipment);
             }
         }
     };
 
+
     public interface Listener {
         void addShipment();
 
-        void onDelete(Workorder workorder, ShipmentTracking shipmentId);
+        void onDelete(WorkOrder workOrder, Shipment shipment);
 
-        void onAssign(Workorder workorder, ShipmentTracking shipmentId);
+        void onAssign(WorkOrder workOrder, Shipment shipment);
     }
-
-
 }
