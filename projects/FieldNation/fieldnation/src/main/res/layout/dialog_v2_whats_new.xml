@@ -42,11 +42,11 @@
                 android:layout_below="@+id/new_textview"
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="0dp"
-                android:background="#FF00FF00"
                 android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
 
+<!--
             <TextView
                 android:id="@+id/fixed_textview"
                 android:layout_width="match_parent"
@@ -91,6 +91,7 @@
                 android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
+-->
 
         </RelativeLayout>
     </com.fieldnation.ui.OverScrollView>

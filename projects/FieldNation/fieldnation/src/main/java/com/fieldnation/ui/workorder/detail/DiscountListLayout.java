@@ -163,7 +163,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
             if (_listener != null
                     && payModifier != null
                     && payModifier.getActionsSet() != null
-                    && payModifier.getActionsSet().contains(PayModifier.ActionsEnum.REMOVE)) {
+                    && payModifier.getActionsSet().contains(PayModifier.ActionsEnum.DELETE)) {
                 _listener.discountLongClick(payModifier);
                 return true;
             }

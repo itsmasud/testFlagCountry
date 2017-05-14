@@ -31,10 +31,10 @@ public class WhatsNewDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private TextView _newTextView;
     private WebView _newWebView;
-    private TextView _fixedTextView;
-    private WebView _fixedWebView;
-    private TextView _nextTextView;
-    private WebView _nextWebView;
+    //private TextView _fixedTextView;
+    //private WebView _fixedWebView;
+    //private TextView _nextTextView;
+    //private WebView _nextWebView;
 
     public WhatsNewDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -51,10 +51,10 @@ public class WhatsNewDialog extends FullScreenDialog {
 
         _newTextView = (TextView) _root.findViewById(R.id.new_textview);
         _newWebView = (WebView) _root.findViewById(R.id.new_webview);
-        _fixedTextView = (TextView) _root.findViewById(R.id.fixed_textview);
-        _fixedWebView = (WebView) _root.findViewById(R.id.fixed_webview);
-        _nextTextView = (TextView) _root.findViewById(R.id.next_textview);
-        _nextWebView = (WebView) _root.findViewById(R.id.next_webview);
+//        _fixedTextView = (TextView) _root.findViewById(R.id.fixed_textview);
+//        _fixedWebView = (WebView) _root.findViewById(R.id.fixed_webview);
+//        _nextTextView = (TextView) _root.findViewById(R.id.next_textview);
+//        _nextWebView = (WebView) _root.findViewById(R.id.next_webview);
 
         return _root;
     }
@@ -85,29 +85,29 @@ public class WhatsNewDialog extends FullScreenDialog {
         }
 
         if (SHOW_BUGS) {
-            _fixedTextView.setVisibility(View.VISIBLE);
-            _fixedWebView.setVisibility(View.VISIBLE);
-            _fixedWebView.loadData(context.getString(R.string.bugs_fixed), "text/html", "utf-8");
-            webSettings = _fixedWebView.getSettings();
-            webSettings.setJavaScriptEnabled(true);
-            webSettings.setDomStorageEnabled(true);
-            webSettings.setDefaultFontSize(fontSize);
+//            _fixedTextView.setVisibility(View.VISIBLE);
+//            _fixedWebView.setVisibility(View.VISIBLE);
+//            _fixedWebView.loadData(context.getString(R.string.bugs_fixed), "text/html", "utf-8");
+//            webSettings = _fixedWebView.getSettings();
+//            webSettings.setJavaScriptEnabled(true);
+//            webSettings.setDomStorageEnabled(true);
+//            webSettings.setDefaultFontSize(fontSize);
         } else {
-            _fixedTextView.setVisibility(View.GONE);
-            _fixedWebView.setVisibility(View.GONE);
+//            _fixedTextView.setVisibility(View.GONE);
+//            _fixedWebView.setVisibility(View.GONE);
         }
 
         if (SHOW_FEATURES) {
-            _nextTextView.setVisibility(View.VISIBLE);
-            _nextWebView.setVisibility(View.VISIBLE);
-            _nextWebView.loadData(context.getString(R.string.working_on_feature), "text/html", "utf-8");
-            webSettings = _nextWebView.getSettings();
-            webSettings.setJavaScriptEnabled(true);
-            webSettings.setDomStorageEnabled(true);
-            webSettings.setDefaultFontSize(fontSize);
+//            _nextTextView.setVisibility(View.VISIBLE);
+//            _nextWebView.setVisibility(View.VISIBLE);
+//            _nextWebView.loadData(context.getString(R.string.working_on_feature), "text/html", "utf-8");
+//            webSettings = _nextWebView.getSettings();
+//            webSettings.setJavaScriptEnabled(true);
+//            webSettings.setDomStorageEnabled(true);
+//            webSettings.setDefaultFontSize(fontSize);
         } else {
-            _nextTextView.setVisibility(View.GONE);
-            _nextWebView.setVisibility(View.GONE);
+//            _nextTextView.setVisibility(View.GONE);
+//            _nextWebView.setVisibility(View.GONE);
         }
     }
 
@@ -119,9 +119,9 @@ public class WhatsNewDialog extends FullScreenDialog {
         @Override
         public void onViewDetachedFromWindow(View v) {
             WebStorage.getInstance().deleteAllData();
-            _fixedWebView.destroy();
+//            _fixedWebView.destroy();
             _newWebView.destroy();
-            _nextWebView.destroy();
+//            _nextWebView.destroy();
         }
     };
 

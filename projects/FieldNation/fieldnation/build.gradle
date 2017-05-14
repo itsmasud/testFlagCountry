@@ -28,7 +28,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 97
+        versionCode 98
         versionName "4.0.0"
         multiDexEnabled true
     }
@@ -65,6 +65,18 @@ android {
             applicationId "com.fieldnation.android.ncns"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"NCNS"'
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncns"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
+        qa1 {
+            applicationId "com.fieldnation.android.qa1"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"QA1"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.qa1"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
+        qa2 {
+            applicationId "com.fieldnation.android.qa2"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"QA2"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.qa2"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
         ncnstest {

@@ -272,6 +272,8 @@ public class AttachmentFolder implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "delete")
         DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit"),
         @Json(name = "upload")
         UPLOAD("upload");
 

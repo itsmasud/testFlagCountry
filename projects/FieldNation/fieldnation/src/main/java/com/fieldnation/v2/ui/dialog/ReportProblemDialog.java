@@ -402,6 +402,9 @@ public class ReportProblemDialog extends SimpleDialog {
                     problem.setType((ProblemType) getPrimaryAdapter().getItem(_primaryPosition));
                 }
 
+                if (problem.getType().getHasOther())
+                    problem.getType().setOther(explanation);
+
                 if (problem.getType().getShowPqapWarning() != null && problem.getType().getShowPqapWarning()) {
                     CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getId(), problem);
                 } else {

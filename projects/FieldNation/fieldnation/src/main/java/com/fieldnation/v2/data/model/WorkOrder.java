@@ -24,6 +24,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "actions")
     private ActionsEnum[] _actions;
 
+    @Json(name = "allow_counter_offers")
+    private Boolean _allowCounterOffers;
+
     @Json(name = "assignee")
     private Assignee _assignee;
 
@@ -92,6 +95,9 @@ public class WorkOrder implements Parcelable {
 
     @Json(name = "policy_and_procedures")
     private RichText _policyAndProcedures;
+
+    @Json(name = "printable")
+    private Boolean _printable;
 
     @Json(name = "problems")
     private Problems _problems;
@@ -205,6 +211,28 @@ public class WorkOrder implements Parcelable {
             ja.add(item.toString());
         }
         SOURCE.put("actions", ja, true);
+        return this;
+    }
+
+    public void setAllowCounterOffers(Boolean allowCounterOffers) throws ParseException {
+        _allowCounterOffers = allowCounterOffers;
+        SOURCE.put("allow_counter_offers", allowCounterOffers);
+    }
+
+    public Boolean getAllowCounterOffers() {
+        try {
+            if (_allowCounterOffers == null && SOURCE.has("allow_counter_offers") && SOURCE.get("allow_counter_offers") != null)
+                _allowCounterOffers = SOURCE.getBoolean("allow_counter_offers");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _allowCounterOffers;
+    }
+
+    public WorkOrder allowCounterOffers(Boolean allowCounterOffers) throws ParseException {
+        _allowCounterOffers = allowCounterOffers;
+        SOURCE.put("allow_counter_offers", allowCounterOffers);
         return this;
     }
 
@@ -773,6 +801,28 @@ public class WorkOrder implements Parcelable {
     public WorkOrder policyAndProcedures(RichText policyAndProcedures) throws ParseException {
         _policyAndProcedures = policyAndProcedures;
         SOURCE.put("policy_and_procedures", policyAndProcedures.getJson());
+        return this;
+    }
+
+    public void setPrintable(Boolean printable) throws ParseException {
+        _printable = printable;
+        SOURCE.put("printable", printable);
+    }
+
+    public Boolean getPrintable() {
+        try {
+            if (_printable == null && SOURCE.has("printable") && SOURCE.get("printable") != null)
+                _printable = SOURCE.getBoolean("printable");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _printable;
+    }
+
+    public WorkOrder printable(Boolean printable) throws ParseException {
+        _printable = printable;
+        SOURCE.put("printable", printable);
         return this;
     }
 
@@ -1363,6 +1413,8 @@ public class WorkOrder implements Parcelable {
         CONFIRM("confirm"),
         @Json(name = "copy")
         COPY("copy"),
+        @Json(name = "counter_offer")
+        COUNTER_OFFER("counter_offer"),
         @Json(name = "delete")
         DELETE("delete"),
         @Json(name = "edit")
@@ -1398,7 +1450,9 @@ public class WorkOrder implements Parcelable {
         @Json(name = "unpublish")
         UNPUBLISH("unpublish"),
         @Json(name = "view_problem")
-        VIEW_PROBLEM("view_problem");
+        VIEW_PROBLEM("view_problem"),
+        @Json(name = "withdraw_request")
+        WITHDRAW_REQUEST("withdraw_request");
 
         private String value;
 

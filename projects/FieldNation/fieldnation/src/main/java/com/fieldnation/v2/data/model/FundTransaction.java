@@ -27,8 +27,8 @@ public class FundTransaction implements Parcelable {
     @Json(name = "amount")
     private Double _amount;
 
-    @Json(name = "bank_details")
-    private BankDetails _bankDetails;
+    @Json(name = "bank")
+    private Bank _bank;
 
     @Json(name = "billing_address")
     private BillingAddress _billingAddress;
@@ -102,28 +102,28 @@ public class FundTransaction implements Parcelable {
         return this;
     }
 
-    public void setBankDetails(BankDetails bankDetails) throws ParseException {
-        _bankDetails = bankDetails;
-        SOURCE.put("bank_details", bankDetails.getJson());
+    public void setBank(Bank bank) throws ParseException {
+        _bank = bank;
+        SOURCE.put("bank", bank.getJson());
     }
 
-    public BankDetails getBankDetails() {
+    public Bank getBank() {
         try {
-            if (_bankDetails == null && SOURCE.has("bank_details") && SOURCE.get("bank_details") != null)
-                _bankDetails = BankDetails.fromJson(SOURCE.getJsonObject("bank_details"));
+            if (_bank == null && SOURCE.has("bank") && SOURCE.get("bank") != null)
+                _bank = Bank.fromJson(SOURCE.getJsonObject("bank"));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (_bankDetails != null && _bankDetails.isSet())
-        return _bankDetails;
+        if (_bank != null && _bank.isSet())
+            return _bank;
 
         return null;
     }
 
-    public FundTransaction bankDetails(BankDetails bankDetails) throws ParseException {
-        _bankDetails = bankDetails;
-        SOURCE.put("bank_details", bankDetails.getJson());
+    public FundTransaction bank(Bank bank) throws ParseException {
+        _bank = bank;
+        SOURCE.put("bank", bank.getJson());
         return this;
     }
 

@@ -314,8 +314,8 @@ public class PayModifier implements Parcelable {
     public enum ActionsEnum {
         @Json(name = "charge")
         CHARGE("charge"),
-        @Json(name = "remove")
-        REMOVE("remove");
+        @Json(name = "delete")
+        DELETE("delete");
 
         private String value;
 

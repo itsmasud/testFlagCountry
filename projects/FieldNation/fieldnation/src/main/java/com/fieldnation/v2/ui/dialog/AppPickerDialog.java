@@ -270,21 +270,32 @@ public class AppPickerDialog extends SimpleDialog {
                             } else {
                                 Log.v(TAG, "Single local/ non-local file upload");
                                 _tempUri = data.getData();
-                                _tempFile = null;
-                                if (_slot == null)
-                                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
-                                else
-                                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
-
+                                if (_tempUri != null) {
+                                    if (_slot == null)
+                                        PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
+                                    else
+                                        PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
+                                } else if (_tempFile != null) {
+                                    if (_slot == null)
+                                        PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, _tempFile.getName(), _tempFile.getAbsolutePath());
+                                    else
+                                        PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, _tempFile.getName(), _tempFile.getAbsolutePath());
+                                }
                             }
                         } else {
                             Log.v(TAG, "Android version is pre-4.3");
                             _tempUri = data.getData();
-                            _tempFile = null;
-                            if (_slot == null)
-                                PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
-                            else
-                                PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
+                            if (_tempUri != null) {
+                                if (_slot == null)
+                                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
+                                else
+                                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
+                            } else if (_tempFile != null) {
+                                if (_slot == null)
+                                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _task, _tempFile.getName(), _tempFile.getAbsolutePath());
+                                else
+                                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _slot, _tempFile.getName(), _tempFile.getAbsolutePath());
+                            }
                         }
                     }
 
