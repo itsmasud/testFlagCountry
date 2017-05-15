@@ -265,6 +265,7 @@ public class DeclineDialog extends SimpleDialog {
                     WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
+
                 }
             }
             dismiss(true);

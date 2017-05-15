@@ -26,7 +26,9 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Declines;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -56,11 +58,14 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     // Data
     private int _bundleId = 0;
     private Location _location;
+    private WorkOrders _workOrders;
 
     // Services
     private BundlesWebApi _bundlesApi;
     private SimpleGps _simpleGps;
     private WorkorderClient _workOrderClient;
+    private WorkordersWebApi _workOrdersApiClient;
+
 
     @Override
     public int getLayoutResource() {
@@ -127,6 +132,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
         _bundlesApi.connect(App.get());
 
+        _workOrdersApiClient = new WorkordersWebApi(_workOrdersApiClient_listener);
+        _workOrdersApiClient.connect(App.get());
+
         _workOrderClient = new WorkorderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
     }
@@ -137,12 +145,42 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
+        if (_workOrdersApiClient != null) _workOrdersApiClient.disconnect(App.get());
+
         AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
 
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         super.onPause();
+    }
+
+    private void populateUi() {
+
+        for (WorkOrder workOrder : _workOrders.getResults()) {
+            if (workOrder.getDeclines() != null
+                    && workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
+                _notInterestedButton.setEnabled(true);
+            } else {
+                _notInterestedButton.setEnabled(false);
+            }
+
+
+            if (workOrder.getRoutes() != null
+                    && workOrder.getRoutes().getUserRoute() != null
+                    && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                _buttonToolbar.setVisibility(View.VISIBLE);
+                _okButton.setText(R.string.btn_accept);
+                break;
+            } else if (workOrder.getRequests() != null
+                    && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                _buttonToolbar.setVisibility(View.VISIBLE);
+                _okButton.setText(R.string.btn_request);
+                break;
+            } else {
+                _buttonToolbar.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void setLoading(boolean isloading) {
@@ -157,7 +195,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             _okButton.setEnabled(false);
         } else {
             _refreshView.refreshComplete();
-            _notInterestedButton.setEnabled(true);
             _okButton.setEnabled(true);
         }
     }
@@ -276,26 +313,29 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 }
 
                 _adapter.addObjects(1, workOrders.getResults());
-
-                for (WorkOrder workOrder : workOrders.getResults()) {
-                    if (workOrder.getRoutes() != null
-                            && workOrder.getRoutes().getUserRoute() != null
-                            && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-                        _buttonToolbar.setVisibility(View.VISIBLE);
-                        _okButton.setText(R.string.btn_accept);
-                        break;
-                    } else if (workOrder.getRequests() != null
-                            && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-                        _buttonToolbar.setVisibility(View.VISIBLE);
-                        _okButton.setText(R.string.btn_request);
-                        break;
-                    } else {
-                        _buttonToolbar.setVisibility(View.GONE);
-                    }
-                }
+                _workOrders = workOrders;
+                populateUi();
             }
         }
     };
+
+
+    private final WorkordersWebApi.Listener _workOrdersApiClient_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrdersApiClient.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.contains("decline") && success) {
+                ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
+                populateUi();
+            }
+        }
+
+    };
+
 
     private final WoPagingAdapter _adapter = new WoPagingAdapter() {
         @Override
