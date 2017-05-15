@@ -42,10 +42,10 @@
 
             <com.fieldnation.ui.FnNumberPicker
                 android:id="@+id/hourNumberPicker"
-                android:layout_width="30dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp" />
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
 
             <TextView
                 android:id="@+id/hour_textview"
@@ -59,10 +59,10 @@
 
             <com.fieldnation.ui.FnNumberPicker
                 android:id="@+id/minuteNumberumberPicker"
-                android:layout_width="30dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp" />
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp" />
 
             <TextView
                 android:id="@+id/minute_textview"

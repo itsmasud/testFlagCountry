@@ -60,6 +60,9 @@ public class WorkOrder implements Parcelable {
     @Json(name = "custom_fields")
     private CustomFields _customFields;
 
+    @Json(name = "declines")
+    private Declines _declines;
+
     @Json(name = "description")
     private RichText _description;
 
@@ -502,6 +505,31 @@ public class WorkOrder implements Parcelable {
     public WorkOrder customFields(CustomFields customFields) throws ParseException {
         _customFields = customFields;
         SOURCE.put("custom_fields", customFields.getJson());
+        return this;
+    }
+
+    public void setDeclines(Declines declines) throws ParseException {
+        _declines = declines;
+        SOURCE.put("declines", declines.getJson());
+    }
+
+    public Declines getDeclines() {
+        try {
+            if (_declines == null && SOURCE.has("declines") && SOURCE.get("declines") != null)
+                _declines = Declines.fromJson(SOURCE.getJsonObject("declines"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        if (_declines != null && _declines.isSet())
+            return _declines;
+
+        return null;
+    }
+
+    public WorkOrder declines(Declines declines) throws ParseException {
+        _declines = declines;
+        SOURCE.put("declines", declines.getJson());
         return this;
     }
 
