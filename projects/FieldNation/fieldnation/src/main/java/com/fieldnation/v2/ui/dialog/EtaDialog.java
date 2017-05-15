@@ -766,14 +766,16 @@ public class EtaDialog extends FullScreenDialog {
 
                 try {
                     ETA eta = new ETA();
+                    eta.workOrderId(_workOrder.getId());
                     eta.setStart(new Date(_etaStart));
                     eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                     eta.setUser(new User().id((int) App.getProfileId()));
                     eta.setHourEstimate(_durationMilliseconds / 3600000.0);
                     eta.setNotes(_noteEditText.getText().toString().trim());
 
-                    _onBundleEtaDispatcher.dispatch(getUid(), eta, _workOrder.getId());
+                    _onBundleEtaDispatcher.dispatch(getUid(), eta, _workOrder);
                     dismiss(true);
+                    return true;
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -1019,13 +1021,13 @@ public class EtaDialog extends FullScreenDialog {
     /*-         Bundle Eta         -*/
     /*-****************************-*/
     public interface OnBundleEtaListener {
-        void onBundleEta(ETA eta, int workOrderid);
+        void onBundleEta(ETA eta, WorkOrder workOrder);
     }
 
     private static KeyedDispatcher<OnBundleEtaListener> _onBundleEtaDispatcher = new KeyedDispatcher<OnBundleEtaListener>() {
         @Override
         public void onDispatch(OnBundleEtaListener listener, Object... parameters) {
-            listener.onBundleEta((ETA) parameters[0], (int) parameters[1]);
+            listener.onBundleEta((ETA) parameters[0], (WorkOrder) parameters[1]);
         }
     };
 
