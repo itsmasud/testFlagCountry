@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
@@ -29,12 +28,9 @@ import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Declines;
-import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
-import com.fieldnation.v2.data.model.User;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -62,6 +58,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     // Data
     private int _bundleId = 0;
     private Location _location;
+    private WorkOrders _workOrders;
 
     // Services
     private BundlesWebApi _bundlesApi;
@@ -156,6 +153,34 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         super.onPause();
+    }
+
+    private void populateUi() {
+
+        for (WorkOrder workOrder : _workOrders.getResults()) {
+            if (workOrder.getDeclines() != null
+                    && workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
+                _notInterestedButton.setEnabled(true);
+            } else {
+                _notInterestedButton.setEnabled(false);
+            }
+
+
+            if (workOrder.getRoutes() != null
+                    && workOrder.getRoutes().getUserRoute() != null
+                    && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                _buttonToolbar.setVisibility(View.VISIBLE);
+                _okButton.setText(R.string.btn_accept);
+                break;
+            } else if (workOrder.getRequests() != null
+                    && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                _buttonToolbar.setVisibility(View.VISIBLE);
+                _okButton.setText(R.string.btn_request);
+                break;
+            } else {
+                _buttonToolbar.setVisibility(View.GONE);
+            }
+        }
     }
 
     private void setLoading(boolean isloading) {
@@ -288,29 +313,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 }
 
                 _adapter.addObjects(1, workOrders.getResults());
-
-                for (WorkOrder workOrder : workOrders.getResults()) {
-                    if (workOrder.getDeclines() != null
-                            && workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
-                        _notInterestedButton.setEnabled(true);
-                    }
-
-
-                    if (workOrder.getRoutes() != null
-                            && workOrder.getRoutes().getUserRoute() != null
-                            && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-                        _buttonToolbar.setVisibility(View.VISIBLE);
-                        _okButton.setText(R.string.btn_accept);
-                        break;
-                    } else if (workOrder.getRequests() != null
-                            && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-                        _buttonToolbar.setVisibility(View.VISIBLE);
-                        _okButton.setText(R.string.btn_request);
-                        break;
-                    } else {
-                        _buttonToolbar.setVisibility(View.GONE);
-                    }
-                }
+                _workOrders = workOrders;
+                populateUi();
             }
         }
     };
@@ -325,7 +329,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
-                finish();
+                ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
+                populateUi();
             }
         }
 

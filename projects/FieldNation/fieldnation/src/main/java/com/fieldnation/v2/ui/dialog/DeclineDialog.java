@@ -19,7 +19,6 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -259,12 +258,10 @@ public class DeclineDialog extends SimpleDialog {
                 }
             } else {
                 if (_declinePosition == -1) {
-                    Log.e(TAG, "type-1");
                     WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-                    Log.e(TAG, "type-2");
                     WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
