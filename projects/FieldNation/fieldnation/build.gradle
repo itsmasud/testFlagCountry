@@ -137,9 +137,13 @@ dependencies {
     }
     // ANR reporting
     compile 'com.github.anrwatchdog:anrwatchdog:1.1.1'
+
     // ZXing - barcode scanning
     compile 'com.journeyapps:zxing-android-embedded:3.0.3@aar'
     compile 'com.google.zxing:core:3.2.1'
+
+    // Swipe Reveal Layout
+    compile ('com.chauthai.swipereveallayout:swipe-reveal-layout:1.4.0')
 
     // Snowplow
     compile 'com.snowplowanalytics:snowplow-android-tracker:0.6.0@aar'

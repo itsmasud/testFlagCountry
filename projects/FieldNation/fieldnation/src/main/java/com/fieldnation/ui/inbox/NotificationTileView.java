@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.chauthai.swipereveallayout.SwipeRevealLayout;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.fnlog.Log;
@@ -80,6 +81,10 @@ public class NotificationTileView extends RelativeLayout {
 
     public Notification getNotification() {
         return _notification;
+    }
+
+    public SwipeRevealLayout getSwipeRevealLayout() {
+        return (SwipeRevealLayout) findViewById(R.id.swipe_layout);
     }
 
     private void populateUi() {

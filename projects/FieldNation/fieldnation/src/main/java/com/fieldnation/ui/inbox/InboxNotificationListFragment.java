@@ -1,6 +1,6 @@
 package com.fieldnation.ui.inbox;
 
-import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.chauthai.swipereveallayout.ViewBinderHelper;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
@@ -86,7 +87,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         _listView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.VERTICAL, false));
         _listView.setAdapter(_adapter);
         _listView.setOnOverScrollListener(_loadingView);
-        new ItemTouchHelper(_itemTouchHelper).attachToRecyclerView(_listView);
 
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
@@ -100,9 +100,9 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     }
 
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(Context context) {
         Log.v(TAG, "onAttach");
-        super.onAttach(activity);
+        super.onAttach(context);
 
         _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(App.get());
@@ -181,6 +181,9 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     };
 
     private final PagingAdapter<Notification> _adapter = new PagingAdapter<Notification>(Notification.class) {
+
+        private final ViewBinderHelper binderHelper = new ViewBinderHelper();
+
         @Override
         public void requestPage(int page, boolean allowCache) {
             requestList(page, allowCache);
@@ -195,6 +198,8 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         @Override
         public void onBindObjectViewHolder(BaseHolder holder, Notification object) {
             NotificationTileView v = (NotificationTileView) holder.itemView;
+
+            binderHelper.bind(v.getSwipeRevealLayout(), holder.getItemId() + "");
             v.setData(object);
         }
 
@@ -238,7 +243,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
 
         }
-    }
+    };
 
     private final ItemTouchHelper.SimpleCallback _itemTouchHelper = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
         @Override
