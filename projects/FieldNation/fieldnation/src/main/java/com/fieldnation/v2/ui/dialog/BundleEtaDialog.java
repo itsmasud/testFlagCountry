@@ -18,6 +18,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -26,12 +27,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.BundleEtaCardView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -40,6 +36,10 @@ import java.util.Random;
 
 public class BundleEtaDialog extends FullScreenDialog {
     private static final String TAG = "BundleEtaDialog";
+
+    // State
+    private static final String STATE_COMPLETE_WO_LIST = "STATE_COMPLETE_WO_LIST";
+    private static final String STATE_ETA_LIST = "STATE_ETA_LIST";
 
     // Dialogs
     private static final String UID_DIALOG_ETA = TAG + ".etaDialog";
@@ -141,12 +141,24 @@ public class BundleEtaDialog extends FullScreenDialog {
     @Override
     public void onSaveDialogState(Bundle outState) {
         super.onSaveDialogState(outState);
+
+        if (_completeWorkOrders != null)
+            outState.putSerializable(STATE_COMPLETE_WO_LIST, _completeWorkOrders);
+
+        if (_etaList != null)
+            outState.putSerializable(STATE_ETA_LIST, _etaList);
     }
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         Log.v(TAG, "onRestoreDialogState");
         super.onRestoreDialogState(savedState);
+        if (savedState.containsKey(STATE_COMPLETE_WO_LIST))
+            _completeWorkOrders = (Hashtable<Integer, WorkOrder>) savedState.getSerializable(STATE_COMPLETE_WO_LIST);
+
+        if (savedState.containsKey(STATE_ETA_LIST))
+            _etaList = (Hashtable<Integer, ETA>) savedState.getSerializable(STATE_ETA_LIST);
+
         populateUi();
     }
 
@@ -252,13 +264,9 @@ public class BundleEtaDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-
             ETA[] etaAll = (ETA[]) _etaList.values().toArray(new ETA[_etaList.size()]);
-
-            Log.e(TAG, "etaAll with eta node: " + "{" +"\"eta\":" + new ETA ().toJsonArray(etaAll).toString() + "}");
-
-            WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" +"\"eta\":" + new ETA ().toJsonArray(etaAll).toString() + "}");
-
+            Log.e(TAG, "etaAll with eta node: " + "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
+//            WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
             dismiss(true);
             return true;
         }
@@ -279,15 +287,7 @@ public class BundleEtaDialog extends FullScreenDialog {
             } else {
                 _etaList.remove(workOrder.getId());
                 _etaList.put(workOrder.getId(), eta);
-                Log.e(TAG, "size of _etaList" + _etaList.size());
             }
-
-            for (int key : _etaList.keySet()) {
-                System.out.println("key : " + key);
-                System.out.println("value : " + _etaList.get(key).getJson());
-            }
-
-
             populateUi();
         }
     };
