@@ -74,6 +74,7 @@ public class App extends Application {
     public static final String PREF_INSTALL_TIME = "PREF_INSTALL_TIME";
     public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
+    public static final String PREF_RATE_SHOWN_VERSION = "PREF_RATE_SHOWN_VERSION";
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
     public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
@@ -150,7 +151,7 @@ public class App extends Application {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        
+
         HttpJson.setTempFolder(getTempFolder());
 
         Stopwatch mwatch = new Stopwatch(true);
@@ -588,6 +589,7 @@ public class App extends Application {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_RATE_INTERACTION, System.currentTimeMillis());
+        edit.putLong(PREF_RATE_SHOWN_VERSION, BuildConfig.VERSION_CODE);
         edit.apply();
     }
 
@@ -599,6 +601,11 @@ public class App extends Application {
         }
 
         return settings.getLong(PREF_RATE_INTERACTION, System.currentTimeMillis());
+    }
+
+    public boolean getRateMeInteractedThisVersion() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return BuildConfig.VERSION_CODE == settings.getLong(PREF_RATE_SHOWN_VERSION, -1);
     }
 
     public void setRateMeShown() {
@@ -645,6 +652,12 @@ public class App extends Application {
         // if shown before, check time.
         if (System.currentTimeMillis() - getRateMeShown() < DAY * 14) {
             Log.v(TAG, "showRateMe:  shown before check failed");
+            return false;
+        }
+
+        // if shown this version, leave
+        if (getRateMeInteractedThisVersion()) {
+            Log.v(TAG, "showRateMe: shown this version check failed");
             return false;
         }
 

@@ -84,7 +84,7 @@ public class ConfirmResultScreen extends RelativeLayout {
         _workOrderList.setOnOverScrollListener(_refreshView);
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
         _workOrderList.setAdapter(_adapter);
-        _adapter.setRateMeAllowed(true);
+        _adapter.setRateMeAllowed(false);
 
         post(new Runnable() {
             @Override
