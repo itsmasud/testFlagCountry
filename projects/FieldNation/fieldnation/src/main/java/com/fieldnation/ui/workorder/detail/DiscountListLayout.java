@@ -86,7 +86,8 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
             return;
 
 
-        if (_workOrder.getStatus().getId() == 2
+        if (_workOrder.getStatus() == null
+                || _workOrder.getStatus().getId() == 2
                 || _workOrder.getStatus().getId() == 9
                 || _workOrder.getPay() == null
                 || _workOrder.getPay().getDiscounts() == null) {

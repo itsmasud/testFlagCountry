@@ -98,9 +98,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         if (pay == null) {
             this.setVisibility(GONE);
             return;
-        } else if (_workOrder.getPay() == null /* TODO || _workOrder.getPay().hidePay()*/) {
-            setVisibility(GONE);
-            return;
         } else {
             setVisibility(VISIBLE);
         }
@@ -110,13 +107,19 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             return;
         }
 
-        Double expectedSum = pay.getLaborSum();
-
         // Labor
-        _laborTextView.setText(misc.toCurrency(pay.getLaborSum()));
+        if (pay.getLaborSum() != null)
+            _laborTextView.setText(misc.toCurrency(pay.getLaborSum()));
+        else
+            _laborTextView.setText(misc.toCurrency(0));
 
         // Expenses approved
-        _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
+        if (pay.getExpenses() != null
+                && pay.getExpenses().getSum() != null
+                && pay.getExpenses().getSum().getCharged() != null)
+            _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
+        else
+            _expensesTextView.setText(misc.toCurrency(0));
 
         // Discounts
         if (pay.getDiscounts() != null
@@ -127,10 +130,20 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             _discountsTextView.setText(misc.toCurrency(0));
 
         // Bonus
-        _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
+        if (pay.getBonuses() != null
+                && pay.getBonuses().getSum() != null
+                && pay.getBonuses().getSum().getCharged() != null)
+            _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
+        else
+            _bonusTextView.setText(misc.toCurrency(0));
 
         // Penalty
-        _penaltyTextView.setText(misc.toCurrency(-pay.getPenalties().getSum().getCharged()));
+        if (pay.getPenalties() != null
+                && pay.getPenalties().getSum() != null
+                && pay.getPenalties().getSum().getCharged() != null)
+            _penaltyTextView.setText(misc.toCurrency(-pay.getPenalties().getSum().getCharged()));
+        else
+            _penaltyTextView.setText(misc.toCurrency(0));
 
 
         // Insurance and Field Nation fees
@@ -139,23 +152,31 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _insurancePercentTextView.setVisibility(GONE);
         _insuranceFeeTextView.setVisibility(GONE);
         PayModifier[] fees = pay.getFees();
-        for (PayModifier fee : fees) {
-            if (fee.getName().equals("provider") && fee.getAmount() != null && fee.getModifier() != null) {
-                _feeTextView.setText(misc.toCurrency(-fee.getAmount()));
-                _feePercentTextView.setText(String.format(
-                        getContext().getString(R.string.fieldnation_expected_fee_percentage),
-                        (float) (fee.getModifier() * 100)));
+        if (fees != null) {
+            for (PayModifier fee : fees) {
+                if (fee.getName() != null
+                        && fee.getName().equals("provider")
+                        && fee.getAmount() != null
+                        && fee.getModifier() != null) {
+                    _feeTextView.setText(misc.toCurrency(-fee.getAmount()));
+                    _feePercentTextView.setText(String.format(
+                            getContext().getString(R.string.fieldnation_expected_fee_percentage),
+                            (float) (fee.getModifier() * 100)));
 
-                _feeTextView.setVisibility(VISIBLE);
-                _feePercentTextView.setVisibility(VISIBLE);
-            } else if (fee.getName().equals("insurance") && fee.getAmount() != null && fee.getModifier() != null) {
-                _insuranceFeeTextView.setText(misc.toCurrency(-fee.getAmount()));
-                _insurancePercentTextView.setText(String.format(
-                        getContext().getString(R.string.fieldnation_expected_insurance_percentage),
-                        (float) (fee.getModifier() * 100)));
+                    _feeTextView.setVisibility(VISIBLE);
+                    _feePercentTextView.setVisibility(VISIBLE);
+                } else if (fee.getName() != null
+                        && fee.getName().equals("insurance")
+                        && fee.getAmount() != null
+                        && fee.getModifier() != null) {
+                    _insuranceFeeTextView.setText(misc.toCurrency(-fee.getAmount()));
+                    _insurancePercentTextView.setText(String.format(
+                            getContext().getString(R.string.fieldnation_expected_insurance_percentage),
+                            (float) (fee.getModifier() * 100)));
 
-                _insuranceFeeTextView.setVisibility(VISIBLE);
-                _insurancePercentTextView.setVisibility(VISIBLE);
+                    _insuranceFeeTextView.setVisibility(VISIBLE);
+                    _insurancePercentTextView.setVisibility(VISIBLE);
+                }
             }
         }
 
@@ -165,7 +186,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             _totalTextView.setText(misc.toCurrency(0));
         }
 
-        if (_workOrder.getStatus().getId() == 5) {
+        if (_workOrder.getStatus() != null && _workOrder.getStatus().getId() == 5) {
             _payStatusTextView.setText("Pending");
         } else if (pay.getPayment() != null
                 && pay.getPayment().getCharged() != null

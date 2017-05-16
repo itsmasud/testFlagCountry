@@ -41,8 +41,15 @@ public class DiscountView extends RelativeLayout {
 
     public void setDiscount(PayModifier discount) {
         _discount = discount;
-        _titleTextView.setText(discount.getName());
-        _amountTextView.setText(misc.toCurrency(discount.getAmount()));
+        if (discount.getName() != null)
+            _titleTextView.setText(discount.getName());
+        else
+            _titleTextView.setText("NA");
+
+        if (discount.getAmount() != null)
+            _amountTextView.setText(misc.toCurrency(discount.getAmount()));
+        else
+            _amountTextView.setText(misc.toCurrency(0));
     }
 
     public PayModifier getDiscount() {

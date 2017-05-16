@@ -340,35 +340,38 @@ public class WorkOrderCard extends RelativeLayout {
                     _amountTextView.setVisibility(INVISIBLE);
                     break;
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             _payTypeTextView.setVisibility(INVISIBLE);
             _amountTextView.setVisibility(INVISIBLE);
         }
 
-        if (!misc.isEmptyOrNull(_workOrder.getStatus().getName())) {
-            switch (_workOrder.getStatus().getName().toLowerCase()) {
-                case "approved":
-                    _amountTextView.setVisibility(VISIBLE);
-                    _payTypeTextView.setVisibility(VISIBLE);
-                    _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
-                    _payTypeTextView.setText("APPROVED");
-                    break;
-                case "paid":
-                    _amountTextView.setVisibility(VISIBLE);
-                    _payTypeTextView.setVisibility(VISIBLE);
-                    _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
-                    _payTypeTextView.setText("PAID");
-                    break;
-                case "work done":
-                    _amountTextView.setVisibility(VISIBLE);
-                    _payTypeTextView.setVisibility(VISIBLE);
-                    // we use the payment value set above, because total isn't set at this stage
-                    _payTypeTextView.setText("IN REVIEW");
-                    break;
-                default:
-                    // Log.v(TAG, "break!");
-                    break;
+        try {
+            if (!misc.isEmptyOrNull(_workOrder.getStatus().getName())) {
+                switch (_workOrder.getStatus().getName().toLowerCase()) {
+                    case "approved":
+                        _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
+                        _payTypeTextView.setText("APPROVED");
+                        _amountTextView.setVisibility(VISIBLE);
+                        _payTypeTextView.setVisibility(VISIBLE);
+                        break;
+                    case "paid":
+                        _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
+                        _payTypeTextView.setText("PAID");
+                        _amountTextView.setVisibility(VISIBLE);
+                        _payTypeTextView.setVisibility(VISIBLE);
+                        break;
+                    case "work done":
+                        // we use the payment value set above, because total isn't set at this stage
+                        _payTypeTextView.setText("IN REVIEW");
+                        _amountTextView.setVisibility(VISIBLE);
+                        _payTypeTextView.setVisibility(VISIBLE);
+                        break;
+                    default:
+                        // Log.v(TAG, "break!");
+                        break;
+                }
             }
+        } catch (Exception ex) {
         }
     }
 
@@ -648,7 +651,10 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View view) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN_AGAIN, null, _workOrder.getId());
-            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
+                    && _workOrder.getPay().getBase() != null
+                    && _workOrder.getPay().getBase().getUnits() != null) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(),
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -663,7 +669,10 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getId());
-            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
+                    && _workOrder.getPay().getBase() != null
+                    && _workOrder.getPay().getBase().getUnits() != null) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
@@ -687,7 +696,10 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getId());
-            if (_workOrder.getPay() != null && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
+            if (_workOrder.getPay() != null
+                    && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
+                    && _workOrder.getPay().getBase() != null
+                    && _workOrder.getPay().getBase().getUnits() != null) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {

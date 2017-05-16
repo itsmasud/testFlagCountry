@@ -88,9 +88,13 @@ public class ExpenseView extends LinearLayout {
         if (_categories == null)
             return;
 
-        _descriptionTextView.setText(_expense.getDescription());
+        if (_expense.getDescription() != null)
+            _descriptionTextView.setText(_expense.getDescription());
+        else
+            _descriptionTextView.setText("NA");
+
         _categoryTextView.setVisibility(View.GONE);
-        if (_categories != null && _expense.getId() != null) {
+        if (_categories != null && _expense.getId() != null && _expense.getCategory() != null && _expense.getCategory().getId() != null) {
             for (ExpenseCategory _category : _categories) {
                 if (_category.getId().equals(_expense.getCategory().getId())) {
                     _categoryTextView.setText(_category.getName());
@@ -99,7 +103,9 @@ public class ExpenseView extends LinearLayout {
                 }
             }
         }
-        _costTextView.setText(misc.toCurrency(_expense.getAmount()));
-
+        if (_expense.getAmount() != null)
+            _costTextView.setText(misc.toCurrency(_expense.getAmount()));
+        else
+            _costTextView.setText(misc.toCurrency(0));
     }
 }
