@@ -205,7 +205,6 @@ public class TaskRowView extends RelativeLayout {
         }
     }
 
-
     private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -217,11 +216,10 @@ public class TaskRowView extends RelativeLayout {
         }
     };
 
-
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
+            if (_workOrderApi != null) _workOrderApi.subWorkordersWebApi();
         }
 
         @Override
@@ -308,7 +306,6 @@ public class TaskRowView extends RelativeLayout {
             }
         }
     };
-
 
     public interface Listener {
         void onTaskClick(Task task);
