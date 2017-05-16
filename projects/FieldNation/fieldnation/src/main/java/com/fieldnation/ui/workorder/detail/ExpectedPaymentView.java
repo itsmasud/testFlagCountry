@@ -119,7 +119,12 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
         _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
 
         // Discounts
-        _discountsTextView.setText(misc.toCurrency(-pay.getDiscounts().getSum().getAll()));
+        if (pay.getDiscounts() != null
+                && pay.getDiscounts().getSum() != null
+                && pay.getDiscounts().getSum().getAll() != null)
+            _discountsTextView.setText(misc.toCurrency(-pay.getDiscounts().getSum().getAll()));
+        else
+            _discountsTextView.setText(misc.toCurrency(0));
 
         // Bonus
         _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
