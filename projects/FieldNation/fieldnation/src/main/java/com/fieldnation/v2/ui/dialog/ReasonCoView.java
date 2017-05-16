@@ -1,6 +1,8 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 
@@ -24,9 +27,6 @@ import com.fieldnation.ui.HintSpinner;
  */
 public class ReasonCoView extends RelativeLayout {
     private static final String TAG = "ReasonCoView";
-
-    // Dialog
-    private static final String DIALOG_TERMS = TAG + ".oneButtonDialog";
 
     // Ui
     private EditText _requestReasonEditText;
@@ -77,8 +77,9 @@ public class ReasonCoView extends RelativeLayout {
 
         _termsWarningTextView = (TextView) findViewById(R.id.termswarning_textview);
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        SpannableString spanned = new SpannableString("By countering this work order you are agreeing to our Work Order Terms and Conditions");
-        spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
+        SpannableString spanned = new SpannableString("By countering this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+        spanned.setSpan(_standardTerms_onClick, 91, 131, spanned.getSpanFlags(_standardTerms_onClick));
+        spanned.setSpan(_pqap_onClick, 140, 173, spanned.getSpanFlags(_pqap_onClick));
         _termsWarningTextView.setText(spanned);
 
         _durations = getContext().getResources().getIntArray(R.array.expire_duration_values);
@@ -168,11 +169,21 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private final ClickableSpan _terms_onClick = new ClickableSpan() {
+    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.show(App.get(), DIALOG_TERMS, R.string.dialog_terms_title,
-                    R.string.dialog_terms_body, R.string.btn_ok, true);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
+            ActivityResultClient.startActivity(App.get(), intent);
+        }
+    };
+
+    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 

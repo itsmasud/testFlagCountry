@@ -1,6 +1,8 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +34,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
@@ -320,8 +323,9 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(_isSwitchOn);
             _etaLayout.setVisibility(_isSwitchOn ? View.VISIBLE : View.GONE);
 
-            SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
-            spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
+            SpannableString spanned = new SpannableString("By requesting this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+            spanned.setSpan(_standardTerms_onClick, 91, 131, spanned.getSpanFlags(_standardTerms_onClick));
+            spanned.setSpan(_pqap_onClick, 140, 173, spanned.getSpanFlags(_pqap_onClick));
             _termsWarningTextView.setText(spanned);
             _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -336,8 +340,9 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setVisibility(View.GONE);
             _etaLayout.setVisibility(View.VISIBLE);
 
-            SpannableString spanned = new SpannableString("By accepting this work order you are agreeing to our Work Order Terms and Conditions");
-            spanned.setSpan(_terms_onClick, 53, 84, spanned.getSpanFlags(_terms_onClick));
+            SpannableString spanned = new SpannableString("By accepting this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+            spanned.setSpan(_standardTerms_onClick, 90, 130, spanned.getSpanFlags(_standardTerms_onClick));
+            spanned.setSpan(_pqap_onClick, 139, 172, spanned.getSpanFlags(_pqap_onClick));
             _termsWarningTextView.setText(spanned);
             _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -589,11 +594,21 @@ public class EtaDialog extends FullScreenDialog {
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
-    private final ClickableSpan _terms_onClick = new ClickableSpan() {
+    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.show(App.get(), getUid() + ".oneButtonDialog", R.string.dialog_terms_title,
-                    R.string.dialog_terms_body, R.string.btn_ok, true);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
+            ActivityResultClient.startActivity(App.get(), intent);
+        }
+    };
+
+    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
