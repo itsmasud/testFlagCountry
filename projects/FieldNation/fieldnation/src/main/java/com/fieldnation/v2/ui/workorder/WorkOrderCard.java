@@ -317,27 +317,32 @@ public class WorkOrderCard extends RelativeLayout {
         _payTypeTextView.setVisibility(VISIBLE);
         _amountTextView.setVisibility(VISIBLE);
 
-        switch (pay.getType()) {
-            case FIXED:
-                _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
-                _payTypeTextView.setText(getResources().getString(R.string.payment_type_fixed));
-                break;
-            case HOURLY:
-                _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
-                _payTypeTextView.setText(getResources().getString(R.string.payment_type_hourly, pay.getBase().getUnits().intValue()));
-                break;
-            case BLENDED:
-                _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
-                _payTypeTextView.setText(getResources().getString(R.string.payment_type_blended, pay.getAdditional().getAmount().intValue(), pay.getAdditional().getUnits().intValue()));
-                break;
-            case DEVICE:
-                _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
-                _payTypeTextView.setText(getResources().getString(R.string.payment_type_device, pay.getBase().getUnits().intValue()));
-                break;
-            default:
-                _payTypeTextView.setVisibility(INVISIBLE);
-                _amountTextView.setVisibility(INVISIBLE);
-                break;
+        try {
+            switch (pay.getType()) {
+                case FIXED:
+                    _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
+                    _payTypeTextView.setText(getResources().getString(R.string.payment_type_fixed));
+                    break;
+                case HOURLY:
+                    _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
+                    _payTypeTextView.setText(getResources().getString(R.string.payment_type_hourly, pay.getBase().getUnits().intValue()));
+                    break;
+                case BLENDED:
+                    _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
+                    _payTypeTextView.setText(getResources().getString(R.string.payment_type_blended, pay.getAdditional().getAmount().intValue(), pay.getAdditional().getUnits().intValue()));
+                    break;
+                case DEVICE:
+                    _amountTextView.setText(misc.toShortCurrency(pay.getBase().getAmount()));
+                    _payTypeTextView.setText(getResources().getString(R.string.payment_type_device, pay.getBase().getUnits().intValue()));
+                    break;
+                default:
+                    _payTypeTextView.setVisibility(INVISIBLE);
+                    _amountTextView.setVisibility(INVISIBLE);
+                    break;
+            }
+        } catch (Exception ex){
+            _payTypeTextView.setVisibility(INVISIBLE);
+            _amountTextView.setVisibility(INVISIBLE);
         }
 
         if (!misc.isEmptyOrNull(_workOrder.getStatus().getName())) {
