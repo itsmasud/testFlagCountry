@@ -130,7 +130,7 @@ public class AcceptBundleDialog extends SimpleDialog {
         switch (_type) {
             case TYPE_ACCEPT: {
                 _titleTextView.setText(R.string.accept_bundle);
-                _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
+                _bodyTextView.setText("If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(false);
                 _okButton.setText(R.string.btn_accept);
 
@@ -144,7 +144,7 @@ public class AcceptBundleDialog extends SimpleDialog {
             }
             case TYPE_REQUEST: {
                 _titleTextView.setText(R.string.request_bundle);
-                _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you request this bundle you are requesting all " + _bundleSize + " work orders.");
+                _bodyTextView.setText("If you request this bundle you are requesting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(true);
                 _okButton.setText(R.string.btn_request);
 
