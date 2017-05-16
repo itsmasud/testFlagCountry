@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.TabHost;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -17,7 +16,6 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
@@ -54,7 +52,6 @@ public class CounterOfferDialog extends SimpleDialog {
     private static final String STATE_COUNTER_SCHEDULE = "STATE_COUNTER_SCHEDULE";
     private static final String STATE_COUNTER_REASON = "STATE_COUNTER_REASON";
     private static final String STATE_EXPIRES = "STATE_EXPIRES";
-    private static final String STATE_TAC = "STATE_TAC";
 
     // Ui
     private TabHost _tabHost;
@@ -78,9 +75,6 @@ public class CounterOfferDialog extends SimpleDialog {
     private long _expires = 0;
     private WorkordersWebApi _workOrderApi;
     private String _explanation;
-
-    // Data
-    private boolean _tacAccept;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -229,9 +223,6 @@ public class CounterOfferDialog extends SimpleDialog {
 
             if (savedState.containsKey(STATE_EXPIRES))
                 _expires = savedState.getLong(STATE_EXPIRES);
-
-            if (savedState.containsKey(STATE_TAC))
-                _tacAccept = savedState.getBoolean(STATE_TAC);
         }
         populateUi();
     }
@@ -251,7 +242,6 @@ public class CounterOfferDialog extends SimpleDialog {
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
         outState.putLong(STATE_EXPIRES, _expires);
-        outState.putBoolean(STATE_TAC, _tacAccept);
 
         if (_counterPay != null)
             outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
@@ -330,17 +320,6 @@ public class CounterOfferDialog extends SimpleDialog {
     /*-             Events              -*/
     /*-*********************************-*/
     private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
-        @Override
-        public void onTacClick() {
-            TermsDialog.show(App.get(), DIALOG_TERMS, App.get().getString(R.string.dialog_terms_title),
-                    App.get().getString(R.string.dialog_terms_body));
-        }
-
-        @Override
-        public void onTacChange(boolean isChecked) {
-            _tacAccept = isChecked;
-        }
-
         @Override
         public void onExpirationChange(long expires) {
             _expires = expires;
@@ -460,11 +439,6 @@ public class CounterOfferDialog extends SimpleDialog {
             } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
                 setTabPos(_tabHost.getCurrentTab() + 1);
             } else if (_tabHost.getCurrentTabTag().equals("end")) {
-                if (!_tacAccept) {
-                    ToastClient.toast(App.get(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG);
-                    return;
-                }
-
                 _counterReason = _reasonView.getReason();
 
                 Log.e(TAG, "_expireDuration: " + _expires);

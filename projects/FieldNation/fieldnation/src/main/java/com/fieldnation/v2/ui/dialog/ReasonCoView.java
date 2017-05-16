@@ -1,15 +1,19 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.HintArrayAdapter;
@@ -21,12 +25,14 @@ import com.fieldnation.ui.HintSpinner;
 public class ReasonCoView extends RelativeLayout {
     private static final String TAG = "ReasonCoView";
 
+    // Dialog
+    private static final String DIALOG_TERMS = TAG + ".oneButtonDialog";
+
     // Ui
     private EditText _requestReasonEditText;
     private CheckBox _expiresCheckBox;
     private HintSpinner _expireDurationSpinner;
-    private CheckBox _tacCheckBox;
-    private Button _tacButton;
+    private TextView _termsWarningTextView;
 
     // Data
     private Listener _listener;
@@ -69,11 +75,11 @@ public class ReasonCoView extends RelativeLayout {
         _expireDurationSpinner.setAdapter(adapter);
         _expireDurationSpinner.setSelection(1);
 
-        _tacCheckBox = (CheckBox) findViewById(R.id.tac_checkbox);
-        _tacCheckBox.setOnClickListener(_tacCheck_onClick);
-
-        _tacButton = (Button) findViewById(R.id.tac_button);
-        _tacButton.setOnClickListener(_tac_onClick);
+        _termsWarningTextView = (TextView) findViewById(R.id.termswarning_textview);
+        _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        SpannableString spanned = new SpannableString("By countering this work order you are agreeing to our Work Order Terms and Conditions");
+        spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
+        _termsWarningTextView.setText(spanned);
 
         _durations = getContext().getResources().getIntArray(R.array.expire_duration_values);
     }
@@ -162,27 +168,15 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _tacCheck_onClick = new OnClickListener() {
+    private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.onTacChange(_tacCheckBox.isChecked());
-        }
-    };
-
-    private final View.OnClickListener _tac_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.onTacClick();
+        public void onClick(View widget) {
+            OneButtonDialog.show(App.get(), DIALOG_TERMS, R.string.dialog_terms_title,
+                    R.string.dialog_terms_body, R.string.btn_ok, true);
         }
     };
 
     public interface Listener {
-        void onTacClick();
-
-        void onTacChange(boolean isChecked);
-
         void onExpirationChange(long expires);
     }
 }
