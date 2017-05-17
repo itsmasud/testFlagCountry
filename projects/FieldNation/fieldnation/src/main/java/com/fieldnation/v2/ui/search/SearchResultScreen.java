@@ -200,6 +200,11 @@ public class SearchResultScreen extends RelativeLayout {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
+                if (!success || successObject == null) {
+                    _refreshView.refreshComplete();
+                    return;
+                }
+
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
                     return;
@@ -207,7 +212,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
-                if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
+                if (workOrders.getMetadata() == null || workOrders.getResults() == null) {
                     _refreshView.refreshComplete();
                     return;
                 }
