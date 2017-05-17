@@ -78,6 +78,17 @@ public class AppPickerDialog extends SimpleDialog {
     }
 
     @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+
+        if (savedState.containsKey("_tempFile"))
+            _tempFile = new File(savedState.getString("_tempFile"));
+
+        if (savedState.containsKey("_tempUri"))
+            _tempUri = Uri.parse(savedState.getString("_tempUri"));
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
@@ -98,6 +109,13 @@ public class AppPickerDialog extends SimpleDialog {
         super.onPause();
     }
 
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_tempFile != null)
+            outState.putString("_tempFile", _tempFile.getAbsolutePath());
+        if (_tempUri != null)
+            outState.putString("_tempUri", _tempUri.toString());
+    }
 
     @Override
     public void show(Bundle payload, boolean animate) {
