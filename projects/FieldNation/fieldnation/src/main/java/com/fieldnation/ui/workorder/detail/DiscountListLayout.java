@@ -86,7 +86,11 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
             return;
 
 
-        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
+        if (_workOrder.getStatus() == null
+                || _workOrder.getStatus().getId() == 2
+                || _workOrder.getStatus().getId() == 9
+                || _workOrder.getPay() == null
+                || _workOrder.getPay().getDiscounts() == null) {
             setVisibility(GONE);
             return;
         } else {
@@ -94,7 +98,6 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
         }
 
         if (_workOrder.getPay() != null
-                && _workOrder.getPay().getDiscounts() != null
                 && _workOrder.getPay().getDiscounts().getActionsSet() != null
                 && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
@@ -102,14 +105,12 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
             _addButton.setVisibility(GONE);
         }
 
-
         final PayModifier[] list = _workOrder.getPay().getDiscounts().getResults();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
             return;
         }
-
 
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);

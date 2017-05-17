@@ -162,7 +162,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         public void onClick(View v) {
             boolean showdevices = false;
             try {
-                showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
+                showdevices = _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE;
             } catch (Exception ex) {
             }
 

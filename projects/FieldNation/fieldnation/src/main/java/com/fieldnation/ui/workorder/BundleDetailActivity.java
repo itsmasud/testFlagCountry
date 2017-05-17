@@ -165,6 +165,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 _notInterestedButton.setEnabled(false);
             }
 
+
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
@@ -312,7 +313,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-
     private final WorkordersWebApi.Listener _workOrdersApiClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -323,14 +323,13 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
-                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+                populateUi();
             }
             if (methodName.contains("MassAcceptWorkOrder") && success) {
                 ToastClient.toast(App.get(), "Bundle workorders accepted successfully.", Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
         }
-
     };
 
     private final WoPagingAdapter _adapter = new WoPagingAdapter() {

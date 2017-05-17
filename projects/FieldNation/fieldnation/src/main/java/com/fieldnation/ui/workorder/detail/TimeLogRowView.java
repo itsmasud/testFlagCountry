@@ -12,7 +12,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.TimeLog;
-import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.text.ParseException;
@@ -127,7 +126,7 @@ public class TimeLogRowView extends RelativeLayout {
             Log.v(TAG, ex);
         }
 
-        if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE)) {
+        if (_workOrder.getPay() != null && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
             _devicesTextView.setVisibility(VISIBLE);
             _devicesTextView.setText(_timeLog.getDevices() + " devices");
         } else {
@@ -144,7 +143,7 @@ public class TimeLogRowView extends RelativeLayout {
         public void onClick(View v) {
             boolean showdevices = false;
             try {
-                showdevices = _workOrder.getPay().getType().equals(Pay.TypeEnum.DEVICE);
+                showdevices = _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE;
             } catch (Exception ex) {
             }
 

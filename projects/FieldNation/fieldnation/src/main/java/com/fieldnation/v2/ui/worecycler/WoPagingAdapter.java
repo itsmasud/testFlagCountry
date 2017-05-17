@@ -3,6 +3,9 @@ package com.fieldnation.v2.ui.worecycler;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.ui.RateMeView;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -99,6 +102,12 @@ public abstract class WoPagingAdapter extends com.fieldnation.v2.ui.PagingAdapte
                 break;
 
             case BaseHolder.TYPE_RATE_ME:
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("RateMeCardShown")
+                                .build());
+                App.get().setRateMeShown();
                 break;
 
             case BaseHolder.TYPE_HEADER:

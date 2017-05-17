@@ -1,17 +1,24 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 
@@ -25,8 +32,7 @@ public class ReasonCoView extends RelativeLayout {
     private EditText _requestReasonEditText;
     private CheckBox _expiresCheckBox;
     private HintSpinner _expireDurationSpinner;
-    private CheckBox _tacCheckBox;
-    private Button _tacButton;
+    private TextView _termsWarningTextView;
 
     // Data
     private Listener _listener;
@@ -69,11 +75,12 @@ public class ReasonCoView extends RelativeLayout {
         _expireDurationSpinner.setAdapter(adapter);
         _expireDurationSpinner.setSelection(1);
 
-        _tacCheckBox = (CheckBox) findViewById(R.id.tac_checkbox);
-        _tacCheckBox.setOnClickListener(_tacCheck_onClick);
-
-        _tacButton = (Button) findViewById(R.id.tac_button);
-        _tacButton.setOnClickListener(_tac_onClick);
+        _termsWarningTextView = (TextView) findViewById(R.id.termswarning_textview);
+        _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        SpannableString spanned = new SpannableString("By countering this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+        spanned.setSpan(_standardTerms_onClick, 91, 131, spanned.getSpanFlags(_standardTerms_onClick));
+        spanned.setSpan(_pqap_onClick, 140, 173, spanned.getSpanFlags(_pqap_onClick));
+        _termsWarningTextView.setText(spanned);
 
         _durations = getContext().getResources().getIntArray(R.array.expire_duration_values);
     }
@@ -162,27 +169,25 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _tacCheck_onClick = new OnClickListener() {
+    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
         @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.onTacChange(_tacCheckBox.isChecked());
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
-    private final View.OnClickListener _tac_onClick = new OnClickListener() {
+    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
         @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.onTacClick();
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
     public interface Listener {
-        void onTacClick();
-
-        void onTacChange(boolean isChecked);
-
         void onExpirationChange(long expires);
     }
 }

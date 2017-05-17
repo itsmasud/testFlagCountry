@@ -85,7 +85,9 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
         if (_workOrder.getPay() == null)
             return;
 
-        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
+        if (_workOrder.getStatus().getId() == 2
+                || _workOrder.getStatus().getId() == 9
+                || _workOrder.getPay().getExpenses() == null) {
             setVisibility(GONE);
             return;
         } else {

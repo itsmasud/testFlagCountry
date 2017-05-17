@@ -2055,6 +2055,8 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId ID of work order
      */
     public static void completeWorkOrder(Context context, Integer workOrderId, EventContext uiContext) {
+        App.get().setInteractedWorkorder();
+
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("completeWorkOrderByWorkOrder")
                 .label(workOrderId + "")
@@ -2101,6 +2103,8 @@ public class WorkordersWebApi extends TopicClient {
      * @param async       Async (Optional)
      */
     public static void completeWorkOrder(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+        App.get().setInteractedWorkorder();
+
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("completeWorkOrderByWorkOrder")
                 .label(workOrderId + "")

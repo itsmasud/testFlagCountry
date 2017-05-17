@@ -298,6 +298,7 @@ public class WebCrawlerService extends Service {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "onComplete " + methodName);
             if (methodName.equals("getWorkOrderLists")) {
                 Log.v(TAG, "getWorkOrderLists");
                 SavedList[] savedList = (SavedList[]) successObject;
@@ -316,6 +317,11 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "getWorkOrders " + workOrders.getMetadata().getList() + ", " + workOrders.getMetadata().getPage());
                 incrementPendingRequestCounter(-1);
 
+                if (!workOrders.getMetadata().getList().equals("workorders_assignments")) {
+                    Log.v(TAG, "!!!!!! Not assigned work !!!!!!");
+                    return;
+                }
+
                 // get the details
                 WorkOrder[] works = workOrders.getResults();
                 for (WorkOrder workOrder : works) {
@@ -327,7 +333,7 @@ public class WebCrawlerService extends Service {
                 // request the other lists
                 ListEnvelope metadata = workOrders.getMetadata();
                 if (metadata.getPage() == 1) {
-                    for (int i = 2; i <= workOrders.getMetadata().getPage() + 1; i++) {
+                    for (int i = 2; i <= workOrders.getMetadata().getPages(); i++) {
                         incrementPendingRequestCounter(1);
                         incRequestCounter(1);
                         WorkordersWebApi.getWorkOrders(WebCrawlerService.this, new GetWorkOrdersOptions().list(workOrders.getMetadata().getList()).page(i), false, true);
@@ -335,7 +341,7 @@ public class WebCrawlerService extends Service {
                 }
             } else if (methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
-                // Log.v(TAG, "getWorkOrder " + workOrder.getId());
+                Log.v(TAG, "getWorkOrder " + workOrder.getId());
                 incrementPendingRequestCounter(-1);
 
                 if (workOrder.getBundle() != null && workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {

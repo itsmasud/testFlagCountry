@@ -153,6 +153,6 @@ public class PayBase implements Parcelable {
     /*-*****************************-*/
 
     public boolean isSet() {
-        return getAmount() != null && getAmount() != 0;
+        return getUnits() != null && getUnits() != 0;
     }
 }

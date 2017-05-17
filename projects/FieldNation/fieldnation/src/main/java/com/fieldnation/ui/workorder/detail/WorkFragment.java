@@ -549,7 +549,10 @@ public class WorkFragment extends WorkorderFragment {
 //        setLoading(true);
 
         Pay pay = _workOrder.getPay();
-        if (pay != null && pay.getType() == Pay.TypeEnum.DEVICE) {
+        if (pay != null
+                && pay.getType() == Pay.TypeEnum.DEVICE
+                && pay.getBase() != null
+                && pay.getBase().getUnits() != null) {
             _deviceCount = pay.getBase().getUnits().intValue();
         }
 

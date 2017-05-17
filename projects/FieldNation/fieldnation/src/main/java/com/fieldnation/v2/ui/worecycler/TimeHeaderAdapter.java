@@ -4,6 +4,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.RateMeView;
 
@@ -151,6 +154,12 @@ public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHold
                 // RateMeHolder h = (RateMeHolder) holder;
                 // RateMeView v = h.getView();
                 // Nothing to do.. no data needed
+                Tracker.event(App.get(),
+                        new SimpleEvent.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("RateMeCardShown")
+                                .build());
+                App.get().setRateMeShown();
                 break;
             }
         }

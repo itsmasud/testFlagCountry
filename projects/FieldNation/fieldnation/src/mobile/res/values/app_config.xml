@@ -3,6 +3,7 @@
 <resources>
     <string name="app_name">Field Nation Mobile</string>
     <string name="auth_account_name">Field Nation Mobile</string>
+    
     <!--<string name="auth_default_username">provider</string>-->
     <!--<string name="auth_default_password">provider</string>-->
     <!--<string name="auth_default_username">mprovider</string>-->
@@ -17,8 +18,6 @@
     <!--<string name="auth_default_password">saas.w2.provider1</string>-->
     <!--<string name="auth_default_username">saas.w2.provider2</string>-->
     <!--<string name="auth_default_password">saas.w2.provider2</string>-->
-
-    <!-- SC stuff -->
     <!--<string name="auth_default_username">service.company.admin</string>-->
     <!--<string name="auth_default_password">service.company.admin</string>-->
     <!--<string name="auth_default_username">service.company.provider</string>-->
