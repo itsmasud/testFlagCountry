@@ -13,14 +13,6 @@
         android:layout_marginBottom="@dimen/tileContentPadding"
         android:text="@string/reason_for_counter_offer" />
 
-    <TextView
-        android:id="@+id/body_textview"
-        style="?attr/tileTextStatusStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/schedule_textview"
-        android:text="@string/disclaimer_to_counter_offer" />
-
     <EditText
         android:id="@+id/request_reason_edittext"
         style="@style/EditText"
@@ -29,6 +21,13 @@
         android:inputType="textMultiLine"
         android:scrollHorizontally="false" />
 
+    <TextView
+        android:id="@+id/body_textview"
+        style="?attr/tileTextStatusStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/schedule_textview"
+        android:text="@string/disclaimer_to_counter_offer" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -50,25 +49,14 @@
             android:layout_gravity="center_vertical"
             android:hint="30 mins"
             android:visibility="visible" />
-
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/termswarning_textview"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <CheckBox
-            android:id="@+id/tac_checkbox"
-            style="?attr/tileCheckBoxStyle"
-            android:layout_width="wrap_content"
-            android:text="@string/i_accept" />
-
-        <Button
-            android:id="@+id/tac_button"
-            style="?attr/buttonFlatStyle"
-            android:layout_gravity="center_vertical"
-            android:text="@string/terms_and_conditions" />
-    </LinearLayout>
+        android:layout_gravity="center_vertical"
+        android:layout_marginTop="16dp"
+        android:text="By countering this work order you are agreeing to our Work Order Terms and Conditions" />
 
 </LinearLayout>

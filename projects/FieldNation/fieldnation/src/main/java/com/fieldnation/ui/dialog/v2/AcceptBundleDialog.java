@@ -1,6 +1,8 @@
 package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -17,11 +19,11 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
-import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 
 /**
  * Created by mc on 10/27/16.
@@ -128,12 +130,13 @@ public class AcceptBundleDialog extends SimpleDialog {
         switch (_type) {
             case TYPE_ACCEPT: {
                 _titleTextView.setText(R.string.accept_bundle);
-                _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
+                _bodyTextView.setText("If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(false);
                 _okButton.setText(R.string.btn_accept);
 
-                SpannableString spanned = new SpannableString("By accepting this bundle you are agreeing to our Work Order Terms and Conditions");
-                spanned.setSpan(_terms_onClick, 49, 80, spanned.getSpanFlags(_terms_onClick));
+                SpannableString spanned = new SpannableString("By accepting these work orders, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+                spanned.setSpan(_standardTerms_onClick, 92, 132, spanned.getSpanFlags(_standardTerms_onClick));
+                spanned.setSpan(_pqap_onClick, 141, 174, spanned.getSpanFlags(_pqap_onClick));
                 _termsWarningTextView.setText(spanned);
                 _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -141,12 +144,13 @@ public class AcceptBundleDialog extends SimpleDialog {
             }
             case TYPE_REQUEST: {
                 _titleTextView.setText(R.string.request_bundle);
-                _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you request this bundle you are requesting all " + _bundleSize + " work orders.");
+                _bodyTextView.setText("If you request this bundle you are requesting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(true);
                 _okButton.setText(R.string.btn_request);
 
-                SpannableString spanned = new SpannableString("By requesting this bundle you are agreeing to our Work Order Terms and Conditions");
-                spanned.setSpan(_terms_onClick, 50, 81, spanned.getSpanFlags(_terms_onClick));
+                SpannableString spanned = new SpannableString("By requesting these work orders, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+                spanned.setSpan(_standardTerms_onClick, 93, 133, spanned.getSpanFlags(_standardTerms_onClick));
+                spanned.setSpan(_pqap_onClick, 142, 175, spanned.getSpanFlags(_pqap_onClick));
                 _termsWarningTextView.setText(spanned);
                 _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -178,11 +182,21 @@ public class AcceptBundleDialog extends SimpleDialog {
         _expiresTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private final ClickableSpan _terms_onClick = new ClickableSpan() {
+    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.show(App.get(), getUid() + ".oneButtonDialog", R.string.dialog_terms_title,
-                    R.string.dialog_terms_body, R.string.btn_ok, true);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
+            ActivityResultClient.startActivity(App.get(), intent);
+        }
+    };
+
+    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
