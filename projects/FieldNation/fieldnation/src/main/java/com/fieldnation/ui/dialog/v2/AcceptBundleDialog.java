@@ -204,10 +204,10 @@ public class AcceptBundleDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             switch (_type) {
-                case TYPE_ACCEPT:
-                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
-                    _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
-                    break;
+//                case TYPE_ACCEPT:
+//                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
+//                    _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+//                    break;
                 case TYPE_REQUEST:
                     if (_expires && _expiringDurationSeconds > -1) {
                         WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds);
@@ -289,31 +289,6 @@ public class AcceptBundleDialog extends SimpleDialog {
         _onRequestedDispatcher.removeAll(uid);
     }
 
-    /*-*************************************-*/
-    /*-         Accepted Listener           -*/
-    /*-*************************************-*/
-    public interface OnAcceptedListener {
-        void onAccepted(long workOrderId);
-    }
-
-    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
-        @Override
-        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
-            listener.onAccepted((Long) parameters[0]);
-        }
-    };
-
-    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
-        _onAcceptedDispatcher.add(uid, onAcceptedListener);
-    }
-
-    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
-        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
-    }
-
-    public static void removeAllOnAcceptedListener(String uid) {
-        _onAcceptedDispatcher.removeAll(uid);
-    }
 
     /*-*************************************-*/
     /*-         Canceled Listener           -*/

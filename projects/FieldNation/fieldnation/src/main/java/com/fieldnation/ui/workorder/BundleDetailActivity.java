@@ -47,7 +47,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     // Dialog tags
     private static final String UID_DIALOG_DECLINE = TAG + ".DeclineDialog";
-    private static final String UID_DIALOG_ACCEPT_BUNDLE = TAG + ".AcceptBundleDialog";
+    private static final String UID_DIALOG_ACCEPT_BUNDLE = TAG + ".BundleEtaDialog";
     private static final String UID_DIALOG_BUNDLE_ETA = TAG + ".bundleEtaDialog";
 
     // UI
@@ -126,9 +126,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         super.onResume();
         setLoading(true);
 
-        AcceptBundleDialog.addOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
+        BundleEtaDialog.addOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.addOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
-
         DeclineDialog.addOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
@@ -149,9 +148,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         if (_workOrdersApiClient != null) _workOrdersApiClient.disconnect(App.get());
 
-        AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
+        BundleEtaDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
-
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         super.onPause();
@@ -166,7 +164,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             } else {
                 _notInterestedButton.setEnabled(false);
             }
-
 
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
@@ -212,14 +209,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-//                AcceptBundleDialog.show(
-//                        App.get(),
-//                        UID_DIALOG_ACCEPT_BUNDLE,
-//                        _bundleId,
-//                        _adapter.getItemCount(),
-//                        workOrder.getId(),
-//                        AcceptBundleDialog.TYPE_ACCEPT);
-
                 BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
 
             } else if (workOrder.getRequests() != null
@@ -246,10 +235,10 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final AcceptBundleDialog.OnAcceptedListener _acceptBundleDialog_onAccepted = new AcceptBundleDialog.OnAcceptedListener() {
+    private final BundleEtaDialog.OnAcceptedListener _acceptBundleDialog_onAccepted = new BundleEtaDialog.OnAcceptedListener() {
         @Override
-        public void onAccepted(long workOrderId) {
-            setLoading(true);
+        public void onAccepted(int bundleId) {
+            Log.v(TAG, "onAccepted");
         }
     };
 
@@ -334,12 +323,15 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
-                populateUi();
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            }
+            if (methodName.contains("MassAcceptWorkOrder") && success) {
+                ToastClient.toast(App.get(), "Bundle workorders accepted successfully.", Toast.LENGTH_LONG);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
         }
 
     };
-
 
     private final WoPagingAdapter _adapter = new WoPagingAdapter() {
         @Override

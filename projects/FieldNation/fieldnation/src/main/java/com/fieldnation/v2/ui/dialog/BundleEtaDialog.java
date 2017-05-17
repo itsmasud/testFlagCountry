@@ -78,8 +78,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
-//        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
-
         _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
 
         _incompleteLayout = (RelativeLayout) v.findViewById(R.id.incompleteEta_layout);
@@ -170,17 +168,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         _incompleteLayout.setVisibility(visibility == true ? View.VISIBLE : View.INVISIBLE);
     }
 
-//    private void setLoading(boolean loading) {
-//        if (loading) {
-//            _toolbar.setEnabled(false);
-//            _refreshView.startRefreshing();
-//        } else {
-//            _toolbar.setEnabled(true);
-//            _refreshView.refreshComplete();
-//        }
-//    }
-
-
     /*-********************************************-*/
     /*-             Internal Mutators              -*/
     /*-********************************************-*/
@@ -266,7 +253,9 @@ public class BundleEtaDialog extends FullScreenDialog {
         public boolean onMenuItemClick(MenuItem item) {
             ETA[] etaAll = (ETA[]) _etaList.values().toArray(new ETA[_etaList.size()]);
             Log.e(TAG, "etaAll with eta node: " + "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
-//            WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
+            WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
+            _onAcceptedDispatcher.dispatch(getUid(), _bundleId);
+
             dismiss(true);
             return true;
         }
@@ -309,7 +298,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getBundleWorkOrders")) {
                 WorkOrders workOrders = (WorkOrders) successObject;
-//                setLoading(false);
 
                 if (!success || workOrders == null || workOrders.getResults() == null) {
                     return;
@@ -325,5 +313,32 @@ public class BundleEtaDialog extends FullScreenDialog {
         params.putInt("bundleId", bundleId);
         Controller.show(context, uid, BundleEtaDialog.class, params);
     }
+
+    /*-*************************************-*/
+    /*-         Accepted Listener           -*/
+    /*-*************************************-*/
+    public interface OnAcceptedListener {
+        void onAccepted(int bundleId);
+    }
+
+    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
+        @Override
+        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
+            listener.onAccepted((Integer) parameters[0]);
+        }
+    };
+
+    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.add(uid, onAcceptedListener);
+    }
+
+    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
+    }
+
+    public static void removeAllOnAcceptedListener(String uid) {
+        _onAcceptedDispatcher.removeAll(uid);
+    }
+
 
 }
