@@ -9,6 +9,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Pay;
 
@@ -83,30 +84,40 @@ public class PaymentCoView extends RelativeLayout {
         if (_pay == null)
             return;
 
+        _body1TextView.setVisibility(VISIBLE);
         _body2TextView.setVisibility(View.GONE);
 
-        switch (_pay.getType()) {
-            case BLENDED:
-                _body2TextView.setVisibility(View.VISIBLE);
-                _body1TextView.setText("Blended " + misc.toCurrencyTrim(_pay.getBase().getAmount()) + " for the first " + _pay.getBase().getUnits() + " hours");
-                _body2TextView.setText(misc.toCurrencyTrim(_pay.getAdditional().getAmount()) + "/hour for up to " + _pay.getAdditional().getUnits() + " hours");
-                break;
-            case DEVICE:
-                _body1TextView.setText(misc.toCurrencyTrim(_pay.getBase().getAmount()) + "/device for up to " + _pay.getBase().getUnits() + " devices");
-                break;
-            case FIXED:
-                _body1TextView.setText("Fixed pay of " + misc.toCurrencyTrim(_pay.getBase().getAmount()));
-                break;
-            case HOURLY:
-                _body1TextView.setText("Hourly pay, " + misc.toCurrencyTrim(_pay.getBase().getAmount()) + "/hour for up to " + _pay.getBase().getUnits() + " hours");
-                break;
+        try {
+            switch (_pay.getType()) {
+                case BLENDED:
+                    _body2TextView.setVisibility(View.VISIBLE);
+                    _body1TextView.setText("Blended " + misc.toCurrencyTrim(_pay.getBase().getAmount()) + " for the first " + _pay.getBase().getUnits() + " hours");
+                    _body2TextView.setText(misc.toCurrencyTrim(_pay.getAdditional().getAmount()) + "/hour for up to " + _pay.getAdditional().getUnits() + " hours");
+                    break;
+                case DEVICE:
+                    _body1TextView.setText(misc.toCurrencyTrim(_pay.getBase().getAmount()) + "/device for up to " + _pay.getBase().getUnits() + " devices");
+                    break;
+                case FIXED:
+                    _body1TextView.setText("Fixed pay of " + misc.toCurrencyTrim(_pay.getBase().getAmount()));
+                    break;
+                case HOURLY:
+                    _body1TextView.setText("Hourly pay, " + misc.toCurrencyTrim(_pay.getBase().getAmount()) + "/hour for up to " + _pay.getBase().getUnits() + " hours");
+                    break;
+            }
+
+            _statusTextView.setVisibility(VISIBLE);
+            if (_isCounterOffer) {
+                _statusTextView.setText("Your Offer");
+            } else {
+                _statusTextView.setText("Buyer's Offer");
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            _statusTextView.setVisibility(GONE);
+            _body1TextView.setVisibility(GONE);
+            _body2TextView.setVisibility(GONE);
         }
 
-        if (_isCounterOffer) {
-            _statusTextView.setText("Your Offer");
-        } else {
-            _statusTextView.setText("Buyer's Offer");
-        }
     }
 
     /*-*************************-*/
