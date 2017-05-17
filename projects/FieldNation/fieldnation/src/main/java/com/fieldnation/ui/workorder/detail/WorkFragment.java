@@ -1515,7 +1515,7 @@ public class WorkFragment extends WorkorderFragment {
 
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
-        public void onWithdraw(long workOrderId) {
+        public void onWithdraw(int workOrderId) {
             if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
         }

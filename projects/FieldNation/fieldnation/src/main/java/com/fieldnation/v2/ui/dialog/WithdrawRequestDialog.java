@@ -59,13 +59,13 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
     /*-         Withdraw           -*/
     /*-****************************-*/
     public interface OnWithdrawListener {
-        void onWithdraw(long workOrderId);
+        void onWithdraw(int workOrderId);
     }
 
     private static KeyedDispatcher<OnWithdrawListener> _onWithdrawDispatcher = new KeyedDispatcher<OnWithdrawListener>() {
         @Override
         public void onDispatch(OnWithdrawListener listener, Object... parameters) {
-            listener.onWithdraw((Long) parameters[0]);
+            listener.onWithdraw((Integer) parameters[0]);
         }
     };
 
