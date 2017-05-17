@@ -319,7 +319,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-
     private final WorkordersWebApi.Listener _workOrdersApiClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -330,12 +329,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
-                populateUi();
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+//                populateUi();
             }
         }
-
     };
-
 
     private final WoPagingAdapter _adapter = new WoPagingAdapter() {
         @Override
