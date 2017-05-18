@@ -4,16 +4,17 @@
     android:layout_height="match_parent">
 
     <com.fieldnation.ui.NestedScrollView
+        android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarStyle="outsideOverlay">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/options_textview"
                 style="@style/OptionsTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -23,6 +24,7 @@
                 android:id="@+id/profile_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/options_textview"
                 android:layout_gravity="center_vertical"
                 android:background="@color/fn_clickable_bg"
                 android:paddingBottom="8dp"
@@ -66,17 +68,18 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
-            <ViewStub
-                android:id="@+id/stub_profile_detail_list"
+            <com.fieldnation.ui.NavProfileDetailListView
+                android:id="@+id/profile_detail_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout="@layout/stub_nav_profile_detail_list"
+                android:layout_below="@+id/profile_view"
                 android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/link_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/profile_view"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -244,6 +247,6 @@
                     </LinearLayout>
                 </RelativeLayout>
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </com.fieldnation.ui.NestedScrollView>
 </merge>
