@@ -775,14 +775,14 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
 
-            boolean isBundle = _workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
+            boolean isBundle = _workOrder.getBundle() != null
+                    && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
 
-            if (isBundle){
-
+            if (isBundle) {
                 try {
                     ETA eta = new ETA();
                     eta.workOrderId(_workOrder.getId());
-                    eta.setStart(new Date(_etaStart));
+                    eta.setStart(new Date(_etaStart.getTimeInMillis()));
                     eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                     eta.setUser(new User().id((int) App.getProfileId()));
                     eta.setHourEstimate(_durationMilliseconds / 3600000.0);
@@ -809,7 +809,7 @@ public class EtaDialog extends FullScreenDialog {
 
                         if (_etaSwitch.isChecked()) {
                             ETA eta = new ETA();
-                            eta.setStart(new Date(_etaStart));
+                            eta.setStart(new Date(_etaStart.getTimeInMillis()));
                             eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                             eta.setUser(new User().id((int) App.getProfileId()));
                             eta.setHourEstimate(_durationMilliseconds / 3600000.0);
@@ -874,7 +874,7 @@ public class EtaDialog extends FullScreenDialog {
                     // TODO this might not work
                     try {
                         ETA eta = new ETA();
-                        eta.setStart(new Date(_etaStart));
+                        eta.setStart(new Date(_etaStart.getTimeInMillis()));
                         eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
                         eta.setUser(new User().id((int) App.getProfileId()));
                         eta.setHourEstimate(_durationMilliseconds / 3600000.0);
