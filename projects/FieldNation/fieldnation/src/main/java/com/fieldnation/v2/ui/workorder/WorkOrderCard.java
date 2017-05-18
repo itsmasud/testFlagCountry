@@ -50,7 +50,6 @@ import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.TimeLogs;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.dialog.BundleEtaDialog;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
@@ -362,7 +361,7 @@ public class WorkOrderCard extends RelativeLayout {
                         _payTypeTextView.setVisibility(VISIBLE);
                         break;
                     case "work done":
-                        // we use the payment value set above, because total isn't set at this stage
+                        _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
                         _payTypeTextView.setText("IN REVIEW");
                         _amountTextView.setVisibility(VISIBLE);
                         _payTypeTextView.setVisibility(VISIBLE);
