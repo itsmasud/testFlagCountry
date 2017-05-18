@@ -29,8 +29,8 @@ import com.fieldnation.ui.KeyedDispatcher;
  * Created by mc on 10/27/16.
  */
 
-public class AcceptBundleDialog extends SimpleDialog {
-    private static final String TAG = "AcceptBundleDialog";
+public class RequestBundleDialog extends SimpleDialog {
+    private static final String TAG = "RequestBundleDialog";
 
     // State
     private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
@@ -68,7 +68,7 @@ public class AcceptBundleDialog extends SimpleDialog {
     private int[] _durations;
     private boolean _expires;
 
-    public AcceptBundleDialog(Context context, ViewGroup container) {
+    public RequestBundleDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
@@ -274,7 +274,7 @@ public class AcceptBundleDialog extends SimpleDialog {
         bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
         bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
         bundle.putInt(PARAM_TYPE, type);
-        Controller.show(context, uid, AcceptBundleDialog.class, bundle);
+        Controller.show(context, uid, RequestBundleDialog.class, bundle);
     }
 
     /*-**************************************-*/
