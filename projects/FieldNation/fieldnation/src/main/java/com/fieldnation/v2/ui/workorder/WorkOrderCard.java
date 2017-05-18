@@ -916,7 +916,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
-        public void onWithdraw(long workOrderId) {
+        public void onWithdraw(int workOrderId) {
             if (_onActionListener != null) _onActionListener.onAction();
 
             if (_workOrder.getId() == workOrderId)

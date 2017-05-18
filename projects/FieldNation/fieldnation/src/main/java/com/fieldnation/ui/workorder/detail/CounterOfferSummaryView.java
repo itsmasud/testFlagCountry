@@ -218,20 +218,26 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         String line1 = null;
         String line2 = null;
 
-        switch (pay.getType()) {
-            case FIXED:
-                line1 = misc.toCurrency(pay.getBase().getAmount()) + " Fixed";
-                break;
-            case HOURLY:
-                line1 = misc.toCurrency(pay.getBase().getAmount()) + " per hr up to " + pay.getBase().getUnits() + " hours.";
-                break;
-            case BLENDED:
-                line1 = misc.toCurrency(pay.getBase().getAmount()) + " for the first " + pay.getBase().getUnits() + " hours.";
-                line2 = "Then " + misc.toCurrency(pay.getAdditional().getAmount()) + " per hr up to " + pay.getAdditional().getUnits() + " hours.";
-                break;
-            case DEVICE:
-                line1 = misc.toCurrency(pay.getBase().getAmount()) + " per device up to " + pay.getBase().getUnits() + " devices.";
-                break;
+        try {
+            switch (pay.getType()) {
+                case FIXED:
+                    line1 = misc.toCurrency(pay.getBase().getAmount()) + " Fixed";
+                    break;
+                case HOURLY:
+                    line1 = misc.toCurrency(pay.getBase().getAmount()) + " per hr up to " + pay.getBase().getUnits() + " hours.";
+                    break;
+                case BLENDED:
+                    line1 = misc.toCurrency(pay.getBase().getAmount()) + " for the first " + pay.getBase().getUnits() + " hours.";
+                    line2 = "Then " + misc.toCurrency(pay.getAdditional().getAmount()) + " per hr up to " + pay.getAdditional().getUnits() + " hours.";
+                    break;
+                case DEVICE:
+                    line1 = misc.toCurrency(pay.getBase().getAmount()) + " per device up to " + pay.getBase().getUnits() + " devices.";
+                    break;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            line1 = null;
+            line2 = null;
         }
 
         return new String[]{line1, line2};
