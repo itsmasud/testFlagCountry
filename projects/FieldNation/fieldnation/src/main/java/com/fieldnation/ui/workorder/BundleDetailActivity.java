@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
@@ -25,7 +24,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
+import com.fieldnation.ui.dialog.v2.RequestBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -35,6 +34,7 @@ import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
+import com.fieldnation.v2.ui.dialog.BundleEtaDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
@@ -49,8 +49,10 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     // Dialog tags
     private static final String UID_DIALOG_DECLINE = TAG + ".DeclineDialog";
-    private static final String UID_DIALOG_ACCEPT_BUNDLE = TAG + ".AcceptBundleDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
+    private static final String UID_DIALOG_BUNDLE_ETA = TAG + ".BundleEtaDialog";
+    private static final String UID_DIALOG_REQUEST_BUNDLE = TAG + ".RequestBundleDialog";
+
 
     // UI
     private LinearLayout _buttonToolbar;
@@ -128,10 +130,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         super.onResume();
         setLoading(true);
 
-        AcceptBundleDialog.addOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
-        AcceptBundleDialog.addOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
+        BundleEtaDialog.addOnAcceptedListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onAccepted);
+        RequestBundleDialog.addOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
-
         DeclineDialog.addOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
@@ -152,8 +153,8 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         if (_workOrdersApiClient != null) _workOrdersApiClient.disconnect(App.get());
 
-        AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
-        AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
+        BundleEtaDialog.removeOnAcceptedListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onAccepted);
+        RequestBundleDialog.removeOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
@@ -220,23 +221,17 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-                AcceptBundleDialog.show(
-                        App.get(),
-                        UID_DIALOG_ACCEPT_BUNDLE,
-                        _bundleId,
-                        _adapter.getItemCount(),
-                        workOrder.getId(),
-                        AcceptBundleDialog.TYPE_ACCEPT);
+                BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
 
             } else if (workOrder.getRequests() != null
                     && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-                AcceptBundleDialog.show(
+                RequestBundleDialog.show(
                         App.get(),
-                        UID_DIALOG_ACCEPT_BUNDLE,
+                        UID_DIALOG_REQUEST_BUNDLE,
                         _bundleId,
                         _adapter.getItemCount(),
                         workOrder.getId(),
-                        AcceptBundleDialog.TYPE_REQUEST);
+                        RequestBundleDialog.TYPE_REQUEST);
             } else if (workOrder.getRequests() != null
                     && workOrder.getRequests().getOpenRequest() != null
                     && workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
@@ -257,14 +252,14 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final AcceptBundleDialog.OnAcceptedListener _acceptBundleDialog_onAccepted = new AcceptBundleDialog.OnAcceptedListener() {
+    private final BundleEtaDialog.OnAcceptedListener _acceptBundleDialog_onAccepted = new BundleEtaDialog.OnAcceptedListener() {
         @Override
-        public void onAccepted(long workOrderId) {
-            setLoading(true);
+        public void onAccepted(int bundleId) {
+            Log.v(TAG, "onAccepted");
         }
     };
 
-    private final AcceptBundleDialog.OnRequestedListener _acceptBundleDialog_onRequested = new AcceptBundleDialog.OnRequestedListener() {
+    private final RequestBundleDialog.OnRequestedListener _requestBundleDialog_onRequested = new RequestBundleDialog.OnRequestedListener() {
         @Override
         public void onRequested(long workOrderId) {
             setLoading(true);
@@ -342,7 +337,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
@@ -351,6 +345,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 ToastClient.toast(App.get(), "You withdrew bundle successfully.", Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
+            if (methodName.contains("MassAcceptWorkOrder") && success) {
+                ToastClient.toast(App.get(), "Bundle workorders accepted successfully.", Toast.LENGTH_LONG);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            }
+
         }
     };
 

@@ -6377,7 +6377,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param eta JSON Payload
      */
-    public static void MassAcceptWorkOrder(Context context, EtaMassAccept eta) {
+    public static void MassAcceptWorkOrder(Context context, String eta) {
         try {
             String key = misc.md5("POST//api/rest/v2/workorders/mass-accept");
 
@@ -6387,11 +6387,11 @@ public class WorkordersWebApi extends TopicClient {
                     .path("/api/rest/v2/workorders/mass-accept");
 
             if (eta != null)
-                builder.body(eta.getJson().toString());
+                builder.body(eta);
 
             JsonObject methodParams = new JsonObject();
             if (eta != null)
-                methodParams.put("eta", eta.getJson());
+                methodParams.put("eta", eta);
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/mass-accept")

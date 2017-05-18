@@ -51,6 +51,9 @@ public class ETA implements Parcelable {
     @Json(name = "user")
     private User _user;
 
+    @Json(name = "work_order_id")
+    private Integer _workOrderId;
+
     @Source
     private JsonObject SOURCE;
 
@@ -285,6 +288,28 @@ public class ETA implements Parcelable {
     public ETA user(User user) throws ParseException {
         _user = user;
         SOURCE.put("user", user.getJson());
+        return this;
+    }
+
+    public void setWorkOrderId(Integer workOrderId) throws ParseException {
+        _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
+    }
+
+    public Integer getWorkOrderId() {
+        try {
+            if (_workOrderId == null && SOURCE.has("work_order_id") && SOURCE.get("work_order_id") != null)
+                _workOrderId = SOURCE.getInt("work_order_id");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _workOrderId;
+    }
+
+    public ETA workOrderId(Integer workOrderId) throws ParseException {
+        _workOrderId = workOrderId;
+        SOURCE.put("work_order_id", workOrderId);
         return this;
     }
 

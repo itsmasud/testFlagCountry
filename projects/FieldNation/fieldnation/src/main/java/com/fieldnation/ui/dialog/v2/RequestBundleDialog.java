@@ -29,8 +29,8 @@ import com.fieldnation.ui.KeyedDispatcher;
  * Created by mc on 10/27/16.
  */
 
-public class AcceptBundleDialog extends SimpleDialog {
-    private static final String TAG = "AcceptBundleDialog";
+public class RequestBundleDialog extends SimpleDialog {
+    private static final String TAG = "RequestBundleDialog";
 
     // State
     private static final String STATE_SPINNER_POSITION = "STATE_SPINNER_POSITION";
@@ -68,7 +68,7 @@ public class AcceptBundleDialog extends SimpleDialog {
     private int[] _durations;
     private boolean _expires;
 
-    public AcceptBundleDialog(Context context, ViewGroup container) {
+    public RequestBundleDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
@@ -218,10 +218,10 @@ public class AcceptBundleDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             switch (_type) {
-                case TYPE_ACCEPT:
-                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
-                    _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
-                    break;
+//                case TYPE_ACCEPT:
+//                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
+//                    _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+//                    break;
                 case TYPE_REQUEST:
                     if (_expires && _expiringDurationSeconds > -1) {
                         WorkorderClient.actionRequest(App.get(), _workOrderId, _expiringDurationSeconds);
@@ -274,7 +274,7 @@ public class AcceptBundleDialog extends SimpleDialog {
         bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
         bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
         bundle.putInt(PARAM_TYPE, type);
-        Controller.show(context, uid, AcceptBundleDialog.class, bundle);
+        Controller.show(context, uid, RequestBundleDialog.class, bundle);
     }
 
     /*-**************************************-*/
@@ -303,31 +303,6 @@ public class AcceptBundleDialog extends SimpleDialog {
         _onRequestedDispatcher.removeAll(uid);
     }
 
-    /*-*************************************-*/
-    /*-         Accepted Listener           -*/
-    /*-*************************************-*/
-    public interface OnAcceptedListener {
-        void onAccepted(long workOrderId);
-    }
-
-    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
-        @Override
-        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
-            listener.onAccepted((Long) parameters[0]);
-        }
-    };
-
-    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
-        _onAcceptedDispatcher.add(uid, onAcceptedListener);
-    }
-
-    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
-        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
-    }
-
-    public static void removeAllOnAcceptedListener(String uid) {
-        _onAcceptedDispatcher.removeAll(uid);
-    }
 
     /*-*************************************-*/
     /*-         Canceled Listener           -*/

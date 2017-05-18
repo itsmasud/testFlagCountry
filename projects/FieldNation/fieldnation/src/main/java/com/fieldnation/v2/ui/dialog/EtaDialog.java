@@ -775,6 +775,27 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
 
+            boolean isBundle = _workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
+
+            if (isBundle){
+
+                try {
+                    ETA eta = new ETA();
+                    eta.workOrderId(_workOrder.getId());
+                    eta.setStart(new Date(_etaStart));
+                    eta.end(new Date(_etaStart.getTimeInMillis() + _durationMilliseconds));
+                    eta.setUser(new User().id((int) App.getProfileId()));
+                    eta.setHourEstimate(_durationMilliseconds / 3600000.0);
+                    eta.setNotes(_noteEditText.getText().toString().trim());
+
+                    _onBundleEtaDispatcher.dispatch(getUid(), eta, _workOrder);
+                    dismiss(true);
+                    return true;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+
             try {
                 switch (_dialogType) {
                     case PARAM_DIALOG_TYPE_REQUEST: {
@@ -1010,4 +1031,31 @@ public class EtaDialog extends FullScreenDialog {
     public static void removeAllOnEtaListener(String uid) {
         _onEtaDispatcher.removeAll(uid);
     }
+
+    /*-****************************-*/
+    /*-         Bundle Eta         -*/
+    /*-****************************-*/
+    public interface OnBundleEtaListener {
+        void onBundleEta(ETA eta, WorkOrder workOrder);
+    }
+
+    private static KeyedDispatcher<OnBundleEtaListener> _onBundleEtaDispatcher = new KeyedDispatcher<OnBundleEtaListener>() {
+        @Override
+        public void onDispatch(OnBundleEtaListener listener, Object... parameters) {
+            listener.onBundleEta((ETA) parameters[0], (WorkOrder) parameters[1]);
+        }
+    };
+
+    public static void addOnBundleEtaListener(String uid, OnBundleEtaListener onBundleEtaListener) {
+        _onBundleEtaDispatcher.add(uid, onBundleEtaListener);
+    }
+
+    public static void removeOnBundleEtaListener(String uid, OnBundleEtaListener onBundleEtaListener) {
+        _onBundleEtaDispatcher.remove(uid, onBundleEtaListener);
+    }
+
+    public static void removeAllOnBundleEtaListener(String uid) {
+        _onBundleEtaDispatcher.removeAll(uid);
+    }
+
 }

@@ -45,8 +45,7 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
-import com.fieldnation.ui.ncns.ConfirmActivity;
+import com.fieldnation.ui.dialog.v2.RequestBundleDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -641,7 +640,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
-            ConfirmActivity.startNew(App.get());
+//            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
         }
     };
@@ -764,8 +763,8 @@ public class WorkFragment extends WorkorderFragment {
 
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), AcceptBundleDialog.TYPE_REQUEST);
+                RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
             }
@@ -778,8 +777,8 @@ public class WorkFragment extends WorkorderFragment {
 
             if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
-                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), AcceptBundleDialog.TYPE_ACCEPT);
+                RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
+                        _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_ACCEPT);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
             }
