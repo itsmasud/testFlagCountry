@@ -85,19 +85,24 @@ public class BundleEtaCardView extends RelativeLayout {
 
         if (_workOrder.getLocation() != null) {
             _addressTextView.setVisibility((misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) || misc.isEmptyOrNull(_workOrder.getLocation().getAddress2())) ? VISIBLE : GONE);
-            _addressTextView.setText(
-                    (misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) ? "" : _workOrder.getLocation().getAddress1() + ", ")
-                            + (misc.isEmptyOrNull(_workOrder.getLocation().getAddress2()) ? "" : _workOrder.getLocation().getAddress2()));
+            final String addressText = (misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) ? "" : _workOrder.getLocation().getAddress1() + ", ")
+                    + (misc.isEmptyOrNull(_workOrder.getLocation().getAddress2()) ? "" : _workOrder.getLocation().getAddress2());
+            if (misc.isEmptyOrNull(addressText))
+                _addressTextView.setVisibility(GONE);
+            _addressTextView.setText(addressText);
         } else {
             _addressTextView.setVisibility(GONE);
         }
 
         if (_workOrder.getLocation() != null) {
             _locationTextView.setVisibility((misc.isEmptyOrNull(_workOrder.getLocation().getCity()) || misc.isEmptyOrNull(_workOrder.getLocation().getState())) ? VISIBLE : GONE);
-            _locationTextView.setText(
-                    (_workOrder.getLocation().getCity() == null ? "" : _workOrder.getLocation().getCity() + ", ")
-                            + (_workOrder.getLocation().getState() == null ? "" : _workOrder.getLocation().getState() + " ")
-                            + (_workOrder.getLocation().getZip() == null ? "" : _workOrder.getLocation().getZip()));
+            final String locationText =
+                    (misc.isEmptyOrNull(_workOrder.getLocation().getCity()) ? "" : _workOrder.getLocation().getCity() + ", ")
+                            + (misc.isEmptyOrNull(_workOrder.getLocation().getState()) ? "" : _workOrder.getLocation().getState() + " ")
+                            + (misc.isEmptyOrNull(_workOrder.getLocation().getZip()) ? "" : _workOrder.getLocation().getZip());
+            if (misc.isEmptyOrNull(locationText))
+                _locationTextView.setVisibility(GONE);
+            _locationTextView.setText(locationText);
         } else {
             _locationTextView.setVisibility(GONE);
         }
