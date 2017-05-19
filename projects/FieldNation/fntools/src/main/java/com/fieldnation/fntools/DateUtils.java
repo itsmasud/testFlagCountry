@@ -9,8 +9,8 @@ import java.util.TimeZone;
 
 public class DateUtils {
 
-    private static final SimpleDateFormat V2_DATE_FORMAT_PARSE = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss z");
-    private static final SimpleDateFormat V2_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss");
+    private static final SimpleDateFormat V2_DATE_FORMAT_PARSE = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+    private static final SimpleDateFormat V2_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     static {
         V2_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));

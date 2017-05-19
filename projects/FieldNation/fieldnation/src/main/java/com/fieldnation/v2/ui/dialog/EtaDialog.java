@@ -775,10 +775,10 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
 
-            boolean isBundle = _workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
+            boolean isBundle = _workOrder.getBundle() != null
+                    && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
 
-            if (isBundle){
-
+            if (isBundle) {
                 try {
                     ETA eta = new ETA();
                     eta.workOrderId(_workOrder.getId());
