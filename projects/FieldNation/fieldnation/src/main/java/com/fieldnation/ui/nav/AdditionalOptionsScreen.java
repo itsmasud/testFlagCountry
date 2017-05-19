@@ -200,7 +200,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             subPhoto();
             addProfilePhoto();
         }
-        ((NestedScrollView) findViewById(R.id.scroll_view)).setScrollY(0);
     }
 
     private void addProfilePhoto() {
