@@ -125,6 +125,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         Log.v(TAG, "onSaveDialogState");
         if (_tempFile != null)
             outState.putString("TEMP_FILE", _tempFile.toString());
+        if (_tempUri != null)
+            outState.putString("TEMP_URI", _tempUri.toString());
     }
 
     @Override
@@ -132,6 +134,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         Log.v(TAG, "onRestoreDialogState");
         if (savedState.containsKey("TEMP_FILE"))
             _tempFile = new File(savedState.getString("TEMP_FILE"));
+        if (savedState.containsKey("TEMP_URI"))
+            _tempUri = Uri.parse(savedState.getString("TEMP_URI"));
     }
 
     @Override
