@@ -86,7 +86,7 @@ public class HeaderView extends RelativeLayout {
                     break;
             }
         } catch (Exception ex) {
-            Log.v(TAG, ex);
+            //Log.v(TAG, ex);
             _filtersTextView.setText("Filters: None");
         }
     }

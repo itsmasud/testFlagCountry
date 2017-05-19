@@ -161,6 +161,8 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final View.OnClickListener _remindMeButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            App.get().setNeedsConfirmation(false);
+            RemindMeBroadcastReceiver.registerAlarm(App.get());
             Tracker.event(App.get(), new CustomEvent.Builder()
                     .addContext(new SpScreenDisplayUiContext.Builder().page("Confirm Work Screen").build())
                     .addContext(new SpUIContext.Builder()

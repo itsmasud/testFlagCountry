@@ -51,7 +51,6 @@ public abstract class TopicClient implements TopicConstants {
         try {
             context.unbindService(_serviceConnection);
         } catch (Exception ex) {
-            Log.v(TAG, ex);
         }
         _subscribed.clear();
         _isConnected = false;
