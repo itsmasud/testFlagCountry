@@ -8,7 +8,8 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewStub;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +47,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private ProfilePicView _profilePicView;
     private TextView _profileNameTextView;
     private IconFontButton _profileExpandButton;
-    private ViewStub _stubProfileListView;
     private NavProfileDetailListView _profileListView = null;
 
     private View _profileMenu;
@@ -69,6 +69,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     // Services
     private PhotoClient _photoClient;
     private ProfileClient _profileClient;
+
+    // Animations
+    private Animation _ccw;
+    private Animation _cw;
 
 
     public AdditionalOptionsScreen(Context context) {
@@ -101,7 +105,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _profileExpandButton = (IconFontButton) findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
-        _stubProfileListView = (ViewStub) findViewById(R.id.stub_profile_detail_list);
+        _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+        _profileListView.setListener(_navlistener);
 
         _linkContainerView = findViewById(R.id.link_container);
 
@@ -144,6 +149,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         } catch (Exception ex) {
             _versionTextView.setVisibility(View.GONE);
         }
+
+        _ccw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_ccw);
+        _cw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_cw);
 
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(App.get());
@@ -222,29 +230,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _photoClient.subGet(_profile.getPhoto().getLarge(), true, false);
     }
 
-    private void setProfileListViewVisibility(int visibility) {
-        if (_stubProfileListView == null)
-            return;
-
-        if (visibility == GONE) {
-            if (_profileListView != null) {
-                _profileListView.setVisibility(GONE);
-            }
-        } else if (visibility == VISIBLE) {
-            if (_profileListView == null) {
-                _profileListView = (NavProfileDetailListView) _stubProfileListView.inflate().findViewById(R.id.profile_detail_list);
-                _profileListView.setListener(_navlistener);
-
-                if (_profile != null)
-                    _profileListView.setProfile(_profile);
-            }
-
-            _profileListView.setVisibility(VISIBLE);
-        } else if (visibility == INVISIBLE) {
-            // Not used
-        }
-    }
-
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -304,12 +289,16 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
             if (_profileExpandButton.isActivated()) {
-                setProfileListViewVisibility(VISIBLE);
                 _linkContainerView.setVisibility(View.GONE);
+                _profileListView.setVisibility(VISIBLE);
+                _profileExpandButton.startAnimation(_ccw);
             } else {
-                setProfileListViewVisibility(GONE);
+
+                _profileListView.setVisibility(GONE);
                 _linkContainerView.setVisibility(View.VISIBLE);
+                _profileExpandButton.startAnimation(_cw);
             }
+            populateUi();
         }
     };
 
