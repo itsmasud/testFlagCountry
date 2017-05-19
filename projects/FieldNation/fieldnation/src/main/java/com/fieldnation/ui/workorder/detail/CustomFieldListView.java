@@ -11,13 +11,12 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.CustomField;
 import com.fieldnation.v2.data.model.CustomFieldCategory;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -79,7 +78,8 @@ public class CustomFieldListView extends RelativeLayout implements WorkOrderRend
                 if (category.getRole().equals("buyer"))
                     continue;
 
-                _fields.add(category.getName());
+                if (!misc.isEmptyOrNull(category.getName()))
+                    _fields.add(category.getName());
 
                 CustomField[] customFields = category.getResults();
                 for (CustomField customField : customFields) {
