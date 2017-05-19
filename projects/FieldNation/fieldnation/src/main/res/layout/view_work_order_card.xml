@@ -11,7 +11,7 @@
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:text="$125k"
+        android:text=""
         android:textColor="#FF333333"
         android:textSize="20sp" />
 
@@ -25,7 +25,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/amount_textview"
-        android:text="BLENDED"
+        android:text=""
         android:textColor="#FF555555"
         android:textSize="10sp" />
 
@@ -44,7 +44,7 @@
         android:ellipsize="end"
         android:gravity="right"
         android:maxLines="1"
-        android:text="AUTOMATIC TELLER MACHINE (ATM)"
+        android:text=""
         android:textColor="#FF555555"
         android:textSize="10sp" />
 
@@ -70,7 +70,7 @@
         android:layout_marginRight="10dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/placeholder_paragraph"
+        android:text=""
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
@@ -82,7 +82,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
-        android:text="Sept 12"
+        android:text=""
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
@@ -95,7 +95,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date_textview"
-        android:text="10:45 am"
+        android:text=""
         android:textColor="#FF555555"
         android:textSize="14sp" />
 
@@ -121,7 +121,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginBottom="5dp"
         android:layout_toRightOf="@+id/hyphen_textview"
-        android:text="Sept 12"
+        android:text=""
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
@@ -134,7 +134,7 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date2_textview"
-        android:text="10:45 am"
+        android:text=""
         android:textColor="#FF555555"
         android:textSize="14sp" />
 
@@ -147,7 +147,7 @@
         android:layout_below="@+id/date_textview"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:text="Rancho Santa Margarita, CA"
+        android:text=""
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
@@ -159,7 +159,7 @@
         android:layout_alignBaseline="@+id/location_textview"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/location_textview"
-        android:text="19 mi"
+        android:text=""
         android:textColor="#FF555555"
         android:textSize="14sp" />
 
