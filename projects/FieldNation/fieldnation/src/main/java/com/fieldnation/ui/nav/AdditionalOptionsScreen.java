@@ -28,7 +28,6 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
-import com.fieldnation.ui.NestedScrollView;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
