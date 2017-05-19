@@ -318,6 +318,11 @@
             android:exported="false"
             android:process=":frontside" />
 
+        <service
+            android:name=".ui.ncns.RemindMeService"
+            android:exported="false"
+            android:process=":frontside" />
+
         <provider
             android:name=".StubProvider"
             android:authorities="${applicationId}.provider"
@@ -327,6 +332,10 @@
 
         <receiver
             android:name=".service.crawler.AlarmBroadcastReceiver"
+            android:process=":frontside" />
+
+        <receiver
+            android:name=".ui.ncns.RemindMeBroadcastReceiver"
             android:process=":frontside" />
 
         <receiver
