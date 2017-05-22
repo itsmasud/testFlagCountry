@@ -131,6 +131,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         setLoading(true);
 
         BundleEtaDialog.addOnAcceptedListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onAccepted);
+        BundleEtaDialog.addOnCancelListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onCancel);
         RequestBundleDialog.addOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         DeclineDialog.addOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
@@ -154,6 +155,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         if (_workOrdersApiClient != null) _workOrdersApiClient.disconnect(App.get());
 
         BundleEtaDialog.removeOnAcceptedListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onAccepted);
+        BundleEtaDialog.removeOnCancelListener(UID_DIALOG_BUNDLE_ETA, _acceptBundleDialog_onCancel);
         RequestBundleDialog.removeOnRequestedListener(UID_DIALOG_REQUEST_BUNDLE, _requestBundleDialog_onRequested);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
         DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
@@ -221,6 +223,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                setLoading(true);
                 BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
 
             } else if (workOrder.getRequests() != null
@@ -256,6 +259,16 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onAccepted(int bundleId) {
             Log.v(TAG, "onAccepted");
+            setLoading(true);
+        }
+    };
+
+    private final BundleEtaDialog.OnCancelListener _acceptBundleDialog_onCancel = new BundleEtaDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
+            Log.v(TAG, "onCancel");
+            setLoading(false);
+
         }
     };
 
@@ -346,6 +359,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
             if (methodName.contains("MassAcceptWorkOrder") && success) {
+                setLoading(false);
                 ToastClient.toast(App.get(), "Bundle workorders accepted successfully.", Toast.LENGTH_LONG);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
