@@ -28,8 +28,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 99
-        versionName "4.0.1"
+        versionCode 100
+        versionName "4.0.2"
         multiDexEnabled true
     }
 
@@ -61,10 +61,10 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.mobile"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
-        ncns {
-            applicationId "com.fieldnation.android.ncns"
-            buildConfigField "String", "BUILD_FLAVOR_NAME", '"NCNS"'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncns"'
+        demo {
+            applicationId "com.fieldnation.android.demo"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Demo"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.demo"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
         qa1 {

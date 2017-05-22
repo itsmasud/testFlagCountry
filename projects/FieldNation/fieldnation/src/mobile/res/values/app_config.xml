@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="app_name">Field Nation Mobile</string>
-    <string name="auth_account_name">Field Nation Mobile</string>
+    <string name="app_name">FN Mobile</string>
+    <string name="auth_account_name">FN Mobile</string>
     
     <!--<string name="auth_default_username">provider</string>-->
     <!--<string name="auth_default_password">provider</string>-->

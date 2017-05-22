@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="app_name">Field Nation Test1</string>
-    <string name="auth_account_name">Field Nation Test1</string>
+    <string name="app_name">FN Test1</string>
+    <string name="auth_account_name">FN Test1</string>
     <string name="auth_default_username"></string>
     <string name="auth_default_password"></string>
 
@@ -12,7 +12,7 @@
 
     <string name="auth_account_type">com.fieldnation.test1</string>
     <string name="auth_authority">com.fieldnation.test1.service</string>
-    <string name="web_fn_hostname">ui-test1.fndev.net</string>
+    <string name="web_fn_hostname">mono-test1.fndev.net</string>
     <integer name="ga_local_dispatch_period">60</integer>
     <bool name="ga_dry_run">false</bool>
     <string name="sp_app_id">fn:live</string>

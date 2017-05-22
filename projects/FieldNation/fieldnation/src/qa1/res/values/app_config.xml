@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string name="app_name">Field Nation QA1</string>
-    <string name="auth_account_name">Field Nation QA1</string>
+    <string name="app_name">FN QA1</string>
+    <string name="auth_account_name">FN QA1</string>
     <string name="auth_default_username"></string>
     <string name="auth_default_password"></string>
     <string name="auth_fn_grant_type">password</string>
