@@ -38,8 +38,29 @@ class TransactionThread extends ThreadManager.ManagedThread {
     private final String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
 
-    private static final long RETRY_SHORT = 5000;
-    private static final long RETRY_LONG = 30000;
+    private static final long RETRY_MIN = 5000;
+    private static final long RETRY_MAX = 30000;
+
+
+    private long _lastRetry = 0;
+    private long _retryTimeout = 2000;
+
+    // when called we are doing a retry on a query.
+    private long getRetry() {
+        if (_lastRetry + _retryTimeout > System.currentTimeMillis()) {
+            _lastRetry = System.currentTimeMillis();
+            _retryTimeout = (_retryTimeout * 5) / 4;
+
+            if (_retryTimeout >= RETRY_MAX)
+                _retryTimeout = RETRY_MAX;
+        } else {
+            _lastRetry = System.currentTimeMillis();
+            _retryTimeout = RETRY_MIN;
+        }
+
+        Log.v(TAG, "getRetry " + _retryTimeout);
+        return _retryTimeout;
+    }
 
     private final WebTransactionService _service;
 
@@ -149,7 +170,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (auth == null) {
                 AuthTopicClient.requestCommand(ContextProvider.get());
-                trans.requeue(RETRY_SHORT);
+                trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
                 return false;
@@ -158,7 +179,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
                 AuthTopicClient.invalidateCommand(ContextProvider.get());
-                trans.requeue(RETRY_SHORT);
+                trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
                 return false;
@@ -166,7 +187,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
             if (!_service.isAuthenticated()) {
                 Log.v(TAG, "skip no auth");
-                trans.requeue(RETRY_SHORT);
+                trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
                 return false;
@@ -241,7 +262,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             case RETRY:
                 Log.v(TAG, "3");
                 generateNotification(notifId, notifRetry);
-                trans.requeue(RETRY_LONG);
+                trans.requeue(getRetry());
                 if (!misc.isEmptyOrNull(listenerName))
                     WebTransactionDispatcher.paused(_service, listenerName, trans);
 
