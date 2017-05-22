@@ -79,12 +79,6 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.qa2"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
-        ncnstest {
-            applicationId "com.fieldnation.android.ncnstest"
-            buildConfigField "String", "BUILD_FLAVOR_NAME", '"NCNS"'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncnstest"'
-            buildConfigField "boolean", "USE_HTTPS", "true"
-        }
         prod {
             applicationId "com.fieldnation.android"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '""'
