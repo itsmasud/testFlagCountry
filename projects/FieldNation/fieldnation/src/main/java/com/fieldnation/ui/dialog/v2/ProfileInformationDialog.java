@@ -347,8 +347,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
                     Log.v(TAG, "Single local/ non-local file upload");
                     _tempUri = data.getData();
                     _tempFile = null;
-                    FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
-                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), data.getData()), _tempUri);
+                    FileCacheClient.cacheDeliverableUpload(App.get(), _tempUri);
+                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), _tempUri), _tempUri);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
