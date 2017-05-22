@@ -340,5 +340,33 @@ public class BundleEtaDialog extends FullScreenDialog {
         _onAcceptedDispatcher.removeAll(uid);
     }
 
+    /*-**************************-*/
+    /*-         Cancel           -*/
+    /*-**************************-*/
+    public interface OnCancelListener {
+        void onCancel();
+    }
+
+    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
+        @Override
+        public void onDispatch(OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
+
+
+
 
 }
