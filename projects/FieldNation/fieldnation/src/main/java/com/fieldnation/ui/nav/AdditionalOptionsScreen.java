@@ -65,6 +65,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
     private Listener _listener = null;
+    private boolean _activated = false;
 
     // Services
     private PhotoClient _photoClient;
@@ -145,9 +146,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
             _versionTextView.setText((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
-            _versionTextView.setVisibility(View.VISIBLE);
+            _versionTextView.setVisibility(VISIBLE);
         } catch (Exception ex) {
-            _versionTextView.setVisibility(View.GONE);
+            _versionTextView.setVisibility(GONE);
         }
 
         _ccw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_ccw);
@@ -287,16 +288,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
-            if (_profileExpandButton.isActivated()) {
-                _linkContainerView.setVisibility(View.GONE);
+            _activated = !_activated;
+            if (_activated) {
+                _linkContainerView.setVisibility(GONE);
                 _profileListView.setVisibility(VISIBLE);
-                _profileExpandButton.startAnimation(_ccw);
-            } else {
-
-                _profileListView.setVisibility(GONE);
-                _linkContainerView.setVisibility(View.VISIBLE);
                 _profileExpandButton.startAnimation(_cw);
+            } else {
+                _profileListView.setVisibility(GONE);
+                _linkContainerView.setVisibility(VISIBLE);
+                _profileExpandButton.startAnimation(_ccw);
             }
             populateUi();
         }
