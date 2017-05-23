@@ -217,10 +217,10 @@ public class TopicService extends MultiThreadedService implements TopicConstants
 
         synchronized (TAG) {
             // exact match
+            topicId = topicIdTree[0];
             if (_stickies.containsKey(topicId))
                 _stickies.remove(topicId);
 
-            topicId = topicIdTree[0];
             for (int i = 1; i < topicIdTree.length; i++) {
                 topicId += "/" + topicIdTree[i];
                 if (_stickies.containsKey(topicId))

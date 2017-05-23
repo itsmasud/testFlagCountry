@@ -269,6 +269,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
             dismiss(true);
         }
     };
+
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
@@ -300,9 +301,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
                     PackageManager.FEATURE_CAMERA)) {
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2});
+                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, false);
             } else {
-                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1});
+                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, false);
             }
         }
     };
@@ -327,15 +328,12 @@ public class ProfileInformationDialog extends FullScreenDialog {
             Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
 
             try {
-
                 if ((requestCode != RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
                         && requestCode != RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
                         || resultCode != RESULT_OK) {
                     return;
                 }
 
-                _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
-                _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
                 setLoading(true);
 
                 if (data == null) {
