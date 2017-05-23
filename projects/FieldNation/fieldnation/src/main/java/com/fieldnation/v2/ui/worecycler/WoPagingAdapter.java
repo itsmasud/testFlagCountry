@@ -6,6 +6,7 @@ import com.fieldnation.App;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.RateMeView;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -60,15 +61,20 @@ public abstract class WoPagingAdapter extends com.fieldnation.v2.ui.PagingAdapte
 
     @Override
     public int getItemViewType(int position) {
-        Object obj = getObject(position);
-        if (obj == RATEME) {
-            return BaseHolder.TYPE_RATE_ME;
-        } else if (obj == HEADER) {
-            return BaseHolder.TYPE_HEADER;
-        } else if (obj == EMPTY) {
-            return BaseHolder.TYPE_EMPTY;
-        } else {
-            return BaseHolder.TYPE_OBJECT;
+        try {
+            Object obj = getObject(position);
+            if (obj == RATEME) {
+                return BaseHolder.TYPE_RATE_ME;
+            } else if (obj == HEADER) {
+                return BaseHolder.TYPE_HEADER;
+            } else if (obj == EMPTY) {
+                return BaseHolder.TYPE_EMPTY;
+            } else {
+                return BaseHolder.TYPE_OBJECT;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return -1;
         }
     }
 
@@ -98,8 +104,12 @@ public abstract class WoPagingAdapter extends com.fieldnation.v2.ui.PagingAdapte
     public void onBindViewHolder(BaseHolder holder, int position) {
         switch (holder.type) {
             case BaseHolder.TYPE_OBJECT:
-                onBindObjectViewHolder(holder, (WorkOrder) getObject(position));
-                break;
+                try {
+                    onBindObjectViewHolder(holder, (WorkOrder) getObject(position));
+                    break;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
             case BaseHolder.TYPE_RATE_ME:
                 Tracker.event(App.get(),

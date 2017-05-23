@@ -143,7 +143,7 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
         }
     }
 
-    public Object getObject(int index) {
+    public Object getObject(int index) throws Exception{
         return _displayList.get(index);
     }
 
