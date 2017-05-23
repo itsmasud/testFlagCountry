@@ -48,7 +48,6 @@ public class AppPickerDialog extends SimpleDialog {
     // Dialog tags
     private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
 
-
     // Ui
     private ListView _items;
     private View _root;
@@ -78,43 +77,9 @@ public class AppPickerDialog extends SimpleDialog {
     }
 
     @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        super.onRestoreDialogState(savedState);
-
-        if (savedState.containsKey("_tempFile"))
-            _tempFile = new File(savedState.getString("_tempFile"));
-
-        if (savedState.containsKey("_tempUri"))
-            _tempUri = Uri.parse(savedState.getString("_tempUri"));
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
-        _activityResultClient.connect(App.get());
-    }
-
-    @Override
-    public void onPause() {
-        if (_activityResultClient != null) {
-            _activityResultClient.disconnect(App.get());
-        }
-        super.onPause();
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        if (_tempFile != null)
-            outState.putString("_tempFile", _tempFile.getAbsolutePath());
-        if (_tempUri != null)
-            outState.putString("_tempUri", _tempUri.toString());
     }
 
     @Override
@@ -132,8 +97,41 @@ public class AppPickerDialog extends SimpleDialog {
         if (payload.containsKey("slot"))
             _slot = payload.getParcelable("slot");
 
+        if (payload.containsKey("handleResult") && payload.getBoolean("handleResult")) {
+            _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
+            _activityResultClient.connect(App.get());
+        }
+
         super.show(payload, animate);
     }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+
+        if (savedState.containsKey("_tempFile"))
+            _tempFile = new File(savedState.getString("_tempFile"));
+
+        if (savedState.containsKey("_tempUri"))
+            _tempUri = Uri.parse(savedState.getString("_tempUri"));
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_tempFile != null)
+            outState.putString("_tempFile", _tempFile.getAbsolutePath());
+        if (_tempUri != null)
+            outState.putString("_tempUri", _tempUri.toString());
+    }
+
+    @Override
+    public void onPause() {
+        if (_activityResultClient != null) {
+            _activityResultClient.disconnect(App.get());
+        }
+        super.onPause();
+    }
+
 
     private void addIntent(AppPickerIntent appIntent) {
         PackageManager pm = App.get().getPackageManager();
@@ -165,7 +163,7 @@ public class AppPickerDialog extends SimpleDialog {
     private final AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {
         @Override
         public void onClick(AppPickerRowView row, Intent intent) {
-
+            Log.v(TAG, "AppPickerRowView.OnClickListener _app_onClick");
             if (_workOrderId == -1) {
                 _onOkDispatcher.dispatch(getUid(), intent);
                 dismiss(true);
@@ -187,45 +185,50 @@ public class AppPickerDialog extends SimpleDialog {
     };
 
     public static void show(Context context, String uid, AppPickerIntent[] intents) {
+        show(context, uid, intents, true);
+    }
+
+    public static void show(Context context, String uid, AppPickerIntent[] intents, boolean handleResult) {
         Bundle params = new Bundle();
         params.putParcelableArray("AppPickerIntents", intents);
+        params.putBoolean("handleResult", handleResult);
 
         Controller.show(context, uid, AppPickerDialog.class, params);
     }
 
     public static void show(Context context, String uid, AppPickerIntent[] intents, int workOrderId, Task task) {
+        show(context, uid, intents, workOrderId, task, true);
+    }
+
+    public static void show(Context context, String uid, AppPickerIntent[] intents, int workOrderId, Task task, boolean handleResult) {
         Bundle params = new Bundle();
         params.putParcelableArray("AppPickerIntents", intents);
         params.putInt("workOrderId", workOrderId);
         params.putParcelable("task", task);
+        params.putBoolean("handleResult", handleResult);
 
         Controller.show(context, uid, AppPickerDialog.class, params);
     }
 
     public static void show(Context context, String uid, AppPickerIntent[] intents, int workOrderId, AttachmentFolder slot) {
+        show(context, uid, intents, workOrderId, slot, true);
+    }
+
+    public static void show(Context context, String uid, AppPickerIntent[] intents, int workOrderId, AttachmentFolder slot, boolean handleResult) {
         Bundle params = new Bundle();
         params.putParcelableArray("AppPickerIntents", intents);
         params.putInt("workOrderId", workOrderId);
         params.putParcelable("slot", slot);
+        params.putBoolean("handleResult", handleResult);
 
         Controller.show(context, uid, AppPickerDialog.class, params);
     }
 
-    public static void dismiss(Context context) {
-        Controller.dismiss(context, null);
-    }
-
-
     private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
         @Override
         public void onConnected() {
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Log.v(TAG, topicId);
-            super.onEvent(topicId, payload);
+            _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+            _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
         }
 
         @Override
@@ -235,9 +238,7 @@ public class AppPickerDialog extends SimpleDialog {
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            _activityResultClient.clearOnActivityResult();
-            Log.v(TAG, "onActivityResult");
-
+            Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
             try {
                 Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
                 Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
@@ -318,7 +319,6 @@ public class AppPickerDialog extends SimpleDialog {
                     }
 
                     dismiss(true);
-
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -326,7 +326,6 @@ public class AppPickerDialog extends SimpleDialog {
             }
         }
     };
-
 
     /*-*********************************/
     /*-         Ok Listener           -*/
