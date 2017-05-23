@@ -79,6 +79,7 @@ public class BundleEtaDialog extends FullScreenDialog {
         _toolbar.inflateMenu(R.menu.dialog);
 
         _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
 
         _incompleteLayout = (RelativeLayout) v.findViewById(R.id.incompleteEta_layout);
         _incompleteList = (LinearLayout) v.findViewById(R.id.incompleteEta_list);
@@ -193,9 +194,11 @@ public class BundleEtaDialog extends FullScreenDialog {
 
         if (_completeWorkOrders.size() == _workOrders.getResults().length) {
             _finishMenu.setEnabled(true);
+            _finishMenu.setTextColor(getView().getResources().getColor(R.color.white));
             _incompleteLayout.setVisibility(View.GONE);
         } else {
             _finishMenu.setEnabled(false);
+            _finishMenu.setTextColor(getView().getResources().getColor(R.color.fn_light_text_80));
             _incompleteLayout.setVisibility(View.VISIBLE);
         }
 
