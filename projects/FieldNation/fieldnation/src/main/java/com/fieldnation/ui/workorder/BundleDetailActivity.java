@@ -252,15 +252,10 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
                 DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
                         _adapter.getItemCount(),
                         ((WorkOrder) _adapter.getObject(0)).getId(),
                         ((WorkOrder) _adapter.getObject(0)).getCompany().getId());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-
         }
     };
 

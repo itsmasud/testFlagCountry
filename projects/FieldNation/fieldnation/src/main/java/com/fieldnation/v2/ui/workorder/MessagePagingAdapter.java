@@ -43,7 +43,6 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
 
     @Override
     public int getItemViewType(int position) {
-        try {
             Object obj = getObject(position);
             if (obj == EMPTY) {
                 return BaseHolder.TYPE_EMPTY;
@@ -54,10 +53,6 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
                     return BaseHolder.TYPE_RCVD;
                 }
             }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
         return -1;
     }
 
@@ -82,7 +77,7 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
 
     @Override
     public void onBindViewHolder(BaseHolder holder, int position) {
-        try {
+
             switch (holder.type) {
                 case BaseHolder.TYPE_EMPTY:
                     // do nothing. no data to bind
@@ -98,9 +93,6 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
                     break;
                 }
             }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
         super.onBindViewHolder(holder, position);
     }
 

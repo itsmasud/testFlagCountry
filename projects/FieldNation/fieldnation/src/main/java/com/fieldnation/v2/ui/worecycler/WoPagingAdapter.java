@@ -61,7 +61,6 @@ public abstract class WoPagingAdapter extends com.fieldnation.v2.ui.PagingAdapte
 
     @Override
     public int getItemViewType(int position) {
-        try {
             Object obj = getObject(position);
             if (obj == RATEME) {
                 return BaseHolder.TYPE_RATE_ME;
@@ -72,10 +71,6 @@ public abstract class WoPagingAdapter extends com.fieldnation.v2.ui.PagingAdapte
             } else {
                 return BaseHolder.TYPE_OBJECT;
             }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            return -1;
-        }
     }
 
     @Override
@@ -104,12 +99,8 @@ public abstract class WoPagingAdapter extends com.fieldnation.v2.ui.PagingAdapte
     public void onBindViewHolder(BaseHolder holder, int position) {
         switch (holder.type) {
             case BaseHolder.TYPE_OBJECT:
-                try {
                     onBindObjectViewHolder(holder, (WorkOrder) getObject(position));
                     break;
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
 
             case BaseHolder.TYPE_RATE_ME:
                 Tracker.event(App.get(),
