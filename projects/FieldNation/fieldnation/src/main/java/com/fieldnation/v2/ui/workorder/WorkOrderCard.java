@@ -41,6 +41,8 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
@@ -79,6 +81,7 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteWarningDialog";
 
     // Ui
+    private View _warningBarView;
     private TextView _amountTextView;
     private TextView _payTypeTextView;
     private TextView _workTypeTextView;
@@ -121,6 +124,7 @@ public class WorkOrderCard extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _warningBarView = findViewById(R.id.warninginbar_view);
         _amountTextView = (TextView) findViewById(R.id.amount_textview);
         _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
         _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
@@ -203,10 +207,40 @@ public class WorkOrderCard extends RelativeLayout {
             _workTypeTextView.setText("");
         }
 
+        setWarning(false);
+        if (_workOrder.getProblems() != null
+                && _workOrder.getProblems().getResults() != null
+                && _workOrder.getProblems().getResults().length > 0) {
+            for (Problem problem : _workOrder.getProblems().getResults()) {
+                if (problem != null
+                        && problem.getResolution() != null
+                        && problem.getResolution().getStatus() != null) {
+                    if (problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
+                        setWarning(true);
+                        break;
+                    }
+                }
+            }
+        }
+
         populateLocation();
         populatePay();
         populateTime();
         populateButtons();
+    }
+
+    private void setWarning(boolean warning) {
+        if (warning) {
+            _warningBarView.setVisibility(VISIBLE);
+            _amountTextView.setTextColor(getResources().getColor(R.color.fn_white_text));
+            _payTypeTextView.setTextColor(getResources().getColor(R.color.fn_white_text));
+            _workTypeTextView.setTextColor(getResources().getColor(R.color.fn_white_text));
+        } else {
+            _warningBarView.setVisibility(GONE);
+            _amountTextView.setTextColor(getResources().getColor(R.color.fn_gray_dark));
+            _payTypeTextView.setTextColor(getResources().getColor(R.color.fn_gray_light));
+            _workTypeTextView.setTextColor(getResources().getColor(R.color.fn_gray_light));
+        }
     }
 
     private void populateTime() {
