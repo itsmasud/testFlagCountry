@@ -2,6 +2,8 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +42,8 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _recyclerView = (OverScrollRecyclerView) v.findViewById(R.id.recyclerView);
+        _recyclerView.setLayoutManager(new LinearLayoutManager(v.getContext(), LinearLayoutManager.VERTICAL, false));
+        _recyclerView.setAdapter(_adapter);
 
         return v;
     }
@@ -68,6 +72,31 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         public void onClick(View v) {
             cancel();
             dismiss(true);
+        }
+    };
+
+    private static class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View itemView) {
+            super(itemView);
+        }
+    }
+
+    private final RecyclerView.Adapter<ViewHolder> _adapter = new RecyclerView.Adapter<ViewHolder>() {
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            ViewHolder vh = new ViewHolder(new )
+            return null;
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+
+        }
+
+        @Override
+        public int getItemCount() {
+            return _workOrder.getProblems().getResults().length;
         }
     };
 
