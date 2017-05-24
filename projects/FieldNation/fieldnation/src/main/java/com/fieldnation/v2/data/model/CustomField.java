@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -608,7 +605,7 @@ public class CustomField implements Parcelable {
     public Set<FlagsEnum> getFlagsSet() {
         if (_flagsSet == null) {
             _flagsSet = new HashSet<>();
-            _flagsSet.addAll(Arrays.asList(getFlags()));
+            if (getFlags() != null) _flagsSet.addAll(Arrays.asList(getFlags()));
         }
         return _flagsSet;
     }
