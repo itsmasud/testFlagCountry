@@ -382,7 +382,7 @@ public class AttachmentFolder implements Parcelable {
     public Set<ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(getActions()));
+            if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }
