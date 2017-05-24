@@ -555,7 +555,7 @@ public class Attachment implements Parcelable {
     public Set<Attachment.ActionsEnum> getActionsSet() {
         if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
-            _actionsSet.addAll(Arrays.asList(getActions()));
+            if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
     }
