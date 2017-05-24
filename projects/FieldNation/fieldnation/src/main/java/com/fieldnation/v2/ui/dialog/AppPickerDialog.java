@@ -227,8 +227,7 @@ public class AppPickerDialog extends SimpleDialog {
     private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
         @Override
         public void onConnected() {
-            _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
-            _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+            _activityResultClient.subOnActivityResult();
         }
 
         @Override

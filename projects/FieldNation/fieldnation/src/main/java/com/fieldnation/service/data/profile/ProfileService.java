@@ -144,9 +144,9 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
             try {
                 StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
                 if (cache != null) {
-                    ProfileTransactionBuilder.uploadProfilePhoto(this, cache, filename, filePath, profileId);
+                    ProfileTransactionBuilder.uploadProfilePhoto(this, cache, filename, uri.toString(), profileId);
                 } else {
-                    ProfileTransactionBuilder.uploadProfilePhoto(this, this.getContentResolver().openInputStream(uri), filename, filePath, profileId);
+                    ProfileTransactionBuilder.uploadProfilePhoto(this, this.getContentResolver().openInputStream(uri), filename, uri.toString(), profileId);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
