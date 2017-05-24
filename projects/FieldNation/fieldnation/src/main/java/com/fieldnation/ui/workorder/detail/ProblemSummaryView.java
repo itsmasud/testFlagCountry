@@ -7,10 +7,12 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.UnresolvedProblemsDialog;
 
 /**
  * Created by mc on 5/24/17.
@@ -94,7 +96,7 @@ public class ProblemSummaryView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO show dialog
+            UnresolvedProblemsDialog.show(App.get(), null, _workOrder);
         }
     };
 }
