@@ -151,6 +151,13 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
             }
             setVisibility(VISIBLE);
         }
+
+        if (requests.getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)){
+            _counterOfferButton.setEnabled(true);
+        } else {
+            _counterOfferButton.setEnabled(false);
+        }
+
     }
 
 
@@ -171,17 +178,6 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
             }
         } else {
             try {
-
-                if (schedule == null)
-                    Log.e(TAG, "schedule is null ");
-                if (schedule.getServiceWindow() == null)
-                    Log.e(TAG, "getServiceWindow is null ");
-
-                if (schedule.getServiceWindow().getStart() == null)
-                    Log.e(TAG, "getServiceWindow().getStart() is null ");
-                else
-                    Log.e(TAG, "getServiceWindow().getStart().getUtc(): " + schedule.getServiceWindow().getStart().getUtc());
-
                 Calendar cal = schedule.getServiceWindow().getStart().getCalendar();
                 String dayDate;
                 String time = "";
