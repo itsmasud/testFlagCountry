@@ -144,6 +144,7 @@ public abstract class PagingAdapter<DataModel, ViewHolder extends RecyclerView.V
     }
 
     public Object getObject(int index) {
+        if (!_displayList.isEmpty() && _displayList.size() > index)
             return _displayList.get(index);
         return null;
     }
