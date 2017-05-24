@@ -219,32 +219,30 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                WorkOrder workOrder = (WorkOrder) _adapter.getObject(0);
-                if (workOrder.getRoutes() != null
-                        && workOrder.getRoutes().getUserRoute() != null
-                        && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-                    setLoading(true);
-                    BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
-
-                } else if (workOrder.getRequests() != null
-                        && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-                    RequestBundleDialog.show(
-                            App.get(),
-                            UID_DIALOG_REQUEST_BUNDLE,
-                            _bundleId,
-                            _adapter.getItemCount(),
-                            workOrder.getId(),
-                            RequestBundleDialog.TYPE_REQUEST);
-                } else if (workOrder.getRequests() != null
-                        && workOrder.getRequests().getOpenRequest() != null
-                        && workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
-                    WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, workOrder.getId(), workOrder.getRequests().getOpenRequest().getId());
-
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+            WorkOrder workOrder = (WorkOrder) _adapter.getObject(0);
+            if (workOrder == null)
                 return;
+
+            if (workOrder.getRoutes() != null
+                    && workOrder.getRoutes().getUserRoute() != null
+                    && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+                setLoading(true);
+                BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
+
+            } else if (workOrder.getRequests() != null
+                    && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+                RequestBundleDialog.show(
+                        App.get(),
+                        UID_DIALOG_REQUEST_BUNDLE,
+                        _bundleId,
+                        _adapter.getItemCount(),
+                        workOrder.getId(),
+                        RequestBundleDialog.TYPE_REQUEST);
+            } else if (workOrder.getRequests() != null
+                    && workOrder.getRequests().getOpenRequest() != null
+                    && workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
+                WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, workOrder.getId(), workOrder.getRequests().getOpenRequest().getId());
+
             }
         }
     };
@@ -252,10 +250,12 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_adapter.getItemCount() > 0 && _adapter.getObject(0) != null) {
                 DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
                         _adapter.getItemCount(),
                         ((WorkOrder) _adapter.getObject(0)).getId(),
                         ((WorkOrder) _adapter.getObject(0)).getCompany().getId());
+            }
         }
     };
 
