@@ -77,35 +77,17 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         return clearTopic(TOPIC_ID_START_ACTIVITY_FOR_RESULT);
     }
 
-    public boolean clearStartActivityForResult(int requestCode) {
-        return clearTopicAll(TOPIC_ID_START_ACTIVITY_FOR_RESULT + "/" + requestCode);
-    }
-
     public static void onActivityResult(Context context, int requestCode, int resultCode, Intent data) {
         Bundle payload = new Bundle();
         payload.putInt(PARAM_REQUEST_CODE, requestCode);
         payload.putInt(PARAM_RESULT_CODE, resultCode);
         payload.putParcelable(PARAM_INTENT, data);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode, payload, Sticky.TEMP);
+        TopicService.dispatchEvent(context, TOPIC_ID_ON_ACTIVITY_RESULT, payload, Sticky.TEMP);
     }
 
     public boolean subOnActivityResult() {
         return register(TOPIC_ID_ON_ACTIVITY_RESULT);
-    }
-
-    /**
-     * Subscribes to an activity result
-     *
-     * @param requestCode
-     * @return
-     */
-    public boolean subOnActivityResult(int requestCode) {
-        return register(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
-    }
-
-    public void clearOnActivityResult(int requestCode) {
-        clearTopicAll(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
     }
 
     public void clearOnActivityResult() {
@@ -163,10 +145,11 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         }
 
         private void startActivityForResult(Bundle bundle) {
-            Log.v(TAG, "startActivityForResult " + getActivity().getClass().getSimpleName());
+            getClient().clearStartActivityForResult();
+
             Intent intent = bundle.getParcelable(PARAM_INTENT);
             int requestCode = bundle.getInt(PARAM_REQUEST_CODE);
-            getClient().clearStartActivityForResult(requestCode);
+            Log.v(TAG, "startActivityForResult " + getActivity().getClass().getSimpleName() + " " + requestCode);
 
             getActivity().startActivityForResult(intent, requestCode);
 
@@ -199,7 +182,6 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
         private void preOnActivityResult(Bundle bundle) {
             Log.v(TAG, "preOnActivityResult");
-            getClient().clearOnActivityResult(bundle.getInt(PARAM_REQUEST_CODE));
             onActivityResult(
                     bundle.getInt(PARAM_REQUEST_CODE),
                     bundle.getInt(PARAM_RESULT_CODE),

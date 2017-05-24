@@ -27,12 +27,10 @@ import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.ui.AppPickerIntent;
 import com.fieldnation.v2.ui.dialog.AppPickerDialog;
 
@@ -53,7 +51,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private View _root;
-    private RefreshView _refreshView;
     private ProfilePicView _picView;
     private TextView _profileIdTextView;
     private TextView _profileNameTextView;
@@ -69,7 +66,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private Profile _profile;
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
-    private boolean _clear = false;
     private ActivityResultClient _activityResultClient;
     private FileCacheClient _fileCacheClient;
     private File _tempFile = null;
@@ -94,8 +90,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
 
-        _refreshView = (RefreshView) _root.findViewById(R.id.refresh_view);
-
         _profileIdTextView = (TextView) _root.findViewById(R.id.profile_id_textview);
         _profileNameTextView = (TextView) _root.findViewById(R.id.profile_name_textview);
         _phoneNoEditText = (EditText) _root.findViewById(R.id.phone_edittext);
@@ -108,17 +102,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         return _root;
     }
-
-    private void setLoading(boolean loading) {
-        if (loading) {
-            _toolbar.setEnabled(false);
-            _refreshView.startRefreshing();
-        } else {
-            _toolbar.setEnabled(true);
-            _refreshView.refreshComplete();
-        }
-    }
-
 
     @Override
     public void onSaveDialogState(Bundle outState) {
@@ -152,8 +135,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         _picView.setOnClickListener(_pic_onClick);
 
-        AppPickerDialog.addOnOkListener(UID_APP_PICKER_DIALOG, _appPickerDialog_onOk);
-
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
 
@@ -177,8 +158,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
             _activityResultClient.disconnect(App.get());
 
         if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
-
-        AppPickerDialog.removeOnOkListener(UID_APP_PICKER_DIALOG, _appPickerDialog_onOk);
     }
 
     @Override
@@ -313,9 +292,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onConnected() {
             Log.v(TAG, "_activityResultClient_listener.onConnected");
-
-            _activityResultClient.subOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
-            _activityResultClient.subOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+            _activityResultClient.subOnActivityResult();
         }
 
         @Override
@@ -333,8 +310,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
                         || resultCode != RESULT_OK) {
                     return;
                 }
-
-                setLoading(true);
 
                 if (data == null) {
                     Log.v(TAG, "Image uploading taken by camera");
@@ -354,26 +329,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
-    private final AppPickerDialog.OnOkListener _appPickerDialog_onOk = new AppPickerDialog.OnOkListener() {
-        @Override
-        public void onOk(Intent pack) {
-            if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + pack.toString());
-                ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
-            } else {
-                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
-                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-                _tempFile = temppath;
-                Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
-
-                // removed because this doesn't work on my motorola
-                pack.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
-            }
-        }
-    };
-
-
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
@@ -382,8 +337,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filename) {
-            _picView.setProfilePic(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400)));
-            setLoading(false);
+            try {
+                _picView.setProfilePic(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400)));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 
