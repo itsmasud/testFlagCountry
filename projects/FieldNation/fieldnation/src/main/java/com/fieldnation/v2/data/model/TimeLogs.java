@@ -407,7 +407,7 @@ public class TimeLogs implements Parcelable {
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
-        if (_actionsSet == null && getActions() != null) {
+        if (_actionsSet == null) {
             _actionsSet = new HashSet<>();
             if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
         }
