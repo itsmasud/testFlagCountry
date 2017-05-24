@@ -220,6 +220,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onClick(View v) {
             WorkOrder workOrder = (WorkOrder) _adapter.getObject(0);
+            if (workOrder == null)
+                return;
+
             if (workOrder.getRoutes() != null
                     && workOrder.getRoutes().getUserRoute() != null
                     && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
@@ -247,11 +250,12 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
-                    _adapter.getItemCount(),
-                    ((WorkOrder) _adapter.getObject(0)).getId(),
-                    ((WorkOrder) _adapter.getObject(0)).getCompany().getId());
-
+            if (_adapter.getItemCount() > 0 && _adapter.getObject(0) != null) {
+                DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
+                        _adapter.getItemCount(),
+                        ((WorkOrder) _adapter.getObject(0)).getId(),
+                        ((WorkOrder) _adapter.getObject(0)).getCompany().getId());
+            }
         }
     };
 
