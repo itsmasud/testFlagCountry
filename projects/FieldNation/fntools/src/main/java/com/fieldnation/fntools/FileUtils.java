@@ -3,7 +3,6 @@ package com.fieldnation.fntools;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -25,6 +24,7 @@ import java.net.URLConnection;
  * Created by Michael on 3/10/2016.
  */
 public class FileUtils {
+    private static final String TAG = "FileUtils";
 
     public static String guessContentTypeFromName(String url) {
         try {
@@ -192,13 +192,13 @@ public class FileUtils {
 
         } else if (uri.getScheme().equals("content")) {
 //            if (uri.getAuthority().equals("media")) {
-                Log.e("FileUtils", "For gallery app, google photo");
-                Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-                int filePathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                cursor.moveToFirst();
-                filePath = cursor.getString(filePathIndex);
-                cursor.close();
-                return filePath;
+            Log.e("FileUtils", "For gallery app, google photo");
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            int filePathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            filePath = cursor.getString(filePathIndex);
+            cursor.close();
+            return filePath;
 
 //            } else if (uri.getAuthority() != null &&
 //                    uri.getAuthority().equals("com.google.android.apps.photos.contentprovider")) {
@@ -236,20 +236,24 @@ public class FileUtils {
             final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
             if (cursor == null) {
             } else if (cursor.moveToFirst()) {
+                String[] columnNames = new String[]{MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA};
 
-                int nameIndex = -1;
-                try {
-                    nameIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-                } catch (Exception ex) {
+                for (String columnName : columnNames) {
+                    int nameIndex = -1;
                     try {
-                        nameIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    } catch (Exception ex2) {
-                        ex2.printStackTrace();
+                        nameIndex = cursor.getColumnIndexOrThrow(columnName);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+
+                    if (nameIndex != -1) {
+                        String value = cursor.getString(nameIndex);
+                        if (value != null) {
+                            fileName = Uri.parse(value).getLastPathSegment();
+                            break;
+                        }
                     }
                 }
-
-                final Uri filePathUri = Uri.parse(cursor.getString(nameIndex));
-                fileName = filePathUri.getLastPathSegment();
             }
         } else if (uri.getScheme().compareTo("file") == 0) {
             fileName = new File(uri.getPath()).getName();
