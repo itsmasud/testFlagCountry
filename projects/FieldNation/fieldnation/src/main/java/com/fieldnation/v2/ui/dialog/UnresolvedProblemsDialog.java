@@ -94,7 +94,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            // TODO bind the position
+            ((ProblemRowView) holder.itemView).setProblem(_workOrder.getProblems().getResults()[position]);
         }
 
         @Override
