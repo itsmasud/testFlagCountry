@@ -32,7 +32,7 @@ public class AppPickerRowView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_app_row, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_get_file_package_row, this);
 
         if (isInEditMode()) {
             return;

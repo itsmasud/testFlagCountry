@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -26,27 +25,24 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.v2.ui.AppPickerIntent;
-import com.fieldnation.v2.ui.dialog.AppPickerDialog;
+import com.fieldnation.v2.ui.GetFileIntent;
+import com.fieldnation.v2.ui.dialog.GetFileDialog;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
-
-import static android.app.Activity.RESULT_OK;
-import static com.fieldnation.service.activityresult.ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES;
-import static com.fieldnation.service.activityresult.ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES;
+import java.util.List;
 
 /**
  * Created by Shoaib on 13/01/2016.
  */
 public class ProfileInformationDialog extends FullScreenDialog {
     private static final String TAG = "ProfileInformationDialog";
-    private static final String UID_APP_PICKER_DIALOG = TAG + ".AppPickerDialog";
+
+    // Dialogs
+    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
 
     // Ui
     private Toolbar _toolbar;
@@ -66,10 +62,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private Profile _profile;
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
-    private ActivityResultClient _activityResultClient;
     private FileCacheClient _fileCacheClient;
-    private File _tempFile = null;
-    private Uri _tempUri;
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -104,24 +97,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onSaveDialogState(Bundle outState) {
-        Log.v(TAG, "onSaveDialogState");
-        if (_tempFile != null)
-            outState.putString("TEMP_FILE", _tempFile.toString());
-        if (_tempUri != null)
-            outState.putString("TEMP_URI", _tempUri.toString());
-    }
-
-    @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        Log.v(TAG, "onRestoreDialogState");
-        if (savedState.containsKey("TEMP_FILE"))
-            _tempFile = new File(savedState.getString("TEMP_FILE"));
-        if (savedState.containsKey("TEMP_URI"))
-            _tempUri = Uri.parse(savedState.getString("TEMP_URI"));
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         Log.v(TAG, "onStart");
@@ -138,11 +113,10 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
-
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
+
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         _profile = App.get().getProfile();
         populateUi();
@@ -154,10 +128,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
         Log.v(TAG, "onPause");
         if (_photos != null) _photos.disconnect(App.get());
 
-        if (_activityResultClient != null)
-            _activityResultClient.disconnect(App.get());
-
         if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
+
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
     }
 
     @Override
@@ -268,63 +241,45 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
+        @Override
+        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+            if (fileResult.size() == 0)
+                return;
+
+            if (fileResult.size() > 1)
+                return;
+
+            GetFileDialog.FileUriIntent fui = fileResult.get(0);
+
+            if (fui.file != null) {
+                Log.v(TAG, "Image uploading taken by camera");
+                FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(fui.file));
+                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), fui.file.getAbsolutePath(), fui.file.getName());
+            } else if (fui.uri != null) {
+                Log.v(TAG, "Single local/ non-local file upload");
+                FileCacheClient.cacheDeliverableUpload(App.get(), fui.uri);
+                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+            }
+
+        }
+    };
+
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("image/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
-            AppPickerIntent intent1 = new AppPickerIntent(intent, "Get Content");
+            GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
 
             if (App.get().getPackageManager().hasSystemFeature(
                     PackageManager.FEATURE_CAMERA)) {
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, false);
+                GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
+                GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
             } else {
-                AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, false);
-            }
-        }
-    };
-
-
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_activityResultClient_listener.onConnected");
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
-
-        @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
-
-            try {
-                if ((requestCode != RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
-                        && requestCode != RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
-                        || resultCode != RESULT_OK) {
-                    return;
-                }
-
-                if (data == null) {
-                    Log.v(TAG, "Image uploading taken by camera");
-                    _tempUri = null;
-                    FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(_tempFile));
-                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), _tempFile.getAbsolutePath(), _tempFile.getName());
-                } else {
-                    Log.v(TAG, "Single local/ non-local file upload");
-                    _tempUri = data.getData();
-                    _tempFile = null;
-                    FileCacheClient.cacheDeliverableUpload(App.get(), _tempUri);
-                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), _tempUri), _tempUri);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+                GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
             }
         }
     };

@@ -30,8 +30,6 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -39,13 +37,15 @@ import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.AppPickerIntent;
-import com.fieldnation.v2.ui.dialog.AppPickerDialog;
+import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
+import com.fieldnation.v2.ui.dialog.GetFileDialog;
+import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -57,12 +57,12 @@ public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "DeliverableFragment";
 
     // Dialog
-    private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
+    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_UPLOAD_SLOTS = TAG + ".attachmentFolderDialog";
+    private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
 
     // State
-    private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
-    private static final String STATE_TEMP_FILE = "STATE_TEMP_FILE";
+    private static final String STATE_UPLOAD_FOLDER = "STATE_UPLOAD_FOLDER";
 
     // UI
     private OverScrollView _scrollView;
@@ -76,12 +76,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private TwoButtonDialog _yesNoDialog;
 
     // Data
-    private int _uploadingSlotId = -1;
-    private File _tempFile;
-    private Uri _tempUri;
     private WorkOrder _workOrder;
     private DocumentClient _docClient;
     private PhotoClient _photoClient;
+    private AttachmentFolder _folder;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -107,13 +105,8 @@ public class DeliverableFragment extends WorkorderFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
-                _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
-                Log.e(TAG, "_tempFile: " + _tempFile.getName());
-            }
-
-            if (savedInstanceState.containsKey(STATE_UPLOAD_SLOTID))
-                _uploadingSlotId = savedInstanceState.getInt(STATE_UPLOAD_SLOTID);
+            if (savedInstanceState.containsKey(STATE_UPLOAD_FOLDER))
+                _folder = savedInstanceState.getParcelable(STATE_UPLOAD_FOLDER);
         }
 
         return inflater.inflate(R.layout.fragment_workorder_deliverables, container, false);
@@ -150,13 +143,13 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
-        AppPickerDialog.addOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
     }
 
     @Override
     public void onPause() {
-        AppPickerDialog.removeOnOkListener(DIALOG_APP_PICKER_DIALOG, _appPicker_onOk);
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
         super.onPause();
     }
@@ -164,11 +157,8 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
-        if (_uploadingSlotId > 0)
-            outState.putInt(STATE_UPLOAD_SLOTID, _uploadingSlotId);
-
-        if (_tempFile != null)
-            outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
+        if (_folder != null)
+            outState.putParcelable(STATE_UPLOAD_FOLDER, _folder);
 
         super.onSaveInstanceState(outState);
     }
@@ -179,7 +169,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_docClient != null) _docClient.disconnect(App.get());
 
         if (_photoClient != null) _photoClient.disconnect(App.get());
-        
+
         super.onDetach();
     }
 
@@ -187,23 +177,21 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
-
-    private void startAppPickerDialog(AttachmentFolder folder) {
+    private void startAppPickerDialog() {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        AppPickerIntent intent1 = new AppPickerIntent(intent, "Get Content");
+        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
 
-        if (getActivity().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
+        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, _workOrder.getId(), folder);
+            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
         } else {
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, _workOrder.getId(), folder);
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
         }
 
     }
@@ -374,8 +362,8 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onFolderSelected(AttachmentFolder folder) {
             if (checkMedia()) {
                 // start of the upload process
-                _uploadingSlotId = folder.getId();
-                startAppPickerDialog(folder);
+                _folder = folder;
+                startAppPickerDialog();
             } else {
                 ToastClient.toast(App.get(),
                         getString(R.string.toast_external_storage_needed),
@@ -395,14 +383,13 @@ public class DeliverableFragment extends WorkorderFragment {
             }
 
             if (slots.size() > 1) {
-                AttachmentFolderDialog.show(App.get(), DIALOG_UPLOAD_SLOTS,
-                        slots.toArray(new AttachmentFolder[slots.size()]));
+                AttachmentFolderDialog.show(App.get(), DIALOG_UPLOAD_SLOTS, slots.toArray(new AttachmentFolder[slots.size()]));
             } else if (slots.size() == 1) {
                 AttachmentFolder folder = slots.get(0);
                 if (checkMedia()) {
                     // start of the upload process
-                    _uploadingSlotId = folder.getId();
-                    startAppPickerDialog(folder);
+                    _folder = folder;
+                    startAppPickerDialog();
                 } else {
                     ToastClient.toast(App.get(),
                             getString(R.string.toast_external_storage_needed),
@@ -478,22 +465,30 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // step 1, user clicks on a upload - done elseware?
     // step 2, user selects an app to load the file with
-    private final AppPickerDialog.OnOkListener _appPicker_onOk = new AppPickerDialog.OnOkListener() {
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onOk(Intent pack) {
+        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+            if (fileResult.size() == 0)
+                return;
 
-            if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + pack.toString());
-                ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
-            } else {
-                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
-                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-                _tempFile = temppath;
-                Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
+            if (fileResult.size() == 1) {
+                GetFileDialog.FileUriIntent fui = fileResult.get(0);
+                if (fui.uri != null) {
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                } else {
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder, fui.file.getName(), fui.file.getAbsolutePath());
+                }
+                return;
+            }
 
-                // removed because this doesn't work on my motorola
-                pack.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+            for (GetFileDialog.FileUriIntent fui : fileResult) {
+                Attachment attachment = new Attachment();
+                try {
+                    attachment.folderId(_folder.getId());
+                    AttachmentService.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
             }
         }
     };
