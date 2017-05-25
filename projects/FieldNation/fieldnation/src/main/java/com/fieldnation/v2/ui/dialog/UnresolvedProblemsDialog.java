@@ -42,8 +42,6 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _recyclerView = (OverScrollRecyclerView) v.findViewById(R.id.recyclerView);
-        _recyclerView.setLayoutManager(new LinearLayoutManager(v.getContext(), LinearLayoutManager.VERTICAL, false));
-        _recyclerView.setAdapter(_adapter);
 
         return v;
     }
@@ -53,11 +51,16 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         super.onStart();
 
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
+        _recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        _recyclerView.setAdapter(_adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        _adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -65,6 +68,8 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         _workOrder = params.getParcelable("workOrder");
 
         super.show(params, animate);
+
+        _adapter.notifyDataSetChanged();
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -82,21 +87,24 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     }
 
     private final RecyclerView.Adapter<ViewHolder> _adapter = new RecyclerView.Adapter<ViewHolder>() {
-
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            ViewHolder vh = new ViewHolder(new )
-            return null;
+            return new ViewHolder(new ProblemRowView(parent.getContext()));
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-
+            // TODO bind the position
         }
 
         @Override
         public int getItemCount() {
-            return _workOrder.getProblems().getResults().length;
+            if (_workOrder != null
+                    && _workOrder.getProblems() != null
+                    && _workOrder.getProblems().getResults() != null)
+                return _workOrder.getProblems().getResults().length;
+
+            return 0;
         }
     };
 
