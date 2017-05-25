@@ -49,5 +49,4 @@
         style="@style/DividerFull"
         android:layout_below="@id/comments_edittext" />
 
-
 </RelativeLayout>

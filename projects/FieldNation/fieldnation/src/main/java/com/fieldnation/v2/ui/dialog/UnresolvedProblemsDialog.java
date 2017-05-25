@@ -9,10 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.ui.OverScrollRecyclerView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
@@ -28,6 +31,9 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
     // Data
     private WorkOrder _workOrder;
+
+    // Services
+    private WorkordersWebApi _workOrderApi;
 
     public UnresolvedProblemsDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -61,6 +67,9 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         super.onResume();
 
         _adapter.notifyDataSetChanged();
+
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
     }
 
     @Override
@@ -70,6 +79,13 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -105,6 +121,24 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
                 return _workOrder.getProblems().getResults().length;
 
             return 0;
+        }
+    };
+
+    private WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject != null && successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (_workOrder.getId().equals(workOrder.getId())) {
+                    _workOrder = workOrder;
+                    _adapter.notifyDataSetChanged();
+                }
+            }
         }
     };
 
