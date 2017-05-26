@@ -56,6 +56,10 @@ public class ProblemRowView extends RelativeLayout {
         populateUi();
     }
 
+    public Problem getProblem() {
+        return _problem;
+    }
+
     private void populateUi() {
         if (_titleTextView == null)
             return;

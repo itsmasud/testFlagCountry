@@ -105,7 +105,9 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     private final RecyclerView.Adapter<ViewHolder> _adapter = new RecyclerView.Adapter<ViewHolder>() {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(new ProblemRowView(parent.getContext()));
+            ProblemRowView v = new ProblemRowView(parent.getContext());
+            v.setOnClickListener(_problemRow_onClick);
+            return new ViewHolder(v);
         }
 
         @Override
@@ -121,6 +123,16 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
                 return _workOrder.getProblems().getResults().length;
 
             return 0;
+        }
+    };
+
+    private final View.OnClickListener _problemRow_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v instanceof ProblemRowView) {
+                ProblemRowView prv = (ProblemRowView) v;
+                ResolveProblemDialog.show(App.get(), null, _workOrder.getId(), prv.getProblem());
+            }
         }
     };
 

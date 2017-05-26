@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Dialog.v3"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,7 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_scrollFlags="scroll|enterAlways"
-        app:theme="@style/FieldNation.Material.ToolBar" />
+        app:theme="@style/FieldNation.Material.ToolBar">
+
+        <Button
+            android:id="@+id/resolve_button"
+            style="@style/Material.Button.Flat"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/btn_resolve"
+
+            android:textColor="@color/btn_toolbar_text" />
+    </android.support.v7.widget.Toolbar>
 
     <TextView
         android:id="@+id/title_textview"
