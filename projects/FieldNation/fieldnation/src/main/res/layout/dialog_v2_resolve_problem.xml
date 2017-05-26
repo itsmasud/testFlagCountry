@@ -11,17 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_scrollFlags="scroll|enterAlways"
-        app:theme="@style/FieldNation.Material.ToolBar">
-
-        <Button
-            android:id="@+id/resolve_button"
-            style="@style/Material.Button.Flat"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/btn_resolve"
-
-            android:textColor="@color/btn_toolbar_text" />
-    </android.support.v7.widget.Toolbar>
+        app:theme="@style/FieldNation.Material.ToolBar" />
 
     <TextView
         android:id="@+id/title_textview"

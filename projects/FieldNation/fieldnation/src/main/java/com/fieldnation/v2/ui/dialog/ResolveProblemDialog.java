@@ -3,11 +3,9 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,7 +29,6 @@ public class ResolveProblemDialog extends FullScreenDialog {
 
     // Ui
     private Toolbar _toolbar;
-    private Button _resolveButton;
     private TextView _titleTextView;
     private TextView _detailTextView;
     private EditText _commentsEditText;
@@ -54,7 +51,6 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         _toolbar.setTitle("Problem");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _resolveButton = (Button) v.findViewById(R.id.resolve_button);
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _detailTextView = (TextView) v.findViewById(R.id.detail_textview);
         _commentsEditText = (EditText) v.findViewById(R.id.comments_edittext);
@@ -66,14 +62,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
     public void onStart() {
 
         _toolbar.inflateMenu(R.menu.resolve_problem);
-        _toolbar.setOnCreateContextMenuListener(new View.OnCreateContextMenuListener() {
-            @Override
-            public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
-            }
-        });
-
-        _resolveButton.setOnClickListener(_resolve_onClick);
+        _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView().setOnClickListener(_resolve_onClick);
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
