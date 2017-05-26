@@ -87,6 +87,7 @@ import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
+import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
@@ -129,6 +130,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -387,8 +389,10 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
+        HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
+
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
@@ -423,8 +427,10 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
+        HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
+
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
@@ -672,20 +678,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledgeHold() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
-                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
-
-            try {
-                Hold unAck = _workOrder.getUnAcknowledgedHold();
-                Hold param = new Hold();
-                param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
-                param.id(unAck.getId());
-
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param, App.get().getSpUiContext());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
             setLoading(true);
+            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder);
         }
 
         @Override
@@ -1444,6 +1438,23 @@ public class WorkFragment extends WorkorderFragment {
             populateUi();
         }
     };
+
+    private final HoldReviewDialog.OnAcknowledgeListener _holdReviewDialog_onAcknowledge = new HoldReviewDialog.OnAcknowledgeListener() {
+        @Override
+        public void onAcknowledge(int workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
+                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
+
+        }
+    };
+
+    private final HoldReviewDialog.OnCancelListener _holdReviewDialog_onCancel = new HoldReviewDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
+            setLoading(false);
+        }
+    };
+
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override

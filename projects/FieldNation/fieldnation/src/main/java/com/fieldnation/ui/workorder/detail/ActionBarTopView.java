@@ -152,12 +152,18 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         if (false) {
 
             // ack hold
-        } else if (_workOrder.isOnHold() && !_workOrder.areHoldsAcknowledged()) {
+        } else if (_workOrder.isOnHold()) {
             inflate();
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
-            _rightWhiteButton.setText(R.string.btn_acknowledge_hold);
+            if (_workOrder.areHoldsAcknowledged()){
+                _rightWhiteButton.setText(R.string.btn_on_hold);
+                _rightWhiteButton.setEnabled(false);
+            }else {
+                _rightWhiteButton.setText(R.string.btn_review_hold);
+                _rightWhiteButton.setEnabled(true);
+            }
             setVisibility(View.VISIBLE);
 
             // is on hold

@@ -24,11 +24,11 @@ import java.util.Set;
 public class HoldType implements Parcelable {
     private static final String TAG = "HoldType";
 
-    @Json(name = "description")
-    private String _description;
-
     @Json(name = "id")
     private Integer _id;
+
+    @Json(name = "name")
+    private String _name;
 
     @Source
     private JsonObject SOURCE;
@@ -39,28 +39,6 @@ public class HoldType implements Parcelable {
 
     public HoldType(JsonObject obj) {
         SOURCE = obj;
-    }
-
-    public void setDescription(String description) throws ParseException {
-        _description = description;
-        SOURCE.put("description", description);
-    }
-
-    public String getDescription() {
-        try {
-            if (_description == null && SOURCE.has("description") && SOURCE.get("description") != null)
-                _description = SOURCE.getString("description");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return _description;
-    }
-
-    public HoldType description(String description) throws ParseException {
-        _description = description;
-        SOURCE.put("description", description);
-        return this;
     }
 
     public void setId(Integer id) throws ParseException {
@@ -82,6 +60,28 @@ public class HoldType implements Parcelable {
     public HoldType id(Integer id) throws ParseException {
         _id = id;
         SOURCE.put("id", id);
+        return this;
+    }
+
+    public void setName(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
+    }
+
+    public String getName() {
+        try {
+            if (_name == null && SOURCE.has("name") && SOURCE.get("name") != null)
+                _name = SOURCE.getString("name");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _name;
+    }
+
+    public HoldType name(String name) throws ParseException {
+        _name = name;
+        SOURCE.put("name", name);
         return this;
     }
 
