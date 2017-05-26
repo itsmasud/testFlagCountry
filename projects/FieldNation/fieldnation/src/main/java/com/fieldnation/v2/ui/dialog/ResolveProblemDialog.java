@@ -15,6 +15,7 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.ui.menu.ResolveMenuButton;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Problem;
@@ -30,7 +31,6 @@ public class ResolveProblemDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private TextView _titleTextView;
-    private TextView _detailTextView;
     private EditText _commentsEditText;
 
     // Data
@@ -52,7 +52,6 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _toolbar.setTitle("Problem");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _detailTextView = (TextView) v.findViewById(R.id.detail_textview);
         _commentsEditText = (EditText) v.findViewById(R.id.comments_edittext);
 
         return v;
@@ -60,9 +59,9 @@ public class ResolveProblemDialog extends FullScreenDialog {
 
     @Override
     public void onStart() {
-
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.inflateMenu(R.menu.resolve_problem);
-        _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView().setOnClickListener(_resolve_onClick);
+        ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton().setOnClickListener(_resolve_onClick);
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
@@ -75,6 +74,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _problem = params.getParcelable("problem");
         _workOrderId = params.getInt("workOrderId");
 
+        _titleTextView.setText(_problem.getType().getName());
 
         super.show(params, animate);
     }
@@ -82,23 +82,33 @@ public class ResolveProblemDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         super.onStop();
-
-
     }
+
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            cancel();
+            dismiss(true);
+        }
+    };
 
     private final View.OnClickListener _resolve_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_resolve_onClick");
             try {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Resolve Problem Dialog";
 
                 String comments = _commentsEditText.getText().toString();
-                _problem.resolution(new ProblemResolution()
-                        .status(ProblemResolution.StatusEnum.RESOLVED))
+
+                Problem problem = new Problem()
+                        .id(_problem.getId())
+                        .resolution(new ProblemResolution()
+                                .status(ProblemResolution.StatusEnum.RESOLVED))
                         .comments(comments);
 
-                WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), _problem, uiContext);
+                WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), problem, uiContext);
 
                 // TODO start loading
             } catch (Exception ex) {

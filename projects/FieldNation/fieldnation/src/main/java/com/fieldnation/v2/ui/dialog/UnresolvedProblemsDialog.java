@@ -16,7 +16,12 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.WorkOrder;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by mc on 5/24/17.
@@ -31,6 +36,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
     // Data
     private WorkOrder _workOrder;
+    private List<Problem> _problems = new LinkedList<>();
 
     // Services
     private WorkordersWebApi _workOrderApi;
@@ -78,6 +84,26 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
         super.show(params, animate);
 
+        generateProblemsList();
+    }
+
+    private void generateProblemsList() {
+        _problems.clear();
+
+        if (_workOrder == null
+                || _workOrder.getProblems() == null
+                || _workOrder.getProblems().getResults() == null
+                || _workOrder.getProblems().getResults().length == 0)
+            return;
+
+        Problem[] problems = _workOrder.getProblems().getResults();
+        for (Problem problem : problems) {
+            if (problem.getResolution() != null
+                    && problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
+                _problems.add(problem);
+            }
+        }
+
         _adapter.notifyDataSetChanged();
     }
 
@@ -112,17 +138,12 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            ((ProblemRowView) holder.itemView).setProblem(_workOrder.getProblems().getResults()[position]);
+            ((ProblemRowView) holder.itemView).setProblem(_problems.get(position));
         }
 
         @Override
         public int getItemCount() {
-            if (_workOrder != null
-                    && _workOrder.getProblems() != null
-                    && _workOrder.getProblems().getResults() != null)
-                return _workOrder.getProblems().getResults().length;
-
-            return 0;
+            return _problems.size();
         }
     };
 
@@ -148,7 +169,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (_workOrder.getId().equals(workOrder.getId())) {
                     _workOrder = workOrder;
-                    _adapter.notifyDataSetChanged();
+                    generateProblemsList();
                 }
             }
         }
