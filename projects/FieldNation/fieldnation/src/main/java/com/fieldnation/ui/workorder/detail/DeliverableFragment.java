@@ -293,12 +293,12 @@ public class DeliverableFragment extends WorkorderFragment {
             _reviewList.removeAllViews();
             _noDocsTextView.setVisibility(View.VISIBLE);
         }
-        Log.v(TAG, "pop docs time " + stopwatch.finish());
+        //Log.v(TAG, "pop docs time " + stopwatch.finish());
 
-        stopwatch.start();
+        //stopwatch.start();
 
         if (slots != null && slots.length > 0) {
-            Log.v(TAG, "US count: " + slots.length);
+            //Log.v(TAG, "US count: " + slots.length);
 
             if (_filesRunnable != null)
                 _filesRunnable.cancel();
@@ -331,7 +331,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 @Override
                 public void finish(int count) throws Exception {
-                    Log.v(TAG, "finish");
+                    //Log.v(TAG, "finish");
                     _filesLayout.removeAllViews();
                     for (View v : buffer) {
                         _filesLayout.addView(v);
@@ -349,7 +349,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _actionButton.setVisibility(View.VISIBLE);
         }
 
-        Log.v(TAG, "upload docs time " + stopwatch.finish());
+        //Log.v(TAG, "upload docs time " + stopwatch.finish());
 
         setLoading(false);
     }
@@ -474,9 +474,11 @@ public class DeliverableFragment extends WorkorderFragment {
             if (fileResult.size() == 1) {
                 GetFileDialog.FileUriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
+                            FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder, fui.file.getName(), fui.file.getAbsolutePath());
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
+                            fui.file.getName(), fui.file.getAbsolutePath());
                 }
                 return;
             }

@@ -159,7 +159,6 @@ public class PhotoUploadDialog extends SimpleDialog {
         super.onPause();
     }
 
-
     @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
@@ -353,6 +352,25 @@ public class PhotoUploadDialog extends SimpleDialog {
 
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filePath) {
+            Log.v(TAG, "onDeliverableCacheEnd " + filePath);
+            Log.v(TAG, "onDeliverableCacheEnd " + uri);
+            Log.v(TAG, "onDeliverableCacheEnd " + _filePath);
+            Log.v(TAG, "onDeliverableCacheEnd " + _uri);
+
+            if (_filePath != null && filePath != null) {
+                if (!_filePath.equals(filePath)) {
+                    Log.v(TAG, "onDeliverableCacheEnd filepath mismatch, skipping");
+                    return;
+                }
+            }
+
+            if (_uri != null && uri != null) {
+                if (!_uri.toString().equals(uri.toString())) {
+                    Log.v(TAG, "onDeliverableCacheEnd uri mismatch, skipping");
+                    return;
+                }
+            }
+
             _filePath = filePath;
             setPhoto(MemUtils.getMemoryEfficientBitmap(filePath, 400));
         }
@@ -397,5 +415,4 @@ public class PhotoUploadDialog extends SimpleDialog {
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
-
 }
