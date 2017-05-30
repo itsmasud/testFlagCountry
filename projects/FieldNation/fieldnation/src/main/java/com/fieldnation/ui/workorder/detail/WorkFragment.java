@@ -436,7 +436,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
-        Log.v(TAG, "setWorkOrder");
+        //Log.v(TAG, "setWorkOrder");
         _workOrder = workOrder;
         populateUi();
     }

@@ -9941,7 +9941,7 @@ public class WorkordersWebApi extends TopicClient {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            Log.v(STAG, "Listener " + topicId);
+            //Log.v(STAG, "Listener " + topicId);
 
             String type = ((Bundle) payload).getString("type");
             switch (type) {
@@ -10014,7 +10014,7 @@ public class WorkordersWebApi extends TopicClient {
 
         @Override
         protected Object doInBackground(Object... params) {
-            Log.v(TAG, "Start doInBackground");
+            //Log.v(TAG, "Start doInBackground");
             Stopwatch watch = new Stopwatch(true);
             try {
                 if (success) {

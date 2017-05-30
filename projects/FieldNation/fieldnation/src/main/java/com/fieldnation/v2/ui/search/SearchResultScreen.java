@@ -198,7 +198,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            Log.v(TAG, "onWorkordersWebApi: " + methodName);
+            //Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
                 if (!success || successObject == null) {
                     _refreshView.refreshComplete();
@@ -219,7 +219,7 @@ public class SearchResultScreen extends RelativeLayout {
 
                 ListEnvelope envelope = workOrders.getMetadata();
 
-                Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
+                //Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();

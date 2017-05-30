@@ -139,7 +139,7 @@ public class MessageFragment extends WorkorderFragment {
 
     private void rebuildList() {
         // debug testing
-        Log.v(TAG, "rebuildList");
+        //Log.v(TAG, "rebuildList");
 
         _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
 

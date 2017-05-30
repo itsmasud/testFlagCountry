@@ -138,9 +138,9 @@ class TransactionThread extends ThreadManager.ManagedThread {
         }
 
         // debug if have key, output
-        if (!misc.isEmptyOrNull(trans.getKey())) {
-            Log.v(TAG, "Key: " + trans.getKey());
-        }
+        //if (!misc.isEmptyOrNull(trans.getKey())) {
+        //Log.v(TAG, "Key: " + trans.getKey());
+        //}
 
         // Load the request, and apply authentication
         JsonObject request = null;
@@ -306,7 +306,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
     private boolean allowSync() {
         synchronized (SYNC_LOCK) {
             if (_syncCheckCoolDown < System.currentTimeMillis()) {
-                Log.v(TAG, "Running allowSync");
+                //Log.v(TAG, "Running allowSync");
                 _allowSync = true;
 
                 SharedPreferences settings = App.get().getSharedPreferences();

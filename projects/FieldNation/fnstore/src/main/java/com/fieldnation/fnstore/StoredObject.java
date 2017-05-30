@@ -155,7 +155,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object. Null if there was an error.
      */
     public static StoredObject get(Context context, long id) {
-        Log.v(TAG, "get(" + id + ")");
+        //Log.v(TAG, "get(" + id + ")");
         StoredObject obj = null;
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
@@ -231,7 +231,6 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      */
     public static StoredObject put(Context context, StoredObject obj) {
         Log.v(TAG, "put(" + obj + ")");
-        // Log.v(TAG, "put1(" + obj._id + ", " + obj._objName + "/" + obj._objKey + ");");
         ContentValues v = new ContentValues();
         v.put(Column.PROFILE_ID.getName(), obj._profileId);
         v.put(Column.OBJ_NAME.getName(), obj._objName);

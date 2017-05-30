@@ -134,7 +134,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
+        //Log.v(TAG, "onSaveInstanceState");
         if (_savedList != null)
             outState.putParcelable(STATE_CURRENT_SEARCH, _savedList);
         super.onSaveInstanceState(outState);
@@ -142,7 +142,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.v(TAG, "onRestoreInstanceState");
+        //Log.v(TAG, "onRestoreInstanceState");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
                 _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
