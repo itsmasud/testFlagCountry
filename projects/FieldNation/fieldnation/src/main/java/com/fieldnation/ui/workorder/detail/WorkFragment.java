@@ -32,6 +32,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
@@ -50,6 +51,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Acknowledgment;
@@ -77,8 +79,7 @@ import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.TimeLog;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.AppPickerIntent;
-import com.fieldnation.v2.ui.dialog.AppPickerDialog;
+import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
@@ -87,9 +88,11 @@ import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
+import com.fieldnation.v2.ui.dialog.GetFileDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
+import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
@@ -99,7 +102,6 @@ import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.dialog.WorkLogDialog;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,7 +110,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String TAG = "WorkFragment";
 
     // Dialog tags
-    private static final String DIALOG_APP_PICKER_DIALOG = TAG + ".appPickerDialog";
+    private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_CLOSING_NOTES = TAG + ".closingNotesDialog";
@@ -135,8 +137,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
-    private static final String STATE_TEMP_FILE = "WorkFragment:STATE_TEMP_FILE";
-    private static final String STATE_TEMP_URI = "WorkFragment:STATE_TEMP_URI";
 
     // UI
     private Button _testButton;
@@ -169,8 +169,6 @@ public class WorkFragment extends WorkorderFragment {
 
     // Data
     private WorkordersWebApi _workOrderApi;
-    private File _tempFile;
-    private Uri _tempUri;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
@@ -187,15 +185,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
-                _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
-            }
-
-            if (savedInstanceState.containsKey(STATE_TEMP_URI)) {
-                _tempUri = savedInstanceState.getParcelable(STATE_TEMP_URI);
-            }
-        }
         return inflater.inflate(R.layout.fragment_workorder_work, container, false);
     }
 
@@ -323,12 +312,6 @@ public class WorkFragment extends WorkorderFragment {
         if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
 
-        if (_tempFile != null)
-            outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
-
-        if (_tempUri != null)
-            outState.putParcelable(STATE_TEMP_URI, _tempUri);
-
         super.onSaveInstanceState(outState);
     }
 
@@ -345,15 +328,15 @@ public class WorkFragment extends WorkorderFragment {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         }
-        AppPickerIntent intent1 = new AppPickerIntent(intent, "Get Content");
+        GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
 
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            AppPickerIntent intent2 = new AppPickerIntent(intent, "Take Picture");
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1, intent2}, _workOrder.getId(), _currentTask);
+            GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
         } else {
-            AppPickerDialog.show(App.get(), DIALOG_APP_PICKER_DIALOG, new AppPickerIntent[]{intent1}, _workOrder.getId(), _currentTask);
+            GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
         }
     }
 
@@ -389,6 +372,7 @@ public class WorkFragment extends WorkorderFragment {
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
@@ -425,6 +409,7 @@ public class WorkFragment extends WorkorderFragment {
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
 
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
@@ -1270,6 +1255,33 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Dialogs				-*/
     /*-*********************************-*/
+    private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
+        @Override
+        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+            if (fileResult.size() == 0)
+                return;
+
+            if (fileResult.size() == 1) {
+                GetFileDialog.FileUriIntent fui = fileResult.get(0);
+                if (fui.uri != null)
+                    PhotoUploadDialog.show(App.get(), "uid", _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                else
+                    PhotoUploadDialog.show(App.get(), "uid", _workOrder.getId(), _currentTask, fui.file.getName(), fui.file.getAbsolutePath());
+                return;
+            }
+
+            for (GetFileDialog.FileUriIntent fui : fileResult) {
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_currentTask.getAttachments().getId());
+                    AttachmentService.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            }
+        }
+    };
+
     private void showClosingNotesDialog() {
         if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.CLOSING_NOTES))
             ClosingNotesDialog.show(App.get(), DIALOG_CLOSING_NOTES, _workOrder.getId(), _workOrder.getClosingNotes());
