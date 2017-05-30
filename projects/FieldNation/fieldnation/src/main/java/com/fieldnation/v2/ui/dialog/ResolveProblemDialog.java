@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -32,6 +33,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private TextView _titleTextView;
     private EditText _commentsEditText;
+    private Button _resolveButton;
 
     // Data
     private Problem _problem;
@@ -61,7 +63,9 @@ public class ResolveProblemDialog extends FullScreenDialog {
     public void onStart() {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.inflateMenu(R.menu.resolve_problem);
-        ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton().setOnClickListener(_resolve_onClick);
+
+        _resolveButton = ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton();
+        _resolveButton.setOnClickListener(_resolve_onClick);
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
@@ -75,6 +79,10 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _workOrderId = params.getInt("workOrderId");
 
         _titleTextView.setText(_problem.getType().getName());
+
+        if (!_problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
+            _resolveButton.setEnabled(false);
+        }
 
         super.show(params, animate);
     }

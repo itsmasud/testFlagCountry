@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Dialog.v3"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clickable="true">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -30,9 +31,9 @@
         android:id="@+id/comments_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Comments"
         android:layout_below="@+id/title_textview"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"
+        android:hint="Comments" />
 
     <View
         style="@style/DividerFull"
