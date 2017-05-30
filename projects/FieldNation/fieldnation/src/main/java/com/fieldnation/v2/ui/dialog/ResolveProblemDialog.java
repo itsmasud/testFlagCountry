@@ -33,6 +33,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private TextView _titleTextView;
     private EditText _commentsEditText;
+    private View _commentsDivider;
     private Button _resolveButton;
 
     // Data
@@ -55,6 +56,7 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _commentsEditText = (EditText) v.findViewById(R.id.comments_edittext);
+        _commentsDivider = v.findViewById(R.id.comments_divider);
 
         return v;
     }
@@ -80,8 +82,14 @@ public class ResolveProblemDialog extends FullScreenDialog {
 
         _titleTextView.setText(_problem.getType().getName());
 
-        if (!_problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
+        if (_problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
+            _resolveButton.setEnabled(true);
+            _commentsEditText.setVisibility(View.VISIBLE);
+            _commentsDivider.setVisibility(View.VISIBLE);
+        } else {
             _resolveButton.setEnabled(false);
+            _commentsEditText.setVisibility(View.GONE);
+            _commentsDivider.setVisibility(View.GONE);
         }
 
         super.show(params, animate);

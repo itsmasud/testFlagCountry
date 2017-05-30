@@ -4,6 +4,7 @@
     style="@style/Dialog.v3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg"
     android:clickable="true">
 
     <android.support.v7.widget.Toolbar
@@ -20,7 +21,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
-        android:layout_margin="16dp"
+        android:background="@color/fn_clickable_bg"
+        android:padding="16dp"
         android:text="Title" />
 
     <View
@@ -32,10 +34,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
-        android:layout_margin="16dp"
-        android:hint="Comments" />
+        android:background="@color/fn_clickable_bg"
+        android:hint="Comments"
+        android:padding="16dp" />
 
     <View
+        android:id="@+id/comments_divider"
         style="@style/DividerFull"
         android:layout_below="@id/comments_edittext" />
 
