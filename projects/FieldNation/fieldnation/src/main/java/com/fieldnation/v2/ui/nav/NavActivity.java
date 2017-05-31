@@ -241,6 +241,11 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrderLists");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
@@ -248,6 +253,13 @@ public class NavActivity extends AuthSimpleActivity {
                     _savedList = savedList[0];
                     _recyclerView.startSearch(_savedList);
                     NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                } else {
+                    for (SavedList list : savedList) {
+                        if (list.getId().equals(_savedList.getId())) {
+                            _savedList = list;
+                            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                        }
+                    }
                 }
             }
         }

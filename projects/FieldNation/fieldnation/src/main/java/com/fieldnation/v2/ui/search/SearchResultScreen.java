@@ -197,6 +197,12 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrders")
+                    || (!methodName.startsWith("get") && !methodName.toLowerCase().contains("attachment"));
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             //Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
@@ -235,6 +241,8 @@ public class SearchResultScreen extends RelativeLayout {
 
             if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
                 return;
+
+            WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
 
             _adapter.refreshAll();
             post(new Runnable() {

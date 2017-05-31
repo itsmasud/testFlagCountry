@@ -200,6 +200,11 @@ public class ConfirmResultScreen extends RelativeLayout {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrders") || !methodName.startsWith("get");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
@@ -235,9 +240,6 @@ public class ConfirmResultScreen extends RelativeLayout {
 
                 _refreshView.refreshComplete();
             }
-
-            if (methodName.startsWith("get"))
-                return;
 
             _adapter.refreshAll();
             post(new Runnable() {

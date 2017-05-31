@@ -380,6 +380,11 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return !methodName.equals("getWorkOrders");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;

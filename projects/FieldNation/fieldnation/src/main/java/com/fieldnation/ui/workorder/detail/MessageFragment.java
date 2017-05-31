@@ -198,6 +198,13 @@ public class MessageFragment extends WorkorderFragment {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("addMessage")
+                    || methodName.equals("getMessages")
+                    || methodName.equals("replyMessage");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             try {
                 if (successObject instanceof Messages) {

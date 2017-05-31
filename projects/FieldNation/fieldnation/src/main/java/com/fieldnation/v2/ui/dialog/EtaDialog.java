@@ -868,6 +868,13 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("assignUser")
+                    || methodName.contains("updateETA")
+                    || methodName.contains("request"); // TODO this might not work here
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("assignUser")) {
                 if (success) {

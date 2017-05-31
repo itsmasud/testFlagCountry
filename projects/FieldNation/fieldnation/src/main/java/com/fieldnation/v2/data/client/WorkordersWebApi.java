@@ -29,8 +29,58 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.*;
+import com.fieldnation.v2.data.model.Assignee;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.data.model.Cancellation;
+import com.fieldnation.v2.data.model.Contact;
+import com.fieldnation.v2.data.model.Contacts;
+import com.fieldnation.v2.data.model.CustomField;
+import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Error;
+import com.fieldnation.v2.data.model.EtaMassAccept;
+import com.fieldnation.v2.data.model.EtaMassAcceptWithLocation;
+import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.Expenses;
+import com.fieldnation.v2.data.model.Hold;
+import com.fieldnation.v2.data.model.Holds;
+import com.fieldnation.v2.data.model.Location;
+import com.fieldnation.v2.data.model.Message;
+import com.fieldnation.v2.data.model.Messages;
+import com.fieldnation.v2.data.model.Milestones;
+import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.PayIncrease;
+import com.fieldnation.v2.data.model.PayIncreases;
+import com.fieldnation.v2.data.model.PayModifier;
+import com.fieldnation.v2.data.model.PayModifiers;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.Problems;
+import com.fieldnation.v2.data.model.Qualifications;
+import com.fieldnation.v2.data.model.Request;
+import com.fieldnation.v2.data.model.Requests;
+import com.fieldnation.v2.data.model.Route;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.Schedule;
+import com.fieldnation.v2.data.model.Shipment;
+import com.fieldnation.v2.data.model.Shipments;
+import com.fieldnation.v2.data.model.Signature;
+import com.fieldnation.v2.data.model.Signatures;
+import com.fieldnation.v2.data.model.SwapResponse;
+import com.fieldnation.v2.data.model.Tag;
+import com.fieldnation.v2.data.model.Tags;
+import com.fieldnation.v2.data.model.Task;
+import com.fieldnation.v2.data.model.TaskAlert;
+import com.fieldnation.v2.data.model.Tasks;
+import com.fieldnation.v2.data.model.TimeLog;
+import com.fieldnation.v2.data.model.TimeLogs;
+import com.fieldnation.v2.data.model.Users;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.data.model.WorkOrderOverview;
+import com.fieldnation.v2.data.model.WorkOrderOverviewValues;
+import com.fieldnation.v2.data.model.WorkOrderRatings;
+import com.fieldnation.v2.data.model.WorkOrders;
 
 /**
  * Created by dmgen from swagger.
@@ -72,7 +122,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: acceptSwapRequest
      * Accept work order swap request.
-     *
      */
     public static void acceptSwapRequest(Context context) {
         try {
@@ -267,8 +316,6 @@ public class WorkordersWebApi extends TopicClient {
      * @param workOrderId Work order id
      * @param folderId    Folder id
      * @param attachment  Folder
-     * @param file File
-     * @param async Async (Optional)
      */
     static void addAttachment(Context context, Integer workOrderId, Integer folderId,
                               Attachment attachment, String filename, StoredObject storedObject, EventContext uiContext) {
@@ -631,7 +678,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param expense     Expense
-     * @param async Asynchronous (Optional)
+     * @param async       Asynchronous (Optional)
      */
     public static void addExpense(Context context, Integer workOrderId, Expense expense, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -2017,7 +2064,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: cancelSwapRequest
      * Cancel work order swap request.
-     *
      */
     public static void cancelSwapRequest(Context context) {
         try {
@@ -2342,7 +2388,6 @@ public class WorkordersWebApi extends TopicClient {
     /**
      * Swagger operationId: declineSwapRequest
      * Decline work order swap request.
-     *
      */
     public static void declineSwapRequest(Context context) {
         try {
@@ -2758,7 +2803,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param expenseId   ID of expense
-     * @param async Asynchronous (Optional)
+     * @param async       Asynchronous (Optional)
      */
     public static void deleteExpense(Context context, Integer workOrderId, Integer expenseId, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -3974,7 +4019,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getAssignee(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/assignee" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4014,7 +4059,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getAttachments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4055,7 +4100,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4098,7 +4143,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getBonus(Context context, Integer workOrderId, Integer bonusId, PayModifier bonus, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses/" + bonusId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4144,7 +4189,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getBonuses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/bonuses" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4184,7 +4229,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getContacts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/contacts" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4225,7 +4270,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getCustomField(Context context, Integer workOrderId, Integer customFieldId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields/" + customFieldId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4266,7 +4311,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getCustomFields(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/custom_fields" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4306,7 +4351,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getDiscounts(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/discounts" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4346,7 +4391,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getETA(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/eta");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/eta" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4386,7 +4431,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getExpenses(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/expenses" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4428,7 +4473,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getFile(Context context, Integer workOrderId, Integer folderId, Integer attachmentId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + "/" + attachmentId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4471,7 +4516,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getFolder(Context context, Integer workOrderId, Integer folderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/attachments/" + folderId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4513,7 +4558,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getHold(Context context, Integer workOrderId, Integer holdId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4556,7 +4601,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getHold(Context context, Integer workOrderId, Integer holdId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds/" + holdId + "?async=" + async + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4599,7 +4644,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getHolds(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/holds" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4640,7 +4685,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4683,7 +4728,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getIncrease(Context context, Integer workOrderId, Integer increaseId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases/" + increaseId + "?async=" + async + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4726,7 +4771,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getIncreases(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/increases" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4766,7 +4811,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getLocation(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/location" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4806,7 +4851,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getMessages(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/messages" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4846,7 +4891,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getMilestones(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/milestones" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4886,7 +4931,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getOverview(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4926,7 +4971,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getOverviewValues(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/overview/values" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -4971,7 +5016,7 @@ public class WorkordersWebApi extends TopicClient {
                     + (getOverviewValuesOptions.getProjectId() != null ? "&project_id=" + getOverviewValuesOptions.getProjectId() : "")
                     + (getOverviewValuesOptions.getServiceContractId() != null ? "&service_contract_id=" + getOverviewValuesOptions.getServiceContractId() : "")
                     + (getOverviewValuesOptions.getTeamId() != null ? "&team_id=" + getOverviewValuesOptions.getTeamId() : "")
-            );
+                    + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5016,7 +5061,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getPay(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/pay" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5056,7 +5101,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getPenalties(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5097,7 +5142,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getPenalty(Context context, Integer workOrderId, Integer penaltyId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/penalties/" + penaltyId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5139,7 +5184,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getProblem(Context context, Integer workOrderId, Integer problemId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems/" + problemId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5180,7 +5225,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getProblems(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/problems" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5220,7 +5265,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getProviders(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5264,7 +5309,7 @@ public class WorkordersWebApi extends TopicClient {
             String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/providers" + (getProvidersOptions.getSticky() != null ? "?sticky=" + getProvidersOptions.getSticky() : "")
                     + (getProvidersOptions.getDefaultView() != null ? "&default_view=" + getProvidersOptions.getDefaultView() : "")
                     + (getProvidersOptions.getView() != null ? "&view=" + getProvidersOptions.getView() : "")
-            );
+                    + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5308,7 +5353,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getQualifications(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/qualifications");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/qualifications" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5348,7 +5393,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getRatings(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/ratings" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5389,7 +5434,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getRequest(Context context, Integer workOrderId, Integer requestId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5432,7 +5477,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getRequest(Context context, Integer workOrderId, Integer requestId, Boolean async, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests/" + requestId + "?async=" + async + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5475,7 +5520,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getRequests(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/requests" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5515,7 +5560,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void GetScheduleAndLocation(Context context, Integer[] workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId);
+            String key = misc.md5("GET//api/rest/v2/workorders/mass-accept?work_order_id=" + workOrderId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5556,7 +5601,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getSchedule(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/schedule" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5596,7 +5641,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getShipments(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/shipments" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5637,7 +5682,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getSignature(Context context, Integer workOrderId, Integer signatureId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures/" + signatureId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5678,7 +5723,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getSignatures(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/signatures" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5718,7 +5763,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getStatus(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/status" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5759,7 +5804,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTag(Context context, Integer workOrderId, Integer tagId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags/" + tagId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5800,7 +5845,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTags(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tags" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5841,7 +5886,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTask(Context context, Integer workOrderId, Integer taskId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks/" + taskId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5882,7 +5927,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTasks(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/tasks" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5922,7 +5967,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getTimeLogs(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs");
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + "/time_logs" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -5962,7 +6007,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrder(Context context, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId);
+            String key = misc.md5("GET//api/rest/v2/workorders/" + workOrderId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -6001,7 +6046,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrderLists(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders/lists");
+            String key = misc.md5("GET//api/rest/v2/workorders/lists" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -6039,7 +6084,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrders(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders");
+            String key = misc.md5("GET//api/rest/v2/workorders" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -6078,8 +6123,7 @@ public class WorkordersWebApi extends TopicClient {
      */
     public static void getWorkOrders(Context context, GetWorkOrdersOptions getWorkOrdersOptions, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/workorders"
-                    + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
+            String key = misc.md5("GET//api/rest/v2/workorders" + (getWorkOrdersOptions.getList() != null ? "?list=" + getWorkOrdersOptions.getList() : "")
                     + (getWorkOrdersOptions.getColumns() != null ? "&columns=" + getWorkOrdersOptions.getColumns() : "")
                     + (getWorkOrdersOptions.getPage() != null ? "&page=" + getWorkOrdersOptions.getPage() : "")
                     + (getWorkOrdersOptions.getPerPage() != null ? "&per_page=" + getWorkOrdersOptions.getPerPage() : "")
@@ -6135,7 +6179,7 @@ public class WorkordersWebApi extends TopicClient {
                     + (getWorkOrdersOptions.getFLocationRadius() != null ?
                     ("&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[0]
                             + "&f_location_radius[]=" + getWorkOrdersOptions.getFLocationRadius()[1]) : "")
-            );
+                    + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -6543,10 +6587,10 @@ public class WorkordersWebApi extends TopicClient {
      * Swagger operationId: publishByWorkOrder
      * Publishes a work order to the marketplace where it can garner requests.
      *
-     * @param workOrderId ID of work order
-     * @param async       Async (Optional)
+     * @param workOrderId    ID of work order
+     * @param publishOptions Additional optional parameters
      */
-    public static void publish(Context context, Integer workOrderId, Boolean async, EventContext uiContext) {
+    public static void publish(Context context, Integer workOrderId, PublishOptions publishOptions, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
                 .action("publishByWorkOrder")
                 .label(workOrderId + "")
@@ -6557,17 +6601,23 @@ public class WorkordersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish?async=" + async);
+            String key = misc.md5("POST//api/rest/v2/workorders/" + workOrderId + "/publish" + (publishOptions.getAsync() != null ? "?async=" + publishOptions.getAsync() : "")
+            );
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/publish")
-                    .urlParams("?async=" + async);
+                    .urlParams("" + (publishOptions.getAsync() != null ? "?async=" + publishOptions.getAsync() : "")
+                    );
+
+            if (publishOptions.getBody() != null)
+                builder.body(publishOptions.getBody().getJson().toString());
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
-            methodParams.put("async", async);
+            if (publishOptions.getBody() != null)
+                methodParams.put("body", publishOptions.getBody().getJson());
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/workorders/{work_order_id}/publish")
@@ -9785,7 +9835,7 @@ public class WorkordersWebApi extends TopicClient {
      *
      * @param workOrderId ID of work order
      * @param workOrder   Work order model
-     * @param async Asynchronous (Optional)
+     * @param async       Asynchronous (Optional)
      */
     public static void updateWorkOrder(Context context, Integer workOrderId, WorkOrder workOrder, Boolean async, EventContext uiContext) {
         Tracker.event(context, new SimpleEvent.Builder()
@@ -9943,37 +9993,39 @@ public class WorkordersWebApi extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             //Log.v(STAG, "Listener " + topicId);
 
-            String type = ((Bundle) payload).getString("type");
+            Bundle bundle = (Bundle) payload;
+            String type = bundle.getString("type");
+            TransactionParams transactionParams = bundle.getParcelable("params");
+
+            if (!processTransaction(transactionParams, transactionParams.apiFunction))
+                return;
+
             switch (type) {
                 case "queued": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "progress": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "paused": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
-                    new AsyncParser(this, (Bundle) payload);
+                    new AsyncParser(this, bundle);
                     break;
                 }
             }
+        }
+
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return false;
         }
 
         public void onQueued(TransactionParams transactionParams, String methodName) {

@@ -414,6 +414,12 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("addTimeLog")
+                    || methodName.equals("updateTimeLog");
+        }
+
+        @Override
         public void onEvent(String topicId, Parcelable payload) {
             _workOrderClient.clearTopicAll(topicId);
             super.onEvent(topicId, payload);
