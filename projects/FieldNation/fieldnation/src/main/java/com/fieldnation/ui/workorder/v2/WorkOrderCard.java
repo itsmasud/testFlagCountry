@@ -618,9 +618,9 @@ public class WorkOrderCard extends RelativeLayout {
     };
 
 /*
-    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
+    private final EtaDialog.OnAcknowledgeListener _etaDialog_onAccepted = new EtaDialog.OnAcknowledgeListener() {
         @Override
-        public void onAccepted(long workOrderId) {
+        public void onAcknowledge(long workOrderId) {
             if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
         }

@@ -35,7 +35,7 @@
     <string name="btn_accept">ACCEPT</string>
     <string name="btn_accept_bundle">ACCEPT BUNDLE</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
-    <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
+    <string name="btn_review_hold">REVIEW HOLD</string>
     <string name="btn_add">ADD</string>
     <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add_discount">ADD DISCOUNT</string>
@@ -129,6 +129,8 @@
     <string name="switch_text_set_eta">Set an ETA</string>
     <string name="incomplete">Incomplete</string>
     <string name="complete">Complete</string>
+    <string name="reasons">Reasons</string>
+
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
@@ -206,6 +208,9 @@
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="dialog_duration_v2_title">Set duration</string>
+
+    <string name="dialog_review_hold_title">Hold Review</string>
+
 
     <string name="hint_text_decline_spinner">Please specify</string>
     <string name="hint_text_optional_details">Feel free to share more details</string>
@@ -435,6 +440,7 @@
     <string name="expenses">Expenses</string>
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
+    <string name="place_holder_explanation">No explanation added from buyer.</string>
     <string name="ext">Ext</string>
     <string name="failure_to_confirm_by_noon">Failure to confirm by noon may result in the buyer removing you from a work order.</string>
     <string name="feedback">Feedback</string>
