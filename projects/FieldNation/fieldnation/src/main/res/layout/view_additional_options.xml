@@ -32,9 +32,9 @@
                 android:layout_below="@id/account_title_divider"
                 android:layout_gravity="center_vertical"
                 android:background="@color/fn_clickable_bg"
-                android:paddingBottom="8dp"
+                android:paddingBottom="12dp"
                 android:paddingLeft="12dp"
-                android:paddingTop="10dp">
+                android:paddingTop="12dp">
 
                 <com.fieldnation.ui.ProfilePicView
                     android:id="@+id/pic_view"
