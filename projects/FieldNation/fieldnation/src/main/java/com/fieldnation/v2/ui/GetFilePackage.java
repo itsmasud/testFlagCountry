@@ -11,8 +11,8 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnlog.Log;
 
-public class AppPickerPackage implements Parcelable {
-    private static final String TAG = "AppPickerPackage";
+public class GetFilePackage implements Parcelable {
+    private static final String TAG = "GetFilePackage";
     public String postfix;
     public Intent intent;
     public ResolveInfo resolveInfo;
@@ -24,7 +24,7 @@ public class AppPickerPackage implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(AppPickerPackage pack) {
+    public static JsonObject toJson(GetFilePackage pack) {
         try {
             return Serializer.serializeObject(pack);
         } catch (Exception ex) {
@@ -33,9 +33,9 @@ public class AppPickerPackage implements Parcelable {
         }
     }
 
-    public static AppPickerPackage fromJson(JsonObject json) {
+    public static GetFilePackage fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(AppPickerPackage.class, json);
+            return Unserializer.unserializeObject(GetFilePackage.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -46,11 +46,11 @@ public class AppPickerPackage implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Creator<AppPickerPackage> CREATOR = new Creator<AppPickerPackage>() {
+    public static final Creator<GetFilePackage> CREATOR = new Creator<GetFilePackage>() {
         @Override
-        public AppPickerPackage createFromParcel(Parcel source) {
+        public GetFilePackage createFromParcel(Parcel source) {
             try {
-                return AppPickerPackage.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+                return GetFilePackage.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -58,8 +58,8 @@ public class AppPickerPackage implements Parcelable {
         }
 
         @Override
-        public AppPickerPackage[] newArray(int size) {
-            return new AppPickerPackage[size];
+        public GetFilePackage[] newArray(int size) {
+            return new GetFilePackage[size];
         }
     };
 

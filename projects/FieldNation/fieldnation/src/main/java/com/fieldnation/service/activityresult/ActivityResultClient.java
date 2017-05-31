@@ -182,6 +182,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
         private void preOnActivityResult(Bundle bundle) {
             Log.v(TAG, "preOnActivityResult");
+            getClient().clearOnActivityResult();
             onActivityResult(
                     bundle.getInt(PARAM_REQUEST_CODE),
                     bundle.getInt(PARAM_RESULT_CODE),

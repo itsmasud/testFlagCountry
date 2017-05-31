@@ -13,29 +13,29 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 
-public class AppPickerRowView extends RelativeLayout {
+public class GetFilePackageRowView extends RelativeLayout {
     private ImageView _icon;
     private TextView _name;
-    private AppPickerPackage _pack;
+    private GetFilePackage _pack;
     private OnClickListener _listener;
 
-    public AppPickerRowView(Context context) {
+    public GetFilePackageRowView(Context context) {
         super(context);
         init();
     }
 
-    public AppPickerRowView(Context context, AttributeSet attrs) {
+    public GetFilePackageRowView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public AppPickerRowView(Context context, AttributeSet attrs, int defStyle) {
+    public GetFilePackageRowView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_app_row, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_get_file_package_row, this);
 
         if (isInEditMode()) {
             return;
@@ -47,7 +47,7 @@ public class AppPickerRowView extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
-    public void setInfo(AppPickerPackage pack) {
+    public void setInfo(GetFilePackage pack) {
         _pack = pack;
         _name.setText(pack.appName);
         _icon.setBackgroundDrawable(pack.icon);
@@ -64,15 +64,13 @@ public class AppPickerRowView extends RelativeLayout {
                 Intent src = _pack.intent;
                 ResolveInfo info = _pack.resolveInfo;
 
-                src.setComponent(new ComponentName(
-                        info.activityInfo.applicationInfo.packageName,
-                        info.activityInfo.name));
-                _listener.onClick(AppPickerRowView.this, src);
+                src.setComponent(new ComponentName(info.activityInfo.applicationInfo.packageName, info.activityInfo.name));
+                _listener.onClick(GetFilePackageRowView.this, src);
             }
         }
     };
 
     public interface OnClickListener {
-        void onClick(AppPickerRowView row, Intent src);
+        void onClick(GetFilePackageRowView row, Intent src);
     }
 }

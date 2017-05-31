@@ -289,7 +289,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _leftWhiteButton.setOnClickListener(_withdraw_onClick);
             _leftWhiteButton.setText(R.string.btn_withdraw);
 
-            if (_workOrder.getRequests() != null && _workOrder.getRequests().getCounterOffer() != null) {
+            if (_workOrder.getRequests() != null && _workOrder.getRequests().getCounterOffer() != null
+                    && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_view_counter);
                 _rightWhiteButton.setOnClickListener(_viewCounter_onClick);
