@@ -54,6 +54,15 @@
     <color name="btn_status_black_center">@color/fn_dark_text_0</color>
     <color name="btn_status_black_bottom">#05000000</color>
 
+    <color name="menu_additional_payment">#FF1EAC36</color>
+    <color name="menu_additional_settings">#FF007AFF</color>
+    <color name="menu_additional_logout">#FF8C8C8C</color>
+    <color name="menu_additional_contact_us">#FFF16522</color>
+    <color name="menu_additional_send_debug_log">#FFE00000</color>
+    <color name="menu_additional_legal">#FF5AC8FA</color>
+    <color name="menu_additional_app_version">#FF5856D6</color>
+    <color name="menu_additional_rate_us">#FFFFCC00</color>
+
 
     <dimen name="Button_Touch_Target">48dp</dimen>
     <dimen name="buttonTouchTarget_Material">48dp</dimen>

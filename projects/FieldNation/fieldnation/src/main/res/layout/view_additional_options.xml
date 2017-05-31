@@ -20,16 +20,21 @@
                 android:layout_height="wrap_content"
                 android:text="@string/account" />
 
+            <View
+                android:id="@+id/account_title_divider"
+                style="@style/DividerFull"
+                android:layout_below="@+id/options_textview" />
+
             <RelativeLayout
                 android:id="@+id/profile_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/options_textview"
+                android:layout_below="@id/account_title_divider"
                 android:layout_gravity="center_vertical"
                 android:background="@color/fn_clickable_bg"
-                android:paddingBottom="8dp"
-                android:paddingLeft="8dp"
-                android:paddingTop="8dp">
+                android:paddingBottom="12dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="12dp">
 
                 <com.fieldnation.ui.ProfilePicView
                     android:id="@+id/pic_view"
@@ -68,18 +73,23 @@
                     android:visibility="gone" />
             </RelativeLayout>
 
+            <View
+                android:id="@+id/profile_divider"
+                style="@style/DividerFull"
+                android:layout_below="@+id/profile_view" />
+
             <com.fieldnation.ui.NavProfileDetailListView
                 android:id="@+id/profile_detail_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_view"
+                android:layout_below="@+id/profile_divider"
                 android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/link_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_view"
+                android:layout_below="@+id/profile_divider"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -91,13 +101,18 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/payment_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_glyphish_dollar" />
+                        android:background="@drawable/circle_menu_payment"
+                        android:text="@string/icon_circle_dollar_solid" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
                         android:layout_toRightOf="@+id/payment_iconfont"
                         android:text="@string/payments" />
                 </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/settings_menu"
@@ -108,13 +123,18 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/settings_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_gear" />
+                        android:background="@drawable/circle_menu_settings"
+                        android:text="@string/icon_gear_solid" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
                         android:layout_toRightOf="@+id/settings_iconfont"
                         android:text="@string/settings" />
                 </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/logout_menu"
@@ -125,7 +145,8 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/logout_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_logout" />
+                        android:background="@drawable/circle_menu_logout"
+                        android:text="@string/icon_circle_logout_solid" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
@@ -133,11 +154,19 @@
                         android:text="@string/log_out" />
                 </RelativeLayout>
 
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
+
                 <TextView
                     style="@style/OptionsTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/support" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/contact_menu"
@@ -148,13 +177,18 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/contact_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_contact" />
+                        android:background="@drawable/circle_menu_contact_us"
+                        android:text="@string/icon_chat_solid" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
                         android:layout_toRightOf="@+id/contact_iconfont"
                         android:text="@string/contact_us" />
                 </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/debug_menu"
@@ -165,6 +199,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/debug_iconfont"
                         style="@style/OptionsMenuIcon"
+                        android:background="@drawable/circle_menu_send_debug_log"
                         android:text="@string/icon_bug" />
 
                     <TextView
@@ -172,6 +207,10 @@
                         android:layout_toRightOf="@+id/debug_iconfont"
                         android:text="@string/send_debug_log" />
                 </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/legal_menu"
@@ -182,13 +221,18 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/legal_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_gavel" />
+                        android:background="@drawable/circle_menu_legal"
+                        android:text="@string/icon_gavel_solid" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
                         android:layout_toRightOf="@+id/legal_iconfont"
                         android:text="@string/legal" />
                 </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/version_menu"
@@ -199,7 +243,8 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/version_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_info_circle_line" />
+                        android:background="@drawable/circle_menu_app_version"
+                        android:text="@string/icon_info_circle" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -221,6 +266,10 @@
                             android:text="0.0.0" />
                     </LinearLayout>
                 </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
 
                 <RelativeLayout
                     android:id="@+id/touchMe_menu"
@@ -246,6 +295,30 @@
 
                     </LinearLayout>
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rate_us_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/rate_us_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:background="@drawable/circle_menu_rate_us"
+                        android:text="@string/icon_star_solid" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/rate_us_iconfont"
+                        android:text="@string/rate_us" />
+                </RelativeLayout>
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/profile_view" />
+
+
             </LinearLayout>
         </RelativeLayout>
     </com.fieldnation.ui.NestedScrollView>
