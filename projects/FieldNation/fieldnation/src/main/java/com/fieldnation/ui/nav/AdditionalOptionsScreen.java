@@ -57,6 +57,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private View _debugMenu;
     private View _legalMenu;
     private View _versionMenu;
+    private View _rateUsMenu;
     private View _touchMeMenu;
     private TextView _versionTextView;
     private View _linkContainerView;
@@ -134,6 +135,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _versionMenu = findViewById(R.id.version_menu);
         _versionMenu.setOnClickListener(_version_onClick);
+
+        _rateUsMenu = findViewById(R.id.rate_us_menu);
+        _rateUsMenu.setOnClickListener(_rateUs_onClick);
 
         _touchMeMenu = findViewById(R.id.touchMe_menu);
         _touchMeMenu.setOnClickListener(_touchMe_onClick);
@@ -365,6 +369,20 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.APP_VERSION);
             WhatsNewDialog.show(App.get());
+        }
+    };
+
+    private final View.OnClickListener _rateUs_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Uri uri = Uri.parse("market://details?id=" + App.get().getPackageName());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                App.get().startActivity(intent);
+            }
+
         }
     };
 
