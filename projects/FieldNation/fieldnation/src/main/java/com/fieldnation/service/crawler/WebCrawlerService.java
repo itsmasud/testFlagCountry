@@ -297,6 +297,13 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrderLists")
+                    || methodName.equals("getWorkOrders")
+                    || methodName.equals("getWorkOrder");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onComplete " + methodName);
             if (methodName.equals("getWorkOrderLists")) {

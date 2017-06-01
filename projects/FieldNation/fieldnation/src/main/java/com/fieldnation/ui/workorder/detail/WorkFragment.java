@@ -440,7 +440,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
-        Log.v(TAG, "setWorkOrder");
+        //Log.v(TAG, "setWorkOrder");
         _workOrder = workOrder;
         populateUi();
     }
@@ -1572,6 +1572,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConnected() {
             _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.contains("TimeLog");
         }
 
         @Override

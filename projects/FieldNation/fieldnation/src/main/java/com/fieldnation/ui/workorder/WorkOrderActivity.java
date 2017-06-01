@@ -373,17 +373,22 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
+            //Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
             _workOrderApi.subWorkordersWebApi();
             setLoading(true);
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return !methodName.equals("getWorkOrders");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
-                Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
+                //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
                 if (workOrder == null || !success) {
                     setLoading(false);
                     return;
@@ -401,7 +406,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (methodName.startsWith("get") || !success)
                 return;
 
-            Log.v(TAG, "onWorkordersWebApi " + methodName);
+            //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
             WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }

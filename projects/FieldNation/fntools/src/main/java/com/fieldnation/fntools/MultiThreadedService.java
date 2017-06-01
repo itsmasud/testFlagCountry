@@ -59,7 +59,7 @@ public abstract class MultiThreadedService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand start");
+        //Log.v(TAG, "onStartCommand start");
         if (intent != null) {
             _lastRequestTime = System.currentTimeMillis();
             synchronized (LOCK) {
@@ -70,7 +70,7 @@ public abstract class MultiThreadedService extends Service {
         }
 
         _manager.wakeUp();
-        Log.v(TAG, "onStartCommand end");
+        //Log.v(TAG, "onStartCommand end");
         return START_STICKY;
     }
 

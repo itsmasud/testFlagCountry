@@ -210,7 +210,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     @Override
     public void onOverScrollComplete(View view, int pixelsX, int pixelsY) {
         if (_state == STATE_RELEASE_TO_REFRESH) {
-            Log.v(TAG, "onOverScrollComplete, STATE_RELEASE_TO_REFRESH");
+            //Log.v(TAG, "onOverScrollComplete, STATE_RELEASE_TO_REFRESH");
             _state = STATE_MOVE_TO_REFRESH;
 
             pixelsY = cleanYPixels(pixelsY);
@@ -227,7 +227,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
             }
 
         } else if (_state == STATE_PULLING) {
-            Log.v(TAG, "onOverScrollComplete, STATE_PULLING");
+            //Log.v(TAG, "onOverScrollComplete, STATE_PULLING");
             _state = STATE_HIDING;
 
             pixelsY = cleanYPixels(pixelsY);
@@ -239,7 +239,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void startRefreshing() {
-        Log.v(TAG, "startRefreshing " + _state + ":" + _contentLayout.getHeight());
+        //Log.v(TAG, "startRefreshing " + _state + ":" + _contentLayout.getHeight());
 
         if (_contentLayout.getHeight() == 0)
             return;
@@ -257,7 +257,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public void refreshComplete() {
-        Log.v(TAG, "refreshComplete " + _state);
+        //Log.v(TAG, "refreshComplete " + _state);
         if (_state == STATE_REFRESHING) {
             _state = STATE_HIDING;
             _completeWhenAble = false;
@@ -286,7 +286,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
 
         @Override
         public void setLoading(boolean isLoading) {
-            Log.v(TAG, "setLoading()");
+            //Log.v(TAG, "setLoading()");
             if (isLoading) {
                 startRefreshing();
             } else {

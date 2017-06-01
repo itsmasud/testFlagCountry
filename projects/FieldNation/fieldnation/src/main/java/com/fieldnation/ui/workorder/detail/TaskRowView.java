@@ -223,6 +223,11 @@ public class TaskRowView extends RelativeLayout {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("addAttachment");
+        }
+
+        @Override
         public void onQueued(TransactionParams transactionParams, String methodName) {
             if (!methodName.equals("addAttachment"))
                 return;

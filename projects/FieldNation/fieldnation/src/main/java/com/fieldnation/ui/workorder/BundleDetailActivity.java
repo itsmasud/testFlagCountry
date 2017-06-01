@@ -353,6 +353,13 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.contains("decline")
+                    || methodName.contains("deleteRequest")
+                    || methodName.contains("MassAcceptWorkOrder");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.contains("decline") && success) {
                 ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);

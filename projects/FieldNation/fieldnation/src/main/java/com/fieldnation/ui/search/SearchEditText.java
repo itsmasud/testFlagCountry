@@ -207,6 +207,11 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrder");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrder")) {
                 WorkOrder workOrder = (WorkOrder) successObject;

@@ -46,7 +46,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     }
 
     public void clear() {
-        Log.v(TAG, "clear");
+        //Log.v(TAG, "clear");
         _pages.clear();
         _displayList.clear();
         _loadingPages.clear();

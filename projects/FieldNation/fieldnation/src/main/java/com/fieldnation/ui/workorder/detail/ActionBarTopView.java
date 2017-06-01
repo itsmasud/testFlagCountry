@@ -117,7 +117,7 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
     }
 
     private void populateButtons() {
-        Log.v(TAG, "populateButtons");
+        //Log.v(TAG, "populateButtons");
         Set<WorkOrder.ActionsEnum> workOrderActions = new HashSet<>();
         if (_workOrder.getActionsSet() != null) {
             workOrderActions = _workOrder.getActionsSet();

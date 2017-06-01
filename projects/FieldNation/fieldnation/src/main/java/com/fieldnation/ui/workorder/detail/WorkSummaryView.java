@@ -127,7 +127,7 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             // we have fields, find the buyer fields
             CustomFieldCategory[] categories = _workOrder.getCustomFields().getResults();
             for (CustomFieldCategory category : categories) {
-                if (category.getRole().equals("buyer")) {
+                if (category.getRole() != null && category.getRole().equals("buyer")) {
                     if (category.getResults() != null && category.getResults().length > 0) {
                         CustomField[] fields = category.getResults();
                         for (CustomField field : fields) {

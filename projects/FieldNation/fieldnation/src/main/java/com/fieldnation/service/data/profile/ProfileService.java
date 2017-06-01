@@ -9,20 +9,12 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 
 /**
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileService extends MultiThreadedService implements ProfileConstants {
     private static final String TAG = "ProfileService";
-
-    @Override
-    public void onDestroy() {
-        Log.v(TAG, "onDestroy");
-        super.onDestroy();
-    }
 
     @Override
     public int getMaxWorkerCount() {
@@ -51,7 +43,6 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
     }
 
     private void get(Intent intent) {
-        Log.v(TAG, "get");
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
         long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
@@ -84,7 +75,7 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
-        Log.v(TAG, "listNotifications(" + page + ", " + isSync + ")");
+        //Log.v(TAG, "listNotifications(" + page + ", " + isSync + ")");
 
         StoredObject obj = null;
         if (!isSync && allowCache) {
@@ -107,7 +98,7 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
     }
 
     private void listMessages(Intent intent) {
-        Log.v(TAG, "listMessages");
+        //Log.v(TAG, "listMessages");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
@@ -154,6 +145,4 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
         } else
             ProfileTransactionBuilder.uploadProfilePhoto(this, filename, filePath, profileId);
     }
-
-
 }
