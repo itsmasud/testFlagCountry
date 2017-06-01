@@ -32,15 +32,15 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
-import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
-import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
@@ -212,6 +212,22 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         setWarning(false);
+
+        if (_workOrder.getProblems() != null
+                && _workOrder.getProblems().getResults() != null
+                && _workOrder.getProblems().getResults().length > 0) {
+            for (Problem problem : _workOrder.getProblems().getResults()) {
+                if (problem != null
+                        && problem.getResolution() != null
+                        && problem.getResolution().getStatus() != null) {
+                    if (problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
+                        setWarning(true);
+                        break;
+                    }
+                }
+            }
+        }
+
         if (_workOrder.getHolds() != null
                 && _workOrder.getHolds().getResults() != null
                 && _workOrder.getHolds().getResults().length > 0) {
@@ -237,7 +253,6 @@ public class WorkOrderCard extends RelativeLayout {
             _workTypeTextView.setTextColor(getResources().getColor(R.color.fn_gray_light));
         }
     }
-
 
     private void populateTime() {
         _timeTextView.setVisibility(VISIBLE);

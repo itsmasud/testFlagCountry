@@ -33,6 +33,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
     private TextView _bundleWarningTextView;
 
+    private ProblemSummaryView _problemSummaryView;
+
     private LinearLayout _descriptionContainer;
     private WebView _descriptionWebView;
     private RelativeLayout _descriptionShortLayout;
@@ -96,6 +98,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
 
         _readMoreButton = (Button) findViewById(R.id.readMore_button);
         _readMoreButton.setOnClickListener(_readMore_onClick);
+
+        _problemSummaryView = (ProblemSummaryView) findViewById(R.id.problemsummary_view);
 
         setVisibility(View.GONE);
     }
@@ -177,6 +181,8 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         } else {
             _standardInstructionTextView.setVisibility(VISIBLE);
         }
+
+        _problemSummaryView.setWorkOrder(_workOrder);
     }
 
     /*-*********************************-*/
@@ -185,7 +191,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
     private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
                 _descriptionWebView.setVisibility(View.VISIBLE);
                 _descriptionShortLayout.setVisibility(View.GONE);

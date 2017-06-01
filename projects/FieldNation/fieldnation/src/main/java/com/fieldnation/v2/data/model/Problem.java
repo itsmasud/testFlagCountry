@@ -24,6 +24,9 @@ import java.util.Set;
 public class Problem implements Parcelable {
     private static final String TAG = "Problem";
 
+    @Json(name = "actions")
+    private ActionsEnum[] _actions;
+
     @Json(name = "author")
     private User _author;
 
@@ -63,6 +66,41 @@ public class Problem implements Parcelable {
 
     public Problem(JsonObject obj) {
         SOURCE = obj;
+    }
+
+    public void setActions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja);
+    }
+
+    public ActionsEnum[] getActions() {
+        try {
+            if (_actions != null)
+                return _actions;
+
+            if (SOURCE.has("actions") && SOURCE.get("actions") != null) {
+                _actions = ActionsEnum.fromJsonArray(SOURCE.getJsonArray("actions"));
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _actions;
+    }
+
+    public Problem actions(ActionsEnum[] actions) throws ParseException {
+        _actions = actions;
+        JsonArray ja = new JsonArray();
+        for (ActionsEnum item : actions) {
+            ja.add(item.toString());
+        }
+        SOURCE.put("actions", ja, true);
+        return this;
     }
 
     public void setAuthor(User author) throws ParseException {
@@ -356,6 +394,45 @@ public class Problem implements Parcelable {
         }
     }
 
+    public enum ActionsEnum {
+        @Json(name = "delete")
+        DELETE("delete"),
+        @Json(name = "edit")
+        EDIT("edit"),
+        @Json(name = "resolve")
+        RESOLVE("resolve"),
+        @Json(name = "view_message")
+        VIEW_MESSAGE("view_message");
+
+        private String value;
+
+        ActionsEnum(String value) {
+            this.value = value;
+        }
+
+        public static ActionsEnum fromString(String value) {
+            ActionsEnum[] values = values();
+            for (ActionsEnum v : values) {
+                if (v.value.equals(value))
+                    return v;
+            }
+            return null;
+        }
+
+        public static ActionsEnum[] fromJsonArray(JsonArray jsonArray) {
+            ActionsEnum[] list = new ActionsEnum[jsonArray.size()];
+            for (int i = 0; i < list.length; i++) {
+                list[i] = fromString(jsonArray.getString(i));
+            }
+            return list;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
     /*-*****************************-*/
     /*-             Json            -*/
     /*-*****************************-*/
@@ -426,4 +503,15 @@ public class Problem implements Parcelable {
     public boolean isSet() {
         return getId() != null && getId() != 0;
     }
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
+    }
+
 }

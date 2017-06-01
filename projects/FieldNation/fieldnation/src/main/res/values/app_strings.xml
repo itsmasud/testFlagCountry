@@ -104,6 +104,7 @@
     <string name="btn_request">REQUEST</string>
     <string name="btn_request_new_pay">REQUEST NEW PAY</string>
     <string name="btn_reset">RESET</string>
+    <string name="btn_resolve">RESOLVE</string>
     <string name="btn_review_toc">REVIEW PQAP POLICY</string>
     <string name="btn_running_late">RUNNING LATE</string>
     <string name="btn_save">SAVE</string>
