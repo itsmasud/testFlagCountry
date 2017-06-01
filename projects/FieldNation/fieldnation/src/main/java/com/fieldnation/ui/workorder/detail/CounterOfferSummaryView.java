@@ -153,9 +153,9 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
         }
 
         if (requests.getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)){
-            _counterOfferButton.setEnabled(true);
+            _counterOfferButton.setVisibility(VISIBLE);
         } else {
-            _counterOfferButton.setEnabled(false);
+            _counterOfferButton.setVisibility(GONE);
         }
 
     }

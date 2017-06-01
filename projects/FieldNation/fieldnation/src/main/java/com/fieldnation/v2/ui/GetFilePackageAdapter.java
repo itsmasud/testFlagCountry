@@ -6,13 +6,13 @@ import android.widget.BaseAdapter;
 
 import java.util.List;
 
-public class AppPickerAdapter extends BaseAdapter {
-    private static String TAG = "AppPickerAdapter";
+public class GetFilePackageAdapter extends BaseAdapter {
+    private static String TAG = "GetFilePackageAdapter";
 
-    private final List<AppPickerPackage> _appList;
-    private final AppPickerRowView.OnClickListener _listener;
+    private final List<GetFilePackage> _appList;
+    private final GetFilePackageRowView.OnClickListener _listener;
 
-    public AppPickerAdapter(List<AppPickerPackage> list, AppPickerRowView.OnClickListener listener) {
+    public GetFilePackageAdapter(List<GetFilePackage> list, GetFilePackageRowView.OnClickListener listener) {
         super();
         _appList = list;
         _listener = listener;
@@ -35,16 +35,16 @@ public class AppPickerAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        AppPickerRowView view = null;
+        GetFilePackageRowView view = null;
         if (convertView == null) {
-            view = new AppPickerRowView(parent.getContext());
-        } else if (convertView instanceof AppPickerRowView) {
-            view = (AppPickerRowView) convertView;
+            view = new GetFilePackageRowView(parent.getContext());
+        } else if (convertView instanceof GetFilePackageRowView) {
+            view = (GetFilePackageRowView) convertView;
         } else {
-            view = new AppPickerRowView(parent.getContext());
+            view = new GetFilePackageRowView(parent.getContext());
         }
 
-        AppPickerPackage pack = _appList.get(position);
+        GetFilePackage pack = _appList.get(position);
         view.setInfo(pack);
         view.setListener(_listener);
 

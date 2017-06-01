@@ -152,12 +152,18 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         if (false) {
 
             // ack hold
-        } else if (_workOrder.isOnHold() && !_workOrder.areHoldsAcknowledged()) {
+        } else if (_workOrder.isOnHold()) {
             inflate();
 
             _rightWhiteButton.setVisibility(VISIBLE);
             _rightWhiteButton.setOnClickListener(_acknowledge_onClick);
-            _rightWhiteButton.setText(R.string.btn_acknowledge_hold);
+            if (_workOrder.areHoldsAcknowledged()){
+                _rightWhiteButton.setText(R.string.btn_on_hold);
+                _rightWhiteButton.setEnabled(false);
+            }else {
+                _rightWhiteButton.setText(R.string.btn_review_hold);
+                _rightWhiteButton.setEnabled(true);
+            }
             setVisibility(View.VISIBLE);
 
             // is on hold
@@ -283,7 +289,8 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _leftWhiteButton.setOnClickListener(_withdraw_onClick);
             _leftWhiteButton.setText(R.string.btn_withdraw);
 
-            if (_workOrder.getRequests() != null && _workOrder.getRequests().getCounterOffer() != null) {
+            if (_workOrder.getRequests() != null && _workOrder.getRequests().getCounterOffer() != null
+                    && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_view_counter);
                 _rightWhiteButton.setOnClickListener(_viewCounter_onClick);

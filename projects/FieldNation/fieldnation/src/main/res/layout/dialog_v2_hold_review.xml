@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:paddingBottom="@dimen/dialogActionBarPadding">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/hold_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/reasons_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="24dp"
+                    android:gravity="center"
+                    android:text="@string/reasons"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/reasons_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/reasons_title_textview" />
+
+                <LinearLayout
+                    android:id="@+id/holdReasons_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/reasons_title_divider"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/explanation_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/hold_layout"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/explanation_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="24dp"
+                    android:gravity="center"
+                    android:text="@string/explanation"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/explanation_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/explanation_title_textview" />
+
+                <TextView
+                    android:id="@+id/explanation_textview"
+                    style="@style/Text_Subhead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/explanation_title_divider"
+                    android:layout_marginLeft="24dp"
+                    android:textColor="@color/fn_light_text"
+                    android:ellipsize="end"
+                    android:hint="@string/place_holder_explanation"
+                    android:lines="5" />
+
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

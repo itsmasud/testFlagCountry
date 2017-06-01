@@ -11,16 +11,16 @@ import com.fieldnation.fnlog.Log;
  * Created by mc on 2/13/17.
  */
 
-public class AppPickerIntent implements Parcelable {
-    private static final String TAG = "AppPickerIntent";
+public class GetFileIntent implements Parcelable {
+    private static final String TAG = "GetFileIntent";
 
     public Bundle bundle;
 
-    private AppPickerIntent(Bundle bundle) {
+    private GetFileIntent(Bundle bundle) {
         this.bundle = bundle;
     }
 
-    public AppPickerIntent(Intent intent, String postfix) {
+    public GetFileIntent(Intent intent, String postfix) {
         bundle = new Bundle();
         bundle.putParcelable("intent", intent);
         bundle.putString("postfix", postfix);
@@ -37,12 +37,12 @@ public class AppPickerIntent implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<AppPickerIntent> CREATOR = new Parcelable.Creator<AppPickerIntent>() {
+    public static final Parcelable.Creator<GetFileIntent> CREATOR = new Parcelable.Creator<GetFileIntent>() {
 
         @Override
-        public AppPickerIntent createFromParcel(Parcel source) {
+        public GetFileIntent createFromParcel(Parcel source) {
             try {
-                return new AppPickerIntent(source.readBundle());
+                return new GetFileIntent(source.readBundle());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -50,8 +50,8 @@ public class AppPickerIntent implements Parcelable {
         }
 
         @Override
-        public AppPickerIntent[] newArray(int size) {
-            return new AppPickerIntent[size];
+        public GetFileIntent[] newArray(int size) {
+            return new GetFileIntent[size];
         }
     };
 
