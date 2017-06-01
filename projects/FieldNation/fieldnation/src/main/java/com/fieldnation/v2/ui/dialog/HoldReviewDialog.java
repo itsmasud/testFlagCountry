@@ -3,7 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
