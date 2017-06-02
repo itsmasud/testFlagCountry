@@ -32,12 +32,14 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Coords;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
+import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Problem;
 import com.fieldnation.v2.data.model.ProblemResolution;
@@ -231,7 +233,13 @@ public class WorkOrderCard extends RelativeLayout {
         if (_workOrder.getHolds() != null
                 && _workOrder.getHolds().getResults() != null
                 && _workOrder.getHolds().getResults().length > 0) {
-            setWarning(true);
+            Hold[] holds = _workOrder.getHolds().getResults();
+            for (Hold hold : holds) {
+                if (hold.getAcknowledgment().getStatus() != Acknowledgment.StatusEnum.ACKNOWLEDGED) {
+                    setWarning(true);
+                    break;
+                }
+            }
         }
 
         populateLocation();
