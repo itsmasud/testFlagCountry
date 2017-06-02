@@ -8,9 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.fieldnation.R;
-import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
  * Created by Michael on 10/5/2016.

@@ -4,8 +4,6 @@ import android.content.Context;
 
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
-import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -94,10 +92,6 @@ public class SavedSearchTracker {
 
     public static void test(Context context) {
         onShow(context);
-        SavedSearchParams[] list = SavedSearchClient.defaults;
-        for (SavedSearchParams p : list) {
-            onListChanged(context, p.title);
-        }
         for (Item item : Item.values()) {
             onClick(context, item);
         }

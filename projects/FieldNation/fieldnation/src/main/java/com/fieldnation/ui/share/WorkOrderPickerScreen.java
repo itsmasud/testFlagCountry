@@ -8,10 +8,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.data.v2.WorkOrder;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
-import com.fieldnation.ui.search.SearchResultScreen;
+import com.fieldnation.v2.data.model.SavedList;
+import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.search.SearchResultScreen;
 
 /**
  * Created by Michael on 9/27/2016.
@@ -20,11 +19,14 @@ import com.fieldnation.ui.search.SearchResultScreen;
 public class WorkOrderPickerScreen extends FrameLayout {
     private static final String TAG = "WorkOrderPickerScreen";
 
-    private static final SavedSearchParams _searchParams =
-            new SavedSearchParams(0)
-                    .type(WorkOrderListType.ATTACHABLE.getType())
-                    .status(WorkOrderListType.ATTACHABLE.getStatuses())
-                    .title("Select a Work Order");
+    private static SavedList _searchParams;
+
+    static {
+        try {
+            _searchParams = new SavedList().id("workorders_assignments");
+        } catch (Exception ex) {
+        }
+    }
 
     // UI
     private Toolbar _toolbar;
