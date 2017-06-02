@@ -773,7 +773,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onWithdraw() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
 
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getId(), _workOrder.getRequests().getOpenRequest().getId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getId(), 0, _workOrder.getRequests().getOpenRequest().getId());
         }
 
         @Override
