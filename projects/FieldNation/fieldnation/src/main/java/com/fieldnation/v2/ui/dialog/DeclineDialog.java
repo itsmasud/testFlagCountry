@@ -210,7 +210,7 @@ public class DeclineDialog extends SimpleDialog {
     }
 
     private void onDeclined() {
-        _onDeclinedDispatcher.dispatch(getUid(), _workOrderId);
+        _onDeclinedDispatcher.dispatch(getUid(), (long) _workOrderId);
     }
 
     /*-*********************************-*/
