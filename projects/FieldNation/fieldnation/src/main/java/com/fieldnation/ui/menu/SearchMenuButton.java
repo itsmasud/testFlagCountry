@@ -43,12 +43,12 @@ public class SearchMenuButton extends RelativeLayout {
         //setOnClickListener(_this_onClick);
     }
 
-    private final View.OnClickListener _this_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //EditSearchActivity.startNew(getContext());
-            SavedSearchTracker.onClick(App.get(), SavedSearchTracker.Item.SEARCH);
-            SearchDialog.show(App.get());
-        }
-    };
+//    private final View.OnClickListener _this_onClick = new OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            //EditSearchActivity.startNew(getContext());
+//            SavedSearchTracker.onClick(App.get(), SavedSearchTracker.Item.SEARCH);
+//            SearchDialog.show(App.get());
+//        }
+//    };
 }
