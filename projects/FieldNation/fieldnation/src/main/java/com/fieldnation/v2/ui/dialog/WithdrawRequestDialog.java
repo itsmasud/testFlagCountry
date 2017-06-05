@@ -9,6 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 
@@ -31,12 +32,16 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
             Bundle bundle = (Bundle) extraData;
             int workOrderId = bundle.getInt("workOrderId");
             int requestId = bundle.getInt("requestId");
+            int bundleId = bundle.getInt("bundleId");
 
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Withdraw Request Dialog";
 
             try {
-                WorkordersWebApi.deleteRequest(App.get(), workOrderId, requestId, uiContext);
+                if (bundleId == 0)
+                    WorkordersWebApi.deleteRequest(App.get(), workOrderId, requestId, uiContext);
+                else
+                    WorkorderClient.actionWithdrawRequest(App.get(), workOrderId);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -46,10 +51,11 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
     }
 
 
-    public static void show(Context context, String uid, int workOrderId, int requestId) {
+    public static void show(Context context, String uid, int workOrderId, int bundleId, int requestId) {
         Bundle extraData = new Bundle();
         extraData.putInt("workOrderId", workOrderId);
         extraData.putInt("requestId", requestId);
+        extraData.putInt("bundleId", bundleId);
 
         show(context, uid, WithdrawRequestDialog.class, R.string.dialog_withdraw_title, R.string.dialog_withdraw_body,
                 R.string.btn_yes, R.string.btn_no, true, extraData);

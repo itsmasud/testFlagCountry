@@ -46,7 +46,7 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.v2.RequestBundleDialog;
+import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -773,7 +773,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onWithdraw() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
 
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getId(), _workOrder.getRequests().getOpenRequest().getId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getId(), 0, _workOrder.getRequests().getOpenRequest().getId());
         }
 
         @Override

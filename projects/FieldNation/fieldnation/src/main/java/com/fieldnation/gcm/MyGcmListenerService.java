@@ -30,7 +30,6 @@ import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;

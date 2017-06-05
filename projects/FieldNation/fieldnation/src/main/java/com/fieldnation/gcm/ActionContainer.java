@@ -1,4 +1,4 @@
-package com.fieldnation.data.v2.actions;
+package com.fieldnation.gcm;
 
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;

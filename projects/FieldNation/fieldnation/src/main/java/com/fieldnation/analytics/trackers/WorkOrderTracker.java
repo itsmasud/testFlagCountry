@@ -6,9 +6,7 @@ import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
-import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.v2.data.model.TaskType;
 
 import java.util.LinkedList;
@@ -591,7 +589,7 @@ public class WorkOrderTracker {
     }
 
     public static void test(Context context) {
-        SavedSearchParams[] list = SavedSearchClient.defaults;
+//        SavedSearchParams[] list = SavedSearchClient.defaults;
 
         for (Tab tab : Tab.values()) {
             onShow(context, tab, 1);
@@ -606,10 +604,10 @@ public class WorkOrderTracker {
         for (ActionButton ab : ActionButton.values()) {
             onActionButtonEvent(context, ab, ab.getAction(), 1);
             onActionButtonEvent(context, ab, null, 1);
-            for (SavedSearchParams p : list) {
-                onActionButtonEvent(context, p.title, ab, ab.getAction(), 1);
-                onActionButtonEvent(context, p.title, ab, null, 1);
-            }
+//            for (SavedSearchParams p : list) {
+//                onActionButtonEvent(context, p.title, ab, ab.getAction(), 1);
+//                onActionButtonEvent(context, p.title, ab, null, 1);
+//            }
         }
 
         for (WorkOrderDetailsSection section : WorkOrderDetailsSection.values()) {

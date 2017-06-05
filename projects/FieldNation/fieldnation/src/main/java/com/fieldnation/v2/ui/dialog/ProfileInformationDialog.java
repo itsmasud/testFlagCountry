@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog.v2;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +30,6 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.v2.ui.GetFileIntent;
-import com.fieldnation.v2.ui.dialog.GetFileDialog;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
