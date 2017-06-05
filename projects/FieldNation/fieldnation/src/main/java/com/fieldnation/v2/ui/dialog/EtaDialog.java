@@ -778,7 +778,10 @@ public class EtaDialog extends FullScreenDialog {
             boolean isBundle = _workOrder.getBundle() != null
                     && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
 
-            if (isBundle) {
+            if (isBundle
+                    && _workOrder.getRoutes() != null
+                    && _workOrder.getRoutes().getUserRoute() != null
+                    && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
                 try {
                     ETA eta = new ETA();
                     eta.workOrderId(_workOrder.getId());
