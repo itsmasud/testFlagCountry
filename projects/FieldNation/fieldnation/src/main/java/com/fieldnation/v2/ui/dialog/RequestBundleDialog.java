@@ -1,4 +1,4 @@
-package com.fieldnation.ui.dialog.v2;
+package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.content.Intent;

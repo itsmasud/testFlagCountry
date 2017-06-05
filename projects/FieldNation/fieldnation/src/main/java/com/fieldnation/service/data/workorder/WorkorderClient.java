@@ -519,11 +519,15 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 */
 
-/*
+    public static void actionDecline(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionDecline(context, workorderId);
+    }
+
     public static void actionWithdrawRequest(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionWithdrawRequest(context, workorderId);
     }
 
+/*
     public static void actionReeadyToGo(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionReady(context, workorderId);
     }
