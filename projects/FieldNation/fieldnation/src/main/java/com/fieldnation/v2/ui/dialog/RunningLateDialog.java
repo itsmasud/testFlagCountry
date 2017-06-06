@@ -109,8 +109,13 @@ public class RunningLateDialog extends SimpleDialog {
 
         Calendar cal = null;
         try {
-            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+            if (_workOrder.getEta() != null
+                    && _workOrder.getEta().getStatus() != null
+                    && _workOrder.getEta().getStatus().getName() != null
+                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _workOrder.getEta().getStart() != null) {
                 cal = _workOrder.getEta().getStart().getCalendar();
+                
             } else if (_workOrder.getSchedule() != null
                     && _workOrder.getSchedule().getServiceWindow() != null
                     && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
@@ -199,8 +204,8 @@ public class RunningLateDialog extends SimpleDialog {
 
                 ETA eta = new ETA()
                         .condition(new Condition()
-                                        .estimatedDelay(delayMin * 60)
-                                        .status(Condition.StatusEnum.DELAYED));
+                                .estimatedDelay(delayMin * 60)
+                                .status(Condition.StatusEnum.DELAYED));
 
                 Log.e(TAG, "eta: " + eta.getJson());
 
