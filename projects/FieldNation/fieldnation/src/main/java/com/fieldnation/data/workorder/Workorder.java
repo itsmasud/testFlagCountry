@@ -3,10 +3,8 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.v2.Estimate;
-import com.fieldnation.data.v2.Range;
-import com.fieldnation.data.v2.actions.Action;
-import com.fieldnation.data.v2.actions.ActionContainer;
+import com.fieldnation.gcm.Action;
+import com.fieldnation.gcm.ActionContainer;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -140,33 +138,33 @@ public class Workorder implements Parcelable {
     // 1=>exact schedule
     // 2=>Buseness hours
     // 3=>Open range
-    public com.fieldnation.data.v2.Schedule getScheduleV2() {
-        com.fieldnation.data.v2.Schedule schedule = new com.fieldnation.data.v2.Schedule();
-
-        if (getScheduleType() == 1) {
-            schedule.setExact(getSchedule().getStartTime());
-        } else if (getScheduleType() == 2) {
-            Range range = new Range();
-            range.setBegin(getSchedule().getStartTime());
-            range.setEnd(getSchedule().getEndTime());
-            range.setType(Range.Type.BUSINESS);
-            schedule.setRange(range);
-        } else if (getScheduleType() == 3) {
-            Range range = new Range();
-            range.setBegin(getSchedule().getStartTime());
-            range.setEnd(getSchedule().getEndTime());
-            range.setType(Range.Type.RANGE);
-            schedule.setRange(range);
-        }
-
-        if (getEstimatedSchedule() != null) {
-            Estimate estimate = new Estimate();
-            estimate.setArrival(getEstimatedSchedule().getStartTime());
-            estimate.setDuration(getEstimatedSchedule().getDuration());
-            schedule.setEstimate(estimate);
-        }
-        return schedule;
-    }
+//    public com.fieldnation.data.v2.Schedule getScheduleV2() {
+//        com.fieldnation.data.v2.Schedule schedule = new com.fieldnation.data.v2.Schedule();
+//
+//        if (getScheduleType() == 1) {
+//            schedule.setExact(getSchedule().getStartTime());
+//        } else if (getScheduleType() == 2) {
+//            Range range = new Range();
+//            range.setBegin(getSchedule().getStartTime());
+//            range.setEnd(getSchedule().getEndTime());
+//            range.setType(Range.Type.BUSINESS);
+//            schedule.setRange(range);
+//        } else if (getScheduleType() == 3) {
+//            Range range = new Range();
+//            range.setBegin(getSchedule().getStartTime());
+//            range.setEnd(getSchedule().getEndTime());
+//            range.setType(Range.Type.RANGE);
+//            schedule.setRange(range);
+//        }
+//
+//        if (getEstimatedSchedule() != null) {
+//            Estimate estimate = new Estimate();
+//            estimate.setArrival(getEstimatedSchedule().getStartTime());
+//            estimate.setDuration(getEstimatedSchedule().getDuration());
+//            schedule.setEstimate(estimate);
+//        }
+//        return schedule;
+//    }
 
     public JsonArray getActions() {
         return _action;

@@ -200,7 +200,7 @@
                         android:id="@+id/debug_iconfont"
                         style="@style/OptionsMenuIcon"
                         android:background="@drawable/circle_menu_send_debug_log"
-                        android:text="@string/icon_bug" />
+                        android:text="@string/icon_bug_solid" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"

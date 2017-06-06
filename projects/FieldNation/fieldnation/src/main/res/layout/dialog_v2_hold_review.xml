@@ -33,7 +33,7 @@
                     android:id="@+id/reasons_title_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:gravity="center"
                     android:text="@string/reasons"
@@ -67,7 +67,7 @@
                     android:id="@+id/explanation_title_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
                     android:gravity="center"
                     android:text="@string/explanation"
@@ -85,15 +85,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/explanation_title_divider"
+                    android:layout_marginBottom="12dp"
                     android:layout_marginLeft="24dp"
-                    android:textColor="@color/fn_light_text"
+                    android:layout_marginTop="12dp"
                     android:ellipsize="end"
                     android:hint="@string/place_holder_explanation"
-                    android:lines="5" />
+                    android:textColor="@color/fn_light_text" />
 
-
+                <View
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/explanation_textview" />
             </RelativeLayout>
-
         </RelativeLayout>
     </ScrollView>
 </RelativeLayout>

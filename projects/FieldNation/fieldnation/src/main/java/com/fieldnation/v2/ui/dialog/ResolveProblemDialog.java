@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.fieldnation.App;
@@ -16,6 +15,7 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.menu.ResolveMenuButton;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -32,9 +32,9 @@ public class ResolveProblemDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private TextView _titleTextView;
-    private EditText _commentsEditText;
-    private View _commentsDivider;
+    private TextView _commentsTextView;
     private Button _resolveButton;
+    private RefreshView _refreshView;
 
     // Data
     private Problem _problem;
@@ -54,25 +54,33 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         _toolbar.setTitle("Problem");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _commentsEditText = (EditText) v.findViewById(R.id.comments_edittext);
-        _commentsDivider = v.findViewById(R.id.comments_divider);
+
+        _commentsTextView = (TextView) v.findViewById(R.id.comments_textview);
+
+        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
 
         return v;
     }
 
     @Override
     public void onStart() {
+        super.onStart();
+
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.inflateMenu(R.menu.resolve_problem);
 
         _resolveButton = ((ResolveMenuButton) _toolbar.getMenu().findItem(R.id.resolve_menuitem).getActionView()).getButton();
         _resolveButton.setOnClickListener(_resolve_onClick);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
-
-        super.onStart();
     }
 
     @Override
@@ -81,23 +89,22 @@ public class ResolveProblemDialog extends FullScreenDialog {
         _workOrderId = params.getInt("workOrderId");
 
         _titleTextView.setText(_problem.getType().getName());
+        _commentsTextView.setText(_problem.getComments());
 
         if (_problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
             _resolveButton.setEnabled(true);
-            _commentsEditText.setVisibility(View.VISIBLE);
-            _commentsDivider.setVisibility(View.VISIBLE);
         } else {
             _resolveButton.setEnabled(false);
-            _commentsEditText.setVisibility(View.GONE);
-            _commentsDivider.setVisibility(View.GONE);
         }
 
         super.show(params, animate);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+
+        super.onPause();
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -116,17 +123,13 @@ public class ResolveProblemDialog extends FullScreenDialog {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Resolve Problem Dialog";
 
-                String comments = _commentsEditText.getText().toString();
-
                 Problem problem = new Problem()
                         .id(_problem.getId())
                         .resolution(new ProblemResolution()
-                                .status(ProblemResolution.StatusEnum.RESOLVED))
-                        .comments(comments);
+                                .status(ProblemResolution.StatusEnum.RESOLVED));
 
                 WorkordersWebApi.updateProblem(App.get(), _workOrderId, _problem.getId(), problem, uiContext);
-
-                // TODO start loading
+                _refreshView.startRefreshing();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -140,15 +143,20 @@ public class ResolveProblemDialog extends FullScreenDialog {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("updateProblem");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("updateProblem") && success) {
                 _workOrderApi.clearTopicAll("TOPIC_ID_WEB_API_V2/WorkordersWebApi");
                 WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
                 dismiss(true);
             } else {
-
+                Log.v(TAG, "onComplete");
             }
-            // TODO stop loading
+            _refreshView.refreshComplete();
         }
     };
 

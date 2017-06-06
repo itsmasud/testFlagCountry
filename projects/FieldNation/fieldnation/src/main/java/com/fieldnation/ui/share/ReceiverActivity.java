@@ -13,7 +13,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
@@ -24,6 +23,7 @@ import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.ArrayList;
 

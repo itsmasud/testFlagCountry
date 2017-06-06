@@ -13,13 +13,13 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.LinkedList;
 import java.util.List;

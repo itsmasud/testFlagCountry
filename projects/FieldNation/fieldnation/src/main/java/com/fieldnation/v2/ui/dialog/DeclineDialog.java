@@ -22,6 +22,7 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.KeyedDispatcher;
@@ -209,7 +210,7 @@ public class DeclineDialog extends SimpleDialog {
     }
 
     private void onDeclined() {
-        _onDeclinedDispatcher.dispatch(getUid(), _workOrderId);
+        _onDeclinedDispatcher.dispatch(getUid(), (long) _workOrderId);
     }
 
     /*-*********************************-*/
@@ -234,9 +235,12 @@ public class DeclineDialog extends SimpleDialog {
                     return;
                 }
 
-                // TODO implement decline reason stuff
                 if (_declinePosition == -1) {
-                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    if (_bundleSize == 0) // not a bundle
+                        WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    else
+                        WorkorderClient.actionDecline(App.get(), _workOrderId);
+
                     ProfileClient.actionBlockCompany(
                             App.get(),
                             App.get().getProfile().getUserId(),
@@ -246,7 +250,10 @@ public class DeclineDialog extends SimpleDialog {
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    if (_bundleSize == 0) // not a bundle
+                        WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    else
+                        WorkorderClient.actionDecline(App.get(), _workOrderId);
                     ProfileClient.actionBlockCompany(
                             App.get(),
                             App.get().getProfile().getUserId(),
@@ -258,11 +265,17 @@ public class DeclineDialog extends SimpleDialog {
                 }
             } else {
                 if (_declinePosition == -1) {
-                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    if (_bundleSize == 0) // not a bundle
+                        WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    else
+                        WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
                 } else {
-                    WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    if (_bundleSize == 0) // not a bundle
+                        WorkordersWebApi.decline(App.get(), _workOrderId, uiContext);
+                    else
+                        WorkorderClient.actionDecline(App.get(), _workOrderId);
                     onDeclined();
                     GlobalTopicClient.finishActivity(App.get());
 
@@ -348,6 +361,7 @@ public class DeclineDialog extends SimpleDialog {
         params.putInt(PARAM_TYPE, TYPE_WORK_ORDER);
         params.putInt(PARAM_WORK_ORDER_ID, workOrderId);
         params.putInt(PARAM_COMPANY_ID, companyId);
+        params.putInt(PARAM_BUNDLE_SIZE, 0);
 
         Controller.show(context, uid, DeclineDialog.class, params);
     }

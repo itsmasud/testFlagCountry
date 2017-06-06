@@ -105,6 +105,9 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         }
 
         _adapter.notifyDataSetChanged();
+
+        if (_problems.size() == 0)
+            dismiss(true);
     }
 
     @Override
@@ -161,6 +164,11 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
         @Override
         public void onConnected() {
             _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return true;
         }
 
         @Override
