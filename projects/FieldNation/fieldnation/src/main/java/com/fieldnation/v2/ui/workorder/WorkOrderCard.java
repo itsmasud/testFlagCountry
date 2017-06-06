@@ -462,6 +462,10 @@ public class WorkOrderCard extends RelativeLayout {
 
             // is on hold
         } else if (_workOrder.isOnHold()) {
+            button.setVisibility(VISIBLE);
+            button.setText(R.string.btn_on_hold);
+            button.setEnabled(false);
+            button.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_white));
 
             // set eta
         } else if (_workOrder.getEta() != null
