@@ -452,6 +452,8 @@ public class WorkOrderCard extends RelativeLayout {
         // request
         // withdraw
 
+        button.setEnabled(true);
+
         if (false) {
 
             // ack hold/
@@ -465,7 +467,6 @@ public class WorkOrderCard extends RelativeLayout {
             button.setVisibility(VISIBLE);
             button.setText(R.string.btn_on_hold);
             button.setEnabled(false);
-            button.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_bg_white));
 
             // set eta
         } else if (_workOrder.getEta() != null
