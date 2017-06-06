@@ -512,6 +512,12 @@ public class CounterOfferDialog extends SimpleDialog {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("request")
+                    || methodName.equals("deleteRequest");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;

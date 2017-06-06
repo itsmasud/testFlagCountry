@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Dialog.v3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg"
+    android:clickable="true">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:background="@color/fn_clickable_bg"
+        android:padding="16dp"
+        android:text="Title" />
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@id/title_textview" />
+
+    <TextView
+        android:id="@+id/comments_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:background="@color/fn_clickable_bg"
+        android:padding="16dp"
+        android:text="Comments" />
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@id/comments_textview" />
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
+
+</RelativeLayout>

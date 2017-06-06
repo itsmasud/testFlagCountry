@@ -604,6 +604,12 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 WorkorderTransactionListener.pConfirm(workorderId, startTimeIso8601, endTimeIso8601, note));
     }
 
+    // returns the details
+    public static void actionDecline(Context context, long workorderId) {
+        action(context, workorderId, "decline", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
+    }
+
     public static void actionReady(Context context, long workorderId) {
         context.startService(actionReadyIntent(context, workorderId));
     }

@@ -68,7 +68,7 @@ public class TopicService extends MultiThreadedService implements TopicConstants
     @Override
     public void addIntent(List<Intent> intents, Intent intent) {
         super.addIntent(intents, intent);
-        Log.v(TAG, "intents " + intents.size());
+        //Log.v(TAG, "intents " + intents.size());
     }
 
     @Override
@@ -249,7 +249,7 @@ public class TopicService extends MultiThreadedService implements TopicConstants
 
         synchronized (TAG) {
             String topicId = topicIdTree[0];
-            Log.v(TAG, "dispatchEvent(" + topicId + ", " + stickyType + ")");
+            //Log.v(TAG, "dispatchEvent(" + topicId + ", " + stickyType + ")");
             // exact match
             Set<TopicUser> users = TopicUser.getUsers(topicId);
             for (TopicUser c : users) {
@@ -264,7 +264,7 @@ public class TopicService extends MultiThreadedService implements TopicConstants
 
             for (int i = 1; i < topicIdTree.length; i++) {
                 topicId += "/" + topicIdTree[i];
-                Log.v(TAG, "dispatchEvent(" + topicId + ", " + stickyType + ")");
+                //Log.v(TAG, "dispatchEvent(" + topicId + ", " + stickyType + ")");
 
                 users = TopicUser.getUsers(topicId);
                 for (TopicUser c : users) {

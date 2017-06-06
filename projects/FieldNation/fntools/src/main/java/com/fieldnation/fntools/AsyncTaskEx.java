@@ -34,7 +34,7 @@ public abstract class AsyncTaskEx<Params, Progress, Result> extends AsyncTask<Pa
             MAXIMUM_POOL_SIZE, KEEP_ALIVE, TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
 
     public AsyncTask<Params, Progress, Result> executeEx(Params... params) {
-        Log.v(TAG, "Queue: " + sPoolWorkQueue.size());
+        //Log.v(TAG, "Queue: " + sPoolWorkQueue.size());
         return super.executeOnExecutor(THREAD_POOL_EXECUTOR, params);
     }
 

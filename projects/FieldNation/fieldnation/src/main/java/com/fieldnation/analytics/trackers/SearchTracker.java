@@ -5,9 +5,7 @@ import android.content.Context;
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.contexts.SpSearchContext;
-import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnanalytics.EventContext;
-import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.v2.ui.search.FilterParams;
 
 import java.util.LinkedList;
@@ -87,25 +85,25 @@ public class SearchTracker {
                 });
     }
 
-    public static void onSearch(Context context, Item item, SavedSearchParams savedSearchParams) {
-        Item i = item.clone();
-        i.elementType = ElementType.LIST_ITEM;
-        TrackerBase.unstructuredEvent(context, item,
-                new EventContext[]{
-                        new SpSearchContext.Builder()
-                                .name("Location")
-                                .value(getLocationString(savedSearchParams))
-                                .build(),
-                        new SpSearchContext.Builder()
-                                .name("Status")
-                                .value(savedSearchParams.title)
-                                .build(),
-                        new SpSearchContext.Builder()
-                                .name("Distance")
-                                .value(savedSearchParams.radius + "")
-                                .build()
-                });
-    }
+//    public static void onSearch(Context context, Item item, SavedSearchParams savedSearchParams) {
+//        Item i = item.clone();
+//        i.elementType = ElementType.LIST_ITEM;
+//        TrackerBase.unstructuredEvent(context, item,
+//                new EventContext[]{
+//                        new SpSearchContext.Builder()
+//                                .name("Location")
+//                                .value(getLocationString(savedSearchParams))
+//                                .build(),
+//                        new SpSearchContext.Builder()
+//                                .name("Status")
+//                                .value(savedSearchParams.title)
+//                                .build(),
+//                        new SpSearchContext.Builder()
+//                                .name("Distance")
+//                                .value(savedSearchParams.radius + "")
+//                                .build()
+//                });
+//    }
 
     public static void onSearch(Context context, Item item, FilterParams filterParams) {
         Item i = item.clone();
@@ -127,20 +125,20 @@ public class SearchTracker {
                 });
     }
 
-    private static String getLocationString(SavedSearchParams savedSearchParams) {
-        switch (savedSearchParams.uiLocationSpinner) {
-            case 0:
-                return "Profile";
-            case 1:
-                return "Current";
-            case 2:
-                return "Other";
-            case 3:
-                return "Remote";
-            default:
-                return "na";
-        }
-    }
+//    private static String getLocationString(SavedSearchParams savedSearchParams) {
+//        switch (savedSearchParams.uiLocationSpinner) {
+//            case 0:
+//                return "Profile";
+//            case 1:
+//                return "Current";
+//            case 2:
+//                return "Other";
+//            case 3:
+//                return "Remote";
+//            default:
+//                return "na";
+//        }
+//    }
 
     private static String getLocationString(FilterParams filterParams) {
         switch (filterParams.uiLocationSpinner) {
@@ -159,13 +157,12 @@ public class SearchTracker {
 
     public static void test(Context context) {
         onShow(context);
-        SavedSearchParams[] list = SavedSearchClient.defaults;
-        for (Item item : Item.values()) {
-            onSearch(context, item, 1);
-            for (SavedSearchParams p : list) {
-                onSearch(context, item, p);
-            }
-        }
-
+//        SavedSearchParams[] list = SavedSearchClient.defaults;
+//        for (Item item : Item.values()) {
+//            onSearch(context, item, 1);
+//            for (SavedSearchParams p : list) {
+//                onSearch(context, item, p);
+//            }
+//        }
     }
 }

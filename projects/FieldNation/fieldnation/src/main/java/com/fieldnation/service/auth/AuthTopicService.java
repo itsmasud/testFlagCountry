@@ -90,7 +90,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     }
 
     private void setState(AuthState state) {
-        Log.v(TAG, "setState");
         if (_state == null || state != _state || state == AuthState.AUTHENTICATED) {
             _state = state;
             Log.v(TAG, state.name());

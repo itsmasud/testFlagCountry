@@ -41,6 +41,8 @@ import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
+import com.fieldnation.v2.data.model.Problem;
+import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
@@ -53,6 +55,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
+import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
 import com.fieldnation.v2.ui.dialog.RunningLateDialog;
@@ -77,8 +80,10 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String DIALOG_WITHDRAW_REQUEST = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
     private static final String DIALOG_MARK_INCOMPLETE = TAG + ".markIncompleteWarningDialog";
+    private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
 
     // Ui
+    private View _warningBarView;
     private TextView _amountTextView;
     private TextView _payTypeTextView;
     private TextView _workTypeTextView;
@@ -121,6 +126,7 @@ public class WorkOrderCard extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _warningBarView = findViewById(R.id.warninginbar_view);
         _amountTextView = (TextView) findViewById(R.id.amount_textview);
         _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
         _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
@@ -157,6 +163,8 @@ public class WorkOrderCard extends RelativeLayout {
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.addOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
+        HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
+        HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
 
         setOnClickListener(_this_onClick);
     }
@@ -173,6 +181,8 @@ public class WorkOrderCard extends RelativeLayout {
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         RunningLateDialog.removeOnSendListener(DIALOG_RUNNING_LATE, _runningLateDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW_REQUEST, _withdrawRequestDialog_onWithdraw);
+        HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
+        HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
 
         super.onDetachedFromWindow();
     }
@@ -203,10 +213,53 @@ public class WorkOrderCard extends RelativeLayout {
             _workTypeTextView.setText("");
         }
 
+        setWarning(false);
+
+        if (_workOrder.getProblems() != null
+                && _workOrder.getProblems().getResults() != null
+                && _workOrder.getProblems().getResults().length > 0) {
+            for (Problem problem : _workOrder.getProblems().getResults()) {
+                if (problem != null
+                        && problem.getResolution() != null
+                        && problem.getResolution().getStatus() != null) {
+                    if (problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
+                        setWarning(true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (_workOrder.getHolds() != null
+                && _workOrder.getHolds().getResults() != null
+                && _workOrder.getHolds().getResults().length > 0) {
+            Hold[] holds = _workOrder.getHolds().getResults();
+            for (Hold hold : holds) {
+                if (hold.getAcknowledgment().getStatus() != Acknowledgment.StatusEnum.ACKNOWLEDGED) {
+                    setWarning(true);
+                    break;
+                }
+            }
+        }
+
         populateLocation();
         populatePay();
         populateTime();
         populateButtons();
+    }
+
+    private void setWarning(boolean warning) {
+        if (warning) {
+            _warningBarView.setVisibility(VISIBLE);
+            _amountTextView.setTextColor(getResources().getColor(R.color.fn_white_text));
+            _payTypeTextView.setTextColor(getResources().getColor(R.color.fn_white_text));
+            _workTypeTextView.setTextColor(getResources().getColor(R.color.fn_white_text));
+        } else {
+            _warningBarView.setVisibility(GONE);
+            _amountTextView.setTextColor(getResources().getColor(R.color.fn_gray_dark));
+            _payTypeTextView.setTextColor(getResources().getColor(R.color.fn_gray_light));
+            _workTypeTextView.setTextColor(getResources().getColor(R.color.fn_gray_light));
+        }
     }
 
     private void populateTime() {
@@ -399,16 +452,21 @@ public class WorkOrderCard extends RelativeLayout {
         // request
         // withdraw
 
+        button.setEnabled(true);
+
         if (false) {
 
             // ack hold/
         } else if (_workOrder.isOnHold() && !_workOrder.areHoldsAcknowledged()) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_ackHold_onClick);
-            button.setText(R.string.btn_acknowledge_hold);
+            button.setText(R.string.btn_review_hold);
 
             // is on hold
         } else if (_workOrder.isOnHold()) {
+            button.setVisibility(VISIBLE);
+            button.setText(R.string.btn_on_hold);
+            button.setEnabled(false);
 
             // set eta
         } else if (_workOrder.getEta() != null
@@ -637,13 +695,8 @@ public class WorkOrderCard extends RelativeLayout {
             if (_onActionListener != null) _onActionListener.onAction();
 
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
-            try {
-                Hold unAckHold = _workOrder.getUnAcknowledgedHold();
-                Hold ackHold = new Hold().id(unAckHold.getId()).acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAckHold.getId(), ackHold, App.get().getSpUiContext());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder);
+
         }
     };
 
@@ -909,7 +962,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
-            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getId(), _workOrder.getRequests().getOpenRequest().getId());
+            WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW_REQUEST, _workOrder.getId(), 0, _workOrder.getRequests().getOpenRequest().getId());
         }
     };
 
@@ -946,6 +999,21 @@ public class WorkOrderCard extends RelativeLayout {
 
             if (_workOrder.getId() == workOrderId)
                 WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, WorkOrderTracker.Action.RUNNING_LATE, (int) workOrderId);
+        }
+    };
+
+    private final HoldReviewDialog.OnAcknowledgeListener _holdReviewDialog_onAcknowledge = new HoldReviewDialog.OnAcknowledgeListener() {
+        @Override
+        public void onAcknowledge(int workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
+                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
+
+        }
+    };
+
+    private final HoldReviewDialog.OnCancelListener _holdReviewDialog_onCancel = new HoldReviewDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
         }
     };
 

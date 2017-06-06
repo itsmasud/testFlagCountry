@@ -152,7 +152,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
 
     @Override
     public void processIntent(Intent intent) {
-        Log.v(TAG, "processIntent start");
+        //Log.v(TAG, "processIntent start");
         if (intent != null && intent.getExtras() != null) {
             try {
                 Bundle extras = intent.getExtras();
@@ -163,10 +163,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                     return;
                 }
 
-                Log.v(TAG, "processIntent building transaction");
+                //Log.v(TAG, "processIntent building transaction");
                 WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
 
-                Log.v(TAG, "processIntent building transforms");
+                //Log.v(TAG, "processIntent building transforms");
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (Parcelable parcel : transforms) {
@@ -175,7 +175,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                     }
                 }
 
-                Log.v(TAG, "processIntent saving transaction");
+                //Log.v(TAG, "processIntent saving transaction");
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save();
 
@@ -189,7 +189,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
         _manager.wakeUp();
 
-        Log.v(TAG, "processIntent end");
+        //Log.v(TAG, "processIntent end");
     }
 
     public boolean isAuthenticated() {

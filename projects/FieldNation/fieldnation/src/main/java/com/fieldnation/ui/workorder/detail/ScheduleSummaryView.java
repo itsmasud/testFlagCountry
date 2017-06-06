@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
@@ -121,7 +120,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
             if (_workOrder.getEta() != null && _workOrder.getEta().getUser() != null
                     && _workOrder.getEta().getUser().getId() > 0) {
 
-                Log.v(TAG, "ETA!!");
+                //Log.v(TAG, "ETA!!");
                 ETA eta = _workOrder.getEta();
                 Calendar sCal = eta.getStart().getCalendar();
 

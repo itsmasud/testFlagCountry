@@ -134,7 +134,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
+        //Log.v(TAG, "onSaveInstanceState");
         if (_savedList != null)
             outState.putParcelable(STATE_CURRENT_SEARCH, _savedList);
         super.onSaveInstanceState(outState);
@@ -142,7 +142,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        Log.v(TAG, "onRestoreInstanceState");
+        //Log.v(TAG, "onRestoreInstanceState");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
                 _savedList = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
@@ -241,6 +241,11 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrderLists");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getWorkOrderLists")) {
                 SavedList[] savedList = (SavedList[]) successObject;
@@ -248,6 +253,13 @@ public class NavActivity extends AuthSimpleActivity {
                     _savedList = savedList[0];
                     _recyclerView.startSearch(_savedList);
                     NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                } else {
+                    for (SavedList list : savedList) {
+                        if (list.getId().equals(_savedList.getId())) {
+                            _savedList = list;
+                            NavActivity.this.setTitle(misc.capitalize(_savedList.getTitle()));
+                        }
+                    }
                 }
             }
         }

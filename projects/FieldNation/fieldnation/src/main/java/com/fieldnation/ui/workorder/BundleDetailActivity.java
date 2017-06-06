@@ -24,7 +24,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.dialog.v2.RequestBundleDialog;
+import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -241,7 +241,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             } else if (workOrder.getRequests() != null
                     && workOrder.getRequests().getOpenRequest() != null
                     && workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
-                WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, workOrder.getId(), workOrder.getRequests().getOpenRequest().getId());
+                WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, workOrder.getId(), workOrder.getBundle().getId(), workOrder.getRequests().getOpenRequest().getId());
 
             }
         }
@@ -311,18 +311,6 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final WorkorderClient.Listener _workOrderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subActions();
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            _adapter.refreshAll();
-        }
-    };
-
     private final BundlesWebApi.Listener _bundlesWebApi_listener = new BundlesWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -346,10 +334,37 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
+    private final WorkorderClient.Listener _workOrderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderClient.subActions();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            if (action.contains("decline") && !failed) {
+                ToastClient.toast(App.get(), "Bundle workorders declined successfully.", Toast.LENGTH_LONG);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            }
+            if (action.contains("delete_request") && !failed) {
+                ToastClient.toast(App.get(), "You withdrew bundle successfully.", Toast.LENGTH_LONG);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            }
+            _adapter.refreshAll();
+        }
+    };
+
     private final WorkordersWebApi.Listener _workOrdersApiClient_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
             _workOrdersApiClient.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.contains("decline")
+                    || methodName.contains("deleteRequest")
+                    || methodName.contains("MassAcceptWorkOrder");
         }
 
         @Override

@@ -29,7 +29,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
+import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;

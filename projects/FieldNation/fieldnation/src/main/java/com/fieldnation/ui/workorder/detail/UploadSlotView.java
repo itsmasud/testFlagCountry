@@ -99,7 +99,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     }
 
     public void setData(WorkOrder workOrder, long profileId, AttachmentFolder slot, UploadedDocumentView.Listener listener) {
-        Log.v(TAG, "setData");
+        //Log.v(TAG, "setData");
         _workOrder = workOrder;
         _slot = slot;
         _docListener = listener;
@@ -117,7 +117,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
     @Override
     public void setPhoto(String url, Drawable photo) {
-        Log.v(TAG, "setPhoto");
+        //Log.v(TAG, "setPhoto");
         for (int i = 0; i < _docsList.getChildCount(); i++) {
             View v = _docsList.getChildAt(i);
             if (v instanceof PhotoReceiver) {
@@ -146,7 +146,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
 
         if (files.size() > 0) {
-            Log.v(TAG, "docs: " + files.size() + " " + _docsList.getChildCount());
+            //Log.v(TAG, "docs: " + files.size() + " " + _docsList.getChildCount());
 
             if (_docsRunnable != null)
                 _docsRunnable.cancel();
@@ -192,7 +192,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
                 @Override
                 public void finish(int count) throws Exception {
-                    Log.v(TAG, "finish");
+                    //Log.v(TAG, "finish");
                     _loadingProgressBar.setVisibility(GONE);
                     _docsList.removeAllViews();
                     for (View v : buffer) {
@@ -202,7 +202,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             };
             post(_docsRunnable);
         } else {
-            Log.v(TAG, "removeAllViews");
+            //Log.v(TAG, "removeAllViews");
             _docsList.removeAllViews();
         }
 
@@ -221,6 +221,11 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         @Override
         public void onConnected() {
             _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("addAttachment");
         }
 
         @Override
@@ -267,7 +272,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         public void onPaused(TransactionParams transactionParams, String methodName) {
             if (!methodName.equals("addAttachment"))
                 return;
-            Log.v(TAG, "onStart");
+            Log.v(TAG, "onPaused");
             try {
                 JsonObject obj = new JsonObject(transactionParams.methodParams);
                 String name = obj.getString("attachment.file.name");

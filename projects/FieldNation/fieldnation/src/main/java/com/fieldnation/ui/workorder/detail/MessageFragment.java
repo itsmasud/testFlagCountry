@@ -139,7 +139,7 @@ public class MessageFragment extends WorkorderFragment {
 
     private void rebuildList() {
         // debug testing
-        Log.v(TAG, "rebuildList");
+        //Log.v(TAG, "rebuildList");
 
         _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
 
@@ -195,6 +195,13 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void onConnected() {
             _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("addMessage")
+                    || methodName.equals("getMessages")
+                    || methodName.equals("replyMessage");
         }
 
         @Override
