@@ -28,5 +28,4 @@ dependencies {
     compile project(':fnpigeon')
 
     compile 'com.android.support:support-v4:25.3.1'
-
 }

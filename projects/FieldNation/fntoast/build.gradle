@@ -25,5 +25,5 @@ dependencies {
     compile project(':fnlog')
     compile project(':fnpigeon')
 
-    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:design:25.3.1'
 }

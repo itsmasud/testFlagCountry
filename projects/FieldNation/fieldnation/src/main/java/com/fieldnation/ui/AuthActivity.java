@@ -1,17 +1,20 @@
 package com.fieldnation.ui;
 
+import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -31,6 +34,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
@@ -73,6 +77,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     // Services
     private GlobalTopicClient _globalClient;
     private ActivityResultClient _activityResultClient;
+    private PermissionsClient _permissionsClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -144,6 +149,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onStart();
 
         _dialogManager.onStart();
+
+        _permissionsClient = new PermissionsClient(_permissionsListener);
+        _permissionsClient.connect(App.get());
     }
 
     @Override
@@ -155,7 +163,13 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
+
         _dialogManager.onResume();
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            Log.v(TAG, "PermissionsClient sending request");
+            PermissionsClient.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
     }
 
     @Override
@@ -205,7 +219,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
+        PermissionsClient.sendResults(App.get(), requestCode, permissions, grantResults);
     }
 
     /*-*********************************-*/
@@ -228,6 +242,18 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         @Override
         public void onAnimationEnd(Animation animation) {
             _fader.setVisibility(View.GONE);
+        }
+    };
+
+    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+        @Override
+        public Activity getActivity() {
+            return AuthActivity.this;
+        }
+
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
         }
     };
 
