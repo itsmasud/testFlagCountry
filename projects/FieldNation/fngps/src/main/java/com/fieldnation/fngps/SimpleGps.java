@@ -1,9 +1,12 @@
 package com.fieldnation.fngps;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 
 import com.fieldnation.fnlog.Log;
 import com.google.android.gms.common.ConnectionResult;
@@ -117,21 +120,28 @@ public class SimpleGps {
     }
 
     public SimpleGps start(Context context) {
-        Log.v(TAG, "start");
-        Log.v(TAG, _locationRequest.toString());
-        try {
-            _gglApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(_gglApi_callbacks)
-                    .addOnConnectionFailedListener(_gglApi_failedCallbacks)
-                    .build();
+        int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 
-            _isRunning = true;
-            _gglApiClient.connect();
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            if (_listener != null)
-                _listener.onFail(this);
+        if (permissionCheck == PackageManager.PERMISSION_DENIED){
+
+
+        } else {
+            Log.v(TAG, "start");
+            Log.v(TAG, _locationRequest.toString());
+            try {
+                _gglApiClient = new GoogleApiClient.Builder(context)
+                        .addApi(LocationServices.API)
+                        .addConnectionCallbacks(_gglApi_callbacks)
+                        .addOnConnectionFailedListener(_gglApi_failedCallbacks)
+                        .build();
+
+                _isRunning = true;
+                _gglApiClient.connect();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                if (_listener != null)
+                    _listener.onFail(this);
+            }
         }
         return this;
     }
