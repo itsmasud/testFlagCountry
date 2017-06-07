@@ -29,6 +29,7 @@ import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.Calendar;
@@ -111,7 +112,7 @@ public class RunningLateDialog extends SimpleDialog {
                     && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
                     && _workOrder.getEta().getStart() != null) {
                 cal = _workOrder.getEta().getStart().getCalendar();
-                
+
             } else if (_workOrder.getSchedule() != null
                     && _workOrder.getSchedule().getServiceWindow() != null
                     && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
