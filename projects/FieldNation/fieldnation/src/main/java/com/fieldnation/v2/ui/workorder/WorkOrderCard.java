@@ -42,7 +42,6 @@ import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.ProblemType;
 import com.fieldnation.v2.data.model.Problems;
 import com.fieldnation.v2.data.model.Request;
@@ -220,12 +219,9 @@ public class WorkOrderCard extends RelativeLayout {
                 && _workOrder.getProblems().getResults().length > 0) {
             for (Problem problem : _workOrder.getProblems().getResults()) {
                 if (problem != null
-                        && problem.getResolution() != null
-                        && problem.getResolution().getStatus() != null) {
-                    if (problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
-                        setWarning(true);
-                        break;
-                    }
+                        && problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
+                    setWarning(true);
+                    break;
                 }
             }
         }

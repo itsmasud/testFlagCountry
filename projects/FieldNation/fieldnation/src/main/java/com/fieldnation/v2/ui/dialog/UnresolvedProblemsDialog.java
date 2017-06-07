@@ -17,7 +17,6 @@ import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.LinkedList;
@@ -98,8 +97,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
 
         Problem[] problems = _workOrder.getProblems().getResults();
         for (Problem problem : problems) {
-            if (problem.getResolution() != null
-                    && problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
+            if (problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
                 _problems.add(problem);
             }
         }
