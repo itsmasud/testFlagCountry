@@ -46,6 +46,7 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Requests;
 import com.fieldnation.v2.data.model.Route;
@@ -248,8 +249,13 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         try {
-            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+            if (_workOrder.getEta() != null
+                    && _workOrder.getEta().getStatus() != null
+                    && _workOrder.getEta().getStatus().getName() != null
+                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _workOrder.getEta().getStart() != null) {
                 _etaStart = _workOrder.getEta().getStart().getCalendar();
+
             } else if (_workOrder.getSchedule() != null
                     && _workOrder.getSchedule().getServiceWindow() != null
                     && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
@@ -405,6 +411,9 @@ public class EtaDialog extends FullScreenDialog {
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
                 if (_workOrder.getEta() != null
+                        && _workOrder.getEta().getStatus() != null
+                        && _workOrder.getEta().getStatus().getName() != null
+                        && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
                         && _workOrder.getEta().getHourEstimate() != null
                         && _workOrder.getEta().getHourEstimate() > 0
                         && _dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {

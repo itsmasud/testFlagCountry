@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.v2.data.model.Problem;
-import com.fieldnation.v2.data.model.ProblemResolution;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.dialog.UnresolvedProblemsDialog;
 
@@ -74,11 +73,8 @@ public class ProblemSummaryView extends RelativeLayout {
                 && _workOrder.getProblems().getResults().length > 0) {
             for (Problem problem : _workOrder.getProblems().getResults()) {
                 if (problem != null
-                        && problem.getResolution() != null
-                        && problem.getResolution().getStatus() != null) {
-                    if (problem.getResolution().getStatus() == ProblemResolution.StatusEnum.OPEN) {
-                        count++;
-                    }
+                        && problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
+                    count++;
                 }
             }
         }
