@@ -25,6 +25,7 @@ dependencies {
     compile project(":fnlog")
     compile project(":fntools")
     compile project(":fnpigeon")
+    compile project(":fndialog")
 
     compile 'com.android.support:support-v4:25.3.1'
 }

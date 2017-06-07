@@ -35,18 +35,18 @@ public class PermissionsClient extends TopicClient {
         return TAG;
     }
 
-    public static void sendResults(Context context, int requestCode, String[] permissions, int[] grantResults) {
+    public static void sendResults(Context context, int requestCode, String permissions, int[] grantResults) {
         Bundle payload = new Bundle();
         payload.putInt("requestCode", requestCode);
-        payload.putStringArray("permissions", permissions);
+        payload.putString("permissions", permissions);
         payload.putIntArray("grantResults", grantResults);
 
         TopicService.dispatchEvent(context, TOPIC_ID_RESULTS, payload, Sticky.TEMP);
     }
 
-    public static void requestPermissions(Context context, String[] permissions, int requestCode) {
+    public static void requestPermissions(Context context, String permissions, int requestCode) {
         Bundle payload = new Bundle();
-        payload.putStringArray("permissions", permissions);
+        payload.putString("permissions", permissions);
         payload.putInt("requestCode", requestCode);
 
         TopicService.dispatchEvent(context, TOPIC_ID_REQUESTS, payload, Sticky.TEMP);
@@ -71,7 +71,7 @@ public class PermissionsClient extends TopicClient {
 
             if (topicId.equals(TOPIC_ID_REQUESTS)) {
                 Bundle bundle = (Bundle) payload;
-                onRequest(bundle.getStringArray("permissions"), bundle.getInt("requestCode"));
+                onRequest(bundle.getString("permissions"), bundle.getInt("requestCode"));
             }
         }
 
@@ -79,7 +79,7 @@ public class PermissionsClient extends TopicClient {
 
         public abstract PermissionsClient getClient();
 
-        public void onRequest(String[] permissions, int requestCode) {
+        public void onRequest(String permissions, int requestCode) {
             Log.v(TAG, "onRequest");
             // Here, thisActivity is the current activity
             if (ContextCompat.checkSelfPermission(getActivity(),
@@ -88,12 +88,13 @@ public class PermissionsClient extends TopicClient {
 
                 // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                        Manifest.permission.READ_CONTACTS)) {
+                        permissions)) {
 
                     // TODO, show a dialog
+                    Log.v(TAG, "todo show dialog");
 
                 } else {
-                    ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{permissions}, requestCode);
                 }
             }
         }

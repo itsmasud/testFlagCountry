@@ -168,7 +168,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             Log.v(TAG, "PermissionsClient sending request");
-            PermissionsClient.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+            PermissionsClient.requestPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION, 0);
         }
     }
 
@@ -219,7 +219,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsClient.sendResults(App.get(), requestCode, permissions, grantResults);
+        PermissionsClient.sendResults(App.get(), requestCode, permissions[0], grantResults);
     }
 
     /*-*********************************-*/
