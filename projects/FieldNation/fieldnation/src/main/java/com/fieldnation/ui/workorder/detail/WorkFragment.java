@@ -476,7 +476,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -719,7 +719,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onEta() {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override
@@ -743,7 +743,7 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -757,7 +757,7 @@ public class WorkFragment extends WorkorderFragment {
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
@@ -899,7 +899,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onSetEta(Task task) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
 
         @Override

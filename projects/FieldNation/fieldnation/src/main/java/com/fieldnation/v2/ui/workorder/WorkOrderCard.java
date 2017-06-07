@@ -776,7 +776,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
         }
     };
 
@@ -794,7 +794,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ACCEPT_WORK, null, _workOrder.getId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
         }
     };
 
@@ -830,7 +830,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.ETA, null, _workOrder.getId());
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
     };
 
