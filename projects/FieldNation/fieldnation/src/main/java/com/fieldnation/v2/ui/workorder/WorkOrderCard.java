@@ -266,7 +266,11 @@ public class WorkOrderCard extends RelativeLayout {
         _date2TextView.setVisibility(GONE);
 
         if (_workOrder.getSchedule() != null) {
-            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+            if (_workOrder.getEta() != null
+                    && _workOrder.getEta().getStatus() != null
+                    && _workOrder.getEta().getStatus().getName() != null
+                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _workOrder.getEta().getStart() != null) {
                 // estimated
                 try {
                     Calendar cal = _workOrder.getEta().getStart().getCalendar();
