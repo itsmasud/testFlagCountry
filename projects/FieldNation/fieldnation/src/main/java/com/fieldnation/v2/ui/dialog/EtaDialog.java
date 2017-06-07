@@ -915,12 +915,6 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
-        Bundle params = new Bundle();
-        params.putParcelable(PARAM_WORKORDER, workOrder);
-        Controller.show(context, uid, EtaDialog.class, params);
-    }
-
     public static void show(Context context, String uid, WorkOrder workOrder, String dialogType) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORKORDER, workOrder);

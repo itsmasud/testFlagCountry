@@ -472,7 +472,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkOrderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkOrderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+                EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
                 getArguments().remove(WorkOrderActivity.INTENT_FIELD_ACTION);
             }
         }
