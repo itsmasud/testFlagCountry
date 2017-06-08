@@ -148,8 +148,6 @@ public class PermissionsClient extends TopicClient {
             }
         }
 
-        public abstract Activity getActivity();
-
         public abstract PermissionsClient getClient();
 
         public abstract void onComplete(String permission, int grantResult);
