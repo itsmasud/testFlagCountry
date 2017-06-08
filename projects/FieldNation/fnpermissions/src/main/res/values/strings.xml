@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FN Permissions</string>
+
+    <string name="dialog_location_title">Location information</string>
+    <string name="dialog_location_body">&lt;center&gt;We would like to use your current location to help find available work orders near you, give you accurate distance measurements, gain access to work orders that require GPS, and check in and check out on site.&lt;/center&gt;</string>
+
+    <string name="dialog_storage_title">System storage</string>
+    <string name="dialog_storage_body">&lt;center&gt;We need access to a small portion of your system storage to store temporary files and to allow you to download and upload files from a work order.&lt;br/&gt;Without this permission the Field Nation app will not work.&lt;/center&gt;</string>
+
+    <string name="dialog_camera_title">Device camera</string>
+    <string name="dialog_camera_body">&lt;center&gt;We would like access to your camera so you can take photos or videos to upload to your work orders.&lt;/center&gt;</string>
 </resources>
