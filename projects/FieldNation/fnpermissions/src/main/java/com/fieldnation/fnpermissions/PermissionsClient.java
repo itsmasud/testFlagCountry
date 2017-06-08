@@ -89,7 +89,7 @@ public class PermissionsClient extends TopicClient {
             if (topicId.equals(TOPIC_ID_REQUESTS)) {
                 getClient().clearTopicAll(TOPIC_ID_REQUESTS);
                 Bundle bundle = (Bundle) payload;
-                onRequest(bundle.getStringArray("permissions"));
+                onRequest(bundle.getStringArray("permissions"), bundle.getInt("requestCode"));
             } else if (topicId.equals(TOPIC_ID_REQUEST_RESULT)) {
                 getClient().clearTopicAll(TOPIC_ID_REQUEST_RESULT);
                 Bundle bundle = (Bundle) payload;
@@ -103,9 +103,9 @@ public class PermissionsClient extends TopicClient {
 
         public abstract PermissionsClient getClient();
 
-        private void onRequest(String[] permissions) {
+        private void onRequest(String[] permissions, int requestCode) {
             Log.v(TAG, "onRequest");
-            ActivityCompat.requestPermissions(getActivity(), permissions, INITIAL_REQUEST);
+            ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
         }
 
         private void onResponse(int requestCode, String[] permissions, int[] grantResults) {
