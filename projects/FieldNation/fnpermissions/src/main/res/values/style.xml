@@ -80,4 +80,33 @@
         <item name="android:alpha">1</item>
     </style>
 
+    <color name="fn_dark_text">#FF1e1e1e</color>
+    <color name="fn_dark_text_80">#CC1e1e1e</color>
+    <color name="fn_dark_text_50">#801e1e1e</color>
+    <color name="fn_dark_text_25">#3F1e1e1e</color>
+    <color name="fn_dark_text_0">#001e1e1e</color>
+    <color name="fn_clickable_text">#FF2196F3</color>
+
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="button_horr_padding">12dp</dimen>
+    <dimen name="button_horr_margin">1dp</dimen>
+    <dimen name="button_vert_margin">4dp</dimen>
+    <dimen name="button_min_width">88dp</dimen>
+
+    <style name="Material.Button" parent="Text_Button">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:layout_marginLeft">@dimen/button_horr_margin</item>
+        <item name="android:layout_marginRight">@dimen/button_horr_margin</item>
+        <item name="android:layout_marginTop">@dimen/button_vert_margin</item>
+        <item name="android:layout_marginBottom">@dimen/button_vert_margin</item>
+        <item name="android:paddingLeft">@dimen/button_horr_padding</item>
+        <item name="android:paddingRight">@dimen/button_horr_padding</item>
+    </style>
+
+    <style name="Material.Button.Flat" parent="Material.Button">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/btn_fg_flat</item>
+    </style>
 </resources>

@@ -59,9 +59,9 @@ public class PermissionsDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
 
-        String permission = params.getString("permission");
+        _permission = params.getString("permission");
 
-        switch (permission) {
+        switch (_permission) {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 _imageView.setImageResource(R.drawable.location);
                 _titleTextView.setText(R.string.dialog_location_title);
@@ -81,7 +81,7 @@ public class PermissionsDialog extends FullScreenDialog {
                 break;
 
             default:
-                Log.v(TAG, "Permission " + permission + " not supported by this dialog!");
+                Log.v(TAG, "Permission " + _permission + " not supported by this dialog!");
                 break;
         }
     }
@@ -100,7 +100,8 @@ public class PermissionsDialog extends FullScreenDialog {
     private final View.OnClickListener _access_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            PermissionsClient.requestPermissions(getContext(), new String[]{_permission}, PermissionsClient.SECOND_REQUEST);
+            dismiss(true);
         }
     };
 

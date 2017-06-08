@@ -86,12 +86,12 @@ public class PermissionsClient extends TopicClient {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(TAG, "onEvent");
-            getClient().clearTopicAll(TOPIC_ID_REQUESTS);
-
             if (topicId.equals(TOPIC_ID_REQUESTS)) {
+                getClient().clearTopicAll(TOPIC_ID_REQUESTS);
                 Bundle bundle = (Bundle) payload;
                 onRequest(bundle.getStringArray("permissions"));
             } else if (topicId.equals(TOPIC_ID_REQUEST_RESULT)) {
+                getClient().clearTopicAll(TOPIC_ID_REQUEST_RESULT);
                 Bundle bundle = (Bundle) payload;
                 onResponse(bundle.getInt("requestCode"),
                         bundle.getStringArray("permissions"),
@@ -109,8 +109,8 @@ public class PermissionsClient extends TopicClient {
         }
 
         private void onResponse(int requestCode, String[] permissions, int[] grantResults) {
+            Log.v(TAG, "onResponse " + requestCode);
             if (requestCode == INITIAL_REQUEST) {
-
                 for (int i = 0; i < permissions.length; i++) {
                     if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                         PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_GRANTED);

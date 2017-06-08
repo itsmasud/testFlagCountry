@@ -39,10 +39,9 @@
 
     <TextView
         android:id="@+id/access_button"
-        style="@style/Text_Roboto_Medium"
+        style="@style/Material.Button.Flat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="GIVE ACCESS"
-        android:textColor="#FF2196F3" />
+        android:text="GIVE ACCESS" />
 </LinearLayout>
