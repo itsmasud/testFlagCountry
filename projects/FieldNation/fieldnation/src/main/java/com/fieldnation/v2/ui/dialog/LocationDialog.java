@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 
 import com.fieldnation.R;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by mc on 2/13/17.

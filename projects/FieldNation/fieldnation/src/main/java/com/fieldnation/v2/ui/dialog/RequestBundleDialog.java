@@ -23,7 +23,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by mc on 10/27/16.

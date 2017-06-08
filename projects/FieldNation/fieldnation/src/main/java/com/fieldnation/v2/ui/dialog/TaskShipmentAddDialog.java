@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;

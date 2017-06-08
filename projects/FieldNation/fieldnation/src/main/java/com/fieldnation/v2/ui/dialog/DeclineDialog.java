@@ -25,7 +25,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 
 /**

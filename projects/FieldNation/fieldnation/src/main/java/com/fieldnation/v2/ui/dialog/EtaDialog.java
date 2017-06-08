@@ -37,7 +37,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;

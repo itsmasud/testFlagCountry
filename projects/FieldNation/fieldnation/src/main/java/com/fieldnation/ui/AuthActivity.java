@@ -152,6 +152,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _permissionsClient = new PermissionsClient(_permissionsListener);
         _permissionsClient.connect(App.get());
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
+            Log.v(TAG, "PermissionsClient sending request");
+            PermissionsClient.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE});
+        }
     }
 
     @Override
@@ -163,13 +169,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
-
         _dialogManager.onResume();
-
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-            Log.v(TAG, "PermissionsClient sending request");
-            PermissionsClient.requestPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION, 0);
-        }
     }
 
     @Override
@@ -187,6 +187,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     protected void onStop() {
+        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+
         super.onStop();
 
         _dialogManager.onStop();
@@ -219,7 +221,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsClient.sendResults(App.get(), requestCode, permissions[0], grantResults);
+        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
     }
 
     /*-*********************************-*/

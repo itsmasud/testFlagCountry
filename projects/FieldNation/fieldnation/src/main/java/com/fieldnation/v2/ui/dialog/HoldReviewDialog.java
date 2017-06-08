@@ -19,7 +19,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.workorder.detail.HoldReasonCard;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Acknowledgment;

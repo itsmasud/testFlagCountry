@@ -24,7 +24,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.GetFilePackage;
 import com.fieldnation.v2.ui.GetFilePackageAdapter;
