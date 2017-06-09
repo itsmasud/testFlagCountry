@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -150,15 +149,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _permissionsClient = new PermissionsClient(_permissionsListener);
         _permissionsClient.connect(App.get());
-
-        //if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_DENIED) {
-        Log.v(TAG, "PermissionsClient sending request");
-        PermissionsClient.requestPermissions(this,
-                new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA});
-        //}
     }
 
     @Override
@@ -178,7 +168,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onPause");
 
         if (_globalClient != null) _globalClient.disconnect(App.get());
-
         if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         _dialogManager.onPause();

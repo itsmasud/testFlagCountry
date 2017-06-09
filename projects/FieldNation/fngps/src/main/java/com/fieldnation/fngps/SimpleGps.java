@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fntools.ContextProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -35,6 +37,9 @@ public class SimpleGps {
     // Data
     private boolean _isRunning = false;
     private Listener _listener = null;
+
+    // Services
+    private PermissionsClient _permissionsClient;
 
     // Constructors
     public SimpleGps(Context context) {
@@ -122,8 +127,11 @@ public class SimpleGps {
     public SimpleGps start(Context context) {
         int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 
-        if (permissionCheck == PackageManager.PERMISSION_DENIED){
-
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            Log.v(TAG, "Waiting for permission");
+            _permissionsClient = new PermissionsClient(_permissionsListener);
+            _permissionsClient.connect(ContextProvider.get());
+            PermissionsClient.requestPermissions(context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION});
 
         } else {
             Log.v(TAG, "start");
@@ -152,6 +160,8 @@ public class SimpleGps {
             return this;
         }
 
+        if (_permissionsClient != null) _permissionsClient.disconnect(ContextProvider.get());
+
         if (_gglApiClient.isConnected()) {
             _providerApi.removeLocationUpdates(_gglApiClient, _locationUpdate_listener);
             _gglApiClient.disconnect();
@@ -161,6 +171,24 @@ public class SimpleGps {
         return this;
     }
 
+    private final PermissionsClient.ResponseListener _permissionsListener = new PermissionsClient.ResponseListener() {
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
+        }
+
+        @Override
+        public void onComplete(String permission, int grantResult) {
+            if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    start(ContextProvider.get());
+                } else {
+                    if (_listener != null) _listener.onFail(SimpleGps.this);
+                    stop();
+                }
+            }
+        }
+    };
 
     // API Listeners
     private final GoogleApiClient.ConnectionCallbacks _gglApi_callbacks = new GoogleApiClient.ConnectionCallbacks() {
