@@ -2,16 +2,22 @@ package com.fieldnation.fnpermissions;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.UniqueTag;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by mc on 6/7/17.
@@ -70,6 +76,45 @@ public class PermissionsClient extends TopicClient {
         TopicService.dispatchEvent(context, TOPIC_ID_COMPLETE, payload, Sticky.FOREVER);
     }
 
+    static void setPermissionDenied(String permission) {
+        SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
+        SharedPreferences.Editor edit = sp.edit();
+        edit.putLong(permission, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    static void clearPermissionDenied(String permission) {
+        SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
+        SharedPreferences.Editor edit = sp.edit();
+        edit.remove(permission);
+        edit.apply();
+    }
+
+    private static boolean isPermissionDenied(String permission) {
+        SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
+        if (sp.contains(permission)) {
+            if (sp.getLong(permission, 0) + 86400000 < System.currentTimeMillis()) { // 1 day
+                return true;
+            } else {
+                clearPermissionDenied(permission);
+            }
+        }
+        return false;
+    }
+
+    public static int checkSelfPermission(Context context, String permission) {
+        int grant = ContextCompat.checkSelfPermission(context, permission);
+
+        if (grant == PackageManager.PERMISSION_GRANTED)
+            clearPermissionDenied(permission);
+
+        return grant;
+    }
+
+    public static void checkSelfPermissionAndRequest(Context context, String[] permissions){
+
+    }
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
@@ -105,7 +150,17 @@ public class PermissionsClient extends TopicClient {
 
         private void onRequest(String[] permissions, int requestCode) {
             Log.v(TAG, "onRequest");
-            ActivityCompat.requestPermissions(getActivity(), permissions, requestCode);
+            List<String> requestable = new LinkedList<>();
+
+            for (int i = 0; i < permissions.length; i++) {
+                if (isPermissionDenied(permissions[i])) {
+                    PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
+                } else {
+                    requestable.add(permissions[i]);
+                }
+            }
+
+            ActivityCompat.requestPermissions(getActivity(), requestable.toArray(new String[requestable.size()]), requestCode);
         }
 
         private void onResponse(int requestCode, String[] permissions, int[] grantResults) {
@@ -113,6 +168,7 @@ public class PermissionsClient extends TopicClient {
             if (requestCode == INITIAL_REQUEST) {
                 for (int i = 0; i < permissions.length; i++) {
                     if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        clearPermissionDenied(permissions[i]);
                         PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_GRANTED);
 
                     } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
@@ -120,11 +176,17 @@ public class PermissionsClient extends TopicClient {
                             PermissionsDialog.show(getActivity(), permissions[i], permissions[i]);
                         } else {
                             PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
+                            setPermissionDenied(permissions[i]);
                         }
                     }
                 }
             } else if (requestCode == SECOND_REQUEST) {
                 for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+                        setPermissionDenied(permissions[i]);
+                    else
+                        clearPermissionDenied(permissions[i]);
+
                     PermissionsClient.onComplete(getActivity(), permissions[i], grantResults[i]);
                 }
             }

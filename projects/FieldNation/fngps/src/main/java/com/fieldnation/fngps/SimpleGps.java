@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
@@ -125,7 +124,7 @@ public class SimpleGps {
     }
 
     public SimpleGps start(Context context) {
-        int permissionCheck = ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
+        int permissionCheck = PermissionsClient.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
             Log.v(TAG, "Waiting for permission");
@@ -183,7 +182,7 @@ public class SimpleGps {
                 if (grantResult == PackageManager.PERMISSION_GRANTED) {
                     start(ContextProvider.get());
                 } else {
-                    if (_listener != null) _listener.onFail(SimpleGps.this);
+                    if (_listener != null) _listener.onPermissionDenied(SimpleGps.this);
                     stop();
                 }
             }
@@ -254,5 +253,7 @@ public class SimpleGps {
         void onLocation(SimpleGps simpleGps, Location location);
 
         void onFail(SimpleGps simpleGps);
+
+        void onPermissionDenied(SimpleGps simpleGps);
     }
 }

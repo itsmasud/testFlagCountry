@@ -519,6 +519,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
         @Override
         public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+
+            _simpleGps.stop();
         }
     };
 

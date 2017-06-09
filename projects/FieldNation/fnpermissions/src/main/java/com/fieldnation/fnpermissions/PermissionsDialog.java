@@ -62,12 +62,14 @@ public class PermissionsDialog extends FullScreenDialog {
         _permission = params.getString("permission");
 
         switch (_permission) {
+            case Manifest.permission.ACCESS_COARSE_LOCATION:
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 _imageView.setImageResource(R.drawable.location);
                 _titleTextView.setText(R.string.dialog_location_title);
                 _descriptionTextView.setText(misc.htmlify(getContext().getString(R.string.dialog_location_body)));
                 break;
 
+            case Manifest.permission.READ_EXTERNAL_STORAGE:
             case Manifest.permission.WRITE_EXTERNAL_STORAGE:
                 _imageView.setImageResource(R.drawable.storage);
                 _titleTextView.setText(R.string.dialog_storage_title);
@@ -89,12 +91,19 @@ public class PermissionsDialog extends FullScreenDialog {
     @Override
     public void cancel() {
         super.cancel();
+        PermissionsClient.setPermissionDenied(_permission);
         PermissionsClient.onComplete(getContext(), _permission, PackageManager.PERMISSION_DENIED);
     }
 
     @Override
     public boolean isCancelable() {
-        return true;
+        switch (_permission) {
+            case Manifest.permission.READ_EXTERNAL_STORAGE:
+            case Manifest.permission.WRITE_EXTERNAL_STORAGE:
+                return false;
+            default:
+                return true;
+        }
     }
 
     private final View.OnClickListener _access_onClick = new View.OnClickListener() {
