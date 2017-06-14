@@ -272,8 +272,6 @@ public class CounterOfferDialog extends FullScreenDialog {
                 }
 
 
-                Log.e(TAG, "request: " + request.getJson());
-
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Counter Offer Dialog";
                 WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
