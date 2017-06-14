@@ -145,7 +145,8 @@
     <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_job_duration_empty">Please fill up job duration.</string>
-    <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
+    <string name="toast_minimum_accumulated_payable_amount">Total amount must be greater than $20.</string>
+    <string name="toast_empty_counter_offer">Counter offer must have an expense, schedule or pry</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
     <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
@@ -154,6 +155,7 @@
     <string name="toast_missing_description">Missing description</string>
     <string name="toast_missing_tracking_number">Missing tracking number</string>
     <string name="toast_must_enter_description">Please enter a description</string>
+    <string name="toast_must_enter_amount_and_description">Please enter an expense amount and description</string>
     <string name="toast_must_select_category">Please select a category</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
@@ -370,6 +372,8 @@
     <string name="tv_start_time">Start Time</string>
     <string name="assign_add_new">Assign/Add New</string>
     <string name="between">Between</string>
+    <string name="earliest_arrival">Earliest Arrival</string>
+    <string name="latest_arrival">Latest Arrival</string>
     <string name="block_reason">Block Reason</string>
     <string name="cannot_upload_to_work_order_num">Cannot upload to work order %1$s please select another</string>
     <string name="decline_reason">Decline Reason</string>
@@ -390,6 +394,7 @@
     <string name="carrier">Carrier</string>
     <string name="carrier_name">Carrier Name</string>
     <string name="change_pay">Change Pay</string>
+    <string name="pay">Pay</string>
     <string name="check_our_marketplace_for_new_work">Check our marketplace for new work</string>
     <string name="check_your_gps_settings">Check your GPS settings or location\'s address</string>
     <string name="city">City</string>
@@ -457,9 +462,11 @@
     <string name="first_time_hours">First %1$s hrs</string>
     <string name="fixed">Fixed</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>
+    <string name="blended_fixed_pay_max_hours">For How Many Hours</string>
     <string name="fixed_rate">Fixed Rate</string>
     <string name="for_the_first">for the first</string>
     <string name="for_up_to">for up to</string>
+    <string name="blended_hourly_max_hours">For Up To How Many Hours</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="government">Government</string>
     <string name="cant_calc_miles">Cannot calculate miles</string>
@@ -471,6 +478,7 @@
     <string name="hourly">Hourly</string>
     <string name="hourly_after">Hourly after</string>
     <string name="hourly_rate">Hourly Rate</string>
+    <string name="blended_hourly_amount">Hourly Amount After</string>
     <string name="i_accept">I accept</string>
     <string name="in_time">In %1$s</string>
     <string name="inbox">Inbox</string>
@@ -602,6 +610,8 @@
     <string name="payment_id_x">Payment %1$s</string>
     <string name="payment_pending">Payment Pending</string>
     <string name="pay_rate_basis">Pay Rate Basis</string>
+    <string name="pay_type">Pay Type</string>
+    <string name="schedule_type">Schedule Type</string>
     <string name="pending">Pending</string>
     <string name="per_device">Per Device</string>
     <string name="per_device_rate">Per Device Rate</string>
@@ -609,6 +619,7 @@
     <string name="phone_no">Phone No</string>
     <string name="please_accept_the_terms_and_conditions_to_continue">Please accept the terms and conditions to continue</string>
     <string name="please_enter_a_value_greater_than">Please enter a value greater than $0.10.</string>
+    <string name="please_enter_a_value_atleast_one_dollar">Pay amount must be at least $1.</string>
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
     <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>
@@ -629,7 +640,7 @@
     <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="report_issue">Report Issue</string>
     <string name="disclaimer_to_counter_offer">Terms added within this field cannot be enforced.</string>
-    <string name="reason_for_request">Reason (optional)</string>
+    <string name="reason_for_request">Reason for counter offer (optional)</string>
     <string name="remote_work">Remote Work</string>
     <string name="report_other_issue">Report other issue</string>
     <string name="request_bundle">Request Bundle</string>
@@ -960,6 +971,31 @@
         <item>2 days</item>
     </string-array>
     <integer-array name="expire_duration_values">
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
+    <string-array name="co_expire_duration_titles">
+        <item>NEVER</item>
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="co_expire_duration_values">
+        <item>-1</item>
         <item>900</item>
         <item>1800</item>
         <item>3600</item>
