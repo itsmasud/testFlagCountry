@@ -1,9 +1,7 @@
 package com.fieldnation.ui;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -137,30 +135,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            PermissionsClient.checkSelfPermissionAndRequest(this, new String[]{
-//                    Manifest.permission.GET_ACCOUNTS,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.INTERNET,
-                    Manifest.permission.READ_SYNC_SETTINGS,
-                    Manifest.permission.WRITE_SYNC_SETTINGS,
-                    Manifest.permission.VIBRATE,
-                    Manifest.permission.ACCESS_NETWORK_STATE,
-                    Manifest.permission.WAKE_LOCK
-            });
-        } else {
-            PermissionsClient.checkSelfPermissionAndRequest(this, new String[]{
-//                    Manifest.permission.GET_ACCOUNTS,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.INTERNET,
-                    Manifest.permission.READ_SYNC_SETTINGS,
-                    Manifest.permission.WRITE_SYNC_SETTINGS,
-                    Manifest.permission.VIBRATE,
-                    Manifest.permission.ACCESS_NETWORK_STATE,
-                    Manifest.permission.WAKE_LOCK
-            });
-        }
+        PermissionsClient.checkSelfPermissionAndRequest(this, App.getBasePermissions());
     }
 
     @Override

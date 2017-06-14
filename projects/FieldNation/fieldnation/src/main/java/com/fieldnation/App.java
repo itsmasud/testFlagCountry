@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -54,6 +55,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -323,6 +326,40 @@ public class App extends Application {
             AuthTopicClient.requestCommand(App.this);
         }
     };
+
+    /*-*****************************-*/
+    /*-         Permissions         -*/
+    /*-*****************************-*/
+
+    public static String[] getBasePermissions() {
+        List<String> perms = new LinkedList<>();
+
+        perms.add("com.google.android.c2dm.permission.RECEIVE");
+        perms.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        perms.add(Manifest.permission.INTERNET);
+        perms.add(Manifest.permission.READ_SYNC_SETTINGS);
+        perms.add(Manifest.permission.WRITE_SYNC_SETTINGS);
+        perms.add(Manifest.permission.VIBRATE);
+        perms.add(Manifest.permission.ACCESS_NETWORK_STATE);
+        perms.add(Manifest.permission.WAKE_LOCK);
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            // this permission is implicit pre 19. After 19 we have to ask for it.
+            perms.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+/* not needed since the permissions checking is only needed 23+
+        if (Build.VERSION.SDK_INT <= 22) {
+            // These were removed 23+
+            perms.add(Manifest.permission.GET_ACCOUNTS);
+            perms.add("android.permission.MANAGE_ACCOUNTS");
+            perms.add("android.permission.AUTHENTICATE_ACCOUNTS");
+            perms.add("android.permission.USE_CREDENTIALS");
+        }
+*/
+
+        return perms.toArray(new String[perms.size()]);
+    }
 
     /*-*************************-*/
     /*-         Profile         -*/
