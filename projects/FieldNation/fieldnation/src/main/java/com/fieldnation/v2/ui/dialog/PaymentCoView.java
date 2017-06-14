@@ -29,7 +29,7 @@ public class PaymentCoView extends RelativeLayout {
 
 
     private static final double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
-    private static final double MINIMUM_PAYABLE_AMOUNT = .1;
+    private static final double MINIMUM_PAYABLE_AMOUNT = 1.0;
 
     // Modes
     private static final int MODE_FIXED = 0;
@@ -92,7 +92,6 @@ public class PaymentCoView extends RelativeLayout {
         // fixed
         _fixedLayout = (LinearLayout) findViewById(R.id.fixed_layout);
         _fixedEditText = (EditText) findViewById(R.id.fixed_edittext);
-        _fixedEditText.addTextChangedListener(_textWatcher_listener);
 
         // hourly
         _hourlyLayout = (LinearLayout) findViewById(R.id.hourly_layout);
@@ -317,7 +316,6 @@ public class PaymentCoView extends RelativeLayout {
     }
 
     private void populateUi() {
-        Log.e(TAG, "populateUi");
         setMode(_mode);
     }
 
@@ -335,28 +333,4 @@ public class PaymentCoView extends RelativeLayout {
             _mode = -1;
         }
     };
-
-    private final TextWatcher _textWatcher_listener = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-//            if (!misc.isEmptyOrNull(_fixedEditText.getText().toString())) {
-//                _fixedEditText.setText("$" + _fixedEditText.getText().toString());
-//            }
-//
-//            Log.e(TAG, "text: " + s);
-
-
-        }
-    };
-
-
 }

@@ -80,7 +80,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_v3_counter_offer, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
 
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
@@ -276,7 +276,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Counter Offer Dialog";
-//                WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
+                WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);

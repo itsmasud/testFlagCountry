@@ -12,7 +12,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Expense;
 
 /**
- * Created by shoaib.ahmed on 11/5/2014.
+ * Created by shoaib.ahmed on 06/09/2017.
  */
 public class ExpensesCoCardView extends RelativeLayout {
     private static final String TAG = "ExpensesCoCardView";
