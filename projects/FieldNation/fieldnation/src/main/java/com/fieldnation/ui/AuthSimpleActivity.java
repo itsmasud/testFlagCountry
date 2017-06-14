@@ -15,12 +15,12 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
@@ -113,6 +113,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _permissionsClient = new PermissionsClient(_permissionsListener);
         _permissionsClient.connect(App.get());
+        PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
     }
 
     @Override
@@ -134,8 +135,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
-
-        PermissionsClient.checkSelfPermissionAndRequest(this, App.getBasePermissions());
     }
 
     @Override

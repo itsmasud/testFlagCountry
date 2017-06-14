@@ -16,8 +16,10 @@ import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.UniqueTag;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by mc on 6/7/17.
@@ -30,9 +32,9 @@ public class PermissionsClient extends TopicClient {
     protected static final int INITIAL_REQUEST = 0;
     protected static final int SECOND_REQUEST = 1;
 
-    private static final String TOPIC_ID_REQUESTS = "TOPIC_ID_REQUESTS";
-    private static final String TOPIC_ID_REQUEST_RESULT = "TOPIC_ID_REQUEST_RESULT";
-    private static final String TOPIC_ID_COMPLETE = "TOPIC_ID_COMPLETE";
+    private static final String TOPIC_ID_REQUESTS = STAG + ":TOPIC_ID_REQUESTS";
+    private static final String TOPIC_ID_REQUEST_RESULT = STAG + ":TOPIC_ID_REQUEST_RESULT";
+    private static final String TOPIC_ID_COMPLETE = STAG + ":TOPIC_ID_COMPLETE";
 
     public PermissionsClient(Listener listener) {
         super(listener);
@@ -43,17 +45,19 @@ public class PermissionsClient extends TopicClient {
         return TAG;
     }
 
-    public static void requestPermissions(Context context, String[] permissions) {
+    public static void requestPermissions(Context context, String[] permissions, boolean[] required) {
         Bundle payload = new Bundle();
         payload.putStringArray("permissions", permissions);
+        payload.putBooleanArray("required", required);
         payload.putInt("requestCode", INITIAL_REQUEST);
 
         TopicService.dispatchEvent(context, TOPIC_ID_REQUESTS, payload, Sticky.TEMP);
     }
 
-    static void requestPermissions(Context context, String[] permissions, int requestCode) {
+    static void requestPermissions(Context context, String[] permissions, boolean[] required, int requestCode) {
         Bundle payload = new Bundle();
         payload.putStringArray("permissions", permissions);
+        payload.putBooleanArray("required", required);
         payload.putInt("requestCode", requestCode);
 
         TopicService.dispatchEvent(context, TOPIC_ID_REQUESTS, payload, Sticky.TEMP);
@@ -111,18 +115,26 @@ public class PermissionsClient extends TopicClient {
         return grant;
     }
 
-    public static void checkSelfPermissionAndRequest(Context context, String[] permissions) {
+    public static void checkSelfPermissionAndRequest(Context context, String[] permissions, boolean[] required) {
         List<String> requestable = new LinkedList<>();
-        for (String permission : permissions) {
-            if (checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED){
-                PermissionsClient.onComplete(context,permission,PackageManager.PERMISSION_GRANTED);
+        List<Boolean> requireds = new LinkedList<>();
+        for (int i = 0; i < required.length; i++) {
+            if (checkSelfPermission(context, permissions[i]) == PackageManager.PERMISSION_GRANTED) {
+                PermissionsClient.onComplete(context, permissions[i], PackageManager.PERMISSION_GRANTED);
             } else {
-                requestable.add(permission);
+                requestable.add(permissions[i]);
+                requireds.add(required[i]);
             }
         }
 
-        if (requestable.size() > 0){
-            requestPermissions(context,requestable.toArray(new String[requestable.size()]));
+        if (requestable.size() > 0) {
+            boolean[] reqs = new boolean[requireds.size()];
+
+            for (int i = 0; i < reqs.length; i++) {
+                reqs[i] = requireds.get(i);
+            }
+
+            requestPermissions(context, requestable.toArray(new String[requestable.size()]), reqs);
         }
     }
 
@@ -131,6 +143,8 @@ public class PermissionsClient extends TopicClient {
     /*-**********************************-*/
     public static abstract class RequestListener extends TopicClient.Listener {
         private static final String TAG = "PermissionsClient.RequestListener";
+
+        private final Set<String> requiredPermissions = new HashSet<>();
 
         @Override
         public void onConnected() {
@@ -145,7 +159,10 @@ public class PermissionsClient extends TopicClient {
             if (topicId.equals(TOPIC_ID_REQUESTS)) {
                 getClient().clearTopicAll(TOPIC_ID_REQUESTS);
                 Bundle bundle = (Bundle) payload;
-                onRequest(bundle.getStringArray("permissions"), bundle.getInt("requestCode"));
+                onRequest(bundle.getStringArray("permissions"),
+                        bundle.getBooleanArray("required"),
+                        bundle.getInt("requestCode"));
+
             } else if (topicId.equals(TOPIC_ID_REQUEST_RESULT)) {
                 getClient().clearTopicAll(TOPIC_ID_REQUEST_RESULT);
                 Bundle bundle = (Bundle) payload;
@@ -159,15 +176,19 @@ public class PermissionsClient extends TopicClient {
 
         public abstract PermissionsClient getClient();
 
-        private void onRequest(String[] permissions, int requestCode) {
+        private void onRequest(String[] permissions, boolean[] required, int requestCode) {
             Log.v(TAG, "onRequest");
-            List<String> requestable = new LinkedList<>();
 
+            List<String> requestable = new LinkedList<>();
             for (int i = 0; i < permissions.length; i++) {
                 if (isPermissionDenied(permissions[i])) {
                     PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
                 } else {
                     requestable.add(permissions[i]);
+                }
+
+                if (required[i]) {
+                    requiredPermissions.add(permissions[i]);
                 }
             }
 
@@ -184,21 +205,30 @@ public class PermissionsClient extends TopicClient {
 
                     } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissions[i])) {
-                            PermissionsDialog.show(getActivity(), permissions[i], permissions[i]);
+                            PermissionsDialog.show(getActivity(), permissions[i], permissions[i], requiredPermissions.contains(permissions[i]), false);
                         } else {
-                            PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
-                            setPermissionDenied(permissions[i]);
+                            if (requiredPermissions.contains(permissions[i])) {
+                                PermissionsDialog.show(getActivity(), permissions[i], permissions[i], true, true);
+                            } else {
+                                PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
+                                setPermissionDenied(permissions[i]);
+                            }
                         }
                     }
                 }
             } else if (requestCode == SECOND_REQUEST) {
                 for (int i = 0; i < permissions.length; i++) {
-                    if (grantResults[i] == PackageManager.PERMISSION_DENIED)
-                        setPermissionDenied(permissions[i]);
-                    else
-                        clearPermissionDenied(permissions[i]);
+                    if (requiredPermissions.contains(permissions[i])) {
+                        PermissionsDialog.show(getActivity(), permissions[i], permissions[i], true, true);
+                    } else {
 
-                    PermissionsClient.onComplete(getActivity(), permissions[i], grantResults[i]);
+                        if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+                            setPermissionDenied(permissions[i]);
+                        else
+                            clearPermissionDenied(permissions[i]);
+
+                        PermissionsClient.onComplete(getActivity(), permissions[i], grantResults[i]);
+                    }
                 }
             }
         }

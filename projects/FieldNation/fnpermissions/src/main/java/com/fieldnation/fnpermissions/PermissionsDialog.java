@@ -2,7 +2,9 @@ package com.fieldnation.fnpermissions;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -30,6 +33,8 @@ public class PermissionsDialog extends FullScreenDialog {
 
     // Data
     private String _permission;
+    private boolean _required;
+    private boolean _denied;
 
     public PermissionsDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -60,7 +65,13 @@ public class PermissionsDialog extends FullScreenDialog {
         super.show(params, animate);
 
         _permission = params.getString("permission");
+        _required = params.getBoolean("required");
+        _denied = params.getBoolean("denied");
 
+        populateUi();
+    }
+
+    private void populateUi() {
         switch (_permission) {
             case Manifest.permission.ACCESS_COARSE_LOCATION:
             case Manifest.permission.ACCESS_FINE_LOCATION:
@@ -97,26 +108,27 @@ public class PermissionsDialog extends FullScreenDialog {
 
     @Override
     public boolean isCancelable() {
-        switch (_permission) {
-            case Manifest.permission.READ_EXTERNAL_STORAGE:
-            case Manifest.permission.WRITE_EXTERNAL_STORAGE:
-                return false;
-            default:
-                return true;
-        }
+        return !_required;
     }
 
     private final View.OnClickListener _access_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            PermissionsClient.requestPermissions(getContext(), new String[]{_permission}, PermissionsClient.SECOND_REQUEST);
+            if (_denied && _required) {
+                ActivityResultClient.startActivity(getContext(), new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", getContext().getPackageName(), null)));
+            } else {
+                PermissionsClient.requestPermissions(getContext(), new String[]{_permission}, new boolean[]{_required}, PermissionsClient.SECOND_REQUEST);
+            }
             dismiss(true);
         }
     };
 
-    public static void show(Context context, String uid, String permission) {
+    public static void show(Context context, String uid, String permission, boolean required, boolean denied) {
         Bundle params = new Bundle();
         params.putString("permission", permission);
+        params.putBoolean("required", required);
+        params.putBoolean("denied", denied);
         Controller.show(context, uid, PermissionsDialog.class, params);
     }
 }

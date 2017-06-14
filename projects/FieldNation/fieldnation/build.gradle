@@ -116,6 +116,7 @@ dependencies {
     compile project(':fnanalytics')
     compile project(':fnhttpjson')
     compile project(':fnpermissions')
+    compile project(':fnactivityresult')
 
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'

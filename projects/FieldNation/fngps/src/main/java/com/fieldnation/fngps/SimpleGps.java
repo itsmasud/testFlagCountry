@@ -130,7 +130,10 @@ public class SimpleGps {
             Log.v(TAG, "Waiting for permission");
             _permissionsClient = new PermissionsClient(_permissionsListener);
             _permissionsClient.connect(ContextProvider.get());
-            PermissionsClient.requestPermissions(context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION});
+            PermissionsClient.requestPermissions(
+                    context,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new boolean[]{false});
 
         } else {
             Log.v(TAG, "start");

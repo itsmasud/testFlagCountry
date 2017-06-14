@@ -331,7 +331,7 @@ public class App extends Application {
     /*-         Permissions         -*/
     /*-*****************************-*/
 
-    public static String[] getBasePermissions() {
+    public static String[] getPermissions() {
         List<String> perms = new LinkedList<>();
 
         perms.add("com.google.android.c2dm.permission.RECEIVE");
@@ -359,6 +359,36 @@ public class App extends Application {
 */
 
         return perms.toArray(new String[perms.size()]);
+    }
+
+    public static boolean[] getPermissionsRequired() {
+        boolean[] required = new boolean[getPermissions().length];
+        int i = 0;
+
+        //perms.add("com.google.android.c2dm.permission.RECEIVE");
+        required[i++] = false;
+        //perms.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        required[i++] = true;
+        //perms.add(Manifest.permission.INTERNET);
+        required[i++] = true;
+        //perms.add(Manifest.permission.READ_SYNC_SETTINGS);
+        required[i++] = false;
+        //perms.add(Manifest.permission.WRITE_SYNC_SETTINGS);
+        required[i++] = false;
+        //perms.add(Manifest.permission.VIBRATE);
+        required[i++] = false;
+        //perms.add(Manifest.permission.ACCESS_NETWORK_STATE);
+        required[i++] = true;
+        //perms.add(Manifest.permission.WAKE_LOCK);
+        required[i++] = true;
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            // this permission is implicit pre 19. After 19 we have to ask for it.
+            //perms.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            required[i++] = true;
+        }
+
+        return required;
     }
 
     /*-*************************-*/
