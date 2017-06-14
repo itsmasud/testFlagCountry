@@ -584,6 +584,12 @@ public class WorkFragment extends WorkorderFragment {
             _locationFailed = true;
             simpleGps.stop();
         }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
+            _locationFailed = true;
+            simpleGps.stop();
+        }
     };
 
     @Override

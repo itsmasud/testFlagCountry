@@ -96,6 +96,10 @@ public class GpsTrackingService extends MultiThreadedService {
         @Override
         public void onFail(SimpleGps simpleGps) {
         }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
+        }
     };
 
     public static void start(Context context, long expires) {

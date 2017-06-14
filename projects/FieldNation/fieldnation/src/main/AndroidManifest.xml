@@ -6,7 +6,7 @@
 
     <!-- "Dangerous" permissions -->
     <!-- Contacts -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
 
     <!-- Storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -20,16 +20,18 @@
     <!--<uses-permission android:name="android.permission.CALL_PHONE" />-->
 
     <!-- Not dangerous permissions -->
-    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
-    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
     <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!-- 22 and older permissions -->
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
 
     <!-- Dangerous? -->
     <uses-feature

@@ -111,8 +111,19 @@ public class PermissionsClient extends TopicClient {
         return grant;
     }
 
-    public static void checkSelfPermissionAndRequest(Context context, String[] permissions){
+    public static void checkSelfPermissionAndRequest(Context context, String[] permissions) {
+        List<String> requestable = new LinkedList<>();
+        for (String permission : permissions) {
+            if (checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED){
+                PermissionsClient.onComplete(context,permission,PackageManager.PERMISSION_GRANTED);
+            } else {
+                requestable.add(permission);
+            }
+        }
 
+        if (requestable.size() > 0){
+            requestPermissions(context,requestable.toArray(new String[requestable.size()]));
+        }
     }
 
     /*-**********************************-*/
