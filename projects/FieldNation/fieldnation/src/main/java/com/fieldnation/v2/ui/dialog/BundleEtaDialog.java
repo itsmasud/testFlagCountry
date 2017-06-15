@@ -180,7 +180,6 @@ public class BundleEtaDialog extends FullScreenDialog {
             return;
         }
 
-        Log.e(TAG, "populateUi");
         _toolbar.setTitle("Set ETAs");
         _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
@@ -203,8 +202,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         }
 
 
-        Log.e(TAG, "bundle id: " + _bundleId);
-
         _incompleteList.removeAllViews();
         _completeList.removeAllViews();
 
@@ -215,7 +212,6 @@ public class BundleEtaDialog extends FullScreenDialog {
             public void next(int i) throws Exception {
                 BundleEtaCardView v = null;
                 if (!_completeWorkOrders.isEmpty() && _completeWorkOrders.containsKey(workOrders[i].getId())) {
-                    Log.e(TAG, "preparing complete list");
                     if (i < _completeList.getChildCount()) {
                         v = (BundleEtaCardView) _completeList.getChildAt(i);
                     } else {
@@ -223,7 +219,6 @@ public class BundleEtaDialog extends FullScreenDialog {
                         _completeList.addView(v);
                     }
                 } else {
-                    Log.e(TAG, "preparing incomplete list");
                     if (i < _incompleteList.getChildCount()) {
                         v = (BundleEtaCardView) _incompleteList.getChildAt(i);
                     } else {
@@ -255,7 +250,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
             ETA[] etaAll = (ETA[]) _etaList.values().toArray(new ETA[_etaList.size()]);
-            Log.e(TAG, "etaAll with eta node: " + "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
             WorkordersWebApi.MassAcceptWorkOrder(App.get(), "{" + "\"eta\":" + new ETA().toJsonArray(etaAll).toString() + "}");
             _onAcceptedDispatcher.dispatch(getUid(), _bundleId);
 
@@ -269,7 +263,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         @Override
         public void onBundleEta(ETA eta, WorkOrder workOrder) {
 
-            Log.e(TAG, "onBundleEta");
             if (!_completeWorkOrders.containsKey(workOrder.getId())) {
                 _completeWorkOrders.put(workOrder.getId(), workOrder);
             }
@@ -287,7 +280,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     private final BundleEtaCardView.OnClickListener _summaryListener = new BundleEtaCardView.OnClickListener() {
         @Override
         public void onClick(BundleEtaCardView view, WorkOrder workOrder) {
-            EtaDialog.show(App.get(), UID_DIALOG_ETA, workOrder);
+            EtaDialog.show(App.get(), UID_DIALOG_ETA, workOrder, EtaDialog.PARAM_DIALOG_TYPE_MASS_ACCEPT);
         }
     };
 

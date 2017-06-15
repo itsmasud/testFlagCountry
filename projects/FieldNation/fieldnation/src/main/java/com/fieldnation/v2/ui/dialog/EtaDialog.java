@@ -79,12 +79,14 @@ public class EtaDialog extends FullScreenDialog {
 
     // Params
     //public static final String PARAM_DIALOG_TYPE = "type";
-    private static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
-    private static final String PARAM_DIALOG_TYPE_REQUEST = "request";
+    public static final String PARAM_DIALOG_TYPE_ACCEPT = "accept";
+    public static final String PARAM_DIALOG_TYPE_MASS_ACCEPT = "massAccept";
+    public static final String PARAM_DIALOG_TYPE_REQUEST = "request";
     //public static final String PARAM_DIALOG_TYPE_CONFIRM = "confirm";
-    private static final String PARAM_DIALOG_TYPE_ADD = "add";
-    private static final String PARAM_DIALOG_TYPE_EDIT = "edit";
+    public static final String PARAM_DIALOG_TYPE_ADD = "add";
+    public static final String PARAM_DIALOG_TYPE_EDIT = "edit";
     private static final String PARAM_WORKORDER = "workOrder";
+    private static final String PARAM_DIALOG_TYPE = "dialogType";
 
     private final static int MIN_JOB_DURATION = 900000;
     //    private final static int MIN_EXPIRING_DURATION = 900000;
@@ -232,21 +234,7 @@ public class EtaDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
         _workOrder = params.getParcelable(PARAM_WORKORDER);
-
-        if (_workOrder.getRoutes() != null
-                && _workOrder.getRoutes().getUserRoute() != null
-                && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
-            _dialogType = PARAM_DIALOG_TYPE_ACCEPT;
-        } else if (_workOrder.getRequests() != null
-                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
-            _dialogType = PARAM_DIALOG_TYPE_REQUEST;
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
-            _dialogType = PARAM_DIALOG_TYPE_ADD;
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
-            _dialogType = PARAM_DIALOG_TYPE_EDIT;
-        }
+        _dialogType = params.getString(PARAM_DIALOG_TYPE);
 
         try {
             if (_workOrder.getEta() != null
@@ -336,7 +324,8 @@ public class EtaDialog extends FullScreenDialog {
             _termsWarningTextView.setVisibility(View.VISIBLE);
 
             // Woc accept route, Wod Accept route (onSetEta)
-        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
+        } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)
+                || _dialogType.equals(PARAM_DIALOG_TYPE_MASS_ACCEPT)) {
             _toolbar.setTitle("Accept " + _workOrder.getId());
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
@@ -784,10 +773,7 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
 
-            boolean isBundle = _workOrder.getBundle() != null
-                    && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
-
-            if (isBundle) {
+            if (_dialogType.equals(PARAM_DIALOG_TYPE_MASS_ACCEPT)) {
                 try {
                     ETA eta = new ETA();
                     eta.workOrderId(_workOrder.getId());
@@ -938,9 +924,10 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, String uid, WorkOrder workOrder, String dialogType) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORKORDER, workOrder);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
         Controller.show(context, uid, EtaDialog.class, params);
     }
 

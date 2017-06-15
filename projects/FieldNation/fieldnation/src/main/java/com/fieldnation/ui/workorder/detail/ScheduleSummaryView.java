@@ -63,7 +63,6 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         _type2TextView = (TextView) findViewById(R.id.type2_textview);
         _date2TextView = (TextView) findViewById(R.id.date2_textview);
         _editEtaButton = (Button) findViewById(R.id.add_button);
-        _editEtaButton.setOnClickListener(_editEta_onClick);
 
         setVisibility(View.GONE);
     }
@@ -99,11 +98,13 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             _editEtaButton.setVisibility(VISIBLE);
             _editEtaButton.setText(R.string.btn_set_eta);
+            _editEtaButton.setOnClickListener(_setEta_onClick);
 
         } else if (_workOrder.getEta() != null
                 && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
             _editEtaButton.setVisibility(VISIBLE);
             _editEtaButton.setText(R.string.btn_edit_eta);
+            _editEtaButton.setOnClickListener(_editEta_onClick);
 
         } else {
             _editEtaButton.setVisibility(GONE);
@@ -114,6 +115,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
         try {
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
+
 
             if (schedule == null) {
                 setVisibility(GONE);
@@ -192,7 +194,14 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
     private final View.OnClickListener _editEta_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder);
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+        }
+    };
+
+    private final View.OnClickListener _setEta_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EtaDialog.show(App.get(), DIALOG_ETA, _workOrder, EtaDialog.PARAM_DIALOG_TYPE_ADD);
         }
     };
 }
