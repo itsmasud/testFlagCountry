@@ -37,6 +37,7 @@ public class PermissionsClient extends TopicClient {
     private static final String TOPIC_ID_REQUESTS = STAG + ":TOPIC_ID_REQUESTS";
     private static final String TOPIC_ID_REQUEST_RESULT = STAG + ":TOPIC_ID_REQUEST_RESULT";
     private static final String TOPIC_ID_COMPLETE = STAG + ":TOPIC_ID_COMPLETE";
+    private static final String TOPIC_ID_PROCESS_QUEUE = STAG + ":TOPIC_ID_PROCESS_QUEUE";
 
     public PermissionsClient(Listener listener) {
         super(listener);
@@ -45,6 +46,10 @@ public class PermissionsClient extends TopicClient {
     @Override
     public String getUserTag() {
         return TAG;
+    }
+
+    static void processQueue(Context context) {
+        TopicService.dispatchEvent(context, TOPIC_ID_PROCESS_QUEUE, null, Sticky.TEMP);
     }
 
     public static void requestPermissions(Context context, String[] permissions, boolean[] required) {
@@ -153,6 +158,7 @@ public class PermissionsClient extends TopicClient {
             Log.v(TAG, "onConnected");
             getClient().register(TOPIC_ID_REQUESTS);
             getClient().register(TOPIC_ID_REQUEST_RESULT);
+            getClient().register(TOPIC_ID_PROCESS_QUEUE);
         }
 
         @Override
@@ -171,6 +177,9 @@ public class PermissionsClient extends TopicClient {
                 onResponse(bundle.getInt("requestCode"),
                         bundle.getStringArray("permissions"),
                         bundle.getIntArray("grantResults"));
+            } else if (topicId.equals(TOPIC_ID_PROCESS_QUEUE)) {
+                getClient().clearTopicAll(TOPIC_ID_PROCESS_QUEUE);
+                processQueue();
             }
         }
 
@@ -247,7 +256,10 @@ public class PermissionsClient extends TopicClient {
                     }
                 }
             }
+            processQueue();
+        }
 
+        private void processQueue() {
             while (QUEUED_PERMS.size() > 0) {
                 PermissionsTuple tuple = QUEUED_PERMS.remove(QUEUED_PERMS.keys().nextElement());
 

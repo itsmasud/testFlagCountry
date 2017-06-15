@@ -4,6 +4,8 @@
     package="com.fieldnation">
 
     <!-- "Dangerous" permissions -->
+    <!-- Camera -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <!-- Storage -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
