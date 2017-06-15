@@ -100,8 +100,6 @@ public class ActionView extends RelativeLayout {
             _counterOfferButton.setVisibility(View.VISIBLE);
             if (_workorder.getCounterOfferInfo() == null) {
                 _counterOfferButton.setText(R.string.btn_counter);
-            } else {
-                _counterOfferButton.setText(R.string.btn_view_counter);
             }
         }
 
