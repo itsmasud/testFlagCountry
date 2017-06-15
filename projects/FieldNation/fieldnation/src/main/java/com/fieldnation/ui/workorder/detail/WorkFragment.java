@@ -774,12 +774,6 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onViewCounter() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workOrder.getId());
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
-        }
-
-        @Override
         public void onReadyToGo() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workOrder.getId());
 
