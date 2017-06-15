@@ -371,11 +371,18 @@ public class CheckInOutDialog extends FullScreenDialog {
                         if (timeLog.getStatus() == TimeLog.StatusEnum.CHECKED_IN) {
                             if (_itemSelectedPosition > INVALID_NUMBER) {
                                 timeLog.devices((double) _itemSelectedPosition);
+                                if (timeLog.getIn().getCreated().getCalendar().after(_startCalendar)) {
+                                    ToastClient.toast(App.get(), "Check Out Failed. Check your mobile date and time.", Toast.LENGTH_SHORT);
+                                    setLoading(false);
+                                    return false;
+                                }
+
                             }
                             timeLog.out(cio);
                             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                             uiContext.page += " - Check Out Dialog";
-                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
+                            Log.e(TAG, "check out: " + timeLog.getJson());
+//                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
                         }

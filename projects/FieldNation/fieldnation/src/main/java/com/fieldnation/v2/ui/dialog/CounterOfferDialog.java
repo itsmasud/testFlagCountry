@@ -1,80 +1,74 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.HorizontalScrollView;
-import android.widget.TabHost;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
-import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by michael.carver on 11/5/2014.
  */
-public class CounterOfferDialog extends SimpleDialog {
+public class CounterOfferDialog extends FullScreenDialog {
     private static final String TAG = "CounterOfferDialog";
 
-    // Dialogs
-    private static final String DIALOG_EXPENSE = TAG + ".expenseDialog";
-    private static final String DIALOG_PAY = TAG + ".payDialog";
-    private static final String DIALOG_SCHEDULE = TAG + ".scheduleDialog";
-    private static final String DIALOG_TERMS = TAG + ".termsDialog";
-
     // State
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
-    private static final String STATE_COUNTER_PAY = "STATE_COUNTER_PAY";
     private static final String STATE_EXPENSES = "STATE_EXPENSES";
-    private static final String STATE_COUNTER_SCHEDULE = "STATE_COUNTER_SCHEDULE";
-    private static final String STATE_COUNTER_REASON = "STATE_COUNTER_REASON";
-    private static final String STATE_EXPIRES = "STATE_EXPIRES";
-
     // Ui
-    private TabHost _tabHost;
-    private Button _backButton;
-    private Button _okButton;
-    private HorizontalScrollView _tabScrollView;
+    private Toolbar _toolbar;
+    private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
 
     private PaymentCoView _paymentView;
     private ScheduleCoView _scheduleView;
-    private ExpenseCoView _expenseView;
-    private ReasonCoView _reasonView;
+    private LinearLayout _expensesList;
+    private ReasonCoViewNew _reasonView;
+    private TextView _termsWarningTextView;
+    private IconFontTextView _addExpense;
 
-    // Data State
-    private final List<Expense> _expenses = new LinkedList<>();
-
+    // Data
+    private final List<ExpensesCoCardView> _expensesViews = new LinkedList<>();
     private WorkOrder _workOrder;
-    private Pay _counterPay;
-    private Schedule _counterSchedule;
-    private String _counterReason;
-    private long _expires = 0;
     private WorkordersWebApi _workOrderApi;
-    private String _explanation;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -88,37 +82,24 @@ public class CounterOfferDialog extends SimpleDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
 
-        _tabHost = (TabHost) v.findViewById(R.id.tabhost);
-        _tabHost.setup();
 
-        TabHost.TabSpec tab1 = _tabHost.newTabSpec("start");
-        tab1.setIndicator("Pay");
-        tab1.setContent(R.id.payment_view);
-        _tabHost.addTab(tab1);
+        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle(App.get().getString(R.string.counter_offer));
 
-        TabHost.TabSpec tab2 = _tabHost.newTabSpec("mid1");
-        tab2.setIndicator("Schedule");
-        tab2.setContent(R.id.schedule_view);
-        _tabHost.addTab(tab2);
+        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
-        TabHost.TabSpec tab3 = _tabHost.newTabSpec("mid2");
-        tab3.setIndicator("Expense");
-        tab3.setContent(R.id.expenses_view);
-        _tabHost.addTab(tab3);
-
-        TabHost.TabSpec tab4 = _tabHost.newTabSpec("end");
-        tab4.setIndicator("Reason");
-        tab4.setContent(R.id.reasons_view);
-        _tabHost.addTab(tab4);
-
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _backButton = (Button) v.findViewById(R.id.back_button);
-        _backButton.setVisibility(View.GONE);
         _paymentView = (PaymentCoView) v.findViewById(R.id.payment_view);
         _scheduleView = (ScheduleCoView) v.findViewById(R.id.schedule_view);
-        _expenseView = (ExpenseCoView) v.findViewById(R.id.expenses_view);
-        _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
-        _tabScrollView = (HorizontalScrollView) v.findViewById(R.id.tabscroll_view);
+
+        _expensesList = (LinearLayout) v.findViewById(R.id.expenses_list);
+        _addExpense = (IconFontTextView) v.findViewById(R.id.add_expense);
+
+        _reasonView = (ReasonCoViewNew) v.findViewById(R.id.reasons_view);
+
+        _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
 
         _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
 
@@ -129,32 +110,23 @@ public class CounterOfferDialog extends SimpleDialog {
     public void onStart() {
         super.onStart();
 
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+        _addExpense.setOnClickListener(_actionButton_onClick);
+
+        _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        SpannableString spanned = new SpannableString("By countering this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
+        spanned.setSpan(_standardTerms_onClick, 91, 131, spanned.getSpanFlags(_standardTerms_onClick));
+        spanned.setSpan(_pqap_onClick, 140, 173, spanned.getSpanFlags(_pqap_onClick));
+        _termsWarningTextView.setText(spanned);
+
         _workOrderApi = new WorkordersWebApi(_workOrdersWebApi_listener);
         _workOrderApi.connect(App.get());
-
-        _okButton.setOnClickListener(_ok_onClick);
-        _backButton.setOnClickListener(_back_onClick);
-        _paymentView.setListener(_payment_listener);
-        _scheduleView.setListener(_scheduleView_listener);
-        _expenseView.setListener(_expenseView_listener);
-        _reasonView.setListener(_reason_listener);
-
-        _tabHost.setOnTabChangedListener(_tab_changeListener);
-
-        for (int i = 0; i < 4; i++) {
-            _tabHost.getTabWidget().getChildAt(i).setFocusableInTouchMode(false);
-        }
-
-        PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
-        ExpenseDialog.addOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
-        ScheduleDialog.addOnCompleteListener(DIALOG_SCHEDULE, _scheduleDialog_onComplete);
     }
 
     @Override
     public void onResume() {
-        Log.v(TAG, "onResume");
         super.onResume();
-
         populateUi();
     }
 
@@ -164,108 +136,49 @@ public class CounterOfferDialog extends SimpleDialog {
 
         Log.v(TAG, "show");
         _workOrder = payload.getParcelable("workOrder");
-
-        Request coRequest = null;
-
-        if (_workOrder.getRequests() != null)
-            coRequest = _workOrder.getRequests().getCounterOffer();
-
-        _counterPay = null;
-        _counterSchedule = null;
-        _counterReason = null;
-        _expires = 0;
-
-        if (coRequest != null) {
-            if (coRequest.getPay() != null) {
-                _counterPay = coRequest.getPay();
-            }
-            if (coRequest.getSchedule() != null) {
-                _counterSchedule = coRequest.getSchedule();
-            }
-
-            if (coRequest.getExpenses() != null && coRequest.getExpenses().length > 0) {
-                _expenses.clear();
-                Expense[] exp = coRequest.getExpenses();
-                Collections.addAll(_expenses, exp);
-            }
-
-            _counterReason = coRequest.getCounterNotes();
-            try {
-                _expires = coRequest.getExpires() == null ? 0 : coRequest.getExpires().getUtcLong();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
         populateUi();
     }
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         Log.v(TAG, "onCreate");
-        if (savedState != null) {
-            if (savedState.containsKey(STATE_COUNTER_PAY))
-                _counterPay = savedState.getParcelable(STATE_COUNTER_PAY);
 
-            if (savedState.containsKey(STATE_EXPENSES)) {
-                Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
-                _expenses.clear();
-                for (Parcelable aParc : parc) {
-                    _expenses.add((Expense) aParc);
-                }
+        if (savedState.containsKey(STATE_EXPENSES)) {
+            Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
+            _expensesViews.clear();
+            for (Parcelable aParc : parc) {
+                ExpensesCoCardView v = new ExpensesCoCardView(getContext());
+                v.setExpense((Expense) aParc);
+                _expensesViews.add(v);
             }
-
-            if (savedState.containsKey(STATE_COUNTER_SCHEDULE))
-                _counterSchedule = savedState.getParcelable(STATE_COUNTER_SCHEDULE);
-
-            if (savedState.containsKey(STATE_COUNTER_REASON))
-                _counterReason = savedState.getString(STATE_COUNTER_REASON);
-
-            if (savedState.containsKey(STATE_EXPIRES))
-                _expires = savedState.getLong(STATE_EXPIRES);
         }
+
         populateUi();
     }
 
     @Override
     public void onStop() {
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
-
         super.onStop();
-
-        PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
-        ExpenseDialog.removeOnOkListener(DIALOG_EXPENSE, _expenseDialog_onOk);
-        ScheduleDialog.removeOnCompleteListener(DIALOG_SCHEDULE, _scheduleDialog_onComplete);
     }
 
     @Override
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
-        outState.putLong(STATE_EXPIRES, _expires);
 
-        if (_counterPay != null)
-            outState.putParcelable(STATE_COUNTER_PAY, _counterPay);
+        if (_expensesViews != null && _expensesViews.size() > 0) {
+            Expense[] exs = new Expense[_expensesViews.size()];
 
-        if (_expenses != null && _expenses.size() > 0) {
-            Expense[] exs = new Expense[_expenses.size()];
-
-            for (int i = 0; i < _expenses.size(); i++) {
-                exs[i] = _expenses.get(i);
+            for (int i = 0; i < _expensesViews.size(); i++) {
+                exs[i] = _expensesViews.get(i).getExpense();
             }
 
             outState.putParcelableArray(STATE_EXPENSES, exs);
-        }
 
-        if (_counterSchedule != null)
-            outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
-
-        if (_reasonView != null) {
-            outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
         }
     }
 
     private void populateUi() {
-        Log.v(TAG, "populateUi maybe!");
         if (_workOrder == null)
             return;
 
@@ -275,235 +188,121 @@ public class CounterOfferDialog extends SimpleDialog {
         if (_scheduleView == null)
             return;
 
-        Log.v(TAG, "populateUi yes!");
+        _expensesList.removeAllViews();
 
-        if (_counterPay != null)
-            _paymentView.setPay(_counterPay, true);
-        else
-            _paymentView.setPay(_workOrder.getPay(), false);
+        ForLoopRunnable r = new ForLoopRunnable(_expensesViews.size(), new Handler()) {
 
-        if (_counterSchedule != null) {
-            _scheduleView.setSchedule(_counterSchedule, true);
-        } else {
-            _scheduleView.setSchedule(_workOrder.getSchedule(), false);
-        }
+            @Override
+            public void next(int i) throws Exception {
+                ExpensesCoCardView v = null;
+                if (i < _expensesList.getChildCount()) {
+                    v = (ExpensesCoCardView) _expensesList.getChildAt(i);
+                } else {
+                    v = _expensesViews.get(i);
+                    _expensesList.addView(v);
+                }
+            }
+        };
+        _expensesList.postDelayed(r, new Random().nextInt(100));
 
-        _expenseView.setData(_workOrder, _expenses);
-
-        _reasonView.setCounterOffer(_counterReason, _expires);
     }
 
-    private void setTabPos(int pos) {
-        Log.v(TAG, "setTabPos: " + pos);
-        if (pos == 0) {
-            _tabScrollView.post(new Runnable() {
-                @Override
-                public void run() {
-                    _tabScrollView.fullScroll(View.FOCUS_LEFT);
-                    _tabHost.setCurrentTab(0);
-                }
-            });
-        } else if (pos > 0 && pos < 4) {
-            _tabHost.setCurrentTab(pos);
-        } else {
-            _tabScrollView.post(new Runnable() {
-                @Override
-                public void run() {
-                    _tabScrollView.fullScroll(View.FOCUS_RIGHT);
-                    _tabHost.setCurrentTab(4);
-                }
-            });
-        }
-    }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
-        public void onExpirationChange(long expires) {
-            _expires = expires;
+        public void onClick(View v) {
+            dismiss(true);
         }
     };
 
-    private final ExpenseCoView.Listener _expenseView_listener = new ExpenseCoView.Listener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
-        public void addExpense() {
-            ExpenseDialog.show(App.get(), DIALOG_EXPENSE, false);
-        }
+        public boolean onMenuItemClick(MenuItem item) {
 
-        @Override
-        public void removeExpense(Expense expense) {
-            _expenses.remove(expense);
-            populateUi();
-        }
+            _refreshView.startRefreshing();
 
-        @Override
-        public void reset() {
-            Request co = null;
-
-            if (_workOrder.getRequests() != null)
-                co = _workOrder.getRequests().getCounterOffer();
-
-            _expenses.clear();
-            if (co != null && co.getExpenses() != null && co.getExpenses().length > 0) {
-                Expense[] exp = co.getExpenses();
-                Collections.addAll(_expenses, exp);
+            Expense[] exp = new Expense[_expensesViews.size()];
+            for (int i = 0; i < _expensesViews.size(); i++) {
+                if (_expensesViews.get(i).isValidExpense())
+                    exp[i] = _expensesViews.get(i).getExpense();
+                else {
+                    ToastClient.toast(App.get(), R.string.toast_must_enter_amount_and_description, Toast.LENGTH_LONG);
+                    _refreshView.refreshComplete();
+                    return false;
+                }
             }
-            populateUi();
-        }
 
-        @Override
-        public void editExpense(Expense expense) {
-            // TODO editExpense
-        }
-    };
-
-    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
             try {
-                _expenses.add(new Expense()
-                        .description(description)
-                        .amount(amount));
+                Request request = new Request();
+                request.counter(true);
+
+                if (_paymentView.getPay() != null && _paymentView.isValidPay()) {
+                    if (!_paymentView.isValidAmount()) {
+                        ToastClient.toast(App.get(), R.string.please_enter_a_value_atleast_one_dollar, Toast.LENGTH_SHORT);
+                        _refreshView.refreshComplete();
+                        return false;
+                    }
+                    if (!_paymentView.isValidTotalAmount()) {
+                        ToastClient.toast(App.get(), App.get().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
+                        _refreshView.refreshComplete();
+                        return false;
+                    }
+                    request.pay(_paymentView.getPay());
+                }
+
+                if (_scheduleView.getSchedule() != null)
+                    request.schedule(_scheduleView.getSchedule());
+
+                if (exp != null)
+                    request.expenses(exp);
+
+                if (_reasonView.getExpiryTime() > 0)
+                    request.expires(new Date(_reasonView.getExpiryTime()));
+
+                if (!misc.isEmptyOrNull(_reasonView.getReason()))
+                    request.counterNotes(_reasonView.getReason());
+
+                if (!_paymentView.isValidPay() && !_scheduleView.isValidSchedule() && !(exp != null && exp.length > 0)) {
+                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_empty_counter_offer), Toast.LENGTH_SHORT);
+                    _refreshView.refreshComplete();
+                    return false;
+                }
+
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Counter Offer Dialog";
+                WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
+
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-            populateUi();
+
+
+            return true;
         }
     };
 
-    private final ScheduleCoView.Listener _scheduleView_listener = new ScheduleCoView.Listener() {
+    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
         @Override
-        public void onClear() {
-            _counterSchedule = null;
-            populateUi();
-        }
-
-        @Override
-        public void onChange(Schedule schedule) {
-            ScheduleDialog.show(App.get(), DIALOG_SCHEDULE, schedule);
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
-    private final ScheduleDialog.OnCompleteListener _scheduleDialog_onComplete = new ScheduleDialog.OnCompleteListener() {
+    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
         @Override
-        public void onComplete(Schedule schedule) {
-            _counterSchedule = schedule;
-            populateUi();
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
-    private final PaymentCoView.Listener _payment_listener = new PaymentCoView.Listener() {
-        @Override
-        public void onClearClick() {
-            _counterPay = null;
-            populateUi();
-        }
-
-        @Override
-        public void onChangeClick(Pay pay) {
-            PayDialog.show(App.get(), DIALOG_PAY, pay, false);
-        }
-    };
-
-    private final PayDialog.OnCompleteListener _payDialog_onComplete = new PayDialog.OnCompleteListener() {
-        @Override
-        public void onComplete(Pay pay, String explanation) {
-            _counterPay = pay;
-            _explanation = explanation;
-            populateUi();
-        }
-    };
-
-    private final TabHost.OnTabChangeListener _tab_changeListener = new TabHost.OnTabChangeListener() {
-        @Override
-        public void onTabChanged(String tabId) {
-            _backButton.setVisibility(View.VISIBLE);
-            _okButton.setText("NEXT");
-            if (tabId.equals("start")) {
-                _backButton.setVisibility(View.GONE);
-            } else if (tabId.startsWith("mid")) {
-            } else if (tabId.equals("end")) {
-                _okButton.setText("FINISH");
-            }
-        }
-    };
-
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // start?
-            if (_tabHost.getCurrentTabTag().equals("start")) {
-                setTabPos(_tabHost.getCurrentTab() + 1);
-            } else if (_tabHost.getCurrentTabTag().startsWith("mid")) {
-                setTabPos(_tabHost.getCurrentTab() + 1);
-            } else if (_tabHost.getCurrentTabTag().equals("end")) {
-                _counterReason = _reasonView.getReason();
-
-                Log.e(TAG, "_expireDuration: " + _expires);
-
-                if (_workOrder.getRequests().getOpenRequest() != null) {
-                    _refreshView.startRefreshing();
-
-                    SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                    uiContext.page += " - Counter Offer Dialog";
-                    WorkordersWebApi.deleteRequest(App.get(), _workOrder.getId(),
-                            _workOrder.getRequests().getOpenRequest().getId(), uiContext);
-                } else {
-                    _refreshView.startRefreshing();
-
-                    Expense[] exp = new Expense[_expenses.size()];
-                    for (int i = 0; i < _expenses.size(); i++) {
-                        exp[i] = _expenses.get(i);
-                    }
-
-                    try {
-                        Request request = new Request();
-                        request.counter(true);
-
-                        if (!misc.isEmptyOrNull(_counterReason))
-                            request.counterNotes(_counterReason);
-
-                        if (_counterPay != null)
-                            request.pay(_counterPay);
-
-                        if (_counterSchedule != null)
-                            request.schedule(_counterSchedule);
-
-                        if (exp != null)
-                            request.expenses(exp);
-
-                        if (_expires > 0)
-                            request.expires(new Date(_expires));
-
-                        if (!misc.isEmptyOrNull(_explanation))
-                            request.setNotes(_explanation);
-
-                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                        uiContext.page += " - Counter Offer Dialog";
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                }
-            }
-        }
-    };
-
-    private final View.OnClickListener _back_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            setTabPos(_tabHost.getCurrentTab() - 1);
-        }
-    };
-
-    public static void show(Context context, String uid, WorkOrder workOrder) {
-        Bundle params = new Bundle();
-        params.putParcelable("workOrder", workOrder);
-
-        Controller.show(context, uid, CounterOfferDialog.class, params);
-    }
 
     private final WorkordersWebApi.Listener _workOrdersWebApi_listener = new WorkordersWebApi.Listener() {
         @Override
@@ -522,53 +321,37 @@ public class CounterOfferDialog extends SimpleDialog {
             if (methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
-                    Expense[] exp = new Expense[_expenses.size()];
-                    for (int i = 0; i < _expenses.size(); i++) {
-                        exp[i] = _expenses.get(i);
+                    Expense[] exp = new Expense[_expensesViews.size()];
+                    for (int i = 0; i < _expensesViews.size(); i++) {
+                        exp[i] = _expensesViews.get(i).getExpense();
                     }
 
-                    _onOkDispatcher.dispatch(getUid(), _workOrder, _counterReason, _expires, _counterPay, _counterSchedule, exp);
+                    _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _paymentView.getPay(), _scheduleView.getSchedule(), exp);
                     dismiss(true);
-                }
-                _refreshView.refreshComplete();
-            } else if (methodName.equals("deleteRequest")) {
-                WorkOrder workOrder = (WorkOrder) successObject;
-                if (success) {
-                    Expense[] exp = new Expense[_expenses.size()];
-                    for (int i = 0; i < _expenses.size(); i++) {
-                        exp[i] = _expenses.get(i);
-                    }
-                    try {
-                        Request request = new Request();
-                        request.counter(true);
 
-                        if (!misc.isEmptyOrNull(_counterReason))
-                            request.counterNotes(_counterReason);
-
-                        if (_counterPay != null)
-                            request.pay(_counterPay);
-
-                        if (_counterSchedule != null)
-                            request.schedule(_counterSchedule);
-
-                        if (exp != null)
-                            request.expenses(exp);
-
-                        if (_expires > 0)
-                            request.expires(new Date(_expires));
-
-                        SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                        uiContext.page += " - Counter Offer Dialog";
-                        WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
-                } else {
                     _refreshView.refreshComplete();
                 }
             }
         }
     };
+
+    private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ExpensesCoCardView view = new ExpensesCoCardView(getContext());
+            _expensesViews.add(view);
+            populateUi();
+        }
+    };
+
+
+    public static void show(Context context, String uid, WorkOrder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable("workOrder", workOrder);
+
+        Controller.show(context, uid, CounterOfferDialog.class, params);
+    }
+
 
     /*-**********************-*/
     /*-         Ok           -*/

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="16dp">
+
+
+        <TextView
+            android:id="@+id/offer_expire_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="4dp"
+            android:text="@string/offer_expires"
+            android:textColor="@color/fn_dark_text_50" />
+
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/expire_duration_spinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/offer_expire_title_textview"
+            android:hint="NEVER"
+            android:visibility="visible" />
+
+        <EditText
+            android:id="@+id/request_reason_edittext"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/expire_duration_spinner"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="@string/reason_for_request"
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences|textAutoCorrect"
+            android:textColor="@color/fn_dark_text_50" />
+
+        <TextView
+            android:id="@+id/disclaimer_textview"
+            style="?attr/tileTextStatusStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/request_reason_edittext"
+            android:layout_marginBottom="20dp"
+            android:text="@string/disclaimer_to_counter_offer" />
+    </RelativeLayout>
+</RelativeLayout>

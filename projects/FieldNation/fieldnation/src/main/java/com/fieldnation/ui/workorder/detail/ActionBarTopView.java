@@ -297,13 +297,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
             _leftWhiteButton.setOnClickListener(_withdraw_onClick);
             _leftWhiteButton.setText(R.string.btn_withdraw);
 
-            if (_workOrder.getRequests() != null && _workOrder.getRequests().getCounterOffer() != null
-                    && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
-                _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_view_counter);
-                _rightWhiteButton.setOnClickListener(_viewCounter_onClick);
-                _rightWhiteButton.setEnabled(true);
-            }
             setVisibility(View.VISIBLE);
 
             // View payments
@@ -438,13 +431,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         }
     };
 
-    private final View.OnClickListener _viewCounter_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null) _listener.onViewCounter();
-        }
-    };
-
     private final View.OnClickListener _readyToGo_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -523,8 +509,6 @@ public class ActionBarTopView extends LinearLayout implements WorkOrderRenderer 
         void onWithdraw();
 
         void onAccept();
-
-        void onViewCounter();
 
         void onConfirm();
 

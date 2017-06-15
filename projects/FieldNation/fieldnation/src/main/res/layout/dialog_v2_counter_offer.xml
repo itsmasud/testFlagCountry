@@ -1,91 +1,212 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/dialogStyle"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true">
+    android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg">
 
-    <TabHost
-        android:id="@+id/tabhost"
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
 
-        <LinearLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:paddingBottom="@dimen/dialogActionBarPadding">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <HorizontalScrollView
-                android:id="@+id/tabscroll_view"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:scrollbars="none">
-
-                <TabWidget
-                    android:id="@android:id/tabs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </HorizontalScrollView>
-
-            <ScrollView
-                android:id="@android:id/tabcontent"
+            <RelativeLayout
+                android:id="@+id/pay_layout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp">
 
-                <FrameLayout
+                <TextView
+                    android:id="@+id/pay_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="24dp"
+                    android:gravity="center"
+                    android:text="@string/pay"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/pay_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/pay_title_textview" />
+
+                <com.fieldnation.v2.ui.dialog.PaymentCoView
+                    android:id="@+id/payment_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp">
+                    android:layout_below="@+id/pay_title_divider" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/pay_layout_divider"
+                style="@style/DividerFull"
+                android:layout_below="@+id/pay_layout" />
+
+            <RelativeLayout
+                android:id="@+id/schedule_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/pay_layout_divider"
+                android:layout_marginTop="12dp">
+
+                <TextView
+                    android:id="@+id/schedule_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="24dp"
+                    android:gravity="center"
+                    android:text="@string/schedule"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/schedule_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/schedule_title_textview" />
 
 
-                    <com.fieldnation.v2.ui.dialog.PaymentCoView
-                        android:id="@+id/payment_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                <com.fieldnation.v2.ui.dialog.ScheduleCoView
+                    android:id="@+id/schedule_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/schedule_title_divider"
+                    android:visibility="visible" />
 
-                    <com.fieldnation.v2.ui.dialog.ScheduleCoView
-                        android:id="@+id/schedule_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+            </RelativeLayout>
 
-                    <com.fieldnation.v2.ui.dialog.ExpenseCoView
-                        android:id="@+id/expenses_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+            <View
+                android:id="@+id/schedule_layout_divider"
+                style="@style/DividerFull"
+                android:layout_below="@+id/schedule_layout" />
 
-                    <com.fieldnation.v2.ui.dialog.ReasonCoView
-                        android:id="@+id/reasons_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </FrameLayout>
-            </ScrollView>
-        </LinearLayout>
-    </TabHost>
+            <RelativeLayout
+                android:id="@+id/expense_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/schedule_layout_divider"
+                android:layout_marginTop="12dp">
 
-    <LinearLayout
-        android:id="@+id/actionbar_view"
-        style="?attr/dialogActionBarStyle"
-        android:layout_below="@+id/tabhost"
-        android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/expenses_title_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="24dp"
+                    android:gravity="center"
+                    android:text="@string/expenses"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/back_button"
-            style="?attr/dialogCancelButtonStyle"
-            android:text="@string/btn_back" />
+                <View
+                    android:id="@+id/expenses_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/expenses_title_textview" />
 
-        <Button
-            android:id="@+id/ok_button"
-            style="?attr/dialogOkButtonStyle"
-            android:text="@string/btn_next" />
-    </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/expenses_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expenses_title_divider"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
 
 
-    <com.fieldnation.ui.RefreshView
-        android:id="@+id/refresh_view"
-        android:layout_width="wrap_content"
-        android:layout_height="250dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-50dp" />
+                <RelativeLayout
+                    android:id="@+id/addExpense_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expenses_list"
+                    android:background="@android:color/white"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:id="@+id/addExpense_textview"
+                        style="?attr/tileTextBodyStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_toLeftOf="@+id/add_button"
+                        android:text="Add Expense"
+                        android:textColor="@color/fn_dark_text_50" />
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/add_expense"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="24dp"
+                        android:textSize="20dp"
+                        android:text="@string/icon_circle_add"
+                        android:textColor="@color/fn_dark_text_50" />
+
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/add_expense_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/addExpense_layout" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/reason_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expense_layout"
+                android:layout_marginTop="18dp">
+
+                <com.fieldnation.v2.ui.dialog.ReasonCoViewNew
+                    android:id="@+id/reasons_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+
+                <View
+                    android:id="@+id/termswarning_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/reasons_view" />
+
+                <TextView
+                    android:id="@+id/termswarning_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/termswarning_divider"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="24dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginTop="16dp"
+                    android:text="By countering this work order you are agreeing to our Work Order Terms and Conditions" />
+
+            </RelativeLayout>
+
+            <com.fieldnation.ui.RefreshView
+                android:id="@+id/refresh_view"
+                android:layout_width="wrap_content"
+                android:layout_height="250dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="-50dp" />
+
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

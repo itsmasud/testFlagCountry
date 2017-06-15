@@ -302,8 +302,16 @@ public class WorkOrderCard extends RelativeLayout {
                     Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
                     _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
                             + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
-                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
-                            + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
+
+
+                    if (scal.get(Calendar.MONTH) != ecal.get(Calendar.MONTH)) {
+                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                                + " - " + new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
+                    } else {
+                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                                + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
+                    }
+
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                     _timeTextView.setVisibility(GONE);

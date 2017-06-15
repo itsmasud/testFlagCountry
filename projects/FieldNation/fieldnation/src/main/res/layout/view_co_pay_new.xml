@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/type_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_textview"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/pay_type_title_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:text="@string/pay_type" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/type_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pay_type"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <!-- fixed pay -->
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/fixed_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/type_layout"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/fixed_edittext"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="@string/amount"
+                android:textColor="@color/fn_dark_text_50"
+                android:imeOptions="actionDone"
+                android:inputType="numberDecimal" />
+        </android.support.design.widget.TextInputLayout>
+
+        <!-- hourly -->
+
+        <LinearLayout
+            android:id="@+id/hourly_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/fixed_layout"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/hourlyrate_edittext"
+                    style="@style/EditText"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/hourly"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/maxhours_edittext"
+                    style="@style/EditText"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/max_hours"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <!-- per device -->
+
+        <LinearLayout
+            android:id="@+id/devices_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/hourly_layout"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/devicerate_edittext"
+                    style="@style/EditText"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/amount"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/maxdevices_edittext"
+                    style="@style/EditText"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/max_devices"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+        </LinearLayout>
+
+        <!-- blended -->
+
+        <LinearLayout
+            android:id="@+id/blended_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/devices_layout"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/blendedFixedRate_edittext"
+                    style="@style/EditText"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/fixed_pay_amount"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:imeOptions="actionNext"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/blendedFixedMaxHours_edittext"
+                    style="@style/EditText"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/blended_fixed_pay_max_hours"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/extrahours_edittext"
+                    style="@style/EditText"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/blended_hourly_amount"
+                    android:imeOptions="actionNext"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/extramaxhours_edittext"
+                    style="@style/EditText"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/blended_hourly_max_hours"
+                    android:imeOptions="actionDone"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+</RelativeLayout>
