@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="16dp">
+
+        <LinearLayout
+            android:id="@+id/type_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_textview"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="24dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/schedule_type_title_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:text="@string/schedule_type" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/type_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/schedule_type"
+                android:visibility="visible" />
+
+        </LinearLayout>
+
+        <!-- exact -->
+
+        <LinearLayout
+            android:id="@+id/exact_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/type_layout"
+            android:orientation="vertical"
+            android:layout_marginRight="24dp"
+            android:visibility="gone">
+
+            <TextView
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:text="@string/arrival_time" />
+
+            <Button
+                android:id="@+id/date_time_button"
+                style="@style/SpinnerButton"
+                android:textColor="@color/fn_dark_text_50"
+                android:hint="@string/placeholder_date_long" />
+
+            <View
+                style="@style/DividerSpinnerFull"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@color/fn_material_spinner_bottom_line" />
+        </LinearLayout>
+
+        <!-- range -->
+
+        <LinearLayout
+            android:id="@+id/range_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/type_layout"
+            android:orientation="vertical"
+            android:layout_marginRight="24dp"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/earliest_arrival" />
+
+                <Button
+                    android:id="@+id/start_date_button"
+                    style="@style/SpinnerButton"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:hint="@string/placeholder_date_long" />
+
+                <View
+                    style="@style/DividerSpinnerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/latest_arrival" />
+
+                <Button
+                    android:id="@+id/end_date_button"
+                    style="@style/SpinnerButton"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:hint="@string/placeholder_date_long" />
+
+                <View
+                    style="@style/DividerSpinnerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

@@ -46,6 +46,7 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
@@ -82,6 +83,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
+import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -631,6 +633,9 @@ public class WorkFragment extends WorkorderFragment {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
+
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
+
         }
     };
 
