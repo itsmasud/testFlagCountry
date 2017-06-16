@@ -31,6 +31,8 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.PaymentCoView;
+import com.fieldnation.ui.ReasonCoView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -40,6 +42,7 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.ui.ExpensesCoCardView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -61,7 +64,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private PaymentCoView _paymentView;
     private ScheduleCoView _scheduleView;
     private LinearLayout _expensesList;
-    private ReasonCoViewNew _reasonView;
+    private ReasonCoView _reasonView;
     private TextView _termsWarningTextView;
     private IconFontTextView _addExpense;
 
@@ -97,7 +100,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         _expensesList = (LinearLayout) v.findViewById(R.id.expenses_list);
         _addExpense = (IconFontTextView) v.findViewById(R.id.add_expense);
 
-        _reasonView = (ReasonCoViewNew) v.findViewById(R.id.reasons_view);
+        _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
 
         _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
 

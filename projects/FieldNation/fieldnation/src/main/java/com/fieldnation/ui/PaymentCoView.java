@@ -1,4 +1,4 @@
-package com.fieldnation.v2.ui.dialog;
+package com.fieldnation.ui;
 
 import android.content.Context;
 import android.text.Editable;
