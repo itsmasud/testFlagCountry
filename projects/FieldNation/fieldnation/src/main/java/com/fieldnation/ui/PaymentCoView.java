@@ -1,8 +1,6 @@
-package com.fieldnation.v2.ui.dialog;
+package com.fieldnation.ui;
 
 import android.content.Context;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,8 +13,6 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.HintArrayAdapter;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayAdditional;
 import com.fieldnation.v2.data.model.PayBase;

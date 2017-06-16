@@ -1,4 +1,4 @@
-package com.fieldnation.v2.ui.dialog;
+package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,8 +25,8 @@ import com.fieldnation.ui.HintSpinner;
 /**
  * Created by shoaib.ahmed on 06/07/2017.
  */
-public class ReasonCoViewNew extends RelativeLayout {
-    private static final String TAG = "ReasonCoViewNew";
+public class ReasonCoView extends RelativeLayout {
+    private static final String TAG = "ReasonCoView";
 
     // Ui
     private EditText _requestReasonEditText;
@@ -37,24 +37,24 @@ public class ReasonCoViewNew extends RelativeLayout {
     private int[] _durations;
     private long expireMillisecond = -1;
 
-    public ReasonCoViewNew(Context context) {
+    public ReasonCoView(Context context) {
         super(context);
         init();
     }
 
-    public ReasonCoViewNew(Context context, AttributeSet attrs) {
+    public ReasonCoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ReasonCoViewNew(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ReasonCoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
         Log.v(TAG, "init");
-        LayoutInflater.from(getContext()).inflate(R.layout.view_co_reasons_tile_new, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_co_reasons_tile, this);
 
         if (isInEditMode())
             return;
