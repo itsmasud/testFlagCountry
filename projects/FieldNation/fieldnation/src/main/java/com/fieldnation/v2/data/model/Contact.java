@@ -277,7 +277,4 @@ public class Contact implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getName()) && !misc.isEmptyOrNull(getPhone());
-    }
 }

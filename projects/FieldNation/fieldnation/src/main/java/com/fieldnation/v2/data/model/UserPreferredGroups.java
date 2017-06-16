@@ -60,10 +60,10 @@ public class UserPreferredGroups implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public UserPreferredGroups created(Date created) throws ParseException {
@@ -205,7 +205,4 @@ public class UserPreferredGroups implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

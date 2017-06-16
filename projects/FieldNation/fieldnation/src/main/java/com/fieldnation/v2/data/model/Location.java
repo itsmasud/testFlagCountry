@@ -123,6 +123,9 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -220,6 +223,9 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_contacts == null)
+            _contacts = new Contact[0];
+
         return _contacts;
     }
 
@@ -242,10 +248,10 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_coordinates != null && _coordinates.isSet())
-            return _coordinates;
+        if (_coordinates == null)
+            _coordinates = new Coords();
 
-        return null;
+            return _coordinates;
     }
 
     public Location coordinates(Coords coordinates) throws ParseException {
@@ -311,10 +317,10 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_map != null && _map.isSet())
-            return _map;
+        if (_map == null)
+            _map = new Map();
 
-        return null;
+            return _map;
     }
 
     public Location map(Map map) throws ParseException {
@@ -362,6 +368,9 @@ public class Location implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_notes == null)
+            _notes = new LocationNote[0];
 
         return _notes;
     }
@@ -451,10 +460,10 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_savedLocation != null && _savedLocation.isSet())
-            return _savedLocation;
+        if (_savedLocation == null)
+            _savedLocation = new StoredLocation();
 
-        return null;
+            return _savedLocation;
     }
 
     public Location savedLocation(StoredLocation savedLocation) throws ParseException {
@@ -520,10 +529,10 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public Location timeZone(TimeZone timeZone) throws ParseException {
@@ -545,10 +554,10 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_type != null && _type.isSet())
-            return _type;
+        if (_type == null)
+            _type = new LocationType();
 
-        return null;
+            return _type;
     }
 
     public Location type(LocationType type) throws ParseException {
@@ -570,10 +579,10 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_validation != null && _validation.isSet())
-            return _validation;
+        if (_validation == null)
+            _validation = new LocationValidation();
 
-        return null;
+            return _validation;
     }
 
     public Location validation(LocationValidation validation) throws ParseException {
@@ -767,10 +776,6 @@ public class Location implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getMode() != null;
-    }
 
     public String getCityState() {
         if (misc.isEmptyOrNull(getCity()) && misc.isEmptyOrNull(getState()))

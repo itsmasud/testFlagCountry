@@ -63,10 +63,10 @@ public class Hold implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_acknowledgment != null && _acknowledgment.isSet())
-            return _acknowledgment;
+        if (_acknowledgment == null)
+            _acknowledgment = new Acknowledgment();
 
-        return null;
+            return _acknowledgment;
     }
 
     public Hold acknowledgment(Acknowledgment acknowledgment) throws ParseException {
@@ -96,6 +96,9 @@ public class Hold implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
 
         return _actions;
     }
@@ -167,10 +170,10 @@ public class Hold implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_type != null && _type.isSet())
-            return _type;
+        if (_type == null)
+            _type = new HoldType();
 
-        return null;
+            return _type;
     }
 
     public Hold type(HoldType type) throws ParseException {
@@ -286,7 +289,4 @@ public class Hold implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

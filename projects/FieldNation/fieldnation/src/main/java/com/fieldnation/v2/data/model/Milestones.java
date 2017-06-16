@@ -81,10 +81,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_approved != null && _approved.isSet())
-        return _approved;
+        if (_approved == null)
+            _approved = new Date();
 
-        return null;
+        return _approved;
     }
 
     public Milestones approved(Date approved) throws ParseException {
@@ -106,10 +106,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_assigned != null && _assigned.isSet())
-        return _assigned;
+        if (_assigned == null)
+            _assigned = new Date();
 
-        return null;
+        return _assigned;
     }
 
     public Milestones assigned(Date assigned) throws ParseException {
@@ -131,10 +131,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_canceled != null && _canceled.isSet())
-        return _canceled;
+        if (_canceled == null)
+            _canceled = new Date();
 
-        return null;
+        return _canceled;
     }
 
     public Milestones canceled(Date canceled) throws ParseException {
@@ -156,10 +156,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-        return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public Milestones created(Date created) throws ParseException {
@@ -181,10 +181,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_paid != null && _paid.isSet())
-        return _paid;
+        if (_paid == null)
+            _paid = new Date();
 
-        return null;
+        return _paid;
     }
 
     public Milestones paid(Date paid) throws ParseException {
@@ -206,10 +206,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_published != null && _published.isSet())
-        return _published;
+        if (_published == null)
+            _published = new Date();
 
-        return null;
+        return _published;
     }
 
     public Milestones published(Date published) throws ParseException {
@@ -231,10 +231,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_routed != null && _routed.isSet())
-        return _routed;
+        if (_routed == null)
+            _routed = new Date();
 
-        return null;
+        return _routed;
     }
 
     public Milestones routed(Date routed) throws ParseException {
@@ -322,10 +322,10 @@ public class Milestones implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_workdone != null && _workdone.isSet())
-        return _workdone;
+        if (_workdone == null)
+            _workdone = new Date();
 
-        return null;
+        return _workdone;
     }
 
     public Milestones workdone(Date workdone) throws ParseException {
@@ -401,7 +401,4 @@ public class Milestones implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

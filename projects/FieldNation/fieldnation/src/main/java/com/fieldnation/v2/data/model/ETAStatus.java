@@ -76,10 +76,10 @@ public class ETAStatus implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_updated != null && _updated.isSet())
-            return _updated;
+        if (_updated == null)
+            _updated = new Date();
 
-        return null;
+            return _updated;
     }
 
     public ETAStatus updated(Date updated) throws ParseException {
@@ -199,7 +199,4 @@ public class ETAStatus implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

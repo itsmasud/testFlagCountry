@@ -10,8 +10,8 @@
     <!--<string name="auth_default_password">provider</string>-->
     <!--<string name="auth_default_username">mprovider</string>-->
     <!--<string name="auth_default_password">1</string>-->
-    <string name="auth_default_username">mp.provider1</string>
-    <string name="auth_default_password">mp.provider1</string>
+    <!--<string name="auth_default_username">mp.provider1</string>-->
+    <!--<string name="auth_default_password">mp.provider1</string>-->
     <!--<string name="auth_default_username">mp.provider2</string>-->
     <!--<string name="auth_default_password">mp.provider2</string>-->
     <!--<string name="auth_default_username">mp.provider3</string>-->
@@ -22,8 +22,8 @@
     <!--<string name="auth_default_password">saas.w2.provider2</string>-->
     <!--<string name="auth_default_username">service.company.admin</string>-->
     <!--<string name="auth_default_password">service.company.admin</string>-->
-    <!--<string name="auth_default_username">service.company.provider</string>-->
-    <!--<string name="auth_default_password">service.company.provider</string>-->
+    <string name="auth_default_username">service.company.provider</string>
+    <string name="auth_default_password">service.company.provider</string>
     <!--<string name="auth_default_username">service.company.provider2</string>-->
     <!--<string name="auth_default_password">service.company.provider2</string>-->
 

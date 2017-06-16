@@ -5,17 +5,11 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -51,10 +45,10 @@ public class UserPreviousRequest implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_at != null && _at.isSet())
-            return _at;
+        if (_at == null)
+            _at = new Date();
 
-        return null;
+        return _at;
     }
 
     public UserPreviousRequest at(Date at) throws ParseException {
@@ -130,7 +124,4 @@ public class UserPreviousRequest implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

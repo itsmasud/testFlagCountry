@@ -96,6 +96,9 @@ public class TimeLog implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -188,10 +191,10 @@ public class TimeLog implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_in != null && _in.isSet())
-            return _in;
+        if (_in == null)
+            _in = new CheckInOut();
 
-        return null;
+            return _in;
     }
 
     public TimeLog in(CheckInOut in) throws ParseException {
@@ -213,10 +216,10 @@ public class TimeLog implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_loggedBy != null && _loggedBy.isSet())
-            return _loggedBy;
+        if (_loggedBy == null)
+            _loggedBy = new User();
 
-        return null;
+            return _loggedBy;
     }
 
     public TimeLog loggedBy(User loggedBy) throws ParseException {
@@ -238,10 +241,10 @@ public class TimeLog implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_onMyWay != null && _onMyWay.isSet())
-            return _onMyWay;
+        if (_onMyWay == null)
+            _onMyWay = new OnMyWay();
 
-        return null;
+            return _onMyWay;
     }
 
     public TimeLog onMyWay(OnMyWay onMyWay) throws ParseException {
@@ -263,10 +266,10 @@ public class TimeLog implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_out != null && _out.isSet())
-            return _out;
+        if (_out == null)
+            _out = new CheckInOut();
 
-        return null;
+            return _out;
     }
 
     public TimeLog out(CheckInOut out) throws ParseException {
@@ -332,10 +335,10 @@ public class TimeLog implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public TimeLog timeZone(TimeZone timeZone) throws ParseException {
@@ -529,10 +532,6 @@ public class TimeLog implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<TimeLog.ActionsEnum> _actionsSet = null;
 
