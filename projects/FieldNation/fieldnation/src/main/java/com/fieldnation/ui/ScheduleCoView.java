@@ -102,9 +102,7 @@ public class ScheduleCoView extends RelativeLayout {
         _endDateButton = (Button) findViewById(R.id.end_date_button);
         _dateTimeButton = (Button) findViewById(R.id.date_time_button);
 
-        final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _timePicker = new TimePickerDialog(getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+        initializeTimePicker();
 
         _startCal = Calendar.getInstance();
         _endCal = Calendar.getInstance();
@@ -205,6 +203,12 @@ public class ScheduleCoView extends RelativeLayout {
         return true;
     }
 
+    private void initializeTimePicker(){
+        final Calendar c = Calendar.getInstance();
+        _datePicker = new DatePickerDialog(getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+    };
+
 
     /*-*****************************-*/
     /*-			UI Events			-*/
@@ -303,6 +307,7 @@ public class ScheduleCoView extends RelativeLayout {
                 _endIsSet = true;
                 _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
             }
+            initializeTimePicker();
         }
     };
 
