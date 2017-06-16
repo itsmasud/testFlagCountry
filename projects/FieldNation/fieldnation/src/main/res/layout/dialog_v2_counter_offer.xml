@@ -82,7 +82,7 @@
                     android:layout_below="@+id/schedule_title_textview" />
 
 
-                <com.fieldnation.v2.ui.dialog.ScheduleCoView
+                <com.fieldnation.ui.ScheduleCoView
                     android:id="@+id/schedule_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

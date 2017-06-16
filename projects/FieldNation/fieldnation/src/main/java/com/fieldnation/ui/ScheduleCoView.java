@@ -1,4 +1,4 @@
-package com.fieldnation.v2.ui.dialog;
+package com.fieldnation.ui;
 
 import android.content.Context;
 import android.os.Handler;
@@ -20,8 +20,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.HintArrayAdapter;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.Date;
