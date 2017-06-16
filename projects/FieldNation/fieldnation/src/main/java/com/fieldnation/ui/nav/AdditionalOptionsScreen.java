@@ -29,9 +29,9 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
+import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 import java.io.File;
@@ -171,12 +171,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _listener = listener;
     }
 
-
     @Override
     protected void onDetachedFromWindow() {
         if (_photoClient != null) _photoClient.disconnect(App.get());
         if (_profileClient != null) _profileClient.disconnect(App.get());
-
 
         super.onDetachedFromWindow();
     }

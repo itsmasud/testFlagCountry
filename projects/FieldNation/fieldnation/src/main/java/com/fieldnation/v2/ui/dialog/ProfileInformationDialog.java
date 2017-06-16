@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
     private FileCacheClient _fileCacheClient;
+    private boolean _isNew = false;
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -139,6 +141,16 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onSaveDialogState(Bundle outState) {
+        super.onSaveDialogState(outState);
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
     public void dismiss(boolean animate) {
         Log.v(TAG, "dismiss");
         super.dismiss(animate);
@@ -161,7 +173,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 misc.hideKeyboard(_phoneNoEditText);
             }
         });
-
 
         if (_profile.getUserId() != null)
             _profileIdTextView.setText("ID: " + _profile.getUserId().toString());
@@ -292,7 +303,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filename) {
             try {
-                _picView.setProfilePic(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400)));
+                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400))));
+                _picView.setProfilePic(_profilePic.get());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
