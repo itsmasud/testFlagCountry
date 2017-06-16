@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,13 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.ImageUtils;
+import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
@@ -67,6 +73,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private WeakReference<Drawable> _profilePic = null;
     private Listener _listener = null;
     private boolean _activated = false;
+    private FileCacheClient _fileCacheClient;
+    private String _tempFileName = null;
 
     // Services
     private PhotoClient _photoClient;
@@ -97,6 +105,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         if (isInEditMode())
             return;
+
+        setSaveEnabled(true);
 
         _profilePicView = (ProfilePicView) findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
@@ -164,6 +174,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(App.get());
 
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
+
         AdditionalOptionsTracker.onShow(App.get());
     }
 
@@ -172,10 +185,35 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     @Override
+    protected Parcelable onSaveInstanceState() {
+        Log.v(TAG, "onSaveInstanceState");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("super", super.onSaveInstanceState());
+
+        if (_tempFileName != null)
+            bundle.putString("_tempFileName", _tempFileName);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.v(TAG, "onRestoreInstanceState");
+        Bundle bundle = (Bundle) state;
+        super.onRestoreInstanceState(bundle.getParcelable("super"));
+
+        if (bundle.containsKey("_tempFileName")) {
+            _tempFileName = bundle.getString("_tempFileName");
+            _profilePic = null;
+            addProfilePhoto();
+        }
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         if (_photoClient != null) _photoClient.disconnect(App.get());
         if (_profileClient != null) _profileClient.disconnect(App.get());
-
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -205,6 +243,17 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     private void addProfilePhoto() {
+        if (_tempFileName != null) {
+            try {
+                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
+                if (_profilePic.get() != null)
+                    _profilePicView.setProfilePic(_profilePic.get());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return;
+        }
+
         if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
             _profilePicView.setProfilePic(R.drawable.missing_circle);
             return;
@@ -286,6 +335,21 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             addProfilePhoto();
         }
     };
+
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
+        @Override
+        public void onConnected() {
+            _fileCacheClient.subDeliverableCache();
+        }
+
+        @Override
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
+            _profilePic = null;
+            _tempFileName = filename;
+            addProfilePhoto();
+        }
+    };
+
 
     private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
         @Override
