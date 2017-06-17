@@ -152,7 +152,4 @@ public class RichText implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getHtml()) && !misc.isEmptyOrNull(getMarkdown());
-    }
 }

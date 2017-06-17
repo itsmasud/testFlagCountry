@@ -152,7 +152,4 @@ public class TechnicianW9Status implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

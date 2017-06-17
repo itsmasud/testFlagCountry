@@ -177,10 +177,6 @@ public class TaskType implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
-
     public TaskType(int id, String title) throws ParseException {
         this();
         setId(id);

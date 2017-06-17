@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -66,6 +69,9 @@ public class WorkOrders implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -92,10 +98,10 @@ public class WorkOrders implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-            return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+            return _metadata;
     }
 
     public WorkOrders metadata(ListEnvelope metadata) throws ParseException {
@@ -121,6 +127,9 @@ public class WorkOrders implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new WorkOrder[0];
 
         return _results;
     }
@@ -297,10 +306,6 @@ public class WorkOrders implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return true;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

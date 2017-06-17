@@ -143,6 +143,9 @@ public class WorkOrderRatingsBuyerOverall implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_percentApproval == null)
+            _percentApproval = new WorkOrderRatingsBuyerOverallPercentApproval[0];
+
         return _percentApproval;
     }
 
@@ -307,7 +310,4 @@ public class WorkOrderRatingsBuyerOverall implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

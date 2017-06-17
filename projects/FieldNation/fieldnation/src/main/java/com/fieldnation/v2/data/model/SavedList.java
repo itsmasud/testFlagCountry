@@ -315,10 +315,6 @@ public class SavedList implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getId());
-    }
-
     public String getTitle() {
         if (getCount() == null) {
             return getLabel();

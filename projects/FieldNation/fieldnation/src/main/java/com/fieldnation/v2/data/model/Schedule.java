@@ -87,6 +87,9 @@ public class Schedule implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -157,10 +160,10 @@ public class Schedule implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_onMyWay != null && _onMyWay.isSet())
-            return _onMyWay;
+        if (_onMyWay == null)
+            _onMyWay = new OnMyWay();
 
-        return null;
+            return _onMyWay;
     }
 
     public Schedule onMyWay(OnMyWay onMyWay) throws ParseException {
@@ -204,10 +207,10 @@ public class Schedule implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_serviceWindow != null && _serviceWindow.isSet())
-            return _serviceWindow;
+        if (_serviceWindow == null)
+            _serviceWindow = new ScheduleServiceWindow();
 
-        return null;
+            return _serviceWindow;
     }
 
     public Schedule serviceWindow(ScheduleServiceWindow serviceWindow) throws ParseException {
@@ -251,10 +254,10 @@ public class Schedule implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public Schedule timeZone(TimeZone timeZone) throws ParseException {
@@ -444,10 +447,6 @@ public class Schedule implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getServiceWindow() != null && getServiceWindow().isSet();
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 
