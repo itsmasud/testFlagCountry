@@ -1,24 +1,15 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import android.text.SpannableString;
-import android.text.method.LinkMovementMethod;
-import android.text.style.ClickableSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 
@@ -77,7 +68,7 @@ public class ReasonCoView extends RelativeLayout {
         return _requestReasonEditText.getText().toString();
     }
 
-    public long getExpiryTime(){
+    public long getExpiryTime() {
         return expireMillisecond;
     }
 

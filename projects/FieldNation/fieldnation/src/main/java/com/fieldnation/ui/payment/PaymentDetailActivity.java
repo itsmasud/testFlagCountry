@@ -11,12 +11,12 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 

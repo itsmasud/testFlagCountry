@@ -1,4 +1,4 @@
-package com.fieldnation.service.activityresult;
+package com.fieldnation.fnactivityresult;
 
 /**
  * Created by Michael on 7/8/2016.

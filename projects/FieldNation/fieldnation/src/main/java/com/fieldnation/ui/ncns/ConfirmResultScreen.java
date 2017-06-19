@@ -135,6 +135,10 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
+        }
     };
 
     public WoPagingAdapter getAdapter() {

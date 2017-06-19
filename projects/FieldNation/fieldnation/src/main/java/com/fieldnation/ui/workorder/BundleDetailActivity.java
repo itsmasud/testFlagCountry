@@ -15,16 +15,15 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -36,6 +35,7 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.dialog.BundleEtaDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
+import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.WithdrawRequestDialog;
 import com.fieldnation.v2.ui.worecycler.BaseHolder;
 import com.fieldnation.v2.ui.worecycler.WoPagingAdapter;
@@ -308,6 +308,10 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
         }
     };
 

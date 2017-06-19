@@ -2,7 +2,7 @@ package com.fieldnation.ui.share;
 
 import android.content.Context;
 import android.os.Handler;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;

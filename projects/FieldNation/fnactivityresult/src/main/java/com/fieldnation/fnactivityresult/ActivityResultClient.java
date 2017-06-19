@@ -1,4 +1,4 @@
-package com.fieldnation.service.activityresult;
+package com.fieldnation.fnactivityresult;
 
 import android.app.Activity;
 import android.content.Context;
@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
