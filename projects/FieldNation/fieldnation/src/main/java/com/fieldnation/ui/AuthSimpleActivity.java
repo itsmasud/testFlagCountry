@@ -170,6 +170,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);

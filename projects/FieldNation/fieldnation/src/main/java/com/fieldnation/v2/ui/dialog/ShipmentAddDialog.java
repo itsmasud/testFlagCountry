@@ -48,6 +48,7 @@ public class ShipmentAddDialog extends SimpleDialog {
     // State
     private static final String STATE_CARRIER_SELECTION = "STATE_CARRIER_SELECTION";
     private static final String STATE_DIRECTION_SELECTION = "STATE_DIRECTION_SELECTION";
+    private static final String STATE_SCANNED_IMAGE = "STATE_SCANNED_IMAGE";
 
     private static final int RESULT_CODE_BARCODE_SCAN = 0;
 
@@ -176,6 +177,10 @@ public class ShipmentAddDialog extends SimpleDialog {
             } else {
                 getDirectionSpinner().clearSelection();
             }
+
+            if (savedState.containsKey(STATE_SCANNED_IMAGE)) {
+                _scannedImagePath = savedState.getString(STATE_SCANNED_IMAGE);
+            }
         }
     }
 
@@ -188,6 +193,9 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         if (_directionPosition != -1)
             outState.putInt(STATE_DIRECTION_SELECTION, _directionPosition);
+
+        if (_scannedImagePath != null)
+            outState.putString(STATE_SCANNED_IMAGE, _scannedImagePath);
     }
 
     @Override

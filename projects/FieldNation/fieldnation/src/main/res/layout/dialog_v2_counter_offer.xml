@@ -45,7 +45,7 @@
                     style="@style/DividerFull"
                     android:layout_below="@+id/pay_title_textview" />
 
-                <com.fieldnation.v2.ui.dialog.PaymentCoView
+                <com.fieldnation.ui.PaymentCoView
                     android:id="@+id/payment_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -82,7 +82,7 @@
                     android:layout_below="@+id/schedule_title_textview" />
 
 
-                <com.fieldnation.v2.ui.dialog.ScheduleCoView
+                <com.fieldnation.ui.ScheduleCoView
                     android:id="@+id/schedule_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -176,11 +176,10 @@
                 android:layout_below="@+id/expense_layout"
                 android:layout_marginTop="18dp">
 
-                <com.fieldnation.v2.ui.dialog.ReasonCoViewNew
+                <com.fieldnation.ui.ReasonCoView
                     android:id="@+id/reasons_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
 
                 <View
                     android:id="@+id/termswarning_divider"

@@ -11,7 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.nav.ToolbarMenuBehavior;
 import com.fieldnation.ui.nav.ToolbarMenuInterface;
@@ -36,6 +38,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     private SavedList[] _list;
 
     private WorkordersWebApi _workOrderClient;
+    private GlobalTopicClient _globalTopicClient;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -69,11 +72,15 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
 
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }
@@ -209,6 +216,18 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
                 _list = savedList;
                 populateUi();
             }
+        }
+    };
+
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalTopicClient.subUserSwitched();
+        }
+
+        @Override
+        public void onUserSwitched(Profile profile) {
+            WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
         }
     };
 

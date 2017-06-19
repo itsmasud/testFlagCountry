@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -62,6 +63,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
     private FileCacheClient _fileCacheClient;
+    private String _tempFileName = null;
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -139,6 +141,20 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_tempFileName != null)
+            outState.putString("_tempFileName", _tempFileName);
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState != null) {
+            if (savedState.containsKey("_tempFileName"))
+                _tempFileName = savedState.getString("_tempFileName");
+        }
+    }
+
+    @Override
     public void dismiss(boolean animate) {
         Log.v(TAG, "dismiss");
         super.dismiss(animate);
@@ -161,7 +177,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 misc.hideKeyboard(_phoneNoEditText);
             }
         });
-
 
         if (_profile.getUserId() != null)
             _profileIdTextView.setText("ID: " + _profile.getUserId().toString());
@@ -198,7 +213,18 @@ public class ProfileInformationDialog extends FullScreenDialog {
             _zipCodeEditText.setText(_profile.getZip());
 
 
-        if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+        if (_tempFileName != null) {
+            try {
+                if (_profilePic == null) {
+                    _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
+                }
+                if (_profilePic.get() != null)
+                    _picView.setProfilePic(_profilePic.get());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+        } else if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
             String url = _profile.getPhoto().getLarge();
             if (!misc.isEmptyOrNull(url)) {
@@ -209,7 +235,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
             _picView.setProfilePic(_profilePic.get());
         }
     }
-
 
     /*-*************************-*/
     /*-         Events			-*/
@@ -260,7 +285,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 FileCacheClient.cacheDeliverableUpload(App.get(), fui.uri);
                 ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
             }
-
         }
     };
 
@@ -291,11 +315,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filename) {
-            try {
-                _picView.setProfilePic(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400)));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            _profilePic = null;
+            _tempFileName = filename;
+            populateUi();
         }
     };
 
