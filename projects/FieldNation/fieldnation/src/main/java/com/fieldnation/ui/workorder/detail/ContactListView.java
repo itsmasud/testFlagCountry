@@ -73,10 +73,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
         boolean addedContact = false;
         final List<Contact> contactList = new LinkedList<>();
 
-        if (_workOrder.getLocation() != null
-                && _workOrder.getLocation().getSavedLocation() != null
-                && _workOrder.getLocation().getSavedLocation().getContact() != null) {
-
+        {
             Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
             if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
                 ContactTileView tileView = new ContactTileView(getContext());
@@ -86,7 +83,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
             }
         }
 
-        if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null) {
+        if (_workOrder.getContacts().getResults().length > 0) {
             for (Contact contact : _workOrder.getContacts().getResults()) {
                 if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
                     contactList.add(contact);

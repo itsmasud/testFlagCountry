@@ -351,7 +351,7 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "getWorkOrder " + workOrder.getId());
                 incrementPendingRequestCounter(-1);
 
-                if (workOrder.getBundle() != null && workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
+                if (workOrder.getBundle().getId() != null && workOrder.getBundle().getId() > 0) {
                     incrementPendingRequestCounter(1);
                     incRequestCounter(1);
                     BundlesWebApi.getBundleWorkOrders(WebCrawlerService.this, workOrder.getBundle().getId(), false, true);
@@ -363,10 +363,10 @@ public class WebCrawlerService extends Service {
 
                 // get attachments
                 AttachmentFolders folders = workOrder.getAttachments();
-                if (folders != null && folders.getResults() != null && folders.getResults().length > 0) {
+                if (folders.getResults().length > 0) {
                     for (AttachmentFolder folder : folders.getResults()) {
                         Attachment[] attachments = folder.getResults();
-                        if (attachments != null && attachments.length > 0) {
+                        if (attachments.length > 0) {
                             for (Attachment attachment : attachments) {
                                 incRequestCounter(1);
                                 DocumentClient.downloadDocument(WebCrawlerService.this, attachment.getId(), attachment.getFile().getLink(), attachment.getFile().getName(), true);

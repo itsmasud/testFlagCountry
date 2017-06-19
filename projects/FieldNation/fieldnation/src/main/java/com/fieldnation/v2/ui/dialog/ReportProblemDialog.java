@@ -151,12 +151,6 @@ public class ReportProblemDialog extends SimpleDialog {
     }
 
     @Override
-    public void dismiss(boolean animate) {
-
-        super.dismiss(animate);
-    }
-
-    @Override
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
 
@@ -181,7 +175,7 @@ public class ReportProblemDialog extends SimpleDialog {
         if (_workOrder != null) {
             Problems problems = _workOrder.getProblems();
 
-            if (problems != null && problems.getTypes() != null && problems.getTypes().length > 0) {
+            if (problems.getTypes() != null && problems.getTypes().length > 0) {
                 getPrimaryAdapter().clear();
                 getPrimaryAdapter().addAll((Object[]) problems.getTypes());
 
@@ -275,7 +269,7 @@ public class ReportProblemDialog extends SimpleDialog {
         { // put in a block to limit the scope of pList
             ProblemType[] types = _workOrder.getProblems().getTypes();
 
-            if (types == null || types.length == 0) {
+            if (types.length == 0) {
                 _parentTypes = null;
                 getPrimaryAdapter().clear();
                 getPrimarySpinner().clearSelection();
@@ -401,7 +395,7 @@ public class ReportProblemDialog extends SimpleDialog {
                     problem.setType((ProblemType) getPrimaryAdapter().getItem(_primaryPosition));
                 }
 
-                if (problem.getType().getHasOther())
+                if (problem.getType().getHasOther() != null && problem.getType().getHasOther())
                     problem.getType().setOther(explanation);
 
                 if (problem.getType().getShowPqapWarning() != null && problem.getType().getShowPqapWarning()) {

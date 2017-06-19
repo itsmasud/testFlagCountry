@@ -29,6 +29,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.ui.ExpensesCoCardView;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.PaymentCoView;
@@ -43,7 +44,6 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.ui.ExpensesCoCardView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -85,7 +85,6 @@ public class CounterOfferDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
-
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
@@ -178,7 +177,6 @@ public class CounterOfferDialog extends FullScreenDialog {
             }
 
             outState.putParcelableArray(STATE_EXPENSES, exs);
-
         }
     }
 
@@ -275,16 +273,12 @@ public class CounterOfferDialog extends FullScreenDialog {
                     return false;
                 }
 
-
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Counter Offer Dialog";
                 WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-
-
             return true;
         }
     };

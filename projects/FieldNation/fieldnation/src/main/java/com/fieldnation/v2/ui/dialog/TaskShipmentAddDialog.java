@@ -84,7 +84,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
         try {
             _shipmentsLayout.removeAllViews();
             Shipments shipments = _workOrder.getShipments();
-            if (shipments == null || shipments.getResults() == null || shipments.getResults().length == 0)
+            if (shipments.getResults().length == 0)
                 return;
 
             for (int i = 0; i < shipments.getResults().length; i++) {

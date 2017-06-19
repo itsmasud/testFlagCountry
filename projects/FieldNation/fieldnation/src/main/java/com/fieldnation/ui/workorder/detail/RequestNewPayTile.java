@@ -72,14 +72,8 @@ public class RequestNewPayTile extends RelativeLayout {
         if (_payTextView == null)
             return;
 
-        if (_workOrder.getPay() == null || _workOrder.getPay().getIncreases() == null)
-            return;
-
         PayIncrease increase = _workOrder.getPay().getIncreases().getLastIncrease();
-
         if (increase == null
-                || increase.getPay() == null
-                || increase.getPay().getBase() == null
                 || increase.getPay().getBase().getAmount() == null
                 || increase.getPay().getBase().getUnits() == null) {
             return;

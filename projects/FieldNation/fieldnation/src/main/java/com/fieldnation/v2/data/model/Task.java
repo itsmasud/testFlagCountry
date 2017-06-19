@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -185,7 +182,7 @@ public class Task implements Parcelable {
         if (_attachment == null)
             _attachment = new Attachment();
 
-            return _attachment;
+        return _attachment;
     }
 
     public Task attachment(Attachment attachment) throws ParseException {
@@ -210,7 +207,7 @@ public class Task implements Parcelable {
         if (_attachments == null)
             _attachments = new AttachmentFolder();
 
-            return _attachments;
+        return _attachments;
     }
 
     public Task attachments(AttachmentFolder attachments) throws ParseException {
@@ -235,7 +232,7 @@ public class Task implements Parcelable {
         if (_author == null)
             _author = new User();
 
-            return _author;
+        return _author;
     }
 
     public Task author(User author) throws ParseException {
@@ -260,7 +257,7 @@ public class Task implements Parcelable {
         if (_checkIn == null)
             _checkIn = new TimeLog();
 
-            return _checkIn;
+        return _checkIn;
     }
 
     public Task checkIn(TimeLog checkIn) throws ParseException {
@@ -285,7 +282,7 @@ public class Task implements Parcelable {
         if (_checkOut == null)
             _checkOut = new TimeLog();
 
-            return _checkOut;
+        return _checkOut;
     }
 
     public Task checkOut(TimeLog checkOut) throws ParseException {
@@ -332,7 +329,7 @@ public class Task implements Parcelable {
         if (_completed == null)
             _completed = new Date();
 
-            return _completed;
+        return _completed;
     }
 
     public Task completed(Date completed) throws ParseException {
@@ -357,7 +354,7 @@ public class Task implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Task created(Date created) throws ParseException {
@@ -382,7 +379,7 @@ public class Task implements Parcelable {
         if (_customField == null)
             _customField = new CustomField();
 
-            return _customField;
+        return _customField;
     }
 
     public Task customField(CustomField customField) throws ParseException {
@@ -451,7 +448,7 @@ public class Task implements Parcelable {
         if (_eta == null)
             _eta = new ETA();
 
-            return _eta;
+        return _eta;
     }
 
     public Task eta(ETA eta) throws ParseException {
@@ -476,7 +473,7 @@ public class Task implements Parcelable {
         if (_group == null)
             _group = new TaskGroup();
 
-            return _group;
+        return _group;
     }
 
     public Task group(TaskGroup group) throws ParseException {
@@ -567,7 +564,7 @@ public class Task implements Parcelable {
         if (_shipment == null)
             _shipment = new Shipment();
 
-            return _shipment;
+        return _shipment;
     }
 
     public Task shipment(Shipment shipment) throws ParseException {
@@ -592,7 +589,7 @@ public class Task implements Parcelable {
         if (_signature == null)
             _signature = new Signature();
 
-            return _signature;
+        return _signature;
     }
 
     public Task signature(Signature signature) throws ParseException {
@@ -639,7 +636,7 @@ public class Task implements Parcelable {
         if (_type == null)
             _type = new TaskType();
 
-            return _type;
+        return _type;
     }
 
     public Task type(TaskType type) throws ParseException {

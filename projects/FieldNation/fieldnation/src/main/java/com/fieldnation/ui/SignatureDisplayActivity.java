@@ -109,8 +109,7 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         if (_workOrder == null)
             return;
 
-        if (_workOrder.getSignatures() == null
-                || _workOrder.getSignatures().getResults() == null
+        if (_workOrder.getSignatures().getResults() == null
                 || _workOrder.getSignatures().getResults().length == 0)
             return;
 

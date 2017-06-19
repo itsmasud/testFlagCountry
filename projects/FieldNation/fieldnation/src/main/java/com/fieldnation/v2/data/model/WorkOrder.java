@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -261,7 +258,7 @@ public class WorkOrder implements Parcelable {
         if (_assignee == null)
             _assignee = new Assignee();
 
-            return _assignee;
+        return _assignee;
     }
 
     public WorkOrder assignee(Assignee assignee) throws ParseException {
@@ -286,7 +283,7 @@ public class WorkOrder implements Parcelable {
         if (_attachments == null)
             _attachments = new AttachmentFolders();
 
-            return _attachments;
+        return _attachments;
     }
 
     public WorkOrder attachments(AttachmentFolders attachments) throws ParseException {
@@ -311,7 +308,7 @@ public class WorkOrder implements Parcelable {
         if (_bundle == null)
             _bundle = new Bundle();
 
-            return _bundle;
+        return _bundle;
     }
 
     public WorkOrder bundle(Bundle bundle) throws ParseException {
@@ -336,7 +333,7 @@ public class WorkOrder implements Parcelable {
         if (_client == null)
             _client = new Company();
 
-            return _client;
+        return _client;
     }
 
     public WorkOrder client(Company client) throws ParseException {
@@ -361,7 +358,7 @@ public class WorkOrder implements Parcelable {
         if (_clientRequest == null)
             _clientRequest = new ClientRequest();
 
-            return _clientRequest;
+        return _clientRequest;
     }
 
     public WorkOrder clientRequest(ClientRequest clientRequest) throws ParseException {
@@ -408,7 +405,7 @@ public class WorkOrder implements Parcelable {
         if (_company == null)
             _company = new Company();
 
-            return _company;
+        return _company;
     }
 
     public WorkOrder company(Company company) throws ParseException {
@@ -433,7 +430,7 @@ public class WorkOrder implements Parcelable {
         if (_confidential == null)
             _confidential = new RichText();
 
-            return _confidential;
+        return _confidential;
     }
 
     public WorkOrder confidential(RichText confidential) throws ParseException {
@@ -458,7 +455,7 @@ public class WorkOrder implements Parcelable {
         if (_contacts == null)
             _contacts = new Contacts();
 
-            return _contacts;
+        return _contacts;
     }
 
     public WorkOrder contacts(Contacts contacts) throws ParseException {
@@ -505,7 +502,7 @@ public class WorkOrder implements Parcelable {
         if (_customFields == null)
             _customFields = new CustomFields();
 
-            return _customFields;
+        return _customFields;
     }
 
     public WorkOrder customFields(CustomFields customFields) throws ParseException {
@@ -530,7 +527,7 @@ public class WorkOrder implements Parcelable {
         if (_declines == null)
             _declines = new Declines();
 
-            return _declines;
+        return _declines;
     }
 
     public WorkOrder declines(Declines declines) throws ParseException {
@@ -555,7 +552,7 @@ public class WorkOrder implements Parcelable {
         if (_description == null)
             _description = new RichText();
 
-            return _description;
+        return _description;
     }
 
     public WorkOrder description(RichText description) throws ParseException {
@@ -580,7 +577,7 @@ public class WorkOrder implements Parcelable {
         if (_eta == null)
             _eta = new ETA();
 
-            return _eta;
+        return _eta;
     }
 
     public WorkOrder eta(ETA eta) throws ParseException {
@@ -605,7 +602,7 @@ public class WorkOrder implements Parcelable {
         if (_holds == null)
             _holds = new Holds();
 
-            return _holds;
+        return _holds;
     }
 
     public WorkOrder holds(Holds holds) throws ParseException {
@@ -652,7 +649,7 @@ public class WorkOrder implements Parcelable {
         if (_integration == null)
             _integration = new Integration();
 
-            return _integration;
+        return _integration;
     }
 
     public WorkOrder integration(Integration integration) throws ParseException {
@@ -677,7 +674,7 @@ public class WorkOrder implements Parcelable {
         if (_location == null)
             _location = new Location();
 
-            return _location;
+        return _location;
     }
 
     public WorkOrder location(Location location) throws ParseException {
@@ -702,7 +699,7 @@ public class WorkOrder implements Parcelable {
         if (_manager == null)
             _manager = new Manager();
 
-            return _manager;
+        return _manager;
     }
 
     public WorkOrder manager(Manager manager) throws ParseException {
@@ -727,7 +724,7 @@ public class WorkOrder implements Parcelable {
         if (_messages == null)
             _messages = new Messages();
 
-            return _messages;
+        return _messages;
     }
 
     public WorkOrder messages(Messages messages) throws ParseException {
@@ -752,7 +749,7 @@ public class WorkOrder implements Parcelable {
         if (_milestones == null)
             _milestones = new Milestones();
 
-            return _milestones;
+        return _milestones;
     }
 
     public WorkOrder milestones(Milestones milestones) throws ParseException {
@@ -807,7 +804,7 @@ public class WorkOrder implements Parcelable {
         if (_pay == null)
             _pay = new Pay();
 
-            return _pay;
+        return _pay;
     }
 
     public WorkOrder pay(Pay pay) throws ParseException {
@@ -832,7 +829,7 @@ public class WorkOrder implements Parcelable {
         if (_policyAndProcedures == null)
             _policyAndProcedures = new RichText();
 
-            return _policyAndProcedures;
+        return _policyAndProcedures;
     }
 
     public WorkOrder policyAndProcedures(RichText policyAndProcedures) throws ParseException {
@@ -879,7 +876,7 @@ public class WorkOrder implements Parcelable {
         if (_problems == null)
             _problems = new Problems();
 
-            return _problems;
+        return _problems;
     }
 
     public WorkOrder problems(Problems problems) throws ParseException {
@@ -904,7 +901,7 @@ public class WorkOrder implements Parcelable {
         if (_project == null)
             _project = new Project();
 
-            return _project;
+        return _project;
     }
 
     public WorkOrder project(Project project) throws ParseException {
@@ -929,7 +926,7 @@ public class WorkOrder implements Parcelable {
         if (_publishStats == null)
             _publishStats = new PublishStats();
 
-            return _publishStats;
+        return _publishStats;
     }
 
     public WorkOrder publishStats(PublishStats publishStats) throws ParseException {
@@ -954,7 +951,7 @@ public class WorkOrder implements Parcelable {
         if (_qualifications == null)
             _qualifications = new Qualifications();
 
-            return _qualifications;
+        return _qualifications;
     }
 
     public WorkOrder qualifications(Qualifications qualifications) throws ParseException {
@@ -979,7 +976,7 @@ public class WorkOrder implements Parcelable {
         if (_ratings == null)
             _ratings = new WorkOrderRatings();
 
-            return _ratings;
+        return _ratings;
     }
 
     public WorkOrder ratings(WorkOrderRatings ratings) throws ParseException {
@@ -1004,7 +1001,7 @@ public class WorkOrder implements Parcelable {
         if (_requests == null)
             _requests = new Requests();
 
-            return _requests;
+        return _requests;
     }
 
     public WorkOrder requests(Requests requests) throws ParseException {
@@ -1029,7 +1026,7 @@ public class WorkOrder implements Parcelable {
         if (_role == null)
             _role = new WorkOrderRole();
 
-            return _role;
+        return _role;
     }
 
     public WorkOrder role(WorkOrderRole role) throws ParseException {
@@ -1054,7 +1051,7 @@ public class WorkOrder implements Parcelable {
         if (_routes == null)
             _routes = new Routes();
 
-            return _routes;
+        return _routes;
     }
 
     public WorkOrder routes(Routes routes) throws ParseException {
@@ -1079,7 +1076,7 @@ public class WorkOrder implements Parcelable {
         if (_schedule == null)
             _schedule = new Schedule();
 
-            return _schedule;
+        return _schedule;
     }
 
     public WorkOrder schedule(Schedule schedule) throws ParseException {
@@ -1104,7 +1101,7 @@ public class WorkOrder implements Parcelable {
         if (_selectionRule == null)
             _selectionRule = new SelectionRule();
 
-            return _selectionRule;
+        return _selectionRule;
     }
 
     public WorkOrder selectionRule(SelectionRule selectionRule) throws ParseException {
@@ -1129,7 +1126,7 @@ public class WorkOrder implements Parcelable {
         if (_serviceContract == null)
             _serviceContract = new ServiceContract();
 
-            return _serviceContract;
+        return _serviceContract;
     }
 
     public WorkOrder serviceContract(ServiceContract serviceContract) throws ParseException {
@@ -1154,7 +1151,7 @@ public class WorkOrder implements Parcelable {
         if (_shipments == null)
             _shipments = new Shipments();
 
-            return _shipments;
+        return _shipments;
     }
 
     public WorkOrder shipments(Shipments shipments) throws ParseException {
@@ -1179,7 +1176,7 @@ public class WorkOrder implements Parcelable {
         if (_signatures == null)
             _signatures = new Signatures();
 
-            return _signatures;
+        return _signatures;
     }
 
     public WorkOrder signatures(Signatures signatures) throws ParseException {
@@ -1204,7 +1201,7 @@ public class WorkOrder implements Parcelable {
         if (_standardInstructions == null)
             _standardInstructions = new RichText();
 
-            return _standardInstructions;
+        return _standardInstructions;
     }
 
     public WorkOrder standardInstructions(RichText standardInstructions) throws ParseException {
@@ -1229,7 +1226,7 @@ public class WorkOrder implements Parcelable {
         if (_status == null)
             _status = new Status();
 
-            return _status;
+        return _status;
     }
 
     public WorkOrder status(Status status) throws ParseException {
@@ -1254,7 +1251,7 @@ public class WorkOrder implements Parcelable {
         if (_tasks == null)
             _tasks = new Tasks();
 
-            return _tasks;
+        return _tasks;
     }
 
     public WorkOrder tasks(Tasks tasks) throws ParseException {
@@ -1279,7 +1276,7 @@ public class WorkOrder implements Parcelable {
         if (_team == null)
             _team = new Team();
 
-            return _team;
+        return _team;
     }
 
     public WorkOrder team(Team team) throws ParseException {
@@ -1304,7 +1301,7 @@ public class WorkOrder implements Parcelable {
         if (_template == null)
             _template = new Template();
 
-            return _template;
+        return _template;
     }
 
     public WorkOrder template(Template template) throws ParseException {
@@ -1329,7 +1326,7 @@ public class WorkOrder implements Parcelable {
         if (_timeLogs == null)
             _timeLogs = new TimeLogs();
 
-            return _timeLogs;
+        return _timeLogs;
     }
 
     public WorkOrder timeLogs(TimeLogs timeLogs) throws ParseException {
@@ -1376,7 +1373,7 @@ public class WorkOrder implements Parcelable {
         if (_typeOfWork == null)
             _typeOfWork = new TypeOfWork();
 
-            return _typeOfWork;
+        return _typeOfWork;
     }
 
     public WorkOrder typeOfWork(TypeOfWork typeOfWork) throws ParseException {
@@ -1423,7 +1420,7 @@ public class WorkOrder implements Parcelable {
         if (_workflowCompletion == null)
             _workflowCompletion = new WorkflowCompletion();
 
-            return _workflowCompletion;
+        return _workflowCompletion;
     }
 
     public WorkOrder workflowCompletion(WorkflowCompletion workflowCompletion) throws ParseException {

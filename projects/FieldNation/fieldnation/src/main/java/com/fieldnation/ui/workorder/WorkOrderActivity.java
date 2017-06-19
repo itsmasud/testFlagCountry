@@ -264,9 +264,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             return;
 
         setTitle("WO: " + _workOrder.getId());
-        if (_workOrder.getMessages() != null
-                && _workOrder.getMessages().getMetadata() != null
-                && _workOrder.getMessages().getMetadata().getTotal() != null) {
+        if (_workOrder.getMessages().getMetadata().getTotal() != null) {
             _tabview.setMessagesCount(_workOrder.getMessages().getMetadata().getTotal());
         } else {
             _tabview.setMessagesCount(0);
@@ -389,7 +387,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
-                if (workOrder == null || !success) {
+                if (!success) {
                     setLoading(false);
                     return;
                 }

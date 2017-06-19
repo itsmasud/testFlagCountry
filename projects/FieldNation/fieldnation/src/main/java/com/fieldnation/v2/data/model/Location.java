@@ -5,17 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -251,7 +246,7 @@ public class Location implements Parcelable {
         if (_coordinates == null)
             _coordinates = new Coords();
 
-            return _coordinates;
+        return _coordinates;
     }
 
     public Location coordinates(Coords coordinates) throws ParseException {
@@ -320,7 +315,7 @@ public class Location implements Parcelable {
         if (_map == null)
             _map = new Map();
 
-            return _map;
+        return _map;
     }
 
     public Location map(Map map) throws ParseException {
@@ -463,7 +458,7 @@ public class Location implements Parcelable {
         if (_savedLocation == null)
             _savedLocation = new StoredLocation();
 
-            return _savedLocation;
+        return _savedLocation;
     }
 
     public Location savedLocation(StoredLocation savedLocation) throws ParseException {
@@ -532,7 +527,7 @@ public class Location implements Parcelable {
         if (_timeZone == null)
             _timeZone = new TimeZone();
 
-            return _timeZone;
+        return _timeZone;
     }
 
     public Location timeZone(TimeZone timeZone) throws ParseException {
@@ -557,7 +552,7 @@ public class Location implements Parcelable {
         if (_type == null)
             _type = new LocationType();
 
-            return _type;
+        return _type;
     }
 
     public Location type(LocationType type) throws ParseException {
@@ -582,7 +577,7 @@ public class Location implements Parcelable {
         if (_validation == null)
             _validation = new LocationValidation();
 
-            return _validation;
+        return _validation;
     }
 
     public Location validation(LocationValidation validation) throws ParseException {

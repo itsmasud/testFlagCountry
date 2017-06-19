@@ -11,7 +11,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.PayModifier;
 
 public class DiscountView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.DiscountView";
+    private static final String TAG = "DiscountView";
 
     // UI
     private TextView _titleTextView;

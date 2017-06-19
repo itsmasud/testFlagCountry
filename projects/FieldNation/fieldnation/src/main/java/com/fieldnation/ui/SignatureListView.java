@@ -83,15 +83,14 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
 
     private void populateUI() {
         setVisibility(View.GONE);
-        if (_addButton == null) {
+        if (_addButton == null)
             return;
-        }
 
-        if (_workOrder == null) {
+        if (_workOrder == null)
             return;
-        }
 
-        if (_workOrder.getSignatures() == null)
+        if (_workOrder.getSignatures().getResults().length == 0
+                && !_workOrder.getSignatures().getActionsSet().contains(Signatures.ActionsEnum.ADD))
             return;
 
         if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)
@@ -171,10 +170,7 @@ public class SignatureListView extends RelativeLayout implements WorkOrderRender
         public boolean onLongClick(View v) {
             SignatureCardView view = (SignatureCardView) v;
             Signature signature = view.getSignature();
-            if (_listener != null
-                    && signature != null
-                    && signature.getActionsSet() != null
-                    && signature.getActionsSet().contains(Signature.ActionsEnum.DELETE))
+            if (_listener != null && signature.getActionsSet().contains(Signature.ActionsEnum.DELETE))
                 return _listener.signatureOnLongClick(view, view.getSignature());
 
             return false;

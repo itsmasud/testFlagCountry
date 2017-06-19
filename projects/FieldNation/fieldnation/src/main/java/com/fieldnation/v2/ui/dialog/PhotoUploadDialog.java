@@ -64,7 +64,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     private String _extension;
     private FileCacheClient _fileCacheClient;
 
-
     // Supplied
     private String _originalFileName;
     private Bitmap _bitmap;
@@ -74,7 +73,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     private Uri _uri;
     private Task _task;
     private AttachmentFolder _slot;
-
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -129,6 +127,7 @@ public class PhotoUploadDialog extends SimpleDialog {
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
+
         return v;
     }
 
@@ -150,7 +149,6 @@ public class PhotoUploadDialog extends SimpleDialog {
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
         populateUi();
-
     }
 
     @Override

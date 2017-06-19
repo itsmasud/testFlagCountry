@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -132,7 +129,7 @@ public class Route implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Route created(Date created) throws ParseException {
@@ -201,7 +198,7 @@ public class Route implements Parcelable {
         if (_routed == null)
             _routed = new User();
 
-            return _routed;
+        return _routed;
     }
 
     public Route routed(User routed) throws ParseException {
@@ -226,7 +223,7 @@ public class Route implements Parcelable {
         if (_technician == null)
             _technician = new User();
 
-            return _technician;
+        return _technician;
     }
 
     public Route technician(User technician) throws ParseException {

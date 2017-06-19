@@ -48,8 +48,6 @@ import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.User;
@@ -219,7 +217,6 @@ public class EtaDialog extends FullScreenDialog {
             _expiringDurationSeconds = _durations[_currentPosition];
             _expireSpinner.setSelection(_currentPosition);
         }
-
     }
 
     @Override
@@ -237,16 +234,12 @@ public class EtaDialog extends FullScreenDialog {
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
 
         try {
-            if (_workOrder.getEta() != null
-                    && _workOrder.getEta().getStatus() != null
-                    && _workOrder.getEta().getStatus().getName() != null
+            if (_workOrder.getEta().getStatus().getName() != null
                     && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
-                    && _workOrder.getEta().getStart() != null) {
+                    && _workOrder.getEta().getStart().getUtc() != null) {
                 _etaStart = _workOrder.getEta().getStart().getCalendar();
 
-            } else if (_workOrder.getSchedule() != null
-                    && _workOrder.getSchedule().getServiceWindow() != null
-                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getStart().getUtc() != null) {
                 _etaStart = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
         } catch (Exception ex) {
@@ -399,9 +392,7 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-                if (_workOrder.getEta() != null
-                        && _workOrder.getEta().getStatus() != null
-                        && _workOrder.getEta().getStatus().getName() != null
+                if (_workOrder.getEta().getStatus().getName() != null
                         && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
                         && _workOrder.getEta().getHourEstimate() != null
                         && _workOrder.getEta().getHourEstimate() > 0
@@ -573,7 +564,7 @@ public class EtaDialog extends FullScreenDialog {
 
                 return dateTimeString;
 
-            } else { //if (schedule.getType() == Schedule.Type.EXACT) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
                 Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
@@ -697,7 +688,6 @@ public class EtaDialog extends FullScreenDialog {
         public void onClick(View v) {
             misc.hideKeyboard(_noteEditText);
             DurationPickerDialog.show(App.get(), UID_DURATION_DIALOG);
-
         }
     };
 

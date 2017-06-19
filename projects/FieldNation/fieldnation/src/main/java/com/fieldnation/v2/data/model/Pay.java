@@ -5,17 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -161,7 +156,7 @@ public class Pay implements Parcelable {
         if (_additional == null)
             _additional = new PayAdditional();
 
-            return _additional;
+        return _additional;
     }
 
     public Pay additional(PayAdditional additional) throws ParseException {
@@ -186,7 +181,7 @@ public class Pay implements Parcelable {
         if (_base == null)
             _base = new PayBase();
 
-            return _base;
+        return _base;
     }
 
     public Pay base(PayBase base) throws ParseException {
@@ -211,7 +206,7 @@ public class Pay implements Parcelable {
         if (_bonuses == null)
             _bonuses = new PayModifiers();
 
-            return _bonuses;
+        return _bonuses;
     }
 
     public Pay bonuses(PayModifiers bonuses) throws ParseException {
@@ -258,7 +253,7 @@ public class Pay implements Parcelable {
         if (_discounts == null)
             _discounts = new PayModifiers();
 
-            return _discounts;
+        return _discounts;
     }
 
     public Pay discounts(PayModifiers discounts) throws ParseException {
@@ -283,7 +278,7 @@ public class Pay implements Parcelable {
         if (_estimatedPaymentDate == null)
             _estimatedPaymentDate = new Date();
 
-            return _estimatedPaymentDate;
+        return _estimatedPaymentDate;
     }
 
     public Pay estimatedPaymentDate(Date estimatedPaymentDate) throws ParseException {
@@ -308,7 +303,7 @@ public class Pay implements Parcelable {
         if (_expenses == null)
             _expenses = new Expenses();
 
-            return _expenses;
+        return _expenses;
     }
 
     public Pay expenses(Expenses expenses) throws ParseException {
@@ -363,7 +358,7 @@ public class Pay implements Parcelable {
         if (_finance == null)
             _finance = new PayFinance();
 
-            return _finance;
+        return _finance;
     }
 
     public Pay finance(PayFinance finance) throws ParseException {
@@ -388,7 +383,7 @@ public class Pay implements Parcelable {
         if (_hold == null)
             _hold = new PayModifier();
 
-            return _hold;
+        return _hold;
     }
 
     public Pay hold(PayModifier hold) throws ParseException {
@@ -413,7 +408,7 @@ public class Pay implements Parcelable {
         if (_increases == null)
             _increases = new PayIncreases();
 
-            return _increases;
+        return _increases;
     }
 
     public Pay increases(PayIncreases increases) throws ParseException {
@@ -504,7 +499,7 @@ public class Pay implements Parcelable {
         if (_payment == null)
             _payment = new PayModifier();
 
-            return _payment;
+        return _payment;
     }
 
     public Pay payment(PayModifier payment) throws ParseException {
@@ -529,7 +524,7 @@ public class Pay implements Parcelable {
         if (_penalties == null)
             _penalties = new PayModifiers();
 
-            return _penalties;
+        return _penalties;
     }
 
     public Pay penalties(PayModifiers penalties) throws ParseException {
@@ -554,7 +549,7 @@ public class Pay implements Parcelable {
         if (_pricingInsights == null)
             _pricingInsights = new PricingInsights();
 
-            return _pricingInsights;
+        return _pricingInsights;
     }
 
     public Pay pricingInsights(PricingInsights pricingInsights) throws ParseException {
@@ -579,7 +574,7 @@ public class Pay implements Parcelable {
         if (_range == null)
             _range = new PayRange();
 
-            return _range;
+        return _range;
     }
 
     public Pay range(PayRange range) throws ParseException {
@@ -865,6 +860,8 @@ public class Pay implements Parcelable {
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
+            line1 = null;
+            line2 = null;
         }
 
         return new String[]{line1, line2};

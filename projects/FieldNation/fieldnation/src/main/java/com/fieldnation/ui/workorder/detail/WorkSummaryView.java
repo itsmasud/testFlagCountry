@@ -123,12 +123,12 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         _workorderIdTextView.setText("Work Order Id: " + _workOrder.getId());
 
         StringBuilder sb = new StringBuilder();
-        if (_workOrder.getCustomFields() != null && _workOrder.getCustomFields().getResults() != null && _workOrder.getCustomFields().getResults().length > 0) {
+        if (_workOrder.getCustomFields().getResults().length > 0) {
             // we have fields, find the buyer fields
             CustomFieldCategory[] categories = _workOrder.getCustomFields().getResults();
             for (CustomFieldCategory category : categories) {
                 if (category.getRole() != null && category.getRole().equals("buyer")) {
-                    if (category.getResults() != null && category.getResults().length > 0) {
+                    if (category.getResults().length > 0) {
                         CustomField[] fields = category.getResults();
                         for (CustomField field : fields) {
                             sb.append(field.getName() + ": " + field.getValue() + "\n");
@@ -139,19 +139,19 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
         }
         _customDisplayFieldsTextView.setText(sb.toString().trim());
 
-        if (_workOrder.getTypeOfWork() != null && !misc.isEmptyOrNull(_workOrder.getTypeOfWork().getName()))
+        if (!misc.isEmptyOrNull(_workOrder.getTypeOfWork().getName()))
             _worktypeTextView.setText(_workOrder.getTypeOfWork().getName().toUpperCase());
         else
             _worktypeTextView.setText("");
 
 
-        if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+        if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
             _bundleWarningTextView.setVisibility(View.VISIBLE);
         } else {
             _bundleWarningTextView.setVisibility(View.GONE);
         }
 
-        if (_workOrder.getDescription() == null || misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
+        if (misc.isEmptyOrNull(_workOrder.getDescription().getHtml())) {
             _descriptionContainer.setVisibility(GONE);
         } else {
             _descriptionContainer.setVisibility(VISIBLE);
@@ -164,19 +164,19 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        if (_workOrder.getPolicyAndProcedures() == null || misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
+        if (misc.isEmptyOrNull(_workOrder.getPolicyAndProcedures().getHtml())) {
             _policiesTextView.setVisibility(View.GONE);
         } else {
             _policiesTextView.setVisibility(View.VISIBLE);
         }
 
-        if (_workOrder.getConfidential() == null || misc.isEmptyOrNull(_workOrder.getConfidential().getHtml())) {
+        if (misc.isEmptyOrNull(_workOrder.getConfidential().getHtml())) {
             _confidentialTextView.setVisibility(View.GONE);
         } else {
             _confidentialTextView.setVisibility(View.VISIBLE);
         }
 
-        if (_workOrder.getStandardInstructions() == null || misc.isEmptyOrNull(_workOrder.getStandardInstructions().getHtml())) {
+        if (misc.isEmptyOrNull(_workOrder.getStandardInstructions().getHtml())) {
             _standardInstructionTextView.setVisibility(GONE);
         } else {
             _standardInstructionTextView.setVisibility(VISIBLE);
@@ -242,7 +242,6 @@ public class WorkSummaryView extends LinearLayout implements WorkOrderRenderer {
                 _descriptionShortLayout.setVisibility(View.GONE);
                 _readMoreButton.setText(R.string.btn_read_less);
             }
-
             return true;
         }
     };

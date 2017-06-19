@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -128,7 +125,7 @@ public class Attachment implements Parcelable {
         if (_author == null)
             _author = new User();
 
-            return _author;
+        return _author;
     }
 
     public Attachment author(User author) throws ParseException {
@@ -153,7 +150,7 @@ public class Attachment implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Attachment created(Date created) throws ParseException {
@@ -178,7 +175,7 @@ public class Attachment implements Parcelable {
         if (_file == null)
             _file = new File();
 
-            return _file;
+        return _file;
     }
 
     public Attachment file(File file) throws ParseException {
@@ -269,7 +266,7 @@ public class Attachment implements Parcelable {
         if (_reviewed == null)
             _reviewed = new Date();
 
-            return _reviewed;
+        return _reviewed;
     }
 
     public Attachment reviewed(Date reviewed) throws ParseException {
@@ -294,7 +291,7 @@ public class Attachment implements Parcelable {
         if (_reviewer == null)
             _reviewer = new User();
 
-            return _reviewer;
+        return _reviewer;
     }
 
     public Attachment reviewer(User reviewer) throws ParseException {
@@ -385,7 +382,7 @@ public class Attachment implements Parcelable {
         if (_task == null)
             _task = new Task();
 
-            return _task;
+        return _task;
     }
 
     public Attachment task(Task task) throws ParseException {

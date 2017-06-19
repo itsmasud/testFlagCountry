@@ -89,10 +89,7 @@ public class UnresolvedProblemsDialog extends FullScreenDialog {
     private void generateProblemsList() {
         _problems.clear();
 
-        if (_workOrder == null
-                || _workOrder.getProblems() == null
-                || _workOrder.getProblems().getResults() == null
-                || _workOrder.getProblems().getResults().length == 0)
+        if (_workOrder == null || _workOrder.getProblems().getResults().length == 0)
             return;
 
         Problem[] problems = _workOrder.getProblems().getResults();

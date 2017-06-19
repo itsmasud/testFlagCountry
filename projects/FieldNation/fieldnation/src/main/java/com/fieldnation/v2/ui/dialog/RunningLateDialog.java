@@ -106,27 +106,24 @@ public class RunningLateDialog extends SimpleDialog {
 
         Calendar cal = null;
         try {
-            if (_workOrder.getEta() != null
-                    && _workOrder.getEta().getStatus() != null
-                    && _workOrder.getEta().getStatus().getName() != null
+            if (_workOrder.getEta().getStatus().getName() != null
                     && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
-                    && _workOrder.getEta().getStart() != null) {
+                    && _workOrder.getEta().getStart().getUtc() != null) {
                 cal = _workOrder.getEta().getStart().getCalendar();
 
-            } else if (_workOrder.getSchedule() != null
-                    && _workOrder.getSchedule().getServiceWindow() != null
-                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getStart().getUtc() != null) {
                 cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
-            _bodyTextView.setText(
-                    _workOrder.getTitle()
-                            + " is scheduled to begin at "
-                            + DateUtils.formatTime2(cal) + ".");
+            _bodyTextView.setText(_workOrder.getTitle()
+                    + " is scheduled to begin at "
+                    + DateUtils.formatTime2(cal) + ".");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if (_workOrder.getContacts() == null || _workOrder.getContacts().getResults() == null || _workOrder.getContacts().getResults().length == 0) {
+        if (_workOrder.getContacts().getResults().length == 0
+                && misc.isEmptyOrNull(_workOrder.getLocation().getSavedLocation().getContact().getName())
+                && misc.isEmptyOrNull(_workOrder.getLocation().getSavedLocation().getContact().getPhone())) {
             _callButton.setVisibility(View.GONE);
         } else {
             _callButton.setVisibility(View.VISIBLE);

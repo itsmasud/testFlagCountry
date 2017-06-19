@@ -122,8 +122,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         EtaDialog.removeOnBundleEtaListener(UID_DIALOG_ETA, _etaDialog_onBundleEta);
-        if (_bundlesApi != null)
-            _bundlesApi.disconnect(App.get());
+        if (_bundlesApi != null) _bundlesApi.disconnect(App.get());
 
         super.onStop();
     }
@@ -162,11 +161,11 @@ public class BundleEtaDialog extends FullScreenDialog {
     }
 
     public void setCompleteLayoutVisible(boolean visibility) {
-        _completeLayout.setVisibility(visibility == true ? View.VISIBLE : View.INVISIBLE);
+        _completeLayout.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void setIncompleteLayoutVisible(boolean visibility) {
-        _incompleteLayout.setVisibility(visibility == true ? View.VISIBLE : View.INVISIBLE);
+        _incompleteLayout.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
     /*-********************************************-*/
@@ -361,8 +360,6 @@ public class BundleEtaDialog extends FullScreenDialog {
     public static void removeAllOnCancelListener(String uid) {
         _onCancelDispatcher.removeAll(uid);
     }
-
-
 
 
 }

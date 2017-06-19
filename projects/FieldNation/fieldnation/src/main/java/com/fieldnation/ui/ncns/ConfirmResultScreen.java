@@ -227,7 +227,7 @@ public class ConfirmResultScreen extends RelativeLayout {
 
                 Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
 
-                if (envelope.getTotal() == 0) {
+                if (envelope.getTotal() == null || envelope.getTotal() == 0) {
                     _adapter.clear();
                 } else if (workOrders.getResults().length > 0
                         && envelope.getPerPage() > 0
