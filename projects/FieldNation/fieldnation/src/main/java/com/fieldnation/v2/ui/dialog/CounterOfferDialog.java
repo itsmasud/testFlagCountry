@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -22,16 +22,16 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.ExpensesCoCardView;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.PaymentCoView;
 import com.fieldnation.ui.ReasonCoView;
 import com.fieldnation.ui.RefreshView;
@@ -206,9 +206,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             }
         };
         _expensesList.postDelayed(r, new Random().nextInt(100));
-
     }
-
 
     /*-*********************************-*/
     /*-             Events              -*/
@@ -342,14 +340,12 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-
     public static void show(Context context, String uid, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable("workOrder", workOrder);
 
         Controller.show(context, uid, CounterOfferDialog.class, params);
     }
-
 
     /*-**********************-*/
     /*-         Ok           -*/

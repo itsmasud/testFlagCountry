@@ -74,6 +74,10 @@ public abstract class SimpleDialog implements Dialog {
         });
     }
 
+    public Context getContext() {
+        return _root.getContext();
+    }
+
     public abstract View onCreateView(LayoutInflater inflater, Context context, ViewGroup container);
 
     @Override

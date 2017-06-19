@@ -28,6 +28,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -36,7 +37,6 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
-import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -419,10 +419,14 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-
-        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
     }
 
     @Override
@@ -575,6 +579,12 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onFail(SimpleGps simpleGps) {
+            _locationFailed = true;
+            simpleGps.stop();
+        }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
             _locationFailed = true;
             simpleGps.stop();
         }

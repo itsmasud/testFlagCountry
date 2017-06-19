@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,11 +15,12 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
@@ -48,6 +50,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private ToastClient _toastClient;
     private AuthTopicClient _authTopicClient;
     private ActivityResultClient _activityResultClient;
+    private PermissionsClient _permissionsClient;
 
     // Data
     private Profile _profile;
@@ -107,6 +110,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         super.onStart();
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStart();
+
+        _permissionsClient = new PermissionsClient(_permissionsListener);
+        _permissionsClient.connect(App.get());
+        PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
     }
 
     @Override
@@ -149,6 +156,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.v(TAG, "onStop");
+        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+
         super.onStop();
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStop();
@@ -158,6 +167,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_TAG, TAG);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -230,6 +244,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         Log.v(TAG, "onActivityResult " + requestCode + ", " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
         ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
     }
 
     /*-*********************************-*/
@@ -379,6 +398,18 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public int getSnackbarTextId() {
             return android.support.design.R.id.snackbar_text;
+        }
+    };
+
+    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+        @Override
+        public Activity getActivity() {
+            return AuthSimpleActivity.this;
+        }
+
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
         }
     };
 }
