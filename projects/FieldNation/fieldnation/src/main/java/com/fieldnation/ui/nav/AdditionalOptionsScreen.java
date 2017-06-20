@@ -298,6 +298,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onConnected() {
             _profileClient.subGet(false);
+            ProfileClient.get(App.get(), false);
         }
 
         @Override
