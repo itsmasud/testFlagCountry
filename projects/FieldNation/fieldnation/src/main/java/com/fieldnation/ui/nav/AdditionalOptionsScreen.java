@@ -288,6 +288,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {
+            _tempFileName = null;
             if (_listener != null) {
                 _listener.onSwitchUser(userId);
             }
@@ -350,7 +351,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             addProfilePhoto();
         }
     };
-
 
     private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
         @Override
