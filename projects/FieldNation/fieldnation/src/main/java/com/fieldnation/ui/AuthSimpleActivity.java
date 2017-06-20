@@ -180,7 +180,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
 
-    private void gotProfile(Profile profile) {
+    private void gotProfile() {
         if (_profile == null)
             return;
 
@@ -195,6 +195,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _profileBounceProtect = true;
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
+            Log.v(TAG, "show release notes");
             App.get().setReleaseNoteShownReminded();
             WhatsNewDialog.show(App.get());
         }
@@ -207,11 +208,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
 
         App gs = App.get();
-        if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
+        if (!_profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
-                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
+                    getString(R.string.dialog_coi_body, _profile.insurancePercent()),
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
@@ -222,7 +223,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             }
         } else {
             Log.v(TAG, "toc/coi check done");
-            onProfile(profile);
+            onProfile(_profile);
             _profileBounceProtect = false;
         }
     }
@@ -260,7 +261,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -293,7 +294,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -305,7 +306,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -347,12 +348,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
             _globalClient.subProfileInvalid(App.get());
+            ProfileClient.get(App.get());
         }
 
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile(profile);
+            gotProfile();
         }
 
         @Override
