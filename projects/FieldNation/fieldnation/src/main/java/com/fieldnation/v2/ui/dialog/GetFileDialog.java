@@ -1,5 +1,6 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.Context;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -23,6 +25,8 @@ import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.ui.GetFileIntent;
@@ -36,6 +40,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+<<<<<<<HEAD
+        =======
+        >>>>>>>PA-287
+
 public class GetFileDialog extends SimpleDialog {
     private static final String TAG = "GetFileDialog";
 
@@ -45,9 +53,13 @@ public class GetFileDialog extends SimpleDialog {
     // Data
     private List<GetFilePackage> _activityList = new LinkedList<>();
     private Set<String> _packages = new HashSet<>();
-    private ActivityResultClient _activityResultClient;
     private File _tempFile;
     private Uri _tempUri;
+    private Intent _cameraIntent = null;
+
+    // Clients
+    private PermissionsClient _permissionsClient;
+    private ActivityResultClient _activityResultClient;
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -85,7 +97,6 @@ public class GetFileDialog extends SimpleDialog {
                 addIntent((GetFileIntent) parcelable);
             }
 
-
         super.show(payload, animate);
     }
 
@@ -98,6 +109,9 @@ public class GetFileDialog extends SimpleDialog {
 
         if (savedState.containsKey("_tempUri"))
             _tempUri = Uri.parse(savedState.getString("_tempUri"));
+
+        if (savedState.containsKey("_cameraIntent"))
+            _cameraIntent = savedState.getParcelable("_cameraIntent");
     }
 
     @Override
@@ -106,13 +120,20 @@ public class GetFileDialog extends SimpleDialog {
             outState.putString("_tempFile", _tempFile.getAbsolutePath());
         if (_tempUri != null)
             outState.putString("_tempUri", _tempUri.toString());
+        if (_cameraIntent != null)
+            outState.putParcelable("_cameraIntent", _cameraIntent);
     }
 
     @Override
     public void onPause() {
         if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
-
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        super.onStop();
     }
 
     private void addIntent(GetFileIntent appIntent) {
@@ -151,9 +172,18 @@ public class GetFileDialog extends SimpleDialog {
                 Log.v(TAG, "onClick: " + intent.toString());
                 ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
+                int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
                 _tempFile = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(_tempFile));
-                ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+
+                if (grant == PackageManager.PERMISSION_DENIED) {
+                    _permissionsClient = new PermissionsClient(_permissionsClient_listener);
+                    _permissionsClient.connect(App.get());
+                    PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
+                    _cameraIntent = intent;
+                } else {
+                    ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+                }
             }
         }
     };
@@ -164,6 +194,25 @@ public class GetFileDialog extends SimpleDialog {
 
         Controller.show(context, uid, GetFileDialog.class, params);
     }
+
+    private final PermissionsClient.ResponseListener _permissionsClient_listener = new PermissionsClient.ResponseListener() {
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
+        }
+
+        @Override
+        public void onComplete(String permission, int grantResult) {
+            if (permission.equals(Manifest.permission.CAMERA) && _cameraIntent != null) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    ActivityResultClient.startActivityForResult(App.get(), _cameraIntent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+                    _cameraIntent = null;
+                } else {
+                    ToastClient.toast(App.get(), "Camera Permission denied. Please try again.", Toast.LENGTH_SHORT);
+                }
+            }
+        }
+    };
 
     private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
         @Override
