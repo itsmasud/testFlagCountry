@@ -736,6 +736,12 @@ public class App extends Application {
         return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
     }
 
+    public String getPicturePath() {
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/FieldNation");
+        path.mkdirs();
+        return path.getAbsolutePath();
+    }
+
     public String getStoragePath() {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = getPackageName();

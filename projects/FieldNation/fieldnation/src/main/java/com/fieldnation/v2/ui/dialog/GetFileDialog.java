@@ -23,8 +23,8 @@ import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.GetFilePackage;
 import com.fieldnation.v2.ui.GetFilePackageAdapter;
@@ -59,7 +59,7 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_get_file, container, false);
-        _items = (ListView) v.findViewById(R.id.apps_listview);
+        _items = v.findViewById(R.id.apps_listview);
         return v;
     }
 
@@ -151,7 +151,7 @@ public class GetFileDialog extends SimpleDialog {
                 Log.v(TAG, "onClick: " + intent.toString());
                 ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
-                _tempFile = new File(App.get().getTempFolder() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                _tempFile = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(_tempFile));
                 ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
             }
