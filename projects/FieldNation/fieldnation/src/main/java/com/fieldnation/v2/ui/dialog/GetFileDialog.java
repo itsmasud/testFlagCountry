@@ -40,10 +40,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-<<<<<<<HEAD
-        =======
-        >>>>>>>PA-287
-
 public class GetFileDialog extends SimpleDialog {
     private static final String TAG = "GetFileDialog";
 
