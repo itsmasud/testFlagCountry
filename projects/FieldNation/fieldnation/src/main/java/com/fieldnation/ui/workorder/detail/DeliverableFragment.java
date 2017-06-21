@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -512,7 +512,13 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), FileUtils.guessContentTypeFromName(file.getName()));
+                intent.setDataAndType(
+                        FileProvider.getUriForFile(
+                                App.get(),
+                                App.get().getApplicationContext().getPackageName() + ".provider",
+                                file),
+                        FileUtils.guessContentTypeFromName(file.getName()));
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
                     startActivity(intent);
@@ -521,7 +527,15 @@ public class DeliverableFragment extends WorkorderFragment {
                     name = name.substring(name.indexOf("_") + 1);
 
                     Intent folderIntent = new Intent(Intent.ACTION_VIEW);
-                    folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    intent.setDataAndType(
+                            FileProvider.getUriForFile(
+                                    App.get(),
+                                    App.get().getApplicationContext().getPackageName() + ".provider",
+                                    new File(App.get().getDownloadsFolder())),
+                            "resource/folder");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
                         PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
                         ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);

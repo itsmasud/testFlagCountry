@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -325,7 +326,13 @@ public class PhotoUploadDialog extends SimpleDialog {
             Intent intent;
             if (_uri == null) {
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(_filePath)), "image/*");
+                intent.setDataAndType(
+                        FileProvider.getUriForFile(
+                                App.get(),
+                                App.get().getApplicationContext().getPackageName() + ".provider",
+                                new File(_filePath)),
+                        "image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             } else {
                 intent = new Intent(Intent.ACTION_VIEW, _uri);
