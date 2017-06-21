@@ -67,7 +67,7 @@ public class GetFileDialog extends SimpleDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_get_file, container, false);
-        _items = (ListView) v.findViewById(R.id.apps_listview);
+        _items = v.findViewById(R.id.apps_listview);
         return v;
     }
 
@@ -169,7 +169,7 @@ public class GetFileDialog extends SimpleDialog {
                 ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
                 int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
-                _tempFile = new File(App.get().getTempFolder() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                _tempFile = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(_tempFile));
 
                 if (grant == PackageManager.PERMISSION_DENIED) {
