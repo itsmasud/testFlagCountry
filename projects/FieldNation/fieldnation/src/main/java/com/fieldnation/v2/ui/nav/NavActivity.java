@@ -12,7 +12,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.data.profile.Profile;
@@ -107,14 +106,12 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         if (App.get().needsConfirmation()) {
             launchConfirmActivity();
         }
 
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
-
     }
 
     @Override
