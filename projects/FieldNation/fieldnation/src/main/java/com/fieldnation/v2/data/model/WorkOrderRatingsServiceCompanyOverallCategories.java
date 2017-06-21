@@ -152,7 +152,4 @@ public class WorkOrderRatingsServiceCompanyOverallCategories implements Parcelab
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

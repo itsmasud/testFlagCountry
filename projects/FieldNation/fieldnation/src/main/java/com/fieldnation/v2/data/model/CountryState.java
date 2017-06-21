@@ -106,6 +106,9 @@ public class CountryState implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_values == null)
+            _values = new CountryStateValues[0];
+
         return _values;
     }
 
@@ -182,7 +185,4 @@ public class CountryState implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

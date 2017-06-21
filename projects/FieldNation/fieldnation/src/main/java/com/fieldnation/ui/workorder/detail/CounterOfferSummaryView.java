@@ -97,41 +97,34 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
         setVisibility(GONE);
 
-        if (requests == null)
+        if (requests.getOpenRequest().getId() == null)
             return;
 
-        if (requests.getOpenRequest() == null)
-            return;
+        final Pay pay = requests.getOpenRequest().getPay();
+        String[] paytext = toDisplayStringLong(pay);
+        String data = "";
 
-
-        if (requests.getOpenRequest().getPay() == null) {
-            _payLayout.setVisibility(GONE);
-        } else {
-            final Pay pay = requests.getOpenRequest().getPay();
-            String[] paytext = toDisplayStringLong(pay);
-            String data = "";
-
-            if (paytext[0] != null) {
-                data = paytext[0];
-            }
-
-            if (paytext[1] != null) {
-                data += "\n" + paytext[1];
-            }
-
-            if (misc.isEmptyOrNull(data)) {
-                _payLayout.setVisibility(GONE);
-            } else {
-                _payTextView.setText(data);
-                setVisibility(VISIBLE);
-                _payLayout.setVisibility(VISIBLE);
-            }
+        if (paytext[0] != null) {
+            data = paytext[0];
         }
 
-        if (requests.getOpenRequest().getSchedule() == null) {
+        if (paytext[1] != null) {
+            data += "\n" + paytext[1];
+        }
+
+        if (misc.isEmptyOrNull(data)) {
+            _payLayout.setVisibility(GONE);
+        } else {
+            _payTextView.setText(data);
+            setVisibility(VISIBLE);
+            _payLayout.setVisibility(VISIBLE);
+        }
+
+        Schedule schedule = requests.getOpenRequest().getSchedule();
+        data = getDisplayString(schedule);
+        if (data == null) {
             _scheduleLayout.setVisibility(GONE);
         } else {
-            Schedule schedule = requests.getOpenRequest().getSchedule();
             _scheduleTextView.setText(getDisplayString(schedule));
             _scheduleLayout.setVisibility(VISIBLE);
             setVisibility(VISIBLE);
@@ -139,7 +132,7 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
 
         // expense
         final Expense[] expenses = requests.getOpenRequest().getExpenses();
-        if (expenses == null || expenses.length == 0) {
+        if (expenses.length == 0) {
             _expenseLayout.setVisibility(GONE);
         } else {
             _expenseLayout.setVisibility(VISIBLE);
@@ -152,16 +145,17 @@ public class CounterOfferSummaryView extends LinearLayout implements WorkOrderRe
             setVisibility(VISIBLE);
         }
 
-        if (requests.getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)){
+        if (requests.getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)) {
             _counterOfferButton.setVisibility(VISIBLE);
         } else {
             _counterOfferButton.setVisibility(GONE);
         }
-
     }
 
-
     public String getDisplayString(Schedule schedule) {
+        if (schedule.getServiceWindow().getStart().getUtc() == null)
+            return null;
+
         if (schedule.getServiceWindow().getMode().equals(ScheduleServiceWindow.ModeEnum.EXACT)) {
             try {
                 String dayDate;

@@ -51,10 +51,10 @@ public class UserPreviousRequest implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_at != null && _at.isSet())
-            return _at;
+        if (_at == null)
+            _at = new Date();
 
-        return null;
+        return _at;
     }
 
     public UserPreviousRequest at(Date at) throws ParseException {
@@ -130,7 +130,4 @@ public class UserPreviousRequest implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

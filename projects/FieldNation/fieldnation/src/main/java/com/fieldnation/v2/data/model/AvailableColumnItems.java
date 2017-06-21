@@ -302,7 +302,4 @@ public class AvailableColumnItems implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getId());
-    }
 }

@@ -57,10 +57,10 @@ public class Acknowledgment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-            return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+            return _author;
     }
 
     public Acknowledgment author(User author) throws ParseException {
@@ -82,10 +82,10 @@ public class Acknowledgment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Acknowledgment created(Date created) throws ParseException {
@@ -221,7 +221,4 @@ public class Acknowledgment implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

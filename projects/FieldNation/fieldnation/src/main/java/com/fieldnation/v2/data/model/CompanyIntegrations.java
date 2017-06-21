@@ -54,10 +54,10 @@ public class CompanyIntegrations implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_envelope != null && _envelope.isSet())
-        return _envelope;
+        if (_envelope == null)
+            _envelope = new ListEnvelope();
 
-        return null;
+        return _envelope;
     }
 
     public CompanyIntegrations envelope(ListEnvelope envelope) throws ParseException {
@@ -83,6 +83,9 @@ public class CompanyIntegrations implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new CompanyIntegration[0];
 
         return _results;
     }
@@ -160,7 +163,4 @@ public class CompanyIntegrations implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

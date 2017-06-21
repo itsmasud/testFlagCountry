@@ -63,10 +63,10 @@ public class ShipmentCarrier implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_arrival != null && _arrival.isSet())
-            return _arrival;
+        if (_arrival == null)
+            _arrival = new Date();
 
-        return null;
+            return _arrival;
     }
 
     public ShipmentCarrier arrival(Date arrival) throws ParseException {
@@ -88,10 +88,10 @@ public class ShipmentCarrier implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_arrived != null && _arrived.isSet())
-            return _arrived;
+        if (_arrived == null)
+            _arrived = new Date();
 
-        return null;
+            return _arrived;
     }
 
     public ShipmentCarrier arrived(Date arrived) throws ParseException {
@@ -275,7 +275,4 @@ public class ShipmentCarrier implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

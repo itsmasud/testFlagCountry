@@ -98,7 +98,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
-
     }
 
     @Override
@@ -193,7 +192,6 @@ public class DeliverableFragment extends WorkorderFragment {
         } else {
             GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
         }
-
     }
 
     private boolean checkMedia() {
@@ -256,7 +254,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (reviewSlot != null) {
             final Attachment[] docs = reviewSlot.getResults();
 
-            if (docs != null && docs.length > 0) {
+            if (docs.length > 0) {
                 if (_reviewList.getChildCount() != docs.length) {
                     if (_reviewRunnable != null)
                         _reviewRunnable.cancel();
@@ -297,7 +295,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         //stopwatch.start();
 
-        if (slots != null && slots.length > 0) {
+        if (slots.length > 0) {
             //Log.v(TAG, "US count: " + slots.length);
 
             if (_filesRunnable != null)

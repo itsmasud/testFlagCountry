@@ -252,10 +252,6 @@ public class Coords implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getLatitude() != null && getLongitude() != null && getLatitude() != 0 && getLongitude() != 0;
-    }
-
     public Coords(double latitude, double longitude) throws ParseException {
         this();
         setLatitude(latitude);

@@ -57,10 +57,10 @@ public class CompanyRatingRating implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_marketplace != null && _marketplace.isSet())
-        return _marketplace;
+        if (_marketplace == null)
+            _marketplace = new Satisfaction();
 
-        return null;
+        return _marketplace;
     }
 
     public CompanyRatingRating marketplace(Satisfaction marketplace) throws ParseException {
@@ -82,10 +82,10 @@ public class CompanyRatingRating implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_mine != null && _mine.isSet())
-        return _mine;
+        if (_mine == null)
+            _mine = new Satisfaction();
 
-        return null;
+        return _mine;
     }
 
     public CompanyRatingRating mine(Satisfaction mine) throws ParseException {
@@ -183,7 +183,4 @@ public class CompanyRatingRating implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

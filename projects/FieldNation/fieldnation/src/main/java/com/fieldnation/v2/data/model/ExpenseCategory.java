@@ -152,10 +152,6 @@ public class ExpenseCategory implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
-
     public ExpenseCategory(int id, String name) throws ParseException {
         this();
         setId(id);

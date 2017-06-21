@@ -94,37 +94,29 @@ public class ScheduleSummaryView extends LinearLayout implements WorkOrderRender
 10    Deleted
          */
 
-        if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
+        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             _editEtaButton.setVisibility(VISIBLE);
             _editEtaButton.setText(R.string.btn_set_eta);
             _editEtaButton.setOnClickListener(_setEta_onClick);
-
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
+        } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.EDIT)) {
             _editEtaButton.setVisibility(VISIBLE);
             _editEtaButton.setText(R.string.btn_edit_eta);
             _editEtaButton.setOnClickListener(_editEta_onClick);
-
         } else {
             _editEtaButton.setVisibility(GONE);
         }
 
         Schedule schedule = _workOrder.getSchedule();
-
         try {
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
-
 
             if (schedule == null) {
                 setVisibility(GONE);
                 return;
             }
 
-            if (_workOrder.getEta() != null
-                    && _workOrder.getEta().getStatus() != null
-                    && _workOrder.getEta().getStatus().getName() != null
+            if (_workOrder.getEta().getStatus().getName() != null
                     && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED) {
 
                 //Log.v(TAG, "ETA!!");

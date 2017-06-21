@@ -61,27 +61,24 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
         _listener = listener;
     }
 
-
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
         populateUi();
     }
 
-
     private void populateUi() {
         if (_workOrder.getShipments() == null)
             return;
-        
+
         final Shipment[] shipments = _workOrder.getShipments().getResults();
 
-        if ((shipments == null || shipments.length == 0) && !_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+        if (shipments.length == 0 && !_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
             setVisibility(GONE);
             return;
         }
 
-        if (_workOrder.getShipments() != null
-                && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
+        if (_workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
@@ -89,7 +86,7 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
 
         setVisibility(View.VISIBLE);
 
-        if (shipments == null || shipments.length == 0) {
+        if (shipments.length == 0) {
             _shipmentsLayout.removeAllViews();
             _noShipmentsTextView.setVisibility(VISIBLE);
             return;
@@ -104,10 +101,10 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
             _forLoop = null;
         }
 
-        if (shipments != null && shipments.length > 0) {
+        if (shipments.length > 0) {
             _forLoop = new ForLoopRunnable(shipments.length, new Handler()) {
                 Shipment[] _shipments = shipments;
-                List<View> views = new LinkedList();
+                List<View> views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
@@ -136,7 +133,6 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
         @Override
         public void onClick(View v) {
             if (_listener != null
-                    && _workOrder.getShipments() != null
                     && _workOrder.getShipments().getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
                 _listener.addShipment();
             }
@@ -150,12 +146,10 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
         public void onDelete(Shipment shipment) {
             if (_listener != null
                     && shipment != null
-                    && shipment.getActionsSet() != null
                     && shipment.getActionsSet().contains(Shipment.ActionsEnum.DELETE)) {
                 _listener.onDelete(_workOrder, shipment);
             } else {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
-                return;
             }
         }
 
@@ -163,7 +157,6 @@ public class ShipmentListView extends LinearLayout implements WorkOrderRenderer 
         public void onEdit(Shipment shipment) {
             if (_listener != null
                     && shipment != null
-                    && shipment.getActionsSet() != null
                     && shipment.getActionsSet().contains(Shipments.ActionsEnum.ADD)) {
                 _listener.onAssign(_workOrder, shipment);
             }

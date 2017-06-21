@@ -206,7 +206,7 @@ public class WorkOrderCard extends RelativeLayout {
             return;
 
         _titleTextView.setText(_workOrder.getId() + " | " + _workOrder.getTitle());
-        if (_workOrder.getTypeOfWork() != null && !misc.isEmptyOrNull(_workOrder.getTypeOfWork().getName())) {
+        if (!misc.isEmptyOrNull(_workOrder.getTypeOfWork().getName())) {
             _workTypeTextView.setText(_workOrder.getTypeOfWork().getName().toUpperCase());
         } else {
             _workTypeTextView.setText("");
@@ -214,9 +214,7 @@ public class WorkOrderCard extends RelativeLayout {
 
         setWarning(false);
 
-        if (_workOrder.getProblems() != null
-                && _workOrder.getProblems().getResults() != null
-                && _workOrder.getProblems().getResults().length > 0) {
+        if (_workOrder.getProblems().getResults().length > 0) {
             for (Problem problem : _workOrder.getProblems().getResults()) {
                 if (problem != null
                         && problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
@@ -226,9 +224,7 @@ public class WorkOrderCard extends RelativeLayout {
             }
         }
 
-        if (_workOrder.getHolds() != null
-                && _workOrder.getHolds().getResults() != null
-                && _workOrder.getHolds().getResults().length > 0) {
+        if (_workOrder.getHolds().getResults().length > 0) {
             Hold[] holds = _workOrder.getHolds().getResults();
             for (Hold hold : holds) {
                 if (hold.getAcknowledgment().getStatus() != Acknowledgment.StatusEnum.ACKNOWLEDGED) {
@@ -265,90 +261,86 @@ public class WorkOrderCard extends RelativeLayout {
         _time2TextView.setVisibility(GONE);
         _date2TextView.setVisibility(GONE);
 
-        if (_workOrder.getSchedule() != null) {
-            if (_workOrder.getEta() != null
-                    && _workOrder.getEta().getStatus() != null
-                    && _workOrder.getEta().getStatus().getName() != null
-                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
-                    && _workOrder.getEta().getStart() != null) {
-                // estimated
-                try {
-                    Calendar cal = _workOrder.getEta().getStart().getCalendar();
-                    _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
-                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    _timeTextView.setVisibility(GONE);
-                    _dateTextView.setVisibility(GONE);
-                }
-
-                // exact
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
-                try {
-                    Calendar cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                    _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
-                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    _timeTextView.setVisibility(GONE);
-                    _dateTextView.setVisibility(GONE);
-                }
-
-                // range
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-                // business
-                try {
-                    Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                    Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
-                    _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
-                            + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
-
-
-                    if (scal.get(Calendar.MONTH) != ecal.get(Calendar.MONTH)) {
-                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
-                                + " - " + new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
-                    } else {
-                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
-                                + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
-                    }
-
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    _timeTextView.setVisibility(GONE);
-                    _dateTextView.setVisibility(GONE);
-                }
-
-            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-                // normal range
-                try {
-                    Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
-                    Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
-                    _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
-                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
-                    _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
-                    _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
-                    _hyphenTextView.setVisibility(VISIBLE);
-                    _time2TextView.setVisibility(VISIBLE);
-                    _date2TextView.setVisibility(VISIBLE);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    _timeTextView.setVisibility(GONE);
-                    _dateTextView.setVisibility(GONE);
-                }
-
-            } else {
-                _timeTextView.setText("");
+        if (_workOrder.getEta().getStatus().getName() != null
+                && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                && _workOrder.getEta().getStart().getUtc() != null) {
+            // estimated
+            try {
+                Calendar cal = _workOrder.getEta().getStart().getCalendar();
+                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+                _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                _timeTextView.setVisibility(GONE);
+                _dateTextView.setVisibility(GONE);
             }
+
+            // exact
+        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
+            try {
+                Calendar cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+                _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                _timeTextView.setVisibility(GONE);
+                _dateTextView.setVisibility(GONE);
+            }
+
+            // range
+        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
+            // business
+            try {
+                Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
+                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+
+
+                if (scal.get(Calendar.MONTH) != ecal.get(Calendar.MONTH)) {
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                            + " - " + new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
+                } else {
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                            + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
+                }
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                _timeTextView.setVisibility(GONE);
+                _dateTextView.setVisibility(GONE);
+            }
+
+        } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
+            // normal range
+            try {
+                Calendar scal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
+                Calendar ecal = _workOrder.getSchedule().getServiceWindow().getEnd().getCalendar();
+                _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
+                _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
+                _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+                _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
+                _hyphenTextView.setVisibility(VISIBLE);
+                _time2TextView.setVisibility(VISIBLE);
+                _date2TextView.setVisibility(VISIBLE);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                _timeTextView.setVisibility(GONE);
+                _dateTextView.setVisibility(GONE);
+            }
+
+        } else {
+            _timeTextView.setText("");
         }
     }
 
     private void populateLocation() {
         com.fieldnation.v2.data.model.Location location = _workOrder.getLocation();
-        if (location == null || location.getMode() == com.fieldnation.v2.data.model.Location.ModeEnum.REMOTE) {
+        if (location.getMode() == com.fieldnation.v2.data.model.Location.ModeEnum.REMOTE) {
             _locationTextView.setText(R.string.remote_work);
             _distanceTextView.setVisibility(GONE);
         } else {
-            if (location.getCoordinates() == null || _location == null) {
+            if (location.getCoordinates().getLatitude() == null || location.getCoordinates().getLongitude() == null || _location == null) {
                 _locationTextView.setText(location.getCityState());
                 _distanceTextView.setVisibility(GONE);
             } else {
@@ -369,7 +361,7 @@ public class WorkOrderCard extends RelativeLayout {
     private void populatePay() {
         Pay pay = _workOrder.getPay();
 
-        if (pay == null || pay.getType() == null) {
+        if (pay.getType() == null) {
             _payTypeTextView.setVisibility(INVISIBLE);
             _amountTextView.setVisibility(INVISIBLE);
             return;
@@ -477,37 +469,31 @@ public class WorkOrderCard extends RelativeLayout {
             button.setEnabled(false);
 
             // set eta
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
+        } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_eta_onClick);
             button.setText(R.string.btn_set_eta);
 
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.MARK_READY_TO_GO)) {
+        } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.MARK_READY_TO_GO)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_readyToGo_onClick);
             button.setText(R.string.btn_ready_to_go);
 
             // confirm
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
+        } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.CONFIRM)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_confirm_onClick);
             button.setText(R.string.btn_confirm);
 
             // on my way
-        } else if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
+        } else if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.ON_MY_WAY)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_onMyWay_onClick);
             button.setText(R.string.btn_on_my_way);
 
 
             // check_out
-        } else if (_workOrder.getTimeLogs() != null
-                && _workOrder.getTimeLogs().getOpenTimeLog() != null
-                && _workOrder.getTimeLogs().getOpenTimeLog().getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
+        } else if (_workOrder.getTimeLogs().getOpenTimeLog().getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_checkOut_onClick);
             button.setText(R.string.btn_check_out);
@@ -519,8 +505,7 @@ public class WorkOrderCard extends RelativeLayout {
 //            button.setText(R.string.btn_complete);
 
             // check_in
-        } else if (_workOrder.getTimeLogs() != null
-                && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
+        } else if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             if (_workOrder.getTimeLogs().getMetadata().getTotal() >= 1) {
                 button.setText(R.string.btn_check_in_again);
@@ -531,39 +516,32 @@ public class WorkOrderCard extends RelativeLayout {
             }
 
             // mark incomplete
-        } else if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
+        } else if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.INCOMPLETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_incomplete_onClick);
             button.setText(R.string.btn_incomplete);
 
             // view_bundle
-        } else if (_workOrder.getBundle() != null
-                && _workOrder.getBundle().getActionsSet().contains(Bundle.ActionsEnum.VIEW)) {
+        } else if (_workOrder.getBundle().getActionsSet().contains(Bundle.ActionsEnum.VIEW)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_viewBundle_onClick);
             button.setText(getResources().getString(R.string.btn_view_bundle_num,
                     _workOrder.getBundle().getMetadata().getTotal() + 1));
 
             // accept
-        } else if (_workOrder.getRoutes() != null
-                && _workOrder.getRoutes().getUserRoute() != null
-                && _workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+        } else if (_workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_accept_onClick);
             button.setText(R.string.btn_accept);
 
             // request
-        } else if (_workOrder.getRequests() != null
-                && _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+        } else if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_request_onClick);
             button.setText(R.string.btn_request);
 
             // withdraw
-        } else if (_workOrder.getRequests() != null
-                && _workOrder.getRequests().getOpenRequest() != null
-                && _workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
+        } else if (_workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
             button.setVisibility(VISIBLE);
             button.setOnClickListener(_withdraw_onClick);
             button.setText(R.string.btn_withdraw);
@@ -595,11 +573,10 @@ public class WorkOrderCard extends RelativeLayout {
         int buttonId = 0;
         Button button = _secondaryButtons[buttonId];
 
-        boolean isBundle = _workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
+        boolean isBundle = _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() != 0;
 
         // decline
         if (!isBundle
-                && _workOrder.getRequests() != null
                 && (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)
                 || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))) {
             button.setVisibility(VISIBLE);
@@ -611,8 +588,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // running late
-        if (_workOrder.getEta() != null
-                && _workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
+        if (_workOrder.getEta().getActionsSet().contains(ETA.ActionsEnum.RUNNING_LATE)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_time_issue_solid);
             button.setOnClickListener(_runningLate_onClick);
@@ -622,8 +598,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // report a problem
-        if (_workOrder.getProblems() != null
-                && _workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
+        if (_workOrder.getProblems().getActionsSet().contains(Problems.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_problem_solid);
             button.setOnClickListener(_reportProblem_onClick);
@@ -633,9 +608,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // phone
-        if (_workOrder.getContacts() != null
-                && _workOrder.getContacts().getResults() != null
-                && _workOrder.getContacts().getResults().length > 0) {
+        if (_workOrder.getContacts().getResults().length > 0) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_phone_solid);
             button.setOnClickListener(_phone_onClick);
@@ -645,8 +618,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // message
-        if (_workOrder.getActionsSet() != null
-                && _workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.MESSAGING)) {
+        if (_workOrder.getActionsSet().contains(WorkOrder.ActionsEnum.MESSAGING)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_chat_solid);
             button.setOnClickListener(_message_onClick);
@@ -656,8 +628,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // map
-        if (_workOrder.getLocation() != null
-                && _workOrder.getLocation().getCoordinates() != null) {
+        if (_workOrder.getLocation().getMode() != null) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_map_location_solid);
             button.setOnClickListener(_map_onClick);
@@ -712,9 +683,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View view) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN_AGAIN, null, _workOrder.getId());
-            if (_workOrder.getPay() != null
-                    && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
-                    && _workOrder.getPay().getBase() != null
+            if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(),
@@ -730,9 +699,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getId());
-            if (_workOrder.getPay() != null
-                    && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
-                    && _workOrder.getPay().getBase() != null
+            if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -757,9 +724,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getId());
-            if (_workOrder.getPay() != null
-                    && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
-                    && _workOrder.getPay().getBase() != null
+            if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE
                     && _workOrder.getPay().getBase().getUnits() != null) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder, _location,
                         _workOrder.getPay().getBase().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
@@ -1031,19 +996,16 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.DIRECTIONS, null, _workOrder.getId());
             if (_workOrder != null) {
                 com.fieldnation.v2.data.model.Location location = _workOrder.getLocation();
-
-                if (location != null) {
-                    try {
-                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
-                        String _uriString = "geo:0,0?q=" + _fullAddress;
-                        Uri _uri = Uri.parse(_uriString);
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setData(_uri);
-                        ActivityResultClient.startActivity(App.get(), intent);
-                    } catch (Exception e) {
-                        Log.v(TAG, e);
-                        ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
-                    }
+                try {
+                    String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                    String _uriString = "geo:0,0?q=" + _fullAddress;
+                    Uri _uri = Uri.parse(_uriString);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setData(_uri);
+                    ActivityResultClient.startActivity(App.get(), intent);
+                } catch (Exception e) {
+                    Log.v(TAG, e);
+                    ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
                 }
             }
         }

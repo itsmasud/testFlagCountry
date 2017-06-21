@@ -90,6 +90,9 @@ public class Problem implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -116,10 +119,10 @@ public class Problem implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-        return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+        return _author;
     }
 
     public Problem author(User author) throws ParseException {
@@ -185,10 +188,10 @@ public class Problem implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-        return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public Problem created(Date created) throws ParseException {
@@ -254,10 +257,10 @@ public class Problem implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_message != null && _message.isSet())
-        return _message;
+        if (_message == null)
+            _message = new ProblemMessage();
 
-        return null;
+        return _message;
     }
 
     public Problem message(ProblemMessage message) throws ParseException {
@@ -279,10 +282,10 @@ public class Problem implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_resolution != null && _resolution.isSet())
-        return _resolution;
+        if (_resolution == null)
+            _resolution = new ProblemResolution();
 
-        return null;
+        return _resolution;
     }
 
     public Problem resolution(ProblemResolution resolution) throws ParseException {
@@ -304,10 +307,10 @@ public class Problem implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_type != null && _type.isSet())
-        return _type;
+        if (_type == null)
+            _type = new ProblemType();
 
-        return null;
+        return _type;
     }
 
     public Problem type(ProblemType type) throws ParseException {
@@ -338,6 +341,9 @@ public class Problem implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_watchers == null)
+            _watchers = new Integer[0];
 
         return _watchers;
     }
@@ -499,10 +505,6 @@ public class Problem implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

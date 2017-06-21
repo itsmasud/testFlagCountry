@@ -69,6 +69,9 @@ public class Signatures implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -117,10 +120,10 @@ public class Signatures implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public Signatures metadata(ListEnvelope metadata) throws ParseException {
@@ -146,6 +149,9 @@ public class Signatures implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new Signature[0];
 
         return _results;
     }
@@ -258,10 +264,6 @@ public class Signatures implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return true;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

@@ -84,6 +84,9 @@ public class Shipment implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -110,10 +113,10 @@ public class Shipment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_carrier != null && _carrier.isSet())
-            return _carrier;
+        if (_carrier == null)
+            _carrier = new ShipmentCarrier();
 
-        return null;
+            return _carrier;
     }
 
     public Shipment carrier(ShipmentCarrier carrier) throws ParseException {
@@ -135,10 +138,10 @@ public class Shipment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Shipment created(Date created) throws ParseException {
@@ -248,10 +251,10 @@ public class Shipment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_task != null && _task.isSet())
-            return _task;
+        if (_task == null)
+            _task = new ShipmentTask();
 
-        return null;
+            return _task;
     }
 
     public Shipment task(ShipmentTask task) throws ParseException {
@@ -273,10 +276,10 @@ public class Shipment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_user != null && _user.isSet())
-            return _user;
+        if (_user == null)
+            _user = new User();
 
-        return null;
+            return _user;
     }
 
     public Shipment user(User user) throws ParseException {
@@ -465,10 +468,6 @@ public class Shipment implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<Shipment.ActionsEnum> _actionsSet = null;
 

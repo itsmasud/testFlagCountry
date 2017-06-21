@@ -131,6 +131,9 @@ public class Error implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_trace == null)
+            _trace = new ErrorTrace[0];
+
         return _trace;
     }
 
@@ -207,7 +210,4 @@ public class Error implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

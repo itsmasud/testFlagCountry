@@ -69,6 +69,9 @@ public class ProblemResolution implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_allowedResolvers == null)
+            _allowedResolvers = new AllowedResolversEnum[0];
+
         return _allowedResolvers;
     }
 
@@ -95,10 +98,10 @@ public class ProblemResolution implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_at != null && _at.isSet())
-        return _at;
+        if (_at == null)
+            _at = new Date();
 
-        return null;
+        return _at;
     }
 
     public ProblemResolution at(Date at) throws ParseException {
@@ -120,10 +123,10 @@ public class ProblemResolution implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_by != null && _by.isSet())
-        return _by;
+        if (_by == null)
+            _by = new User();
 
-        return null;
+        return _by;
     }
 
     public ProblemResolution by(User by) throws ParseException {
@@ -296,7 +299,4 @@ public class ProblemResolution implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

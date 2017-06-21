@@ -5,11 +5,17 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -108,6 +114,9 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -205,6 +214,9 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_attributes == null)
+            _attributes = new LocationAttribute[0];
+
         return _attributes;
     }
 
@@ -249,10 +261,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_client != null && _client.isSet())
-            return _client;
+        if (_client == null)
+            _client = new Company();
 
-        return null;
+            return _client;
     }
 
     public StoredLocation client(Company client) throws ParseException {
@@ -274,10 +286,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_company != null && _company.isSet())
-            return _company;
+        if (_company == null)
+            _company = new Company();
 
-        return null;
+            return _company;
     }
 
     public StoredLocation company(Company company) throws ParseException {
@@ -299,10 +311,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_contact != null && _contact.isSet())
-            return _contact;
+        if (_contact == null)
+            _contact = new Contact();
 
-        return null;
+            return _contact;
     }
 
     public StoredLocation contact(Contact contact) throws ParseException {
@@ -346,10 +358,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_geo != null && _geo.isSet())
-            return _geo;
+        if (_geo == null)
+            _geo = new Coords();
 
-        return null;
+            return _geo;
     }
 
     public StoredLocation geo(Coords geo) throws ParseException {
@@ -371,10 +383,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_group != null && _group.isSet())
-            return _group;
+        if (_group == null)
+            _group = new LocationGroup();
 
-        return null;
+            return _group;
     }
 
     public StoredLocation group(LocationGroup group) throws ParseException {
@@ -445,6 +457,9 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_notes == null)
+            _notes = new LocationNote[0];
+
             return _notes;
     }
 
@@ -489,10 +504,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public StoredLocation timeZone(TimeZone timeZone) throws ParseException {
@@ -514,10 +529,10 @@ public class StoredLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_type != null && _type.isSet())
-            return _type;
+        if (_type == null)
+            _type = new LocationType();
 
-        return null;
+            return _type;
     }
 
     public StoredLocation type(LocationType type) throws ParseException {
@@ -651,7 +666,4 @@ public class StoredLocation implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

@@ -54,10 +54,10 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_new != null && _new.isSet())
-        return _new;
+        if (_new == null)
+            _new = new EventUpdateScheduleByWorkOrderNew();
 
-        return null;
+        return _new;
     }
 
     public EventUpdateScheduleByWorkOrder neww(EventUpdateScheduleByWorkOrderNew neww) throws ParseException {
@@ -79,10 +79,10 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_old != null && _old.isSet())
-        return _old;
+        if (_old == null)
+            _old = new EventUpdateScheduleByWorkOrderOld();
 
-        return null;
+        return _old;
     }
 
     public EventUpdateScheduleByWorkOrder old(EventUpdateScheduleByWorkOrderOld old) throws ParseException {
@@ -158,7 +158,4 @@ public class EventUpdateScheduleByWorkOrder implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

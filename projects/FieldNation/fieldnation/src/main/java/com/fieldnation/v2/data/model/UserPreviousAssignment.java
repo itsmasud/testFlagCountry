@@ -57,10 +57,10 @@ public class UserPreviousAssignment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_by != null && _by.isSet())
-            return _by;
+        if (_by == null)
+            _by = new User();
 
-        return null;
+            return _by;
     }
 
     public UserPreviousAssignment by(User by) throws ParseException {
@@ -104,10 +104,10 @@ public class UserPreviousAssignment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_removal != null && _removal.isSet())
-            return _removal;
+        if (_removal == null)
+            _removal = new Date();
 
-        return null;
+            return _removal;
     }
 
     public UserPreviousAssignment removal(Date removal) throws ParseException {
@@ -183,7 +183,4 @@ public class UserPreviousAssignment implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

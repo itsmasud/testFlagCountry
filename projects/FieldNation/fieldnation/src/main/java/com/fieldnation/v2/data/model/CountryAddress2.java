@@ -152,7 +152,4 @@ public class CountryAddress2 implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

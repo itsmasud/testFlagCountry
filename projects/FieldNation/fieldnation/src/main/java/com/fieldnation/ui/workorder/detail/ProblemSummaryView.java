@@ -68,9 +68,7 @@ public class ProblemSummaryView extends RelativeLayout {
             return;
 
         int count = 0;
-        if (_workOrder.getProblems() != null
-                && _workOrder.getProblems().getResults() != null
-                && _workOrder.getProblems().getResults().length > 0) {
+        if (_workOrder.getProblems().getResults().length > 0) {
             for (Problem problem : _workOrder.getProblems().getResults()) {
                 if (problem != null
                         && problem.getActionsSet().contains(Problem.ActionsEnum.RESOLVE)) {
@@ -86,7 +84,6 @@ public class ProblemSummaryView extends RelativeLayout {
 
         setVisibility(VISIBLE);
         _countTextView.setText(count + "");
-
     }
 
     private final View.OnClickListener _this_onClick = new OnClickListener() {

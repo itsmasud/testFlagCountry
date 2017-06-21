@@ -128,31 +128,29 @@ public class WorkLogDialog extends SimpleDialog {
         }
 
         try {
-            if (!_startIsSet && _timeLog != null && _timeLog.getIn() != null && _timeLog.getIn().getCreated() != null) {
+            if (!_startIsSet && _timeLog != null && _timeLog.getIn().getCreated().getUtc() != null) {
                 _startCalendar = _timeLog.getIn().getCreated().getCalendar();
                 _startIsSet = true;
             }
 
-            if (_startIsSet)
-                _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
+            if (_startIsSet) _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
         } catch (ParseException ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            if (!_endIsSet && _timeLog != null && _timeLog.getOut() != null && _timeLog.getOut().getCreated() != null) {
+            if (!_endIsSet && _timeLog != null && _timeLog.getOut().getCreated().getUtc() != null) {
                 _endCalendar = _timeLog.getOut().getCreated().getCalendar();
                 _endIsSet = true;
             }
 
-            if (_endIsSet)
-                _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
+            if (_endIsSet) _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            if (_timeLog != null && _timeLog.getDevices() != null)
+            if (_timeLog.getDevices() != null)
                 _devicesEditText.setText(_timeLog.getDevices().toString());
         } catch (Exception ex) {
             Log.v(TAG, ex);

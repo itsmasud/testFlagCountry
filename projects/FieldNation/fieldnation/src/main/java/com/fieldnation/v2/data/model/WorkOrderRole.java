@@ -127,7 +127,4 @@ public class WorkOrderRole implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

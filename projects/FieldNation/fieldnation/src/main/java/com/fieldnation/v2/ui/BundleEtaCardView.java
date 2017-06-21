@@ -83,7 +83,7 @@ public class BundleEtaCardView extends RelativeLayout {
             _dateTextView.setText(scheduleDisplayText);
 
 
-        if (_workOrder.getLocation() != null) {
+        if (_workOrder.getLocation().getMode() != null) {
             _addressTextView.setVisibility((misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) || misc.isEmptyOrNull(_workOrder.getLocation().getAddress2())) ? VISIBLE : GONE);
             final String addressText = (misc.isEmptyOrNull(_workOrder.getLocation().getAddress1()) ? "" : _workOrder.getLocation().getAddress1() + ", ")
                     + (misc.isEmptyOrNull(_workOrder.getLocation().getAddress2()) ? "" : _workOrder.getLocation().getAddress2());
@@ -94,7 +94,7 @@ public class BundleEtaCardView extends RelativeLayout {
             _addressTextView.setVisibility(GONE);
         }
 
-        if (_workOrder.getLocation() != null) {
+        if (_workOrder.getLocation().getMode() != null) {
             _locationTextView.setVisibility((misc.isEmptyOrNull(_workOrder.getLocation().getCity()) || misc.isEmptyOrNull(_workOrder.getLocation().getState())) ? VISIBLE : GONE);
             final String locationText =
                     (misc.isEmptyOrNull(_workOrder.getLocation().getCity()) ? "" : _workOrder.getLocation().getCity() + ", ")
@@ -106,10 +106,7 @@ public class BundleEtaCardView extends RelativeLayout {
         } else {
             _locationTextView.setVisibility(GONE);
         }
-
-
     }
-
 
     private String getScheduleDisplayText() {
         String dateTimeString = "";
@@ -153,7 +150,7 @@ public class BundleEtaCardView extends RelativeLayout {
 
                 return dateTimeString;
 
-            } else { //if (schedule.getType() == Schedule.Type.EXACT) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
                 Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());

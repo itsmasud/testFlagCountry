@@ -67,6 +67,9 @@ public class Holds implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new String[0];
+
         return _actions;
     }
 
@@ -93,10 +96,10 @@ public class Holds implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public Holds metadata(ListEnvelope metadata) throws ParseException {
@@ -122,6 +125,9 @@ public class Holds implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new Hold[0];
 
         return _results;
     }
@@ -199,7 +205,4 @@ public class Holds implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

@@ -46,8 +46,6 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
-import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -81,7 +79,6 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
 import com.fieldnation.v2.ui.dialog.CheckInOutDialog;
 import com.fieldnation.v2.ui.dialog.ClosingNotesDialog;
-import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.CounterOfferDialog;
 import com.fieldnation.v2.ui.dialog.CustomFieldDialog;
 import com.fieldnation.v2.ui.dialog.DeclineDialog;
@@ -469,7 +466,7 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_bundleWarningTextView != null) {
             Stopwatch watch = new Stopwatch(true);
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 _bundleWarningTextView.setVisibility(View.VISIBLE);
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
@@ -541,9 +538,7 @@ public class WorkFragment extends WorkorderFragment {
 //        setLoading(true);
 
         Pay pay = _workOrder.getPay();
-        if (pay != null
-                && pay.getType() == Pay.TypeEnum.DEVICE
-                && pay.getBase() != null
+        if (pay.getType() == Pay.TypeEnum.DEVICE
                 && pay.getBase().getUnits() != null) {
             _deviceCount = pay.getBase().getUnits().intValue();
         }
@@ -740,7 +735,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onNotInterested() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
 
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null) {
+            if (_workOrder.getBundle().getId() != null) {
                 DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrder.getId(), _workOrder.getCompany().getId());
             } else {
@@ -752,7 +747,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequest() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
 
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_REQUEST);
@@ -766,7 +761,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workOrder.getId());
 
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_ACCEPT);
@@ -917,13 +912,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDownload(Task task) {
-            Attachment doc = null;
-
-            if (task.getAttachment() != null) {
-                doc = task.getAttachment();
-            }
-
-            if (doc != null && doc.getId() != null) {
+            Attachment doc = task.getAttachment();
+            if (doc.getId() != null) {
                 Log.v(TAG, "docid: " + doc.getId());
                 if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                     try {
@@ -932,7 +922,6 @@ public class WorkFragment extends WorkorderFragment {
                         Log.v(TAG, ex);
                     }
                 }
-
                 DocumentClient.downloadDocument(App.get(), doc.getId(),
                         doc.getFile().getLink(), doc.getFile().getName(), false);
             }
@@ -1011,7 +1000,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onShipment(Task task) {
             Shipment[] shipments = _workOrder.getShipments().getResults();
-            if (shipments == null || shipments.length == 0) {
+            if (shipments.length == 0) {
                 ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
             } else {
                 TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
@@ -1152,9 +1141,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequestNewPay(WorkOrder workOrder) {
             // TODO add analytics
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-            if (_workOrder.getPay() != null
-                    && _workOrder.getPay().getIncreases() != null
-                    && _workOrder.getPay().getIncreases().getLastIncrease() != null) {
+            if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
                 PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {
                 PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);

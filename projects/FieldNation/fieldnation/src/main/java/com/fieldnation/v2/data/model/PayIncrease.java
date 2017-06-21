@@ -81,6 +81,9 @@ public class PayIncrease implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -107,10 +110,10 @@ public class PayIncrease implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-        return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+        return _author;
     }
 
     public PayIncrease author(User author) throws ParseException {
@@ -132,10 +135,10 @@ public class PayIncrease implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-        return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public PayIncrease created(Date created) throws ParseException {
@@ -201,10 +204,10 @@ public class PayIncrease implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_pay != null && _pay.isSet())
-        return _pay;
+        if (_pay == null)
+            _pay = new Pay();
 
-        return null;
+        return _pay;
     }
 
     public PayIncrease pay(Pay pay) throws ParseException {
@@ -403,7 +406,4 @@ public class PayIncrease implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

@@ -65,6 +65,9 @@ public class WorkOrderRatingsServiceCompanyOverall implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_categories == null)
+            _categories = new WorkOrderRatingsServiceCompanyOverallCategories[0];
+
         return _categories;
     }
 
@@ -207,7 +210,4 @@ public class WorkOrderRatingsServiceCompanyOverall implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

@@ -54,10 +54,10 @@ public class UpdateModelMetadata implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_data != null && _data.isSet())
-            return _data;
+        if (_data == null)
+            _data = new UpdateModelMetadataData();
 
-        return null;
+            return _data;
     }
 
     public UpdateModelMetadata data(UpdateModelMetadataData data) throws ParseException {
@@ -79,10 +79,10 @@ public class UpdateModelMetadata implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_universalContext != null && _universalContext.isSet())
-            return _universalContext;
+        if (_universalContext == null)
+            _universalContext = new UpdateModelMetadataUniversalContext();
 
-        return null;
+            return _universalContext;
     }
 
     public UpdateModelMetadata universalContext(UpdateModelMetadataUniversalContext universalContext) throws ParseException {
@@ -158,7 +158,4 @@ public class UpdateModelMetadata implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

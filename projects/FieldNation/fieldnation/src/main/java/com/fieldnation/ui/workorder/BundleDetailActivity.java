@@ -165,28 +165,22 @@ public class BundleDetailActivity extends AuthSimpleActivity {
 
     private void populateUi() {
         for (WorkOrder workOrder : _workOrders.getResults()) {
-            if (workOrder.getDeclines() != null
-                    && workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
+            if (workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
                 _notInterestedButton.setEnabled(true);
             } else {
                 _notInterestedButton.setEnabled(false);
             }
 
 
-            if (workOrder.getRoutes() != null
-                    && workOrder.getRoutes().getUserRoute() != null
-                    && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+            if (workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
                 _buttonToolbar.setVisibility(View.VISIBLE);
                 _okButton.setText(R.string.btn_accept);
                 break;
-            } else if (workOrder.getRequests() != null
-                    && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            } else if (workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
                 _buttonToolbar.setVisibility(View.VISIBLE);
                 _okButton.setText(R.string.btn_request);
                 break;
-            } else if (workOrder.getRequests() != null
-                    && workOrder.getRequests().getOpenRequest() != null
-                    && workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
+            } else if (workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
                 _buttonToolbar.setVisibility(View.VISIBLE);
                 _okButton.setText(R.string.btn_withdraw);
                 break;
@@ -223,14 +217,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (workOrder == null)
                 return;
 
-            if (workOrder.getRoutes() != null
-                    && workOrder.getRoutes().getUserRoute() != null
-                    && workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
+            if (workOrder.getRoutes().getUserRoute().getActionsSet().contains(Route.ActionsEnum.ACCEPT)) {
                 setLoading(true);
                 BundleEtaDialog.show(App.get(), UID_DIALOG_BUNDLE_ETA, _bundleId);
 
-            } else if (workOrder.getRequests() != null
-                    && workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
+            } else if (workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)) {
                 RequestBundleDialog.show(
                         App.get(),
                         UID_DIALOG_REQUEST_BUNDLE,
@@ -238,10 +229,9 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                         _adapter.getItemCount(),
                         workOrder.getId(),
                         RequestBundleDialog.TYPE_REQUEST);
-            } else if (workOrder.getRequests() != null
-                    && workOrder.getRequests().getOpenRequest() != null
-                    && workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
-                WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, workOrder.getId(), workOrder.getBundle().getId(), workOrder.getRequests().getOpenRequest().getId());
+            } else if (workOrder.getRequests().getOpenRequest().getActionsSet().contains(Request.ActionsEnum.DELETE)) {
+                WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, workOrder.getId(), workOrder.getBundle().getId(),
+                        workOrder.getRequests().getOpenRequest().getId());
 
             }
         }
@@ -327,7 +317,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
                 WorkOrders workOrders = (WorkOrders) successObject;
                 setLoading(false);
 
-                if (!success || workOrders == null || workOrders.getResults() == null) {
+                if (!success || workOrders == null) {
                     return;
                 }
 

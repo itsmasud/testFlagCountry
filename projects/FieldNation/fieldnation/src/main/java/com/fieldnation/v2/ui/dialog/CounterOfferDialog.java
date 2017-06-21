@@ -86,7 +86,6 @@ public class CounterOfferDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
 
-
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
@@ -178,7 +177,6 @@ public class CounterOfferDialog extends FullScreenDialog {
             }
 
             outState.putParcelableArray(STATE_EXPENSES, exs);
-
         }
     }
 
@@ -208,9 +206,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             }
         };
         _expensesList.postDelayed(r, new Random().nextInt(100));
-
     }
-
 
     /*-*********************************-*/
     /*-             Events              -*/
@@ -275,16 +271,12 @@ public class CounterOfferDialog extends FullScreenDialog {
                     return false;
                 }
 
-
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Counter Offer Dialog";
                 WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-
-
             return true;
         }
     };
@@ -348,14 +340,12 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-
     public static void show(Context context, String uid, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable("workOrder", workOrder);
 
         Controller.show(context, uid, CounterOfferDialog.class, params);
     }
-
 
     /*-**********************-*/
     /*-         Ok           -*/

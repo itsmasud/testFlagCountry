@@ -229,14 +229,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
-                if (workOrders.getMetadata() == null || workOrders.getResults() == null) {
-                    _refreshView.refreshComplete();
-                    return;
-                }
-
                 ListEnvelope envelope = workOrders.getMetadata();
-
-                //Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();

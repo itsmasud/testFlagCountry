@@ -202,7 +202,4 @@ public class EventUpdateScheduleByWorkOrderNew implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }
