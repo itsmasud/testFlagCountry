@@ -382,7 +382,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                             uiContext.page += " - Check Out Dialog";
                             Log.e(TAG, "check out: " + timeLog.getJson());
-//                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
+                            WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;
                         }
