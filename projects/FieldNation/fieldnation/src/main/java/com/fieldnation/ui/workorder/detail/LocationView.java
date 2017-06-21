@@ -323,8 +323,8 @@ public class LocationView extends LinearLayout implements WorkOrderRenderer {
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
 
-        } else if (_workOrder.getLocation().getCoordinates().getLongitude() != null
-                && _workOrder.getLocation().getCoordinates().getLatitude() != null) {
+        } else if (_workOrder.getLocation().getCoordinates().getLongitude() == null
+                || _workOrder.getLocation().getCoordinates().getLatitude() == null) {
             // no geo data - ie bad address - _workorder.getLocation() == null || _workord
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);

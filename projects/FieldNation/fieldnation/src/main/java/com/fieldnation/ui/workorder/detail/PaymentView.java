@@ -131,7 +131,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
 
             // counter offers disabled and in the marketplace
         } else if (!(_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))
-                && _workOrder.getRequests().getCounterOffer().getId() == null
+                && _workOrder.getRequests().getCounterOffer() == null
                 && (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9)) {
             _actionButton.setEnabled(false);
             _actionButton.setText(R.string.btn_counter_disabled);
@@ -148,7 +148,7 @@ public class PaymentView extends LinearLayout implements WorkOrderRenderer {
         public void onClick(View v) {
             if (_listener != null) {
                 if (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER)
-                        && _workOrder.getRequests().getCounterOffer().getId() == null) {
+                        && _workOrder.getRequests().getCounterOffer() == null) {
                     _listener.onCounterOffer(_workOrder);
                 } else if (_workOrder.getPay().getIncreases().getActionsSet().contains(PayIncreases.ActionsEnum.ADD)) {
                     _listener.onRequestNewPay(_workOrder);

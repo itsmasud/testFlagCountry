@@ -735,7 +735,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onNotInterested() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
 
-            if (_workOrder.getBundle().getId() != null) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrder.getId(), _workOrder.getCompany().getId());
             } else {
