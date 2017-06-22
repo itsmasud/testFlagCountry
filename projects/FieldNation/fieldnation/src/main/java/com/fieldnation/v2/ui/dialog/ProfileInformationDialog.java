@@ -32,6 +32,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.v2.ui.GetFileIntent;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -82,7 +83,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
 
-        _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
+        _picView = _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
 
         _profileIdTextView = _root.findViewById(R.id.profile_id_textview);
@@ -220,9 +221,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         if (_tempFileName != null) {
             try {
-                if (_profilePic == null) {
-                    _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
-                }
+                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
                 if (_profilePic.get() != null)
                     _picView.setProfilePic(_profilePic.get());
             } catch (Exception ex) {
@@ -274,8 +273,10 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onSave(String name, String path, Uri uri) {
             if (path != null) {
+                FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(new File(path)));
                 ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), path, name);
             } else if (uri != null) {
+                FileCacheClient.cacheDeliverableUpload(App.get(), uri);
                 ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), name, uri);
             }
         }
@@ -301,7 +302,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
             if (fui.file != null) {
                 Log.v(TAG, "Image uploading taken by camera");
-                FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(fui.file));
+                //FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(fui.file));
                 //ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), fui.file.getAbsolutePath(), fui.file.getName());
                 PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.file.getAbsolutePath(), fui.file.getName());
             } else if (fui.uri != null) {
