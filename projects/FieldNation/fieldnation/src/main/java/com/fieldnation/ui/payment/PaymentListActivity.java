@@ -190,6 +190,8 @@ public class PaymentListActivity extends AuthSimpleActivity {
                 _nextPage = -1;
                 _emptyView.setVisibility(View.VISIBLE);
                 return;
+            }else {
+                _emptyView.setVisibility(View.GONE);
             }
 
             _pages.put(page, list);
