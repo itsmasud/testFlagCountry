@@ -96,7 +96,7 @@ public class UnavailableCardView extends FrameLayout {
 
         switch (_displayView) {
             case ASSIGNED:
-                _titleTextView.setText(R.string.no_assigned_work);
+                _titleTextView.setText(R.string.empty_state_assigned_wol_title);
                 _captionTexView.setText(R.string.check_our_marketplace_for_new_work);
                 _actionButton.setText(R.string.btn_view_marketplace);
                 _actionButton.setVisibility(VISIBLE);
@@ -104,7 +104,7 @@ public class UnavailableCardView extends FrameLayout {
                 break;
             case AVAILABLE: {
                 if (_profile.getMarketplaceStatusOn()) {
-                    _titleTextView.setText(R.string.no_available_work);
+                    _titleTextView.setText(R.string.empty_state_available_wol_title);
                     _captionTexView.setText(R.string.try_adding_to_your_profile);
                     _actionButton.setText(R.string.btn_edit_profile);
                     _actionButton.setVisibility(VISIBLE);
@@ -112,7 +112,7 @@ public class UnavailableCardView extends FrameLayout {
                 } else {
                     String reason = _profile.getMarketplaceStatusReason();
                     if (misc.isEmptyOrNull(reason)) {
-                        _titleTextView.setText(R.string.no_available_work);
+                        _titleTextView.setText(R.string.empty_state_available_wol_title);
                         _captionTexView.setText(R.string.try_adding_to_your_profile);
                         _actionButton.setText(R.string.btn_edit_profile);
                         _actionButton.setVisibility(VISIBLE);
@@ -177,7 +177,7 @@ public class UnavailableCardView extends FrameLayout {
                 break;
             }
             case CANCELED:
-                _titleTextView.setText(R.string.no_canceled_work);
+                _titleTextView.setText(R.string.empty_state_canceled_wol_title);
                 _captionTexView.setText(R.string.nothing_to_worry_about);
                 _actionButton.setVisibility(GONE);
                 break;
