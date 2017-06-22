@@ -511,9 +511,26 @@
     <string name="need_some_help">Need some help?</string>
     <string name="nevermind_ill_do_the_work">Nevermind, I\'ll do the work</string>
     <string name="new_buyer">NEW BUYER</string>
-    <string name="no_assigned_work">No assigned work</string>
-    <string name="no_available_work">No available work</string>
-    <string name="no_canceled_work">No canceled work</string>
+    <string name="empty_state_assigned_wol_title">No Assigned Work Orders</string>
+    <string name="empty_state_available_wol_title">No Available Work Orders</string>
+    <string name="empty_state_completed_wol_title">No Completed Work Orders</string>
+    <string name="empty_state_confirm_wol_title">No Work Orders to Confirm</string>
+    <string name="empty_state_countered_wol_title">No Countered Work Orders</string>
+    <string name="empty_state_requested_wol_title">No Requested Work Orders</string>
+    <string name="empty_state_canceled_wol_title">No canceled Work Order</string>
+    <string name="empty_state_payment_title">No Payments</string>
+
+    <string name="empty_state_assigned_wol_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_available_wol_body">Try adjusting your filters to get better results.</string>
+    <string name="empty_state_completed_wol_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_requested_wol_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_routed_wol_body">Work orders can be routed to multiple providers and they are on a first come first served basis.</string>
+    <string name="empty_state_countered_wol_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_confirm_wol_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_payment_body">Check out what is available around you to get the ball rolling.</string>
+
+
+    <string name="no_confirm_work">No work orders to confirm</string>
     <string name="no_documents_headline">No documents</string>
     <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
@@ -524,7 +541,6 @@
     <string name="no_payments">No Payments</string>
     <string name="no_signatures">No Signatures associated with this work order.</string>
     <string name="no_routed_work">No routed work</string>
-    <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
     <string name="no_work_available">No work available</string>
     <string name="no_work_found">No work found</string>
     <string name="not_available">Not available</string>
