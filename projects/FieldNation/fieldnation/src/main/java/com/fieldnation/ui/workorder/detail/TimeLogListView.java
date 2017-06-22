@@ -55,9 +55,9 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         if (isInEditMode())
             return;
 
-        _logList = (LinearLayout) findViewById(R.id.log_list);
-        _noTimeTextView = (TextView) findViewById(R.id.notime_textview);
-        _logTimeButton = (Button) findViewById(R.id.logTime_button);
+        _logList = findViewById(R.id.log_list);
+        _noTimeTextView = findViewById(R.id.notime_textview);
+        _logTimeButton = findViewById(R.id.logTime_button);
         _logTimeButton.setOnClickListener(_addLog_onClick);
 
         setVisibility(GONE);
