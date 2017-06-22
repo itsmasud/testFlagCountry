@@ -759,7 +759,7 @@ public class App extends Application {
 
     public String getTempFolder() {
         File tempFolder = new File(getStoragePath() + "/temp");
-        if (!tempFolder.exists()) tempFolder.mkdirs();
+        tempFolder.mkdirs();
         return tempFolder.getAbsolutePath();
     }
 
