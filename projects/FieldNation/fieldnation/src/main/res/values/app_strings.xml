@@ -519,6 +519,8 @@
     <string name="empty_state_requested_wol_title">No Requested Work Orders</string>
     <string name="empty_state_canceled_wol_title">No canceled Work Order</string>
     <string name="empty_state_payment_title">No Payments</string>
+    <string name="empty_state_message_title">No Messages</string>
+    <string name="empty_state_notification_title">No Notifications</string>
 
     <string name="empty_state_assigned_wol_body">Check out what is available around you to get the ball rolling.</string>
     <string name="empty_state_available_wol_body">Try adjusting your filters to get better results.</string>
@@ -528,6 +530,8 @@
     <string name="empty_state_countered_wol_body">Check out what is available around you to get the ball rolling.</string>
     <string name="empty_state_confirm_wol_body">Check out what is available around you to get the ball rolling.</string>
     <string name="empty_state_payment_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_message_body">Currently, you have no messages to review.</string>
+    <string name="empty_state_notification_body">We\'ll let you know when we\'ve got something new for you.</string>
 
 
     <string name="no_confirm_work">No work orders to confirm</string>

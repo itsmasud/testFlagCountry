@@ -27,6 +27,8 @@ public class EmptyCardView extends RelativeLayout {
     public static final String PARAM_VIEW_TYPE_REQUESTED = "requested";
     public static final String PARAM_VIEW_TYPE_ROUTED = "routed";
     public static final String PARAM_VIEW_TYPE_PAYMENT = "payment";
+    public static final String PARAM_VIEW_TYPE_MESSAGE = "message";
+    public static final String PARAM_VIEW_TYPE_NOTIFICATION = "notification";
 
 
     // Ui
@@ -122,6 +124,18 @@ public class EmptyCardView extends RelativeLayout {
         _actionButton.setOnClickListener(_available_onClick);
     }
 
+    private void setMessageEmptyState() {
+        _titleTextView.setText(R.string.empty_state_message_title);
+        _captionTexView.setText(R.string.empty_state_message_body);
+        _actionButton.setVisibility(GONE);
+    }
+
+    private void setNotificationEmptyState() {
+        _titleTextView.setText(R.string.empty_state_notification_title);
+        _captionTexView.setText(R.string.empty_state_notification_body);
+        _actionButton.setVisibility(GONE);
+    }
+
 
     public void setData(String viewType) {
         _viewType = viewType;
@@ -164,6 +178,15 @@ public class EmptyCardView extends RelativeLayout {
             case PARAM_VIEW_TYPE_PAYMENT:
                 setPaymentEmptyState();
                 break;
+
+            case PARAM_VIEW_TYPE_MESSAGE:
+                setMessageEmptyState();
+                break;
+
+            case PARAM_VIEW_TYPE_NOTIFICATION:
+                setNotificationEmptyState();
+                break;
+
         }
     }
 
