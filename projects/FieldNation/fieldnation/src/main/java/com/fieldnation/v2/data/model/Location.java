@@ -11,6 +11,9 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -771,6 +774,16 @@ public class Location implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
+
+    private Set<ActionsEnum> _actionsSet = null;
+
+    public Set<ActionsEnum> getActionsSet() {
+        if (_actionsSet == null) {
+            _actionsSet = new HashSet<>();
+            if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
+        }
+        return _actionsSet;
+    }
 
     public String getCityState() {
         if (misc.isEmptyOrNull(getCity()) && misc.isEmptyOrNull(getState()))

@@ -133,7 +133,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
 
     // saved state keys
-    private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
+    // private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
@@ -274,9 +274,11 @@ public class WorkFragment extends WorkorderFragment {
             _testButton.setVisibility(View.GONE);
 
         if (savedInstanceState != null) {
+/*
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
+*/
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
@@ -300,9 +302,11 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_workOrder != null) {
+/* This was eating up too much memory.
+        if (_workOrder != null)
             outState.putParcelable(STATE_WORKORDER, _workOrder);
-        }
+*/
+
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 

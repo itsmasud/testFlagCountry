@@ -126,26 +126,26 @@ public class WorkOrderCard extends RelativeLayout {
             return;
 
         _warningBarView = findViewById(R.id.warninginbar_view);
-        _amountTextView = (TextView) findViewById(R.id.amount_textview);
-        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
-        _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _hyphenTextView = (TextView) findViewById(R.id.hyphen_textview);
-        _time2TextView = (TextView) findViewById(R.id.time2_textview);
-        _date2TextView = (TextView) findViewById(R.id.date2_textview);
-        _locationTextView = (TextView) findViewById(R.id.location_textview);
-        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
+        _amountTextView = findViewById(R.id.amount_textview);
+        _payTypeTextView = findViewById(R.id.paytype_textview);
+        _workTypeTextView = findViewById(R.id.worktype_textview);
+        _titleTextView = findViewById(R.id.title_textview);
+        _dateTextView = findViewById(R.id.date_textview);
+        _timeTextView = findViewById(R.id.time_textview);
+        _hyphenTextView = findViewById(R.id.hyphen_textview);
+        _time2TextView = findViewById(R.id.time2_textview);
+        _date2TextView = findViewById(R.id.date2_textview);
+        _locationTextView = findViewById(R.id.location_textview);
+        _distanceTextView = findViewById(R.id.distance_textview);
 
-        _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
-        _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
-        _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
-        _secondaryButtons[3] = (IconFontButton) findViewById(R.id.secondary4_button);
+        _secondaryButtons[0] = findViewById(R.id.secondary1_button);
+        _secondaryButtons[1] = findViewById(R.id.secondary2_button);
+        _secondaryButtons[2] = findViewById(R.id.secondary3_button);
+        _secondaryButtons[3] = findViewById(R.id.secondary4_button);
 
-        _primaryButton = (Button) findViewById(R.id.primary_button);
+        _primaryButton = findViewById(R.id.primary_button);
 
-        _testButton = (Button) findViewById(R.id.test_button);
+        _testButton = findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
 
         // Just in case we forget to hide this button when building a release version
@@ -628,7 +628,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         // map
-        if (_workOrder.getLocation().getMode() != null) {
+        if (_workOrder.getLocation().getActionsSet().contains(com.fieldnation.v2.data.model.Location.ActionsEnum.MAP)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_map_location_solid);
             button.setOnClickListener(_map_onClick);

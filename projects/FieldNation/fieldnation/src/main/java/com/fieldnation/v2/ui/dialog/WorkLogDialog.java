@@ -58,14 +58,14 @@ public class WorkLogDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_add_worklog, container, false);
 
-        _startButton = (Button) v.findViewById(R.id.start_spinner);
-        _endButton = (Button) v.findViewById(R.id.end_spinner);
+        _startButton = v.findViewById(R.id.start_spinner);
+        _endButton = v.findViewById(R.id.end_spinner);
 
-        _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
-        _devicesEditText = (EditText) v.findViewById(R.id.devices_edittext);
+        _devicesLayout = v.findViewById(R.id.devices_layout);
+        _devicesEditText = v.findViewById(R.id.devices_edittext);
 
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }
@@ -215,7 +215,7 @@ public class WorkLogDialog extends SimpleDialog {
         public void onClick(View v) {
             int deviceCount = -1;
             try {
-                deviceCount = Integer.parseInt(_devicesEditText.getText().toString());
+                deviceCount = (int) Double.parseDouble(_devicesEditText.getText().toString());
             } catch (Exception ex) {
             }
 

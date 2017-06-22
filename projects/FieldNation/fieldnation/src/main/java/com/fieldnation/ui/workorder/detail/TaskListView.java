@@ -58,12 +58,12 @@ public class TaskListView extends RelativeLayout implements WorkOrderRenderer {
         if (isInEditMode())
             return;
 
-        _preVisistTextView = (TextView) findViewById(R.id.previsit_textview);
-        _preVisistList = (LinearLayout) findViewById(R.id.previsit_list);
-        _onSiteLayout = (LinearLayout) findViewById(R.id.onsite_layout);
-        _onSiteList = (LinearLayout) findViewById(R.id.onsite_list);
-        _postVisitLayout = (LinearLayout) findViewById(R.id.postvisit_layout);
-        _postVisitList = (LinearLayout) findViewById(R.id.postvisit_list);
+        _preVisistTextView = findViewById(R.id.previsit_textview);
+        _preVisistList = findViewById(R.id.previsit_list);
+        _onSiteLayout = findViewById(R.id.onsite_layout);
+        _onSiteList = findViewById(R.id.onsite_list);
+        _postVisitLayout = findViewById(R.id.postvisit_layout);
+        _postVisitList = findViewById(R.id.postvisit_list);
     }
 
     public void setTaskListViewListener(TaskListView.Listener l) {
