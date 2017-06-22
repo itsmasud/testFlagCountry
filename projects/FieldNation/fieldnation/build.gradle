@@ -141,4 +141,6 @@ dependencies {
     compile 'com.snowplowanalytics:snowplow-android-tracker:0.6.0@aar'
     // Required Dependency for snowplow
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
+
+    compile 'com.github.yalantis:ucrop:2.2.1-native'
 }
