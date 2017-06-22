@@ -3,6 +3,7 @@ package com.fieldnation.ui.payment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -13,6 +14,7 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.payment.MonthHeaderView.Header;
@@ -28,6 +30,7 @@ public class PaymentListActivity extends AuthSimpleActivity {
     // UI
     private OverScrollListView _listView;
     private RefreshView _refreshView;
+    private EmptyCardView _emptyView;
 
     // Data
     private PaymentClient _paymentClient;
@@ -53,6 +56,10 @@ public class PaymentListActivity extends AuthSimpleActivity {
         _listView.setOnOverScrollListener(_refreshView);
         _adapter = new PaymentListAdapter(_paymentList, _paymentListAdapter);
         _listView.setAdapter(_adapter);
+
+        _emptyView = (EmptyCardView) findViewById(R.id.empty_view);
+        _emptyView.setData(EmptyCardView.PARAM_VIEW_TYPE_PAYMENT);
+
     }
 
     @Override
@@ -181,6 +188,7 @@ public class PaymentListActivity extends AuthSimpleActivity {
         public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
             if (list == null || list.size() == 0) {
                 _nextPage = -1;
+                _emptyView.setVisibility(View.VISIBLE);
                 return;
             }
 
