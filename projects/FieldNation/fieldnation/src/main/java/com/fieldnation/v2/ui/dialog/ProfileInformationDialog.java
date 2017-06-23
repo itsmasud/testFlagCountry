@@ -32,6 +32,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.v2.ui.GetFileIntent;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -43,6 +44,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     // Dialogs
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
+    private static final String DIALOG_EDIT_PHOTO = TAG + ".editPhotoDialog";
 
     // Ui
     private Toolbar _toolbar;
@@ -77,22 +79,22 @@ public class ProfileInformationDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
 
-        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
+        _toolbar = _root.findViewById(R.id.toolbar);
         _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
 
-        _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
+        _picView = _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
 
-        _profileIdTextView = (TextView) _root.findViewById(R.id.profile_id_textview);
-        _profileNameTextView = (TextView) _root.findViewById(R.id.profile_name_textview);
-        _phoneNoEditText = (EditText) _root.findViewById(R.id.phone_edittext);
-        _phoneNoExtEditText = (EditText) _root.findViewById(R.id.phone_ext_edittext);
-        _address1EditText = (EditText) _root.findViewById(R.id.address_1_edittext);
-        _address2EditText = (EditText) _root.findViewById(R.id.address_2_edittext);
-        _cityEditText = (EditText) _root.findViewById(R.id.city_edittext);
-        _stateButton = (Button) _root.findViewById(R.id.state_button);
-        _zipCodeEditText = (EditText) _root.findViewById(R.id.zip_code_edittext);
+        _profileIdTextView = _root.findViewById(R.id.profile_id_textview);
+        _profileNameTextView = _root.findViewById(R.id.profile_name_textview);
+        _phoneNoEditText = _root.findViewById(R.id.phone_edittext);
+        _phoneNoExtEditText = _root.findViewById(R.id.phone_ext_edittext);
+        _address1EditText = _root.findViewById(R.id.address_1_edittext);
+        _address2EditText = _root.findViewById(R.id.address_2_edittext);
+        _cityEditText = _root.findViewById(R.id.city_edittext);
+        _stateButton = _root.findViewById(R.id.state_button);
+        _zipCodeEditText = _root.findViewById(R.id.zip_code_edittext);
 
         return _root;
     }
@@ -118,6 +120,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _fileCacheClient.connect(App.get());
 
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        PhotoEditDialog.addOnSaveListener(DIALOG_EDIT_PHOTO, _photoEdit_onSave);
+        PhotoEditDialog.addOnCancelListener(DIALOG_EDIT_PHOTO, _photoEdit_onCancel);
 
         _profile = App.get().getProfile();
         populateUi();
@@ -132,6 +136,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        PhotoEditDialog.removeOnSaveListener(DIALOG_EDIT_PHOTO, _photoEdit_onSave);
+        PhotoEditDialog.removeOnCancelListener(DIALOG_EDIT_PHOTO, _photoEdit_onCancel);
     }
 
     @Override
@@ -215,9 +221,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         if (_tempFileName != null) {
             try {
-                if (_profilePic == null) {
-                    _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
-                }
+                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
                 if (_profilePic.get() != null)
                     _picView.setProfilePic(_profilePic.get());
             } catch (Exception ex) {
@@ -265,6 +269,26 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
+    private final PhotoEditDialog.OnSaveListener _photoEdit_onSave = new PhotoEditDialog.OnSaveListener() {
+        @Override
+        public void onSave(String name, String path, Uri uri) {
+            if (path != null) {
+                FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(new File(path)));
+                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), path, name);
+            } else if (uri != null) {
+                FileCacheClient.cacheDeliverableUpload(App.get(), uri);
+                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), name, uri);
+            }
+        }
+    };
+
+    private final PhotoEditDialog.OnCancelListener _photoEdit_onCancel = new PhotoEditDialog.OnCancelListener() {
+        @Override
+        public void onCancel(String name, String path, Uri uri) {
+
+        }
+    };
+
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
         public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
@@ -278,12 +302,19 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
             if (fui.file != null) {
                 Log.v(TAG, "Image uploading taken by camera");
-                FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(fui.file));
-                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), fui.file.getAbsolutePath(), fui.file.getName());
+                //FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(fui.file));
+                //ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), fui.file.getAbsolutePath(), fui.file.getName());
+                PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.file.getAbsolutePath(), fui.file.getName());
             } else if (fui.uri != null) {
                 Log.v(TAG, "Single local/ non-local file upload");
-                FileCacheClient.cacheDeliverableUpload(App.get(), fui.uri);
-                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+
+                String mime = App.get().getContentResolver().getType(fui.uri);
+                if (mime != null && mime.contains("image")) {
+                    PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
+                } else {
+                    FileCacheClient.cacheDeliverableUpload(App.get(), fui.uri);
+                    ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
+                }
             }
         }
     };

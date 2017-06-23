@@ -109,16 +109,16 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         setSaveEnabled(true);
 
-        _profilePicView = (ProfilePicView) findViewById(R.id.pic_view);
+        _profilePicView =  findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
 
-        _profileNameTextView = (TextView) findViewById(R.id.name_textview);
+        _profileNameTextView =  findViewById(R.id.name_textview);
         _profileNameTextView.setVisibility(GONE);
 
-        _profileExpandButton = (IconFontButton) findViewById(R.id.profileexpand_button);
+        _profileExpandButton =  findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
-        _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+        _profileListView =  findViewById(R.id.profile_detail_list);
         _profileListView.setListener(_navlistener);
 
         _linkContainerView = findViewById(R.id.link_container);
@@ -158,7 +158,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 //        else
         _touchMeMenu.setVisibility(GONE);
 
-        _versionTextView = (TextView) findViewById(R.id.version_textview);
+        _versionTextView =  findViewById(R.id.version_textview);
         try {
             _versionTextView.setText((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             _versionTextView.setVisibility(VISIBLE);
