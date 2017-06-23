@@ -755,7 +755,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
             PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to request work order"),
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to request bundle"),
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
             return Result.DELETE;
 
