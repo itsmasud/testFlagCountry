@@ -741,7 +741,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         if (result == Result.CONTINUE) {
             WorkorderDispatch.action(context, workorderId, "request", false);
-            ToastClient.toast(context, "Success! You have requested this work order.", Toast.LENGTH_LONG);
+            ToastClient.toast(context, "Success! You have requested the bundle.", Toast.LENGTH_LONG);
             return onDetails(context, result, transaction, params, httpResult, throwable);
 
         } else if (result == Result.DELETE) {
