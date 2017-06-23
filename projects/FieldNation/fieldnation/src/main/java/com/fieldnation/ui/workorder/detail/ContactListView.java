@@ -73,6 +73,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
         boolean addedContact = false;
         final List<Contact> contactList = new LinkedList<>();
 
+/*
         {
             Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
             if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
@@ -82,6 +83,7 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
                 views.add(tileView);
             }
         }
+*/
 
         if (_workOrder.getContacts().getResults().length > 0) {
             for (Contact contact : _workOrder.getContacts().getResults()) {

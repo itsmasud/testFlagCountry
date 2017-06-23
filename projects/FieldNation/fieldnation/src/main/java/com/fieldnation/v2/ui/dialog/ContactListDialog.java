@@ -44,11 +44,11 @@ public class ContactListDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_contact_list, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setTitle("Contacts");
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
 
-        _contactList = (LinearLayout) v.findViewById(R.id.contact_list);
+        _contactList = v.findViewById(R.id.contact_list);
 
         return v;
     }
@@ -73,12 +73,14 @@ public class ContactListDialog extends FullScreenDialog {
 
         final List<Contact> contactList = new LinkedList<>();
 
+/*
         {
             Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
             if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
                 contactList.add(contact);
             }
         }
+*/
 
         if (_workOrder.getContacts().getResults().length > 0) {
             for (Contact contact : _workOrder.getContacts().getResults()) {
