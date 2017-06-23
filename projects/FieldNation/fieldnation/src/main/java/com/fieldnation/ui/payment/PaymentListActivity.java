@@ -188,9 +188,10 @@ public class PaymentListActivity extends AuthSimpleActivity {
         public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
             if (list == null || list.size() == 0) {
                 _nextPage = -1;
-                _emptyView.setVisibility(View.VISIBLE);
+                if (_paymentList.size() == 0)
+                    _emptyView.setVisibility(View.VISIBLE);
                 return;
-            }else {
+            } else {
                 _emptyView.setVisibility(View.GONE);
             }
 
