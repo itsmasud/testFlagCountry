@@ -40,7 +40,7 @@
             android:focusableInTouchMode="true"
             android:hint="@string/reason_for_request"
             android:imeOptions="actionDone"
-            android:inputType="textCapSentences|textAutoCorrect"
+            android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
             android:textColor="@color/fn_dark_text_50" />
 
         <TextView

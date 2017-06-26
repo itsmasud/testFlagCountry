@@ -10,8 +10,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.ui.HintArrayAdapter;
-import com.fieldnation.ui.HintSpinner;
 
 /**
  * Created by shoaib.ahmed on 06/07/2017.
@@ -50,9 +48,9 @@ public class ReasonCoView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _requestReasonEditText = (EditText) findViewById(R.id.request_reason_edittext);
+        _requestReasonEditText = findViewById(R.id.request_reason_edittext);
 
-        _expireDurationSpinner = (HintSpinner) findViewById(R.id.expire_duration_spinner);
+        _expireDurationSpinner = findViewById(R.id.expire_duration_spinner);
         _expireDurationSpinner.setOnItemSelectedListener(_expireSpinner_selected);
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(),
                 R.array.co_expire_duration_titles,
