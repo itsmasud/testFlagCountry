@@ -139,11 +139,11 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onStop() {
-        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-
         if (_docClient != null) _docClient.disconnect(App.get());
         if (_photoClient != null) _photoClient.disconnect(App.get());
+
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
         super.onStop();
     }
 
@@ -155,7 +155,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         super.onSaveInstanceState(outState);
     }
-
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/

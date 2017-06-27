@@ -386,7 +386,14 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onPause() {
+    public void onResume() {
+        super.onResume();
+
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+    }
+
+    @Override
+    public void onStop() {
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
@@ -414,8 +421,7 @@ public class WorkFragment extends WorkorderFragment {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
-
-        super.onPause();
+        super.onStop();
     }
 
     @Override
