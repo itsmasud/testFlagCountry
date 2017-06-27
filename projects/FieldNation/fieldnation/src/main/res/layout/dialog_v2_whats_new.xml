@@ -30,7 +30,7 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:gravity="center"
-                android:text="Important Update Version 4.0.2"
+                android:text="Important Update Version 4.0.3"
                 android:textColor="@color/fn_dark_text_80"
                 android:textSize="20dp"
                 android:visibility="gone" />
@@ -46,52 +46,52 @@
                 android:text=""
                 android:visibility="gone" />
 
-<!--
-            <TextView
-                android:id="@+id/fixed_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/new_webview"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:text="@string/bugs_fixed_header"
-                android:textColor="@color/fn_dark_text_50"
-                android:textSize="16dp"
-                android:visibility="gone" />
+            <!--
+                        <TextView
+                            android:id="@+id/fixed_textview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/new_webview"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginRight="24dp"
+                            android:text="@string/bugs_fixed_header"
+                            android:textColor="@color/fn_dark_text_50"
+                            android:textSize="16dp"
+                            android:visibility="gone" />
 
-            <WebView
-                android:id="@+id/fixed_webview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fixed_textview"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:minHeight="16dp"
-                android:text=""
-                android:visibility="gone" />
+                        <WebView
+                            android:id="@+id/fixed_webview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/fixed_textview"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginRight="0dp"
+                            android:minHeight="16dp"
+                            android:text=""
+                            android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/next_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/fixed_webview"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:text="@string/feature_working_on"
-                android:textColor="@color/fn_dark_text_50"
-                android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/next_textview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/fixed_webview"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginRight="24dp"
+                            android:text="@string/feature_working_on"
+                            android:textColor="@color/fn_dark_text_50"
+                            android:visibility="gone" />
 
-            <WebView
-                android:id="@+id/next_webview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/next_textview"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="0dp"
-                android:minHeight="16dp"
-                android:text=""
-                android:visibility="gone" />
--->
+                        <WebView
+                            android:id="@+id/next_webview"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/next_textview"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginRight="0dp"
+                            android:minHeight="16dp"
+                            android:text=""
+                            android:visibility="gone" />
+            -->
 
         </RelativeLayout>
     </com.fieldnation.ui.OverScrollView>

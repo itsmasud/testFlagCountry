@@ -341,10 +341,8 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-//        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+    public void onStart() {
+        super.onStart();
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
@@ -383,9 +381,14 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onDetach() {
-        Log.v(TAG, "onDetach");
+    public void onResume() {
+        super.onResume();
 
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+    }
+
+    @Override
+    public void onStop() {
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
@@ -412,21 +415,7 @@ public class WorkFragment extends WorkorderFragment {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
-
-        super.onDetach();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
-    }
-
-    @Override
-    public void onPause() {
-        Log.v(TAG, "onPause");
-        super.onPause();
+        super.onStop();
     }
 
     @Override

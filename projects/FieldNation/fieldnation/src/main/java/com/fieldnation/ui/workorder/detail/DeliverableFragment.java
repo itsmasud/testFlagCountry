@@ -89,19 +89,6 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-				LifeCycle				-*/
     /*-*************************************-*/
     @Override
-    public void onAttach(Activity activity) {
-        Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-
-        _docClient = new DocumentClient(_documentClient_listener);
-        _docClient.connect(App.get());
-
-        _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(App.get());
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         if (savedInstanceState != null) {
@@ -137,9 +124,13 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
+    public void onStart() {
+        super.onStart();
+        _docClient = new DocumentClient(_documentClient_listener);
+        _docClient.connect(App.get());
+
+        _photoClient = new PhotoClient(_photoClient_listener);
+        _photoClient.connect(App.get());
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
@@ -148,10 +139,14 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onPause() {
+    public void onStop() {
+        if (_docClient != null) _docClient.disconnect(App.get());
+        if (_photoClient != null) _photoClient.disconnect(App.get());
+
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-        super.onPause();
+
+        super.onStop();
     }
 
     @Override
@@ -162,17 +157,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         super.onSaveInstanceState(outState);
     }
-
-    @Override
-    public void onDetach() {
-        Log.v(TAG, "onDetach");
-        if (_docClient != null) _docClient.disconnect(App.get());
-
-        if (_photoClient != null) _photoClient.disconnect(App.get());
-
-        super.onDetach();
-    }
-
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
