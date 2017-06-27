@@ -7,7 +7,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v4.content.FileProvider;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,6 @@ import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.fntools.ImageUtils;
-import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.filecache.FileCacheClient;
@@ -75,7 +72,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private Listener _listener = null;
     private boolean _activated = false;
     private FileCacheClient _fileCacheClient;
-    private String _tempFileName = null;
+    private Uri _profileImageUri = null;
 
     // Services
     private PhotoClient _photoClient;
@@ -109,16 +106,16 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         setSaveEnabled(true);
 
-        _profilePicView =  findViewById(R.id.pic_view);
+        _profilePicView = findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
 
-        _profileNameTextView =  findViewById(R.id.name_textview);
+        _profileNameTextView = findViewById(R.id.name_textview);
         _profileNameTextView.setVisibility(GONE);
 
-        _profileExpandButton =  findViewById(R.id.profileexpand_button);
+        _profileExpandButton = findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
-        _profileListView =  findViewById(R.id.profile_detail_list);
+        _profileListView = findViewById(R.id.profile_detail_list);
         _profileListView.setListener(_navlistener);
 
         _linkContainerView = findViewById(R.id.link_container);
@@ -158,7 +155,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 //        else
         _touchMeMenu.setVisibility(GONE);
 
-        _versionTextView =  findViewById(R.id.version_textview);
+        _versionTextView = findViewById(R.id.version_textview);
         try {
             _versionTextView.setText((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             _versionTextView.setVisibility(VISIBLE);
@@ -191,8 +188,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         Bundle bundle = new Bundle();
         bundle.putParcelable("super", super.onSaveInstanceState());
 
-        if (_tempFileName != null)
-            bundle.putString("_tempFileName", _tempFileName);
+        if (_profileImageUri != null)
+            bundle.putParcelable("_profileImageUri", _profileImageUri);
 
         return bundle;
     }
@@ -203,8 +200,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         Bundle bundle = (Bundle) state;
         super.onRestoreInstanceState(bundle.getParcelable("super"));
 
-        if (bundle.containsKey("_tempFileName")) {
-            _tempFileName = bundle.getString("_tempFileName");
+        if (bundle.containsKey("_profileImageUri")) {
+            _profileImageUri = bundle.getParcelable("_profileImageUri");
             _profilePic = null;
             addProfilePhoto();
         }
@@ -244,9 +241,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     private void addProfilePhoto() {
-        if (_tempFileName != null) {
+        if (_profileImageUri != null) {
             try {
-                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
+                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(
+                        getContext().getResources(), getContext().getContentResolver().openInputStream(_profileImageUri)));
                 if (_profilePic.get() != null)
                     _profilePicView.setProfilePic(_profilePic.get());
             } catch (Exception ex) {
@@ -289,7 +287,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {
-            _tempFileName = null;
+            _profileImageUri = null;
             if (_listener != null) {
                 _listener.onSwitchUser(userId);
             }
@@ -346,9 +344,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
 
         @Override
-        public void onFileCacheEnd(Uri uri, String filename) {
+        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
             _profilePic = null;
-            _tempFileName = filename;
+            _profileImageUri = uri;
             addProfilePhoto();
         }
     };
@@ -419,10 +417,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
             intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
-            intent.putExtra(Intent.EXTRA_STREAM,
-                    FileProvider.getUriForFile(App.get(),
-                            App.get().getApplicationContext().getPackageName() + ".provider",
-                            tempfile));
+            intent.putExtra(Intent.EXTRA_STREAM, App.getUriFromFile(tempfile));
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getContext().startActivity(intent);
             } else {

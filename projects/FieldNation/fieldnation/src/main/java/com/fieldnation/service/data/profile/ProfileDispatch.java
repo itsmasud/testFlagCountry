@@ -82,6 +82,7 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
 
+/*
     public static void uploadProfilePhoto(Context context,String filePath, boolean isComplete, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
@@ -93,6 +94,7 @@ public class ProfileDispatch implements ProfileConstants {
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
+*/
 
 
     public static void action(Context context, long profileId, String action, boolean failed) {

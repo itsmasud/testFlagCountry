@@ -128,21 +128,17 @@ public class ProfileService extends MultiThreadedService implements ProfileConst
     private void uploadProfilePhoto(Intent intent) {
         long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
-        String filePath = intent.getStringExtra(PARAM_PHOTO_PATH);
         Uri uri = intent.getParcelableExtra(PARAM_URI);
 
-        if (uri != null) {
-            try {
-                StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
-                if (cache != null) {
-                    ProfileTransactionBuilder.uploadProfilePhoto(this, cache, filename, uri.toString(), profileId);
-                } else {
-                    ProfileTransactionBuilder.uploadProfilePhoto(this, this.getContentResolver().openInputStream(uri), filename, uri.toString(), profileId);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+        try {
+            StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
+            if (cache != null) {
+                ProfileTransactionBuilder.uploadProfilePhoto(this, cache, filename, uri.toString(), profileId);
+            } else {
+                ProfileTransactionBuilder.uploadProfilePhoto(this, this.getContentResolver().openInputStream(uri), filename, uri.toString(), profileId);
             }
-        } else
-            ProfileTransactionBuilder.uploadProfilePhoto(this, filename, filePath, profileId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 }

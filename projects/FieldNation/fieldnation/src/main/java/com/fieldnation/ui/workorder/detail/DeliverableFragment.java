@@ -11,7 +11,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -155,6 +154,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         super.onSaveInstanceState(outState);
     }
+
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
@@ -448,23 +448,22 @@ public class DeliverableFragment extends WorkorderFragment {
     // step 2, user selects an app to load the file with
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
             if (fileResult.size() == 0)
                 return;
 
             if (fileResult.size() == 1) {
-                GetFileDialog.FileUriIntent fui = fileResult.get(0);
+                GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
                     PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
-                            fui.file.getName(), fui.file.getAbsolutePath());
+                    // TODO show a toast?
                 }
                 return;
             }
 
-            for (GetFileDialog.FileUriIntent fui : fileResult) {
+            for (GetFileDialog.UriIntent fui : fileResult) {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_folder.getId());
@@ -495,11 +494,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(
-                        FileProvider.getUriForFile(
-                                App.get(),
-                                App.get().getApplicationContext().getPackageName() + ".provider",
-                                file),
+                intent.setDataAndType(App.getUriFromFile(file),
                         FileUtils.guessContentTypeFromName(file.getName()));
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -510,12 +505,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     name = name.substring(name.indexOf("_") + 1);
 
                     Intent folderIntent = new Intent(Intent.ACTION_VIEW);
-                    intent.setDataAndType(
-                            FileProvider.getUriForFile(
-                                    App.get(),
-                                    App.get().getApplicationContext().getPackageName() + ".provider",
-                                    new File(App.get().getDownloadsFolder())),
-                            "resource/folder");
+                    intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                     intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
 

@@ -150,7 +150,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             _sharedFiles[0] = new SharedFile(fileName, fileUri);
-            FileCacheClient.cacheFileUpload(App.get(), fileUri);
+            FileCacheClient.cacheFileUpload(App.get(), "", fileUri);
         } else {
             Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
             finish();
@@ -176,7 +176,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
                 _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
-                FileCacheClient.cacheFileUpload(App.get(), fileUris.get(i));
+                FileCacheClient.cacheFileUpload(App.get(), "", fileUris.get(i));
             }
         } else {
             Toast.makeText(this, "Cannot upload files", Toast.LENGTH_LONG).show();
@@ -284,7 +284,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onFileCacheEnd(Uri uri, String filename) {
+        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
             _remainingCacheItems--;
 
             _loadingProgress.setProgress(_sharedFiles.length - _remainingCacheItems);

@@ -39,8 +39,8 @@ public class PhotoEditDialog extends FullScreenDialog {
     private FileCacheClient _fileCacheClient;
 
     // Supplied Data
-    private Uri _uri;
-    private String _path;
+    private Uri _sourceUri;
+    private Uri _cachedUri;
     private String _name;
     private Bitmap _bitmap;
 
@@ -85,13 +85,37 @@ public class PhotoEditDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
         if (params.containsKey("uri")) {
-            _uri = params.getParcelable("uri");
-            FileCacheClient.cacheFileUpload(App.get(), _uri);
-        } else if (params.containsKey("path")) {
-            _path = params.getString("path");
-            setPhoto(MemUtils.getMemoryEfficientBitmap(_path, 400));
+            _sourceUri = params.getParcelable("uri");
+            FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
         }
         _name = params.getString("name");
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState.containsKey("_cachedUri"))
+            _cachedUri = savedState.getParcelable("_cachedUri");
+
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
+    public void onPause() {
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_cachedUri != null)
+            outState.putParcelable("_cachedUri", _cachedUri);
+
+        super.onSaveDialogState(outState);
     }
 
     public void setPhoto(Bitmap bitmap) {
@@ -115,31 +139,10 @@ public class PhotoEditDialog extends FullScreenDialog {
         }
     }
 
-    @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        super.onRestoreDialogState(savedState);
-    }
-
-    @Override
-    public void onPause() {
-        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        super.onSaveDialogState(outState);
-    }
-
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            _onSaveDispatcher.dispatch(getUid(), _name, _path, _uri);
+            _onSaveDispatcher.dispatch(getUid(), _name, _cachedUri);
             dismiss(true);
             return true;
         }
@@ -155,7 +158,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     @Override
     public void cancel() {
-        _onCancelDispatcher.dispatch(getUid(), _name, _path, _uri);
+        _onCancelDispatcher.dispatch(getUid(), _name, _cachedUri);
         super.cancel();
     }
 
@@ -166,38 +169,22 @@ public class PhotoEditDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onFileCacheEnd(Uri uri, String filePath) {
-            Log.v(TAG, "onFileCacheEnd " + filePath);
-            Log.v(TAG, "onFileCacheEnd " + uri);
-            Log.v(TAG, "onFileCacheEnd " + _path);
-            Log.v(TAG, "onFileCacheEnd " + _uri);
+        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
 
-            if (_path != null && filePath != null) {
-                if (!_path.equals(filePath)) {
-                    Log.v(TAG, "onFileCacheEnd filepath mismatch, skipping");
-                    return;
-                }
+            if (!tag.equals(_sourceUri.toString())) {
+                Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
+                return;
             }
 
-            if (_uri != null && uri != null) {
-                if (!_uri.toString().equals(uri.toString())) {
-                    Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
-                    return;
-                }
-            }
+            _cachedUri = uri;
 
-            _path = filePath;
-            setPhoto(MemUtils.getMemoryEfficientBitmap(filePath, 400));
+            try {
+                setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
-
-    public static void show(Context context, String uid, String path, String name) {
-        Bundle params = new Bundle();
-        params.putString("path", path);
-        params.putString("name", name);
-
-        Controller.show(context, uid, PhotoEditDialog.class, params);
-    }
 
     public static void show(Context context, String uid, Uri uri, String name) {
         Bundle params = new Bundle();
@@ -211,13 +198,13 @@ public class PhotoEditDialog extends FullScreenDialog {
     /*-         Save            -*/
     /*-*************************-*/
     public interface OnSaveListener {
-        void onSave(String name, String path, Uri uri);
+        void onSave(String name, Uri uri);
     }
 
     private static KeyedDispatcher<OnSaveListener> _onSaveDispatcher = new KeyedDispatcher<OnSaveListener>() {
         @Override
         public void onDispatch(OnSaveListener listener, Object... parameters) {
-            listener.onSave((String) parameters[0], (String) parameters[1], (Uri) parameters[2]);
+            listener.onSave((String) parameters[0], (Uri) parameters[1]);
         }
     };
 
@@ -237,13 +224,13 @@ public class PhotoEditDialog extends FullScreenDialog {
     /*-         Cancel          -*/
     /*-*************************-*/
     public interface OnCancelListener {
-        void onCancel(String name, String path, Uri uri);
+        void onCancel(String name, Uri uri);
     }
 
     private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
         @Override
         public void onDispatch(OnCancelListener listener, Object... parameters) {
-            listener.onCancel((String) parameters[0], (String) parameters[1], (Uri) parameters[2]);
+            listener.onCancel((String) parameters[0], (Uri) parameters[1]);
         }
     };
 

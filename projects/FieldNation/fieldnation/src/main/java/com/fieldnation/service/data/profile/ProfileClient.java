@@ -131,6 +131,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         return register(topicId);
     }
 
+/*
     public static void uploadProfilePhoto(Context context, long profileId, String filePath, String filename) {
         Log.v(STAG, "uploadProfilePhoto");
 
@@ -143,11 +144,12 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         intent.putExtra(PARAM_PHOTO_PATH, filePath);
         context.startService(intent);
     }
+*/
 
     public static void uploadProfilePhoto(Context context, long profileId, String filename, Uri uri) {
         Log.v(STAG, "uploadProfilePhoto");
 
-        ProfileDispatch.uploadProfilePhoto(context, filename, false, false);
+        // TODO ProfileDispatch.uploadProfilePhoto(context, filename, false, false);
 
         Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
@@ -215,16 +217,14 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         private void preUploadPhoto(Bundle payload) {
             if (payload.containsKey(PARAM_ERROR) && payload.getBoolean(PARAM_ERROR)) {
                 preUploadPhoto(
-                        payload.getString(PARAM_PHOTO_PATH),
                         payload.getBoolean(PARAM_IS_COMPLETE), true);
             } else {
                 preUploadPhoto(
-                        payload.getString(PARAM_PHOTO_PATH),
                         payload.getBoolean(PARAM_IS_COMPLETE), false);
             }
         }
 
-        public void preUploadPhoto(String filename, boolean isComplete, boolean failed) {
+        public void preUploadPhoto(boolean isComplete, boolean failed) {
         }
 
         public void onSwitchUser(long userId, boolean failed) {

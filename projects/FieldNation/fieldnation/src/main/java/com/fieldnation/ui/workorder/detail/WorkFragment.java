@@ -1233,20 +1233,22 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
             if (fileResult.size() == 0)
                 return;
 
             if (fileResult.size() == 1) {
-                GetFileDialog.FileUriIntent fui = fileResult.get(0);
+                GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null)
                     PhotoUploadDialog.show(App.get(), "uid", _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                else
-                    PhotoUploadDialog.show(App.get(), "uid", _workOrder.getId(), _currentTask, fui.file.getName(), fui.file.getAbsolutePath());
+                else {
+                    // TODO show a toast?
+                }
+
                 return;
             }
 
-            for (GetFileDialog.FileUriIntent fui : fileResult) {
+            for (GetFileDialog.UriIntent fui : fileResult) {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
