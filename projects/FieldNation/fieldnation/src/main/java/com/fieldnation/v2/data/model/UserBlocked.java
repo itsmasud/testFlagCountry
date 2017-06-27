@@ -76,10 +76,10 @@ public class UserBlocked implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_by != null && _by.isSet())
-            return _by;
+        if (_by == null)
+            _by = new UserBlockedBy();
 
-        return null;
+            return _by;
     }
 
     public UserBlocked by(UserBlockedBy by) throws ParseException {
@@ -155,7 +155,4 @@ public class UserBlocked implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

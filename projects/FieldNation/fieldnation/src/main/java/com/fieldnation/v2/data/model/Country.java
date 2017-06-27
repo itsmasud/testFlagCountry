@@ -69,10 +69,10 @@ public class Country implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_address1 != null && _address1.isSet())
-        return _address1;
+        if (_address1 == null)
+            _address1 = new CountryAddress1();
 
-        return null;
+        return _address1;
     }
 
     public Country address1(CountryAddress1 address1) throws ParseException {
@@ -94,10 +94,10 @@ public class Country implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_address2 != null && _address2.isSet())
-        return _address2;
+        if (_address2 == null)
+            _address2 = new CountryAddress2();
 
-        return null;
+        return _address2;
     }
 
     public Country address2(CountryAddress2 address2) throws ParseException {
@@ -119,10 +119,10 @@ public class Country implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_city != null && _city.isSet())
-        return _city;
+        if (_city == null)
+            _city = new CountryCity();
 
-        return null;
+        return _city;
     }
 
     public Country city(CountryCity city) throws ParseException {
@@ -188,10 +188,10 @@ public class Country implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_state != null && _state.isSet())
-        return _state;
+        if (_state == null)
+            _state = new CountryState();
 
-        return null;
+        return _state;
     }
 
     public Country state(CountryState state) throws ParseException {
@@ -213,10 +213,10 @@ public class Country implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_zip != null && _zip.isSet())
-        return _zip;
+        if (_zip == null)
+            _zip = new CountryZip();
 
-        return null;
+        return _zip;
     }
 
     public Country zip(CountryZip zip) throws ParseException {
@@ -292,7 +292,4 @@ public class Country implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

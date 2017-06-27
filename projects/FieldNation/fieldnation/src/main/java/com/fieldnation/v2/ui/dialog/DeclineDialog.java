@@ -20,12 +20,12 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 
 /**
@@ -81,17 +81,17 @@ public class DeclineDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_decline, container, false);
 
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
+        _bodyTextView = v.findViewById(R.id.body_textview);
 
-        _declineSpinner = (HintSpinner) v.findViewById(R.id.decline_spinner);
-        _declineEditText = (EditText) v.findViewById(R.id.declineDetails_edittext);
+        _declineSpinner = v.findViewById(R.id.decline_spinner);
+        _declineEditText = v.findViewById(R.id.declineDetails_edittext);
 
-        _blockCheckBox = (CheckBox) v.findViewById(R.id.block_checkbox);
-        _blockSpinner = (HintSpinner) v.findViewById(R.id.block_spinner);
-        _blockEditText = (EditText) v.findViewById(R.id.blockDetails_edittext);
+        _blockCheckBox = v.findViewById(R.id.block_checkbox);
+        _blockSpinner = v.findViewById(R.id.block_spinner);
+        _blockEditText = v.findViewById(R.id.blockDetails_edittext);
 
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _okButton = v.findViewById(R.id.ok_button);
 
         _declineReasonIds = v.getContext().getResources().getIntArray(R.array.dialog_decline_reason_ids);
         _blockReasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);

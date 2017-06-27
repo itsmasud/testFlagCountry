@@ -106,7 +106,6 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         if (App.get().needsConfirmation()) {
             launchConfirmActivity();
         }

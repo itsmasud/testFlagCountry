@@ -28,6 +28,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -36,7 +37,6 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
-import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -46,7 +46,6 @@ import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.BundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
@@ -54,7 +53,6 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Acknowledgment;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.CheckInOut;
 import com.fieldnation.v2.data.model.Condition;
@@ -66,7 +64,6 @@ import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Error;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
-import com.fieldnation.v2.data.model.Hold;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
@@ -89,12 +86,14 @@ import com.fieldnation.v2.ui.dialog.DiscountDialog;
 import com.fieldnation.v2.ui.dialog.EtaDialog;
 import com.fieldnation.v2.ui.dialog.ExpenseDialog;
 import com.fieldnation.v2.ui.dialog.GetFileDialog;
+import com.fieldnation.v2.ui.dialog.HoldReviewDialog;
 import com.fieldnation.v2.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.v2.ui.dialog.MarkIncompleteWarningDialog;
 import com.fieldnation.v2.ui.dialog.PayDialog;
 import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.v2.ui.dialog.RateBuyerYesNoDialog;
 import com.fieldnation.v2.ui.dialog.ReportProblemDialog;
+import com.fieldnation.v2.ui.dialog.RequestBundleDialog;
 import com.fieldnation.v2.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.v2.ui.dialog.TermsDialog;
@@ -131,9 +130,10 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
     private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
+    private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
 
     // saved state keys
-    private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
+    // private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
@@ -178,10 +178,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
@@ -195,78 +194,78 @@ public class WorkFragment extends WorkorderFragment {
 
         _renderers.clear();
 
-        _testButton = (Button) view.findViewById(R.id.test_button);
+        _testButton = view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
 
-        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+        _topBar = view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
         _renderers.add(_topBar);
 
-        _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
+        _sumView = view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
 
-        _companySummaryView = (CompanySummaryView) view.findViewById(R.id.companySummary_view);
+        _companySummaryView = view.findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
 
-        _contactListView = (ContactListView) view.findViewById(R.id.contactList_view);
+        _contactListView = view.findViewById(R.id.contactList_view);
         _renderers.add(_contactListView);
 
-        _locView = (LocationView) view.findViewById(R.id.location_view);
+        _locView = view.findViewById(R.id.location_view);
         _renderers.add(_locView);
 
-        _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
+        _scheduleView = view.findViewById(R.id.schedule_view);
         _renderers.add(_scheduleView);
 
-        _payView = (PaymentView) view.findViewById(R.id.payment_view);
+        _payView = view.findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
         _renderers.add(_payView);
 
-        _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
+        _coSummaryView = view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
         _renderers.add(_coSummaryView);
 
-        _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
+        _expenseListView = view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
         _renderers.add(_expenseListView);
 
-        _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
+        _discountListView = view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
         _renderers.add(_discountListView);
 
-        _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
+        _exView = view.findViewById(R.id.expected_pay_view);
         _renderers.add(_exView);
 
-        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
+        _bundleWarningTextView = view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
-        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView = view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
+        _scrollView = view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
+        _shipments = view.findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
         _renderers.add(_shipments);
 
-        _taskList = (TaskListView) view.findViewById(R.id.scope_view);
+        _taskList = view.findViewById(R.id.scope_view);
         _taskList.setTaskListViewListener(_taskListView_listener);
         _renderers.add(_taskList);
 
-        _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
+        _timeLogged = view.findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
         _renderers.add(_timeLogged);
 
-        _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
+        _closingNotes = view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
-        _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
+        _customFields = view.findViewById(R.id.customfields_view);
         _customFields.setListener(_customFields_listener);
         _renderers.add(_customFields);
 
-        _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
+        _signatureView = view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
 
@@ -274,9 +273,11 @@ public class WorkFragment extends WorkorderFragment {
             _testButton.setVisibility(View.GONE);
 
         if (savedInstanceState != null) {
+/*
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
             }
+*/
             if (savedInstanceState.containsKey(STATE_CURRENT_TASK)) {
                 _currentTask = savedInstanceState.getParcelable(STATE_CURRENT_TASK);
             }
@@ -300,9 +301,11 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_workOrder != null) {
+/* This was eating up too much memory.
+        if (_workOrder != null)
             outState.putParcelable(STATE_WORKORDER, _workOrder);
-        }
+*/
+
         if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
 
@@ -346,10 +349,16 @@ public class WorkFragment extends WorkorderFragment {
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
+
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
-
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -368,16 +377,12 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.addOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.addOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-
         PayDialog.addOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        HoldReviewDialog.addOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
+        HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
-
-        while (_untilAdded.size() > 0) {
-            _untilAdded.remove(0).run();
-        }
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
     }
 
     @Override
@@ -410,8 +415,9 @@ public class WorkFragment extends WorkorderFragment {
         MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
         MarkIncompleteWarningDialog.removeOnMarkIncompleteListener(DIALOG_MARK_INCOMPLETE, _markIncompleteDialog_markIncomplete);
         WorkLogDialog.removeOnOkListener(DIALOG_WORKLOG, _worklogDialog_listener);
-
         PayDialog.removeOnCompleteListener(DIALOG_PAY, _payDialog_onComplete);
+        HoldReviewDialog.removeOnAcknowledgeListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onAcknowledge);
+        HoldReviewDialog.removeOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
@@ -449,7 +455,7 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_bundleWarningTextView != null) {
             Stopwatch watch = new Stopwatch(true);
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 _bundleWarningTextView.setVisibility(View.VISIBLE);
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
@@ -521,9 +527,7 @@ public class WorkFragment extends WorkorderFragment {
 //        setLoading(true);
 
         Pay pay = _workOrder.getPay();
-        if (pay != null
-                && pay.getType() == Pay.TypeEnum.DEVICE
-                && pay.getBase() != null
+        if (pay.getType() == Pay.TypeEnum.DEVICE
                 && pay.getBase().getUnits() != null) {
             _deviceCount = pay.getBase().getUnits().intValue();
         }
@@ -564,6 +568,12 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onFail(SimpleGps simpleGps) {
+            _locationFailed = true;
+            simpleGps.stop();
+        }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
             _locationFailed = true;
             simpleGps.stop();
         }
@@ -616,6 +626,9 @@ public class WorkFragment extends WorkorderFragment {
 //            RateBuyerDialog.show(App.get(), "TEST_DIALOG", _workOrder);
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
+
+            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
+
         }
     };
 
@@ -646,20 +659,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledgeHold() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
-                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
-
-            try {
-                Hold unAck = _workOrder.getUnAcknowledgedHold();
-                Hold param = new Hold();
-                param.acknowledgment(new Acknowledgment().status(Acknowledgment.StatusEnum.ACKNOWLEDGED));
-                param.id(unAck.getId());
-
-                WorkordersWebApi.updateHold(App.get(), _workOrder.getId(), unAck.getId(), param, App.get().getSpUiContext());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
             setLoading(true);
+            HoldReviewDialog.show(App.get(), DIALOG_HOLD_REVIEW, _workOrder);
         }
 
         @Override
@@ -723,7 +724,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onNotInterested() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workOrder.getId());
 
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 DeclineDialog.show(App.get(), DIALOG_DECLINE, _workOrder.getBundle().getMetadata().getTotal(),
                         _workOrder.getId(), _workOrder.getCompany().getId());
             } else {
@@ -735,7 +736,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequest() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workOrder.getId());
 
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_REQUEST);
@@ -749,7 +750,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workOrder.getId());
 
-            if (_workOrder.getBundle() != null && _workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
+            if (_workOrder.getBundle().getId() != null && _workOrder.getBundle().getId() > 0) {
                 // Todo track bundles... although we don't allow this anymore
                 RequestBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workOrder.getBundle().getId(),
                         _workOrder.getBundle().getMetadata().getTotal(), _workOrder.getId(), RequestBundleDialog.TYPE_ACCEPT);
@@ -763,12 +764,6 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workOrder.getId());
 
             WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workOrder.getId(), 0, _workOrder.getRequests().getOpenRequest().getId());
-        }
-
-        @Override
-        public void onViewCounter() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workOrder.getId());
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
         }
 
         @Override
@@ -906,13 +901,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDownload(Task task) {
-            Attachment doc = null;
-
-            if (task.getAttachment() != null) {
-                doc = task.getAttachment();
-            }
-
-            if (doc != null && doc.getId() != null) {
+            Attachment doc = task.getAttachment();
+            if (doc.getId() != null) {
                 Log.v(TAG, "docid: " + doc.getId());
                 if (task.getStatus() != null && !task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
                     try {
@@ -921,7 +911,6 @@ public class WorkFragment extends WorkorderFragment {
                         Log.v(TAG, ex);
                     }
                 }
-
                 DocumentClient.downloadDocument(App.get(), doc.getId(),
                         doc.getFile().getLink(), doc.getFile().getName(), false);
             }
@@ -1000,7 +989,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onShipment(Task task) {
             Shipment[] shipments = _workOrder.getShipments().getResults();
-            if (shipments == null || shipments.length == 0) {
+            if (shipments.length == 0) {
                 ShipmentAddDialog.show(App.get(), DIALOG_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), null, task);
             } else {
                 TaskShipmentAddDialog.show(App.get(), DIALOG_TASK_SHIPMENT_ADD, _workOrder, getString(R.string.dialog_task_shipment_title), task);
@@ -1141,9 +1130,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequestNewPay(WorkOrder workOrder) {
             // TODO add analytics
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-            if (_workOrder.getPay() != null
-                    && _workOrder.getPay().getIncreases() != null
-                    && _workOrder.getPay().getIncreases().getLastIncrease() != null) {
+            if (_workOrder.getPay().getIncreases().getLastIncrease() != null) {
                 PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay().getIncreases().getLastIncrease().getPay(), true);
             } else {
                 PayDialog.show(App.get(), DIALOG_PAY, _workOrder.getPay(), true);
@@ -1445,6 +1432,23 @@ public class WorkFragment extends WorkorderFragment {
             populateUi();
         }
     };
+
+    private final HoldReviewDialog.OnAcknowledgeListener _holdReviewDialog_onAcknowledge = new HoldReviewDialog.OnAcknowledgeListener() {
+        @Override
+        public void onAcknowledge(int workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
+                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workOrder.getId());
+
+        }
+    };
+
+    private final HoldReviewDialog.OnCancelListener _holdReviewDialog_onCancel = new HoldReviewDialog.OnCancelListener() {
+        @Override
+        public void onCancel() {
+            setLoading(false);
+        }
+    };
+
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override

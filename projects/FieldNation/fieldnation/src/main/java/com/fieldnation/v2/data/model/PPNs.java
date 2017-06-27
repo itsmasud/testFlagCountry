@@ -54,10 +54,10 @@ public class PPNs implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public PPNs metadata(ListEnvelope metadata) throws ParseException {
@@ -83,6 +83,9 @@ public class PPNs implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new PPN[0];
 
         return _results;
     }
@@ -160,7 +163,4 @@ public class PPNs implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

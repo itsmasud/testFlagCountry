@@ -226,8 +226,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
         _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrder.getId()));
 
-        if (_workOrder.getCompany() != null
-                && _workOrder.getCompany().getName() != null) {
+        if (!misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
             _companyNameTextView.setText(_workOrder.getCompany().getName());
         }
 
@@ -303,7 +302,6 @@ public class RateBuyerDialog extends FullScreenDialog {
                 _submitButton.setEnabled(true);
             else
                 _submitButton.setEnabled(false);
-
         }
     };
 

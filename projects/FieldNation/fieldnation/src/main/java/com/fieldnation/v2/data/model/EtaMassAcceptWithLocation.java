@@ -63,10 +63,10 @@ public class EtaMassAcceptWithLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_bundle != null && _bundle.isSet())
-            return _bundle;
+        if (_bundle == null)
+            _bundle = new Bundle();
 
-        return null;
+            return _bundle;
     }
 
     public EtaMassAcceptWithLocation bundle(Bundle bundle) throws ParseException {
@@ -88,10 +88,10 @@ public class EtaMassAcceptWithLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_location != null && _location.isSet())
-            return _location;
+        if (_location == null)
+            _location = new Location();
 
-        return null;
+            return _location;
     }
 
     public EtaMassAcceptWithLocation location(Location location) throws ParseException {
@@ -113,10 +113,10 @@ public class EtaMassAcceptWithLocation implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_schedule != null && _schedule.isSet())
-            return _schedule;
+        if (_schedule == null)
+            _schedule = new Schedule();
 
-        return null;
+            return _schedule;
     }
 
     public EtaMassAcceptWithLocation schedule(Schedule schedule) throws ParseException {
@@ -236,7 +236,4 @@ public class EtaMassAcceptWithLocation implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

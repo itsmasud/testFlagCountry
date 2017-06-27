@@ -69,10 +69,10 @@ public class CheckInOut implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_actor != null && _actor.isSet())
-            return _actor;
+        if (_actor == null)
+            _actor = new User();
 
-        return null;
+            return _actor;
     }
 
     public CheckInOut actor(User actor) throws ParseException {
@@ -94,10 +94,10 @@ public class CheckInOut implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_coords != null && _coords.isSet())
-            return _coords;
+        if (_coords == null)
+            _coords = new Coords();
 
-        return null;
+            return _coords;
     }
 
     public CheckInOut coords(Coords coords) throws ParseException {
@@ -119,10 +119,10 @@ public class CheckInOut implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public CheckInOut created(Date created) throws ParseException {
@@ -188,10 +188,10 @@ public class CheckInOut implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeLog != null && _timeLog.isSet())
-            return _timeLog;
+        if (_timeLog == null)
+            _timeLog = new CheckInOutTimeLog();
 
-        return null;
+            return _timeLog;
     }
 
     public CheckInOut timeLog(CheckInOutTimeLog timeLog) throws ParseException {
@@ -289,7 +289,4 @@ public class CheckInOut implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

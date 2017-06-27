@@ -135,6 +135,10 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
+        }
     };
 
     public WoPagingAdapter getAdapter() {
@@ -227,7 +231,7 @@ public class ConfirmResultScreen extends RelativeLayout {
 
                 Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
 
-                if (envelope.getTotal() == 0) {
+                if (envelope.getTotal() == null || envelope.getTotal() == 0) {
                     _adapter.clear();
                 } else if (workOrders.getResults().length > 0
                         && envelope.getPerPage() > 0
@@ -239,15 +243,15 @@ public class ConfirmResultScreen extends RelativeLayout {
                 }
 
                 _refreshView.refreshComplete();
+            } else {
+                _adapter.refreshAll();
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _refreshView.startRefreshing();
+                    }
+                });
             }
-
-            _adapter.refreshAll();
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    _refreshView.startRefreshing();
-                }
-            });
         }
     };
 

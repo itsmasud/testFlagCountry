@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.content.FileProvider;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,17 +24,21 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.ImageUtils;
+import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
+import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
 import java.io.File;
@@ -57,6 +64,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private View _debugMenu;
     private View _legalMenu;
     private View _versionMenu;
+    private View _rateUsMenu;
     private View _touchMeMenu;
     private TextView _versionTextView;
     private View _linkContainerView;
@@ -66,6 +74,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private WeakReference<Drawable> _profilePic = null;
     private Listener _listener = null;
     private boolean _activated = false;
+    private FileCacheClient _fileCacheClient;
+    private String _tempFileName = null;
 
     // Services
     private PhotoClient _photoClient;
@@ -97,16 +107,18 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _profilePicView = (ProfilePicView) findViewById(R.id.pic_view);
+        setSaveEnabled(true);
+
+        _profilePicView =  findViewById(R.id.pic_view);
         _profilePicView.setProfilePic(R.drawable.missing_circle);
 
-        _profileNameTextView = (TextView) findViewById(R.id.name_textview);
+        _profileNameTextView =  findViewById(R.id.name_textview);
         _profileNameTextView.setVisibility(GONE);
 
-        _profileExpandButton = (IconFontButton) findViewById(R.id.profileexpand_button);
+        _profileExpandButton =  findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
-        _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+        _profileListView =  findViewById(R.id.profile_detail_list);
         _profileListView.setListener(_navlistener);
 
         _linkContainerView = findViewById(R.id.link_container);
@@ -135,6 +147,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _versionMenu = findViewById(R.id.version_menu);
         _versionMenu.setOnClickListener(_version_onClick);
 
+        _rateUsMenu = findViewById(R.id.rate_us_menu);
+        _rateUsMenu.setOnClickListener(_rateUs_onClick);
+
         _touchMeMenu = findViewById(R.id.touchMe_menu);
         _touchMeMenu.setOnClickListener(_touchMe_onClick);
 
@@ -143,7 +158,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 //        else
         _touchMeMenu.setVisibility(GONE);
 
-        _versionTextView = (TextView) findViewById(R.id.version_textview);
+        _versionTextView =  findViewById(R.id.version_textview);
         try {
             _versionTextView.setText((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             _versionTextView.setVisibility(VISIBLE);
@@ -160,6 +175,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(App.get());
 
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
+
         AdditionalOptionsTracker.onShow(App.get());
     }
 
@@ -167,13 +185,36 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _listener = listener;
     }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Log.v(TAG, "onSaveInstanceState");
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("super", super.onSaveInstanceState());
+
+        if (_tempFileName != null)
+            bundle.putString("_tempFileName", _tempFileName);
+
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.v(TAG, "onRestoreInstanceState");
+        Bundle bundle = (Bundle) state;
+        super.onRestoreInstanceState(bundle.getParcelable("super"));
+
+        if (bundle.containsKey("_tempFileName")) {
+            _tempFileName = bundle.getString("_tempFileName");
+            _profilePic = null;
+            addProfilePhoto();
+        }
+    }
 
     @Override
     protected void onDetachedFromWindow() {
         if (_photoClient != null) _photoClient.disconnect(App.get());
         if (_profileClient != null) _profileClient.disconnect(App.get());
-
-
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -203,6 +244,17 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     private void addProfilePhoto() {
+        if (_tempFileName != null) {
+            try {
+                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
+                if (_profilePic.get() != null)
+                    _profilePicView.setProfilePic(_profilePic.get());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return;
+        }
+
         if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
             _profilePicView.setProfilePic(R.drawable.missing_circle);
             return;
@@ -237,6 +289,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {
+            _tempFileName = null;
             if (_listener != null) {
                 _listener.onSwitchUser(userId);
             }
@@ -247,6 +300,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onConnected() {
             _profileClient.subGet(false);
+            ProfileClient.get(App.get(), false);
         }
 
         @Override
@@ -281,6 +335,20 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                 return;
 
             _profilePic = new WeakReference<>((Drawable) drawable);
+            addProfilePhoto();
+        }
+    };
+
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
+        @Override
+        public void onConnected() {
+            _fileCacheClient.subDeliverableCache();
+        }
+
+        @Override
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
+            _profilePic = null;
+            _tempFileName = filename;
             addProfilePhoto();
         }
     };
@@ -351,7 +419,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
             intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
-            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
+            intent.putExtra(Intent.EXTRA_STREAM,
+                    FileProvider.getUriForFile(App.get(),
+                            App.get().getApplicationContext().getPackageName() + ".provider",
+                            tempfile));
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getContext().startActivity(intent);
             } else {
@@ -365,6 +436,20 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.APP_VERSION);
             WhatsNewDialog.show(App.get());
+        }
+    };
+
+    private final View.OnClickListener _rateUs_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Uri uri = Uri.parse("market://details?id=" + App.get().getPackageName());
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                App.get().startActivity(intent);
+            }
+
         }
     };
 

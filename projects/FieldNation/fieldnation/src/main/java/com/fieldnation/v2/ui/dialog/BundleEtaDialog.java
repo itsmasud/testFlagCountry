@@ -3,7 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,7 +18,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.client.BundlesWebApi;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -122,8 +122,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         EtaDialog.removeOnBundleEtaListener(UID_DIALOG_ETA, _etaDialog_onBundleEta);
-        if (_bundlesApi != null)
-            _bundlesApi.disconnect(App.get());
+        if (_bundlesApi != null) _bundlesApi.disconnect(App.get());
 
         super.onStop();
     }
@@ -162,11 +161,11 @@ public class BundleEtaDialog extends FullScreenDialog {
     }
 
     public void setCompleteLayoutVisible(boolean visibility) {
-        _completeLayout.setVisibility(visibility == true ? View.VISIBLE : View.INVISIBLE);
+        _completeLayout.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
     public void setIncompleteLayoutVisible(boolean visibility) {
-        _incompleteLayout.setVisibility(visibility == true ? View.VISIBLE : View.INVISIBLE);
+        _incompleteLayout.setVisibility(visibility ? View.VISIBLE : View.INVISIBLE);
     }
 
     /*-********************************************-*/
@@ -361,8 +360,6 @@ public class BundleEtaDialog extends FullScreenDialog {
     public static void removeAllOnCancelListener(String uid) {
         _onCancelDispatcher.removeAll(uid);
     }
-
-
 
 
 }

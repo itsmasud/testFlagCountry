@@ -78,6 +78,9 @@ public class SelectionRule implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -126,10 +129,10 @@ public class SelectionRule implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public SelectionRule metadata(ListEnvelope metadata) throws ParseException {
@@ -178,6 +181,9 @@ public class SelectionRule implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_results == null)
+            _results = new SelectionRuleCriteria[0];
+
         return _results;
     }
 
@@ -222,10 +228,10 @@ public class SelectionRule implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_sum != null && _sum.isSet())
-        return _sum;
+        if (_sum == null)
+            _sum = new SelectionRuleSum();
 
-        return null;
+        return _sum;
     }
 
     public SelectionRule sum(SelectionRuleSum sum) throws ParseException {
@@ -374,7 +380,4 @@ public class SelectionRule implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

@@ -1,18 +1,17 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,16 +125,16 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onStart() {
         super.onStart();
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
+
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
-
-        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
     }
 
     @Override
@@ -145,7 +144,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-
         super.onStop();
     }
 
@@ -177,7 +175,6 @@ public class DeliverableFragment extends WorkorderFragment {
         } else {
             GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
         }
-
     }
 
     private boolean checkMedia() {
@@ -240,7 +237,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (reviewSlot != null) {
             final Attachment[] docs = reviewSlot.getResults();
 
-            if (docs != null && docs.length > 0) {
+            if (docs.length > 0) {
                 if (_reviewList.getChildCount() != docs.length) {
                     if (_reviewRunnable != null)
                         _reviewRunnable.cancel();
@@ -281,7 +278,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         //stopwatch.start();
 
-        if (slots != null && slots.length > 0) {
+        if (slots.length > 0) {
             //Log.v(TAG, "US count: " + slots.length);
 
             if (_filesRunnable != null)
@@ -498,7 +495,13 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), FileUtils.guessContentTypeFromName(file.getName()));
+                intent.setDataAndType(
+                        FileProvider.getUriForFile(
+                                App.get(),
+                                App.get().getApplicationContext().getPackageName() + ".provider",
+                                file),
+                        FileUtils.guessContentTypeFromName(file.getName()));
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
                     startActivity(intent);
@@ -507,7 +510,15 @@ public class DeliverableFragment extends WorkorderFragment {
                     name = name.substring(name.indexOf("_") + 1);
 
                     Intent folderIntent = new Intent(Intent.ACTION_VIEW);
-                    folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    intent.setDataAndType(
+                            FileProvider.getUriForFile(
+                                    App.get(),
+                                    App.get().getApplicationContext().getPackageName() + ".provider",
+                                    new File(App.get().getDownloadsFolder())),
+                            "resource/folder");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
                         PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
                         ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);

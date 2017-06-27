@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
@@ -15,11 +13,8 @@ import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.Locale;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -61,10 +56,10 @@ public class ScheduleServiceWindow implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_end != null && _end.isSet())
-            return _end;
+        if (_end == null)
+            _end = new Date();
 
-        return null;
+        return _end;
     }
 
     public ScheduleServiceWindow end(Date end) throws ParseException {
@@ -108,10 +103,10 @@ public class ScheduleServiceWindow implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_start != null && _start.isSet())
-            return _start;
+        if (_start == null)
+            _start = new Date();
 
-        return null;
+        return _start;
     }
 
     public ScheduleServiceWindow start(Date start) throws ParseException {
@@ -226,10 +221,6 @@ public class ScheduleServiceWindow implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getMode() != null && getStart() != null && getStart().isSet();
-    }
 
     public String getFormatedDate() {
         try {

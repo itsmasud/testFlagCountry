@@ -51,10 +51,10 @@ public class WorkOrderRatingsServiceCompany implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_overall != null && _overall.isSet())
-            return _overall;
+        if (_overall == null)
+            _overall = new WorkOrderRatingsServiceCompanyOverall();
 
-        return null;
+            return _overall;
     }
 
     public WorkOrderRatingsServiceCompany overall(WorkOrderRatingsServiceCompanyOverall overall) throws ParseException {
@@ -130,7 +130,4 @@ public class WorkOrderRatingsServiceCompany implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

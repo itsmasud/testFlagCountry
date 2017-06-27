@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -64,7 +65,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     private String _extension;
     private FileCacheClient _fileCacheClient;
 
-
     // Supplied
     private String _originalFileName;
     private Bitmap _bitmap;
@@ -74,7 +74,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     private Uri _uri;
     private Task _task;
     private AttachmentFolder _slot;
-
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -129,6 +128,7 @@ public class PhotoUploadDialog extends SimpleDialog {
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
+
         return v;
     }
 
@@ -150,7 +150,6 @@ public class PhotoUploadDialog extends SimpleDialog {
         _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
         _fileCacheClient.connect(App.get());
         populateUi();
-
     }
 
     @Override
@@ -327,7 +326,13 @@ public class PhotoUploadDialog extends SimpleDialog {
             Intent intent;
             if (_uri == null) {
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(new File(_filePath)), "image/*");
+                intent.setDataAndType(
+                        FileProvider.getUriForFile(
+                                App.get(),
+                                App.get().getApplicationContext().getPackageName() + ".provider",
+                                new File(_filePath)),
+                        "image/*");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             } else {
                 intent = new Intent(Intent.ACTION_VIEW, _uri);

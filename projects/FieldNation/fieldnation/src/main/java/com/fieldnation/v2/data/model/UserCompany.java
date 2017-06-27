@@ -73,6 +73,9 @@ public class UserCompany implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_features == null)
+            _features = new String[0];
+
         return _features;
     }
 
@@ -170,6 +173,9 @@ public class UserCompany implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_vendors == null)
+            _vendors = new Company[0];
+
         return _vendors;
     }
 
@@ -246,7 +252,4 @@ public class UserCompany implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

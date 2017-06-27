@@ -66,8 +66,7 @@ public class RemindMeService extends Service {
 
                 WorkOrders workOrders = (WorkOrders) successObject;
 
-                if (workOrders.getMetadata() != null
-                        && workOrders.getMetadata().getTotal() != null
+                if (workOrders.getMetadata().getTotal() != null
                         && workOrders.getMetadata().getTotal() > 0) {
                     Log.v(TAG, "onComplete setNeedsConfirmation");
                     App.get().setNeedsConfirmation(true);

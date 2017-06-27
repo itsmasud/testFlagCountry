@@ -88,6 +88,9 @@ public class Message implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new String[0];
+
         return _actions;
     }
 
@@ -114,10 +117,10 @@ public class Message implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-        return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public Message created(Date created) throws ParseException {
@@ -139,10 +142,10 @@ public class Message implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_from != null && _from.isSet())
-        return _from;
+        if (_from == null)
+            _from = new MessageFrom();
 
-        return null;
+        return _from;
     }
 
     public Message from(MessageFrom from) throws ParseException {
@@ -257,6 +260,9 @@ public class Message implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_replies == null)
+            _replies = new Message[0];
+
         return _replies;
     }
 
@@ -301,10 +307,10 @@ public class Message implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_to != null && _to.isSet())
-        return _to;
+        if (_to == null)
+            _to = new MessageTo();
 
-        return null;
+        return _to;
     }
 
     public Message to(MessageTo to) throws ParseException {
@@ -380,7 +386,4 @@ public class Message implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

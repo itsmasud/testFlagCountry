@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
@@ -86,7 +85,7 @@ public class ShipmentRowView extends RelativeLayout {
         if (_trackingIdTextView == null)
             return;
 
-        if (_shipment.getCarrier() != null && _shipment.getCarrier().getTracking() != null) {
+        if (_shipment.getCarrier().getTracking() != null) {
             _trackingIdTextView.setVisibility(VISIBLE);
             _trackingIdTextView.setText(_shipment.getCarrier().getTracking());
         } else {

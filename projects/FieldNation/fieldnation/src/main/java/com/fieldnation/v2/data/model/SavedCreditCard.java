@@ -75,6 +75,9 @@ public class SavedCreditCard implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -350,7 +353,4 @@ public class SavedCreditCard implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

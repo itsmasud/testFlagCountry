@@ -5,17 +5,11 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -94,10 +88,10 @@ public class OnMyWay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_coords != null && _coords.isSet())
-            return _coords;
+        if (_coords == null)
+            _coords = new Coords();
 
-        return null;
+        return _coords;
     }
 
     public OnMyWay coords(Coords coords) throws ParseException {
@@ -119,10 +113,10 @@ public class OnMyWay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public OnMyWay created(Date created) throws ParseException {
@@ -308,7 +302,4 @@ public class OnMyWay implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

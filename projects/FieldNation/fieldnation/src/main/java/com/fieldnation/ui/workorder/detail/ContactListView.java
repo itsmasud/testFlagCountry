@@ -15,7 +15,6 @@ import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.workorder.WorkOrderRenderer;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -74,21 +73,25 @@ public class ContactListView extends RelativeLayout implements WorkOrderRenderer
         boolean addedContact = false;
         final List<Contact> contactList = new LinkedList<>();
 
-        if (_workOrder.getLocation() != null
-                && _workOrder.getLocation().getSavedLocation() != null
-                && _workOrder.getLocation().getSavedLocation().getContact() != null) {
-
+/*
+        {
             Contact contact = _workOrder.getLocation().getSavedLocation().getContact();
-            if (misc.isEmptyOrNull(contact.getName()) && misc.isEmptyOrNull(contact.getPhone())) {
+            if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
                 ContactTileView tileView = new ContactTileView(getContext());
                 tileView.setData(contact.getName(), contact.getPhone(), contact.getExt(), contact.getRole());
                 addedContact = true;
                 views.add(tileView);
             }
         }
+*/
 
-        if (_workOrder.getContacts() != null && _workOrder.getContacts().getResults() != null)
-            Collections.addAll(contactList, _workOrder.getContacts().getResults());
+        if (_workOrder.getContacts().getResults().length > 0) {
+            for (Contact contact : _workOrder.getContacts().getResults()) {
+                if (!misc.isEmptyOrNull(contact.getName()) && !misc.isEmptyOrNull(contact.getPhone())) {
+                    contactList.add(contact);
+                }
+            }
+        }
 
         if (contactList.size() > 0) {
             if (_contactsRunnable != null)

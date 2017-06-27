@@ -51,10 +51,10 @@ public class PricingInsights implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_region != null && _region.isSet())
-        return _region;
+        if (_region == null)
+            _region = new PricingInsightsRegion();
 
-        return null;
+        return _region;
     }
 
     public PricingInsights region(PricingInsightsRegion region) throws ParseException {
@@ -130,7 +130,4 @@ public class PricingInsights implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

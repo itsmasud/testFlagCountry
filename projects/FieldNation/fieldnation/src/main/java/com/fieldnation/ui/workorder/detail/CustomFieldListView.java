@@ -66,10 +66,7 @@ public class CustomFieldListView extends RelativeLayout implements WorkOrderRend
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
 
-        if (_workOrder.getCustomFields() != null
-                && _workOrder.getCustomFields().getResults() != null
-                && _workOrder.getCustomFields().getResults().length > 0) {
-
+        if (_workOrder.getCustomFields().getResults().length > 0) {
             _fields.clear();
 
             CustomFieldCategory[] categoryList = _workOrder.getCustomFields().getResults();
@@ -98,14 +95,12 @@ public class CustomFieldListView extends RelativeLayout implements WorkOrderRend
         if (_fieldsList == null)
             return;
 
-        if (_workOrder.getCustomFields() == null
-                || _workOrder.getCustomFields().getResults() == null
-                || _workOrder.getCustomFields().getResults().length == 0) {
+        if (_workOrder.getCustomFields().getResults().length == 0) {
             setVisibility(GONE);
             return;
         }
 
-        if (_fields == null || _fields.size() == 0) {
+        if (_fields.size() == 0) {
             setVisibility(GONE);
             return;
         }

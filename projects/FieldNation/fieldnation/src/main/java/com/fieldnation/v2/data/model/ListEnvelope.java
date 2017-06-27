@@ -86,6 +86,9 @@ public class ListEnvelope implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_availableColumns == null)
+            _availableColumns = new AvailableColumn[0];
+
         return _availableColumns;
     }
 
@@ -266,6 +269,9 @@ public class ListEnvelope implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_timings == null)
+            _timings = new ListEnvelopeTimings[0];
 
         return _timings;
     }
@@ -466,7 +472,4 @@ public class ListEnvelope implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

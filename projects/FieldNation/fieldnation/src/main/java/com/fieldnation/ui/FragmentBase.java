@@ -47,7 +47,7 @@ public class FragmentBase extends Fragment {
             for (int i = 0; i < frags.size(); i++) {
                 Fragment frag = frags.get(i);
                 if (clazz.isInstance(frag)) {
-                    if (((FragmentBase) frag)._tag.equals(tag)) {
+                    if (tag.equals(((FragmentBase) frag)._tag)) {
                         d = (T) frag;
                         d._fm = fm;
                         d._tag = tag;
