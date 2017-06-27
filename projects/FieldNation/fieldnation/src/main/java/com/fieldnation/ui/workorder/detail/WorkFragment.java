@@ -178,10 +178,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
@@ -345,17 +344,22 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-//        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+    public void onStart() {
+        Log.v(TAG, "onStart");
+        super.onStart();
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
-
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -379,17 +383,18 @@ public class WorkFragment extends WorkorderFragment {
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
-
-        while (_untilAdded.size() > 0) {
-            _untilAdded.remove(0).run();
-        }
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
     }
 
     @Override
-    public void onDetach() {
-        Log.v(TAG, "onDetach");
+    public void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        Log.v(TAG, "onPause");
 
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
@@ -419,24 +424,13 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
-        super.onDetach();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        Log.v(TAG, "onPause");
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        Log.v(TAG, "onStop");
+        super.onStop();
     }
 
     @Override
