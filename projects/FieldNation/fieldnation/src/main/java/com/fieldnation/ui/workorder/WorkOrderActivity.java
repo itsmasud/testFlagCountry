@@ -257,6 +257,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     }
 
     private void populateUi() {
+        setTitle("WO:");
         if (_workOrder == null)
             return;
 
