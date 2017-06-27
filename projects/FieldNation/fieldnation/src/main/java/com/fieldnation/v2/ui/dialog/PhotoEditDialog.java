@@ -86,7 +86,7 @@ public class PhotoEditDialog extends FullScreenDialog {
         super.show(params, animate);
         if (params.containsKey("uri")) {
             _uri = params.getParcelable("uri");
-            FileCacheClient.cacheDeliverableUpload(App.get(), _uri);
+            FileCacheClient.cacheFileUpload(App.get(), _uri);
         } else if (params.containsKey("path")) {
             _path = params.getString("path");
             setPhoto(MemUtils.getMemoryEfficientBitmap(_path, 400));
@@ -162,26 +162,26 @@ public class PhotoEditDialog extends FullScreenDialog {
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            _fileCacheClient.subDeliverableCache();
+            _fileCacheClient.subFileCache();
         }
 
         @Override
-        public void onDeliverableCacheEnd(Uri uri, String filePath) {
-            Log.v(TAG, "onDeliverableCacheEnd " + filePath);
-            Log.v(TAG, "onDeliverableCacheEnd " + uri);
-            Log.v(TAG, "onDeliverableCacheEnd " + _path);
-            Log.v(TAG, "onDeliverableCacheEnd " + _uri);
+        public void onFileCacheEnd(Uri uri, String filePath) {
+            Log.v(TAG, "onFileCacheEnd " + filePath);
+            Log.v(TAG, "onFileCacheEnd " + uri);
+            Log.v(TAG, "onFileCacheEnd " + _path);
+            Log.v(TAG, "onFileCacheEnd " + _uri);
 
             if (_path != null && filePath != null) {
                 if (!_path.equals(filePath)) {
-                    Log.v(TAG, "onDeliverableCacheEnd filepath mismatch, skipping");
+                    Log.v(TAG, "onFileCacheEnd filepath mismatch, skipping");
                     return;
                 }
             }
 
             if (_uri != null && uri != null) {
                 if (!_uri.toString().equals(uri.toString())) {
-                    Log.v(TAG, "onDeliverableCacheEnd uri mismatch, skipping");
+                    Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
                     return;
                 }
             }

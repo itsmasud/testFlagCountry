@@ -342,11 +342,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            _fileCacheClient.subDeliverableCache();
+            _fileCacheClient.subFileCache();
         }
 
         @Override
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
+        public void onFileCacheEnd(Uri uri, String filename) {
             _profilePic = null;
             _tempFileName = filename;
             addProfilePhoto();

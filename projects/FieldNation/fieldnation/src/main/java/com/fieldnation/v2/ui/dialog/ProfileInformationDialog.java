@@ -273,10 +273,10 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onSave(String name, String path, Uri uri) {
             if (path != null) {
-                FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(new File(path)));
+                FileCacheClient.cacheFileUpload(App.get(), Uri.fromFile(new File(path)));
                 ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), path, name);
             } else if (uri != null) {
-                FileCacheClient.cacheDeliverableUpload(App.get(), uri);
+                FileCacheClient.cacheFileUpload(App.get(), uri);
                 ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), name, uri);
             }
         }
@@ -302,7 +302,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
             if (fui.file != null) {
                 Log.v(TAG, "Image uploading taken by camera");
-                //FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(fui.file));
+                //FileCacheClient.cacheFileUpload(App.get(), Uri.fromFile(fui.file));
                 //ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), fui.file.getAbsolutePath(), fui.file.getName());
                 PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.file.getAbsolutePath(), fui.file.getName());
             } else if (fui.uri != null) {
@@ -312,7 +312,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 if (mime != null && mime.contains("image")) {
                     PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
                 } else {
-                    FileCacheClient.cacheDeliverableUpload(App.get(), fui.uri);
+                    FileCacheClient.cacheFileUpload(App.get(), fui.uri);
                     ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
             }
@@ -341,11 +341,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            _fileCacheClient.subDeliverableCache();
+            _fileCacheClient.subFileCache();
         }
 
         @Override
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
+        public void onFileCacheEnd(Uri uri, String filename) {
             _profilePic = null;
             _tempFileName = filename;
             populateUi();

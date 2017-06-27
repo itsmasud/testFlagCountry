@@ -31,20 +31,20 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
         return TAG;
     }
 
-    public boolean subDeliverableCache() {
+    public boolean subFileCache() {
         return register(TOPIC_ID_CACHE_FILE_START)
                 && register(TOPIC_ID_CACHE_FILE_END);
     }
 
-    public static void cacheDeliverableUpload(Context context, Uri uri) {
-        Log.v(STAG, "cacheDeliverableUpload");
+    public static void cacheFileUpload(Context context, Uri uri) {
+        Log.v(STAG, "cacheFileUpload");
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
             protected Object doInBackground(Object... params) {
                 Context context = (Context) params[0];
                 Uri uri = (Uri) params[1];
 
-                cacheDeliverableStart(context, uri);
+                cacheFileStart(context, uri);
                 StoredObject upFile = null;
                 try {
                     upFile = StoredObject.put(context, App.getProfileId(), "CacheFile", uri.toString(),
@@ -53,25 +53,25 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
                     Log.v(STAG, ex);
                 } finally {
                     if (upFile != null)
-                        cacheDeliverableEnd(context, uri, upFile.getFile().toString());
+                        cacheFileEnd(context, uri, upFile.getFile().toString());
                     else
-                        cacheDeliverableEnd(context, uri, null);
+                        cacheFileEnd(context, uri, null);
                 }
                 return null;
             }
         }.executeEx(context, uri);
     }
 
-    private static void cacheDeliverableStart(Context context, Uri uri) {
-        Log.v(STAG, "cacheDeliverableStart");
+    private static void cacheFileStart(Context context, Uri uri) {
+        Log.v(STAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
 
         TopicService.dispatchEvent(context, TOPIC_ID_CACHE_FILE_START, bundle, Sticky.TEMP);
     }
 
-    private static void cacheDeliverableEnd(Context context, Uri uri, String file) {
-        Log.v(STAG, "cacheDeliverableStart");
+    private static void cacheFileEnd(Context context, Uri uri, String file) {
+        Log.v(STAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
         bundle.putString(PARAM_FILE, file);
@@ -88,10 +88,10 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
             Log.v(STAG, "topicId " + topicId);
 
             if (topicId.startsWith(TOPIC_ID_CACHE_FILE_START)) {
-                onDeliverableCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
+                onFileCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
             } else if (topicId.startsWith(TOPIC_ID_CACHE_FILE_END)) {
                 try {
-                    onDeliverableCacheEnd(
+                    onFileCacheEnd(
                             (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
                             ((Bundle) payload).getString(PARAM_FILE));
                 } catch (Exception ex) {
@@ -100,10 +100,10 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
             }
         }
 
-        public void onDeliverableCacheStart(Uri uri) {
+        public void onFileCacheStart(Uri uri) {
         }
 
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
+        public void onFileCacheEnd(Uri uri, String filename) {
         }
     }
 }
