@@ -114,8 +114,8 @@ public class ProfileIndividualListLayout extends RelativeLayout {
 
         if (_profilePic == null || _profilePic.get() == null) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            if (!misc.isEmptyOrNull(_profile.getPhoto().getThumb())) {
-                PhotoClient.get(getContext(), _profile.getPhoto().getThumb(), true, false);
+            if (!misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
+                PhotoClient.get(getContext(), _profile.getPhoto().getLarge(), true, false);
             }
         } else {
             _picView.setProfilePic(_profilePic.get());
@@ -148,8 +148,8 @@ public class ProfileIndividualListLayout extends RelativeLayout {
             return isCircle
                     && _profile != null
                     && _profile.getPhoto() != null
-                    && !misc.isEmptyOrNull(_profile.getPhoto().getThumb())
-                    && (sourceUri.equals(_profile.getPhoto().getThumb()));
+                    && !misc.isEmptyOrNull(_profile.getPhoto().getLarge())
+                    && (sourceUri.equals(_profile.getPhoto().getLarge()));
         }
 
         @Override
