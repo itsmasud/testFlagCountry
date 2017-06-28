@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,13 +21,10 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
@@ -68,15 +63,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     // Data
     private Profile _profile = null;
+    private Uri _profileImageUri = null;
     private WeakReference<Drawable> _profilePic = null;
+
     private Listener _listener = null;
     private boolean _activated = false;
-    private FileCacheClient _fileCacheClient;
-    private Uri _profileImageUri = null;
 
     // Services
-    private PhotoClient _photoClient;
     private ProfileClient _profileClient;
+    private ProfilePhotoClient _profilePhotoClient;
 
     // Animations
     private Animation _ccw;
@@ -166,14 +161,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _ccw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_ccw);
         _cw = AnimationUtils.loadAnimation(getContext(), R.anim.rotate_180_cw);
 
-        _photoClient = new PhotoClient(_photo_listener);
-        _photoClient.connect(App.get());
+        _profilePhotoClient = new ProfilePhotoClient(_profilePhotoClient_listener);
+        _profilePhotoClient.connect(App.get());
 
         _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(App.get());
-
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
 
         AdditionalOptionsTracker.onShow(App.get());
     }
@@ -183,35 +175,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     }
 
     @Override
-    protected Parcelable onSaveInstanceState() {
-        Log.v(TAG, "onSaveInstanceState");
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("super", super.onSaveInstanceState());
-
-        if (_profileImageUri != null)
-            bundle.putParcelable("_profileImageUri", _profileImageUri);
-
-        return bundle;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        Log.v(TAG, "onRestoreInstanceState");
-        Bundle bundle = (Bundle) state;
-        super.onRestoreInstanceState(bundle.getParcelable("super"));
-
-        if (bundle.containsKey("_profileImageUri")) {
-            _profileImageUri = bundle.getParcelable("_profileImageUri");
-            _profilePic = null;
-            addProfilePhoto();
-        }
-    }
-
-    @Override
     protected void onDetachedFromWindow() {
-        if (_photoClient != null) _photoClient.disconnect(App.get());
+        if (_profilePhotoClient != null) _profilePhotoClient.disconnect(App.get());
         if (_profileClient != null) _profileClient.disconnect(App.get());
-        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -234,51 +200,23 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
             if (_profileListView != null)
                 _profileListView.setProfile(_profile);
-
-            subPhoto();
-            addProfilePhoto();
         }
+        
+        addProfilePhoto();
     }
 
     private void addProfilePhoto() {
-        if (_profileImageUri != null) {
-            try {
-                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(
-                        getContext().getResources(), getContext().getContentResolver().openInputStream(_profileImageUri)));
-                if (_profilePic.get() != null)
-                    _profilePicView.setProfilePic(_profilePic.get());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            return;
-        }
-
-        if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
+        if (_profile == null || _profilePhotoClient == null || !_profilePhotoClient.isConnected()) {
             _profilePicView.setProfilePic(R.drawable.missing_circle);
             return;
         }
 
         if (_profilePic == null || _profilePic.get() == null) {
             _profilePicView.setProfilePic(R.drawable.missing_circle);
-            if (!misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
-                PhotoClient.get(getContext(), _profile.getPhoto().getLarge(), true, false);
-            }
+            ProfilePhotoClient.get(App.get());
         } else {
             _profilePicView.setProfilePic(_profilePic.get());
         }
-    }
-
-    private void subPhoto() {
-        if (_profile == null)
-            return;
-
-        if (_profile.getPhoto() == null)
-            return;
-
-        if (misc.isEmptyOrNull(_profile.getPhoto().getLarge()))
-            return;
-
-        _photoClient.subGet(_profile.getPhoto().getLarge(), true, false);
     }
 
     /*-*********************************-*/
@@ -304,49 +242,32 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onGet(Profile profile, boolean failed) {
             if (profile != null) {
-                _profilePic = null;
                 _profile = profile;
-
-                if (_profilePicView != null) {
-                    _profilePicView.setProfilePic(R.drawable.missing_circle);
-                }
 
                 populateUi();
             }
         }
     };
 
-    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
+    private final ProfilePhotoClient.Listener _profilePhotoClient_listener = new ProfilePhotoClient.Listener() {
         @Override
-        public void onConnected() {
-            subPhoto();
+        public ProfilePhotoClient getClient() {
+            return _profilePhotoClient;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
-            if (drawable == null || url == null || failed)
-                return;
+        public boolean getProfileImage(Uri uri) {
+            if (_profileImageUri == null
+                    || !_profileImageUri.toString().equals(uri.toString())) {
+                _profileImageUri = uri;
+                return true;
+            }
+            return false;
+        }
 
-            if (_profile.getPhoto() == null
-                    || misc.isEmptyOrNull(_profile.getPhoto().getLarge())
-                    || !url.equals(_profile.getPhoto().getLarge()))
-                return;
-
+        @Override
+        public void onProfileImage(BitmapDrawable drawable) {
             _profilePic = new WeakReference<>((Drawable) drawable);
-            addProfilePhoto();
-        }
-    };
-
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
-        @Override
-        public void onConnected() {
-            _fileCacheClient.subFileCache();
-        }
-
-        @Override
-        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
-            _profilePic = null;
-            _profileImageUri = uri;
             addProfilePhoto();
         }
     };

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -420,7 +421,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
                     return _picCache.get(turl).get();
                 } else {
-                    _photoClient.subGet(url, circle, false);
                     PhotoClient.get(App.get(), url, circle, false);
                 }
                 return null;
@@ -436,7 +436,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
                     return _picCache.get(turl).get();
                 } else {
-                    _photoClient.subGet(url, circle, false);
                     PhotoClient.get(App.get(), url, circle, false);
                 }
                 return null;
@@ -524,33 +523,43 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
         @Override
-        public void onConnected() {
+        public PhotoClient getClient() {
+            return _photoClient;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
-            if (drawable == null || url == null || failed)
+        public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
+        }
+
+        @Override
+        public boolean doGetImage(String sourceUri, boolean isCircle) {
+            return isCircle;
+        }
+
+        @Override
+        public void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success) {
+            if (drawable == null || sourceUri == null || !success)
                 return;
 
-            if (url.contains("?"))
-                url = url.substring(0, url.lastIndexOf('?'));
+            if (sourceUri.contains("?"))
+                sourceUri = sourceUri.substring(0, sourceUri.lastIndexOf('?'));
 
             synchronized (_picCache) {
-                _picCache.put(url, new WeakReference<>((Drawable) drawable));
+                _picCache.put(sourceUri, new WeakReference<>((Drawable) drawable));
             }
 
             Log.v(TAG, "PhotoClient.Listener.onGet");
             for (int i = 0; i < _reviewList.getChildCount(); i++) {
                 View v = _reviewList.getChildAt(i);
                 if (v instanceof PhotoReceiver) {
-                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                    ((PhotoReceiver) v).setPhoto(sourceUri, drawable);
                 }
             }
 
             for (int i = 0; i < _filesLayout.getChildCount(); i++) {
                 View v = _filesLayout.getChildAt(i);
                 if (v instanceof PhotoReceiver) {
-                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                    ((PhotoReceiver) v).setPhoto(sourceUri, drawable);
                 }
             }
         }

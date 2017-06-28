@@ -163,10 +163,17 @@ public class GetFileDialog extends SimpleDialog {
             } else {
                 int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
                 File f = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                Log.v(TAG, "GetFileDialog " + f.toString());
                 _sourceUri = App.getUriFromFile(f);
+                Log.v(TAG, "GetFileDialog " + _sourceUri.toString());
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, _sourceUri);
-                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                List<ResolveInfo> resolveInfos = getContext().getPackageManager().queryIntentActivities(intent, 0);
+                for (ResolveInfo resolveInfo : resolveInfos) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    getContext().grantUriPermission(packageName, _sourceUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
 
                 if (grant == PackageManager.PERMISSION_DENIED) {
                     _permissionsClient = new PermissionsClient(_permissionsClient_listener);

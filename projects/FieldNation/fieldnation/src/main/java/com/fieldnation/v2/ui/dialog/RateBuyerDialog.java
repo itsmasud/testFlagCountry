@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -247,7 +248,6 @@ public class RateBuyerDialog extends FullScreenDialog {
             String url = _workOrder.getCompany().getPhoto();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
-                _photos.subGet(url, true, false);
             }
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
@@ -328,18 +328,31 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
-        public void onConnected() {
-            populateUi();
+        public PhotoClient getClient() {
+            return _photos;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
-            if (bitmapDrawable == null) {
+        public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
+        }
+
+        @Override
+        public boolean doGetImage(String sourceUri, boolean isCircle) {
+            return isCircle
+                    && _workOrder != null
+                    && _workOrder.getCompany() != null
+                    && !misc.isEmptyOrNull(_workOrder.getCompany().getPhoto())
+                    && sourceUri.equals(_workOrder.getCompany().getPhoto());
+        }
+
+        @Override
+        public void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success) {
+            if (drawable == null) {
                 _picView.setProfilePic(R.drawable.missing_circle);
                 return;
             }
 
-            Drawable pic = bitmapDrawable;
+            Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
         }
@@ -348,10 +361,8 @@ public class RateBuyerDialog extends FullScreenDialog {
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            WorkorderClient.sendRating(App.get(), _workOrder.getId(),
-                    _goldStar, _hasSelectedScopeRating == true ? 1 : 0,
-                    _hasSelectedRespectRating == true ? 1 : 0, _commentText);
+            WorkorderClient.sendRating(App.get(), _workOrder.getId(), _goldStar,
+                    _hasSelectedScopeRating == true ? 1 : 0, _hasSelectedRespectRating == true ? 1 : 0, _commentText);
             dismiss(true);
         }
     };

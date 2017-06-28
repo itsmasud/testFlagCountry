@@ -15,6 +15,8 @@ import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 /**
@@ -209,13 +211,15 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     }
 
     // returns the deliverable details
-/*
     public static void uploadProfilePhoto(Context context, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto file");
-        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
-        uploadProfilePhoto(context, upFile, filename, filePath, profileId);
+        try {
+            StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new FileInputStream(new File(filePath)), "uploadTemp.dat");
+            uploadProfilePhoto(context, upFile, filename, filePath, profileId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
-*/
 
     public static void uploadProfilePhoto(Context context, InputStream inputStream, String filename, String filePath, long profileId) {
         Log.v(TAG, "uploadProfilePhoto uri");
@@ -229,18 +233,16 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         if (upFile == null) {
             ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
             Log.logException(new Exception("PA-332 - UpFile is null"));
-            // TODO ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
+            ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
             return;
         }
 
 
-        if (upFile.isUri()) {
-            if (upFile.size() > 100000000) { // 100 MB?
-                StoredObject.delete(context, upFile);
-                ToastClient.toast(context, "File is too long: " + filePath, Toast.LENGTH_LONG);
-                // TODO ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
-                return;
-            }
+        if (upFile.size() > 100000000) { // 100 MB?
+            StoredObject.delete(context, upFile);
+            ToastClient.toast(context, "File is too long: " + filePath, Toast.LENGTH_LONG);
+            ProfileDispatch.uploadProfilePhoto(context, filePath, false, true);
+            return;
         }
 
 /* This will dump the file into Downloads/FieldNation for debugging purposes.
