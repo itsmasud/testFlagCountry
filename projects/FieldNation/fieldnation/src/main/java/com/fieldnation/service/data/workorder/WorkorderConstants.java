@@ -42,7 +42,6 @@ public interface WorkorderConstants {
 
     String PARAM_LIST_SELECTOR = "PARAM_LIST_SELECTOR";
     String PARAM_PAGE = "PARAM_PAGE";
-    String PARAM_LOCAL_PATH = "PARAM_LOCAL_PATH";
     String PARAM_URI = "PARAM_URI";
     String PARAM_FILE_NAME = "PARAM_FILE_NAME";
     String PARAM_FILE_DESCRIPTION = "PARAM_FILE_DESCRIPTION";

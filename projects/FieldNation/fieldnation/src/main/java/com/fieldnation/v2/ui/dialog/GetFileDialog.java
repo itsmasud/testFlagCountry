@@ -49,8 +49,7 @@ public class GetFileDialog extends SimpleDialog {
     // Data
     private List<GetFilePackage> _activityList = new LinkedList<>();
     private Set<String> _packages = new HashSet<>();
-    private File _tempFile;
-    private Uri _tempUri;
+    private Uri _sourceUri;
     private Intent _cameraIntent = null;
 
     // Clients
@@ -100,22 +99,16 @@ public class GetFileDialog extends SimpleDialog {
     public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
 
-        if (savedState.containsKey("_tempFile"))
-            _tempFile = new File(savedState.getString("_tempFile"));
-
-        if (savedState.containsKey("_tempUri"))
-            _tempUri = Uri.parse(savedState.getString("_tempUri"));
-
+        if (savedState.containsKey("_sourceUri"))
+            _sourceUri = savedState.getParcelable("_sourceUri");
         if (savedState.containsKey("_cameraIntent"))
             _cameraIntent = savedState.getParcelable("_cameraIntent");
     }
 
     @Override
     public void onSaveDialogState(Bundle outState) {
-        if (_tempFile != null)
-            outState.putString("_tempFile", _tempFile.getAbsolutePath());
-        if (_tempUri != null)
-            outState.putString("_tempUri", _tempUri.toString());
+        if (_sourceUri != null)
+            outState.putParcelable("_sourceUri", _sourceUri);
         if (_cameraIntent != null)
             outState.putParcelable("_cameraIntent", _cameraIntent);
     }
@@ -169,8 +162,18 @@ public class GetFileDialog extends SimpleDialog {
                 ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
                 int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
-                _tempFile = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(_tempFile));
+                File f = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                Log.v(TAG, "GetFileDialog " + f.toString());
+                _sourceUri = App.getUriFromFile(f);
+                Log.v(TAG, "GetFileDialog " + _sourceUri.toString());
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, _sourceUri);
+                intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+                List<ResolveInfo> resolveInfos = getContext().getPackageManager().queryIntentActivities(intent, 0);
+                for (ResolveInfo resolveInfo : resolveInfos) {
+                    String packageName = resolveInfo.activityInfo.packageName;
+                    getContext().grantUriPermission(packageName, _sourceUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                }
 
                 if (grant == PackageManager.PERMISSION_DENIED) {
                     _permissionsClient = new PermissionsClient(_permissionsClient_listener);
@@ -234,12 +237,11 @@ public class GetFileDialog extends SimpleDialog {
             }
 
             try {
-                List<FileUriIntent> fileUris = new LinkedList<>();
+                List<UriIntent> fileUris = new LinkedList<>();
 
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
-                    _tempUri = null;
-                    fileUris.add(new FileUriIntent(_tempFile));
+                    fileUris.add(new UriIntent(_sourceUri));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();
@@ -250,32 +252,23 @@ public class GetFileDialog extends SimpleDialog {
                             Uri uri = null;
 
                             if (count == 1) {
-                                _tempUri = data.getData();
-                                _tempFile = null;
-                                fileUris.add(new FileUriIntent(data.getData()));
+                                _sourceUri = null;// TODO not sure this is corrects
+                                fileUris.add(new UriIntent(data.getData()));
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
-                                    fileUris.add(new FileUriIntent(new Intent().setData(uri)));
+                                    fileUris.add(new UriIntent(new Intent().setData(uri)));
                                 }
                             }
                         } else {
                             Log.v(TAG, "Single local/ non-local file upload");
-                            _tempUri = data.getData();
-                            if (_tempUri != null) {
-                                fileUris.add(new FileUriIntent(_tempUri));
-                            } else if (_tempFile != null) {
-                                fileUris.add(new FileUriIntent(_tempFile));
-                            }
+                            if (data.getData() != null) _sourceUri = data.getData();
+                            if (_sourceUri != null) fileUris.add(new UriIntent(_sourceUri));
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
-                        _tempUri = data.getData();
-                        if (_tempUri != null) {
-                            fileUris.add(new FileUriIntent(_tempUri));
-                        } else if (_tempFile != null) {
-                            fileUris.add(new FileUriIntent(_tempFile));
-                        }
+                        if (data.getData() != null) _sourceUri = data.getData();
+                        if (_sourceUri != null) fileUris.add(new UriIntent(_sourceUri));
                     }
                 }
 
@@ -289,20 +282,15 @@ public class GetFileDialog extends SimpleDialog {
         }
     };
 
-    public static class FileUriIntent {
+    public static class UriIntent {
         public Uri uri = null;
-        public File file = null;
         public Intent intent = null;
 
-        private FileUriIntent(File file) {
-            this.file = file;
-        }
-
-        private FileUriIntent(Uri uri) {
+        private UriIntent(Uri uri) {
             this.uri = uri;
         }
 
-        private FileUriIntent(Intent intent) {
+        private UriIntent(Intent intent) {
             this.intent = intent;
         }
     }
@@ -311,13 +299,13 @@ public class GetFileDialog extends SimpleDialog {
     /*-         File Listener           -*/
     /*-***********************************/
     public interface OnFileListener {
-        void onFile(List<FileUriIntent> fileResult);
+        void onFile(List<UriIntent> fileResult);
     }
 
     private static KeyedDispatcher<OnFileListener> _onFileDispatcher = new KeyedDispatcher<OnFileListener>() {
         @Override
         public void onDispatch(OnFileListener listener, Object... parameters) {
-            listener.onFile((List<FileUriIntent>) parameters[0]);
+            listener.onFile((List<UriIntent>) parameters[0]);
         }
     };
 

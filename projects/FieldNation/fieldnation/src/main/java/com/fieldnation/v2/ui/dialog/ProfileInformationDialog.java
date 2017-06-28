@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -23,16 +22,13 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.ImageUtils;
-import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.profileimage.ProfilePhotoClient;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.v2.ui.GetFileIntent;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
@@ -62,10 +58,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     // Data
     private Profile _profile;
-    private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
-    private FileCacheClient _fileCacheClient;
-    private String _tempFileName = null;
+    private Uri _currentUri;
+    private ProfilePhotoClient _profilePhotoClient;
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -103,6 +98,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
     public void onStart() {
         super.onStart();
         Log.v(TAG, "onStart");
+
+        _profilePhotoClient = new ProfilePhotoClient(_profilePhotoClient_listener);
+        _profilePhotoClient.connect(App.get());
     }
 
     @Override
@@ -112,12 +110,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _picView.setOnClickListener(_pic_onClick);
-
-        _photos = new PhotoClient(_photo_listener);
-        _photos.connect(App.get());
-
-        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
-        _fileCacheClient.connect(App.get());
 
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         PhotoEditDialog.addOnSaveListener(DIALOG_EDIT_PHOTO, _photoEdit_onSave);
@@ -131,9 +123,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     public void onPause() {
         super.onPause();
         Log.v(TAG, "onPause");
-        if (_photos != null) _photos.disconnect(App.get());
-
-        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         PhotoEditDialog.removeOnSaveListener(DIALOG_EDIT_PHOTO, _photoEdit_onSave);
@@ -142,22 +131,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        if (_profilePhotoClient != null) _profilePhotoClient.disconnect(App.get());
         super.onStop();
         Log.v(TAG, "onStop");
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        if (_tempFileName != null)
-            outState.putString("_tempFileName", _tempFileName);
-    }
-
-    @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        if (savedState != null) {
-            if (savedState.containsKey("_tempFileName"))
-                _tempFileName = savedState.getString("_tempFileName");
-        }
     }
 
     @Override
@@ -219,22 +195,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
             _zipCodeEditText.setText(_profile.getZip());
 
 
-        if (_tempFileName != null) {
-            try {
-                _profilePic = new WeakReference<>((Drawable) new BitmapDrawable(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(_tempFileName, 400))));
-                if (_profilePic.get() != null)
-                    _picView.setProfilePic(_profilePic.get());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-
-        } else if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+        if (_profilePhotoClient.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _profile.getPhoto().getLarge();
-            if (!misc.isEmptyOrNull(url)) {
-                PhotoClient.get(App.get(), url, true, false);
-                _photos.subGet(url, true, false);
-            }
+            ProfilePhotoClient.get(App.get());
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
         }
@@ -250,71 +213,75 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
-    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
+    private final ProfilePhotoClient.Listener _profilePhotoClient_listener = new ProfilePhotoClient.Listener() {
+
         @Override
         public void onConnected() {
+            super.onConnected();
             populateUi();
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
-            if (bitmapDrawable == null) {
-                _picView.setProfilePic(R.drawable.missing_circle);
-                return;
-            }
+        public ProfilePhotoClient getClient() {
+            return _profilePhotoClient;
+        }
 
-            Drawable pic = bitmapDrawable;
-            _profilePic = new WeakReference<>(pic);
-            _picView.setProfilePic(pic);
+        @Override
+        public boolean getProfileImage(Uri uri) {
+            if (_currentUri == null || !_currentUri.toString().equals(uri.toString())) {
+                return true;
+            }
+            return false;
+        }
+
+        @Override
+        public void onProfileImage(BitmapDrawable drawable) {
+            _profilePic = new WeakReference<Drawable>(drawable);
+            _picView.setProfilePic(drawable);
         }
     };
 
     private final PhotoEditDialog.OnSaveListener _photoEdit_onSave = new PhotoEditDialog.OnSaveListener() {
         @Override
-        public void onSave(String name, String path, Uri uri) {
-            if (path != null) {
-                FileCacheClient.cacheFileUpload(App.get(), Uri.fromFile(new File(path)));
-                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), path, name);
-            } else if (uri != null) {
-                FileCacheClient.cacheFileUpload(App.get(), uri);
-                ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), name, uri);
+        public void onSave(String name, Uri uri) {
+            if (uri != null) {
+                FileCacheClient.cacheFileUpload(App.get(), "", uri);
+                ProfilePhotoClient.upload(App.get(), uri);
+            } else {
+                // TODO need to show a toast?
             }
         }
     };
 
     private final PhotoEditDialog.OnCancelListener _photoEdit_onCancel = new PhotoEditDialog.OnCancelListener() {
         @Override
-        public void onCancel(String name, String path, Uri uri) {
-
+        public void onCancel(String name, Uri uri) {
         }
     };
 
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
             if (fileResult.size() == 0)
                 return;
 
             if (fileResult.size() > 1)
                 return;
 
-            GetFileDialog.FileUriIntent fui = fileResult.get(0);
+            GetFileDialog.UriIntent fui = fileResult.get(0);
 
-            if (fui.file != null) {
-                Log.v(TAG, "Image uploading taken by camera");
-                //FileCacheClient.cacheFileUpload(App.get(), Uri.fromFile(fui.file));
-                //ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), fui.file.getAbsolutePath(), fui.file.getName());
-                PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.file.getAbsolutePath(), fui.file.getName());
-            } else if (fui.uri != null) {
+            if (fui.uri != null) {
                 Log.v(TAG, "Single local/ non-local file upload");
 
                 String mime = App.get().getContentResolver().getType(fui.uri);
                 if (mime != null && mime.contains("image")) {
                     PhotoEditDialog.show(App.get(), DIALOG_EDIT_PHOTO, fui.uri, FileUtils.getFileNameFromUri(App.get(), fui.uri));
                 } else {
-                    FileCacheClient.cacheFileUpload(App.get(), fui.uri);
+                    FileCacheClient.cacheFileUpload(App.get(), null, fui.uri);
                     ProfileClient.uploadProfilePhoto(App.get(), _profile.getUserId(), FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 }
+            } else {
+                // TODO toast?
             }
         }
     };
@@ -335,20 +302,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
             } else {
                 GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
             }
-        }
-    };
-
-    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
-        @Override
-        public void onConnected() {
-            _fileCacheClient.subFileCache();
-        }
-
-        @Override
-        public void onFileCacheEnd(Uri uri, String filename) {
-            _profilePic = null;
-            _tempFileName = filename;
-            populateUi();
         }
     };
 

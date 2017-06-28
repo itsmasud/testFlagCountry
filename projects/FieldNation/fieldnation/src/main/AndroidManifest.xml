@@ -339,6 +339,11 @@
             android:exported="false"
             android:process=":frontside" />
 
+        <service
+            android:name=".service.profileimage.ProfilePhotoService"
+            android:exported="false"
+            android:process=":frontside" />
+
         <provider
             android:name=".StubProvider"
             android:authorities="${applicationId}.provider"

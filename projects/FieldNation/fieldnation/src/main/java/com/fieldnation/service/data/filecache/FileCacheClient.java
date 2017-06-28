@@ -32,11 +32,10 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
     }
 
     public boolean subFileCache() {
-        return register(TOPIC_ID_CACHE_FILE_START)
-                && register(TOPIC_ID_CACHE_FILE_END);
+        return register(TOPIC_ID_CACHE_FILE_START) && register(TOPIC_ID_CACHE_FILE_END);
     }
 
-    public static void cacheFileUpload(Context context, Uri uri) {
+    public static void cacheFileUpload(Context context, final String tag, Uri uri) {
         Log.v(STAG, "cacheFileUpload");
         new AsyncTaskEx<Object, Object, Object>() {
             @Override
@@ -44,7 +43,7 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
                 Context context = (Context) params[0];
                 Uri uri = (Uri) params[1];
 
-                cacheFileStart(context, uri);
+                cacheFileStart(context, tag, uri);
                 StoredObject upFile = null;
                 try {
                     upFile = StoredObject.put(context, App.getProfileId(), "CacheFile", uri.toString(),
@@ -53,28 +52,30 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
                     Log.v(STAG, ex);
                 } finally {
                     if (upFile != null)
-                        cacheFileEnd(context, uri, upFile.getFile().toString());
+                        cacheFileEnd(context, tag, upFile.getUri(), true);
                     else
-                        cacheFileEnd(context, uri, null);
+                        cacheFileEnd(context, tag, uri, false);
                 }
                 return null;
             }
         }.executeEx(context, uri);
     }
 
-    private static void cacheFileStart(Context context, Uri uri) {
+    private static void cacheFileStart(Context context, String tag, Uri uri) {
         Log.v(STAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
+        bundle.putString(PARAM_TAG, tag);
 
         TopicService.dispatchEvent(context, TOPIC_ID_CACHE_FILE_START, bundle, Sticky.TEMP);
     }
 
-    private static void cacheFileEnd(Context context, Uri uri, String file) {
+    private static void cacheFileEnd(Context context, String tag, Uri uri, boolean success) {
         Log.v(STAG, "cacheFileStart");
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
-        bundle.putString(PARAM_FILE, file);
+        bundle.putString(PARAM_TAG, tag);
+        bundle.putBoolean(PARAM_SUCCESS, success);
 
         TopicService.dispatchEvent(context, TOPIC_ID_CACHE_FILE_END, bundle, Sticky.TEMP);
     }
@@ -88,22 +89,29 @@ public class FileCacheClient extends TopicClient implements FileCacheConstants {
             Log.v(STAG, "topicId " + topicId);
 
             if (topicId.startsWith(TOPIC_ID_CACHE_FILE_START)) {
-                onFileCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
+                Bundle bundle = (Bundle) payload;
+                onFileCacheStart(
+                        bundle.getString(PARAM_TAG),
+                        (Uri) bundle.getParcelable(PARAM_URI));
             } else if (topicId.startsWith(TOPIC_ID_CACHE_FILE_END)) {
                 try {
+                    Bundle bundle = (Bundle) payload;
                     onFileCacheEnd(
-                            (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
-                            ((Bundle) payload).getString(PARAM_FILE));
+                            bundle.getString(PARAM_TAG),
+                            (Uri) bundle.getParcelable(PARAM_URI),
+                            bundle.getBoolean(PARAM_SUCCESS)
+                    );
+
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        public void onFileCacheStart(Uri uri) {
+        public void onFileCacheStart(String tag, Uri uri) {
         }
 
-        public void onFileCacheEnd(Uri uri, String filename) {
+        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
         }
     }
 }
