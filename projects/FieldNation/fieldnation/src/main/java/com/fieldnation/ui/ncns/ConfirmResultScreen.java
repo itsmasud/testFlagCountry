@@ -239,15 +239,15 @@ public class ConfirmResultScreen extends RelativeLayout {
                 }
 
                 _refreshView.refreshComplete();
+            } else {
+                _adapter.refreshAll();
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _refreshView.startRefreshing();
+                    }
+                });
             }
-
-            _adapter.refreshAll();
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    _refreshView.startRefreshing();
-                }
-            });
         }
     };
 
