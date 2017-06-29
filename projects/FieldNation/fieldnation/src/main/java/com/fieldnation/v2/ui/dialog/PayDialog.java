@@ -3,11 +3,13 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -15,18 +17,18 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayAdditional;
 import com.fieldnation.v2.data.model.PayBase;
 
-public class PayDialog extends SimpleDialog {
+public class PayDialog extends FullScreenDialog {
     private static String TAG = "PayDialog";
 
     private static final double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
@@ -56,6 +58,8 @@ public class PayDialog extends SimpleDialog {
     private static final int MODE_BLENDED = 3;
 
     // UI
+    private Toolbar _toolbar;
+    private ActionMenuItemView _finishMenu;
     private HintSpinner _typeSpinner;
 
     private LinearLayout _fixedLayout;
@@ -78,9 +82,6 @@ public class PayDialog extends SimpleDialog {
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
 
-    private Button _okButton;
-    private Button _cancelButton;
-
     // Data
     private Pay _pay;
     private boolean _showExplanation;
@@ -97,35 +98,40 @@ public class PayDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_pay, container, false);
 
-        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle(R.string.change_pay);
+
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        //_finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+        _finishMenu.setText(R.string.btn_submit);
+
+        _typeSpinner = v.findViewById(R.id.type_spinner);
 
         // fixed
-        _fixedLayout = (LinearLayout) v.findViewById(R.id.fixed_layout);
-        _fixedEditText = (EditText) v.findViewById(R.id.fixed_edittext);
+        _fixedLayout = v.findViewById(R.id.fixed_layout);
+        _fixedEditText = v.findViewById(R.id.fixed_edittext);
 
         // hourly
-        _hourlyLayout = (LinearLayout) v.findViewById(R.id.hourly_layout);
-        _hourlyRateEditText = (EditText) v.findViewById(R.id.hourlyrate_edittext);
-        _maxHoursEditText = (EditText) v.findViewById(R.id.maxhours_edittext);
+        _hourlyLayout = v.findViewById(R.id.hourly_layout);
+        _hourlyRateEditText = v.findViewById(R.id.hourlyrate_edittext);
+        _maxHoursEditText = v.findViewById(R.id.maxhours_edittext);
 
         // per device
-        _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
-        _deviceRateEditText = (EditText) v.findViewById(R.id.devicerate_edittext);
-        _maxDevicesEditText = (EditText) v.findViewById(R.id.maxdevices_edittext);
+        _devicesLayout = v.findViewById(R.id.devices_layout);
+        _deviceRateEditText = v.findViewById(R.id.devicerate_edittext);
+        _maxDevicesEditText = v.findViewById(R.id.maxdevices_edittext);
 
         // blended
-        _blendedLayout = (LinearLayout) v.findViewById(R.id.blended_layout);
-        _blendedFixedRateEditText = (EditText) v.findViewById(R.id.blendedFixedRate_edittext);
-        _blendedFixedMaxHoursEditText = (EditText) v.findViewById(R.id.blendedFixedMaxHours_edittext);
-        _extraHourlyEditText = (EditText) v.findViewById(R.id.extrahours_edittext);
-        _extraMaxHoursEditText = (EditText) v.findViewById(R.id.extramaxhours_edittext);
+        _blendedLayout = v.findViewById(R.id.blended_layout);
+        _blendedFixedRateEditText = v.findViewById(R.id.blendedFixedRate_edittext);
+        _blendedFixedMaxHoursEditText = v.findViewById(R.id.blendedFixedMaxHours_edittext);
+        _extraHourlyEditText = v.findViewById(R.id.extrahours_edittext);
+        _extraMaxHoursEditText = v.findViewById(R.id.extramaxhours_edittext);
 
-        _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
-        _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
-
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _explanationLayout = v.findViewById(R.id.explanation_layout);
+        _explanationEditText = v.findViewById(R.id.explanation_edittext);
 
         return v;
     }
@@ -133,10 +139,10 @@ public class PayDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
-        _typeSpinner.setOnItemSelectedListener(_type_selected);
-        _okButton.setOnClickListener(_ok_onClick);
-        _cancelButton.setOnClickListener(_cancel_onClick);
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
+        _typeSpinner.setOnItemSelectedListener(_type_selected);
     }
 
     @Override
@@ -414,32 +420,32 @@ public class PayDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(View view) {
             dismiss(true);
             _onNothingDispatcher.dispatch(getUid());
         }
     };
 
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
-        public void onClick(View v) {
+        public boolean onMenuItemClick(MenuItem item) {
             if (!isValidAmount()) {
                 ToastClient.toast(App.get(), App.get().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
-                return;
+                return false;
             }
 
             try {
                 _onCompleteDispatcher.dispatch(getUid(), makePay(), _explanationEditText.getText().toString());
             } catch (Exception ex) {
                 ToastClient.toast(App.get(), R.string.please_enter_a_value_greater_than, Toast.LENGTH_SHORT);
-                return;
+                return false;
             }
             dismiss(true);
+            return true;
         }
     };
-
 
     public static void show(Context context, String uid, Pay pay, boolean showExplanation) {
         Bundle params = new Bundle();

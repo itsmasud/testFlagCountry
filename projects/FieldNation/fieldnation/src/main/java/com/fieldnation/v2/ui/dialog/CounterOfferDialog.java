@@ -86,25 +86,25 @@ public class CounterOfferDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_v2_counter_offer, container, false);
 
-        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar = v.findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
         _toolbar.setTitle(App.get().getString(R.string.counter_offer));
 
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
-        _paymentView = (PaymentCoView) v.findViewById(R.id.payment_view);
-        _scheduleView = (ScheduleCoView) v.findViewById(R.id.schedule_view);
+        _paymentView = v.findViewById(R.id.payment_view);
+        _scheduleView = v.findViewById(R.id.schedule_view);
 
-        _expensesList = (LinearLayout) v.findViewById(R.id.expenses_list);
-        _addExpense = (IconFontTextView) v.findViewById(R.id.add_expense);
+        _expensesList = v.findViewById(R.id.expenses_list);
+        _addExpense = v.findViewById(R.id.add_expense);
 
-        _reasonView = (ReasonCoView) v.findViewById(R.id.reasons_view);
+        _reasonView = v.findViewById(R.id.reasons_view);
 
-        _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
+        _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
 
-        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
+        _refreshView = v.findViewById(R.id.refresh_view);
 
         return v;
     }

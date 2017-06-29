@@ -79,32 +79,32 @@ public class PaymentCoView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _payTypeTitleTextView = (TextView) findViewById(R.id.pay_type_title_textview);
+        _payTypeTitleTextView = findViewById(R.id.pay_type_title_textview);
 
-        _typeSpinner = (HintSpinner) findViewById(R.id.type_spinner);
+        _typeSpinner = findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemSelectedListener(_type_selected);
         getTypeSpinner();
 
         // fixed
-        _fixedLayout = (LinearLayout) findViewById(R.id.fixed_layout);
-        _fixedEditText = (EditText) findViewById(R.id.fixed_edittext);
+        _fixedLayout = findViewById(R.id.fixed_layout);
+        _fixedEditText = findViewById(R.id.fixed_edittext);
 
         // hourly
-        _hourlyLayout = (LinearLayout) findViewById(R.id.hourly_layout);
-        _hourlyRateEditText = (EditText) findViewById(R.id.hourlyrate_edittext);
-        _maxHoursEditText = (EditText) findViewById(R.id.maxhours_edittext);
+        _hourlyLayout = findViewById(R.id.hourly_layout);
+        _hourlyRateEditText = findViewById(R.id.hourlyrate_edittext);
+        _maxHoursEditText = findViewById(R.id.maxhours_edittext);
 
         // per device
-        _devicesLayout = (LinearLayout) findViewById(R.id.devices_layout);
-        _deviceRateEditText = (EditText) findViewById(R.id.devicerate_edittext);
-        _maxDevicesEditText = (EditText) findViewById(R.id.maxdevices_edittext);
+        _devicesLayout = findViewById(R.id.devices_layout);
+        _deviceRateEditText = findViewById(R.id.devicerate_edittext);
+        _maxDevicesEditText = findViewById(R.id.maxdevices_edittext);
 
         // blended
-        _blendedLayout = (LinearLayout) findViewById(R.id.blended_layout);
-        _blendedFixedRateEditText = (EditText) findViewById(R.id.blendedFixedRate_edittext);
-        _blendedFixedMaxHoursEditText = (EditText) findViewById(R.id.blendedFixedMaxHours_edittext);
-        _extraHourlyEditText = (EditText) findViewById(R.id.extrahours_edittext);
-        _extraMaxHoursEditText = (EditText) findViewById(R.id.extramaxhours_edittext);
+        _blendedLayout = findViewById(R.id.blended_layout);
+        _blendedFixedRateEditText = findViewById(R.id.blendedFixedRate_edittext);
+        _blendedFixedMaxHoursEditText = findViewById(R.id.blendedFixedMaxHours_edittext);
+        _extraHourlyEditText = findViewById(R.id.extrahours_edittext);
+        _extraMaxHoursEditText = findViewById(R.id.extramaxhours_edittext);
 
         populateUi();
     }
