@@ -207,7 +207,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         };
         _expensesList.postDelayed(r, new Random().nextInt(100));
 
-        ScheduleDialog.show(App.get(), "", _workOrder.getSchedule());
+        ExpenseDialog.show(App.get(), "", false);
     }
 
     /*-*********************************-*/

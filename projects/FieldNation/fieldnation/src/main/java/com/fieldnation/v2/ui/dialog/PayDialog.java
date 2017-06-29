@@ -105,7 +105,7 @@ public class PayDialog extends FullScreenDialog {
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         //_finishMenu.setTitle(App.get().getString(R.string.btn_submit));
-        _finishMenu.setText(R.string.btn_submit);
+        _finishMenu.setText(R.string.btn_ok);
 
         _typeSpinner = v.findViewById(R.id.type_spinner);
 

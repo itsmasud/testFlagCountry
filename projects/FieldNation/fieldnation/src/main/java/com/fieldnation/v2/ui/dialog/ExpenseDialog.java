@@ -2,14 +2,16 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,25 +20,25 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.model.ExpenseCategories;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 
-public class ExpenseDialog extends SimpleDialog {
+public class ExpenseDialog extends FullScreenDialog {
     private static final String TAG = "ExpenseDialog";
 
     // State
     private static final String STATE_CATEGORY_SELECTION = "STATE_CATEGORY_SELECTION";
 
     // Ui
-    private Button _okButton;
-    private Button _cancelButton;
+    private Toolbar _toolbar;
+    private ActionMenuItemView _finishMenu;
     private EditText _amountEditText;
     private EditText _descriptionEditText;
     private HintSpinner _categorySpinner;
@@ -60,12 +62,18 @@ public class ExpenseDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_expense, container, false);
 
-        _amountEditText = (EditText) v.findViewById(R.id.amount_edittext);
-        _categoryLayout = (LinearLayout) v.findViewById(R.id.category_layout);
-        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-        _categorySpinner = (HintSpinner) v.findViewById(R.id.category_spinner);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle("Expense");
+
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu.setText(R.string.btn_ok);
+
+        _amountEditText = v.findViewById(R.id.amount_edittext);
+        _categoryLayout = v.findViewById(R.id.category_layout);
+        _descriptionEditText = v.findViewById(R.id.description_edittext);
+        _categorySpinner = v.findViewById(R.id.category_spinner);
         _imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         return v;
@@ -81,10 +89,11 @@ public class ExpenseDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
         _amountEditText.setOnEditorActionListener(_oneditor_listener);
         _categorySpinner.setOnItemSelectedListener(_spinner_selected);
-        _okButton.setOnClickListener(_okButton_onClick);
-        _cancelButton.setOnClickListener(_cancelButton_onClick);
     }
 
     @Override
@@ -163,9 +172,9 @@ public class ExpenseDialog extends SimpleDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _cancelButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(View view) {
             dismiss(true);
             _onCancelDispatcher.dispatch(getUid());
         }
@@ -190,27 +199,28 @@ public class ExpenseDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
-        public void onClick(View v) {
+        public boolean onMenuItemClick(MenuItem item) {
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
                 ToastClient.toast(App.get(), R.string.toast_must_enter_description, Toast.LENGTH_LONG);
-                return;
+                return false;
             }
 
             if (misc.isEmptyOrNull(_amountEditText.getText().toString()) || getAmount() < 0.1) {
                 ToastClient.toast(App.get(), R.string.toast_minimum_payable_amount, Toast.LENGTH_SHORT);
-                return;
+                return false;
             }
 
             if (_showCategories && _itemSelectedPosition == -1) {
                 ToastClient.toast(App.get(), R.string.toast_must_select_category, Toast.LENGTH_LONG);
-                return;
+                return false;
             }
 
             _onOkDispatcher.dispatch(getUid(), getDescription(), getAmount(), getCategory());
 
             ExpenseDialog.this.dismiss(true);
+            return true;
         }
     };
 

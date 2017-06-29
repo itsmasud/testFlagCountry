@@ -42,7 +42,7 @@ public class ScheduleDialog extends FullScreenDialog {
         _toolbar.setTitle("Change Schedule");
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
-        _finishMenu.setText(R.string.btn_submit);
+        _finishMenu.setText(R.string.btn_ok);
 
         _scheduleCoView = v.findViewById(R.id.schedule_layout);
 
