@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
@@ -22,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import com.fieldnation.analytics.AnswersWrapper;
@@ -853,4 +855,9 @@ public class App extends Application {
     public static boolean isNcns() {
         return BuildConfig.BUILD_FLAVOR_NAME.equals("NCNS");
     }
+
+    public static Uri getUriFromFile(File file) {
+        return FileProvider.getUriForFile(get(), get().getApplicationContext().getPackageName() + ".provider", file);
+    }
+
 }

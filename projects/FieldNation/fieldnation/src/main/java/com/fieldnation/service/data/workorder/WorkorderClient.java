@@ -22,7 +22,6 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -609,6 +608,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             deliverables            -*/
     /*-*************************************-*/
 
+/*
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
 
@@ -622,7 +622,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_FILE_NAME, filename);
         context.startService(intent);
     }
+*/
 
+/*
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath, String photoDescription) {
         Log.v(STAG, "requestUploadDeliverable");
 
@@ -637,6 +639,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_FILE_DESCRIPTION, photoDescription);
         context.startService(intent);
     }
+*/
 
 
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
@@ -671,11 +674,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
-            public void fileReady(String filename, File file) {
-                uploadDeliverable(context, workorderId, uploadSlotId, filename, file.getPath());
-            }
-
-            @Override
             public void fromUri(String filename, Uri uri) {
                 uploadDeliverable(context, workorderId, uploadSlotId, filename, uri);
             }
@@ -690,11 +688,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data, final String photoDescription) {
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
-            @Override
-            public void fileReady(String filename, File file) {
-                uploadDeliverable(context, workorderId, uploadSlotId, filename, file.getPath(), photoDescription);
-            }
-
             @Override
             public void fromUri(String filename, Uri uri) {
                 uploadDeliverable(context, workorderId, uploadSlotId, filename, uri, photoDescription);

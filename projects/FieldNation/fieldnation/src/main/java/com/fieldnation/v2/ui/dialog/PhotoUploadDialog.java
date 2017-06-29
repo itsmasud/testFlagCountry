@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -36,8 +35,6 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Task;
 
-import java.io.File;
-
 /**
  * @author shoaib.ahmed
  */
@@ -50,6 +47,7 @@ public class PhotoUploadDialog extends SimpleDialog {
     private static final String STATE_DESCRIPTION = "STATE_DESCRIPTION";
     private static final String STATE_PHOTO = "STATE_PHOTO";
     private static final String STATE_HIDE_PHOTO = "STATE_HIDE_PHOTO";
+    private static final String STATE_CACHED_URI = "STATE_CACHED_URI";
 
     // UI
     private ImageView _imageView;
@@ -70,10 +68,10 @@ public class PhotoUploadDialog extends SimpleDialog {
     private Bitmap _bitmap;
     private boolean _hideImageView = false;
     private int _workOrderId = 0;
-    private String _filePath;
-    private Uri _uri;
     private Task _task;
     private AttachmentFolder _slot;
+    private Uri _sourceUri;
+    private Uri _cachedUri = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -83,51 +81,15 @@ public class PhotoUploadDialog extends SimpleDialog {
     }
 
     @Override
-    public void onRestoreDialogState(Bundle savedState) {
-        super.onRestoreDialogState(savedState);
-        if (savedState != null) {
-            if (savedState.containsKey(STATE_NEW_FILE_NAME))
-                _newFileName = savedState.getString(STATE_NEW_FILE_NAME);
-
-            if (savedState.containsKey(STATE_DESCRIPTION))
-                _description = savedState.getString(STATE_DESCRIPTION);
-
-            if (savedState.containsKey(STATE_PHOTO))
-                _bitmap = savedState.getParcelable(STATE_PHOTO);
-
-            if (savedState.containsKey(STATE_FILE_EXTENSION))
-                _extension = savedState.getString(STATE_FILE_EXTENSION);
-
-            if (savedState.containsKey(STATE_HIDE_PHOTO))
-                _hideImageView = savedState.getBoolean(STATE_HIDE_PHOTO);
-        }
-    }
-
-    @Override
-    public void onSaveDialogState(Bundle outState) {
-        if (!misc.isEmptyOrNull(_newFileName))
-            outState.putString(STATE_NEW_FILE_NAME, _newFileName);
-
-        if (!misc.isEmptyOrNull(_description))
-            outState.putString(STATE_DESCRIPTION, _description);
-
-        if (!misc.isEmptyOrNull(_extension))
-            outState.putString(STATE_FILE_EXTENSION, _extension);
-
-        if (_hideImageView)
-            outState.putBoolean(STATE_HIDE_PHOTO, _hideImageView);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_photo_upload, container, false);
 
-        _imageView = (ImageView) v.findViewById(R.id.photo_imageview);
-        _fileNameEditText = (EditText) v.findViewById(R.id.filename_edittext);
-        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
+        _imageView = v.findViewById(R.id.photo_imageview);
+        _fileNameEditText = v.findViewById(R.id.filename_edittext);
+        _descriptionEditText = v.findViewById(R.id.description_edittext);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _progressBar = v.findViewById(R.id.progressBar);
 
         return v;
     }
@@ -153,12 +115,6 @@ public class PhotoUploadDialog extends SimpleDialog {
     }
 
     @Override
-    public void onPause() {
-        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
-        super.onPause();
-    }
-
-    @Override
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
         _originalFileName = payload.getString("fileName");
@@ -173,13 +129,58 @@ public class PhotoUploadDialog extends SimpleDialog {
             _slot = payload.getParcelable("slot");
 
         if (payload.containsKey("uri")) {
-            _uri = (Uri) payload.getParcelable("uri");
-            FileCacheClient.cacheDeliverableUpload(App.get(), _uri);
-        } else if (payload.containsKey("filePath")) {
-            _uri = null;
-            _filePath = payload.getString("filePath");
-            setPhoto(MemUtils.getMemoryEfficientBitmap(_filePath, 400));
+            _sourceUri = payload.getParcelable("uri");
+            FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
         }
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_NEW_FILE_NAME))
+                _newFileName = savedState.getString(STATE_NEW_FILE_NAME);
+
+            if (savedState.containsKey(STATE_DESCRIPTION))
+                _description = savedState.getString(STATE_DESCRIPTION);
+
+            if (savedState.containsKey(STATE_PHOTO))
+                _bitmap = savedState.getParcelable(STATE_PHOTO);
+
+            if (savedState.containsKey(STATE_FILE_EXTENSION))
+                _extension = savedState.getString(STATE_FILE_EXTENSION);
+
+            if (savedState.containsKey(STATE_HIDE_PHOTO))
+                _hideImageView = savedState.getBoolean(STATE_HIDE_PHOTO);
+
+            if (savedState.containsKey(STATE_CACHED_URI)) {
+                _cachedUri = savedState.getParcelable(STATE_CACHED_URI);
+            }
+        }
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (!misc.isEmptyOrNull(_newFileName))
+            outState.putString(STATE_NEW_FILE_NAME, _newFileName);
+
+        if (!misc.isEmptyOrNull(_description))
+            outState.putString(STATE_DESCRIPTION, _description);
+
+        if (!misc.isEmptyOrNull(_extension))
+            outState.putString(STATE_FILE_EXTENSION, _extension);
+
+        if (_hideImageView)
+            outState.putBoolean(STATE_HIDE_PHOTO, _hideImageView);
+
+        if (_cachedUri != null)
+            outState.putParcelable(STATE_CACHED_URI, _cachedUri);
+    }
+
+    @Override
+    public void onPause() {
+        if (_fileCacheClient != null) _fileCacheClient.disconnect(App.get());
+        super.onPause();
     }
 
     public void setPhoto(Bitmap bitmap) {
@@ -254,9 +255,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     attachment.folderId(_task.getAttachments().getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
                     // TODO: API cant take notes with the attachment
-                    if (_filePath != null) {
-                        AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _filePath);
-                    }
+                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -267,9 +266,7 @@ public class PhotoUploadDialog extends SimpleDialog {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_slot.getId()).notes(_description).file(new com.fieldnation.v2.data.model.File().name(_newFileName));
 
-                    if (_filePath != null) {
-                        AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _filePath);
-                    }
+                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, _newFileName, _cachedUri);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                 }
@@ -324,18 +321,13 @@ public class PhotoUploadDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             Intent intent;
-            if (_uri == null) {
+            if (_cachedUri == null) {
                 intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(
-                        FileProvider.getUriForFile(
-                                App.get(),
-                                App.get().getApplicationContext().getPackageName() + ".provider",
-                                new File(_filePath)),
-                        "image/*");
+                intent.setDataAndType(_cachedUri, "image/*");
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             } else {
-                intent = new Intent(Intent.ACTION_VIEW, _uri);
+                intent = new Intent(Intent.ACTION_VIEW, _sourceUri);
             }
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
@@ -352,32 +344,22 @@ public class PhotoUploadDialog extends SimpleDialog {
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            _fileCacheClient.subDeliverableCache();
+            _fileCacheClient.subFileCache();
         }
 
         @Override
-        public void onDeliverableCacheEnd(Uri uri, String filePath) {
-            Log.v(TAG, "onDeliverableCacheEnd " + filePath);
-            Log.v(TAG, "onDeliverableCacheEnd " + uri);
-            Log.v(TAG, "onDeliverableCacheEnd " + _filePath);
-            Log.v(TAG, "onDeliverableCacheEnd " + _uri);
-
-            if (_filePath != null && filePath != null) {
-                if (!_filePath.equals(filePath)) {
-                    Log.v(TAG, "onDeliverableCacheEnd filepath mismatch, skipping");
-                    return;
-                }
+        public void onFileCacheEnd(String tag, Uri uri, boolean success) {
+            if (!tag.equals(_sourceUri.toString())) {
+                Log.v(TAG, "onFileCacheEnd uri mismatch, skipping");
+                return;
             }
 
-            if (_uri != null && uri != null) {
-                if (!_uri.toString().equals(uri.toString())) {
-                    Log.v(TAG, "onDeliverableCacheEnd uri mismatch, skipping");
-                    return;
-                }
+            _cachedUri = uri;
+            try {
+                setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-
-            _filePath = filePath;
-            setPhoto(MemUtils.getMemoryEfficientBitmap(filePath, 400));
         }
     };
 
@@ -391,31 +373,11 @@ public class PhotoUploadDialog extends SimpleDialog {
         Controller.show(context, uid, PhotoUploadDialog.class, params);
     }
 
-    public static void show(Context context, String uid, int workOrderId, Task task, String fileName, String filePath) {
-        Bundle params = new Bundle();
-        params.putInt("workOrderId", workOrderId);
-        params.putString("fileName", fileName);
-        params.putString("filePath", filePath);
-        params.putParcelable("task", task);
-
-        Controller.show(context, uid, PhotoUploadDialog.class, params);
-    }
-
     public static void show(Context context, String uid, int workOrderId, AttachmentFolder slot, String fileName, Uri uri) {
         Bundle params = new Bundle();
         params.putInt("workOrderId", workOrderId);
         params.putString("fileName", fileName);
         params.putParcelable("uri", uri);
-        params.putParcelable("slot", slot);
-
-        Controller.show(context, uid, PhotoUploadDialog.class, params);
-    }
-
-    public static void show(Context context, String uid, int workOrderId, AttachmentFolder slot, String fileName, String filePath) {
-        Bundle params = new Bundle();
-        params.putInt("workOrderId", workOrderId);
-        params.putString("fileName", fileName);
-        params.putString("filePath", filePath);
         params.putParcelable("slot", slot);
 
         Controller.show(context, uid, PhotoUploadDialog.class, params);

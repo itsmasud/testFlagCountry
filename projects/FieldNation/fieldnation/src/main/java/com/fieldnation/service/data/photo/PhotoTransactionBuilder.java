@@ -14,19 +14,19 @@ import com.fieldnation.service.transaction.WebTransactionService;
 public class PhotoTransactionBuilder implements PhotoConstants {
     private static final String TAG = "PhotoTransactionBuilder";
 
-    public static void get(Context context, String objectName, String url, boolean getCircle, boolean isSync) {
+    public static void get(Context context, String objectName, String sourceUrl, boolean getCircle, boolean isSync) {
         try {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET/ProfilePhotoDownload")
-                    .key((isSync ? "Sync/" : "") + objectName + ":" + url)
+                    .key((isSync ? "Sync/" : "") + objectName + ":" + sourceUrl)
                     .priority(Priority.LOW)
                     .listener(PhotoTransactionListener.class)
-                    .listenerParams(PhotoTransactionListener.pGet(url, getCircle))
+                    .listenerParams(PhotoTransactionListener.pGet(sourceUrl, getCircle))
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()
                                     .method("GET")
-                                    .path(url)
+                                    .path(sourceUrl)
                     ).build();
             WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {

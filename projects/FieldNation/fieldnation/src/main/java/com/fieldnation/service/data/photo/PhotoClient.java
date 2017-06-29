@@ -3,16 +3,17 @@ package com.fieldnation.service.data.photo;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 
@@ -20,6 +21,7 @@ import java.util.Hashtable;
  * Created by Michael Carver on 3/12/2015.
  */
 public class PhotoClient extends TopicClient implements PhotoConstants {
+    private static final String STAG = "PhotoClient";
     private final String TAG = UniqueTag.makeTag("PhotoClient");
 
     private static final Hashtable<String, WeakReference<BitmapDrawable>> _pictureCache = new Hashtable<>();
@@ -33,14 +35,21 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
         return TAG;
     }
 
-    public static void get(Context context, String url, boolean getCircle, boolean isSync) {
-        if (misc.isEmptyOrNull(url))
-            return;
+    /**
+     * Gets the image at sourceUrl. Sends the request to PhotoService for lookup in the database or downloading
+     *
+     * @param context    The application context
+     * @param sourceUrl  The URL of the image to look up (must be http or https)
+     * @param makeCircle true if you want the circle crop, false for full image
+     * @param isSync     true if this is a background process
+     */
+    public static void get(Context context, String sourceUrl, boolean makeCircle, boolean isSync) {
+        if (misc.isEmptyOrNull(sourceUrl)) return;
 
         Intent intent = new Intent(context, PhotoService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
-        intent.putExtra(PARAM_CIRCLE, getCircle);
-        intent.putExtra(PARAM_URL, url);
+        intent.putExtra(PARAM_SOURCE_URL, sourceUrl);
+        intent.putExtra(PARAM_IS_CIRCLE, makeCircle);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
@@ -49,81 +58,104 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
         _pictureCache.clear();
     }
 
-    public boolean subGet(boolean getCircle, boolean isSync) {
-        return subGet("", getCircle, isSync);
-    }
-
-    public boolean subGet(String url, boolean getCircle, boolean isSync) {
-        String topicId = TOPIC_ID_GET_PHOTO;
-
-        if (isSync) {
-            topicId += "_SYNC";
-        }
-
-        if (getCircle) {
-            topicId += "/Circle";
-        }
-
-        topicId += url;
-
-        return register(topicId);
-    }
-
     public static abstract class Listener extends TopicClient.Listener {
+
+        @Override
+        public void onConnected() {
+            getClient().register(TOPIC_ID_GET_PHOTO);
+        }
+
+        public abstract PhotoClient getClient();
+
+        /**
+         * Called when a get() operation finishes
+         *
+         * @param sourceUri The original URL used to get the file
+         * @param localUri  The URI pointing to the local content
+         * @param isCircle  true if circle cropped, false if full image
+         * @param success   true if successful, false otherwise
+         */
+        public abstract void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success);
+
+        /**
+         * Called if the image download was successful.
+         *
+         * @param sourceUri the Uri that originated the request
+         * @param isCircle  true if circle cropped, false if full image
+         * @return true if you want a BitmapDrawable created for you. The drawable will be retruend in onImageReady
+         */
+        public abstract boolean doGetImage(String sourceUri, boolean isCircle);
+
+        /**
+         * Called after the bitmap has been created
+         *
+         * @param sourceUri
+         * @param localUri
+         * @param drawable
+         * @param isCircle
+         * @param success
+         */
+        public abstract void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success);
+
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            final Bundle bundle = (Bundle) payload;
+            Bundle bundle = (Bundle) payload;
             String action = bundle.getString(PARAM_ACTION);
 
-            if (action.startsWith(PARAM_ACTION_GET))
-                if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
-                    onGet(bundle.getString(PARAM_URL),
-                            null,
-                            bundle.getBoolean(PARAM_CIRCLE), true);
-                } else {
-                    new AsyncTaskEx<Bundle, Object, BitmapDrawable>() {
+            if (action.startsWith(PARAM_ACTION_GET)) {
+                String sourceUrl = bundle.getString(PARAM_SOURCE_URL);
+                Uri localUri = bundle.getParcelable(PARAM_CACHE_URI);
+                boolean isCircle = bundle.getBoolean(PARAM_IS_CIRCLE);
+                boolean success = bundle.getBoolean(PARAM_SUCCESS);
+
+                imageDownloaded(sourceUrl, localUri, isCircle, success);
+
+                if (success && doGetImage(sourceUrl, isCircle)) {
+                    new AsyncTaskEx<Object, Object, BitmapDrawable>() {
+                        String sourceUrl;
+                        Uri localUri;
+                        boolean isCircle;
+
                         @Override
-                        protected BitmapDrawable doInBackground(Bundle... params) {
-                            String url = bundle.getString(PARAM_URL);
-                            boolean isCircle = bundle.getBoolean(PARAM_CIRCLE);
-                            File file = (File) bundle.getSerializable(RESULT_IMAGE_FILE);
+                        protected BitmapDrawable doInBackground(Object... params) {
+                            try {
+                                sourceUrl = (String) params[0];
+                                localUri = (Uri) params[1];
+                                isCircle = (Boolean) params[2];
 
-                            String key = isCircle + ":" + url;
+                                String key = isCircle + ":" + sourceUrl;
 
-                            BitmapDrawable result = null;
+                                BitmapDrawable result = null;
 
-                            if (_pictureCache.containsKey(key)) {
-                                WeakReference<BitmapDrawable> wr = _pictureCache.get(key);
+                                if (_pictureCache.containsKey(key)) {
+                                    WeakReference<BitmapDrawable> wr = _pictureCache.get(key);
 
-                                if (wr == null || wr.get() == null) {
-                                    _pictureCache.remove(key);
-                                } else {
-                                    result = wr.get();
+                                    if (wr == null || wr.get() == null) {
+                                        _pictureCache.remove(key);
+                                    } else {
+                                        result = wr.get();
+                                    }
                                 }
-                            }
 
-                            if (result == null) {
-                                if (file != null) {
-                                    result = new BitmapDrawable(App.get().getResources(), file.getAbsolutePath());
+                                if (result == null) {
+                                    result = new BitmapDrawable(App.get().getResources(), App.get().getContentResolver().openInputStream(localUri));
                                     _pictureCache.put(key, new WeakReference<>(result));
                                 }
-                            }
 
-                            return result;
+                                return result;
+                            } catch (Exception ex) {
+                                Log.v(STAG, ex);
+                            }
+                            return null;
                         }
 
                         @Override
                         protected void onPostExecute(BitmapDrawable bitmapDrawable) {
-                            onGet(bundle.getString(PARAM_URL),
-                                    bitmapDrawable,
-                                    bundle.getBoolean(PARAM_CIRCLE), false);
+                            onImageReady(sourceUrl, localUri, bitmapDrawable, isCircle, bitmapDrawable != null);
                         }
-                    }.executeEx();
+                    }.executeEx(sourceUrl, localUri, isCircle);
                 }
-        }
-
-
-        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
+            }
         }
     }
 }

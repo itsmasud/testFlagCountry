@@ -178,10 +178,9 @@ public class WorkFragment extends WorkorderFragment {
 
     private final List<Runnable> _untilAdded = new LinkedList<>();
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
@@ -195,78 +194,78 @@ public class WorkFragment extends WorkorderFragment {
 
         _renderers.clear();
 
-        _testButton = (Button) view.findViewById(R.id.test_button);
+        _testButton = view.findViewById(R.id.test_button);
         _testButton.setOnClickListener(_test_onClick);
 
-        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+        _topBar = view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
         _renderers.add(_topBar);
 
-        _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
+        _sumView = view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
         _renderers.add(_sumView);
 
-        _companySummaryView = (CompanySummaryView) view.findViewById(R.id.companySummary_view);
+        _companySummaryView = view.findViewById(R.id.companySummary_view);
         _renderers.add(_companySummaryView);
 
-        _contactListView = (ContactListView) view.findViewById(R.id.contactList_view);
+        _contactListView = view.findViewById(R.id.contactList_view);
         _renderers.add(_contactListView);
 
-        _locView = (LocationView) view.findViewById(R.id.location_view);
+        _locView = view.findViewById(R.id.location_view);
         _renderers.add(_locView);
 
-        _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
+        _scheduleView = view.findViewById(R.id.schedule_view);
         _renderers.add(_scheduleView);
 
-        _payView = (PaymentView) view.findViewById(R.id.payment_view);
+        _payView = view.findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
         _renderers.add(_payView);
 
-        _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
+        _coSummaryView = view.findViewById(R.id.counterOfferSummary_view);
         _coSummaryView.setListener(_coSummary_listener);
         _renderers.add(_coSummaryView);
 
-        _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
+        _expenseListView = view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
         _renderers.add(_expenseListView);
 
-        _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
+        _discountListView = view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
         _renderers.add(_discountListView);
 
-        _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
+        _exView = view.findViewById(R.id.expected_pay_view);
         _renderers.add(_exView);
 
-        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
+        _bundleWarningTextView = view.findViewById(R.id.bundlewarning2_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
 
-        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView = view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
+        _scrollView = view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _shipments = (ShipmentListView) view.findViewById(R.id.shipment_view);
+        _shipments = view.findViewById(R.id.shipment_view);
         _shipments.setListener(_shipments_listener);
         _renderers.add(_shipments);
 
-        _taskList = (TaskListView) view.findViewById(R.id.scope_view);
+        _taskList = view.findViewById(R.id.scope_view);
         _taskList.setTaskListViewListener(_taskListView_listener);
         _renderers.add(_taskList);
 
-        _timeLogged = (TimeLogListView) view.findViewById(R.id.timelogged_view);
+        _timeLogged = view.findViewById(R.id.timelogged_view);
         _timeLogged.setListener(_timeLoggedView_listener);
         _renderers.add(_timeLogged);
 
-        _closingNotes = (ClosingNotesView) view.findViewById(R.id.closingnotes_view);
+        _closingNotes = view.findViewById(R.id.closingnotes_view);
         _closingNotes.setListener(_closingNotesView_listener);
         _renderers.add(_closingNotes);
 
-        _customFields = (CustomFieldListView) view.findViewById(R.id.customfields_view);
+        _customFields = view.findViewById(R.id.customfields_view);
         _customFields.setListener(_customFields_listener);
         _renderers.add(_customFields);
 
-        _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
+        _signatureView = view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
 
@@ -345,17 +344,21 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        Log.v(TAG, "onAttach");
-        super.onAttach(activity);
-//        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+    public void onStart() {
+        super.onStart();
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
 
         CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
-
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
         CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
@@ -379,18 +382,18 @@ public class WorkFragment extends WorkorderFragment {
         HoldReviewDialog.addOnCancelListener(DIALOG_HOLD_REVIEW, _holdReviewDialog_onCancel);
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
-
-        while (_untilAdded.size() > 0) {
-            _untilAdded.remove(0).run();
-        }
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
     }
 
     @Override
-    public void onDetach() {
-        Log.v(TAG, "onDetach");
+    public void onResume() {
+        super.onResume();
 
+        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
+    }
+
+    @Override
+    public void onStop() {
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
@@ -418,25 +421,7 @@ public class WorkFragment extends WorkorderFragment {
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
 
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
-
-        super.onDetach();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onPause() {
-        Log.v(TAG, "onPause");
-        super.onPause();
+        super.onStop();
     }
 
     @Override
@@ -1248,20 +1233,22 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
             if (fileResult.size() == 0)
                 return;
 
             if (fileResult.size() == 1) {
-                GetFileDialog.FileUriIntent fui = fileResult.get(0);
+                GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null)
                     PhotoUploadDialog.show(App.get(), "uid", _workOrder.getId(), _currentTask, FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
-                else
-                    PhotoUploadDialog.show(App.get(), "uid", _workOrder.getId(), _currentTask, fui.file.getName(), fui.file.getAbsolutePath());
+                else {
+                    // TODO show a toast?
+                }
+
                 return;
             }
 
-            for (GetFileDialog.FileUriIntent fui : fileResult) {
+            for (GetFileDialog.UriIntent fui : fileResult) {
                 try {
                     Attachment attachment = new Attachment();
                     attachment.folderId(_currentTask.getAttachments().getId());
