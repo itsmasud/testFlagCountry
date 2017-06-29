@@ -29,7 +29,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     private TextView _noTimeTextView;
     private Button _logTimeButton;
 
-
     // Data
     private Listener _listener;
     private WorkOrder _workOrder;
@@ -56,11 +55,10 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         if (isInEditMode())
             return;
 
-        _logList = (LinearLayout) findViewById(R.id.log_list);
-        _noTimeTextView = (TextView) findViewById(R.id.notime_textview);
-        _logTimeButton = (Button) findViewById(R.id.logTime_button);
+        _logList = findViewById(R.id.log_list);
+        _noTimeTextView = findViewById(R.id.notime_textview);
+        _logTimeButton = findViewById(R.id.logTime_button);
         _logTimeButton.setOnClickListener(_addLog_onClick);
-
 
         setVisibility(GONE);
     }
@@ -76,14 +74,12 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
     }
 
     public void ppulateUi() {
-        if (_workOrder == null || _workOrder.getTimeLogs() == null)
+        if (_workOrder == null)
             return;
 
         final TimeLog[] logs = _workOrder.getTimeLogs().getResults();
 
-        if (_workOrder.getTimeLogs() != null
-                && _workOrder.getTimeLogs().getActionsSet() != null
-                && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
+        if (_workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
             _logTimeButton.setVisibility(View.VISIBLE);
         } else {
             if (logs == null || logs.length == 0) {
@@ -95,7 +91,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
 
         setVisibility(View.VISIBLE);
 
-        if (logs == null || logs.length == 0) {
+        if (logs.length == 0) {
             _noTimeTextView.setVisibility(View.VISIBLE);
             _logList.removeAllViews();
         } else {
@@ -108,7 +104,7 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
             _forLoop = null;
         }
 
-        if (logs != null && logs.length > 0) {
+        if (logs.length > 0) {
             _forLoop = new ForLoopRunnable(logs.length, new Handler()) {
                 private final TimeLog[] _logs = logs;
                 private List<View> _views = new LinkedList();
@@ -141,7 +137,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void editTimeLog(WorkOrder workOrder, TimeLog timeLog, boolean showDeviceCount) {
             if (_listener != null
-                    && timeLog.getActionsSet() != null
                     && timeLog.getActionsSet().contains(TimeLog.ActionsEnum.EDIT)) {
                 _listener.editWorklog(workOrder, timeLog, showDeviceCount);
             }
@@ -150,7 +145,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
         @Override
         public void deleteTimeLog(final TimeLogRowView view, final WorkOrder workOrder, final TimeLog timeLog) {
             if (_listener != null
-                    && timeLog.getActionsSet() != null
                     && timeLog.getActionsSet().contains(TimeLog.ActionsEnum.DELETE)) {
                 _listener.deleteWorklog(workOrder, timeLog);
             }
@@ -167,8 +161,6 @@ public class TimeLogListView extends RelativeLayout implements WorkOrderRenderer
             }
 
             if (_listener != null
-                    && _workOrder.getTimeLogs() != null
-                    && _workOrder.getTimeLogs().getActionsSet() != null
                     && _workOrder.getTimeLogs().getActionsSet().contains(TimeLogs.ActionsEnum.ADD)) {
                 _listener.addWorklog(showdevices);
             }

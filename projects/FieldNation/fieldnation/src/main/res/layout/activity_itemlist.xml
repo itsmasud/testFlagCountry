@@ -23,6 +23,13 @@
         android:dividerHeight="0dp"
         android:smoothScrollbar="true" />
 
+    <com.fieldnation.ui.EmptyCardView
+        android:id="@+id/empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:visibility="gone" />
+
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"
         android:layout_width="wrap_content"

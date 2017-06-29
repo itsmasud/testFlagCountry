@@ -13,6 +13,7 @@ import com.fieldnation.data.profile.Notification;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -31,7 +32,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     // UI
     private OverScrollListView _listView;
     private RefreshView _loadingView;
-    private UnavailableCardView _emptyView;
+    private EmptyCardView _emptyView;
 
     // Data
     private ProfileClient _profileClient;
@@ -77,7 +78,8 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
 
-        _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
+        _emptyView = (EmptyCardView) view.findViewById(R.id.empty_view);
+        _emptyView.setData(EmptyCardView.PARAM_VIEW_TYPE_NOTIFICATION);
     }
 
     @Override
@@ -147,7 +149,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     public void addPage(int page, List<Notification> list) {
         Log.v(TAG, "addPage: page:" + page);
         if (page == 0 && (list == null || list.size() == 0)) {
-            _emptyView.setNoNotifications();
             _emptyView.setVisibility(View.VISIBLE);
         } else {
             _emptyView.setVisibility(View.GONE);

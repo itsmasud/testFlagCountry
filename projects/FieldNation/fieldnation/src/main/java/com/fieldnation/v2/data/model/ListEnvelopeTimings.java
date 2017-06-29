@@ -152,7 +152,4 @@ public class ListEnvelopeTimings implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

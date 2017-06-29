@@ -57,28 +57,28 @@ public class PhotoService extends MultiThreadedService implements PhotoConstants
 
     public void get(Intent intent) {
         Log.v(TAG, intent.getExtras().toString());
-        String url = intent.getStringExtra(PARAM_URL);
-        boolean getCircle = intent.getBooleanExtra(PARAM_CIRCLE, false);
-        String objectName = "PhotoCache" + (getCircle ? "Circle" : "");
+        String sourceUrl = intent.getStringExtra(PARAM_SOURCE_URL);
+        boolean makeCircle = intent.getBooleanExtra(PARAM_IS_CIRCLE, false);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        String objectName = "PhotoCache" + (makeCircle ? "Circle" : "");
 
         // check cache
-        StoredObject obj = StoredObject.get(this, App.getProfileId(), objectName, url);
+        StoredObject obj = StoredObject.get(this, App.getProfileId(), objectName, sourceUrl);
 
         if (obj != null) {
-            PhotoDispatch.get(this, obj.getFile(), url, getCircle, false, isSync);
+            PhotoDispatch.get(this, sourceUrl, obj.getUri(), makeCircle, true);
 
             if (!_requireWifi || App.get().haveWifi()) {
                 if (_imageDaysToLive > -1) {
                     if (obj.getLastUpdated() + _imageDaysToLive * DAY < System.currentTimeMillis()) {
                         Log.v(TAG, "updating photo");
-                        PhotoTransactionBuilder.get(this, objectName, url, getCircle, isSync);
+                        PhotoTransactionBuilder.get(this, objectName, sourceUrl, makeCircle, isSync);
                     }
                 }
             }
         } else if (obj == null && (!_requireWifi || App.get().haveWifi())) {
             // doesn't exist, try to grab it.
-            PhotoTransactionBuilder.get(this, objectName, url, getCircle, isSync);
+            PhotoTransactionBuilder.get(this, objectName, sourceUrl, makeCircle, isSync);
         }
     }
 }

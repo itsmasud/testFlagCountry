@@ -147,7 +147,7 @@ public class TransactionListener extends WebTransactionListener {
                 if (method.equals("GET")) {
                     StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
                     if (httpResult.isFile()) {
-                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getFile(), transaction.getKey(), true);
+                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
                     } else {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray(), true);
                     }
@@ -185,7 +185,7 @@ public class TransactionListener extends WebTransactionListener {
                 if (method.equals("GET")) {
                     StoredObject.put(context, App.getProfileId(), "V2_PARAMS", transaction.getKey(), params.toJson().toByteArray(), true);
                     if (httpResult.isFile()) {
-                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getFile(), transaction.getKey(), true);
+                        StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), new FileInputStream(httpResult.getFile()), transaction.getKey(), true);
                     } else {
                         StoredObject.put(context, App.getProfileId(), "V2_DATA", transaction.getKey(), httpResult.getByteArray(), true);
                     }

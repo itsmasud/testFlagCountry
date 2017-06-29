@@ -10,8 +10,8 @@
     <com.fieldnation.ui.ProfilePicView
         android:id="@+id/pic_view"
         style="@style/DrawerProfileImage"
-        android:layout_width="48dp"
-        android:layout_height="48dp" />
+        android:layout_width="42dp"
+        android:layout_height="42dp" />
 
     <LinearLayout
         android:id="@+id/profile_layout"

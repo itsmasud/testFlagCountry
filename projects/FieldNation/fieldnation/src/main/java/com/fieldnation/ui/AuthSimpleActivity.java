@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -14,11 +15,12 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
@@ -48,6 +50,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private ToastClient _toastClient;
     private AuthTopicClient _authTopicClient;
     private ActivityResultClient _activityResultClient;
+    private PermissionsClient _permissionsClient;
 
     // Data
     private Profile _profile;
@@ -107,6 +110,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         super.onStart();
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStart();
+
+        _permissionsClient = new PermissionsClient(_permissionsListener);
+        _permissionsClient.connect(App.get());
+        PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
     }
 
     @Override
@@ -149,6 +156,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.v(TAG, "onStop");
+        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+
         super.onStop();
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStop();
@@ -161,12 +170,17 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
 
-    private void gotProfile(Profile profile) {
+    private void gotProfile() {
         if (_profile == null)
             return;
 
@@ -181,6 +195,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _profileBounceProtect = true;
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
+            Log.v(TAG, "show release notes");
             App.get().setReleaseNoteShownReminded();
             WhatsNewDialog.show(App.get());
         }
@@ -193,11 +208,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
 
         App gs = App.get();
-        if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
+        if (!_profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
-                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
+                    getString(R.string.dialog_coi_body, _profile.insurancePercent()),
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
@@ -208,7 +223,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             }
         } else {
             Log.v(TAG, "toc/coi check done");
-            onProfile(profile);
+            onProfile(_profile);
             _profileBounceProtect = false;
         }
     }
@@ -232,6 +247,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -241,7 +261,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -274,7 +294,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -286,7 +306,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile(_profile);
+                    gotProfile();
                 }
             });
         }
@@ -328,12 +348,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
             _globalClient.subProfileInvalid(App.get());
+            ProfileClient.get(App.get());
         }
 
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
-            gotProfile(profile);
+            gotProfile();
         }
 
         @Override
@@ -379,6 +400,18 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public int getSnackbarTextId() {
             return android.support.design.R.id.snackbar_text;
+        }
+    };
+
+    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+        @Override
+        public Activity getActivity() {
+            return AuthSimpleActivity.this;
+        }
+
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
         }
     };
 }

@@ -1,11 +1,15 @@
 package com.fieldnation.fngps;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fntools.ContextProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -32,6 +36,9 @@ public class SimpleGps {
     // Data
     private boolean _isRunning = false;
     private Listener _listener = null;
+
+    // Services
+    private PermissionsClient _permissionsClient;
 
     // Constructors
     public SimpleGps(Context context) {
@@ -117,21 +124,34 @@ public class SimpleGps {
     }
 
     public SimpleGps start(Context context) {
-        Log.v(TAG, "start");
-        Log.v(TAG, _locationRequest.toString());
-        try {
-            _gglApiClient = new GoogleApiClient.Builder(context)
-                    .addApi(LocationServices.API)
-                    .addConnectionCallbacks(_gglApi_callbacks)
-                    .addOnConnectionFailedListener(_gglApi_failedCallbacks)
-                    .build();
+        int permissionCheck = PermissionsClient.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 
-            _isRunning = true;
-            _gglApiClient.connect();
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            if (_listener != null)
-                _listener.onFail(this);
+        if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+            Log.v(TAG, "Waiting for permission");
+            _permissionsClient = new PermissionsClient(_permissionsListener);
+            _permissionsClient.connect(ContextProvider.get());
+            PermissionsClient.requestPermissions(
+                    context,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    new boolean[]{false});
+
+        } else {
+            Log.v(TAG, "start");
+            Log.v(TAG, _locationRequest.toString());
+            try {
+                _gglApiClient = new GoogleApiClient.Builder(context)
+                        .addApi(LocationServices.API)
+                        .addConnectionCallbacks(_gglApi_callbacks)
+                        .addOnConnectionFailedListener(_gglApi_failedCallbacks)
+                        .build();
+
+                _isRunning = true;
+                _gglApiClient.connect();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                if (_listener != null)
+                    _listener.onFail(this);
+            }
         }
         return this;
     }
@@ -142,6 +162,8 @@ public class SimpleGps {
             return this;
         }
 
+        if (_permissionsClient != null) _permissionsClient.disconnect(ContextProvider.get());
+
         if (_gglApiClient.isConnected()) {
             _providerApi.removeLocationUpdates(_gglApiClient, _locationUpdate_listener);
             _gglApiClient.disconnect();
@@ -151,6 +173,24 @@ public class SimpleGps {
         return this;
     }
 
+    private final PermissionsClient.ResponseListener _permissionsListener = new PermissionsClient.ResponseListener() {
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
+        }
+
+        @Override
+        public void onComplete(String permission, int grantResult) {
+            if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    start(ContextProvider.get());
+                } else {
+                    if (_listener != null) _listener.onPermissionDenied(SimpleGps.this);
+                    stop();
+                }
+            }
+        }
+    };
 
     // API Listeners
     private final GoogleApiClient.ConnectionCallbacks _gglApi_callbacks = new GoogleApiClient.ConnectionCallbacks() {
@@ -216,5 +256,7 @@ public class SimpleGps {
         void onLocation(SimpleGps simpleGps, Location location);
 
         void onFail(SimpleGps simpleGps);
+
+        void onPermissionDenied(SimpleGps simpleGps);
     }
 }

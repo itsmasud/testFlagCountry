@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -103,7 +104,6 @@ public class MessageRcvdView extends RelativeLayout {
             String url = _message.getFrom().getThumbnail();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(getContext(), url, true, false);
-                _photos.subGet(url, true, false);
             }
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
@@ -111,19 +111,33 @@ public class MessageRcvdView extends RelativeLayout {
     }
 
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
+
         @Override
-        public void onConnected() {
-            populateUi();
+        public PhotoClient getClient() {
+            return _photos;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
-            if (bitmapDrawable == null) {
+        public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
+        }
+
+        @Override
+        public boolean doGetImage(String sourceUri, boolean isCircle) {
+            return _message != null
+                    && _message.getFrom() != null
+                    && !misc.isEmptyOrNull(_message.getFrom().getThumbnail())
+                    && sourceUri.equals(_message.getFrom().getThumbnail())
+                    && isCircle;
+        }
+
+        @Override
+        public void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success) {
+            if (drawable == null) {
                 _picView.setProfilePic(R.drawable.missing_circle);
                 return;
             }
 
-            Drawable pic = bitmapDrawable;
+            Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
         }

@@ -152,7 +152,4 @@ public class WorkOrderRatingsAssignedProviderWorkOrderComment implements Parcela
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

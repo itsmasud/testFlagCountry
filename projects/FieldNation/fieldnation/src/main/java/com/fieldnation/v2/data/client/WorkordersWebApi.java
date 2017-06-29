@@ -10024,9 +10024,7 @@ public class WorkordersWebApi extends TopicClient {
             }
         }
 
-        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-            return false;
-        }
+        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
         public void onQueued(TransactionParams transactionParams, String methodName) {
         }

@@ -78,6 +78,4 @@ public class SignatureCardView extends RelativeLayout {
             _dateTextView.setVisibility(GONE);
         }
     }
-
-
 }

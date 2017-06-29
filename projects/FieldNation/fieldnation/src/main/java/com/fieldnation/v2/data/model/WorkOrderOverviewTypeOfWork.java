@@ -54,10 +54,10 @@ public class WorkOrderOverviewTypeOfWork implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_company != null && _company.isSet())
-            return _company;
+        if (_company == null)
+            _company = new WorkOrderOverviewTypeOfWorkCompany();
 
-        return null;
+            return _company;
     }
 
     public WorkOrderOverviewTypeOfWork company(WorkOrderOverviewTypeOfWorkCompany company) throws ParseException {
@@ -79,10 +79,10 @@ public class WorkOrderOverviewTypeOfWork implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_marketplace != null && _marketplace.isSet())
-            return _marketplace;
+        if (_marketplace == null)
+            _marketplace = new WorkOrderOverviewTypeOfWorkMarketplace();
 
-        return null;
+            return _marketplace;
     }
 
     public WorkOrderOverviewTypeOfWork marketplace(WorkOrderOverviewTypeOfWorkMarketplace marketplace) throws ParseException {
@@ -158,7 +158,4 @@ public class WorkOrderOverviewTypeOfWork implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

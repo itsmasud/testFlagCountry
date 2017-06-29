@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.Shipments;
@@ -84,7 +84,7 @@ public class TaskShipmentAddDialog extends SimpleDialog {
         try {
             _shipmentsLayout.removeAllViews();
             Shipments shipments = _workOrder.getShipments();
-            if (shipments == null || shipments.getResults() == null || shipments.getResults().length == 0)
+            if (shipments.getResults().length == 0)
                 return;
 
             for (int i = 0; i < shipments.getResults().length; i++) {

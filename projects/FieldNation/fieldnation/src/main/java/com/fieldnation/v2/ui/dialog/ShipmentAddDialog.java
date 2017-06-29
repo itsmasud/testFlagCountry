@@ -1,8 +1,11 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
@@ -19,16 +22,18 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
@@ -45,6 +50,7 @@ public class ShipmentAddDialog extends SimpleDialog {
     // State
     private static final String STATE_CARRIER_SELECTION = "STATE_CARRIER_SELECTION";
     private static final String STATE_DIRECTION_SELECTION = "STATE_DIRECTION_SELECTION";
+    private static final String STATE_SCANNED_IMAGE = "STATE_SCANNED_IMAGE";
 
     private static final int RESULT_CODE_BARCODE_SCAN = 0;
 
@@ -68,9 +74,10 @@ public class ShipmentAddDialog extends SimpleDialog {
     private String _shipmentDescription;
     private Task _task;
     private ActivityResultClient _activityResultClient;
+    private PermissionsClient _permissionsClient;
 
     // Barcode stuff
-    private String _scannedImagePath;
+    private Uri _scannedImageUri;
 
     // Modes
     private static final int CARRIER_FEDEX = 0;
@@ -123,6 +130,9 @@ public class ShipmentAddDialog extends SimpleDialog {
         getCarrierSpinner().clearSelection();
         getDirectionSpinner().setHint(App.get().getString(R.string.dialog_shipment_direction_spinner_default_text));
         getDirectionSpinner().clearSelection();
+
+        _permissionsClient = new PermissionsClient(_permissions_response);
+        _permissionsClient.connect(App.get());
     }
 
     @Override
@@ -169,6 +179,10 @@ public class ShipmentAddDialog extends SimpleDialog {
             } else {
                 getDirectionSpinner().clearSelection();
             }
+
+            if (savedState.containsKey(STATE_SCANNED_IMAGE)) {
+                _scannedImageUri = savedState.getParcelable(STATE_SCANNED_IMAGE);
+            }
         }
     }
 
@@ -181,14 +195,21 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         if (_directionPosition != -1)
             outState.putInt(STATE_DIRECTION_SELECTION, _directionPosition);
+
+        if (_scannedImageUri != null)
+            outState.putParcelable(STATE_SCANNED_IMAGE, _scannedImageUri);
     }
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null) {
-            _activityResultClient.disconnect(App.get());
-        }
+        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
         super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        super.onStop();
     }
 
     private void populateUi() {
@@ -395,7 +416,7 @@ public class ShipmentAddDialog extends SimpleDialog {
     };
 
     private void uploadBarcodeImage() {
-        if (misc.isEmptyOrNull(_scannedImagePath))
+        if (_scannedImageUri == null)
             return;
 
         if (_workOrder.getAttachments() == null)
@@ -413,8 +434,8 @@ public class ShipmentAddDialog extends SimpleDialog {
             }
         }
         if (miscFolder != null) {
-            String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getId(), miscFolder.getId(), fileName, _scannedImagePath);
+            String fileName = FileUtils.getFileNameFromUri(App.get(), _scannedImageUri);
+            WorkorderClient.uploadDeliverable(App.get(), _workOrder.getId(), miscFolder.getId(), fileName, _scannedImageUri);
         }
 
     }
@@ -430,12 +451,18 @@ public class ShipmentAddDialog extends SimpleDialog {
     private final View.OnClickListener _scan_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            IntentIntegrator integrator = new IntentIntegrator((Activity) v.getContext());
-            integrator.setPrompt(App.get().getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
+            int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
+
+            if (grant == PackageManager.PERMISSION_DENIED) {
+                PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
+            } else {
+                IntentIntegrator integrator = new IntentIntegrator((Activity) getContext());
+                integrator.setPrompt(App.get().getString(R.string.dialog_scan_barcode_title));
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(false);
+                integrator.setBarcodeImageEnabled(true);
+                integrator.initiateScan();
+            }
         }
     };
 
@@ -448,6 +475,24 @@ public class ShipmentAddDialog extends SimpleDialog {
 
         Controller.show(context, uid, ShipmentAddDialog.class, params);
     }
+
+    private final PermissionsClient.ResponseListener _permissions_response = new PermissionsClient.ResponseListener() {
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
+        }
+
+        @Override
+        public void onComplete(String permission, int grantResult) {
+            if (permission.equals(Manifest.permission.CAMERA)) {
+                if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                    _scan_onClick.onClick(null);
+                } else {
+                    ToastClient.toast(App.get(), "Camera Access denied, can't scan barcode.", Toast.LENGTH_SHORT);
+                }
+            }
+        }
+    };
 
     private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
         @Override
@@ -483,7 +528,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                         Log.e(TAG, "onActivityResult: no image path");
                     } else {
                         Log.v(TAG, "onActivityResult");
-                        _scannedImagePath = result.getBarcodeImagePath();
+                        _scannedImageUri = App.getUriFromFile(new File(result.getBarcodeImagePath()));
                         _trackingIdEditText.setText(content);
                         _carrierPosition = misc.getCarrierId(content);
                         getCarrierSpinner().setSelection(_carrierPosition);

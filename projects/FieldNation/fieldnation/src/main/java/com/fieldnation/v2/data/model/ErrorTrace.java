@@ -74,6 +74,9 @@ public class ErrorTrace implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_args == null)
+            _args = new ErrorTraceArgs[0];
+
         return _args;
     }
 
@@ -184,10 +187,10 @@ public class ErrorTrace implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_object != null && _object.isSet())
-        return _object;
+        if (_object == null)
+            _object = new ErrorTraceObject();
 
-        return null;
+        return _object;
     }
 
     public ErrorTrace object(ErrorTraceObject object) throws ParseException {
@@ -285,7 +288,4 @@ public class ErrorTrace implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

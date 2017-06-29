@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.workorder.detail.MessageRcvdView;
 import com.fieldnation.ui.workorder.detail.MessageSentView;
 import com.fieldnation.v2.data.model.Message;
@@ -43,16 +42,16 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
 
     @Override
     public int getItemViewType(int position) {
-            Object obj = getObject(position);
-            if (obj == EMPTY) {
-                return BaseHolder.TYPE_EMPTY;
-            } else if (obj instanceof Message) {
-                if (((Message) obj).getFrom().getId().equals((int) App.getProfileId())) {
-                    return BaseHolder.TYPE_SEND;
-                } else {
-                    return BaseHolder.TYPE_RCVD;
-                }
+        Object obj = getObject(position);
+        if (obj == EMPTY) {
+            return BaseHolder.TYPE_EMPTY;
+        } else if (obj instanceof Message) {
+            if (((Message) obj).getFrom().getId().equals((int) App.getProfileId())) {
+                return BaseHolder.TYPE_SEND;
+            } else {
+                return BaseHolder.TYPE_RCVD;
             }
+        }
         return -1;
     }
 
@@ -78,21 +77,21 @@ public abstract class MessagePagingAdapter extends PagingAdapter<Message, Messag
     @Override
     public void onBindViewHolder(BaseHolder holder, int position) {
 
-            switch (holder.type) {
-                case BaseHolder.TYPE_EMPTY:
-                    // do nothing. no data to bind
-                    break;
-                case BaseHolder.TYPE_RCVD: {
-                    MessageRcvdView view = (MessageRcvdView) holder.itemView;
-                    view.setMessage((Message) getObject(position));
-                    break;
-                }
-                case BaseHolder.TYPE_SEND: {
-                    MessageSentView view = (MessageSentView) holder.itemView;
-                    view.setMessage((Message) getObject(position));
-                    break;
-                }
+        switch (holder.type) {
+            case BaseHolder.TYPE_EMPTY:
+                // do nothing. no data to bind
+                break;
+            case BaseHolder.TYPE_RCVD: {
+                MessageRcvdView view = (MessageRcvdView) holder.itemView;
+                view.setMessage((Message) getObject(position));
+                break;
             }
+            case BaseHolder.TYPE_SEND: {
+                MessageSentView view = (MessageSentView) holder.itemView;
+                view.setMessage((Message) getObject(position));
+                break;
+            }
+        }
         super.onBindViewHolder(holder, position);
     }
 

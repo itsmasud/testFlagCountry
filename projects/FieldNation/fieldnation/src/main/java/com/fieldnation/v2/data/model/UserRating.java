@@ -54,10 +54,10 @@ public class UserRating implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_marketplace != null && _marketplace.isSet())
-            return _marketplace;
+        if (_marketplace == null)
+            _marketplace = new Rating();
 
-        return null;
+            return _marketplace;
     }
 
     public UserRating marketplace(Rating marketplace) throws ParseException {
@@ -79,10 +79,10 @@ public class UserRating implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_myCompany != null && _myCompany.isSet())
-            return _myCompany;
+        if (_myCompany == null)
+            _myCompany = new Rating();
 
-        return null;
+            return _myCompany;
     }
 
     public UserRating myCompany(Rating myCompany) throws ParseException {
@@ -158,7 +158,4 @@ public class UserRating implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

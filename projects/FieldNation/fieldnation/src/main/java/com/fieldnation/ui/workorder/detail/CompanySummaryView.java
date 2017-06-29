@@ -88,7 +88,7 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
         if (_nameTextView == null)
             return;
 
-        if (_workOrder == null || _workOrder.getCompany() == null || _workOrder.getRatings() == null)
+        if (_workOrder == null)
             setVisibility(GONE);
         else {
             setVisibility(VISIBLE);
@@ -146,79 +146,67 @@ public class CompanySummaryView extends RelativeLayout implements WorkOrderRende
 
         } else
         */
-        if (_workOrder.getRatings() != null
-                && _workOrder.getRatings().getBuyer() != null
-                && _workOrder.getRatings().getBuyer().getOverall() != null) {
+        WorkOrderRatingsBuyerOverall overall = _workOrder.getRatings().getBuyer().getOverall();
 
-            WorkOrderRatingsBuyerOverall overall = _workOrder.getRatings().getBuyer().getOverall();
+        if (overall.getApprovalDays() != null
+                && overall.getApprovalDays() != 0
+                && overall.getPercentApproval() != null) {
+            _daysTextView.setVisibility(VISIBLE);
+            _daysTextView.setText(overall.getApprovalDays() + " Days");
+        } else {
+            _daysTextView.setText("");
+            _daysTextView.setVisibility(GONE);
+        }
 
-            if (overall.getApprovalDays() != null
-                    && overall.getApprovalDays() != 0
-                    && overall.getPercentApproval() != null) {
-                _daysTextView.setVisibility(VISIBLE);
-                _daysTextView.setText(overall.getApprovalDays() + " Days");
-            } else {
-                _daysTextView.setText("");
-                _daysTextView.setVisibility(GONE);
+        if (overall.getStars() != null) {
+            _starRating.setStars(overall.getStars().intValue());
+        } else {
+            _starRating.setStars(0);
+        }
+
+        if (overall.getRatings() != 0) {
+            _detailsLayout.setVisibility(VISIBLE);
+            if (overall.getPercentClearExpectations() != null) {
+                _expectationsProgressBar.setProgress(overall.getPercentClearExpectations());
+                _expectationsTextView.setText(overall.getPercentClearExpectations() + "%");
             }
 
-            if (overall.getStars() != null) {
-                _starRating.setStars(overall.getStars().intValue());
-            } else {
-                _starRating.setStars(0);
+            if (overall.getPercentRespectful() != null) {
+                _professionalismProgressBar.setProgress(overall.getPercentRespectful());
+                _professionalismTextView.setText(overall.getPercentRespectful() + "%");
             }
+        } else {
+            _detailsLayout.setVisibility(GONE);
+        }
 
-            if (overall.getRatings() != 0) {
-                _detailsLayout.setVisibility(VISIBLE);
-                if (overall.getPercentClearExpectations() != null) {
-                    _expectationsProgressBar.setProgress(overall.getPercentClearExpectations());
-                    _expectationsTextView.setText(overall.getPercentClearExpectations() + "%");
-                }
-
-                if (overall.getPercentRespectful() != null) {
-                    _professionalismProgressBar.setProgress(overall.getPercentRespectful());
-                    _professionalismTextView.setText(overall.getPercentRespectful() + "%");
-                }
-            } else {
-                _detailsLayout.setVisibility(GONE);
-            }
-
-            if (overall.getRatings() != null) {
-                _reviewsTextView.setVisibility(VISIBLE);
-                _reviewsTextView.setText(overall.getRatings() + " Reviews");
-                _newBuyerTextView.setVisibility(GONE);
-            } else {
-                _newBuyerTextView.setVisibility(VISIBLE);
-                _reviewsTextView.setVisibility(GONE);
-            }
-
-            if (overall.getPercentApproval() != null) {
-                _percentageApprovalTextView.setVisibility(VISIBLE);
-                _timeToApprovalLayout.setVisibility(VISIBLE);
-                boolean found = false;
-                for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
-                    if (ob.getDays().equals(overall.getApprovalDays())) {
-                        _percentageApprovalTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found) {
-                    _percentageApprovalTextView.setVisibility(GONE);
-                    _timeToApprovalLayout.setVisibility(GONE);
-                }
-            } else {
-                _timeToApprovalLayout.setVisibility(GONE);
-                _percentageApprovalTextView.setVisibility(GONE);
-            }
-
+        if (overall.getRatings() != null) {
+            _reviewsTextView.setVisibility(VISIBLE);
+            _reviewsTextView.setText(overall.getRatings() + " Reviews");
+            _newBuyerTextView.setVisibility(GONE);
         } else {
             _newBuyerTextView.setVisibility(VISIBLE);
-            _starRating.setStars(0);
-            _detailsLayout.setVisibility(GONE);
             _reviewsTextView.setVisibility(GONE);
+        }
 
+        if (overall.getPercentApproval() != null) {
+            _percentageApprovalTextView.setVisibility(VISIBLE);
+            _timeToApprovalLayout.setVisibility(VISIBLE);
+            boolean found = false;
+            for (WorkOrderRatingsBuyerOverallPercentApproval ob : overall.getPercentApproval()) {
+                if (ob.getDays().equals(overall.getApprovalDays())) {
+                    _percentageApprovalTextView.setText(getResources().getString(R.string.company_percentage_approval, ob.getPercent()));
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                _percentageApprovalTextView.setVisibility(GONE);
+                _timeToApprovalLayout.setVisibility(GONE);
+            }
+        } else {
+            _timeToApprovalLayout.setVisibility(GONE);
+            _percentageApprovalTextView.setVisibility(GONE);
         }
 
         if (_workOrder.getManager() == null) {

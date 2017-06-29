@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -28,12 +29,13 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
@@ -72,6 +74,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     // Services
     private GlobalTopicClient _globalClient;
     private ActivityResultClient _activityResultClient;
+    private PermissionsClient _permissionsClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -143,6 +146,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onStart();
 
         _dialogManager.onStart();
+
+        _permissionsClient = new PermissionsClient(_permissionsListener);
+        _permissionsClient.connect(App.get());
     }
 
     @Override
@@ -162,7 +168,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onPause");
 
         if (_globalClient != null) _globalClient.disconnect(App.get());
-
         if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         _dialogManager.onPause();
@@ -172,6 +177,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     protected void onStop() {
+        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+
         super.onStop();
 
         _dialogManager.onStop();
@@ -202,6 +209,11 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -222,6 +234,18 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         @Override
         public void onAnimationEnd(Animation animation) {
             _fader.setVisibility(View.GONE);
+        }
+    };
+
+    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+        @Override
+        public Activity getActivity() {
+            return AuthActivity.this;
+        }
+
+        @Override
+        public PermissionsClient getClient() {
+            return _permissionsClient;
         }
     };
 

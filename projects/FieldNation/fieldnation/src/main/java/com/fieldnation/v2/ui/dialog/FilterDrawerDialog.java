@@ -25,7 +25,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.ui.search.FilterParams;
 
 import java.util.List;
@@ -152,6 +152,10 @@ public class FilterDrawerDialog extends RightDrawerDialog {
                     @Override
                     public void onFail(SimpleGps simpleGps) {
                         ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+                    }
+
+                    @Override
+                    public void onPermissionDenied(SimpleGps simpleGps) {
                     }
                 }).start(App.get());
                 break;

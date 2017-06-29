@@ -166,7 +166,7 @@ public class SignOffFragment extends FragmentBase {
         //_descriptionTextView.setLinksClickable(false);
 
         final TimeLog[] timeLogs = _workOrder.getTimeLogs().getResults();
-        if (timeLogs != null && timeLogs.length > 0) {
+        if (timeLogs.length > 0) {
             _waitLogs = true;
             _timeLinearLayout.setVisibility(View.VISIBLE);
             _timeTextView.setVisibility(View.VISIBLE);
@@ -205,7 +205,7 @@ public class SignOffFragment extends FragmentBase {
         }
 
         final Task[] tasks = _workOrder.getTasks().getResults();
-        if (tasks != null && tasks.length > 0) {
+        if (tasks.length > 0) {
             _waitTasks = true;
             _tasksDivider.setVisibility(View.VISIBLE);
             _tasksTextView.setVisibility(View.VISIBLE);

@@ -69,6 +69,9 @@ public class Routes implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -95,10 +98,10 @@ public class Routes implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public Routes metadata(ListEnvelope metadata) throws ParseException {
@@ -125,6 +128,9 @@ public class Routes implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_results == null)
+            _results = new Route[0];
+
         return _results;
     }
 
@@ -147,10 +153,10 @@ public class Routes implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_userRoute != null && _userRoute.isSet())
-            return _userRoute;
+        if (_userRoute == null)
+            _userRoute = new Route();
 
-        return null;
+            return _userRoute;
     }
 
     public Routes userRoute(Route userRoute) throws ParseException {
@@ -262,7 +268,4 @@ public class Routes implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

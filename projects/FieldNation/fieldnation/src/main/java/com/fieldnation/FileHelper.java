@@ -36,7 +36,7 @@ public class FileHelper {
             if (data.getExtras() != null && data.getExtras().containsKey(MediaStore.EXTRA_OUTPUT)) {
                 Log.v(TAG, data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
                 tempfile = new File(data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
-                listener.fileReady(tempfile.getName(), tempfile);
+                listener.fromUri(tempfile.getName(), App.getUriFromFile(tempfile));
                 return;
             } else {
                 // generate temp file
@@ -56,7 +56,7 @@ public class FileHelper {
                     bitmap.recycle();
                 }
 
-                listener.fileReady(filename, tempfile);
+                listener.fromUri(filename, App.getUriFromFile(tempfile));
                 return;
             } else if (data.getData() != null) {
                 Uri uri = data.getData();
@@ -174,8 +174,6 @@ public class FileHelper {
     }
 
     public interface Listener {
-        void fileReady(String filename, File file);
-
         void fromUri(String filename, Uri uri);
 
         void fail(String reason);

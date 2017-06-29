@@ -71,11 +71,9 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
                 // build the response
 
                 // done!
-                if (getCircle) {
-                    PhotoDispatch.get(context, circleObj.getFile(), url, true, false, transaction.isSync());
-                } else {
-                    PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
-                }
+                PhotoDispatch.get(context, url, circleObj.getUri(), true, true);
+                PhotoDispatch.get(context, url, imageObj.getUri(), false, true);
+
                 Log.v(TAG, "onComplete");
                 return result;
             } catch (Exception ex) {
@@ -90,7 +88,7 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
                 boolean getCircle = json.getBoolean("circle");
                 String url = json.getString("url");
 
-                PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
+                PhotoDispatch.get(context, url, null, getCircle, false);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

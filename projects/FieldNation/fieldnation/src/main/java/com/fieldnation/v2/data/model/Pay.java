@@ -5,17 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by dmgen from swagger.
@@ -129,6 +124,9 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -155,10 +153,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_additional != null && _additional.isSet())
-            return _additional;
+        if (_additional == null)
+            _additional = new PayAdditional();
 
-        return null;
+        return _additional;
     }
 
     public Pay additional(PayAdditional additional) throws ParseException {
@@ -180,10 +178,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_base != null && _base.isSet())
-            return _base;
+        if (_base == null)
+            _base = new PayBase();
 
-        return null;
+        return _base;
     }
 
     public Pay base(PayBase base) throws ParseException {
@@ -205,10 +203,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_bonuses != null && _bonuses.isSet())
-            return _bonuses;
+        if (_bonuses == null)
+            _bonuses = new PayModifiers();
 
-        return null;
+        return _bonuses;
     }
 
     public Pay bonuses(PayModifiers bonuses) throws ParseException {
@@ -252,10 +250,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_discounts != null && _discounts.isSet())
-            return _discounts;
+        if (_discounts == null)
+            _discounts = new PayModifiers();
 
-        return null;
+        return _discounts;
     }
 
     public Pay discounts(PayModifiers discounts) throws ParseException {
@@ -277,10 +275,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_estimatedPaymentDate != null && _estimatedPaymentDate.isSet())
-            return _estimatedPaymentDate;
+        if (_estimatedPaymentDate == null)
+            _estimatedPaymentDate = new Date();
 
-        return null;
+        return _estimatedPaymentDate;
     }
 
     public Pay estimatedPaymentDate(Date estimatedPaymentDate) throws ParseException {
@@ -302,10 +300,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_expenses != null && _expenses.isSet())
-            return _expenses;
+        if (_expenses == null)
+            _expenses = new Expenses();
 
-        return null;
+        return _expenses;
     }
 
     public Pay expenses(Expenses expenses) throws ParseException {
@@ -332,6 +330,9 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_fees == null)
+            _fees = new PayModifier[0];
+
         return _fees;
     }
 
@@ -354,10 +355,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_finance != null && _finance.isSet())
-            return _finance;
+        if (_finance == null)
+            _finance = new PayFinance();
 
-        return null;
+        return _finance;
     }
 
     public Pay finance(PayFinance finance) throws ParseException {
@@ -379,10 +380,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_hold != null && _hold.isSet())
-            return _hold;
+        if (_hold == null)
+            _hold = new PayModifier();
 
-        return null;
+        return _hold;
     }
 
     public Pay hold(PayModifier hold) throws ParseException {
@@ -404,10 +405,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_increases != null && _increases.isSet())
-            return _increases;
+        if (_increases == null)
+            _increases = new PayIncreases();
 
-        return null;
+        return _increases;
     }
 
     public Pay increases(PayIncreases increases) throws ParseException {
@@ -495,10 +496,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_payment != null && _payment.isSet())
-            return _payment;
+        if (_payment == null)
+            _payment = new PayModifier();
 
-        return null;
+        return _payment;
     }
 
     public Pay payment(PayModifier payment) throws ParseException {
@@ -520,10 +521,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_penalties != null && _penalties.isSet())
-            return _penalties;
+        if (_penalties == null)
+            _penalties = new PayModifiers();
 
-        return null;
+        return _penalties;
     }
 
     public Pay penalties(PayModifiers penalties) throws ParseException {
@@ -545,10 +546,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_pricingInsights != null && _pricingInsights.isSet())
-            return _pricingInsights;
+        if (_pricingInsights == null)
+            _pricingInsights = new PricingInsights();
 
-        return null;
+        return _pricingInsights;
     }
 
     public Pay pricingInsights(PricingInsights pricingInsights) throws ParseException {
@@ -570,10 +571,10 @@ public class Pay implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_range != null && _range.isSet())
-            return _range;
+        if (_range == null)
+            _range = new PayRange();
 
-        return null;
+        return _range;
     }
 
     public Pay range(PayRange range) throws ParseException {
@@ -834,10 +835,6 @@ public class Pay implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getType() != null;
-    }
-
     public String[] toDisplayStringLong() {
         String line1 = null;
         String line2 = null;
@@ -863,6 +860,8 @@ public class Pay implements Parcelable {
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
+            line1 = null;
+            line2 = null;
         }
 
         return new String[]{line1, line2};

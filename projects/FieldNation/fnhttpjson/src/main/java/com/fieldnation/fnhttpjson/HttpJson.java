@@ -9,8 +9,6 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.fntools.misc;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -136,12 +134,12 @@ public class HttpJson {
                         String contentType = fo.getString("contentType");
                         StoredObject so = StoredObject.get(context, soId);
 
-                        File sourceFile = so.getFile();
-                        Log.v(TAG, sourceFile.toString() + ":" + sourceFile.length());
-                        if (so.isFile()) {
-                            InputStream fin = new FileInputStream(sourceFile);
+                        if (so.isUri()) {
+                            Uri sourceFile = so.getUri();
+                            Log.v(TAG, sourceFile + ":" + so.size());
+                            InputStream fin = context.getContentResolver().openInputStream(sourceFile);
                             try {
-                                util.addFilePart(key, filename, fin, (int) sourceFile.length(), progress);
+                                util.addFilePart(key, filename, fin, (int) so.size(), progress);
                             } finally {
                                 fin.close();
                             }
@@ -164,17 +162,17 @@ public class HttpJson {
             final StoredObject so = StoredObject.get(context, soid);
             conn.setDoOutput(true);
             OutputStream out = conn.getOutputStream();
-            if (so.isFile()) {
+            if (so.isUri()) {
                 if (progress != null) {
                     final long startTime = System.currentTimeMillis();
-                    StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100, new StreamUtils.ProgressListener() {
+                    StreamUtils.copyStream(context.getContentResolver().openInputStream(so.getUri()), out, (int) so.size(), 100, new StreamUtils.ProgressListener() {
                         @Override
                         public void progress(int position) {
-                            progress.progress(position, so.getFile().length(), System.currentTimeMillis() - startTime);
+                            progress.progress(position, so.size(), System.currentTimeMillis() - startTime);
                         }
                     });
                 } else {
-                    StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100, null);
+                    StreamUtils.copyStream(context.getContentResolver().openInputStream(so.getUri()), out, (int) so.size(), 100, null);
                 }
             } else {
                 out.write(so.getData());

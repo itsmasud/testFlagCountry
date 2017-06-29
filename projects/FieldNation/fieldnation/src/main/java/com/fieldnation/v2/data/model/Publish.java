@@ -57,10 +57,10 @@ public class Publish implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_billingAddress != null && _billingAddress.isSet())
-            return _billingAddress;
+        if (_billingAddress == null)
+            _billingAddress = new BillingAddress();
 
-        return null;
+            return _billingAddress;
     }
 
     public Publish billingAddress(BillingAddress billingAddress) throws ParseException {
@@ -82,10 +82,10 @@ public class Publish implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_creditCard != null && _creditCard.isSet())
-            return _creditCard;
+        if (_creditCard == null)
+            _creditCard = new CreditCard();
 
-        return null;
+            return _creditCard;
     }
 
     public Publish creditCard(CreditCard creditCard) throws ParseException {
@@ -183,7 +183,4 @@ public class Publish implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

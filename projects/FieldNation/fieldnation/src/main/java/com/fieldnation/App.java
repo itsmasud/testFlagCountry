@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -11,6 +12,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
@@ -21,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
+import android.support.v4.content.FileProvider;
 import android.text.TextUtils;
 
 import com.fieldnation.analytics.AnswersWrapper;
@@ -54,6 +57,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -323,6 +328,70 @@ public class App extends Application {
             AuthTopicClient.requestCommand(App.this);
         }
     };
+
+    /*-*****************************-*/
+    /*-         Permissions         -*/
+    /*-*****************************-*/
+
+    public static String[] getPermissions() {
+        List<String> perms = new LinkedList<>();
+
+        perms.add("com.google.android.c2dm.permission.RECEIVE");
+        perms.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        perms.add(Manifest.permission.INTERNET);
+        perms.add(Manifest.permission.READ_SYNC_SETTINGS);
+        perms.add(Manifest.permission.WRITE_SYNC_SETTINGS);
+        perms.add(Manifest.permission.VIBRATE);
+        perms.add(Manifest.permission.ACCESS_NETWORK_STATE);
+        perms.add(Manifest.permission.WAKE_LOCK);
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            // this permission is implicit pre 19. After 19 we have to ask for it.
+            perms.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+/* not needed since the permissions checking is only needed 23+
+        if (Build.VERSION.SDK_INT <= 22) {
+            // These were removed 23+
+            perms.add(Manifest.permission.GET_ACCOUNTS);
+            perms.add("android.permission.MANAGE_ACCOUNTS");
+            perms.add("android.permission.AUTHENTICATE_ACCOUNTS");
+            perms.add("android.permission.USE_CREDENTIALS");
+        }
+*/
+
+        return perms.toArray(new String[perms.size()]);
+    }
+
+    public static boolean[] getPermissionsRequired() {
+        boolean[] required = new boolean[getPermissions().length];
+        int i = 0;
+
+        //perms.add("com.google.android.c2dm.permission.RECEIVE");
+        required[i++] = false;
+        //perms.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        required[i++] = true;
+        //perms.add(Manifest.permission.INTERNET);
+        required[i++] = true;
+        //perms.add(Manifest.permission.READ_SYNC_SETTINGS);
+        required[i++] = false;
+        //perms.add(Manifest.permission.WRITE_SYNC_SETTINGS);
+        required[i++] = false;
+        //perms.add(Manifest.permission.VIBRATE);
+        required[i++] = false;
+        //perms.add(Manifest.permission.ACCESS_NETWORK_STATE);
+        required[i++] = true;
+        //perms.add(Manifest.permission.WAKE_LOCK);
+        required[i++] = true;
+
+        if (Build.VERSION.SDK_INT >= 19) {
+            // this permission is implicit pre 19. After 19 we have to ask for it.
+            //perms.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+            required[i++] = true;
+        }
+
+        return required;
+    }
 
     /*-*************************-*/
     /*-         Profile         -*/
@@ -669,6 +738,12 @@ public class App extends Application {
         return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
     }
 
+    public String getPicturePath() {
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/FieldNation");
+        path.mkdirs();
+        return path.getAbsolutePath();
+    }
+
     public String getStoragePath() {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = getPackageName();
@@ -686,7 +761,7 @@ public class App extends Application {
 
     public String getTempFolder() {
         File tempFolder = new File(getStoragePath() + "/temp");
-        if (!tempFolder.exists()) tempFolder.mkdirs();
+        tempFolder.mkdirs();
         return tempFolder.getAbsolutePath();
     }
 
@@ -780,4 +855,9 @@ public class App extends Application {
     public static boolean isNcns() {
         return BuildConfig.BUILD_FLAVOR_NAME.equals("NCNS");
     }
+
+    public static Uri getUriFromFile(File file) {
+        return FileProvider.getUriForFile(get(), get().getApplicationContext().getPackageName() + ".provider", file);
+    }
+
 }

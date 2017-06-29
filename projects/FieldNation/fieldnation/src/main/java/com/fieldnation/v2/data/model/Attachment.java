@@ -93,6 +93,9 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -119,10 +122,10 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-            return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+        return _author;
     }
 
     public Attachment author(User author) throws ParseException {
@@ -144,10 +147,10 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public Attachment created(Date created) throws ParseException {
@@ -169,10 +172,10 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_file != null && _file.isSet())
-            return _file;
+        if (_file == null)
+            _file = new File();
 
-        return null;
+        return _file;
     }
 
     public Attachment file(File file) throws ParseException {
@@ -260,10 +263,10 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_reviewed != null && _reviewed.isSet())
-            return _reviewed;
+        if (_reviewed == null)
+            _reviewed = new Date();
 
-        return null;
+        return _reviewed;
     }
 
     public Attachment reviewed(Date reviewed) throws ParseException {
@@ -285,10 +288,10 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_reviewer != null && _reviewer.isSet())
-            return _reviewer;
+        if (_reviewer == null)
+            _reviewer = new User();
 
-        return null;
+        return _reviewer;
     }
 
     public Attachment reviewer(User reviewer) throws ParseException {
@@ -376,10 +379,10 @@ public class Attachment implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_task != null && _task.isSet())
-            return _task;
+        if (_task == null)
+            _task = new Task();
 
-        return null;
+        return _task;
     }
 
     public Attachment task(Task task) throws ParseException {
@@ -545,10 +548,6 @@ public class Attachment implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<Attachment.ActionsEnum> _actionsSet = null;
 

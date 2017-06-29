@@ -115,10 +115,10 @@ public class FundTransaction implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_bank != null && _bank.isSet())
-            return _bank;
+        if (_bank == null)
+            _bank = new Bank();
 
-        return null;
+            return _bank;
     }
 
     public FundTransaction bank(Bank bank) throws ParseException {
@@ -140,10 +140,10 @@ public class FundTransaction implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_billingAddress != null && _billingAddress.isSet())
-        return _billingAddress;
+        if (_billingAddress == null)
+            _billingAddress = new BillingAddress();
 
-        return null;
+        return _billingAddress;
     }
 
     public FundTransaction billingAddress(BillingAddress billingAddress) throws ParseException {
@@ -165,10 +165,10 @@ public class FundTransaction implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-        return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public FundTransaction created(Date created) throws ParseException {
@@ -190,10 +190,10 @@ public class FundTransaction implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_creditCard != null && _creditCard.isSet())
-        return _creditCard;
+        if (_creditCard == null)
+            _creditCard = new CreditCard();
 
-        return null;
+        return _creditCard;
     }
 
     public FundTransaction creditCard(CreditCard creditCard) throws ParseException {
@@ -391,10 +391,10 @@ public class FundTransaction implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_updated != null && _updated.isSet())
-        return _updated;
+        if (_updated == null)
+            _updated = new Date();
 
-        return null;
+        return _updated;
     }
 
     public FundTransaction updated(Date updated) throws ParseException {
@@ -416,10 +416,10 @@ public class FundTransaction implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_workOrder != null && _workOrder.isSet())
-        return _workOrder;
+        if (_workOrder == null)
+            _workOrder = new WorkOrder();
 
-        return null;
+        return _workOrder;
     }
 
     public FundTransaction workOrder(WorkOrder workOrder) throws ParseException {
@@ -582,7 +582,4 @@ public class FundTransaction implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

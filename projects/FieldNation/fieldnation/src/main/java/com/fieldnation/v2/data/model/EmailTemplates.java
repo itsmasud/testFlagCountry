@@ -56,6 +56,9 @@ public class EmailTemplates implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_results == null)
+            _results = new EmailTemplate[0];
+
         return _results;
     }
 
@@ -132,7 +135,4 @@ public class EmailTemplates implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

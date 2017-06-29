@@ -125,8 +125,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final ConfirmResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new ConfirmResultScreen.OnWorkOrderListReceivedListener() {
         @Override
         public void OnWorkOrderListReceived(final WorkOrders workOrders) {
-            if (workOrders == null
-                    || workOrders.getResults() == null) {
+            if (workOrders == null) {
                 return;
             }
 

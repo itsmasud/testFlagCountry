@@ -3,6 +3,7 @@ package com.fieldnation.ui.inbox;
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,13 +15,14 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
-import com.fieldnation.ui.UnavailableCardView;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -36,7 +38,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     // UI
     private OverScrollListView _listView;
     private RefreshView _loadingView;
-    private UnavailableCardView _emptyView;
+    private EmptyCardView _emptyView;
 
     // Data
     private ProfileClient _profileClient;
@@ -84,7 +86,9 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
 
-        _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
+        _emptyView = (EmptyCardView) view.findViewById(R.id.empty_view);
+        _emptyView.setData(EmptyCardView.PARAM_VIEW_TYPE_MESSAGE);
+
     }
 
     @Override
@@ -159,7 +163,6 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     public void addPage(int page, List<Message> list) {
         Log.v(TAG, "addPage: page:" + page);
         if (page == 0 && (list == null || list.size() == 0)) {
-            _emptyView.setNoMessages();
             _emptyView.setVisibility(View.VISIBLE);
         } else {
             _emptyView.setVisibility(View.GONE);
@@ -216,12 +219,11 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
 
     private final MessageTileView.Listener _messageCard_listener = new MessageTileView.Listener() {
         @Override
-        public Drawable getPhoto(MessageTileView view, String url, boolean circle) {
+        public Drawable getPhoto(MessageTileView view, String url) {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {
-                _photoClient.subGet(url, circle, false);
-                PhotoClient.get(App.get(), url, circle, false);
+                PhotoClient.get(App.get(), url, true, false);
             }
             return null;
         }
@@ -232,16 +234,26 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     /*-*****************************-*/
     private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
         @Override
-        public void onConnected() {
+        public PhotoClient getClient() {
+            return _photoClient;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
-            if (bitmapDrawable == null || url == null)
+        public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
+        }
+
+        @Override
+        public boolean doGetImage(String sourceUri, boolean isCircle) {
+            return isCircle;
+        }
+
+        @Override
+        public void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success) {
+            if (drawable == null || misc.isEmptyOrNull(sourceUri))
                 return;
 
-            Drawable pic = bitmapDrawable;
-            _picCache.put(url, new WeakReference<>(pic));
+            Drawable pic = drawable;
+            _picCache.put(sourceUri, new WeakReference<>(pic));
         }
     };
 

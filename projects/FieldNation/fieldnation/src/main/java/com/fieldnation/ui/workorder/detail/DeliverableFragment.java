@@ -1,6 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -126,16 +125,16 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onStart() {
         super.onStart();
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
+
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
-
-        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-
-        GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
     }
 
     @Override
@@ -145,7 +144,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-
         super.onStop();
     }
 
@@ -157,6 +155,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         super.onSaveInstanceState(outState);
     }
+
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
@@ -177,7 +176,6 @@ public class DeliverableFragment extends WorkorderFragment {
         } else {
             GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1});
         }
-
     }
 
     private boolean checkMedia() {
@@ -240,7 +238,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (reviewSlot != null) {
             final Attachment[] docs = reviewSlot.getResults();
 
-            if (docs != null && docs.length > 0) {
+            if (docs.length > 0) {
                 if (_reviewList.getChildCount() != docs.length) {
                     if (_reviewRunnable != null)
                         _reviewRunnable.cancel();
@@ -281,7 +279,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         //stopwatch.start();
 
-        if (slots != null && slots.length > 0) {
+        if (slots.length > 0) {
             //Log.v(TAG, "US count: " + slots.length);
 
             if (_filesRunnable != null)
@@ -423,7 +421,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
                     return _picCache.get(turl).get();
                 } else {
-                    _photoClient.subGet(url, circle, false);
                     PhotoClient.get(App.get(), url, circle, false);
                 }
                 return null;
@@ -439,7 +436,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
                     return _picCache.get(turl).get();
                 } else {
-                    _photoClient.subGet(url, circle, false);
                     PhotoClient.get(App.get(), url, circle, false);
                 }
                 return null;
@@ -451,23 +447,22 @@ public class DeliverableFragment extends WorkorderFragment {
     // step 2, user selects an app to load the file with
     private final GetFileDialog.OnFileListener _getFile_onFile = new GetFileDialog.OnFileListener() {
         @Override
-        public void onFile(List<GetFileDialog.FileUriIntent> fileResult) {
+        public void onFile(List<GetFileDialog.UriIntent> fileResult) {
             if (fileResult.size() == 0)
                 return;
 
             if (fileResult.size() == 1) {
-                GetFileDialog.FileUriIntent fui = fileResult.get(0);
+                GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
                     PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
-                            fui.file.getName(), fui.file.getAbsolutePath());
+                    // TODO show a toast?
                 }
                 return;
             }
 
-            for (GetFileDialog.FileUriIntent fui : fileResult) {
+            for (GetFileDialog.UriIntent fui : fileResult) {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_folder.getId());
@@ -498,7 +493,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), FileUtils.guessContentTypeFromName(file.getName()));
+                intent.setDataAndType(App.getUriFromFile(file),
+                        FileUtils.guessContentTypeFromName(file.getName()));
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
                     startActivity(intent);
@@ -507,7 +504,10 @@ public class DeliverableFragment extends WorkorderFragment {
                     name = name.substring(name.indexOf("_") + 1);
 
                     Intent folderIntent = new Intent(Intent.ACTION_VIEW);
-                    folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    intent.setDataAndType(App.getUriFromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
                         PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
                         ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
@@ -523,33 +523,43 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
         @Override
-        public void onConnected() {
+        public PhotoClient getClient() {
+            return _photoClient;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
-            if (drawable == null || url == null || failed)
+        public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
+        }
+
+        @Override
+        public boolean doGetImage(String sourceUri, boolean isCircle) {
+            return isCircle;
+        }
+
+        @Override
+        public void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success) {
+            if (drawable == null || sourceUri == null || !success)
                 return;
 
-            if (url.contains("?"))
-                url = url.substring(0, url.lastIndexOf('?'));
+            if (sourceUri.contains("?"))
+                sourceUri = sourceUri.substring(0, sourceUri.lastIndexOf('?'));
 
             synchronized (_picCache) {
-                _picCache.put(url, new WeakReference<>((Drawable) drawable));
+                _picCache.put(sourceUri, new WeakReference<>((Drawable) drawable));
             }
 
             Log.v(TAG, "PhotoClient.Listener.onGet");
             for (int i = 0; i < _reviewList.getChildCount(); i++) {
                 View v = _reviewList.getChildAt(i);
                 if (v instanceof PhotoReceiver) {
-                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                    ((PhotoReceiver) v).setPhoto(sourceUri, drawable);
                 }
             }
 
             for (int i = 0; i < _filesLayout.getChildCount(); i++) {
                 View v = _filesLayout.getChildAt(i);
                 if (v instanceof PhotoReceiver) {
-                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                    ((PhotoReceiver) v).setPhoto(sourceUri, drawable);
                 }
             }
         }
