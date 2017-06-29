@@ -158,6 +158,7 @@ public class App extends Application {
         }
 
         HttpJson.setTempFolder(getTempFolder());
+        HttpJson.setVersionName(BuildConfig.VERSION_NAME);
 
         Stopwatch mwatch = new Stopwatch(true);
         Stopwatch watch = new Stopwatch(true);
