@@ -21,31 +21,34 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginTop="16dp">
 
             <LinearLayout
                 android:id="@+id/type_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/title_textview"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
                 android:orientation="vertical">
 
                 <TextView
+                    android:id="@+id/pay_type_title_textview"
                     style="@style/Text_Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="@string/pay_rate_basis" />
+                    android:text="@string/pay_type" />
 
                 <com.fieldnation.ui.HintSpinner
                     android:id="@+id/type_spinner"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/what_type"
+                    android:hint="@string/pay_type"
                     android:visibility="visible" />
 
             </LinearLayout>
@@ -58,9 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/type_layout"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <EditText
                     android:id="@+id/fixed_edittext"
@@ -69,9 +70,10 @@
                     android:layout_height="wrap_content"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="@string/fixed_pay_amount"
-                    android:imeOptions="actionNext"
-                    android:inputType="numberDecimal" />
+                    android:hint="@string/amount"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/fn_dark_text_50" />
             </android.support.design.widget.TextInputLayout>
 
             <!-- hourly -->
@@ -82,10 +84,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/fixed_layout"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -97,7 +97,7 @@
                         style="@style/EditText"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:hint="@string/hourly_rate"
+                        android:hint="@string/hourly"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
@@ -125,10 +125,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/hourly_layout"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -140,7 +138,7 @@
                         style="@style/EditText"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:hint="@string/per_device_rate"
+                        android:hint="@string/amount"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
@@ -168,96 +166,70 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/devices_layout"
                 android:layout_marginBottom="16dp"
-                android:layout_marginLeft="24dp"
-                android:layout_marginRight="24dp"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
-                <TextView
-                    style="@style/Text_Caption"
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:text="@string/fixed_rate" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/dialogContentPadding"
-                    android:orientation="horizontal">
+                    android:layout_marginBottom="16dp">
 
                     <EditText
                         android:id="@+id/blendedFixedRate_edittext"
                         style="@style/EditText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:focusable="true"
                         android:focusableInTouchMode="true"
+                        android:hint="@string/fixed_pay_amount"
                         android:imeOptions="actionNext"
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/fn_dark_text_50" />
+                </android.support.design.widget.TextInputLayout>
 
-                    <TextView
-                        style="?attr/dialogCaptionStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:text="@string/for_the_first" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
 
                     <EditText
                         android:id="@+id/blendedFixedMaxHours_edittext"
                         style="@style/EditText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:focusableInTouchMode="true"
+                        android:hint="@string/blended_fixed_pay_max_hours"
                         android:imeOptions="actionNext"
-                        android:inputType="numberDecimal" />
-                </LinearLayout>
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/fn_dark_text_50" />
+                </android.support.design.widget.TextInputLayout>
 
-                <TextView
-                    style="@style/Text_Caption"
+
+                <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:text="@string/hourly_rate" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:layout_marginBottom="16dp">
 
                     <EditText
                         android:id="@+id/extrahours_edittext"
                         style="@style/EditText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:focusableInTouchMode="true"
+                        android:hint="@string/blended_hourly_amount"
                         android:imeOptions="actionNext"
-                        android:inputType="numberDecimal" />
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/fn_dark_text_50" />
+                </android.support.design.widget.TextInputLayout>
 
-                    <TextView
-                        style="?attr/dialogCaptionStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:text="@string/for_up_to" />
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
 
                     <EditText
                         android:id="@+id/extramaxhours_edittext"
                         style="@style/EditText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:focusableInTouchMode="true"
-                        android:imeOptions="actionNext"
-                        android:inputType="numberDecimal" />
-                </LinearLayout>
+                        android:hint="@string/blended_hourly_max_hours"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberDecimal"
+                        android:textColor="@color/fn_dark_text_50" />
+                </android.support.design.widget.TextInputLayout>
+
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout

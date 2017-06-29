@@ -92,7 +92,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         _toolbar.setTitle(App.get().getString(R.string.counter_offer));
 
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
-        _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+        _finishMenu.setText(R.string.btn_submit);
 
         _paymentView = v.findViewById(R.id.payment_view);
         _scheduleView = v.findViewById(R.id.schedule_view);
@@ -206,6 +206,8 @@ public class CounterOfferDialog extends FullScreenDialog {
             }
         };
         _expensesList.postDelayed(r, new Random().nextInt(100));
+
+        ScheduleDialog.show(App.get(), "", _workOrder.getSchedule());
     }
 
     /*-*********************************-*/
