@@ -27,6 +27,8 @@ public class EmptyCardView extends RelativeLayout {
     public static final String PARAM_VIEW_TYPE_REQUESTED = "requested";
     public static final String PARAM_VIEW_TYPE_ROUTED = "routed";
     public static final String PARAM_VIEW_TYPE_PAYMENT = "payment";
+    public static final String PARAM_VIEW_TYPE_DECLINED = "declined";
+    public static final String PARAM_VIEW_TYPE_PENDING = "pending";
     public static final String PARAM_VIEW_TYPE_MESSAGE = "message";
     public static final String PARAM_VIEW_TYPE_NOTIFICATION = "notification";
 
@@ -106,14 +108,26 @@ public class EmptyCardView extends RelativeLayout {
 
     private void setNoRequestedWorkOrder() {
         _titleTextView.setText(R.string.empty_state_requested_wol_title);
-        _captionTexView.setText(R.string.empty_state_requested_wol_title);
+        _captionTexView.setText(R.string.empty_state_requested_wol_body);
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setOnClickListener(_available_onClick);
     }
 
     private void setNoRoutedWorkOrder() {
-        _titleTextView.setText(R.string.no_routed_work);
+        _titleTextView.setText(R.string.empty_state_routed_wol_title);
         _captionTexView.setText(R.string.empty_state_routed_wol_body);
+        _actionButton.setVisibility(GONE);
+    }
+
+    private void setNoPendingWorkOrder() {
+        _titleTextView.setText(R.string.empty_state_pending_wol_title);
+        _captionTexView.setText(R.string.empty_state_pending_wol_title);
+        _actionButton.setVisibility(GONE);
+    }
+
+    private void setNoDeclinedWorkOrder() {
+        _titleTextView.setText(R.string.empty_state_declined_wol_title);
+        _captionTexView.setText(R.string.empty_state_declined_wol_body);
         _actionButton.setVisibility(GONE);
     }
 
@@ -173,6 +187,14 @@ public class EmptyCardView extends RelativeLayout {
 
             case PARAM_VIEW_TYPE_COUNTER:
                 setNoCounteredWorkOrder();
+                break;
+
+            case PARAM_VIEW_TYPE_DECLINED:
+                setNoDeclinedWorkOrder();
+                break;
+
+            case PARAM_VIEW_TYPE_PENDING:
+                setNoPendingWorkOrder();
                 break;
 
             case PARAM_VIEW_TYPE_PAYMENT:

@@ -35,7 +35,7 @@ import com.fieldnation.v2.ui.workorder.WorkOrderCard;
  * Created by Michael on 7/27/2016.
  */
 public class ConfirmResultScreen extends RelativeLayout {
-    private static final String TAG = "SearchResultScreen";
+    private static final String TAG = "ConfirmResultScreen";
 
     // Dialogs
     private static final String DIALOG_FILTER_DRAWER = TAG + "filterDrawerDialog";

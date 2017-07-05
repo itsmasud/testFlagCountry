@@ -517,7 +517,10 @@
     <string name="empty_state_confirm_wol_title">No Work Orders to Confirm</string>
     <string name="empty_state_countered_wol_title">No Countered Work Orders</string>
     <string name="empty_state_requested_wol_title">No Requested Work Orders</string>
-    <string name="empty_state_canceled_wol_title">No canceled Work Order</string>
+    <string name="empty_state_routed_wol_title">No Routed Work Orders</string>
+    <string name="empty_state_canceled_wol_title">No Canceled Work Orders</string>
+    <string name="empty_state_declined_wol_title">No Declined Work Orders</string>
+    <string name="empty_state_pending_wol_title">No Pending Work Orders</string>
     <string name="empty_state_payment_title">No Payments</string>
     <string name="empty_state_message_title">No Messages</string>
     <string name="empty_state_notification_title">No Notifications</string>
@@ -529,6 +532,8 @@
     <string name="empty_state_routed_wol_body">Work orders can be routed to multiple providers and they are on a first come first served basis.</string>
     <string name="empty_state_countered_wol_body">Check out what is available around you to get the ball rolling.</string>
     <string name="empty_state_confirm_wol_body">Check out what is available around you to get the ball rolling.</string>
+    <string name="empty_state_declined_wol_body">Work orders that you mark not interested on will appear here.</string>
+    <string name="empty_state_pending_wol_body">Work orders that you have marked complete and are awating buyer approval will appear here.</string>
     <string name="empty_state_payment_body">Check out what is available around you to get the ball rolling.</string>
     <string name="empty_state_message_body">Currently, you have no messages to review.</string>
     <string name="empty_state_notification_body">We\'ll let you know when we\'ve got something new for you.</string>
