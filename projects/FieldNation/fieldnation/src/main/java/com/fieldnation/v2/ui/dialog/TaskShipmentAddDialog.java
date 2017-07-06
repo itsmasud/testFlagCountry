@@ -19,6 +19,9 @@ import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class TaskShipmentAddDialog extends SimpleDialog {
     private static final String TAG = "TaskShipmentAddDialog";
 
@@ -83,14 +86,20 @@ public class TaskShipmentAddDialog extends SimpleDialog {
 
         try {
             _shipmentsLayout.removeAllViews();
-            Shipments shipments = _workOrder.getShipments();
-            if (shipments.getResults().length == 0)
+
+            if (_workOrder.getShipments().getResults().length == 0)
                 return;
 
-            for (int i = 0; i < shipments.getResults().length; i++) {
+            List<Shipment> shipments = new LinkedList();
+            for (Shipment shipment: _workOrder.getShipments().getResults()){
+                if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
+                    shipments.add(shipment);
+            }
+
+            for (int i = 0; i < shipments.size(); i++) {
                 ShipmentRowView view = new ShipmentRowView(getView().getContext());
                 _shipmentsLayout.addView(view);
-                view.setData(_workOrder, shipments.getResults()[i]);
+                view.setData(_workOrder, shipments.get(i));
                 view.hideForTaskShipmentDialog();
                 view.setListener(_summaryListener);
             }
