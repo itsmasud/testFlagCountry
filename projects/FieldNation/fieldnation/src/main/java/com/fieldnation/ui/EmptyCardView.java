@@ -121,7 +121,7 @@ public class EmptyCardView extends RelativeLayout {
 
     private void setNoPendingWorkOrder() {
         _titleTextView.setText(R.string.empty_state_pending_wol_title);
-        _captionTexView.setText(R.string.empty_state_pending_wol_title);
+        _captionTexView.setText(R.string.empty_state_pending_wol_body);
         _actionButton.setVisibility(GONE);
     }
 
