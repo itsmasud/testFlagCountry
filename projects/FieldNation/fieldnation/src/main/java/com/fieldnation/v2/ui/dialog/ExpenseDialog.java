@@ -242,9 +242,9 @@ public class ExpenseDialog extends FullScreenDialog {
         Controller.show(context, uid, ExpenseDialog.class, params);
     }
 
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
+    /*-*********************-*/
+    /*-         Ok          -*/
+    /*-*********************-*/
     public interface OnOkListener {
         void onOk(String description, double amount, ExpenseCategory category);
     }
@@ -268,9 +268,9 @@ public class ExpenseDialog extends FullScreenDialog {
         _onOkDispatcher.removeAll(uid);
     }
 
-    /*-**************************-*/
-    /*-         Cancel           -*/
-    /*-**************************-*/
+    /*-*************************-*/
+    /*-         Cancel          -*/
+    /*-*************************-*/
     public interface OnCancelListener {
         void onCancel();
     }

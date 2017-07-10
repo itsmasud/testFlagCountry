@@ -15,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,11 +30,10 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.ExpensesCoCardView;
-import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.PaymentCoView;
 import com.fieldnation.ui.ReasonCoView;
 import com.fieldnation.ui.RefreshView;
@@ -40,10 +42,12 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
+import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.KeyValuePairView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -55,8 +59,12 @@ import java.util.Random;
 public class CounterOfferDialog extends FullScreenDialog {
     private static final String TAG = "CounterOfferDialog";
 
+    // Dialogs
+    private static final String DIALOG_UID_EXPENSE = TAG + ".expenseDialog";
+
     // State
     private static final String STATE_EXPENSES = "STATE_EXPENSES";
+
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
@@ -67,10 +75,26 @@ public class CounterOfferDialog extends FullScreenDialog {
     private LinearLayout _expensesList;
     private ReasonCoView _reasonView;
     private TextView _termsWarningTextView;
-    private IconFontTextView _addExpense;
+
+    // Bottom Sheet
+    private Button _floatingActionButton;
+    private View _bottomSheetBackground;
+    private LinearLayout _bottomSheet;
+    private TextView _changePayButton;
+    private TextView _changeScheduleButton;
+    private TextView _addExpenseButton;
+
+
+    // Animations
+    private Animation _fadeIn;
+    private Animation _fadeOut;
+    private Animation _bsSlideIn;
+    private Animation _bsSlideOut;
+    private Animation _fabSlideOut;
+    private Animation _fabSlideIn;
 
     // Data
-    private final List<ExpensesCoCardView> _expensesViews = new LinkedList<>();
+    private final List<Expense> _expenses = new LinkedList<>();
     private WorkOrder _workOrder;
     private WorkordersWebApi _workOrderApi;
 
@@ -98,13 +122,27 @@ public class CounterOfferDialog extends FullScreenDialog {
         _scheduleView = v.findViewById(R.id.schedule_view);
 
         _expensesList = v.findViewById(R.id.expenses_list);
-        _addExpense = v.findViewById(R.id.add_expense);
 
         _reasonView = v.findViewById(R.id.reasons_view);
 
         _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
 
+        // Bottom Sheet
+        _floatingActionButton = v.findViewById(R.id.action_button);
+        _bottomSheetBackground = v.findViewById(R.id.bottomSheet_background);
+        _bottomSheet = v.findViewById(R.id.bottomsheet);
+        _changePayButton = v.findViewById(R.id.changePay_button);
+        _changeScheduleButton = v.findViewById(R.id.changeSchedule_button);
+        _addExpenseButton = v.findViewById(R.id.addExpense_button);
+
         _refreshView = v.findViewById(R.id.refresh_view);
+
+        _fadeIn = AnimationUtils.loadAnimation(context, R.anim.fade_in);
+        _fadeOut = AnimationUtils.loadAnimation(context, R.anim.fade_out);
+        _bsSlideIn = AnimationUtils.loadAnimation(context, R.anim.fg_slide_in_bottom);
+        _bsSlideOut = AnimationUtils.loadAnimation(context, R.anim.fg_slide_out_bottom);
+        _fabSlideIn = AnimationUtils.loadAnimation(context, R.anim.fg_slide_in_right);
+        _fabSlideOut = AnimationUtils.loadAnimation(context, R.anim.fg_slide_out_right);
 
         return v;
     }
@@ -115,7 +153,6 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _addExpense.setOnClickListener(_actionButton_onClick);
 
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
         SpannableString spanned = new SpannableString("By countering this work order, I understand and agree to the Buyer's work order terms, the Standard Work Order Terms and Conditions and the Provider Quality Assurance Policy. I also understand that I am committing myself to complete this work order at the designated date and time and that failure to do so can result in non-payment or deactivation from the platform.");
@@ -125,6 +162,59 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         _workOrderApi = new WorkordersWebApi(_workOrdersWebApi_listener);
         _workOrderApi.connect(App.get());
+
+        _floatingActionButton.setOnClickListener(_actionButton_onClick);
+        _changePayButton.setOnClickListener(_changePay_onClick);
+        _changeScheduleButton.setOnClickListener(_changeSchedule_onClick);
+        _addExpenseButton.setOnClickListener(_addExpense_onClick);
+        _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
+
+        _fadeIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _bottomSheetBackground.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _fadeOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _bottomSheetBackground.setVisibility(View.GONE);
+            }
+        });
+
+        _bsSlideIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _bottomSheet.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _bsSlideOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _bottomSheet.setVisibility(View.GONE);
+            }
+        });
+
+        _fabSlideIn.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                _floatingActionButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        _fabSlideOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _floatingActionButton.setVisibility(View.GONE);
+            }
+        });
+
+        _bottomSheet.clearAnimation();
+        _bottomSheet.startAnimation(_bsSlideOut);
+
+        ExpenseDialog.addOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
     }
 
     @Override
@@ -148,11 +238,9 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         if (savedState.containsKey(STATE_EXPENSES)) {
             Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
-            _expensesViews.clear();
+            _expenses.clear();
             for (Parcelable aParc : parc) {
-                ExpensesCoCardView v = new ExpensesCoCardView(getContext());
-                v.setExpense((Expense) aParc);
-                _expensesViews.add(v);
+                _expenses.add((Expense) aParc);
             }
         }
 
@@ -161,6 +249,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        ExpenseDialog.removeOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
         super.onStop();
     }
@@ -169,11 +258,11 @@ public class CounterOfferDialog extends FullScreenDialog {
     public void onSaveDialogState(Bundle outState) {
         Log.v(TAG, "onSaveDialogState");
 
-        if (_expensesViews != null && _expensesViews.size() > 0) {
-            Expense[] exs = new Expense[_expensesViews.size()];
+        if (_expenses != null && _expenses.size() > 0) {
+            Expense[] exs = new Expense[_expenses.size()];
 
-            for (int i = 0; i < _expensesViews.size(); i++) {
-                exs[i] = _expensesViews.get(i).getExpense();
+            for (int i = 0; i < _expenses.size(); i++) {
+                exs[i] = _expenses.get(i);
             }
 
             outState.putParcelableArray(STATE_EXPENSES, exs);
@@ -184,35 +273,80 @@ public class CounterOfferDialog extends FullScreenDialog {
         if (_workOrder == null)
             return;
 
-        if (_paymentView == null)
-            return;
-
-        if (_scheduleView == null)
+        if (_expensesList == null)
             return;
 
         _expensesList.removeAllViews();
-
-        ForLoopRunnable r = new ForLoopRunnable(_expensesViews.size(), new Handler()) {
+        ForLoopRunnable r = new ForLoopRunnable(_expenses.size(), new Handler()) {
 
             @Override
             public void next(int i) throws Exception {
-                ExpensesCoCardView v = null;
-                if (i < _expensesList.getChildCount()) {
-                    v = (ExpensesCoCardView) _expensesList.getChildAt(i);
-                } else {
-                    v = _expensesViews.get(i);
-                    _expensesList.addView(v);
-                }
+                KeyValuePairView v = new KeyValuePairView(getContext());
+                v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
+                _expensesList.addView(v);
             }
         };
         _expensesList.postDelayed(r, new Random().nextInt(100));
-
-        ExpenseDialog.show(App.get(), "", false);
     }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
+    private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            misc.hideKeyboard(v);
+            _bottomSheetBackground.clearAnimation();
+            _bottomSheetBackground.startAnimation(_fadeIn);
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideIn);
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideOut);
+        }
+    };
+
+    private final View.OnClickListener _bottomSheet_onCancel = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _bottomSheetBackground.clearAnimation();
+            _bottomSheetBackground.startAnimation(_fadeOut);
+            _bottomSheet.clearAnimation();
+            _bottomSheet.startAnimation(_bsSlideOut);
+            _floatingActionButton.clearAnimation();
+            _floatingActionButton.startAnimation(_fabSlideIn);
+        }
+    };
+
+    private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+    private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+    private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, false);
+            _bottomSheet_onCancel.onClick(view);
+        }
+    };
+
+    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
+        @Override
+        public void onOk(String description, double amount, ExpenseCategory category) {
+            _expenses.add(new Expense(description, amount));
+            populateUi();
+        }
+    };
+
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -226,10 +360,13 @@ public class CounterOfferDialog extends FullScreenDialog {
 
             _refreshView.startRefreshing();
 
-            Expense[] exp = new Expense[_expensesViews.size()];
-            for (int i = 0; i < _expensesViews.size(); i++) {
-                if (_expensesViews.get(i).isValidExpense())
-                    exp[i] = _expensesViews.get(i).getExpense();
+            Expense[] exp = new Expense[_expenses.size()];
+            for (int i = 0; i < _expenses.size(); i++) {
+                Expense e = _expenses.get(i);
+
+
+                if (!misc.isEmptyOrNull(e.getDescription()) && e.getAmount() != null)
+                    exp[i] = _expenses.get(i);
                 else {
                     ToastClient.toast(App.get(), R.string.toast_must_enter_amount_and_description, Toast.LENGTH_LONG);
                     _refreshView.refreshComplete();
@@ -319,9 +456,9 @@ public class CounterOfferDialog extends FullScreenDialog {
             if (methodName.equals("request")) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 if (success) {
-                    Expense[] exp = new Expense[_expensesViews.size()];
-                    for (int i = 0; i < _expensesViews.size(); i++) {
-                        exp[i] = _expensesViews.get(i).getExpense();
+                    Expense[] exp = new Expense[_expenses.size()];
+                    for (int i = 0; i < _expenses.size(); i++) {
+                        exp[i] = _expenses.get(i);
                     }
 
                     _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _paymentView.getPay(), _scheduleView.getSchedule(), exp);
@@ -330,15 +467,6 @@ public class CounterOfferDialog extends FullScreenDialog {
                     _refreshView.refreshComplete();
                 }
             }
-        }
-    };
-
-    private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            ExpensesCoCardView view = new ExpensesCoCardView(getContext());
-            _expensesViews.add(view);
-            populateUi();
         }
     };
 

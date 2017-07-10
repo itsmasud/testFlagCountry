@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -510,7 +507,6 @@ public class Expense implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -519,5 +515,28 @@ public class Expense implements Parcelable {
             if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
+    }
+
+    public Expense(String description, Double amount) {
+        this();
+        try {
+            setDescription(description);
+            setAmount(amount);
+            setStatus(StatusEnum.NEW);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    public Expense(String description, Double amount, ExpenseCategory category) {
+        this();
+        try {
+            setDescription(description);
+            setAmount(amount);
+            setStatus(StatusEnum.NEW);
+            setCategory(category);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 }
