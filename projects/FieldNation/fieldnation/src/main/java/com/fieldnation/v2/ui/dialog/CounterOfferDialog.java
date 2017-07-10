@@ -19,6 +19,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,10 +35,8 @@ import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.PaymentCoView;
 import com.fieldnation.ui.ReasonCoView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.ScheduleCoView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Date;
@@ -49,8 +48,12 @@ import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.KeyValuePairView;
 
+import java.text.DateFormatSymbols;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -61,6 +64,8 @@ public class CounterOfferDialog extends FullScreenDialog {
 
     // Dialogs
     private static final String DIALOG_UID_EXPENSE = TAG + ".expenseDialog";
+    private static final String DIALOG_UID_SCHEDULE = TAG + ".scheduleDialog";
+    private static final String DIALOG_UID_PAY = TAG + ".payDialog";
 
     // State
     private static final String STATE_EXPENSES = "STATE_EXPENSES";
@@ -70,9 +75,20 @@ public class CounterOfferDialog extends FullScreenDialog {
     private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
 
-    private PaymentCoView _paymentView;
-    private ScheduleCoView _scheduleView;
+    private RelativeLayout _payLayout;
+    private KeyValuePairView _pay1View;
+    private KeyValuePairView _pay2View;
+    private KeyValuePairView _pay3View;
+    private KeyValuePairView _pay4View;
+    private KeyValuePairView _pay5View;
+
+    private RelativeLayout _scheduleLayout;
+    private KeyValuePairView _scheduleView1;
+    private KeyValuePairView _scheduleView2;
+
+    private RelativeLayout _expenseLayout;
     private LinearLayout _expensesList;
+
     private ReasonCoView _reasonView;
     private TextView _termsWarningTextView;
 
@@ -94,9 +110,13 @@ public class CounterOfferDialog extends FullScreenDialog {
     private Animation _fabSlideIn;
 
     // Data
-    private final List<Expense> _expenses = new LinkedList<>();
     private WorkOrder _workOrder;
     private WorkordersWebApi _workOrderApi;
+
+    // User Data
+    private final List<Expense> _expenses = new LinkedList<>();
+    private Schedule _schedule = null;
+    private Pay _pay = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -118,9 +138,18 @@ public class CounterOfferDialog extends FullScreenDialog {
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_submit);
 
-        _paymentView = v.findViewById(R.id.payment_view);
-        _scheduleView = v.findViewById(R.id.schedule_view);
+        _payLayout = v.findViewById(R.id.pay_layout);
+        _pay1View = v.findViewById(R.id.pay1_view);
+        _pay2View = v.findViewById(R.id.pay2_view);
+        _pay3View = v.findViewById(R.id.pay3_view);
+        _pay4View = v.findViewById(R.id.pay4_view);
+        _pay5View = v.findViewById(R.id.pay5_view);
 
+        _scheduleLayout = v.findViewById(R.id.schedule_layout);
+        _scheduleView1 = v.findViewById(R.id.scheduleView1);
+        _scheduleView2 = v.findViewById(R.id.scheduleView2);
+
+        _expenseLayout = v.findViewById(R.id.expense_layout);
         _expensesList = v.findViewById(R.id.expenses_list);
 
         _reasonView = v.findViewById(R.id.reasons_view);
@@ -215,6 +244,8 @@ public class CounterOfferDialog extends FullScreenDialog {
         _bottomSheet.startAnimation(_bsSlideOut);
 
         ExpenseDialog.addOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
+        ScheduleDialog.addOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
+        PayDialog.addOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
     }
 
     @Override
@@ -250,6 +281,8 @@ public class CounterOfferDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         ExpenseDialog.removeOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
+        ScheduleDialog.removeOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
+        PayDialog.addOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
         super.onStop();
     }
@@ -276,22 +309,87 @@ public class CounterOfferDialog extends FullScreenDialog {
         if (_expensesList == null)
             return;
 
-        _expensesList.removeAllViews();
-        ForLoopRunnable r = new ForLoopRunnable(_expenses.size(), new Handler()) {
+        if (_expenses.size() > 0) {
+            _expenseLayout.setVisibility(View.VISIBLE);
+            _expensesList.removeAllViews();
+            ForLoopRunnable r = new ForLoopRunnable(_expenses.size(), new Handler()) {
 
-            @Override
-            public void next(int i) throws Exception {
-                KeyValuePairView v = new KeyValuePairView(getContext());
-                v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
-                _expensesList.addView(v);
+                @Override
+                public void next(int i) throws Exception {
+                    KeyValuePairView v = new KeyValuePairView(getContext());
+                    v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
+                    _expensesList.addView(v);
+                }
+            };
+            _expensesList.postDelayed(r, new Random().nextInt(100));
+        } else {
+            _expenseLayout.setVisibility(View.GONE);
+        }
+
+        if (_schedule != null) {
+            _scheduleLayout.setVisibility(View.VISIBLE);
+
+            try {
+                DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
+                symbols.setAmPmStrings(getContext().getResources().getStringArray(R.array.schedule_capital_case_am_pm_array));
+
+                switch (_schedule.getServiceWindow().getMode()) {
+                    case BETWEEN: {
+                        Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
+                        Calendar eCal = _schedule.getServiceWindow().getEnd().getCalendar();
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy @ h:mm a", Locale.getDefault());
+                        sdf.setDateFormatSymbols(symbols);
+
+                        _scheduleView1.set("Start After", sdf.format(sCal.getTime()));
+                        _scheduleView2.set("Finish By", sdf.format(eCal.getTime()));
+                        break;
+                    }
+                    case EXACT: {
+                        Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("E, MMM d, yyyy", Locale.getDefault());
+                        sdf.setDateFormatSymbols(symbols);
+
+                        _scheduleView1.set("Date", sdf.format(sCal.getTime()));
+
+                        sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                        sdf.setDateFormatSymbols(symbols);
+
+                        _scheduleView2.set("Time", sdf.format(sCal.getTime()));
+                        break;
+                    }
+                    case HOURS: {
+                        Calendar sCal = _schedule.getServiceWindow().getStart().getCalendar();
+                        Calendar eCal = _schedule.getServiceWindow().getEnd().getCalendar();
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.getDefault());
+                        sdf.setDateFormatSymbols(symbols);
+
+                        _scheduleView1.set("Between", sdf.format(sCal.getTime()) + " - " + sdf.format(eCal.getTime()));
+
+                        sdf = new SimpleDateFormat("h:mm a", Locale.getDefault());
+                        sdf.setDateFormatSymbols(symbols);
+
+                        _scheduleView2.set("During", sdf.format(sCal.getTime()) + " - " + sdf.format(eCal.getTime()));
+                        break;
+                    }
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                ToastClient.toast(App.get(), "There was a problem with the schedule, please try setting it again", Toast.LENGTH_SHORT);
+                _scheduleLayout.setVisibility(View.GONE);
+                _schedule = null;
             }
-        };
-        _expensesList.postDelayed(r, new Random().nextInt(100));
+        } else {
+            _scheduleLayout.setVisibility(View.GONE);
+        }
     }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
+
     private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -320,14 +418,17 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _workOrder.getPay(), false);
+            _bottomSheet_onCancel.onClick(view);
         }
     };
 
     private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
+            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE,
+                    _schedule != null ? _schedule : _workOrder.getSchedule());
+            _bottomSheet_onCancel.onClick(view);
         }
     };
 
@@ -344,6 +445,21 @@ public class CounterOfferDialog extends FullScreenDialog {
         public void onOk(String description, double amount, ExpenseCategory category) {
             _expenses.add(new Expense(description, amount));
             populateUi();
+        }
+    };
+
+    private final ScheduleDialog.OnCompleteListener _scheduleDialog_onOk = new ScheduleDialog.OnCompleteListener() {
+        @Override
+        public void onComplete(Schedule schedule) {
+            _schedule = schedule;
+            populateUi();
+        }
+    };
+
+    private final PayDialog.OnCompleteListener _payDialog_onOk = new PayDialog.OnCompleteListener() {
+        @Override
+        public void onComplete(Pay pay, String explanation) {
+
         }
     };
 
@@ -392,8 +508,8 @@ public class CounterOfferDialog extends FullScreenDialog {
                     request.pay(_paymentView.getPay());
                 }
 
-                if (_scheduleView.getSchedule() != null)
-                    request.schedule(_scheduleView.getSchedule());
+                if (_schedule != null)
+                    request.schedule(_schedule);
 
                 if (exp != null)
                     request.expenses(exp);
@@ -404,7 +520,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                 if (!misc.isEmptyOrNull(_reasonView.getReason()))
                     request.counterNotes(_reasonView.getReason());
 
-                if (!_paymentView.isValidPay() && !_scheduleView.isValidSchedule() && !(exp != null && exp.length > 0)) {
+                if (!_paymentView.isValidPay() && _schedule == null && !(exp != null && exp.length > 0)) {
                     ToastClient.toast(App.get(), App.get().getString(R.string.toast_empty_counter_offer), Toast.LENGTH_SHORT);
                     _refreshView.refreshComplete();
                     return false;
@@ -461,7 +577,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                         exp[i] = _expenses.get(i);
                     }
 
-                    _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _paymentView.getPay(), _scheduleView.getSchedule(), exp);
+                    _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _paymentView.getPay(), _schedule, exp);
                     dismiss(true);
 
                     _refreshView.refreshComplete();

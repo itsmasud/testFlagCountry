@@ -11,8 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="10dp"
-        android:text="Type"
-        android:textColor="@color/fn_dark_text_50"
+        android:text="Key"
+        android:textColor="@color/fn_dark_text"
         android:textSize="16sp" />
 
     <TextView
@@ -22,8 +22,8 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="24dp"
         android:gravity="right"
-        android:text="Hourly"
-        android:textColor="@color/fn_dark_text"
+        android:text="Value"
+        android:textColor="@color/fn_dark_text_50"
         android:textSize="16sp" />
 
 

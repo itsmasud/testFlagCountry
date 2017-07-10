@@ -44,11 +44,35 @@
                     style="@style/DividerFull"
                     android:layout_below="@+id/pay_title_textview" />
 
-                <com.fieldnation.ui.PaymentCoView
-                    android:id="@+id/payment_view"
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/pay1_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/pay_title_divider" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/pay2_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pay1_view" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/pay3_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pay2_view" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/pay4_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pay3_view" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/pay5_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/pay4_view" />
 
             </RelativeLayout>
 
@@ -80,26 +104,25 @@
                     style="@style/DividerFull"
                     android:layout_below="@+id/schedule_title_textview" />
 
-
-                <com.fieldnation.ui.ScheduleCoView
-                    android:id="@+id/schedule_view"
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/scheduleView1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/schedule_title_divider"
-                    android:visibility="visible" />
+                    android:layout_below="@+id/schedule_title_divider" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/scheduleView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scheduleView1" />
 
             </RelativeLayout>
-
-            <View
-                android:id="@+id/schedule_layout_divider"
-                style="@style/DividerFull"
-                android:layout_below="@+id/schedule_layout" />
 
             <RelativeLayout
                 android:id="@+id/expense_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/schedule_layout_divider"
+                android:layout_below="@+id/schedule_layout"
                 android:layout_marginTop="12dp">
 
                 <TextView

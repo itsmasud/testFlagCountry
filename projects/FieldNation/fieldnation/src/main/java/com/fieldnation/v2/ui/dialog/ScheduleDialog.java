@@ -83,9 +83,9 @@ public class ScheduleDialog extends FullScreenDialog {
         Controller.show(context, uid, ScheduleDialog.class, params);
     }
 
-    /*-****************************-*/
-    /*-         Complete           -*/
-    /*-****************************-*/
+    /*-*****************************-*/
+    /*-         Complete            -*/
+    /*-*****************************-*/
     public interface OnCompleteListener {
         void onComplete(Schedule schedule);
     }
