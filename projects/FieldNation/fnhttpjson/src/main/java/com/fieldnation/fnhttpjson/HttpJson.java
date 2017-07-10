@@ -88,7 +88,7 @@ public class HttpJson {
         conn.setUseCaches(false);
         conn.setRequestProperty("Pragma", "no-cache");
         conn.setRequestProperty("Cache-Control", "no-cache");
-        conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
+        conn.setRequestProperty("X-App-Version", VERSION_NAME);
         conn.setRequestProperty("X-App-Platform", "Android");
         conn.setConnectTimeout(10000);
         conn.setReadTimeout(60000);
@@ -205,10 +205,14 @@ public class HttpJson {
 
 
     static String TEMP_FOLDER = null;
+    static String VERSION_NAME = "";
 
     public static void setTempFolder(String tempFolder) {
         TEMP_FOLDER = tempFolder;
     }
 
+    public static void setVersionName(String versionName) {
+        VERSION_NAME = versionName;
+    }
 }
 

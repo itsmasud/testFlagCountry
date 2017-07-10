@@ -17,6 +17,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
@@ -313,13 +314,50 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
+            EmptyCardView v = new EmptyCardView(getContext());
+
+            if (_savedList.getLabel().equalsIgnoreCase("available")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_AVAILABLE);
+            } else if (_savedList.getLabel().equalsIgnoreCase("routed")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_ROUTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("requested")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_REQUESTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("counter")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_COUNTER);
+            } else if (_savedList.getLabel().equalsIgnoreCase("assigned")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_ASSIGNED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("pending")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_PENDING);
+            } else if (_savedList.getLabel().equalsIgnoreCase("completed")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_COMPLETED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("declined")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_DECLINED);
+            }
+
+
             return new BaseHolder(v, BaseHolder.TYPE_EMPTY);
         }
 
         @Override
         public void onBindEmptyViewHolder(BaseHolder holder) {
-            // nothing
+            EmptyCardView view = (EmptyCardView) holder.itemView;
+            if (_savedList.getLabel().equalsIgnoreCase("available")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_AVAILABLE);
+            } else if (_savedList.getLabel().equalsIgnoreCase("routed")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_ROUTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("requested")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_REQUESTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("counter")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_COUNTER);
+            } else if (_savedList.getLabel().equalsIgnoreCase("assigned")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_ASSIGNED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("pending")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_PENDING);
+            } else if (_savedList.getLabel().equalsIgnoreCase("completed")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_COMPLETED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("declined")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_DECLINED);
+            }
         }
     };
 
