@@ -75,7 +75,7 @@ public class ProfilePhotoService extends MultiThreadedService implements Profile
 
     private void doUploadImage(Uri uri) {
         _currentProfileImage = uri;
-        ProfileClient.uploadProfilePhoto(this, _profile.getUserId(), FileUtils.getFileNameFromUri(this, uri), uri);
+        ProfileClient.uploadProfilePhoto(this, App.get().getProfile().getUserId(), FileUtils.getFileNameFromUri(this, uri), uri);
 
         ProfilePhotoClient.dispatchGet(this, _currentProfileImage);
     }
