@@ -23,7 +23,7 @@
         android:layout_marginRight="24dp"
         android:gravity="right"
         android:text="Hourly"
-        android:textColor="@color/fn_dark_text_50"
+        android:textColor="@color/fn_dark_text"
         android:textSize="16sp" />
 
 
