@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -32,9 +32,9 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
-import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.ReasonCoView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
@@ -49,10 +49,10 @@ import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.KeyValuePairView;
 import com.fieldnation.v2.ui.PayView;
 import com.fieldnation.v2.ui.ScheduleView;
+import com.fieldnation.v2.ui.TwoLineActionTile;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by michael.carver on 11/5/2014.
@@ -73,16 +73,27 @@ public class CounterOfferDialog extends FullScreenDialog {
     private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
 
+    // Ui - Pay
     private RelativeLayout _payLayout;
+    private IconFontTextView _payMenu;
+    private PopupMenu _payPopUp;
     private PayView _payView;
 
+    // Ui - Schedule
     private RelativeLayout _scheduleLayout;
     private KeyValuePairView _scheduleTypeView;
+    private IconFontTextView _scheduleMenu;
+    private PopupMenu _schedulePopUp;
     private ScheduleView _scheduleView;
 
+    // Ui - Expenses
     private RelativeLayout _expenseLayout;
     private LinearLayout _expensesList;
+    private View _expenseMenuClickedView = null;
 
+
+    // Ui - Expires
+    // Ui - Reason
     private ReasonCoView _reasonView;
     private TextView _termsWarningTextView;
 
@@ -133,10 +144,12 @@ public class CounterOfferDialog extends FullScreenDialog {
         _finishMenu.setText(R.string.btn_submit);
 
         _payLayout = v.findViewById(R.id.pay_layout);
+        _payMenu = v.findViewById(R.id.pay_menu);
         _payView = v.findViewById(R.id.pay_view);
 
         _scheduleLayout = v.findViewById(R.id.schedule_layout);
         _scheduleTypeView = v.findViewById(R.id.scheduleType_view);
+        _scheduleMenu = v.findViewById(R.id.schedule_menu);
         _scheduleView = v.findViewById(R.id.schedule_view);
 
         _expenseLayout = v.findViewById(R.id.expense_layout);
@@ -180,10 +193,18 @@ public class CounterOfferDialog extends FullScreenDialog {
         _termsWarningTextView.setText(spanned);
 
         _payView.setOnRenderListener(_pay_onRender);
-        _payView.setOnClickListener(_changePay_onClick);
-        _payView.setOnLongClickListener(_removePay_onClick);
-        _scheduleView.setOnRenderListener(_schedule_onRender);
+        _payView.setOnClickListener(_pay_onClick);
+        _payMenu.setOnClickListener(_payMenu_onClick);
+        _payPopUp = new PopupMenu(getContext(), _payMenu);
+        _payPopUp.inflate(R.menu.edit_delete);
+        _payPopUp.setOnMenuItemClickListener(_payPopUp_onClick);
 
+        _scheduleView.setOnRenderListener(_schedule_onRender);
+        _scheduleView.setOnClickListener(_schedule_onClick);
+        _scheduleMenu.setOnClickListener(_scheduleMenu_onClick);
+        _schedulePopUp = new PopupMenu(getContext(), _scheduleMenu);
+        _schedulePopUp.inflate(R.menu.edit_delete);
+        _schedulePopUp.setOnMenuItemClickListener(_schedulePopUp_onClick);
 
         _floatingActionButton.setOnClickListener(_fab_onClick);
         _changePayButton.setOnClickListener(_changePay_onClick);
@@ -262,7 +283,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
     @Override
     public void onRestoreDialogState(Bundle savedState) {
-        Log.v(TAG, "onCreate");
+        Log.v(TAG, "onRestoreDialogState");
 
         if (savedState.containsKey(STATE_EXPENSES)) {
             Parcelable[] parc = savedState.getParcelableArray(STATE_EXPENSES);
@@ -271,7 +292,6 @@ public class CounterOfferDialog extends FullScreenDialog {
                 _expenses.add((Expense) aParc);
             }
         }
-
         populateUi();
     }
 
@@ -336,16 +356,15 @@ public class CounterOfferDialog extends FullScreenDialog {
         if (_expensesList != null && _expenses.size() > 0) {
             _expenseLayout.setVisibility(View.VISIBLE);
             _expensesList.removeAllViews();
-            ForLoopRunnable r = new ForLoopRunnable(_expenses.size(), new Handler()) {
 
-                @Override
-                public void next(int i) throws Exception {
-                    KeyValuePairView v = new KeyValuePairView(getContext());
-                    v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
-                    _expensesList.addView(v);
-                }
-            };
-            _expensesList.postDelayed(r, new Random().nextInt(100));
+            for (int i = 0; i < _expenses.size(); i++) {
+                TwoLineActionTile v = new TwoLineActionTile(getContext());
+                v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
+                v.setActionString(getContext().getString(R.string.icon_overflow));
+                v.setOnActionClickedListener(_expense_onClick);
+                v.setTag(i);
+                _expensesList.addView(v);
+            }
         } else {
             _expenseLayout.setVisibility(View.GONE);
         }
@@ -379,6 +398,16 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
+    /*-*********************-*/
+    /*-         Pay         -*/
+    /*-*********************-*/
+    private final View.OnClickListener _pay_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _workOrder.getPay(), false);
+        }
+    };
+
     private final View.OnClickListener _changePay_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -387,29 +416,10 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnLongClickListener _removePay_onClick = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View view) {
-            _pay = null;
-            populateUi();
-            return true;
-        }
-    };
-
-    private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _payMenu_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE,
-                    _schedule != null ? _schedule : _workOrder.getSchedule());
-            _bottomSheet_onCancel.onClick(view);
-        }
-    };
-
-    private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, false);
-            _bottomSheet_onCancel.onClick(view);
+            _payPopUp.show();
         }
     };
 
@@ -421,19 +431,16 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final ScheduleDialog.OnCompleteListener _scheduleDialog_onOk = new ScheduleDialog.OnCompleteListener() {
+    private final PopupMenu.OnMenuItemClickListener _payPopUp_onClick = new PopupMenu.OnMenuItemClickListener() {
         @Override
-        public void onComplete(Schedule schedule) {
-            _schedule = schedule;
-            populateUi();
-        }
-    };
-
-    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
-            _expenses.add(new Expense(description, amount));
-            populateUi();
+        public boolean onMenuItemClick(MenuItem item) {
+            if (item.getItemId() == R.id.edit_menu) {
+                PayDialog.show(App.get(), DIALOG_UID_PAY, _pay != null ? _pay : _workOrder.getPay(), false);
+            } else if (item.getItemId() == R.id.delete_menu) {
+                _pay = null;
+                populateUi();
+            }
+            return true;
         }
     };
 
@@ -450,6 +457,17 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
+    /*-*****************************-*/
+    /*-         Schedule            -*/
+    /*-*****************************-*/
+    private final View.OnClickListener _changeSchedule_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _workOrder.getSchedule());
+            _bottomSheet_onCancel.onClick(view);
+        }
+    };
+
     private final ScheduleView.OnRenderListener _schedule_onRender = new ScheduleView.OnRenderListener() {
         @Override
         public void onRender(boolean success) {
@@ -460,6 +478,108 @@ public class CounterOfferDialog extends FullScreenDialog {
             } else {
                 _scheduleLayout.setVisibility(View.VISIBLE);
             }
+        }
+    };
+
+    private final ScheduleDialog.OnCompleteListener _scheduleDialog_onOk = new ScheduleDialog.OnCompleteListener() {
+        @Override
+        public void onComplete(Schedule schedule) {
+            _schedule = schedule;
+            populateUi();
+        }
+    };
+
+    private final View.OnClickListener _schedule_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _workOrder.getSchedule());
+        }
+    };
+
+    private final View.OnClickListener _scheduleMenu_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _schedulePopUp.show();
+        }
+    };
+
+    private final PopupMenu.OnMenuItemClickListener _schedulePopUp_onClick = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            if (item.getItemId() == R.id.edit_menu) {
+                ScheduleDialog.show(App.get(), DIALOG_UID_SCHEDULE, _schedule != null ? _schedule : _workOrder.getSchedule());
+            } else if (item.getItemId() == R.id.delete_menu) {
+                _schedule = null;
+                populateUi();
+            }
+            return true;
+        }
+    };
+
+    /*-*************************-*/
+    /*-         Expense         -*/
+    /*-*************************-*/
+
+    private final View.OnClickListener _addExpense_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, false);
+            _bottomSheet_onCancel.onClick(view);
+        }
+    };
+
+
+    private final ExpenseDialog.OnOkListener _expenseDialog_onOk = new ExpenseDialog.OnOkListener() {
+        @Override
+        public void onOk(String description, double amount, ExpenseCategory category) {
+            Expense expense = null;
+            if (_expenseMenuClickedView != null) {
+                int index = (Integer) _expenseMenuClickedView.getTag();
+                expense = _expenses.get(index);
+                try {
+                    expense.setAmount(amount);
+                    expense.setDescription(description);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else {
+                expense = new Expense(description, amount);
+                _expenses.add(expense);
+            }
+            populateUi();
+        }
+    };
+
+    private final TwoLineActionTile.OnActionClickListener _expense_onClick = new TwoLineActionTile.OnActionClickListener() {
+        @Override
+        public void onClick(View twoLineActionTile, View actionView) {
+            _expenseMenuClickedView = twoLineActionTile;
+            PopupMenu menu = new PopupMenu(getContext(), actionView);
+            menu.inflate(R.menu.edit_delete);
+            menu.setOnMenuItemClickListener(_expenseMenu_onClick);
+            menu.show();
+        }
+    };
+
+    private final PopupMenu.OnMenuItemClickListener _expenseMenu_onClick = new PopupMenu.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            int index = (Integer) _expenseMenuClickedView.getTag();
+            Expense expense = _expenses.get(index);
+            if (item.getItemId() == R.id.edit_menu) {
+                ExpenseDialog.show(App.get(), DIALOG_UID_EXPENSE, expense.getDescription(), expense.getAmount(), false);
+            } else if (item.getItemId() == R.id.delete_menu) {
+                _expenses.remove(index);
+                populateUi();
+            }
+            return true;
+        }
+    };
+
+    private final PopupMenu.OnDismissListener _expensesMenu_onDismess = new PopupMenu.OnDismissListener() {
+        @Override
+        public void onDismiss(PopupMenu menu) {
+            _expenseMenuClickedView = null;
         }
     };
 

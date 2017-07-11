@@ -32,9 +32,21 @@
                     android:id="@+id/pay_title_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/pay_menu"
                     android:padding="16dp"
                     android:text="@string/pay"
                     android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/pay_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <View
@@ -60,9 +72,21 @@
                     android:id="@+id/schedule_title_textview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/schedule_menu"
                     android:padding="16dp"
                     android:text="@string/schedule"
                     android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/schedule_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <View
@@ -213,6 +237,16 @@
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:text="Add Expense" />
+
+        <View style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/addexpiration_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Add Expiration" />
+
     </LinearLayout>
 
 

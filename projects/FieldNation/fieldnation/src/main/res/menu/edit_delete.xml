@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fieldnation.MainActivity">
+
+    <item
+        android:id="@+id/edit_menu"
+        android:enabled="true"
+        android:orderInCategory="300"
+        android:title="Edit"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/delete_menu"
+        android:enabled="true"
+        android:orderInCategory="300"
+        android:title="Delete"
+        app:showAsAction="always" />
+
+</menu>

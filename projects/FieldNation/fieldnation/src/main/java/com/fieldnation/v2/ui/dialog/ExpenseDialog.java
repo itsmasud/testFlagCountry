@@ -82,6 +82,13 @@ public class ExpenseDialog extends FullScreenDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         _showCategories = payload.getBoolean("showCategories");
+
+        if (payload.containsKey("description"))
+            _descriptionEditText.setText(payload.getString("description"));
+
+        if (payload.containsKey("amount"))
+            _amountEditText.setText(payload.getDouble("amount") + "");
+
         super.show(payload, animate);
         populateUi();
     }
@@ -239,6 +246,14 @@ public class ExpenseDialog extends FullScreenDialog {
     public static void show(Context context, String uid, boolean showCategories) {
         Bundle params = new Bundle();
         params.putBoolean("showCategories", showCategories);
+        Controller.show(context, uid, ExpenseDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, String description, double amount, boolean showCategories) {
+        Bundle params = new Bundle();
+        params.putBoolean("showCategories", showCategories);
+        params.putString("description", description);
+        params.putDouble("amount", amount);
         Controller.show(context, uid, ExpenseDialog.class, params);
     }
 
