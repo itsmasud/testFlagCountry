@@ -138,28 +138,117 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/conditions_layout"
+                android:id="@+id/expires_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/expense_layout">
 
-                <com.fieldnation.ui.ReasonCoView
-                    android:id="@+id/reasons_view"
+                <TextView
+                    android:id="@+id/expires_title_textview"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/expires_menu"
+                    android:padding="16dp"
+                    android:text="Expire"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/expires_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/expires_kvp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expires_title_textview" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/reason_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expires_layout">
+
+                <TextView
+                    android:id="@+id/reasons_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/reasons_menu"
+                    android:padding="16dp"
+                    android:text="Reason"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/reasons_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <View
-                    android:id="@+id/termswarning_divider"
+                    android:id="@+id/expenses_top_divider"
                     style="@style/DividerFull"
-                    android:layout_below="@+id/reasons_view" />
+                    android:layout_below="@+id/reasons_title_textview" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expenses_top_divider"
+                    android:background="@color/fn_clickable_bg">
+
+                    <TextView
+                        android:id="@+id/reason_textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <EditText
+                        android:id="@+id/reason_edittext"
+                        style="@style/EditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/reason_for_request"
+                        android:imeOptions="actionDone"
+                        android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+                        android:padding="16dp"
+                        android:textColor="@color/fn_dark_text_50" />
+
+                    <TextView
+                        android:id="@+id/disclaimer_textview"
+                        style="?attr/tileTextStatusStyle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/reason_edittext"
+                        android:padding="16dp"
+                        android:text="@string/disclaimer_to_counter_offer" />
+
+                    <View
+                        style="@style/DividerFull"
+                        android:layout_alignParentBottom="true" />
+                </RelativeLayout>
             </RelativeLayout>
 
             <TextView
                 android:id="@+id/termswarning_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/conditions_layout"
+                android:layout_below="@+id/reason_layout"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
@@ -245,9 +334,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp"
-            android:text="Add Expiration" />
+            android:text="Set Expiration" />
+
+        <View style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/addreason_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Set Reason" />
 
     </LinearLayout>
-
-
 </RelativeLayout>

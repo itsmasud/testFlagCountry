@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,11 +36,9 @@ import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.ReasonCoView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.Expense;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
@@ -64,6 +63,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private static final String DIALOG_UID_EXPENSE = TAG + ".expenseDialog";
     private static final String DIALOG_UID_SCHEDULE = TAG + ".scheduleDialog";
     private static final String DIALOG_UID_PAY = TAG + ".payDialog";
+    private static final String DIALOG_UID_EXPIRE = TAG + ".expireDailog";
 
     // State
     private static final String STATE_EXPENSES = "STATE_EXPENSES";
@@ -91,10 +91,20 @@ public class CounterOfferDialog extends FullScreenDialog {
     private LinearLayout _expensesList;
     private View _expenseMenuClickedView = null;
 
-
     // Ui - Expires
+    private RelativeLayout _expiresLayout;
+    private IconFontTextView _expiresMenu;
+    private KeyValuePairView _expiresView;
+    private PopupMenu _expiresPopUp;
+
     // Ui - Reason
-    private ReasonCoView _reasonView;
+    private RelativeLayout _reasonLayout;
+    private IconFontTextView _reasonsMenu;
+    private TextView _reasonTextView;
+    private EditText _reasonEditText;
+    private TextView _disclaimerTextView;
+    private PopupMenu _reasonPopUp;
+
     private TextView _termsWarningTextView;
 
     // Bottom Sheet
@@ -104,7 +114,8 @@ public class CounterOfferDialog extends FullScreenDialog {
     private TextView _changePayButton;
     private TextView _changeScheduleButton;
     private TextView _addExpenseButton;
-
+    private TextView _addExpirationButton;
+    private TextView _addReasonButton;
 
     // Animations
     private Animation _fadeIn;
@@ -122,6 +133,8 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final List<Expense> _expenses = new LinkedList<>();
     private Schedule _schedule = null;
     private Pay _pay = null;
+    private long _expiresMilliSeconds = -1;
+    private String _expiresTitle = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -155,7 +168,15 @@ public class CounterOfferDialog extends FullScreenDialog {
         _expenseLayout = v.findViewById(R.id.expense_layout);
         _expensesList = v.findViewById(R.id.expenses_list);
 
-        _reasonView = v.findViewById(R.id.reasons_view);
+        _expiresLayout = v.findViewById(R.id.expires_layout);
+        _expiresMenu = v.findViewById(R.id.expires_menu);
+        _expiresView = v.findViewById(R.id.expires_kvp);
+
+        _reasonLayout = v.findViewById(R.id.reason_layout);
+        _reasonsMenu = v.findViewById(R.id.reasons_menu);
+        _reasonTextView = v.findViewById(R.id.reason_textview);
+        _reasonEditText = v.findViewById(R.id.reason_edittext);
+        _disclaimerTextView = v.findViewById(R.id.disclaimer_textview);
 
         _termsWarningTextView = v.findViewById(R.id.termswarning_textview);
 
@@ -166,6 +187,8 @@ public class CounterOfferDialog extends FullScreenDialog {
         _changePayButton = v.findViewById(R.id.changePay_button);
         _changeScheduleButton = v.findViewById(R.id.changeSchedule_button);
         _addExpenseButton = v.findViewById(R.id.addExpense_button);
+        _addExpirationButton = v.findViewById(R.id.addexpiration_button);
+        _addReasonButton = v.findViewById(R.id.addreason_button);
 
         _refreshView = v.findViewById(R.id.refresh_view);
 
@@ -206,10 +229,27 @@ public class CounterOfferDialog extends FullScreenDialog {
         _schedulePopUp.inflate(R.menu.edit_delete);
         _schedulePopUp.setOnMenuItemClickListener(_schedulePopUp_onClick);
 
+        _expiresMenu.setOnClickListener(_expiresMenu_onClick);
+        _expiresView.setOnClickListener(_expiresView_onClick);
+        _expiresPopUp = new PopupMenu(getContext(), _expiresMenu);
+        _expiresPopUp.inflate(R.menu.edit_delete);
+        _expiresPopUp.setOnMenuItemClickListener(_expiresPopUp_onClick);
+
+/*
+        _reasonsMenu.setOnClickListener(_reasonsMenu_onClick);
+        _reasonTextView.setOnClickListener(_reasonTextView_onClick);
+        _reasonEditText.setOnFocusChangeListener(_reasonEditText_onFocusChange);
+*/
+        _reasonPopUp = new PopupMenu(getContext(), _reasonsMenu);
+        _reasonPopUp.inflate(R.menu.edit_delete);
+//        _reasonPopUp.setOnMenuItemClickListener(_reasonPopUp_onClick);
+
         _floatingActionButton.setOnClickListener(_fab_onClick);
         _changePayButton.setOnClickListener(_changePay_onClick);
         _changeScheduleButton.setOnClickListener(_changeSchedule_onClick);
         _addExpenseButton.setOnClickListener(_addExpense_onClick);
+        _addExpirationButton.setOnClickListener(_addExpirationButton_onClick);
+//        _addReasonButton.setOnClickListener(_addReasonButton_onClick);
         _bottomSheetBackground.setOnClickListener(_bottomSheet_onCancel);
 
 
@@ -264,6 +304,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         ExpenseDialog.addOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
         ScheduleDialog.addOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
         PayDialog.addOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
+        ExpireDialog.addOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
     }
 
     @Override
@@ -299,7 +340,8 @@ public class CounterOfferDialog extends FullScreenDialog {
     public void onStop() {
         ExpenseDialog.removeOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
         ScheduleDialog.removeOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
-        PayDialog.addOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
+        PayDialog.removeOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
+        ExpireDialog.removeOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
         super.onStop();
     }
@@ -368,6 +410,14 @@ public class CounterOfferDialog extends FullScreenDialog {
         } else {
             _expenseLayout.setVisibility(View.GONE);
         }
+
+        // expiration
+        if (_expiresMilliSeconds != -1) {
+            _expiresLayout.setVisibility(View.VISIBLE);
+            _expiresView.set("Expire Offer In", _expiresTitle);
+        } else {
+            _expiresLayout.setVisibility(View.GONE);
+        }
     }
 
     /*-*********************************-*/
@@ -395,6 +445,89 @@ public class CounterOfferDialog extends FullScreenDialog {
             _bottomSheet.startAnimation(_bsSlideOut);
             _floatingActionButton.clearAnimation();
             _floatingActionButton.startAnimation(_fabSlideIn);
+        }
+    };
+
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss(true);
+        }
+    };
+
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+
+            _refreshView.startRefreshing();
+
+            Expense[] exp = new Expense[_expenses.size()];
+            for (int i = 0; i < _expenses.size(); i++) {
+                Expense e = _expenses.get(i);
+
+
+                if (!misc.isEmptyOrNull(e.getDescription()) && e.getAmount() != null)
+                    exp[i] = _expenses.get(i);
+                else {
+                    ToastClient.toast(App.get(), R.string.toast_must_enter_amount_and_description, Toast.LENGTH_LONG);
+                    _refreshView.refreshComplete();
+                    return false;
+                }
+            }
+
+            try {
+                Request request = new Request();
+                request.counter(true);
+
+                if (_pay != null) {
+                    request.pay(_pay);
+                }
+
+                if (_schedule != null)
+                    request.schedule(_schedule);
+
+                if (exp != null)
+                    request.expenses(exp);
+
+/* TODO
+                if (_reasonView.getExpiryTime() > 0)
+                    request.expires(new Date(_reasonView.getExpiryTime()));
+
+                if (!misc.isEmptyOrNull(_reasonView.getReason()))
+                    request.counterNotes(_reasonView.getReason());
+*/
+
+                if (_pay == null && _schedule == null && !(exp != null && exp.length > 0)) {
+                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_empty_counter_offer), Toast.LENGTH_SHORT);
+                    _refreshView.refreshComplete();
+                    return false;
+                }
+
+                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
+                uiContext.page += " - Counter Offer Dialog";
+                WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return true;
+        }
+    };
+
+    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
+            ActivityResultClient.startActivity(App.get(), intent);
+        }
+    };
+
+    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
+            ActivityResultClient.startActivity(App.get(), intent);
         }
     };
 
@@ -583,86 +716,56 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+    /*-*****************************-*/
+    /*-         Expiration          -*/
+    /*-*****************************-*/
+    private final View.OnClickListener _addExpirationButton_onClick = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            dismiss(true);
+        public void onClick(View view) {
+            ExpireDialog.show(getContext(), DIALOG_UID_EXPIRE);
+            _bottomSheet_onCancel.onClick(view);
         }
     };
 
-    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
+    private final View.OnClickListener _expiresMenu_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            _expiresPopUp.show();
+        }
+    };
+
+    private final View.OnClickListener _expiresView_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            ExpireDialog.show(getContext(), DIALOG_UID_EXPIRE);
+        }
+    };
+
+    private final PopupMenu.OnMenuItemClickListener _expiresPopUp_onClick = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-
-            _refreshView.startRefreshing();
-
-            Expense[] exp = new Expense[_expenses.size()];
-            for (int i = 0; i < _expenses.size(); i++) {
-                Expense e = _expenses.get(i);
-
-
-                if (!misc.isEmptyOrNull(e.getDescription()) && e.getAmount() != null)
-                    exp[i] = _expenses.get(i);
-                else {
-                    ToastClient.toast(App.get(), R.string.toast_must_enter_amount_and_description, Toast.LENGTH_LONG);
-                    _refreshView.refreshComplete();
-                    return false;
-                }
-            }
-
-            try {
-                Request request = new Request();
-                request.counter(true);
-
-                if (_pay != null) {
-                    request.pay(_pay);
-                }
-
-                if (_schedule != null)
-                    request.schedule(_schedule);
-
-                if (exp != null)
-                    request.expenses(exp);
-
-                if (_reasonView.getExpiryTime() > 0)
-                    request.expires(new Date(_reasonView.getExpiryTime()));
-
-                if (!misc.isEmptyOrNull(_reasonView.getReason()))
-                    request.counterNotes(_reasonView.getReason());
-
-                if (_pay == null && _schedule == null && !(exp != null && exp.length > 0)) {
-                    ToastClient.toast(App.get(), App.get().getString(R.string.toast_empty_counter_offer), Toast.LENGTH_SHORT);
-                    _refreshView.refreshComplete();
-                    return false;
-                }
-
-                SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
-                uiContext.page += " - Counter Offer Dialog";
-                WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+            if (item.getItemId() == R.id.edit_menu) {
+                ExpireDialog.show(getContext(), DIALOG_UID_EXPIRE);
+            } else if (item.getItemId() == R.id.delete_menu) {
+                _expiresMilliSeconds = -1;
+                populateUi();
             }
             return true;
         }
     };
 
-    private final ClickableSpan _standardTerms_onClick = new ClickableSpan() {
+    private final ExpireDialog.OnOkListener _expireDialog_onOk = new ExpireDialog.OnOkListener() {
         @Override
-        public void onClick(View widget) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+        public void onOk(String title, int milliseconds) {
+            _expiresMilliSeconds = milliseconds;
+            _expiresTitle = title;
+            populateUi();
         }
     };
 
-    private final ClickableSpan _pqap_onClick = new ClickableSpan() {
-        @Override
-        public void onClick(View widget) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
-        }
-    };
+    /*-*************************-*/
+    /*-         Reason          -*/
+    /*-*************************-*/
 
 
     private final WorkordersWebApi.Listener _workOrdersWebApi_listener = new WorkordersWebApi.Listener() {
@@ -687,7 +790,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                         exp[i] = _expenses.get(i);
                     }
 
-                    _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _pay, _schedule, exp);
+                    // TODO _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _pay, _schedule, exp);
                     dismiss(true);
 
                     _refreshView.refreshComplete();
