@@ -68,7 +68,6 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.PayIncrease;
 import com.fieldnation.v2.data.model.PayModifier;
 import com.fieldnation.v2.data.model.ProblemType;
-import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.Shipment;
 import com.fieldnation.v2.data.model.ShipmentCarrier;
 import com.fieldnation.v2.data.model.ShipmentTask;
@@ -129,7 +128,6 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_WORKLOG = TAG + ".worklogDialog";
     private static final String DIALOG_PAY = TAG + ".payDialog";
-    private static final String DIALOG_COUNTER_OFFER = TAG + ".counterOfferDialog";
     private static final String DIALOG_HOLD_REVIEW = TAG + ".holdReviewDialog";
 
     // saved state keys
@@ -360,7 +358,6 @@ public class WorkFragment extends WorkorderFragment {
         CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.addOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.addOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        CounterOfferDialog.addOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.addOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DeclineDialog.addOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
         DiscountDialog.addOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
@@ -398,7 +395,6 @@ public class WorkFragment extends WorkorderFragment {
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         CheckInOutDialog.removeOnCancelListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCancel);
         ClosingNotesDialog.removeOnOkListener(DIALOG_CLOSING_NOTES, _closingNotes_onOk);
-        CounterOfferDialog.removeOnOkListener(DIALOG_COUNTER_OFFER, _counterOfferDialog_onOk);
         CustomFieldDialog.removeOnOkListener(DIALOG_CUSTOM_FIELD, _customfieldDialog_onOk);
         DeclineDialog.removeOnDeclinedListener(DIALOG_DECLINE, _declineDialog_onDecline);
         DiscountDialog.removeOnOkListener(DIALOG_DISCOUNT, _discountDialog_onOk);
@@ -627,7 +623,7 @@ public class WorkFragment extends WorkorderFragment {
 //            ConfirmActivity.startNew(App.get());
 //            _actionbartop_listener.onMyWay();
 
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
+            CounterOfferDialog.show(App.get(), _workOrder);
 
         }
     };
@@ -989,7 +985,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onShipment(Task task) {
             List<Shipment> shipments = new LinkedList();
-            for (Shipment shipment: _workOrder.getShipments().getResults()){
+            for (Shipment shipment : _workOrder.getShipments().getResults()) {
                 if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
                     shipments.add(shipment);
             }
@@ -1128,7 +1124,7 @@ public class WorkFragment extends WorkorderFragment {
     private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
         @Override
         public void onCounterOffer(WorkOrder workOrder) {
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, workOrder);
+            CounterOfferDialog.show(App.get(), workOrder);
         }
 
         @Override
@@ -1151,7 +1147,7 @@ public class WorkFragment extends WorkorderFragment {
     private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
         @Override
         public void onCounterOffer() {
-            CounterOfferDialog.show(App.get(), DIALOG_COUNTER_OFFER, _workOrder);
+            CounterOfferDialog.show(App.get(), _workOrder);
         }
     };
 
@@ -1276,16 +1272,6 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workOrder.getId());
             WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
             setLoading(true);
-        }
-    };
-
-    private final CounterOfferDialog.OnOkListener _counterOfferDialog_onOk = new CounterOfferDialog.OnOkListener() {
-        @Override
-        public void onOk(WorkOrder workorder, String reason, long expires, Pay pay, Schedule schedule,
-                         Expense[] expenses) {
-
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
-                    WorkOrderTracker.Action.COUNTER_OFFER, workorder.getId());
         }
     };
 

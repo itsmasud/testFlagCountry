@@ -23,10 +23,43 @@
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true">
 
+
+            <LinearLayout
+                android:id="@+id/empty_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="28dp"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/Text_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:text="Build Your Counter Offer"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/caption_textview"
+                    style="@style/Text_Subhead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="Add counter offer parameters by tapping on the plus icon below."
+                    android:textColor="@color/fn_dark_text"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
             <RelativeLayout
                 android:id="@+id/pay_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/empty_view">
 
                 <TextView
                     android:id="@+id/pay_title_textview"
@@ -135,6 +168,7 @@
                     android:layout_below="@+id/expenses_title_divider"
                     android:animateLayoutChanges="true"
                     android:orientation="vertical" />
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -164,11 +198,16 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
+                <View
+                    android:id="@+id/expires_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/expires_title_textview" />
+
                 <com.fieldnation.v2.ui.KeyValuePairView
                     android:id="@+id/expires_kvp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/expires_title_textview" />
+                    android:layout_below="@+id/expires_divider" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -243,7 +282,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/reason_edittext"
-                        android:padding="16dp"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
                         android:text="@string/disclaimer_to_counter_offer" />
 
                     <View

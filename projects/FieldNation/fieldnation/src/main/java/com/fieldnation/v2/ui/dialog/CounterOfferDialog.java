@@ -8,7 +8,9 @@ import android.os.Parcelable;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
@@ -27,13 +29,13 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.RefreshView;
@@ -70,6 +72,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
     private RefreshView _refreshView;
+    private View _emptyView;
 
     // Ui - Pay
     private RelativeLayout _payLayout;
@@ -155,6 +158,8 @@ public class CounterOfferDialog extends FullScreenDialog {
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
         _finishMenu.setText(R.string.btn_submit);
 
+        _emptyView = v.findViewById(R.id.empty_view);
+
         _payLayout = v.findViewById(R.id.pay_layout);
         _payMenu = v.findViewById(R.id.pay_menu);
         _payView = v.findViewById(R.id.pay_view);
@@ -237,6 +242,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         _reasonsMenu.setOnClickListener(_reasonsMenu_onClick);
         _reasonTextView.setOnClickListener(_reasonTextView_onClick);
         _reasonEditText.setOnFocusChangeListener(_reasonEditText_onFocusChange);
+        _reasonEditText.addTextChangedListener(_reasonEditText_onChanged);
         _reasonPopUp = new PopupMenu(getContext(), _reasonsMenu);
         _reasonPopUp.inflate(R.menu.edit_delete);
         _reasonPopUp.setOnMenuItemClickListener(_reasonPopUp_onClick);
@@ -379,10 +385,8 @@ public class CounterOfferDialog extends FullScreenDialog {
         if (_expiresTitle != null)
             outState.putString("_expiresTitle", _expiresTitle);
 
-        if (_reason != null)
+        if (!misc.isEmptyOrNull(_reason))
             outState.putString("_reason", _reason);
-        else if (!misc.isEmptyOrNull(_reasonEditText.getText().toString()))
-            outState.putString("_reason", _reasonEditText.getText().toString());
     }
 
     private void populateUi() {
@@ -444,7 +448,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
 
         // reason
-        if (_reason != null) {
+        if (!misc.isEmptyOrNull(_reason)) {
             _reasonLayout.setVisibility(View.VISIBLE);
             _reasonTextView.setText(_reason);
             _reasonEditText.setText(_reason);
@@ -458,6 +462,14 @@ public class CounterOfferDialog extends FullScreenDialog {
             _reasonTextView.setVisibility(View.GONE);
             _reasonEditText.setVisibility(View.VISIBLE);
             _disclaimerTextView.setVisibility(View.VISIBLE);
+        }
+
+        if (misc.isEmptyOrNull(_reason) && _expiresMilliSeconds == -1 && _expenses.size() == 0 && _schedule == null && _pay == null) {
+            _emptyView.setVisibility(View.VISIBLE);
+            _termsWarningTextView.setVisibility(View.GONE);
+        } else {
+            _emptyView.setVisibility(View.GONE);
+            _termsWarningTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -533,7 +545,7 @@ public class CounterOfferDialog extends FullScreenDialog {
                 if (_expiresMilliSeconds > -1)
                     request.expires(new Date(System.currentTimeMillis() + _expiresMilliSeconds));
 
-                if (_reason != null)
+                if (!misc.isEmptyOrNull(_reason))
                     request.counterNotes(_reason);
 
                 if (_pay == null && _schedule == null && !(exp != null && exp.length > 0)) {
@@ -545,6 +557,10 @@ public class CounterOfferDialog extends FullScreenDialog {
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Counter Offer Dialog";
                 WorkordersWebApi.request(App.get(), _workOrder.getId(), request, uiContext);
+
+                WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER,
+                        WorkOrderTracker.Action.COUNTER_OFFER, _workOrder.getId());
+
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -746,6 +762,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             PopupMenu menu = new PopupMenu(getContext(), actionView);
             menu.inflate(R.menu.edit_delete);
             menu.setOnMenuItemClickListener(_expenseMenu_onClick);
+            menu.setOnDismissListener(_expensesMenu_onDismess);
             menu.show();
         }
     };
@@ -856,6 +873,21 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
+    private final TextWatcher _reasonEditText_onChanged = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            _reason = editable.toString();
+        }
+    };
+
     private PopupMenu.OnMenuItemClickListener _reasonPopUp_onClick = new PopupMenu.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
@@ -909,7 +941,6 @@ public class CounterOfferDialog extends FullScreenDialog {
                         exp[i] = _expenses.get(i);
                     }
 
-                    // TODO _onOkDispatcher.dispatch(getUid(), _workOrder, _reasonView.getReason(), _reasonView.getExpiryTime(), _pay, _schedule, exp);
                     dismiss(true);
 
                     _refreshView.refreshComplete();
@@ -918,38 +949,10 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, WorkOrder workOrder) {
+    public static void show(Context context, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable("workOrder", workOrder);
 
-        Controller.show(context, uid, CounterOfferDialog.class, params);
-    }
-
-    /*-**********************-*/
-    /*-         Ok           -*/
-    /*-**********************-*/
-    public interface OnOkListener {
-        void onOk(WorkOrder workorder, String reason, long expires, Pay pay, Schedule schedule, Expense[] expenses);
-    }
-
-    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
-        @Override
-        public void onDispatch(OnOkListener listener, Object... parameters) {
-            listener.onOk((WorkOrder) parameters[0], (String) parameters[1], (Long) parameters[2],
-                    (Pay) parameters[3], (Schedule) parameters[4], (Expense[]) parameters[5]
-            );
-        }
-    };
-
-    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.add(uid, onOkListener);
-    }
-
-    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
-        _onOkDispatcher.remove(uid, onOkListener);
-    }
-
-    public static void removeAllOnOkListener(String uid) {
-        _onOkDispatcher.removeAll(uid);
+        Controller.show(context, null, CounterOfferDialog.class, params);
     }
 }
