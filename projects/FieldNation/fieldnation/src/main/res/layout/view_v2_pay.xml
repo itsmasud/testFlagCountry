@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.fieldnation.v2.ui.KeyValuePairView
+        android:id="@+id/pay1_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.fieldnation.v2.ui.KeyValuePairView
+        android:id="@+id/pay2_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.fieldnation.v2.ui.KeyValuePairView
+        android:id="@+id/pay3_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.fieldnation.v2.ui.KeyValuePairView
+        android:id="@+id/pay4_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <com.fieldnation.v2.ui.KeyValuePairView
+        android:id="@+id/pay5_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>

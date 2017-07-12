@@ -68,9 +68,6 @@ public class ScheduleCoView extends RelativeLayout {
     private String _stateRangeEndDateTime;
     private final Handler _handler = new Handler();
 
-
-    // Data
-
     public ScheduleCoView(Context context) {
         super(context);
         init();
@@ -92,15 +89,15 @@ public class ScheduleCoView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _scheduleTypeTitleTextview = (TextView) findViewById(R.id.schedule_type_title_textview);
-        _typeSpinner = (HintSpinner) findViewById(R.id.type_spinner);
-        _rangeLayout = (LinearLayout) findViewById(R.id.range_layout);
+        _scheduleTypeTitleTextview = findViewById(R.id.schedule_type_title_textview);
+        _typeSpinner = findViewById(R.id.type_spinner);
+        _rangeLayout = findViewById(R.id.range_layout);
         getTypeSpinner();
 
-        _exactLayout = (LinearLayout) findViewById(R.id.exact_layout);
-        _startDateButton = (Button) findViewById(R.id.start_date_button);
-        _endDateButton = (Button) findViewById(R.id.end_date_button);
-        _dateTimeButton = (Button) findViewById(R.id.date_time_button);
+        _exactLayout = findViewById(R.id.exact_layout);
+        _startDateButton = findViewById(R.id.start_date_button);
+        _endDateButton = findViewById(R.id.end_date_button);
+        _dateTimeButton = findViewById(R.id.date_time_button);
 
         initializeTimePicker();
 
@@ -153,6 +150,37 @@ public class ScheduleCoView extends RelativeLayout {
         return null;
     }
 
+    public void setSchedule(Schedule schedule) {
+        switch (schedule.getServiceWindow().getMode()) {
+            case HOURS:
+            case BETWEEN:
+                _mode = MODE_RANGE;
+                try {
+                    _startCal = schedule.getServiceWindow().getStart().getCalendar();
+                    _endCal = schedule.getServiceWindow().getEnd().getCalendar();
+                    _startIsSet = true;
+                    _endIsSet = true;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+                _typeSpinner.setSelection(_mode);
+                //setMode(_mode);
+                break;
+            case EXACT:
+                _mode = MODE_EXACT;
+                try {
+                    _startCal = schedule.getServiceWindow().getStart().getCalendar();
+                    _startIsSet = true;
+                    _endIsSet = true;
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+                _typeSpinner.setSelection(_mode);
+                //setMode(_mode);
+                break;
+        }
+    }
+
     private void populateUi() {
         if (_typeSpinner == null)
             return;
@@ -203,12 +231,11 @@ public class ScheduleCoView extends RelativeLayout {
         return true;
     }
 
-    private void initializeTimePicker(){
+    private void initializeTimePicker() {
         final Calendar c = Calendar.getInstance();
         _datePicker = new DatePickerDialog(getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _timePicker = new TimePickerDialog(getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-    };
-
+    }
 
     /*-*****************************-*/
     /*-			UI Events			-*/

@@ -49,7 +49,7 @@ public class misc {
         return null;
     }
 
-    public static boolean isViewVisisble(ScrollView scrollView, View childView) {
+    public static boolean isViewVisible(ScrollView scrollView, View childView) {
         Rect scrollBounds = new Rect();
         scrollView.getHitRect(scrollBounds);
         return childView.getLocalVisibleRect(scrollBounds);

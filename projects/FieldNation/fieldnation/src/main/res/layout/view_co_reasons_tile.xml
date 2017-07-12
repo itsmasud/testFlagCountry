@@ -2,31 +2,32 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    android:background="@color/fn_primary_bg">
+
+    <TextView
+        android:id="@+id/offer_expire_title_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/offer_expires"
+        android:textColor="@color/fn_dark_text_50"
+        android:textStyle="bold" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="16dp">
-
-
-        <TextView
-            android:id="@+id/offer_expire_title_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="4dp"
-            android:text="@string/offer_expires"
-            android:textColor="@color/fn_dark_text_50" />
+        android:layout_below="@+id/offer_expire_title_textview"
+        android:background="@color/fn_clickable_bg">
 
         <com.fieldnation.ui.HintSpinner
             android:id="@+id/expire_duration_spinner"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/offer_expire_title_textview"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="0dp"
             android:hint="NEVER"
             android:visibility="visible" />
 
@@ -36,11 +37,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/expire_duration_spinner"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:hint="@string/reason_for_request"
             android:imeOptions="actionDone"
             android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+            android:padding="16dp"
             android:textColor="@color/fn_dark_text_50" />
 
         <TextView
@@ -49,7 +53,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/request_reason_edittext"
-            android:layout_marginBottom="20dp"
+            android:padding="16dp"
             android:text="@string/disclaimer_to_counter_offer" />
     </RelativeLayout>
 </RelativeLayout>
