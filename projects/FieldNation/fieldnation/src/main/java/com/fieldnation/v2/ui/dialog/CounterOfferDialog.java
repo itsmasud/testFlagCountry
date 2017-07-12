@@ -381,6 +381,8 @@ public class CounterOfferDialog extends FullScreenDialog {
 
         if (_reason != null)
             outState.putString("_reason", _reason);
+        else if (!misc.isEmptyOrNull(_reasonEditText.getText().toString()))
+            outState.putString("_reason", _reasonEditText.getText().toString());
     }
 
     private void populateUi() {
@@ -439,6 +441,23 @@ public class CounterOfferDialog extends FullScreenDialog {
             _expiresView.set("Expire Offer In", _expiresTitle);
         } else {
             _expiresLayout.setVisibility(View.GONE);
+        }
+
+        // reason
+        if (_reason != null) {
+            _reasonLayout.setVisibility(View.VISIBLE);
+            _reasonTextView.setText(_reason);
+            _reasonEditText.setText(_reason);
+            _reasonTextView.setVisibility(View.VISIBLE);
+            _reasonEditText.setVisibility(View.GONE);
+            _disclaimerTextView.setVisibility(View.GONE);
+        } else {
+            _reasonLayout.setVisibility(View.GONE);
+            _reasonEditText.setText("");
+            _reasonTextView.setText("");
+            _reasonTextView.setVisibility(View.GONE);
+            _reasonEditText.setVisibility(View.VISIBLE);
+            _disclaimerTextView.setVisibility(View.VISIBLE);
         }
     }
 
