@@ -147,6 +147,7 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
+            // custom fields
         } else if (_task.getCustomField().getId() != null) {
             _progressBar.setVisibility(GONE);
 
@@ -158,13 +159,18 @@ public class TaskRowView extends RelativeLayout {
             }
 
             if (!isDescriptionSet) {
-                _descriptionTextView.setText(_task.getType().getName());
+                if (misc.isEmptyOrNull(_task.getLabel()))
+                    _descriptionTextView.setText(_task.getType().getName());
+                else
+                    _descriptionTextView.setText(_task.getType().getName() + ": " + _task.getLabel());
+
             }
 
+            // normals
         } else {
             _progressBar.setVisibility(GONE);
-            if (!misc.isEmptyOrNull(_task.getDescription()))
-                _descriptionTextView.setText(_task.getDescription());
+            if (!misc.isEmptyOrNull(_task.getLabel()))
+                _descriptionTextView.setText(_task.getLabel());
             else
                 _descriptionTextView.setText(_task.getType().getName());
         }
