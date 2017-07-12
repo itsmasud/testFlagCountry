@@ -59,6 +59,11 @@ public class ScheduleDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
+
+        if (params.containsKey("schedule") && params.getParcelable("schedule") != null) {
+            Schedule schedule = params.getParcelable("schedule");
+            _scheduleCoView.setSchedule(schedule);
+        }
     }
 
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {

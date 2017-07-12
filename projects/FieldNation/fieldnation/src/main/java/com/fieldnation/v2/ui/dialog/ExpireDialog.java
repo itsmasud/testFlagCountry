@@ -133,7 +133,7 @@ public class ExpireDialog extends FullScreenDialog {
         @Override
         public void onClick(View view) {
             int index = (Integer) view.getTag();
-            _onOkDispatcher.dispatch(getUid(), _titles[index], _values[index]);
+            _onOkDispatcher.dispatch(getUid(), _titles[index], _values[index] * 1000);
             dismiss(true);
         }
     };

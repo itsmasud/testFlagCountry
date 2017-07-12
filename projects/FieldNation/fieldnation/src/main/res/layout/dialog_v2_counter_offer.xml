@@ -175,7 +175,8 @@
                 android:id="@+id/reason_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/expires_layout">
+                android:layout_below="@+id/expires_layout"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/reasons_title_textview"
@@ -212,7 +213,14 @@
                     <TextView
                         android:id="@+id/reason_textview"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="10dp"
+                        android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
+                        android:textColor="@color/fn_dark_text"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
 
                     <EditText
                         android:id="@+id/reason_edittext"
