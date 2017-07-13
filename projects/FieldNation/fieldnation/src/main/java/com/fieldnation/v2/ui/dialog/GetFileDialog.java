@@ -74,14 +74,9 @@ public class GetFileDialog extends SimpleDialog {
     public void onStart() {
         super.onStart();
         _items.setAdapter(new GetFilePackageAdapter(_activityList, _app_onClick));
-    }
 
-    @Override
-    public void onResume() {
         _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
         _activityResultClient.connect(App.get());
-
-        super.onResume();
     }
 
     @Override
@@ -115,13 +110,13 @@ public class GetFileDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
         super.onPause();
     }
 
     @Override
     public void onStop() {
         if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
         super.onStop();
     }
 
@@ -225,7 +220,7 @@ public class GetFileDialog extends SimpleDialog {
         }
 
         @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
             Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
@@ -233,7 +228,7 @@ public class GetFileDialog extends SimpleDialog {
             if ((requestCode != ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
                     && requestCode != ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
                     || resultCode != Activity.RESULT_OK) {
-                return;
+                return false;
             }
 
             try {
@@ -278,7 +273,7 @@ public class GetFileDialog extends SimpleDialog {
                 ex.printStackTrace();
                 Log.logException(ex);
             }
-
+            return true;
         }
     };
 

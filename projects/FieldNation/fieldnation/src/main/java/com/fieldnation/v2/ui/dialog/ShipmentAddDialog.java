@@ -512,7 +512,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
 
         @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             _activityResultClient.clearOnActivityResult();
             Log.v(TAG, "onActivityResult");
 
@@ -539,6 +539,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                     populateUi();
                 }
             }
+            return true;
         }
     };
 

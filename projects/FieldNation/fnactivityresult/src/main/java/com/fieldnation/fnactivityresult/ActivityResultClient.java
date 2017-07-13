@@ -181,11 +181,12 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
         private void preOnActivityResult(Bundle bundle) {
             Log.v(TAG, "preOnActivityResult");
-            getClient().clearOnActivityResult();
-            onActivityResult(
+            if (onActivityResult(
                     bundle.getInt(PARAM_REQUEST_CODE),
                     bundle.getInt(PARAM_RESULT_CODE),
-                    (Intent) bundle.getParcelable(PARAM_INTENT));
+                    (Intent) bundle.getParcelable(PARAM_INTENT))) {
+                getClient().clearOnActivityResult();
+            }
         }
 
         /**
@@ -195,7 +196,8 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
          * @param resultCode
          * @param data
          */
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+            return false;
         }
     }
 }

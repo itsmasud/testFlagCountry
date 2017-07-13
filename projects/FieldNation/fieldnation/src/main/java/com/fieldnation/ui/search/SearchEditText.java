@@ -191,12 +191,14 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             if (resultCode == Activity.RESULT_OK && requestCode == ActivityResultConstants.RESULT_CODE_VOICE_REQUEST) {
                 ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 String firstMatch = (String) matches.get(0);
                 _searchTermEditText.setText(misc.extractNumbers(firstMatch));
+                return true;
             }
+            return false;
         }
     };
 
