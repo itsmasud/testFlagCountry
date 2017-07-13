@@ -3,7 +3,6 @@ package com.fieldnation.service.profileimage;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +15,7 @@ import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ImageUtils;
+import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.UniqueTag;
 
 /**
@@ -82,21 +82,16 @@ public class ProfilePhotoClient extends TopicClient implements ProfilePhotoConst
 
                     @Override
                     protected BitmapDrawable doInBackground(Uri... uris) {
-                        Bitmap circle = null;
                         try {
                             Uri uri = uris[0];
 
-                            Bitmap source = BitmapFactory.decodeStream(App.get().getContentResolver().openInputStream(uri));
-                            Bitmap image = ImageUtils.resizeBitmap(source, 95, 95);
-                            source.recycle();
-                            circle = ImageUtils.extractCircle(image);
+                            Bitmap image = MemUtils.getMemoryEfficientBitmap(App.get(), uri, 95);
+                            Bitmap circle = ImageUtils.extractCircle(image);
                             image.recycle();
 
-                            return new BitmapDrawable(App.get().getResources(), ImageUtils.extractCircle(circle));
+                            return new BitmapDrawable(App.get().getResources(), circle);
                         } catch (Exception ex) {
                             Log.v(STAG, ex);
-                        } finally {
-                            if (circle != null) circle.recycle();
                         }
                         return null;
                     }
