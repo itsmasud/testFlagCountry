@@ -57,10 +57,10 @@ public class PaymentWorkorderView extends RelativeLayout {
         _titleTextView = (TextView) findViewById(R.id.title_textview);
 
         _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
-        _subTitleTextView.setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _payTypeTextView.setVisibility(GONE);
 
 
         setOnClickListener(_this_onClick);
@@ -71,7 +71,7 @@ public class PaymentWorkorderView extends RelativeLayout {
 
         _titleTextView.setText(wo.getTitle());
         _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
-        _payTypeTextView.setText(getResources().getString(R.string.wo_x, wo.getWorkorderId()));
+        _subTitleTextView.setText(getResources().getString(R.string.wo_x, wo.getWorkorderId()));
     }
 
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {

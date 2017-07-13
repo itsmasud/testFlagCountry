@@ -18,45 +18,131 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/FieldNation.Material.ToolBar" />
 
-        <LinearLayout
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:background="@color/fn_primary"-->
+            <!--android:orientation="vertical"-->
+            <!--android:paddingBottom="16dp">-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/title_textview"-->
+                <!--style="@style/Text_Body_1"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:gravity="center"-->
+                <!--android:textColor="@color/fn_white_text"-->
+                <!--android:visibility="gone" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/payment_textview"-->
+                <!--style="@style/Text_Headline"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="4dp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--android:gravity="center"-->
+                <!--android:textColor="@color/fn_white_text"-->
+                <!--android:textSize="40sp"-->
+                <!--android:textStyle="bold" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/time_textview"-->
+                <!--style="@style/Text_Body_1"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginBottom="18dp"-->
+                <!--android:gravity="center"-->
+                <!--android:textColor="@color/fn_white_text" />-->
+
+        <!--</LinearLayout>-->
+
+        <RelativeLayout
+            style="@style/TileContainer.Material"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/fn_primary"
-            android:orientation="vertical"
-            android:paddingBottom="16dp">
+            android:padding="0dp">
 
-            <TextView
-                android:id="@+id/title_textview"
-                style="@style/Text_Body_1"
+            <RelativeLayout
+                android:id="@+id/payment_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:gravity="center"
-                android:textColor="@color/fn_white_text"
-                android:visibility="gone" />
+                android:paddingLeft="16dp">
+
+                <LinearLayout
+                    android:id="@+id/payTitle_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginTop="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/title_textview"
+                        style="@style/Text_Body_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Payment 434" />
+
+                    <TextView
+                        android:id="@+id/time_textview"
+                        style="@style/Text_Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10/12/2017" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/pay_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="16dp"
+                    android:gravity="right"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/payment_textview"
+                        style="@style/Text_Body_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$280.00" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <View
+                style="@style/DividerFull"
+                android:layout_below="@+id/payment_layout" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/payment_textview"
-                style="@style/Text_Headline"
-                android:layout_width="match_parent"
+                android:id="@+id/month_textview"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:textColor="@color/fn_white_text"
-                android:textSize="40sp"
-                android:textStyle="bold" />
+                android:paddingBottom="16dp"
+                android:layout_marginLeft="16dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:paddingTop="16dp"
+                android:textColor="@color/fn_light_text"
+                android:text="Associated Work Orders" />
 
-            <TextView
-                android:id="@+id/time_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="18dp"
-                android:gravity="center"
-                android:textColor="@color/fn_white_text" />
+            <View
+                style="@style/DividerFull"
+                android:layout_below="@+id/month_textview" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
         <ListView
             android:id="@+id/items_listview"

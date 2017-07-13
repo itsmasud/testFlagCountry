@@ -629,9 +629,10 @@
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
+    <string name="next_payment">Next Payment</string>
     <string name="payments">Payments</string>
     <string name="payment_id_na">Payment ID NA</string>
-    <string name="payment_id_x">Payment %1$s</string>
+    <string name="payment_id_x">Payment %1$d</string>
     <string name="payment_pending">Payment Pending</string>
     <string name="pay_rate_basis">Pay Rate Basis</string>
     <string name="pay_type">Pay Type</string>
@@ -753,7 +754,7 @@
     <string name="would_you_like_to_continue">Would you like to continue?</string>
     <string name="write_your_message">Write your message…</string>
     <string name="wo_id_x">WO ID: %1$s</string>
-    <string name="wo_x">WO %1$s</string>
+    <string name="wo_x">WO %1$d</string>
     <string name="work_complete">Work Complete</string>
     <string name="workorder_no_permission">The work order you are trying to view is unavailable.</string>
     <string name="workorder_not_found">The work order you are looking for has been assigned to another provider, canceled, or does not exist.</string>

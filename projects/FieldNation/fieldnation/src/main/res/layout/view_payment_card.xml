@@ -5,71 +5,76 @@
     android:layout_height="wrap_content"
     android:padding="0dp">
 
-    <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/icon_view"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/payment_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:text="@string/icon_circle_check"
-        android:textSize="18sp" />
+        android:paddingLeft="16dp">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@+id/pay_layout"
-        android:layout_toRightOf="@+id/icon_view"
-        android:orientation="vertical">
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/icon_view"
+            style="@style/OptionsMenuIcon"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/circle_menu_payment"
+            android:text="@string/icon_circle_dollar_solid"
+            android:textSize="24sp" />
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="@style/Text_Body_1"
+        <LinearLayout
+            android:id="@+id/payTitle_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Payment 434" />
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_toRightOf="@+id/icon_view"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/subtitle_textview"
-            style="@style/Text_Caption"
+            <TextView
+                android:id="@+id/title_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="Payment 434" />
+
+            <TextView
+                android:id="@+id/subtitle_textview"
+                style="@style/Text_Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5 Work Orders and 1 Fee" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/pay_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5 Work Orders and 1 Fee" />
-    </LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:gravity="right"
+            android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/pay_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:gravity="right"
-        android:orientation="vertical">
+            <TextView
+                android:id="@+id/payment_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$280.00" />
 
-        <TextView
-            android:id="@+id/payment_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="$280.00" />
-
-        <TextView
-            android:id="@+id/paytype_textview"
-            style="@style/Text_Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Direct Deposit" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/nextPaymentDate_textview"
+                style="@style/Text_Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Direct Deposit" />
+        </LinearLayout>
+    </RelativeLayout>
 
     <View
         style="@style/DividerFull"
-        android:layout_below="@+id/pay_layout" />
+        android:layout_below="@+id/payment_layout" />
 </RelativeLayout>
