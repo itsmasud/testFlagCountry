@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -14,13 +13,8 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-
-import java.util.Calendar;
 
 public class PaymentDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "PaymentDetailActivity";
@@ -30,9 +24,6 @@ public class PaymentDetailActivity extends AuthSimpleActivity {
     private static final int WEB_GET_PAY = 1;
 
     // UI
-    private TextView _titleTextView;
-    private TextView _paymentTextView;
-    private TextView _timeTextView;
 
     private ListView _listView;
 
@@ -64,9 +55,6 @@ public class PaymentDetailActivity extends AuthSimpleActivity {
             finish();
         }
 
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
 
         _listView = (ListView) findViewById(R.id.items_listview);
         // TODO set loading info
@@ -115,28 +103,15 @@ public class PaymentDetailActivity extends AuthSimpleActivity {
 
         try {
             if (_paid.getDatePaid() != null) {
-                String when = "";
-                Calendar cal = ISO8601.toCalendar(_paid.getDatePaid());
-
-                // TODO set _timeTextView.setText(when);
-                when = DateUtils.formatDate(cal);
-
-                _timeTextView.setVisibility(View.VISIBLE);
-                _timeTextView.setText(when);
-                setTitle( "Payment " + _paid.getPaymentId());
+                setTitle("Payment " + _paid.getPaymentId());
             } else {
-                _timeTextView.setVisibility(View.GONE);
-                setTitle( getResources().getString(R.string.next_payment));
+                setTitle(getResources().getString(R.string.next_payment));
             }
         } catch (Exception ex) {
-            _timeTextView.setVisibility(View.INVISIBLE);
         }
-
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
         _listView.setVisibility(View.VISIBLE);
-        _titleTextView.setText(_paid.getPayMethod());
     }
 
     /*-*********************************-*/
