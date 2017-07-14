@@ -430,7 +430,8 @@ public class ShipmentAddDialog extends SimpleDialog {
         for (AttachmentFolder folder : folders) {
             if (folder.getType() == AttachmentFolder.TypeEnum.SLOT && folder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
                 miscFolder = folder;
-                break;
+                if (folder.getName().equals("Misc"))
+                    break;
             }
         }
         if (miscFolder != null) {

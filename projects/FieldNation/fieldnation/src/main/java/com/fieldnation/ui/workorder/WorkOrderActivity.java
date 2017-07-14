@@ -45,7 +45,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
     private static final String STATE_CURRENT_TAB = "STATE_CURRENT_TAB";
     private static final String STATE_CURRENTFRAG = "STATE_CURRENT_FRAG";
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // UI
     private ViewPager _viewPager;
@@ -126,9 +125,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (savedInstanceState.containsKey(STATE_CURRENTFRAG)) {
                 _currentFragment = savedInstanceState.getInt(STATE_CURRENTFRAG);
             }
-            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
-            }
         }
 
         if (_workOrderId == 0) {
@@ -168,9 +164,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
         if (_currentFragment != 0)
             outState.putInt(STATE_CURRENTFRAG, _currentFragment);
-
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         super.onSaveInstanceState(outState);
     }
