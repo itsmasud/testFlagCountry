@@ -244,6 +244,9 @@ public class ScheduleCoView extends RelativeLayout {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             String tag = (String) _datePicker.getTag();
+            if (tag == null)
+                return;
+
             if (tag.equals("start")) {
                 _startCal.set(year, monthOfYear, dayOfMonth);
                 if (DateUtils.isBeforeToday(_startCal)) {
@@ -283,6 +286,9 @@ public class ScheduleCoView extends RelativeLayout {
         @Override
         public void onTimeSet(TimePicker v, int hourOfDay, int minute) {
             String tag = (String) _timePicker.getTag();
+            if (tag == null)
+                return;
+
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
