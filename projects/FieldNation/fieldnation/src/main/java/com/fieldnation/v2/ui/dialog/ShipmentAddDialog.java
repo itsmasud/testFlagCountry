@@ -528,7 +528,7 @@ public class ShipmentAddDialog extends SimpleDialog {
                         Log.e(TAG, "onActivityResult: no image path");
                     } else {
                         Log.v(TAG, "onActivityResult");
-                        _scannedImageUri = App.getUriFromFile(new File(result.getBarcodeImagePath()));
+                        _scannedImageUri = Uri.fromFile(new File(result.getBarcodeImagePath()));
                         _trackingIdEditText.setText(content);
                         _carrierPosition = misc.getCarrierId(content);
                         getCarrierSpinner().setSelection(_carrierPosition);

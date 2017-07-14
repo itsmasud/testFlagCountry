@@ -147,26 +147,24 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
-        } else if (_task.getCustomField().getId() != null) {
+            // custom fields
+        } else if (_task.getType().getId() == 7) {
             _progressBar.setVisibility(GONE);
+            _descriptionTextView.setText(_task.getDescription());
+        } else if (_task.getType().getId() == 8) {
+            _descriptionTextView.setText("Call " + _task.getPhone() + "\n" + _task.getLabel());
+        } else if (_task.getType().getId() == 9) {
+            _descriptionTextView.setText("Email " + _task.getEmail() + "\n" + _task.getLabel());
+        } else if (_task.getType().getId() == 10) {
+            _descriptionTextView.setText("Complete Task\n" + _task.getLabel());
 
-            boolean isDescriptionSet = false;
-            if (_task.getCustomField().getName() != null) {
-                // do not remove the casting here!
-                _descriptionTextView.setText(_task.getType().getName() + ": " + _task.getCustomField().getName());
-                isDescriptionSet = true;
-            }
-
-            if (!isDescriptionSet) {
-                _descriptionTextView.setText(_task.getType().getName());
-            }
-
+            // normals
         } else {
             _progressBar.setVisibility(GONE);
-            if (!misc.isEmptyOrNull(_task.getDescription()))
-                _descriptionTextView.setText(_task.getDescription());
-            else
+            if (misc.isEmptyOrNull(_task.getLabel()) || _task.getLabel().equals(_task.getType().getName()))
                 _descriptionTextView.setText(_task.getType().getName());
+            else
+                _descriptionTextView.setText(_task.getType().getName() + "\n" + _task.getLabel());
         }
         updateCheckBox();
     }
