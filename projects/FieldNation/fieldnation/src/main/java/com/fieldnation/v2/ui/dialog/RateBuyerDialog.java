@@ -83,18 +83,18 @@ public class RateBuyerDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_rate_buyer, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _rateStarView = (StarView) v.findViewById(R.id.star_rating);
-        _picView = (ProfilePicView) v.findViewById(R.id.pic_view);
-        _companyNameTextView = (TextView) v.findViewById(R.id.company_name_textview);
-        _locationTextView = (TextView) v.findViewById(R.id.location_textview);
-        _expectationNoTextView = (TextView) v.findViewById(R.id.expectation_no_textview);
-        _expectationYesTextView = (TextView) v.findViewById(R.id.expectation_yes_textview);
-        _chkProfessionalNoTextView = (TextView) v.findViewById(R.id.chk_professional_no_textview);
-        _chkProfessionalYesTextView = (TextView) v.findViewById(R.id.chk_professinal_yes_textview);
-        _otherThoughtsEditText = (EditText) v.findViewById(R.id.other_thoughts_edittext);
-        _submitButton = (Button) v.findViewById(R.id.submit_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _rateStarView = v.findViewById(R.id.star_rating);
+        _picView = v.findViewById(R.id.pic_view);
+        _companyNameTextView = v.findViewById(R.id.company_name_textview);
+        _locationTextView = v.findViewById(R.id.location_textview);
+        _expectationNoTextView = v.findViewById(R.id.expectation_no_textview);
+        _expectationYesTextView = v.findViewById(R.id.expectation_yes_textview);
+        _chkProfessionalNoTextView = v.findViewById(R.id.chk_professional_no_textview);
+        _chkProfessionalYesTextView = v.findViewById(R.id.chk_professinal_yes_textview);
+        _otherThoughtsEditText = v.findViewById(R.id.other_thoughts_edittext);
+        _submitButton = v.findViewById(R.id.submit_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }
@@ -167,8 +167,10 @@ public class RateBuyerDialog extends FullScreenDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         Log.v(TAG, "show");
-        _workOrder = payload.getParcelable(PARAM_WORKORDER);
         super.show(payload, animate);
+        _workOrder = payload.getParcelable(PARAM_WORKORDER);
+
+        populateUi();
     }
 
     @Override
