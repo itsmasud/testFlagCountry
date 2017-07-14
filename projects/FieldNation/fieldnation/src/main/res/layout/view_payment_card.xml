@@ -9,7 +9,9 @@
         android:id="@+id/payment_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="16dp">
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="16dp">
 
         <com.fieldnation.ui.IconFontTextView
             android:id="@+id/icon_view"
@@ -24,8 +26,7 @@
             android:id="@+id/payTitle_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/icon_view"
             android:orientation="vertical">
 
@@ -52,9 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
             android:gravity="right"
             android:orientation="vertical">
 

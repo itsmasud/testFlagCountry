@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <RelativeLayout
         style="@style/TileContainer.Material"
         android:layout_width="match_parent"
@@ -13,15 +14,16 @@
             android:id="@+id/payment_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="16dp">
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp">
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/payTitle_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
-                android:orientation="vertical">
+                android:layout_alignParentLeft="true"
+                android:layout_toLeftOf="@+id/payment_textview">
 
                 <TextView
                     android:id="@+id/title_textview"
@@ -37,29 +39,20 @@
                     style="@style/Text_Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/title_textview"
                     android:text="10/12/2017" />
-            </LinearLayout>
+            </RelativeLayout>
 
-            <LinearLayout
-                android:id="@+id/pay_layout"
+            <TextView
+                android:id="@+id/payment_textview"
+                style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:layout_marginBottom="16dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:gravity="right"
-                android:orientation="vertical">
+                android:text="$280.00" />
 
-                <TextView
-                    android:id="@+id/payment_textview"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="$280.00" />
-
-            </LinearLayout>
         </RelativeLayout>
 
         <View
@@ -75,13 +68,13 @@
             android:id="@+id/month_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
             android:layout_marginLeft="16dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:paddingBottom="16dp"
             android:paddingTop="16dp"
+            android:text="Associated Work Orders"
             android:textColor="@color/fn_light_text"
-            android:text="Associated Work Orders" />
+            android:textSize="14sp"
+            android:textStyle="bold" />
 
         <View
             style="@style/DividerFull"

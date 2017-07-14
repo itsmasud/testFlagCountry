@@ -68,7 +68,7 @@ public class MonthHeaderView extends RelativeLayout {
             Calendar now = Calendar.getInstance();
 
             if (misc.isEmptyOrNull(header.endDate)) {
-                _monthTextView.setText(new SimpleDateFormat("MMMM").format(calendar.getTime()) + " " + new SimpleDateFormat("YYYY").format(calendar.getTime()));
+                _monthTextView.setText(new SimpleDateFormat("MMMM").format(calendar.getTime()) + " " + new SimpleDateFormat("yyyy").format(calendar.getTime()));
             } else {
                 Calendar end = ISO8601.toCalendar(header.endDate);
                 _monthTextView.setText(
