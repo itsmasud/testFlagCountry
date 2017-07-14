@@ -5,14 +5,6 @@
     android:layout_height="match_parent"
     android:background="@color/fn_primary_bg">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:theme="@style/FieldNation.Material.ToolBar" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -309,15 +301,25 @@
                 android:layout_height="100dp"
                 android:layout_below="@+id/termswarning_textview" />
 
-            <com.fieldnation.ui.RefreshView
-                android:id="@+id/refresh_view"
-                android:layout_width="wrap_content"
-                android:layout_height="250dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="-50dp" />
 
         </RelativeLayout>
     </ScrollView>
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
 
     <Button
         android:id="@+id/action_button"
