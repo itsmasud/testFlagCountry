@@ -11,10 +11,12 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "PaymentCardView";
@@ -120,7 +122,8 @@ public class PaymentCardView extends RelativeLayout {
                     _titleTextView.setText(getResources().getString(R.string.payment_id_na));
                 }
                 _iconView.setVisibility(GONE);
-                _nextPaymentDateTextView.setText(DateUtils.formatDate(ISO8601.toCalendar(_paymentInfo.getDatePaid())));
+                _nextPaymentDateTextView.setText(new SimpleDateFormat("MMM d YYYY", Locale.getDefault()).format(ISO8601.toCalendar(_paymentInfo.getDatePaid()).getTime()));
+                _nextPaymentDateTextView.setVisibility(VISIBLE);
             } else {
                 _titleTextView.setText(getResources().getString(R.string.next_payment));
                 _iconView.setVisibility(VISIBLE);

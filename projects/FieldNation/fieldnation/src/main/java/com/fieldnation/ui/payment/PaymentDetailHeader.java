@@ -10,11 +10,13 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by mc on 7/13/17.
@@ -75,7 +77,7 @@ public class PaymentDetailHeader extends LinearLayout {
                 String when = "";
                 Calendar cal = ISO8601.toCalendar(_paid.getDatePaid());
 
-                when = DateUtils.formatDate(cal);
+                when = new SimpleDateFormat("MMM d YYYY", Locale.getDefault()).format(cal.getTime());
 
                 _timeTextView.setVisibility(View.VISIBLE);
                 _timeTextView.setText(when);
@@ -83,6 +85,7 @@ public class PaymentDetailHeader extends LinearLayout {
                 _timeTextView.setVisibility(View.GONE);
             }
         } catch (Exception ex) {
+            Log.v(TAG, ex);
             _timeTextView.setVisibility(View.INVISIBLE);
         }
 
