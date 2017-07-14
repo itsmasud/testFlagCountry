@@ -77,7 +77,7 @@ public class PaymentDetailHeader extends LinearLayout {
                 String when = "";
                 Calendar cal = ISO8601.toCalendar(_paid.getDatePaid());
 
-                when = new SimpleDateFormat("MMM d YYYY", Locale.getDefault()).format(cal.getTime());
+                when = new SimpleDateFormat("MMM d, YYYY", Locale.getDefault()).format(cal.getTime());
 
                 _timeTextView.setVisibility(View.VISIBLE);
                 _timeTextView.setText(when);
