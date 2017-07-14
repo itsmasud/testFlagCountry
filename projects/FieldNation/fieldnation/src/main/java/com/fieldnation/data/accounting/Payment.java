@@ -9,7 +9,6 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 import java.util.Calendar;
 
@@ -56,7 +55,14 @@ public class Payment implements Parcelable {
     }
 
     public String getPayMethod() {
-        return misc.capitalizeWords(_payMethod.replaceAll("_", " ").toLowerCase());
+//        return misc.capitalizeWords(_payMethod.replaceAll("_", " ").toLowerCase());
+        if (_payMethod != null) {
+            if (_payMethod.equalsIgnoreCase("check")) return "Check";
+            else if (_payMethod.equalsIgnoreCase("paypal")) return "PayPal";
+            else if (_payMethod.equalsIgnoreCase("amexfx")) return "Amex FX";
+            else if (_payMethod.equalsIgnoreCase("direct_deposit")) return "Direct Deposit";
+            else return "Unknown";
+        } else return "Unknown";
     }
 
     public Long getPaymentId() {

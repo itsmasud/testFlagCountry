@@ -58,7 +58,6 @@ public class PaymentCardView extends RelativeLayout {
         _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _nextPaymentDateTextView = (TextView) findViewById(R.id.nextPaymentDate_textview);
-        _nextPaymentDateTextView.setVisibility(GONE);
 
         setOnClickListener(_this_onClick);
     }
@@ -126,7 +125,8 @@ public class PaymentCardView extends RelativeLayout {
                 _titleTextView.setText(getResources().getString(R.string.next_payment));
                 _iconView.setVisibility(VISIBLE);
                 // TODO next payment date is not available in the API
-                _nextPaymentDateTextView.setText(R.string.pending);
+                _nextPaymentDateTextView.setVisibility(GONE);
+//                _nextPaymentDateTextView.setText(R.string.pending);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
