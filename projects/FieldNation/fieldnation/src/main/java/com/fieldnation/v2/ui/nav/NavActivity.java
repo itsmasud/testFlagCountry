@@ -109,6 +109,7 @@ public class NavActivity extends AuthSimpleActivity {
         if (App.get().needsConfirmation()) {
             launchConfirmActivity();
         }
+        _recyclerView.onResume();
 
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
@@ -117,6 +118,7 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onPause() {
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _recyclerView.onPause();
         super.onPause();
     }
 

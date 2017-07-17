@@ -104,22 +104,27 @@ public class SearchResultScreen extends RelativeLayout {
 
     @Override
     protected void onAttachedToWindow() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
-
         super.onAttachedToWindow();
 
         FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
+    public void onResume() {
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(App.get());
+    }
+
+    public void onPause() {
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
-        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
 
         FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
 

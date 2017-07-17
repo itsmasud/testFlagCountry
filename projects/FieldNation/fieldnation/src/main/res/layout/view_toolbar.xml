@@ -3,4 +3,4 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/toolbar"
     style="?attr/fnToolbarStyle"
-    app:theme="@style/FieldNation.Material.ToolBar" />
+    android:theme="@style/FieldNation.Material.ToolBar" />

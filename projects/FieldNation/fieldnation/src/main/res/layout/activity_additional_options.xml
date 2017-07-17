@@ -28,7 +28,7 @@
                     style="?attr/fnToolbarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    app:theme="@style/FieldNation.Material.ToolBar" />
+                    android:theme="@style/FieldNation.Material.ToolBar" />
             </android.support.design.widget.AppBarLayout>
 
             <com.fieldnation.ui.nav.AdditionalOptionsScreen

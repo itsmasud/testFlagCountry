@@ -116,6 +116,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _workOrderPicker.onResume();
         Intent intent = getIntent();
         String action = intent.getAction();
         Log.v(TAG, intent.toString());
@@ -129,6 +130,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
+        _workOrderPicker.onPause();
         super.onPause();
     }
 
