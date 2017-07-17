@@ -122,7 +122,7 @@ public class PaymentCardView extends RelativeLayout {
                     _titleTextView.setText(getResources().getString(R.string.payment_id_na));
                 }
                 _iconView.setVisibility(GONE);
-                _nextPaymentDateTextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(ISO8601.toCalendar(_paymentInfo.getDatePaid()).getTime()));
+                _nextPaymentDateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ISO8601.toCalendar(_paymentInfo.getDatePaid()).getTime()));
                 _nextPaymentDateTextView.setVisibility(VISIBLE);
             } else {
                 _titleTextView.setText(getResources().getString(R.string.next_payment));
