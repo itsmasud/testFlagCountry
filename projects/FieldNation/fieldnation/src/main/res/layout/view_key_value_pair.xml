@@ -1,34 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:orientation="vertical"
     android:paddingTop="16dp">
 
-    <TextView
-        android:id="@+id/key"
-        android:layout_width="wrap_content"
+    <TableRow
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="10dp"
-        android:text="Key"
-        android:textColor="@color/fn_dark_text"
-        android:textSize="16sp" />
+        android:layout_weight="10">
 
-    <TextView
-        android:id="@+id/value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="24dp"
-        android:gravity="right"
-        android:text="Value"
-        android:textColor="@color/fn_dark_text_50"
-        android:textSize="16sp" />
+        <TextView
+            android:id="@+id/key"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="6"
+            android:minWidth="100dp"
+            android:text="Key"
+            android:textColor="@color/fn_dark_text"
+            android:textSize="16sp" />
 
+        <TextView
+            android:id="@+id/value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24dp"
+            android:layout_weight="4"
+            android:gravity="right"
+            android:text="Value"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="16sp" />
+    </TableRow>
 
     <View
         style="@style/DividerFull"
-        android:layout_below="@+id/value"
+        android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp" />
-</RelativeLayout>
+</LinearLayout>
