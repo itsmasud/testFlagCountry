@@ -144,7 +144,7 @@
     <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_job_duration_empty">Please fill up job duration.</string>
-    <string name="toast_minimum_accumulated_payable_amount">Total amount must be greater than $20.</string>
+    <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_empty_counter_offer">Counter offer must have an expense, schedule or pay</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
