@@ -211,6 +211,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onConnected() {
             _workOrderClient.subWorkordersWebApi();
+            _adapter.refreshAll();
         }
 
         @Override
