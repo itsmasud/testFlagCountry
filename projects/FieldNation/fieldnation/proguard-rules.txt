@@ -38,6 +38,4 @@
 -dontwarn **
 
 # For MPAndroidChart
--dontwarn com.github.mikephil**
--keep com.github.mikephil** { *; }
--keep com.github.mikephil** { *; }
+-keep class com.github.mikephil.charting.** { *; }
