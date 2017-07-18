@@ -31,8 +31,6 @@ import com.fieldnation.v2.data.model.PayBase;
 public class PayDialog extends FullScreenDialog {
     private static String TAG = "PayDialog";
 
-    private static final double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
-
     // State
     private static final String STATE_MODE = "STATE_MODE";
     private static final String STATE_SHOW_EXPLANATION = "STATE_SHOW_EXPLANATION";
@@ -270,59 +268,6 @@ public class PayDialog extends FullScreenDialog {
         }
     }
 
-    private boolean isValidAmount() {
-        try {
-            switch (_mode) {
-                case MODE_FIXED:
-                    if (getDouble(_fixedEditText.getText().toString()) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT) {
-                        return true;
-                    }
-                    ToastClient.toast(App.get(), R.string.toast_minimum_accumulated_payable_amount, Toast.LENGTH_SHORT);
-                    return false;
-
-                case MODE_HOURLY:
-                    double hourlyRateAmount = getDouble((_hourlyRateEditText.getText().toString()));
-                    double maxHours = getDouble((_maxHoursEditText.getText().toString()));
-                    if (hourlyRateAmount * maxHours >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT) {
-                        return true;
-                    }
-                    ToastClient.toast(App.get(), R.string.toast_minimum_accumulated_payable_amount, Toast.LENGTH_SHORT);
-                    return false;
-
-                case MODE_PER_DEVICE:
-                    double deviceRate = getDouble((_deviceRateEditText.getText().toString()));
-                    int maxDevices = getInteger((_maxDevicesEditText.getText().toString()));
-                    if (deviceRate * maxDevices >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT) {
-                        return true;
-                    }
-                    ToastClient.toast(App.get(), R.string.toast_minimum_accumulated_payable_amount, Toast.LENGTH_SHORT);
-                    return false;
-
-                case MODE_BLENDED:
-                    double blendedFixedRate = getDouble((_blendedFixedRateEditText.getText().toString()));
-//                    double blendedMaxHours = getDouble((_blendedFixedMaxHoursEditText.getText().toString()));
-                    double extraHourly = getDouble((_extraHourlyEditText.getText().toString()));
-                    double extraMaxHours = getDouble((_extraMaxHoursEditText.getText().toString()));
-                    if (extraHourly <= 0) {
-                        ToastClient.toast(App.get(), "Pay must be more than 0", Toast.LENGTH_SHORT);
-                        return false;
-                    }
-                    if (extraMaxHours <= 0) {
-                        ToastClient.toast(App.get(), "Hours must be more than 0", Toast.LENGTH_SHORT);
-                        return false;
-                    }
-
-                    if (blendedFixedRate + (extraHourly * extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT) {
-                        return true;
-                    }
-                    return false;
-            }
-        } catch (Exception ex) {
-            return false;
-        }
-        return false;
-    }
-
     private Pay makePay() {
         Pay pay = new Pay();
         try {
@@ -458,10 +403,6 @@ public class PayDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (!isValidAmount()) {
-                return false;
-            }
-
             try {
                 _onCompleteDispatcher.dispatch(getUid(), makePay(), _explanationEditText.getText().toString());
             } catch (Exception ex) {
