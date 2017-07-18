@@ -41,6 +41,8 @@ public class Profile implements Parcelable {
     private String _lastname;
     @Json(name = "managedProviders")
     private Profile[] _managedProviders;
+    @Json(name = "marketplaceStatusExpiration")
+    private String _marketplaceStatusExpiration;
     @Json(name = "marketplaceStatusExplanation")
     private String _marketplaceStatusExplanation;
     @Json(name = "marketplaceStatusOn")
@@ -145,6 +147,10 @@ public class Profile implements Parcelable {
 
     public Profile[] getManagedProviders() {
         return _managedProviders;
+    }
+
+    public String getMarketplaceStatusExpiration() {
+        return _marketplaceStatusExpiration;
     }
 
     public String getMarketplaceStatusExplanation() {
