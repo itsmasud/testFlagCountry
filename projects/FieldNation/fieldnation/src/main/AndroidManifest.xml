@@ -227,6 +227,11 @@
             android:label="@string/activity_share_activity_title"
             android:process=":frontside" />
 
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+
         <service
             android:name=".v2.data.client.AttachmentService"
             android:exported="false"
