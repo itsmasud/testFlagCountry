@@ -15,17 +15,6 @@
         android:theme="@style/FieldNation.Material.ToolBar"
         app:layout_scrollFlags="scroll|enterAlways" />
 
-    <!--
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/toolbar" />
-    -->
-
     <com.yalantis.ucrop.view.UCropView
         android:id="@+id/ucrop"
         android:layout_width="match_parent"

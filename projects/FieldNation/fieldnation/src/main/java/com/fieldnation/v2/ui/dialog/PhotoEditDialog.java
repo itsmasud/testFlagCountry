@@ -36,7 +36,6 @@ public class PhotoEditDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
-    //private ImageView _imageView;
     private UCropView _uCropView;
     private ProgressBar _progressBar;
 
@@ -47,7 +46,6 @@ public class PhotoEditDialog extends FullScreenDialog {
     private Uri _sourceUri;
     private Uri _cachedUri;
     private String _name;
-//    private Bitmap _bitmap;
 
 
     public PhotoEditDialog(Context context, ViewGroup container) {
@@ -66,7 +64,6 @@ public class PhotoEditDialog extends FullScreenDialog {
         _finishMenu.setText("SAVE");
 
         _uCropView = v.findViewById(R.id.ucrop);
-        //_imageView = v.findViewById(R.id.imageView);
         _progressBar = v.findViewById(R.id.progressBar);
 
         return v;
@@ -124,36 +121,13 @@ public class PhotoEditDialog extends FullScreenDialog {
         super.onSaveDialogState(outState);
     }
 
-/*
-    public void setPhoto(Bitmap bitmap) {
-        Log.v(TAG, "setPhoto");
-        _bitmap = bitmap;
-
-        populateUi();
-    }
-*/
-
     private void populateUi() {
-/*
-        if (_imageView == null)
-            return;
-
-        if (_bitmap != null) {
-            _progressBar.setVisibility(View.GONE);
-            _imageView.setVisibility(View.VISIBLE);
-            _imageView.setImageBitmap(_bitmap);
-        } else {
-            _progressBar.setVisibility(View.VISIBLE);
-            _imageView.setVisibility(View.INVISIBLE);
-        }
-*/
         if (_uCropView == null)
             return;
 
         if (_sourceUri != null) {
             _progressBar.setVisibility(View.GONE);
             _uCropView.setVisibility(View.VISIBLE);
-            // TODO _uCropView.setImageBitmap(_bitmap);
             try {
                 _uCropView.getCropImageView().setImageUri(_cachedUri, _cachedUri);
                 _uCropView.getOverlayView().setShowCropFrame(true);
@@ -226,14 +200,6 @@ public class PhotoEditDialog extends FullScreenDialog {
 
             _cachedUri = uri;
             populateUi();
-
-/*
-            try {
-                setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-*/
         }
     };
 
