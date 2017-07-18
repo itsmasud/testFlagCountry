@@ -274,10 +274,10 @@ public class PayDialog extends FullScreenDialog {
         try {
             switch (_mode) {
                 case MODE_FIXED:
-                    if (getDouble(_fixedEditText.getText().toString()) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT) {
+                    if (getDouble(_fixedEditText.getText().toString()) > MINIMUM_ACCUMULATED_PAYABLE_AMOUNT) {
                         return true;
                     }
-                    ToastClient.toast(App.get(), R.string.toast_minimum_accumulated_payable_amount, Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), "Total amount must be greater than $20", Toast.LENGTH_SHORT);
                     return false;
 
                 case MODE_HOURLY:
@@ -300,9 +300,17 @@ public class PayDialog extends FullScreenDialog {
 
                 case MODE_BLENDED:
                     double blendedFixedRate = getDouble((_blendedFixedRateEditText.getText().toString()));
-//                    double blendedMaxHours = getDouble((_blendedFixedMaxHoursEditText.getText().toString()));
+                    double blendedMaxHours = getDouble((_blendedFixedMaxHoursEditText.getText().toString()));
                     double extraHourly = getDouble((_extraHourlyEditText.getText().toString()));
                     double extraMaxHours = getDouble((_extraMaxHoursEditText.getText().toString()));
+                    if (blendedFixedRate <= 0) {
+                        ToastClient.toast(App.get(), "Pay must be more than 0", Toast.LENGTH_SHORT);
+                        return false;
+                    }
+                    if (blendedMaxHours <= 0) {
+                        ToastClient.toast(App.get(), "Hours must be more than 0", Toast.LENGTH_SHORT);
+                        return false;
+                    }
                     if (extraHourly <= 0) {
                         ToastClient.toast(App.get(), "Pay must be more than 0", Toast.LENGTH_SHORT);
                         return false;
