@@ -47,7 +47,6 @@ import com.fieldnation.v2.data.model.ExpenseCategory;
 import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
-import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.KeyValuePairView;
 import com.fieldnation.v2.ui.PayView;
@@ -620,23 +619,6 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final PayDialog.OnCompleteListener _payDialog_onOk = new PayDialog.OnCompleteListener() {
         @Override
         public void onComplete(Pay pay, String explanation) {
-            Pay _woPay = _workOrder.getPay();
-
-            if (_woPay.getType() == pay.getType()
-                    && (int) (_woPay.getBase().getAmount() * 100) == (int) (pay.getBase().getAmount() * 100)
-                    && (int) (_woPay.getBase().getUnits() * 100) == (int) (pay.getBase().getUnits() * 100)) {
-                if (_woPay.getType() == Pay.TypeEnum.BLENDED) {
-                    if ((int) (_woPay.getAdditional().getAmount() * 100) == (int) (pay.getAdditional().getAmount() * 100)
-                            && (int) (_woPay.getAdditional().getUnits() * 100) == (int) (pay.getAdditional().getUnits() * 100)) {
-                        ToastClient.toast(App.get(), "Please select pay that is different than the work order", Toast.LENGTH_SHORT);
-                        return;
-                    }
-                } else {
-                    ToastClient.toast(App.get(), "Please select pay that is different than the work order", Toast.LENGTH_SHORT);
-                    return;
-                }
-            }
-
             _pay = pay;
             populateUi();
         }
@@ -700,32 +682,8 @@ public class CounterOfferDialog extends FullScreenDialog {
     private final ScheduleDialog.OnCompleteListener _scheduleDialog_onOk = new ScheduleDialog.OnCompleteListener() {
         @Override
         public void onComplete(Schedule schedule) {
-            if (schedule != null) {
-                Schedule woSched = _workOrder.getSchedule();
-                if (woSched.getServiceWindow().getMode() == schedule.getServiceWindow().getMode()) {
-                    if (woSched.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
-                        if (woSched.getServiceWindow().getStart().getUtc().equals(schedule.getServiceWindow().getStart().getUtc())) {
-                            ToastClient.toast(App.get(), "Please select a schedule different than the work order", Toast.LENGTH_SHORT);
-                            return;
-                        }
-                    } else if (woSched.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.BETWEEN) {
-                        if (woSched.getServiceWindow().getStart().getUtc().equals(schedule.getServiceWindow().getStart().getUtc())
-                                && woSched.getServiceWindow().getEnd().getUtc().equals(schedule.getServiceWindow().getEnd().getUtc())) {
-                            ToastClient.toast(App.get(), "Please select a schedule different than the work order", Toast.LENGTH_SHORT);
-                            return;
-                        }
-                    } else if (woSched.getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.HOURS) {
-                        if (woSched.getServiceWindow().getStart().getUtc().equals(schedule.getServiceWindow().getStart().getUtc())
-                                && woSched.getServiceWindow().getEnd().getUtc().equals(schedule.getServiceWindow().getEnd().getUtc())) {
-                            ToastClient.toast(App.get(), "Please select a schedule different than the work order", Toast.LENGTH_SHORT);
-                            return;
-                        }
-                    }
-                }
-
-                _schedule = schedule;
-                populateUi();
-            }
+            _schedule = schedule;
+            populateUi();
         }
     };
 
