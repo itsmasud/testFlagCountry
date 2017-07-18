@@ -36,3 +36,8 @@
 -dontoptimize
 -dontshrink
 -dontwarn **
+
+# For MPAndroidChart
+-dontwarn com.github.mikephil**
+-keep com.github.mikephil** { *; }
+-keep com.github.mikephil** { *; }
