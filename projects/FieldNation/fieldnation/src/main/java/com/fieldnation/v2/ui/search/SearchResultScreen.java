@@ -248,20 +248,20 @@ public class SearchResultScreen extends RelativeLayout {
                     _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
 
                 _refreshView.refreshComplete();
+            } else {
+                if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
+                    return;
+
+                WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
+
+                _adapter.refreshAll();
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _refreshView.startRefreshing();
+                    }
+                });
             }
-
-            if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
-                return;
-
-            WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
-
-            _adapter.refreshAll();
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    _refreshView.startRefreshing();
-                }
-            });
         }
     };
 
