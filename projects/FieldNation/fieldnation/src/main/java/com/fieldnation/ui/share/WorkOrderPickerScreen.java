@@ -23,7 +23,9 @@ public class WorkOrderPickerScreen extends FrameLayout {
 
     static {
         try {
-            _searchParams = new SavedList().id("workorders_assignments");
+            _searchParams = new SavedList()
+                    .id("workorders_assignments")
+                    .label("assigned");
         } catch (Exception ex) {
         }
     }

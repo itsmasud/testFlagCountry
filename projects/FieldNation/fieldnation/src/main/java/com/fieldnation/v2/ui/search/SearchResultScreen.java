@@ -340,7 +340,6 @@ public class SearchResultScreen extends RelativeLayout {
                 v.setData(EmptyCardView.PARAM_VIEW_TYPE_DECLINED);
             }
 
-
             return new BaseHolder(v, BaseHolder.TYPE_EMPTY);
         }
 
