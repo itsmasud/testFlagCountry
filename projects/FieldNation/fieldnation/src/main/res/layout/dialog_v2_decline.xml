@@ -1,89 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/Dialog.v3"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/DialogTitle.v3"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/not_interested" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
 
-    <TextView
-        android:id="@+id/body_textview"
-        style="?attr/dialogBodyStyle"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/body_textview"
+                style="?attr/dialogBodyStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/dialog_decline_message" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/decline_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/body_textview"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:hint="@string/decline_reason"
+                android:visibility="visible" />
+
+            <EditText
+                android:id="@+id/declineDetails_edittext"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/decline_spinner"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:hint="@string/hint_text_decline_spinner"
+                android:visibility="gone" />
+
+            <CheckBox
+                android:id="@+id/block_checkbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/declineDetails_edittext"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:text="@string/dialog_block_message" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/block_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/block_checkbox"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:hint="@string/block_reason"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/blockDetails_edittext"
+                style="@style/EditText"
+                android:layout_width="match_parent"
+                android:layout_below="@+id/block_spinner"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:hint="@string/hint_text_optional_details"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/title_textview"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="@string/dialog_decline_message" />
-
-    <com.fieldnation.ui.HintSpinner
-        android:id="@+id/decline_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/body_textview"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:hint="@string/decline_reason"
-        android:visibility="visible" />
-
-    <EditText
-        android:id="@+id/declineDetails_edittext"
-        style="@style/EditText"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/decline_spinner"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:hint="@string/hint_text_decline_spinner"
-        android:visibility="gone" />
-
-    <CheckBox
-        android:id="@+id/block_checkbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/declineDetails_edittext"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="@string/dialog_block_message" />
-
-    <com.fieldnation.ui.HintSpinner
-        android:id="@+id/block_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/block_checkbox"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:hint="@string/block_reason"
-        android:visibility="gone" />
-
-    <EditText
-        android:id="@+id/blockDetails_edittext"
-        style="@style/EditText"
-        android:layout_width="match_parent"
-        android:layout_below="@+id/block_spinner"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:hint="@string/hint_text_optional_details"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/cancel_button"
-        style="?attr/dialogCancelButtonStyle"
-        android:layout_below="@+id/blockDetails_edittext"
-        android:layout_toLeftOf="@+id/ok_button"
-        android:text="@string/btn_cancel" />
-
-    <Button
-        android:id="@+id/ok_button"
-        style="?attr/dialogOkButtonStyle"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/blockDetails_edittext"
-        android:text="@string/btn_done" />
+        android:layout_height="?attr/actionBarSize"
+        android:theme="@style/FieldNation.Material.ToolBar"
+        app:layout_scrollFlags="scroll|enterAlways" />
 
 </RelativeLayout>
