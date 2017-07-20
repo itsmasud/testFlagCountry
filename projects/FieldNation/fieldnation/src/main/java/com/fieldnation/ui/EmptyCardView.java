@@ -1,6 +1,8 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +12,10 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
@@ -61,9 +67,9 @@ public class EmptyCardView extends RelativeLayout {
 
         if (isInEditMode())
             return;
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _captionTexView = (TextView) findViewById(R.id.caption_textview);
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _titleTextView = findViewById(R.id.title_textview);
+        _captionTexView = findViewById(R.id.caption_textview);
+        _actionButton = findViewById(R.id.action_button);
 
         populateUi();
     }
@@ -74,9 +80,30 @@ public class EmptyCardView extends RelativeLayout {
     }
 
     private void setNoAvailableWorkOrder() {
-        _titleTextView.setText(R.string.empty_state_available_wol_title);
-        _captionTexView.setText(R.string.empty_state_available_wol_body);
-        _actionButton.setVisibility(GONE);
+        Profile profile = App.get().getProfile();
+        if (!profile.getMarketplaceStatusOn()
+                && profile.getMarketplaceStatusReason().equals("SUSPENDED")) {
+            try {
+
+                long expiration = ISO8601.toUtc(profile.getMarketplaceStatusExpiration());
+
+                _titleTextView.setText("Marketplace Suspension");
+                _captionTexView.setText("Your ability to request available work has been suspended for "
+                        + misc.convertMsToHuman(((expiration - System.currentTimeMillis()) / 3600000) * 3600000)
+                        + " due to "
+                        + profile.getMarketplaceStatusExplanation());
+                _actionButton.setVisibility(VISIBLE);
+                _actionButton.setText("CONTACT CUSTOMER SERVICE");
+                _actionButton.setOnClickListener(_contactCustomerService_onClick);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+        } else {
+            _titleTextView.setText(R.string.empty_state_available_wol_title);
+            _captionTexView.setText(R.string.empty_state_available_wol_body);
+            _actionButton.setVisibility(GONE);
+        }
     }
 
     private void setNoAssignedWorkOrder() {
@@ -220,4 +247,14 @@ public class EmptyCardView extends RelativeLayout {
         }
     };
 
+    private final View.OnClickListener _contactCustomerService_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://support.fieldnation.com/customer/portal/emails/new"));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                App.get().startActivity(intent);
+            }
+        }
+    };
 }
