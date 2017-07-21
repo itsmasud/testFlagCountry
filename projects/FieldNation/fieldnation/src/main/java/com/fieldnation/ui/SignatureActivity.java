@@ -198,6 +198,7 @@ public class SignatureActivity extends FragmentActivity {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             String tag = (String) _datePicker.getTag();
+            if (tag == null) return;
             if (tag.equals("arrive")) {
                 _arriveCal.set(year, monthOfYear, dayOfMonth);
             } else if (tag.equals("depart")) {
@@ -214,6 +215,7 @@ public class SignatureActivity extends FragmentActivity {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             String tag = (String) _timePicker.getTag();
+            if (tag == null) return;
             if (tag.equals("arrive")) {
                 _arriveCal.set(_arriveCal.get(Calendar.YEAR), _arriveCal.get(Calendar.MONTH),
                         _arriveCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);

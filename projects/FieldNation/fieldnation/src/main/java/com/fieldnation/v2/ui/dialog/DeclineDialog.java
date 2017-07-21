@@ -2,11 +2,13 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -18,7 +20,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
@@ -32,7 +34,7 @@ import com.fieldnation.v2.data.client.WorkordersWebApi;
  * Created by mc on 10/28/16.
  */
 
-public class DeclineDialog extends SimpleDialog {
+public class DeclineDialog extends FullScreenDialog {
     private static final String TAG = "DeclineDialog";
 
     private static int DECLINE_REASON_OTHER = 7;
@@ -54,14 +56,14 @@ public class DeclineDialog extends SimpleDialog {
 
 
     // Ui
+    private Toolbar _toolbar;
+    private ActionMenuItemView _finishMenu;
     private TextView _bodyTextView;
     private HintSpinner _declineSpinner;
     private EditText _declineEditText;
     private CheckBox _blockCheckBox;
     private HintSpinner _blockSpinner;
     private EditText _blockEditText;
-    private Button _cancelButton;
-    private Button _okButton;
 
     // Data
     private int[] _declineReasonIds;
@@ -81,6 +83,14 @@ public class DeclineDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_decline, container, false);
 
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
+        _toolbar.setTitle(App.get().getString(R.string.not_interested));
+
+        _finishMenu = _toolbar.findViewById(R.id.primary_menu);
+        _finishMenu.setText(R.string.btn_submit);
+
         _bodyTextView = v.findViewById(R.id.body_textview);
 
         _declineSpinner = v.findViewById(R.id.decline_spinner);
@@ -89,9 +99,6 @@ public class DeclineDialog extends SimpleDialog {
         _blockCheckBox = v.findViewById(R.id.block_checkbox);
         _blockSpinner = v.findViewById(R.id.block_spinner);
         _blockEditText = v.findViewById(R.id.blockDetails_edittext);
-
-        _cancelButton = v.findViewById(R.id.cancel_button);
-        _okButton = v.findViewById(R.id.ok_button);
 
         _declineReasonIds = v.getContext().getResources().getIntArray(R.array.dialog_decline_reason_ids);
         _blockReasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);
@@ -102,11 +109,12 @@ public class DeclineDialog extends SimpleDialog {
     @Override
     public void onStart() {
         super.onStart();
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
         _declineSpinner.setOnItemSelectedListener(_declineSpinner_selected);
         _blockCheckBox.setOnCheckedChangeListener(_blockCheckBox_onChecked);
         _blockSpinner.setOnItemSelectedListener(_blockSpinner_selected);
-        _okButton.setOnClickListener(_ok_onClick);
-        _cancelButton.setOnClickListener(_cancel_onClick);
 
         // populate the spinners
         getDeclineSpinner();
@@ -216,9 +224,9 @@ public class DeclineDialog extends SimpleDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
-        public void onClick(View v) {
+        public boolean onMenuItemClick(MenuItem item) {
             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
             uiContext.page += " - Decline Dialog";
 
@@ -226,13 +234,13 @@ public class DeclineDialog extends SimpleDialog {
                     && _declineReasonIds[_declinePosition] == DECLINE_REASON_OTHER
                     && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
                 ToastClient.toast(App.get(), R.string.toast_missing_decline_explanation, Toast.LENGTH_LONG);
-                return;
+                return false;
             }
 
             if (_blockCheckBox.isChecked()) {
                 if (_blockPosition == -1) {
                     ToastClient.toast(App.get(), R.string.toast_missing_blocking_reason, Toast.LENGTH_LONG);
-                    return;
+                    return false;
                 }
 
                 if (_declinePosition == -1) {
@@ -282,12 +290,13 @@ public class DeclineDialog extends SimpleDialog {
                 }
             }
             dismiss(true);
+            return true;
         }
     };
 
-    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
+        public void onClick(View view) {
             cancel();
             dismiss(true);
         }

@@ -19,7 +19,6 @@ import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.Date;
@@ -63,9 +62,6 @@ public class ScheduleCoView extends RelativeLayout {
     private Calendar _endCal;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
-    private String _stateFixedDateTime;
-    private String _stateRangeStartDateTime;
-    private String _stateRangeEndDateTime;
     private final Handler _handler = new Handler();
 
     public ScheduleCoView(Context context) {
@@ -195,27 +191,18 @@ public class ScheduleCoView extends RelativeLayout {
                 _scheduleTypeTitleTextview.setVisibility(VISIBLE);
                 _rangeLayout.setVisibility(View.GONE);
                 _exactLayout.setVisibility(View.VISIBLE);
-                if (misc.isEmptyOrNull(_stateFixedDateTime)) {
-                    _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
-                } else {
-                    _dateTimeButton.setText(_stateFixedDateTime);
-                }
+                _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 break;
             case MODE_RANGE:
                 _scheduleTypeTitleTextview.setVisibility(VISIBLE);
                 _rangeLayout.setVisibility(View.VISIBLE);
                 _exactLayout.setVisibility(View.GONE);
 
-                if (misc.isEmptyOrNull(_stateFixedDateTime)) {
-                    _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
-                } else {
-                    _startDateButton.setText(_stateRangeStartDateTime);
+                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
+                if (_startCal.getTimeInMillis() > _endCal.getTimeInMillis()) {
+                    _endCal.setTimeInMillis(_startCal.getTimeInMillis() + 86400000);
                 }
-                if (misc.isEmptyOrNull(_stateRangeEndDateTime)) {
-                    _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
-                } else {
-                    _endDateButton.setText(_stateRangeEndDateTime);
-                }
+                _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
 
                 break;
             case -1:
@@ -286,8 +273,7 @@ public class ScheduleCoView extends RelativeLayout {
         @Override
         public void onTimeSet(TimePicker v, int hourOfDay, int minute) {
             String tag = (String) _timePicker.getTag();
-            if (tag == null)
-                return;
+            if (tag == null) return;
 
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),

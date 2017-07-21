@@ -180,6 +180,7 @@ public class WorkLogDialog extends SimpleDialog {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             String tag = (String) _datePicker.getTag();
+            if (tag == null) return;
             if (tag.equals("start")) {
                 _startCalendar.set(year, monthOfYear, dayOfMonth);
             } else if (tag.equals("end")) {
@@ -196,6 +197,7 @@ public class WorkLogDialog extends SimpleDialog {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             String tag = (String) _timePicker.getTag();
+            if (tag == null) return;
             if (tag.equals("start")) {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
                         _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);

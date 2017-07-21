@@ -121,7 +121,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
             final UploadSlot[] slots = workorder.getUploadSlots();
 
-            if (slots.length == 0) {
+            if (slots == null || slots.length == 0) {
                 ToastClient.toast(App.get(), getResources().getString(R.string.cannot_upload_to_work_order_num, workorder.getTitle()), Toast.LENGTH_LONG);
                 if (_listener != null)
                     _listener.onBackPressed();
