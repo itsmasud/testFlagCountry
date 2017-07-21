@@ -34,7 +34,7 @@ public class PermissionsDialog extends FullScreenDialog {
     // Data
     private String _permission;
     private boolean _required;
-    private boolean _shouldShowRationale;
+    private boolean _secondTry;
 
     public PermissionsDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -66,7 +66,7 @@ public class PermissionsDialog extends FullScreenDialog {
 
         _permission = params.getString("permission");
         _required = params.getBoolean("required");
-        _shouldShowRationale = params.getBoolean("shouldShowRationale");
+        _secondTry = params.getBoolean("secondTry");
 
         populateUi();
     }
@@ -114,7 +114,7 @@ public class PermissionsDialog extends FullScreenDialog {
     private final View.OnClickListener _access_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (!_shouldShowRationale && _required) {
+            if (_secondTry && _required) {
                 ActivityResultClient.startActivity(getContext(), new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         Uri.fromParts("package", getContext().getPackageName(), null)));
             } else {
@@ -124,11 +124,11 @@ public class PermissionsDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, String uid, String permission, boolean required, boolean shouldShowRationale) {
+    public static void show(Context context, String uid, String permission, boolean required, boolean secondTry) {
         Bundle params = new Bundle();
         params.putString("permission", permission);
         params.putBoolean("required", required);
-        params.putBoolean("shouldShowRationale", shouldShowRationale);
+        params.putBoolean("secondTry", secondTry);
         Controller.show(context, uid, PermissionsDialog.class, params);
     }
 }
