@@ -255,14 +255,23 @@ public class MessageFragment extends WorkorderFragment {
                         @Override
                         public int compare(Message lhs, Message rhs) {
                             try {
-                                return (int) (lhs.getCreated().getUtcLong() - rhs.getCreated().getUtcLong());
+                                long lhsT = lhs.getCreated().getUtcLong();
+                                long rhsT = rhs.getCreated().getUtcLong();
+                                if (lhsT < rhsT) {
+                                    return -1;
+                                } else if (lhsT > rhsT) {
+                                    return 1;
+                                } else {
+                                    return 0;
+                                }
                             } catch (Exception ex) {
+                                Log.v(TAG, ex);
                                 return 0;
-
                             }
                         }
                     });
 
+                    _adapter.clear();
                     _adapter.addObjects(messages.getMetadata().getPage(), flatList);
 
                     rebuildList();
