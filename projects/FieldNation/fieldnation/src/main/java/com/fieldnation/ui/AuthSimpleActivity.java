@@ -104,6 +104,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     public abstract DialogManager getDialogManager();
 
+    public boolean doPermissionsChecks() {
+        return true;
+    }
+
     @Override
     protected void onStart() {
         Log.v(TAG, "onStart");
@@ -111,9 +115,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStart();
 
-        _permissionsClient = new PermissionsClient(_permissionsListener);
-        _permissionsClient.connect(App.get());
-        PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        if (doPermissionsChecks()) {
+            _permissionsClient = new PermissionsClient(_permissionsListener);
+            _permissionsClient.connect(App.get());
+            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        }
     }
 
     @Override
@@ -156,7 +162,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         Log.v(TAG, "onStop");
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        if (doPermissionsChecks()) {
+            if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        }
 
         super.onStop();
         DialogManager dialogManager = getDialogManager();
@@ -249,7 +257,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+        if (doPermissionsChecks()) {
+            PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+        }
     }
 
     /*-*********************************-*/

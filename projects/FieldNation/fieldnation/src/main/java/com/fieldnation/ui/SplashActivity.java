@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -12,7 +13,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
@@ -79,6 +79,11 @@ public class SplashActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean doPermissionsChecks() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(STATE_IS_AUTH, _isAuth);
         if (_profile != null) {
@@ -130,6 +135,11 @@ public class SplashActivity extends AuthSimpleActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
     }
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
