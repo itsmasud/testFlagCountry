@@ -383,13 +383,6 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        new SimpleGps(App.get()).updateListener(_simpleGps_listener).numUpdates(1).start(App.get());
-    }
-
-    @Override
     public void onStop() {
         CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
