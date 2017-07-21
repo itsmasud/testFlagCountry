@@ -22,10 +22,10 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.ETA;
@@ -121,9 +121,7 @@ public class RunningLateDialog extends SimpleDialog {
             ex.printStackTrace();
         }
 
-        if (_workOrder.getContacts().getResults().length == 0
-                && misc.isEmptyOrNull(_workOrder.getLocation().getSavedLocation().getContact().getName())
-                && misc.isEmptyOrNull(_workOrder.getLocation().getSavedLocation().getContact().getPhone())) {
+        if (_workOrder.getContacts().getResults().length == 0) {
             _callButton.setVisibility(View.GONE);
         } else {
             _callButton.setVisibility(View.VISIBLE);
@@ -192,8 +190,6 @@ public class RunningLateDialog extends SimpleDialog {
                         .condition(new Condition()
                                 .estimatedDelay(delayMin * 60)
                                 .status(Condition.StatusEnum.DELAYED));
-
-                Log.e(TAG, "eta: " + eta.getJson());
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Running Late Dialog";
