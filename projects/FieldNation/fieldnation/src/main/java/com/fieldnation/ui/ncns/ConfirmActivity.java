@@ -66,7 +66,9 @@ public class ConfirmActivity extends AuthSimpleActivity {
         App.get().getSpUiContext().page = "Confirm Work";
 
         try {
-            _savedList = new SavedList().id("workorders_assignments");
+            _savedList = new SavedList()
+                    .id("workorders_assignments")
+                    .label("assigned");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
