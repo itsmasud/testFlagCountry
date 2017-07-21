@@ -24,9 +24,9 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
-import com.fieldnation.ui.dialog.OneButtonDialog;
-import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
-import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.v2.ui.dialog.OneButtonDialog;
+import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
+import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
@@ -38,12 +38,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private String TAG = TAG_BASE;
 
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
+    private static final String DIALOG_TOC = TAG_BASE + ".termsAndConditionsDialog";
+    private static final String DIALOG_WHATS_NEW_DIALOG = TAG_BASE + ".whatsNewDialog";
+    private static final String DIALOG_NOT_PROVIDER = TAG_BASE + ".notProviderDialog";
+    private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
 
     // UI
-    private OneButtonDialog _notProviderDialog;
-    private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
-    private TermsAndConditionsDialog _termsAndConditionsDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -85,12 +86,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
 
-        _termsAndConditionsDialog = TermsAndConditionsDialog.getInstance(getSupportFragmentManager(), TAG);
-
-        _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
-        _coiWarningDialog.setCancelable(false);
-
-        _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         onFinishCreate(savedInstanceState);
@@ -114,6 +109,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _permissionsClient = new PermissionsClient(_permissionsListener);
         _permissionsClient.connect(App.get());
         PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        TermsAndConditionsDialog.addOnOkListener(DIALOG_TOC, _termsAndConditionsDialog_onOk);
+        WhatsNewDialog.addOnClosedListener(DIALOG_WHATS_NEW_DIALOG, _whatsNewDialog_onClosed);
+        OneButtonDialog.addOnPrimaryListener(DIALOG_NOT_PROVIDER, _notProvider_onOk);
+        OneButtonDialog.addOnCanceledListener(DIALOG_NOT_PROVIDER, _notProvider_onCancel);
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_COI, _coiDialog_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_COI, _coiDialog_onSecondary);
     }
 
     @Override
@@ -129,10 +130,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
-        _notProviderDialog.setData(getString(R.string.user_not_supported),
-                getString(R.string.buyer_not_supported),
-                getString(R.string.btn_ok), _notProvider_listener);
-
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
     }
@@ -141,11 +138,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onPause() {
         Log.v(TAG, "onPause");
         if (_globalClient != null) _globalClient.disconnect(App.get());
-
         if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
-
         if (_toastClient != null) _toastClient.disconnect(App.get());
-
         if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         DialogManager dialogManager = getDialogManager();
@@ -157,6 +151,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onStop() {
         Log.v(TAG, "onStop");
         if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        TermsAndConditionsDialog.removeOnOkListener(DIALOG_TOC, _termsAndConditionsDialog_onOk);
+        WhatsNewDialog.removeOnClosedListener(DIALOG_WHATS_NEW_DIALOG, _whatsNewDialog_onClosed);
+        OneButtonDialog.removeOnPrimaryListener(DIALOG_NOT_PROVIDER, _notProvider_onOk);
+        OneButtonDialog.removeOnCanceledListener(DIALOG_NOT_PROVIDER, _notProvider_onCancel);
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_COI, _coiDialog_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_COI, _coiDialog_onSecondary);
 
         super.onStop();
         DialogManager dialogManager = getDialogManager();
@@ -188,7 +188,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             return;
 
         if (!_profile.isProvider()) {
-            _notProviderDialog.show();
+            OneButtonDialog.show(App.get(), DIALOG_NOT_PROVIDER, R.string.user_not_supported,
+                    R.string.buyer_not_supported, R.string.btn_ok, true);
             return;
         }
 
@@ -196,31 +197,25 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             Log.v(TAG, "show release notes");
+            _profileBounceProtect = false;
             App.get().setReleaseNoteShownReminded();
-            WhatsNewDialog.show(App.get());
+            WhatsNewDialog.show(App.get(), DIALOG_WHATS_NEW_DIALOG);
+            return;
         }
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {
             Log.v(TAG, "_termsAndConditionsDialog");
             _profileBounceProtect = false;
-            _termsAndConditionsDialog.show(_terms_listener);
+            TermsAndConditionsDialog.show(this, DIALOG_TOC);
             return;
         }
 
         App gs = App.get();
         if (!_profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
-            _coiWarningDialog.setData(
-                    getString(R.string.dialog_coi_title),
+            TwoButtonDialog.show(App.get(), DIALOG_COI, getString(R.string.dialog_coi_title),
                     getString(R.string.dialog_coi_body, _profile.insurancePercent()),
-                    getString(R.string.btn_later),
-                    getString(R.string.btn_no_later),
-                    _coi_listener);
-            try {
-                _coiWarningDialog.show();
-            } catch (Exception ex) {
-                Log.logException(ex);
-            }
+                    getString(R.string.btn_later), getString(R.string.btn_no_later), false, null);
         } else {
             Log.v(TAG, "toc/coi check done");
             onProfile(_profile);
@@ -255,9 +250,21 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final TermsAndConditionsDialog.Listener _terms_listener = new TermsAndConditionsDialog.Listener() {
+    private final TermsAndConditionsDialog.OnOkListener _termsAndConditionsDialog_onOk = new TermsAndConditionsDialog.OnOkListener() {
         @Override
-        public void onAccept() {
+        public void onOk() {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile();
+                }
+            });
+        }
+    };
+
+    private final WhatsNewDialog.OnClosedListener _whatsNewDialog_onClosed = new WhatsNewDialog.OnClosedListener() {
+        @Override
+        public void onClosed() {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -274,21 +281,23 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
+    private final OneButtonDialog.OnPrimaryListener _notProvider_onOk = new OneButtonDialog.OnPrimaryListener() {
         @Override
-        public void onButtonClick() {
-            AuthTopicClient.removeCommand(AuthSimpleActivity.this);
-        }
-
-        @Override
-        public void onCancel() {
+        public void onPrimary() {
             AuthTopicClient.removeCommand(AuthSimpleActivity.this);
         }
     };
 
-    private final TwoButtonDialog.Listener _coi_listener = new TwoButtonDialog.Listener() {
+    private final OneButtonDialog.OnCanceledListener _notProvider_onCancel = new OneButtonDialog.OnCanceledListener() {
         @Override
-        public void onPositive() {
+        public void onCanceled() {
+            AuthTopicClient.removeCommand(AuthSimpleActivity.this);
+        }
+    };
+
+    private final TwoButtonDialog.OnPrimaryListener _coiDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary() {
             _profileBounceProtect = false;
             App.get().setCoiReminded();
             new Handler().post(new Runnable() {
@@ -298,9 +307,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
                 }
             });
         }
+    };
 
+    private final TwoButtonDialog.OnSecondaryListener _coiDialog_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
         @Override
-        public void onNegative() {
+        public void onSecondary() {
             _profileBounceProtect = false;
             App.get().setNeverRemindCoi();
             new Handler().post(new Runnable() {
@@ -309,10 +320,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
                     gotProfile();
                 }
             });
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 

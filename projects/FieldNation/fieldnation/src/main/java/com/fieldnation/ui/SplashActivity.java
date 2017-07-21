@@ -12,7 +12,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
@@ -75,7 +74,7 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public DialogManager getDialogManager() {
-        return null;
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
