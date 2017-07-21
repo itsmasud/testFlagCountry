@@ -210,11 +210,13 @@ public class PermissionsClient extends TopicClient {
             public String permission;
             public boolean required;
             public boolean shouldShowRationale;
+            public boolean secondTry = false;
 
-            public PermissionsTuple(String permission, boolean required, boolean shouldShowRationale) {
+            public PermissionsTuple(String permission, boolean required, boolean shouldShowRationale, boolean secondTry) {
                 this.permission = permission;
                 this.required = required;
                 this.shouldShowRationale = shouldShowRationale;
+                this.secondTry = secondTry;
             }
         }
 
@@ -230,10 +232,10 @@ public class PermissionsClient extends TopicClient {
 
                     } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissions[i])) {
-                            QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], requiredPermissions.contains(permissions[i]), true));
+                            QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], requiredPermissions.contains(permissions[i]), true, false));
                         } else {
                             if (requiredPermissions.contains(permissions[i])) {
-                                QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], true, false));
+                                QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], true, false, false));
                             } else {
                                 PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
                                 setPermissionDenied(permissions[i]);
@@ -245,7 +247,7 @@ public class PermissionsClient extends TopicClient {
                 for (int i = 0; i < permissions.length; i++) {
                     // Denied and required. show dialog
                     if (requiredPermissions.contains(permissions[i]) && grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], true, true));
+                        QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], true, true, true));
                     } else {
                         if (grantResults[i] == PackageManager.PERMISSION_DENIED)
                             setPermissionDenied(permissions[i]);
@@ -266,7 +268,7 @@ public class PermissionsClient extends TopicClient {
                 int grant = checkSelfPermission(getActivity(), tuple.permission);
                 if (grant == PackageManager.PERMISSION_DENIED) {
                     if (tuple.shouldShowRationale || tuple.required) {
-                        PermissionsDialog.show(getActivity(), tuple.permission, tuple.permission, tuple.required, true);
+                        PermissionsDialog.show(getActivity(), tuple.permission, tuple.permission, tuple.required, tuple.secondTry);
                         break;
                     } else {
                         setPermissionDenied(tuple.permission);
