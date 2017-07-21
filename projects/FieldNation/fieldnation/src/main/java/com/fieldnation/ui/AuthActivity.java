@@ -149,6 +149,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _permissionsClient = new PermissionsClient(_permissionsListener);
         _permissionsClient.connect(App.get());
+        PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
     }
 
     @Override
