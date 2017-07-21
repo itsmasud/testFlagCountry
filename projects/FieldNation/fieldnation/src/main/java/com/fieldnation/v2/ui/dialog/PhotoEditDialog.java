@@ -4,23 +4,27 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
-import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
+import com.yalantis.ucrop.callback.BitmapCropCallback;
+import com.yalantis.ucrop.view.OverlayView;
+import com.yalantis.ucrop.view.UCropView;
 
 /**
  * Created by mc on 6/21/17.
@@ -32,7 +36,7 @@ public class PhotoEditDialog extends FullScreenDialog {
     // Ui
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
-    private ImageView _imageView;
+    private UCropView _uCropView;
     private ProgressBar _progressBar;
 
     // Clients
@@ -42,7 +46,6 @@ public class PhotoEditDialog extends FullScreenDialog {
     private Uri _sourceUri;
     private Uri _cachedUri;
     private String _name;
-    private Bitmap _bitmap;
 
 
     public PhotoEditDialog(Context context, ViewGroup container) {
@@ -58,9 +61,9 @@ public class PhotoEditDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
         _finishMenu = _toolbar.findViewById(R.id.primary_menu);
-        _finishMenu.setTitle("SAVE");
+        _finishMenu.setText("SAVE");
 
-        _imageView = v.findViewById(R.id.imageView);
+        _uCropView = v.findViewById(R.id.ucrop);
         _progressBar = v.findViewById(R.id.progressBar);
 
         return v;
@@ -118,32 +121,51 @@ public class PhotoEditDialog extends FullScreenDialog {
         super.onSaveDialogState(outState);
     }
 
-    public void setPhoto(Bitmap bitmap) {
-        Log.v(TAG, "setPhoto");
-        _bitmap = bitmap;
-
-        populateUi();
-    }
-
     private void populateUi() {
-        if (_imageView == null)
+        if (_uCropView == null)
             return;
 
-        if (_bitmap != null) {
+        if (_sourceUri != null) {
             _progressBar.setVisibility(View.GONE);
-            _imageView.setVisibility(View.VISIBLE);
-            _imageView.setImageBitmap(_bitmap);
+            _uCropView.setVisibility(View.VISIBLE);
+            try {
+                _uCropView.getCropImageView().setImageUri(_cachedUri, _cachedUri);
+                _uCropView.getOverlayView().setShowCropFrame(true);
+                _uCropView.getOverlayView().setShowCropGrid(true);
+                _uCropView.getOverlayView().setTargetAspectRatio(1.0F);
+                _uCropView.getOverlayView().setCircleDimmedLayer(true);
+                _uCropView.getOverlayView().setFreestyleCropMode(OverlayView.FREESTYLE_CROP_MODE_ENABLE_WITH_PASS_THROUGH);
+                _uCropView.setEnabled(true);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         } else {
             _progressBar.setVisibility(View.VISIBLE);
-            _imageView.setVisibility(View.INVISIBLE);
+            _uCropView.setVisibility(View.INVISIBLE);
         }
     }
 
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            _onSaveDispatcher.dispatch(getUid(), _name, _cachedUri);
-            dismiss(true);
+            _uCropView.setEnabled(false);
+            _progressBar.setVisibility(View.VISIBLE);
+            _uCropView.getCropImageView().cropAndSaveImage(Bitmap.CompressFormat.JPEG, 99, new BitmapCropCallback() {
+                @Override
+                public void onBitmapCropped(@NonNull Uri resultUri, int offsetX, int offsetY, int imageWidth, int imageHeight) {
+                    _onSaveDispatcher.dispatch(getUid(), _name, resultUri);
+                    dismiss(true);
+                }
+
+                @Override
+                public void onCropFailure(@NonNull Throwable t) {
+                    ToastClient.toast(App.get(), "Failure cropping image", Toast.LENGTH_SHORT);
+                    Log.v(TAG, t);
+                    _uCropView.setEnabled(true);
+                    _progressBar.setVisibility(View.GONE);
+                }
+
+            });
             return true;
         }
     };
@@ -177,12 +199,7 @@ public class PhotoEditDialog extends FullScreenDialog {
             }
 
             _cachedUri = uri;
-
-            try {
-                setPhoto(MemUtils.getMemoryEfficientBitmap(getContext(), _cachedUri, 400));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            populateUi();
         }
     };
 
