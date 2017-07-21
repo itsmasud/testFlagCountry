@@ -138,11 +138,7 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     private void rebuildList() {
-        // debug testing
-        //Log.v(TAG, "rebuildList");
-
         _messagesList.scrollToPosition(_adapter.getItemCount() - 1);
-
         _refreshView.refreshComplete();
     }
 
@@ -183,6 +179,7 @@ public class MessageFragment extends WorkorderFragment {
                 }
 
                 _inputView.clearText();
+                misc.hideKeyboard(_inputView);
             }
         }
     };
@@ -271,7 +268,6 @@ public class MessageFragment extends WorkorderFragment {
                         }
                     });
 
-                    _adapter.clear();
                     _adapter.addObjects(messages.getMetadata().getPage(), flatList);
 
                     rebuildList();
