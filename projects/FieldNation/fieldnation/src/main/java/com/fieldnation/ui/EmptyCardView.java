@@ -81,20 +81,44 @@ public class EmptyCardView extends RelativeLayout {
 
     private void setNoAvailableWorkOrder() {
         Profile profile = App.get().getProfile();
-        if (!profile.getMarketplaceStatusOn()
-                && profile.getMarketplaceStatusReason().equals("SUSPENDED")) {
+        if (!profile.getMarketplaceStatusOn() && profile.getMarketplaceStatusExplanation() != null) {
             try {
+                if (profile.getMarketplaceStatusReason() != null
+                        && profile.getMarketplaceStatusReason().equals("SUSPENDED")) {
 
-                long expiration = ISO8601.toUtc(profile.getMarketplaceStatusExpiration());
+                    _titleTextView.setText("Marketplace Suspension");
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setText("CONTACT CUSTOMER SERVICE");
+                    _actionButton.setOnClickListener(_contactCustomerService_onClick);
 
-                _titleTextView.setText("Marketplace Suspension");
-                _captionTexView.setText("Your ability to request available work has been suspended for "
-                        + misc.convertMsToHuman(((expiration - System.currentTimeMillis()) / 3600000) * 3600000)
-                        + " due to "
-                        + profile.getMarketplaceStatusExplanation());
-                _actionButton.setVisibility(VISIBLE);
-                _actionButton.setText("CONTACT CUSTOMER SERVICE");
-                _actionButton.setOnClickListener(_contactCustomerService_onClick);
+                    if (profile.getMarketplaceStatusExpiration() != null) {
+                        long expiration = ISO8601.toUtc(profile.getMarketplaceStatusExpiration());
+
+                        _captionTexView.setText("Your ability to request available work has been suspended for "
+                                + misc.convertMsToHuman(((expiration - System.currentTimeMillis()) / 3600000) * 3600000)
+                                + " due to "
+                                + profile.getMarketplaceStatusExplanation());
+                    } else {
+                        _captionTexView.setText("Your ability to request available work has been suspended indefinitely due to "
+                                + profile.getMarketplaceStatusExplanation());
+                    }
+                } else {
+                    _titleTextView.setText("Marketplace Disabled");
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setText("CONTACT CUSTOMER SERVICE");
+                    _actionButton.setOnClickListener(_contactCustomerService_onClick);
+                    if (profile.getMarketplaceStatusExpiration() != null) {
+                        long expiration = ISO8601.toUtc(profile.getMarketplaceStatusExpiration());
+
+                        _captionTexView.setText("Your ability to request available work has been disabled for "
+                                + misc.convertMsToHuman(((expiration - System.currentTimeMillis()) / 3600000) * 3600000)
+                                + " due to "
+                                + profile.getMarketplaceStatusExplanation());
+                    } else {
+                        _captionTexView.setText("Your ability to request available work has been disabled indefinitely due to "
+                                + profile.getMarketplaceStatusExplanation());
+                    }
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
