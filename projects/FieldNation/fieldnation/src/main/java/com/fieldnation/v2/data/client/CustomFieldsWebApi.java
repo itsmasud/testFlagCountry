@@ -1,15 +1,18 @@
 package com.fieldnation.v2.data.client;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -18,16 +21,15 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.v2.data.listener.CacheDispatcher;
 import com.fieldnation.v2.data.listener.TransactionListener;
 import com.fieldnation.v2.data.listener.TransactionParams;
-import com.fieldnation.v2.data.model.CustomField;
-import com.fieldnation.v2.data.model.CustomFields;
+import com.fieldnation.v2.data.model.*;
 import com.fieldnation.v2.data.model.Error;
-import com.fieldnation.v2.data.model.IdResponse;
 
 /**
  * Created by dmgen from swagger.
@@ -74,8 +76,6 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void addCustomField(Context context, CustomField json) {
         try {
-            String key = misc.md5("POST//api/rest/v2/custom-fields");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -90,7 +90,6 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/custom-fields")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -122,8 +121,6 @@ public class CustomFieldsWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("DELETE//api/rest/v2/custom-fields/" + customFieldId);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -134,7 +131,6 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/custom-fields/{custom_field_id}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -158,7 +154,7 @@ public class CustomFieldsWebApi extends TopicClient {
      */
     public static void getCustomFields(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/custom-fields");
+            String key = misc.md5("GET//api/rest/v2/custom-fields" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -205,8 +201,6 @@ public class CustomFieldsWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -222,7 +216,6 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -255,8 +248,6 @@ public class CustomFieldsWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/" + visibility);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -268,7 +259,6 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/{visibility}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -304,8 +294,6 @@ public class CustomFieldsWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/client/" + clientId + "/" + visibility);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -318,7 +306,6 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/client/{client_id}/{visibility}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -354,8 +341,6 @@ public class CustomFieldsWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PUT//api/rest/v2/custom-fields/" + customFieldId + "/visibility/project/" + projectId + "/" + visibility);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -368,7 +353,6 @@ public class CustomFieldsWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/custom-fields/{custom_field_id}/visibility/project/{project_id}/{visibility}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -393,38 +377,38 @@ public class CustomFieldsWebApi extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
 
-            String type = ((Bundle) payload).getString("type");
+            Bundle bundle = (Bundle) payload;
+            String type = bundle.getString("type");
+            TransactionParams transactionParams = bundle.getParcelable("params");
+
+            if (!processTransaction(transactionParams, transactionParams.apiFunction))
+                return;
+
             switch (type) {
                 case "queued": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "progress": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "paused": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
-                    new AsyncParser(this, (Bundle) payload);
+                    new AsyncParser(this, bundle);
                     break;
                 }
             }
         }
+
+        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
         public void onQueued(TransactionParams transactionParams, String methodName) {
         }

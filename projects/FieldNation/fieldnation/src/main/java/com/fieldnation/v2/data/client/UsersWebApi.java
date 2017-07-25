@@ -8,9 +8,11 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.SimpleEvent;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -19,6 +21,7 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.tracker.TrackerEnum;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -74,8 +77,6 @@ public class UsersWebApi extends TopicClient {
      */
     public static void addCoords(Context context, Integer userId, Coords coords) {
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/coords");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -91,7 +92,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/coords")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -123,8 +123,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/pay");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -135,7 +133,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/pay")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -168,8 +165,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/types-of-work");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -185,7 +180,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/types-of-work")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -210,7 +204,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getPay(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/pay" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -251,7 +245,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getProfileAndWorkHistory(Context context, Integer userId, Integer workOrderId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId);
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/workorder/" + workOrderId + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -292,7 +286,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getSettings(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/settings" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -332,7 +326,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getTax(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tax" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -372,7 +366,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getTour(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/tour" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -412,7 +406,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getUser(Context context, String user, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + user);
+            String key = misc.md5("GET//api/rest/v2/users/" + user + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -453,7 +447,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getUserPreferenceValue(Context context, Integer userId, String preference, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference);
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferences/" + preference + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -494,7 +488,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getUserPreferredProviderNetworks(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/preferredprovidernetworks" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -534,7 +528,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getUserTypesOfWork(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/types-of-work" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -574,7 +568,7 @@ public class UsersWebApi extends TopicClient {
      */
     public static void getWorkHistory(Context context, Integer userId, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/work_history");
+            String key = misc.md5("GET//api/rest/v2/users/" + userId + "/work_history" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -622,8 +616,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/email");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -639,7 +631,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/email")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -672,8 +663,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/text");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -689,7 +678,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/text")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -722,8 +710,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/phone");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -739,7 +725,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/phone")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -773,8 +758,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/preferences/" + preference);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -791,7 +774,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/preferences/{preference}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -826,8 +808,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/notifications/" + notificationId);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -839,7 +819,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/notifications/{notification_id}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -863,8 +842,6 @@ public class UsersWebApi extends TopicClient {
      */
     public static void switchUser(Context context, User json) {
         try {
-            String key = misc.md5("PUT//api/rest/v2/users/switch");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -879,7 +856,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/users/switch")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -911,8 +887,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/pay");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PATCH")
@@ -923,7 +897,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/pay")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -955,8 +928,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/settings");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PATCH")
@@ -967,7 +938,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/settings")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1000,8 +970,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/tax");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1017,7 +985,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/tax")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1049,8 +1016,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PATCH//api/rest/v2/users/" + userId + "/tour");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PATCH")
@@ -1061,7 +1026,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PATCH//api/rest/v2/users/{user_id}/tour")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1094,8 +1058,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/profile/avatar");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1108,7 +1070,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/profile/avatar")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1141,8 +1102,6 @@ public class UsersWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("POST//api/rest/v2/users/" + userId + "/verify/2fa");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -1158,7 +1117,6 @@ public class UsersWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/users/{user_id}/verify/2fa")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -1183,38 +1141,38 @@ public class UsersWebApi extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
 
-            String type = ((Bundle) payload).getString("type");
+            Bundle bundle = (Bundle) payload;
+            String type = bundle.getString("type");
+            TransactionParams transactionParams = bundle.getParcelable("params");
+
+            if (!processTransaction(transactionParams, transactionParams.apiFunction))
+                return;
+
             switch (type) {
                 case "queued": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "progress": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "paused": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
-                    new AsyncParser(this, (Bundle) payload);
+                    new AsyncParser(this, bundle);
                     break;
                 }
             }
         }
+
+        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
         public void onQueued(TransactionParams transactionParams, String methodName) {
         }
