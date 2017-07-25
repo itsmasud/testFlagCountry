@@ -30,10 +30,6 @@ public class PermissionsClient extends TopicClient {
     private static final String STAG = "PermissionsClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    protected static final int INITIAL_REQUEST = 0;
-    protected static final int SECOND_REQUEST = 1;
-    protected static final int PARTIAL_REQUEST = 2;
-
     private static final String TOPIC_ID_REQUESTS = STAG + ":TOPIC_ID_REQUESTS";
     private static final String TOPIC_ID_REQUEST_RESULT = STAG + ":TOPIC_ID_REQUEST_RESULT";
     private static final String TOPIC_ID_COMPLETE = STAG + ":TOPIC_ID_COMPLETE";
@@ -49,28 +45,21 @@ public class PermissionsClient extends TopicClient {
     }
 
     static void processQueue(Context context) {
+        Log.v(STAG, "processQueue");
         TopicService.dispatchEvent(context, TOPIC_ID_PROCESS_QUEUE, null, Sticky.TEMP);
     }
 
     public static void requestPermissions(Context context, String[] permissions, boolean[] required) {
+        Log.v(STAG, "requestPermissions");
         Bundle payload = new Bundle();
         payload.putStringArray("permissions", permissions);
         payload.putBooleanArray("required", required);
-        payload.putInt("requestCode", INITIAL_REQUEST);
-
-        TopicService.dispatchEvent(context, TOPIC_ID_REQUESTS, payload, Sticky.TEMP);
-    }
-
-    static void requestPermissions(Context context, String[] permissions, boolean[] required, int requestCode) {
-        Bundle payload = new Bundle();
-        payload.putStringArray("permissions", permissions);
-        payload.putBooleanArray("required", required);
-        payload.putInt("requestCode", requestCode);
 
         TopicService.dispatchEvent(context, TOPIC_ID_REQUESTS, payload, Sticky.TEMP);
     }
 
     public static void onRequestPermissionsResult(Context context, int requestCode, String[] permissions, int[] grantResults) {
+        Log.v(STAG, "onRequestPermissionsResult");
         Bundle payload = new Bundle();
         payload.putInt("requestCode", requestCode);
         payload.putStringArray("permissions", permissions);
@@ -80,6 +69,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     protected static void onComplete(Context context, String permission, int grantResult) {
+        Log.v(STAG, "onComplete");
         Bundle payload = new Bundle();
         payload.putString("permission", permission);
         payload.putInt("grantResult", grantResult);
@@ -88,6 +78,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     static void setPermissionDenied(String permission) {
+        Log.v(STAG, "setPermissionDenied");
         SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
         SharedPreferences.Editor edit = sp.edit();
         edit.putLong(permission, System.currentTimeMillis());
@@ -95,6 +86,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     static void clearPermissionDenied(String permission) {
+        Log.v(STAG, "clearPermissionDenied");
         SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
         SharedPreferences.Editor edit = sp.edit();
         edit.remove(permission);
@@ -102,6 +94,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     private static boolean isPermissionDenied(String permission) {
+        Log.v(STAG, "isPermissionDenied");
         SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
         if (sp.contains(permission)) {
             if (sp.getLong(permission, 0) + 86400000 < System.currentTimeMillis()) { // 1 day
@@ -114,6 +107,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     public static int checkSelfPermission(Context context, String permission) {
+        Log.v(STAG, "checkSelfPermission");
         int grant = ContextCompat.checkSelfPermission(context, permission);
 
         if (grant == PackageManager.PERMISSION_GRANTED)
@@ -123,6 +117,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     public static void checkSelfPermissionAndRequest(Context context, String[] permissions, boolean[] required) {
+        Log.v(STAG, "checkSelfPermissionAndRequest");
         List<String> requestable = new LinkedList<>();
         List<Boolean> requireds = new LinkedList<>();
         for (int i = 0; i < required.length; i++) {
@@ -168,8 +163,7 @@ public class PermissionsClient extends TopicClient {
                 getClient().clearTopicAll(TOPIC_ID_REQUESTS);
                 Bundle bundle = (Bundle) payload;
                 onRequest(bundle.getStringArray("permissions"),
-                        bundle.getBooleanArray("required"),
-                        bundle.getInt("requestCode"));
+                        bundle.getBooleanArray("required"));
 
             } else if (topicId.equals(TOPIC_ID_REQUEST_RESULT)) {
                 getClient().clearTopicAll(TOPIC_ID_REQUEST_RESULT);
@@ -187,7 +181,7 @@ public class PermissionsClient extends TopicClient {
 
         public abstract PermissionsClient getClient();
 
-        private void onRequest(String[] permissions, boolean[] required, int requestCode) {
+        private void onRequest(String[] permissions, boolean[] required) {
             Log.v(TAG, "onRequest");
 
             List<String> requestable = new LinkedList<>();
@@ -203,57 +197,66 @@ public class PermissionsClient extends TopicClient {
                 }
             }
 
-            ActivityCompat.requestPermissions(getActivity(), requestable.toArray(new String[requestable.size()]), requestCode);
-        }
-
-        private static class PermissionsTuple {
-            public String permission;
-            public boolean required;
-            public boolean shouldShowRationale;
-            public boolean secondTry = false;
-
-            public PermissionsTuple(String permission, boolean required, boolean shouldShowRationale, boolean secondTry) {
-                this.permission = permission;
-                this.required = required;
-                this.shouldShowRationale = shouldShowRationale;
-                this.secondTry = secondTry;
-            }
+            ActivityCompat.requestPermissions(getActivity(), requestable.toArray(new String[requestable.size()]), 0);
         }
 
         private Hashtable<String, PermissionsTuple> QUEUED_PERMS = new Hashtable<>();
 
         private void onResponse(int requestCode, String[] permissions, int[] grantResults) {
             Log.v(TAG, "onResponse " + requestCode);
-            if (requestCode == INITIAL_REQUEST) {
-                for (int i = 0; i < permissions.length; i++) {
+
+            for (int i = 0; i < permissions.length; i++) {
+                Log.v(TAG, "onResponse for loop");
+                PermissionsTuple tuple = PermissionsTuple.get(getActivity(), permissions[i]);
+                tuple.required(requiredPermissions.contains(permissions[i]));
+
+                if (!tuple.secondTry) {
+                    Log.v(TAG, "onResponse not second try");
+                    //tuple.secondTry(true).save(getActivity());
+
                     if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.v(TAG, "onResponse Granted");
                         clearPermissionDenied(permissions[i]);
+                        tuple.delete(getActivity());
                         PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_GRANTED);
 
                     } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        Log.v(TAG, "onResponse denied");
                         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), permissions[i])) {
-                            QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], requiredPermissions.contains(permissions[i]), true, false));
+                            Log.v(TAG, "onResponse shouldShowRequestPermissionRationale");
+                            QUEUED_PERMS.put(permissions[i],
+                                    tuple.shouldShowRationale(true).save(getActivity()));
                         } else {
+                            Log.v(TAG, "onResponse not shouldShowRequestPermissionRationale");
                             if (requiredPermissions.contains(permissions[i])) {
-                                QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], true, false, false));
+                                Log.v(TAG, "onResponse not shouldShowRequestPermissionRationale required");
+                                QUEUED_PERMS.put(permissions[i],
+                                        tuple.shouldShowRationale(true).save(getActivity()));
                             } else {
+                                Log.v(TAG, "onResponse not shouldShowRequestPermissionRationale not required");
+                                tuple.shouldShowRationale(false).save(getActivity());
                                 PermissionsClient.onComplete(getActivity(), permissions[i], PackageManager.PERMISSION_DENIED);
                                 setPermissionDenied(permissions[i]);
                             }
                         }
                     }
-                }
-            } else if (requestCode == SECOND_REQUEST) {
-                for (int i = 0; i < permissions.length; i++) {
+                } else if (tuple.secondTry) {
+                    Log.v(TAG, "onResponse second try");
                     // Denied and required. show dialog
-                    if (requiredPermissions.contains(permissions[i]) && grantResults[i] == PackageManager.PERMISSION_DENIED) {
-                        QUEUED_PERMS.put(permissions[i], new PermissionsTuple(permissions[i], true, true, true));
+                    if (tuple.required && grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        Log.v(TAG, "onResponse second try, denied and required");
+                        QUEUED_PERMS.put(permissions[i],
+                                tuple.shouldShowRationale(true).save(getActivity()));
                     } else {
-                        if (grantResults[i] == PackageManager.PERMISSION_DENIED)
+                        Log.v(TAG, "onResponse second try, not required");
+                        if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                            Log.v(TAG, "onResponse second try, not required denied");
                             setPermissionDenied(permissions[i]);
-                        else
+                        } else {
+                            Log.v(TAG, "onResponse second try, not required granted");
+                            tuple.delete(getActivity());
                             clearPermissionDenied(permissions[i]);
-
+                        }
                         PermissionsClient.onComplete(getActivity(), permissions[i], grantResults[i]);
                     }
                 }
@@ -262,19 +265,25 @@ public class PermissionsClient extends TopicClient {
         }
 
         private void processQueue() {
+            Log.v(TAG, "processQueue");
             while (QUEUED_PERMS.size() > 0) {
+                Log.v(TAG, "processQueue tuple");
                 PermissionsTuple tuple = QUEUED_PERMS.remove(QUEUED_PERMS.keys().nextElement());
 
                 int grant = checkSelfPermission(getActivity(), tuple.permission);
                 if (grant == PackageManager.PERMISSION_DENIED) {
+                    Log.v(TAG, "processQueue denied");
                     if (tuple.shouldShowRationale || tuple.required) {
-                        PermissionsDialog.show(getActivity(), tuple.permission, tuple.permission, tuple.required, tuple.secondTry);
+                        Log.v(TAG, "processQueue shouldShowRationale || required");
+                        PermissionsDialog.show(getActivity(), tuple.permission, tuple);
                         break;
                     } else {
+                        Log.v(TAG, "processQueue !shouldShowRationale && !required");
                         setPermissionDenied(tuple.permission);
                         PermissionsClient.onComplete(getActivity(), tuple.permission, PackageManager.PERMISSION_DENIED);
                     }
                 } else {
+                    Log.v(TAG, "processQueue granted");
                     clearPermissionDenied(tuple.permission);
                     PermissionsClient.onComplete(getActivity(), tuple.permission, PackageManager.PERMISSION_GRANTED);
                 }
