@@ -40,6 +40,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.ui.ncns.RemindMeService;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
@@ -343,7 +344,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.finish();
 
                         AuthTopicClient.addedAccountCommand(AuthActivity.this);
-
+                        startService(new Intent(getApplicationContext(), RemindMeService.class));
                         SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
