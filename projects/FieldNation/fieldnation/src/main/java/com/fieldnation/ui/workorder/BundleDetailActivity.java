@@ -358,6 +358,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.contains("decline")
                     || methodName.contains("deleteRequest")
+                    || methodName.contains("updateETA")
                     || methodName.contains("MassAcceptWorkOrder");
         }
 
@@ -374,6 +375,10 @@ public class BundleDetailActivity extends AuthSimpleActivity {
             if (methodName.contains("MassAcceptWorkOrder") && success) {
                 setLoading(false);
                 ToastClient.toast(App.get(), "Bundle workorders accepted successfully.", Toast.LENGTH_LONG);
+                BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
+            }
+            if (methodName.contains("updateETA") && success) {
+                setLoading(false);
                 BundlesWebApi.getBundleWorkOrders(App.get(), _bundleId, false, false);
             }
 

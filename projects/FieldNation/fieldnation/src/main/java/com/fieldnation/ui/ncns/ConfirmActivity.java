@@ -90,7 +90,14 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _recyclerView.onResume();
         _recyclerView.startSearch(_savedList, _options);
+    }
+
+    @Override
+    protected void onPause() {
+        _recyclerView.onPause();
+        super.onPause();
     }
 
     @Override
