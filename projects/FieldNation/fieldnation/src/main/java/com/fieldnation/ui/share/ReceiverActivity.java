@@ -13,16 +13,17 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.filecache.FileCacheClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
+import com.fieldnation.v2.data.client.AttachmentService;
+import com.fieldnation.v2.data.model.Attachment;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     // Data
     private WorkOrder _selectedWorkOrder;
-    private UploadSlot _selectedUploadSlot;
+    private AttachmentFolder _selectedUploadSlot;
     private SharedFile[] _sharedFiles;
     private int _remainingCacheItems = 0;
 
@@ -218,7 +219,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
             _selectedWorkOrder = workOrder;
-            _slotPicker.setWorkOrderId(workOrder);
+            _slotPicker.setWorkOrderId(workOrder.getId());
             animateSwap(_slotPicker, _workOrderPicker, false);
         }
     };
@@ -230,14 +231,21 @@ public class ReceiverActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onSlotSelected(UploadSlot uploadSlot) {
+        public void onSlotSelected(AttachmentFolder uploadSlot) {
             _selectedUploadSlot = uploadSlot;
             // if file list == 1, then start upload and redirect to work order details
             if (_sharedFiles.length == 1) {
-                WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
-                        _selectedUploadSlot.getSlotId(), _sharedFiles[0].getFileName(),
-                        _sharedFiles[0].getUri());
                 startWorkOrderDetails();
+
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(_sharedFiles[0].getFileName()));
+
+                    AttachmentService.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, _sharedFiles[0].getFileName(), _sharedFiles[0].getUri());
+                } catch (Exception e) {
+                    Log.v(TAG, e);
+                }
+
             } else {
                 _filePicker.setData(_selectedWorkOrder, _selectedUploadSlot, _sharedFiles);
                 animateSwap(_filePicker, _slotPicker, false);
@@ -255,17 +263,26 @@ public class ReceiverActivity extends AuthSimpleActivity {
         public void onSendFiles(SharedFile[] sharedFiles) {
             ToastClient.toast(App.get(), getString(R.string.sending_num_files, sharedFiles.length), Toast.LENGTH_SHORT);
 
-            if (_selectedUploadSlot.getMaxFiles() != null
-                    && _selectedUploadSlot.getMaxFiles() > 0
-                    && _selectedUploadSlot.getUploadedDocuments().length + sharedFiles.length > _selectedUploadSlot.getMaxFiles()) {
-                ToastClient.toast(App.get(), getString(R.string.please_select_fewer_than_num_files,
-                        _selectedUploadSlot.getMaxFiles() - _selectedUploadSlot.getUploadedDocuments().length), Toast.LENGTH_LONG);
-                return;
-            }
+            // TODO V2 api is not ready for this
+//            if (_selectedUploadSlot.getMaxFiles() != null
+//                    && _selectedUploadSlot.getMaxFiles() > 0
+//                    && _selectedUploadSlot.getUploadedDocuments().length + sharedFiles.length > _selectedUploadSlot.getMaxFiles()) {
+//                ToastClient.toast(App.get(), getString(R.string.please_select_fewer_than_num_files,
+//                        _selectedUploadSlot.getMaxFiles() - _selectedUploadSlot.getUploadedDocuments().length), Toast.LENGTH_LONG);
+//                return;
+//            }
 
             for (SharedFile file : sharedFiles) {
-                WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
-                        _selectedUploadSlot.getSlotId(), file.getFileName(), file.getUri());
+
+                try {
+                    Attachment attachment = new Attachment();
+                    attachment.folderId(_selectedUploadSlot.getId()).file(new com.fieldnation.v2.data.model.File().name(file.getFileName()));
+
+                    AttachmentService.addAttachment(App.get(), _selectedWorkOrder.getId(), attachment, file.getFileName(), file.getUri());
+                } catch (Exception e) {
+                    Log.v(TAG, e);
+                }
+
             }
             startWorkOrderDetails();
         }
