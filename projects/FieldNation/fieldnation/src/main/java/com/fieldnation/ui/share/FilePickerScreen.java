@@ -13,10 +13,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.LinkedList;
@@ -38,7 +38,7 @@ public class FilePickerScreen extends FrameLayout {
 
     // Data
     private WorkOrder _workOrder;
-    private UploadSlot _slot;
+    private AttachmentFolder _slot;
     private SharedFile[] _sharedFiles;
     private Listener _listener;
 
@@ -83,7 +83,7 @@ public class FilePickerScreen extends FrameLayout {
         _listener = listener;
     }
 
-    public void setData(WorkOrder workOrder, UploadSlot slot, SharedFile[] sharedFiles) {
+    public void setData(WorkOrder workOrder, AttachmentFolder slot, SharedFile[] sharedFiles) {
         _workOrder = workOrder;
         _slot = slot;
         _sharedFiles = sharedFiles;
@@ -119,7 +119,7 @@ public class FilePickerScreen extends FrameLayout {
         if (_toolbar == null || _workOrder == null)
             return;
 
-        _uploadSlotTextView.setText(_slot.getSlotName());
+        _uploadSlotTextView.setText(_slot.getName());
 
         Runnable r = new ForLoopRunnable(_sharedFiles.length, new Handler()) {
             private final List<FileRowView> _views = new LinkedList<>();
