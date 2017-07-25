@@ -213,7 +213,14 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrder workOrder = (WorkOrder) _adapter.getObject(0);
+            WorkOrder workOrder = null;
+
+            for (int i = 0; i < _adapter.getItemCount(); i++) {
+                if (_adapter.getObject(i) instanceof WorkOrder) {
+                    workOrder = (WorkOrder) _adapter.getObject(i);
+                }
+            }
+
             if (workOrder == null)
                 return;
 
