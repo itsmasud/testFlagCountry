@@ -32,9 +32,7 @@ public class PermissionsDialog extends FullScreenDialog {
     private TextView _accessButton;
 
     // Data
-    private String _permission;
-    private boolean _required;
-    private boolean _secondTry;
+    private PermissionsTuple _permissionTuple;
 
     public PermissionsDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -64,15 +62,13 @@ public class PermissionsDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         super.show(params, animate);
 
-        _permission = params.getString("permission");
-        _required = params.getBoolean("required");
-        _secondTry = params.getBoolean("secondTry");
+        _permissionTuple = params.getParcelable("permissionsTuple");
 
         populateUi();
     }
 
     private void populateUi() {
-        switch (_permission) {
+        switch (_permissionTuple.permission) {
             case Manifest.permission.ACCESS_COARSE_LOCATION:
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 _imageView.setImageResource(R.drawable.location);
@@ -94,7 +90,7 @@ public class PermissionsDialog extends FullScreenDialog {
                 break;
 
             default:
-                Log.v(TAG, "Permission " + _permission + " not supported by this dialog!");
+                Log.v(TAG, "Permission " + _permissionTuple.permission + " not supported by this dialog!");
                 break;
         }
     }
@@ -102,33 +98,32 @@ public class PermissionsDialog extends FullScreenDialog {
     @Override
     public void cancel() {
         super.cancel();
-        PermissionsClient.setPermissionDenied(_permission);
-        PermissionsClient.onComplete(getContext(), _permission, PackageManager.PERMISSION_DENIED);
+        PermissionsClient.setPermissionDenied(_permissionTuple.permission);
+        PermissionsClient.onComplete(getContext(), _permissionTuple.permission, PackageManager.PERMISSION_DENIED);
     }
 
     @Override
     public boolean isCancelable() {
-        return !_required;
+        return !_permissionTuple.required;
     }
 
     private final View.OnClickListener _access_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            if (_secondTry && _required) {
+            if (_permissionTuple.secondTry && _permissionTuple.required) {
                 ActivityResultClient.startActivity(getContext(), new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         Uri.fromParts("package", getContext().getPackageName(), null)));
             } else {
-                PermissionsClient.requestPermissions(getContext(), new String[]{_permission}, new boolean[]{_required}, PermissionsClient.SECOND_REQUEST);
+                _permissionTuple.secondTry(true).save(getContext());
+                PermissionsClient.requestPermissions(getContext(), new String[]{_permissionTuple.permission}, new boolean[]{_permissionTuple.required});
             }
             dismiss(true);
         }
     };
 
-    public static void show(Context context, String uid, String permission, boolean required, boolean secondTry) {
+    public static void show(Context context, String uid, PermissionsTuple permissionsTuple) {
         Bundle params = new Bundle();
-        params.putString("permission", permission);
-        params.putBoolean("required", required);
-        params.putBoolean("secondTry", secondTry);
+        params.putParcelable("permissionsTuple", permissionsTuple);
         Controller.show(context, uid, PermissionsDialog.class, params);
     }
 }
