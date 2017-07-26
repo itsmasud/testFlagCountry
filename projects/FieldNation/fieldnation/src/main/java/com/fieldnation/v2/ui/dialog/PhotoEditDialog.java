@@ -1,6 +1,8 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,6 +56,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        ((Activity) context).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_NOSENSOR);
         View v = inflater.inflate(R.layout.dialog_photo_edit, container, false);
 
         _toolbar = v.findViewById(R.id.toolbar);
@@ -65,6 +68,7 @@ public class PhotoEditDialog extends FullScreenDialog {
 
         _uCropView = v.findViewById(R.id.ucrop);
         _progressBar = v.findViewById(R.id.progressBar);
+
 
         return v;
     }
@@ -110,6 +114,8 @@ public class PhotoEditDialog extends FullScreenDialog {
 
     @Override
     public void onStop() {
+        ((Activity) getContext()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+
         super.onStop();
     }
 
