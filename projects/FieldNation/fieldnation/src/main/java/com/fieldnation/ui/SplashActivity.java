@@ -18,6 +18,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.ncns.RemindMeService;
 import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
