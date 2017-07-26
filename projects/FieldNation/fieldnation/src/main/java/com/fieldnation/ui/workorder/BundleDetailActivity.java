@@ -319,6 +319,11 @@ public class BundleDetailActivity extends AuthSimpleActivity {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getBundleWorkOrders");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getBundleWorkOrders")) {
                 WorkOrders workOrders = (WorkOrders) successObject;

@@ -464,6 +464,11 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getBundleWorkOrders");
+        }
+
+        @Override
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             if (methodName.equals("getBundleWorkOrders")) {
                 incrementPendingRequestCounter(-1);
