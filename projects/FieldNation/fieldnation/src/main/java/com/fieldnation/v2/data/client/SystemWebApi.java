@@ -76,7 +76,7 @@ public class SystemWebApi extends TopicClient {
      */
     public static void getBanners(Context context, boolean allowCacheResponse, boolean isBackground) {
         try {
-            String key = misc.md5("GET//api/rest/v2/system/banners");
+            String key = misc.md5("GET//api/rest/v2/system/banners" + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -117,7 +117,7 @@ public class SystemWebApi extends TopicClient {
         try {
             String key = misc.md5("GET//api/rest/v2/system/banners" + (getBannersOptions.getActive() != null ? "?active=" + getBannersOptions.getActive() : "")
                     + (getBannersOptions.getAllowedBanners() != null ? "&allowedBanners=" + getBannersOptions.getAllowedBanners() : "")
-            );
+                                    + (isBackground ? ":isBackground" : ""));
 
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -160,8 +160,6 @@ public class SystemWebApi extends TopicClient {
      */
     public static void systemUpdateModel(Context context, String path, String event, KeyValue json) {
         try {
-            String key = misc.md5("POST//api/rest/v2/system/update-model?path=" + path + "&event=" + event);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -179,7 +177,6 @@ public class SystemWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -206,8 +203,6 @@ public class SystemWebApi extends TopicClient {
      */
     public static void systemUpdateModel(Context context, String path, String event, KeyValue json, Boolean async) {
         try {
-            String key = misc.md5("POST//api/rest/v2/system/update-model?path=" + path + "&event=" + event + "&async=" + async);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -226,7 +221,6 @@ public class SystemWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/system/update-model")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -251,38 +245,38 @@ public class SystemWebApi extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
 
-            String type = ((Bundle) payload).getString("type");
+            Bundle bundle = (Bundle) payload;
+            String type = bundle.getString("type");
+            TransactionParams transactionParams = bundle.getParcelable("params");
+
+            if (!processTransaction(transactionParams, transactionParams.apiFunction))
+                return;
+
             switch (type) {
                 case "queued": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "progress": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "paused": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
-                    new AsyncParser(this, (Bundle) payload);
+                    new AsyncParser(this, bundle);
                     break;
                 }
             }
         }
+
+        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
         public void onQueued(TransactionParams transactionParams, String methodName) {
         }

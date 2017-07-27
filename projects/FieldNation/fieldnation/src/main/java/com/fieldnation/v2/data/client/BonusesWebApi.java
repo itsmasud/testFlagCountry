@@ -76,8 +76,6 @@ public class BonusesWebApi extends TopicClient {
      */
     public static void addBonus(Context context, PayModifier bonus) {
         try {
-            String key = misc.md5("POST//api/rest/v2/bonuses");
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
@@ -92,7 +90,6 @@ public class BonusesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST//api/rest/v2/bonuses")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -124,8 +121,6 @@ public class BonusesWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("DELETE//api/rest/v2/bonuses/" + bonusId);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("DELETE")
@@ -136,7 +131,6 @@ public class BonusesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("DELETE//api/rest/v2/bonuses/{bonus_id}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -169,8 +163,6 @@ public class BonusesWebApi extends TopicClient {
         );
 
         try {
-            String key = misc.md5("PUT//api/rest/v2/bonuses/" + bonusId);
-
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("PUT")
@@ -186,7 +178,6 @@ public class BonusesWebApi extends TopicClient {
 
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("PUT//api/rest/v2/bonuses/{bonus_id}")
-                    .key(key)
                     .priority(Priority.HIGH)
                     .listener(TransactionListener.class)
                     .listenerParams(
@@ -211,38 +202,38 @@ public class BonusesWebApi extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "Listener " + topicId);
 
-            String type = ((Bundle) payload).getString("type");
+            Bundle bundle = (Bundle) payload;
+            String type = bundle.getString("type");
+            TransactionParams transactionParams = bundle.getParcelable("params");
+
+            if (!processTransaction(transactionParams, transactionParams.apiFunction))
+                return;
+
             switch (type) {
                 case "queued": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onQueued(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "start": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onStart(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "progress": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onProgress(transactionParams, transactionParams.apiFunction, bundle.getLong("pos"), bundle.getLong("size"), bundle.getLong("time"));
                     break;
                 }
                 case "paused": {
-                    Bundle bundle = (Bundle) payload;
-                    TransactionParams transactionParams = bundle.getParcelable("params");
                     onPaused(transactionParams, transactionParams.apiFunction);
                     break;
                 }
                 case "complete": {
-                    new AsyncParser(this, (Bundle) payload);
+                    new AsyncParser(this, bundle);
                     break;
                 }
             }
         }
+
+        public abstract boolean processTransaction(TransactionParams transactionParams, String methodName);
 
         public void onQueued(TransactionParams transactionParams, String methodName) {
         }
