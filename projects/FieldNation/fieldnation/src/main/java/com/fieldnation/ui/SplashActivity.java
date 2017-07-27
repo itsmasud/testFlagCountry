@@ -18,7 +18,11 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.ncns.RemindMeService;
+import com.fieldnation.ui.ncns.ConfirmActivity;
+import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.WorkOrders;
 import com.fieldnation.v2.ui.nav.NavActivity;
 
 /**
@@ -29,11 +33,14 @@ public class SplashActivity extends AuthSimpleActivity {
 
     private static final String STATE_PROFILE = "STATE_PROFILE";
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
+    private static final String STATE_CONFIRM = "STATE_CONFIRM";
 
     private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
     private AuthTopicClient _authClient;
+    private WorkordersWebApi _workOrdersApi;
+    private boolean _gotConfirmList = false;
 
     public SplashActivity() {
         super();
@@ -119,16 +126,16 @@ public class SplashActivity extends AuthSimpleActivity {
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(App.get());
 
+        _workOrdersApi = new WorkordersWebApi(_workOrdersApi_listener);
+        _workOrdersApi.connect(App.get());
+
         AuthTopicClient.requestCommand(App.get());
     }
 
     @Override
     protected void onStop() {
-        try {
-            if (_authClient != null) _authClient.disconnect(App.get());
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
+        if (_authClient != null) _authClient.disconnect(App.get());
+        if (_workOrdersApi != null) _workOrdersApi.disconnect(App.get());
         super.onStop();
     }
 
@@ -140,7 +147,6 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-
     }
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
@@ -176,16 +182,68 @@ public class SplashActivity extends AuthSimpleActivity {
 
         Log.v(TAG, "doNextStep 3");
 
-        if (_profile.isProvider()) {
+        if (_profile.isProvider() && _gotConfirmList && !_calledMyWork) {
             Log.v(TAG, "doNextStep 4");
-            if (!_calledMyWork) {
-                Log.v(TAG, "doNextStep 5");
+            if (App.get().needsConfirmation()) {
+                Log.v(TAG, "doNextStep 5a");
+                _calledMyWork = true;
+                ConfirmActivity.startNew(this);
+                finish();
+
+            } else {
+                Log.v(TAG, "doNextStep 5b");
                 _calledMyWork = true;
                 NavActivity.startNew(this);
                 finish();
             }
         }
     }
+
+    private final WorkordersWebApi.Listener _workOrdersApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "onConnected");
+            _workOrdersApi.subWorkordersWebApi();
+
+            GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
+            opts.setPerPage(25);
+            opts.setList("workorders_assignments");
+            opts.setFFlightboardTomorrow(true);
+            opts.setPage(1);
+
+            WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return methodName.equals("getWorkOrders");
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            Log.v(TAG, "onComplete");
+
+            if (methodName.equals("getWorkOrders")
+                    && success
+                    && successObject != null
+                    && successObject instanceof WorkOrders) {
+                Log.v(TAG, "onComplete getWorkOrders");
+
+                WorkOrders workOrders = (WorkOrders) successObject;
+
+                if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
+                    return;
+                }
+                _gotConfirmList = true;
+                if (workOrders.getMetadata().getTotal() != null
+                        && workOrders.getMetadata().getTotal() > 0) {
+                    Log.v(TAG, "onComplete setNeedsConfirmation");
+                    App.get().setNeedsConfirmation(true);
+                }
+                doNextStep();
+            }
+        }
+    };
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
