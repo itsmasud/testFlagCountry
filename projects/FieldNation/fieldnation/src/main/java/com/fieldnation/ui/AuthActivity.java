@@ -344,7 +344,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.finish();
 
                         AuthTopicClient.addedAccountCommand(AuthActivity.this);
-                        startService(new Intent(getApplicationContext(), RemindMeService.class));
                         SplashActivity.startNew(AuthActivity.this);
                     } else {
                         _contentLayout.setVisibility(View.VISIBLE);
