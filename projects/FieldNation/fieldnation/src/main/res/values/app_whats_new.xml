@@ -2,18 +2,14 @@
 <resources>
 
     <string name="added_new_feature">
-&lt;center&gt;&lt;h3&gt;Introducing Flightboard&lt;/h3&gt;We have updated our confirmation process to optimize communication between Buyer and Provider.&lt;br/&gt;&lt;br/&gt;&lt;/center&gt;
-&lt;b&gt;What\'s included with Flightboard:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;The day before an assigned work order you will get a notification at 6am to confirm your work.&lt;/li&gt;
-&lt;li&gt;For each assigned work order, you will be required to tap \"Confirm\" by noon. Failure to confirm work may result in removal from that work order.&lt;/li&gt;
-&lt;li&gt;The day of the work order you can mark \"On My Way\" when heading to the job to inform Buyer of your location. You may also mark \"Running Late\" if necessary.&lt;/li&gt;
+&lt;li&gt;Improved counter offer dialog&lt;/li&gt;
+&lt;li&gt;Added \"Problem\" and \"On Hold\" status indicators to work orders&lt;/li&gt;
+&lt;li&gt;Ability to choose which contact to dial&lt;/li&gt;
+&lt;li&gt;Enabled Android O support&lt;/li&gt;
+&lt;li&gt;Enhanced payments information&lt;/li&gt;
+&lt;li&gt;Fixed other small bugs&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;a href="https://www.fieldnation.com/flightboard/flightboard-is-coming-serviceprovider"&gt;Learn more about Flightboard&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
-
-&lt;b&gt;GPS&lt;/b&gt;&lt;br/&gt;
-We highly encourage you to enable GPS to take advantage of the new process and potentially avoid dispatcher calls. We will only send your location to the Buyer after you tap \"On My Way\" and will stop once you tap \"Check In\".
     </string>
 
     <string name="bugs_fixed">
