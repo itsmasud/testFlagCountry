@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
@@ -26,7 +25,6 @@ public class WhatsNewDialog extends FullScreenDialog {
     // Ui
     private View _root;
     private Toolbar _toolbar;
-    private TextView _newTextView;
     private WebView _newWebView;
 
     public WhatsNewDialog(Context context, ViewGroup container) {
@@ -38,12 +36,11 @@ public class WhatsNewDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_whats_new, container, false);
 
-        _toolbar = _root.findViewById(R.id.toolbar);
-        _toolbar.setTitle("What's New");
+        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
+        _toolbar.setTitle("4.0.5");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
-        _newTextView = _root.findViewById(R.id.new_textview);
-        _newWebView = _root.findViewById(R.id.new_webview);
+        _newWebView = (WebView) _root.findViewById(R.id.new_webview);
 
         return _root;
     }
@@ -60,7 +57,6 @@ public class WhatsNewDialog extends FullScreenDialog {
         final int fontSize = context.getResources().getInteger(R.integer.textSizeReleaseNote);
         WebSettings webSettings = null;
 
-        _newTextView.setVisibility(View.VISIBLE);
         _newWebView.setVisibility(View.VISIBLE);
         _newWebView.loadData(context.getString(R.string.added_new_feature), "text/html", "utf-8");
         webSettings = _newWebView.getSettings();
