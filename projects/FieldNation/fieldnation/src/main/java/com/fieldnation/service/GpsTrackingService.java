@@ -1,13 +1,15 @@
 package com.fieldnation.service;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 
 import com.fieldnation.App;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.v2.data.client.UsersWebApi;
 import com.fieldnation.v2.data.model.Coords;
 
@@ -17,7 +19,7 @@ import com.fieldnation.v2.data.model.Coords;
  * This service will track the user for a specified amount of time, and can be stopped at any time
  */
 
-public class GpsTrackingService extends MultiThreadedService {
+public class GpsTrackingService extends Service {
     private static final String TAG = "GpsTrackingService";
 
     private static final long INTERVAL = 60000;
@@ -28,49 +30,38 @@ public class GpsTrackingService extends MultiThreadedService {
     private SimpleGps _simpleGps = null;
 
     @Override
-    public int getMaxWorkerCount() {
-        return 1;
-    }
-
-    @Override
-    public void processIntent(Intent intent) {
-        if (intent == null)
-            return;
-
-        if (intent.getAction() == null)
-            return;
-
-        String action = intent.getAction();
-        switch (action) {
-            case "STOP":
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.getAction() != null) {
+            if (intent.getAction().equals("STOP")) {
                 if (_simpleGps != null) {
                     _simpleGps.stop();
                     _simpleGps = null;
                 }
                 _expirationTime = 0;
-                break;
-            case "START":
+                stopSelf();
+
+            } else if (intent.getAction().equals("START")) {
                 long expires = intent.getLongExtra("EXPIRE", 0);
                 if (expires > _expirationTime)
                     _expirationTime = expires;
-                if (_simpleGps == null)
+
+                if (_simpleGps == null) {
                     _simpleGps = new SimpleGps(this)
                             .priority(PRIORITY)
                             .interval(INTERVAL)
                             .fastestInterval(FAST_INTERVAL)
                             .updateListener(_gps_listener)
                             .start(this);
-                break;
-            default:
-                break;
+                }
+            }
         }
+        return START_STICKY;
     }
 
+    @Nullable
     @Override
-    public boolean isStillWorking() {
-        if (_expirationTime > System.currentTimeMillis())
-            return true;
-        return super.isStillWorking();
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     @Override
@@ -82,7 +73,7 @@ public class GpsTrackingService extends MultiThreadedService {
         super.onDestroy();
     }
 
-    private SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
+    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
         @Override
         public void onLocation(SimpleGps simpleGps, Location location) {
             Log.v(TAG, location.toString());
@@ -90,6 +81,10 @@ public class GpsTrackingService extends MultiThreadedService {
                 UsersWebApi.addCoords(App.get(), (int) App.getProfileId(), new Coords(location.getLatitude(), location.getLongitude()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+            }
+
+            if (_expirationTime > System.currentTimeMillis()) {
+                stopSelf();
             }
         }
 
