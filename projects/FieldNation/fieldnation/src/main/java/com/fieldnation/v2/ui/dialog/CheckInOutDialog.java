@@ -316,7 +316,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             Calendar test = (Calendar) _startCalendar.clone();
             test.set(test.get(Calendar.YEAR), test.get(Calendar.MONTH),
-                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
                 ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);

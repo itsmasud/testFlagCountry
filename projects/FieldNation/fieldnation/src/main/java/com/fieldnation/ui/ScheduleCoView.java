@@ -277,7 +277,7 @@ public class ScheduleCoView extends RelativeLayout {
 
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),
-                        _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                        _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
                 // truncate milliseconds to seconds
                 if (_startCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {

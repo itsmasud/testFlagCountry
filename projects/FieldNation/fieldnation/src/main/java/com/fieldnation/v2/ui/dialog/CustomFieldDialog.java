@@ -256,7 +256,7 @@ public class CustomFieldDialog extends SimpleDialog {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
-                    _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                    _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
             _expirationDate = (Calendar) _pickerCal.clone();
 

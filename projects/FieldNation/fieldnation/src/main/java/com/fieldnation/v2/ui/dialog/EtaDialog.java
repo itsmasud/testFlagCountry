@@ -671,7 +671,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             Calendar test = (Calendar) _etaStart.clone();
             test.set(test.get(Calendar.YEAR), test.get(Calendar.MONTH),
-                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
             if (isValidEta(test)) {
                 _etaStart = test;
