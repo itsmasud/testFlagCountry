@@ -128,6 +128,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     @Override
     public void onBackPressed() {
+        getDialogManager().onBackPressed();
         // do nothing, you're stuck here.... muhahahah
     }
 
