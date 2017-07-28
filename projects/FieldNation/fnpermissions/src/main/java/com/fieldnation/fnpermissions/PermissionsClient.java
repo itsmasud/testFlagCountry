@@ -208,7 +208,7 @@ public class PermissionsClient extends TopicClient {
             Log.v(TAG, "onResponse " + requestCode);
 
             for (int i = 0; i < permissions.length; i++) {
-                Log.v(TAG, "onResponse for loop");
+                Log.v(TAG, "onResponse for loop " + permissions[i]);
                 PermissionsTuple tuple = PermissionsTuple.get(getActivity(), permissions[i]);
                 tuple.required(requiredPermissions.contains(permissions[i]));
 
