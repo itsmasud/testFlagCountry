@@ -2,28 +2,26 @@
 <resources>
 
     <string name="added_new_feature">
+&lt;b&gt;What’s New with Field Nation&lt;/b&gt;&lt;br/&gt;
+&lt;br/&gt;
+Improved overall performance, made updates to our counter offer dialog, and added Android O support to improve help your experience.
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Improved counter offer dialog&lt;/li&gt;
-&lt;li&gt;Added \"Problem\" and \"On Hold\" status indicators to work orders&lt;/li&gt;
-&lt;li&gt;Ability to choose which contact to dial&lt;/li&gt;
-&lt;li&gt;Enabled Android O support&lt;/li&gt;
-&lt;li&gt;Enhanced payments information&lt;/li&gt;
-&lt;li&gt;Fixed other small bugs&lt;/li&gt;
+&lt;li&gt;Problem reported status indicator&lt;/li&gt;
+&lt;li&gt;Work order on hold status indicator&lt;/li&gt;
+&lt;li&gt;Ability to review profile photo before submitting&lt;/li&gt;
+&lt;li&gt;Choose which work order contact to dial&lt;/li&gt;
+&lt;li&gt;Payment information enhancements&lt;/li&gt;
+&lt;li&gt;Android O support&lt;/li&gt;
 &lt;/ul&gt;
-    </string>
 
-    <string name="bugs_fixed">
+&lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Fixed crashes caused by rotating the phone while uploading photos&lt;/li&gt;
-&lt;li&gt;Fixed app getting stuck in retry loop while downloading files&lt;/li&gt;
-&lt;li&gt;Bullet points now show up in work order descriptions&lt;/li&gt;
-&lt;/ul&gt;
-    </string>
-
-    <string name="working_on_feature">
-&lt;ul&gt;
-&lt;li&gt;New look and feel&lt;/li&gt;
-&lt;li&gt;More work order search options&lt;/li&gt;
+&lt;li&gt;Allow users to submit a counter offer&lt;/li&gt;
+&lt;li&gt;Crash around sharing files with app&lt;/li&gt;
+&lt;li&gt;Numerous small bugs&lt;/li&gt;
 &lt;/ul&gt;
     </string>
 </resources>
