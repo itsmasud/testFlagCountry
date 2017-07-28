@@ -200,12 +200,12 @@ public class WorkLogDialog extends SimpleDialog {
             if (tag == null) return;
             if (tag.equals("start")) {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
-                        _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                        _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
                 _startIsSet = true;
                 _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
             } else if (tag.equals("end")) {
                 _endCalendar.set(_endCalendar.get(Calendar.YEAR), _endCalendar.get(Calendar.MONTH),
-                        _endCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                        _endCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
                 _endIsSet = true;
                 _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
             }
