@@ -194,6 +194,8 @@ public class PermissionsClient extends TopicClient {
 
                 if (required[i]) {
                     requiredPermissions.add(permissions[i]);
+                } else {
+                    requiredPermissions.remove(permissions[i]);
                 }
             }
 
