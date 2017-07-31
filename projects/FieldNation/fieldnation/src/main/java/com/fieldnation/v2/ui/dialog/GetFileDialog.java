@@ -157,7 +157,7 @@ public class GetFileDialog extends SimpleDialog {
                 ActivityResultClient.startActivityForResult(App.get(), intent, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
                 int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
-                File f = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                File f = new File(App.get().getPicturePath() + "/IMAGE-" + misc.longToHex(System.currentTimeMillis(), 8) + ".jpg");
                 Log.v(TAG, "GetFileDialog " + f.toString());
                 _sourceUri = App.getUriFromFile(f);
                 Log.v(TAG, "GetFileDialog " + _sourceUri.toString());
