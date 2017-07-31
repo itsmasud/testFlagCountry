@@ -62,6 +62,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // State
     private static final String STATE_UPLOAD_FOLDER = "STATE_UPLOAD_FOLDER";
+    private static final String STATE_WORK_ORDER_ID = "STATE_WORK_ORDER_ID";
 
     // UI
     private OverScrollView _scrollView;
@@ -76,6 +77,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // Data
     private WorkOrder _workOrder;
+    private int _workOrderId = 0;
     private DocumentClient _docClient;
     private PhotoClient _photoClient;
     private AttachmentFolder _folder;
@@ -93,6 +95,9 @@ public class DeliverableFragment extends WorkorderFragment {
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_UPLOAD_FOLDER))
                 _folder = savedInstanceState.getParcelable(STATE_UPLOAD_FOLDER);
+
+            if (savedInstanceState.containsKey(STATE_WORK_ORDER_ID))
+                _workOrderId = savedInstanceState.getInt(STATE_WORK_ORDER_ID);
         }
 
         return inflater.inflate(R.layout.fragment_workorder_deliverables, container, false);
@@ -103,19 +108,19 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
 
-        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
+        _refreshView = view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _scrollView = (OverScrollView) view.findViewById(R.id.scroll_view);
+        _scrollView = view.findViewById(R.id.scroll_view);
         _scrollView.setOnOverScrollListener(_refreshView);
 
-        _reviewList = (LinearLayout) view.findViewById(R.id.review_list);
+        _reviewList = view.findViewById(R.id.review_list);
 
-        _filesLayout = (LinearLayout) view.findViewById(R.id.files_layout);
+        _filesLayout = view.findViewById(R.id.files_layout);
 
-        _noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
+        _noDocsTextView = view.findViewById(R.id.nodocs_textview);
 
-        _actionButton = (Button) view.findViewById(R.id.action_button);
+        _actionButton = view.findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_actionButton_onClick);
 
         checkMedia();
@@ -152,6 +157,8 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onSaveInstanceState");
         if (_folder != null)
             outState.putParcelable(STATE_UPLOAD_FOLDER, _folder);
+
+        outState.putInt(STATE_WORK_ORDER_ID, _workOrderId);
 
         super.onSaveInstanceState(outState);
     }
@@ -191,6 +198,7 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void setWorkOrder(WorkOrder workOrder) {
         _workOrder = workOrder;
+        _workOrderId = workOrder.getId();
         populateUi();
     }
 
@@ -384,7 +392,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 
@@ -398,7 +406,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId, App.get().getSpUiContext());
+                            WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, document.getFolderId(), documentId, App.get().getSpUiContext());
                             setLoading(true);
                         }
 
@@ -454,7 +462,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _folder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
@@ -466,7 +474,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_folder.getId());
-                    AttachmentService.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
