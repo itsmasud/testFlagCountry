@@ -78,7 +78,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     static void setPermissionDenied(String permission) {
-        Log.v(STAG, "setPermissionDenied");
+        Log.v(STAG, "setPermissionDenied " + permission);
         SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
         SharedPreferences.Editor edit = sp.edit();
         edit.putLong(permission, System.currentTimeMillis());
@@ -86,7 +86,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     static void clearPermissionDenied(String permission) {
-        Log.v(STAG, "clearPermissionDenied");
+        //Log.v(STAG, "clearPermissionDenied");
         SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
         SharedPreferences.Editor edit = sp.edit();
         edit.remove(permission);
@@ -94,7 +94,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     private static boolean isPermissionDenied(String permission) {
-        Log.v(STAG, "isPermissionDenied");
+        //Log.v(STAG, "isPermissionDenied");
         SharedPreferences sp = ContextProvider.get().getSharedPreferences("PermissionsClient", 0);
         if (sp.contains(permission)) {
             if (sp.getLong(permission, 0) + 86400000 < System.currentTimeMillis()) { // 1 day
@@ -107,7 +107,7 @@ public class PermissionsClient extends TopicClient {
     }
 
     public static int checkSelfPermission(Context context, String permission) {
-        Log.v(STAG, "checkSelfPermission");
+        //Log.v(STAG, "checkSelfPermission");
         int grant = ContextCompat.checkSelfPermission(context, permission);
 
         if (grant == PackageManager.PERMISSION_GRANTED)
@@ -147,6 +147,7 @@ public class PermissionsClient extends TopicClient {
         private static final String TAG = "PermissionsClient.RequestListener";
 
         private final Set<String> requiredPermissions = new HashSet<>();
+        private boolean requesting = false;
 
         @Override
         public void onConnected() {
@@ -199,13 +200,18 @@ public class PermissionsClient extends TopicClient {
                 }
             }
 
-            ActivityCompat.requestPermissions(getActivity(), requestable.toArray(new String[requestable.size()]), 0);
+            // if we have requested... but no response we need to store these and wait
+            if (!requesting) {
+                ActivityCompat.requestPermissions(getActivity(), requestable.toArray(new String[requestable.size()]), 0);
+                requesting = true;
+            }
         }
 
         private Hashtable<String, PermissionsTuple> QUEUED_PERMS = new Hashtable<>();
 
         private void onResponse(int requestCode, String[] permissions, int[] grantResults) {
             Log.v(TAG, "onResponse " + requestCode);
+            requesting = false;
 
             for (int i = 0; i < permissions.length; i++) {
                 Log.v(TAG, "onResponse for loop " + permissions[i]);
