@@ -114,12 +114,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         super.onStart();
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStart();
-
-        if (doPermissionsChecks()) {
-            _permissionsClient = new PermissionsClient(_permissionsListener);
-            _permissionsClient.connect(App.get());
-            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
-        }
     }
 
     @Override
@@ -141,6 +135,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
+
+        if (doPermissionsChecks()) {
+            _permissionsClient = new PermissionsClient(_permissionsListener);
+            _permissionsClient.connect(App.get());
+            PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
+        }
     }
 
     @Override
@@ -156,16 +156,17 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
+
+        if (doPermissionsChecks()) {
+            if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        }
+
         super.onPause();
     }
 
     @Override
     protected void onStop() {
         Log.v(TAG, "onStop");
-        if (doPermissionsChecks()) {
-            if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
-        }
-
         super.onStop();
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onStop();
