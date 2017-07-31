@@ -392,7 +392,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 
@@ -406,7 +406,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkordersWebApi.deleteAttachment(App.get(), _workOrder.getId(), document.getFolderId(), documentId, App.get().getSpUiContext());
+                            WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, document.getFolderId(), documentId, App.get().getSpUiContext());
                             setLoading(true);
                         }
 
@@ -462,7 +462,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (fileResult.size() == 1) {
                 GetFileDialog.UriIntent fui = fileResult.get(0);
                 if (fui.uri != null) {
-                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrder.getId(), _folder,
+                    PhotoUploadDialog.show(App.get(), DIALOG_PHOTO_UPLOAD, _workOrderId, _folder,
                             FileUtils.getFileNameFromUri(App.get(), fui.uri), fui.uri);
                 } else {
                     // TODO show a toast?
@@ -474,7 +474,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 Attachment attachment = new Attachment();
                 try {
                     attachment.folderId(_folder.getId());
-                    AttachmentService.addAttachment(App.get(), _workOrder.getId(), attachment, fui.intent);
+                    AttachmentService.addAttachment(App.get(), _workOrderId, attachment, fui.intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
