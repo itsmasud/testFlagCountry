@@ -273,7 +273,7 @@ public class WorkordersWebApi extends TopicClient {
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
-            attachment.setType(FileUtils.guessContentTypeFromName(file.getName()));
+            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(file.getName()));
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
@@ -329,7 +329,7 @@ public class WorkordersWebApi extends TopicClient {
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);
 
-            attachment.setType(FileUtils.guessContentTypeFromName(filename));
+            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(filename));
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
@@ -376,7 +376,7 @@ public class WorkordersWebApi extends TopicClient {
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
-            attachment.setType(FileUtils.guessContentTypeFromName(file.getName()));
+            attachment.getFile().setMime(FileUtils.guessContentTypeFromName(file.getName()));
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
