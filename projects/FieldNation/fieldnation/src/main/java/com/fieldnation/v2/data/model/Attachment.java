@@ -60,6 +60,9 @@ public class Attachment implements Parcelable {
     @Json(name = "task")
     private Task _task;
 
+    @Json(name = "type")
+    private String _type;
+
     @Source
     private JsonObject SOURCE;
 
@@ -388,6 +391,28 @@ public class Attachment implements Parcelable {
     public Attachment task(Task task) throws ParseException {
         _task = task;
         SOURCE.put("task", task.getJson());
+        return this;
+    }
+
+    public void setType(String type) throws ParseException {
+        _type = type;
+        SOURCE.put("type", type);
+    }
+
+    public String getType() {
+        try {
+            if (_type == null && SOURCE.has("type") && SOURCE.get("type") != null)
+                _type = SOURCE.getString("type");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return _type;
+    }
+
+    public Attachment type(String type) throws ParseException {
+        _type = type;
+        SOURCE.put("type", type);
         return this;
     }
 

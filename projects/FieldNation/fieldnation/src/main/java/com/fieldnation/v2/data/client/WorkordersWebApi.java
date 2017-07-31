@@ -19,6 +19,7 @@ import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
@@ -272,6 +273,8 @@ public class WorkordersWebApi extends TopicClient {
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
 
+            attachment.setType(FileUtils.guessContentTypeFromName(file.getName()));
+
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             methodParams.put("folderId", folderId);
@@ -326,6 +329,8 @@ public class WorkordersWebApi extends TopicClient {
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", filename, storedObject);
 
+            attachment.setType(FileUtils.guessContentTypeFromName(filename));
+
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
             methodParams.put("folderId", folderId);
@@ -370,6 +375,8 @@ public class WorkordersWebApi extends TopicClient {
                     .urlParams("?async=" + async)
                     .multipartField("attachment", attachment.getJson(), "application/json")
                     .multipartFile("file", file.getName(), Uri.fromFile(file));
+
+            attachment.setType(FileUtils.guessContentTypeFromName(file.getName()));
 
             JsonObject methodParams = new JsonObject();
             methodParams.put("workOrderId", workOrderId);
