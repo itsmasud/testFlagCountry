@@ -10,6 +10,7 @@ import android.os.Bundle;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
 import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.DebugUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -124,6 +125,9 @@ public class SimpleGps {
     }
 
     public SimpleGps start(Context context) {
+        Log.v(TAG, "start");
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception()));
+
         int permissionCheck = PermissionsClient.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
@@ -136,7 +140,6 @@ public class SimpleGps {
                     new boolean[]{false});
 
         } else {
-            Log.v(TAG, "start");
             Log.v(TAG, _locationRequest.toString());
             try {
                 _gglApiClient = new GoogleApiClient.Builder(context)
