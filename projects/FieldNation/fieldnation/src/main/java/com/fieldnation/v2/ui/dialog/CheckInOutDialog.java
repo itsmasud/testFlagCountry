@@ -25,11 +25,11 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -109,6 +109,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         _startCalendar = Calendar.getInstance();
+        _startCalendar.set(Calendar.SECOND, 0);
 
         View v = inflater.inflate(R.layout.dialog_v2_check_in_out, container, false);
 
@@ -247,7 +248,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             _toolbar.setTitle(getView().getResources().getString(R.string.title_check_out));
             _startTimeTextView.setText(getView().getResources().getString(R.string.end_time));
         }
-        _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+        _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
         _startDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
         _startTimeButton.setText(DateUtils.formatTimeLong(_startCalendar));
@@ -287,23 +288,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    private final DatePickerDialog.OnDateSetListener _startDate_onSet = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            Calendar test = (Calendar) _startCalendar.clone();
-            test.set(year, monthOfYear, dayOfMonth);
-
-            if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
-                _startDatePicker.show();
-
-            } else {
-                _startCalendar = test;
-                populateUi();
-            }
-        }
-    };
-
     private final View.OnClickListener startTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -321,6 +305,23 @@ public class CheckInOutDialog extends FullScreenDialog {
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
                 ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
                 _startTimePicker.show();
+            } else {
+                _startCalendar = test;
+                populateUi();
+            }
+        }
+    };
+
+    private final DatePickerDialog.OnDateSetListener _startDate_onSet = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            Calendar test = (Calendar) _startCalendar.clone();
+            test.set(year, monthOfYear, dayOfMonth);
+
+            if (test.getTimeInMillis() > System.currentTimeMillis()) {
+                ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
+                _startDatePicker.show();
+
             } else {
                 _startCalendar = test;
                 populateUi();
