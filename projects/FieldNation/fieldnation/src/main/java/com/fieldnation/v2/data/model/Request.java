@@ -102,6 +102,9 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -194,10 +197,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Request created(Date created) throws ParseException {
@@ -219,10 +222,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_eta != null && _eta.isSet())
-            return _eta;
+        if (_eta == null)
+            _eta = new ETA();
 
-        return null;
+            return _eta;
     }
 
     public Request eta(ETA eta) throws ParseException {
@@ -249,6 +252,9 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_expenses == null)
+            _expenses = new Expense[0];
+
         return _expenses;
     }
 
@@ -271,10 +277,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_expires != null && _expires.isSet())
-            return _expires;
+        if (_expires == null)
+            _expires = new Date();
 
-        return null;
+            return _expires;
     }
 
     public Request expires(Date expires) throws ParseException {
@@ -362,10 +368,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_pay != null && _pay.isSet())
-            return _pay;
+        if (_pay == null)
+            _pay = new Pay();
 
-        return null;
+            return _pay;
     }
 
     public Request pay(Pay pay) throws ParseException {
@@ -387,10 +393,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_schedule != null && _schedule.isSet())
-            return _schedule;
+        if (_schedule == null)
+            _schedule = new Schedule();
 
-        return null;
+            return _schedule;
     }
 
     public Request schedule(Schedule schedule) throws ParseException {
@@ -412,10 +418,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_user != null && _user.isSet())
-            return _user;
+        if (_user == null)
+            _user = new User();
 
-        return null;
+            return _user;
     }
 
     public Request user(User user) throws ParseException {
@@ -437,10 +443,10 @@ public class Request implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_workOrder != null && _workOrder.isSet())
-            return _workOrder;
+        if (_workOrder == null)
+            _workOrder = new WorkOrder();
 
-        return null;
+            return _workOrder;
     }
 
     public Request workOrder(WorkOrder workOrder) throws ParseException {
@@ -551,10 +557,6 @@ public class Request implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

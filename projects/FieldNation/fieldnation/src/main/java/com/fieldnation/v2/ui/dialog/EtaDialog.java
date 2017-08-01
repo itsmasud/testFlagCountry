@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
@@ -28,16 +28,16 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -46,9 +46,8 @@ import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Assignee;
 import com.fieldnation.v2.data.model.Date;
 import com.fieldnation.v2.data.model.ETA;
+import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Request;
-import com.fieldnation.v2.data.model.Requests;
-import com.fieldnation.v2.data.model.Route;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.ScheduleServiceWindow;
 import com.fieldnation.v2.data.model.User;
@@ -218,7 +217,6 @@ public class EtaDialog extends FullScreenDialog {
             _expiringDurationSeconds = _durations[_currentPosition];
             _expireSpinner.setSelection(_currentPosition);
         }
-
     }
 
     @Override
@@ -236,11 +234,12 @@ public class EtaDialog extends FullScreenDialog {
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
 
         try {
-            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+            if (_workOrder.getEta().getStatus().getName() != null
+                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _workOrder.getEta().getStart().getUtc() != null) {
                 _etaStart = _workOrder.getEta().getStart().getCalendar();
-            } else if (_workOrder.getSchedule() != null
-                    && _workOrder.getSchedule().getServiceWindow() != null
-                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+
+            } else if (_workOrder.getSchedule().getServiceWindow().getStart().getUtc() != null) {
                 _etaStart = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
         } catch (Exception ex) {
@@ -393,7 +392,8 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-                if (_workOrder.getEta() != null
+                if (_workOrder.getEta().getStatus().getName() != null
+                        && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
                         && _workOrder.getEta().getHourEstimate() != null
                         && _workOrder.getEta().getHourEstimate() > 0
                         && _dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
@@ -564,7 +564,7 @@ public class EtaDialog extends FullScreenDialog {
 
                 return dateTimeString;
 
-            } else { //if (schedule.getType() == Schedule.Type.EXACT) {
+            } else if (_workOrder.getSchedule().getServiceWindow().getMode() == ScheduleServiceWindow.ModeEnum.EXACT) {
                 Calendar sCal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
@@ -688,7 +688,6 @@ public class EtaDialog extends FullScreenDialog {
         public void onClick(View v) {
             misc.hideKeyboard(_noteEditText);
             DurationPickerDialog.show(App.get(), UID_DURATION_DIALOG);
-
         }
     };
 

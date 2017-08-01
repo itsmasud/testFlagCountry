@@ -15,9 +15,9 @@ import com.fieldnation.Debug;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -45,7 +45,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
     private static final String STATE_CURRENT_TAB = "STATE_CURRENT_TAB";
     private static final String STATE_CURRENTFRAG = "STATE_CURRENT_FRAG";
-    private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // UI
     private ViewPager _viewPager;
@@ -126,9 +125,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (savedInstanceState.containsKey(STATE_CURRENTFRAG)) {
                 _currentFragment = savedInstanceState.getInt(STATE_CURRENTFRAG);
             }
-            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workOrder = savedInstanceState.getParcelable(STATE_WORKORDER);
-            }
         }
 
         if (_workOrderId == 0) {
@@ -168,9 +164,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
         if (_currentFragment != 0)
             outState.putInt(STATE_CURRENTFRAG, _currentFragment);
-
-        if (_workOrder != null)
-            outState.putParcelable(STATE_WORKORDER, _workOrder);
 
         super.onSaveInstanceState(outState);
     }
@@ -265,9 +258,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             return;
 
         setTitle("WO: " + _workOrder.getId());
-        if (_workOrder.getMessages() != null
-                && _workOrder.getMessages().getMetadata() != null
-                && _workOrder.getMessages().getMetadata().getTotal() != null) {
+        if (_workOrder.getMessages().getMetadata().getTotal() != null) {
             _tabview.setMessagesCount(_workOrder.getMessages().getMetadata().getTotal());
         } else {
             _tabview.setMessagesCount(0);
@@ -390,7 +381,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (successObject instanceof WorkOrder) {
                 WorkOrder workOrder = (WorkOrder) successObject;
                 //Log.v(TAG, "_workOrderApi_listener.onGetWorkOrder");
-                if (workOrder == null || !success) {
+                if (!success) {
                     setLoading(false);
                     return;
                 }

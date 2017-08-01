@@ -51,10 +51,10 @@ public class ProfileAndWorkHistory implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_rating != null && _rating.isSet())
-        return _rating;
+        if (_rating == null)
+            _rating = new ProfileAndWorkHistoryRating();
 
-        return null;
+        return _rating;
     }
 
     public ProfileAndWorkHistory rating(ProfileAndWorkHistoryRating rating) throws ParseException {
@@ -130,7 +130,4 @@ public class ProfileAndWorkHistory implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

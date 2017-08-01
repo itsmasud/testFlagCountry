@@ -54,10 +54,10 @@ public class Date implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_local != null && _local.isSet())
-        return _local;
+        if (_local == null)
+            _local = new Local();
 
-        return null;
+        return _local;
     }
 
     public Date local(Local local) throws ParseException {
@@ -158,10 +158,6 @@ public class Date implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getUtc());
-    }
 
     public Date(Calendar calendar) throws ParseException {
         this();

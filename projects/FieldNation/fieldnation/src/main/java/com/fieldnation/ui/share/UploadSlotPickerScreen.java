@@ -12,13 +12,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadSlot;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 import java.util.LinkedList;
@@ -38,11 +39,13 @@ public class UploadSlotPickerScreen extends FrameLayout {
     private RefreshView _refreshView;
 
     // Data
-    private long _workOrderId;
+    private int _workOrderId;
+    private WorkOrder _workOrder;
     private Listener _listener;
 
     // Services
-    private WorkorderClient _workorderClient;
+    private WorkordersWebApi _workOrderApi;
+
 
     public UploadSlotPickerScreen(Context context) {
         super(context);
@@ -80,14 +83,11 @@ public class UploadSlotPickerScreen extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workorderClient != null) _workorderClient.disconnect(App.get());
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -95,10 +95,10 @@ public class UploadSlotPickerScreen extends FrameLayout {
         _listener = listener;
     }
 
-    public void setWorkOrderId(WorkOrder workOrder) {
-        _workOrderTitleTextView.setText(workOrder.getTitle());
-        _workOrderId = workOrder.getId();
-        WorkorderClient.get(App.get(), _workOrderId, false);
+    public void setWorkOrderId(int workOrderId) {
+        _workOrderId = workOrderId;
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
 
         postDelayed(new Runnable() {
             @Override
@@ -108,54 +108,94 @@ public class UploadSlotPickerScreen extends FrameLayout {
         }, 100);
     }
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+
+    private void populateUi() {
+        _workOrderTitleTextView.setText(_workOrder.getTitle());
+
+        AttachmentFolder[] folders = _workOrder.getAttachments().getResults();
+
+        final List<AttachmentFolder> slots = new LinkedList<>();
+        for (AttachmentFolder folder : folders) {
+            if (folder.getType() == AttachmentFolder.TypeEnum.SLOT) {
+                slots.add(folder);
+            }
+        }
+
+        if (slots == null || folders.length == 0) {
+            ToastClient.toast(App.get(), getResources().getString(R.string.cannot_upload_to_work_order_num, _workOrder.getTitle()), Toast.LENGTH_LONG);
+            if (_listener != null)
+                _listener.onBackPressed();
+            return;
+        }
+
+        Runnable r = new ForLoopRunnable(slots.size(), new Handler()) {
+            private final AttachmentFolder[] _slots = slots.toArray(new AttachmentFolder[slots.size()]);
+            private final List<UploadSlotView> _views = new LinkedList<>();
+
+            @Override
+            public void next(int i) throws Exception {
+                UploadSlotView v = new UploadSlotView(getContext());
+                v.setData(_slots[i]);
+                v.setListener(_shareUploadSlotView_listener);
+                _views.add(v);
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                _uploadSlotLayout.removeAllViews();
+                for (UploadSlotView v : _views) {
+                    _uploadSlotLayout.addView(v);
+                }
+                _refreshView.refreshComplete();
+            }
+        };
+
+        post(r);
+    }
+
+
+    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
-            _workorderClient.subGet(false);
+            _workOrderApi.subWorkordersWebApi();
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         @Override
-        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
-            if (workorder == null || failed || _workOrderId != workorderId)
-                return;
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return !methodName.equals("getWorkOrders");
+        }
 
-            final UploadSlot[] slots = workorder.getUploadSlots();
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (!success) {
+                    _refreshView.refreshComplete();
+                    return;
+                }
 
-            if (slots == null || slots.length == 0) {
-                ToastClient.toast(App.get(), getResources().getString(R.string.cannot_upload_to_work_order_num, workorder.getTitle()), Toast.LENGTH_LONG);
-                if (_listener != null)
-                    _listener.onBackPressed();
-                return;
+                if (_workOrderId == (int) workOrder.getId()) {
+                    Debug.setLong("last_workorder", workOrder.getId());
+                    _workOrder = workOrder;
+                    populateUi();
+                }
+            } else if (!methodName.startsWith("get")) {
+                WorkordersWebApi.getWorkOrder(App.get(), _workOrder.getId(), false, false);
             }
 
-            Runnable r = new ForLoopRunnable(slots.length, new Handler()) {
-                private final UploadSlot[] _slots = slots;
-                private final List<UploadSlotView> _views = new LinkedList<>();
+            if (methodName.startsWith("get") || !success)
+                return;
 
-                @Override
-                public void next(int i) throws Exception {
-                    UploadSlotView v = new UploadSlotView(getContext());
-                    v.setData(_slots[i]);
-                    v.setListener(_shareUploadSlotView_listener);
-                    _views.add(v);
-                }
+            //Log.v(TAG, "onWorkordersWebApi " + methodName);
 
-                @Override
-                public void finish(int count) throws Exception {
-                    _uploadSlotLayout.removeAllViews();
-                    for (UploadSlotView v : _views) {
-                        _uploadSlotLayout.addView(v);
-                    }
-                    _refreshView.refreshComplete();
-                }
-            };
-
-            post(r);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         }
     };
 
+
     private final UploadSlotView.Listener _shareUploadSlotView_listener = new UploadSlotView.Listener() {
-        public void onClick(UploadSlotView view, UploadSlot slot) {
+        public void onClick(UploadSlotView view, AttachmentFolder slot) {
 
             if (!view.isChecked()) {
                 view.changeCheckStatus();
@@ -177,7 +217,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
     public interface Listener {
         void onBackPressed();
 
-        void onSlotSelected(UploadSlot uploadSlot);
+        void onSlotSelected(AttachmentFolder uploadSlot);
     }
 }
 

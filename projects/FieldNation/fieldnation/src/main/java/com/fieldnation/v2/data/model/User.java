@@ -211,6 +211,9 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_backgroundChecks == null)
+            _backgroundChecks = new BackgroundCheck[0];
+
         return _backgroundChecks;
     }
 
@@ -237,6 +240,9 @@ public class User implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_blocked == null)
+            _blocked = new UserBlocked[0];
 
         return _blocked;
     }
@@ -282,10 +288,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_client != null && _client.isSet())
-            return _client;
+        if (_client == null)
+            _client = new Company();
 
-        return null;
+            return _client;
     }
 
     public User client(Company client) throws ParseException {
@@ -307,10 +313,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_company != null && _company.isSet())
-            return _company;
+        if (_company == null)
+            _company = new UserCompany();
 
-        return null;
+            return _company;
     }
 
     public User company(UserCompany company) throws ParseException {
@@ -332,10 +338,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_coords != null && _coords.isSet())
-            return _coords;
+        if (_coords == null)
+            _coords = new Coords();
 
-        return null;
+            return _coords;
     }
 
     public User coords(Coords coords) throws ParseException {
@@ -383,6 +389,9 @@ public class User implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_drugTests == null)
+            _drugTests = new DrugTest[0];
 
         return _drugTests;
     }
@@ -472,10 +481,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_jobs != null && _jobs.isSet())
-            return _jobs;
+        if (_jobs == null)
+            _jobs = new UserJobs();
 
-        return null;
+            return _jobs;
     }
 
     public User jobs(UserJobs jobs) throws ParseException {
@@ -497,10 +506,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_lastActive != null && _lastActive.isSet())
-            return _lastActive;
+        if (_lastActive == null)
+            _lastActive = new Date();
 
-        return null;
+            return _lastActive;
     }
 
     public User lastActive(Date lastActive) throws ParseException {
@@ -637,6 +646,9 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_preferredGroups == null)
+            _preferredGroups = new UserPreferredGroups[0];
+
         return _preferredGroups;
     }
 
@@ -659,10 +671,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_previousAssignment != null && _previousAssignment.isSet())
-            return _previousAssignment;
+        if (_previousAssignment == null)
+            _previousAssignment = new UserPreviousAssignment();
 
-        return null;
+            return _previousAssignment;
     }
 
     public User previousAssignment(UserPreviousAssignment previousAssignment) throws ParseException {
@@ -684,10 +696,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_previousRequest != null && _previousRequest.isSet())
-            return _previousRequest;
+        if (_previousRequest == null)
+            _previousRequest = new UserPreviousRequest();
 
-        return null;
+            return _previousRequest;
     }
 
     public User previousRequest(UserPreviousRequest previousRequest) throws ParseException {
@@ -731,10 +743,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_rating != null && _rating.isSet())
-            return _rating;
+        if (_rating == null)
+            _rating = new UserRating();
 
-        return null;
+            return _rating;
     }
 
     public User rating(UserRating rating) throws ParseException {
@@ -756,10 +768,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_request != null && _request.isSet())
-            return _request;
+        if (_request == null)
+            _request = new Request();
 
-        return null;
+            return _request;
     }
 
     public User request(Request request) throws ParseException {
@@ -825,10 +837,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_route != null && _route.isSet())
-            return _route;
+        if (_route == null)
+            _route = new Route();
 
-        return null;
+            return _route;
     }
 
     public User route(Route route) throws ParseException {
@@ -894,10 +906,10 @@ public class User implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public User timeZone(TimeZone timeZone) throws ParseException {
@@ -945,6 +957,9 @@ public class User implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_upcomingSchedule == null)
+            _upcomingSchedule = new UserUpcomingSchedule[0];
 
         return _upcomingSchedule;
     }
@@ -1110,7 +1125,4 @@ public class User implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

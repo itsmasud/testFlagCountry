@@ -11,10 +11,12 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "PaymentCardView";
@@ -24,7 +26,7 @@ public class PaymentCardView extends RelativeLayout {
     private TextView _titleTextView;
     private TextView _subTitleTextView;
     private TextView _paymentTextView;
-    private TextView _payTypeTextView;
+    private TextView _nextPaymentDateTextView;
 
     // Data
     private Payment _paymentInfo;
@@ -57,7 +59,7 @@ public class PaymentCardView extends RelativeLayout {
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _nextPaymentDateTextView = (TextView) findViewById(R.id.nextPaymentDate_textview);
 
         setOnClickListener(_this_onClick);
     }
@@ -112,15 +114,23 @@ public class PaymentCardView extends RelativeLayout {
             String status = misc.capitalize(_paymentInfo.getStatus());
 
             if (status.toLowerCase().equals("paid")) {
-                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-                _iconView.setText(R.string.icon_circle_check);
-                _payTypeTextView.setText(DateUtils.formatDate(ISO8601.toCalendar(_paymentInfo.getDatePaid())));
+                // payment_id
+                try {
+                    _titleTextView.setText(getResources().getString(R.string.payment_id_x, _paymentInfo.getPaymentId()));
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                    _titleTextView.setText(getResources().getString(R.string.payment_id_na));
+                }
+                _iconView.setVisibility(GONE);
+                _nextPaymentDateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ISO8601.toCalendar(_paymentInfo.getDatePaid()).getTime()));
+                _nextPaymentDateTextView.setVisibility(VISIBLE);
             } else {
-                _payTypeTextView.setText(R.string.pending);
-                _iconView.setTextColor(getResources().getColor(R.color.fn_yellow));
-                _iconView.setText(R.string.icon_circle_pending);
+                _titleTextView.setText(getResources().getString(R.string.next_payment));
+                _iconView.setVisibility(VISIBLE);
+                // TODO next payment date is not available in the API
+                _nextPaymentDateTextView.setVisibility(GONE);
+//                _nextPaymentDateTextView.setText(R.string.pending);
             }
-            _titleTextView.setText(status);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -129,18 +139,12 @@ public class PaymentCardView extends RelativeLayout {
 /*        try {
             String method = _paymentInfo.getPayMethod();
             method = misc.capitalize(method);
-            _payTypeTextView.setText(method);
+            _nextPaymentDateTextView.setText(method);
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            _payTypeTextView.setText("");
+            _nextPaymentDateTextView.setText("");
         }*/
-        // payment_id
-        try {
-            _titleTextView.setText(getResources().getString(R.string.payment_id_x, _paymentInfo.getPaymentId()));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            _titleTextView.setText(getResources().getString(R.string.payment_id_na));
-        }
+
 
         // date_paid
 /*

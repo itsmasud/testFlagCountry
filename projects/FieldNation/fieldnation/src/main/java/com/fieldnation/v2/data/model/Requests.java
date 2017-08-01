@@ -69,6 +69,9 @@ public class Requests implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -95,10 +98,10 @@ public class Requests implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public Requests metadata(ListEnvelope metadata) throws ParseException {
@@ -120,10 +123,10 @@ public class Requests implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_openRequest != null && _openRequest.isSet())
-        return _openRequest;
+        if (_openRequest == null)
+            _openRequest = new Request();
 
-        return null;
+        return _openRequest;
     }
 
     public Requests openRequest(Request openRequest) throws ParseException {
@@ -149,6 +152,9 @@ public class Requests implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new Request[0];
 
         return _results;
     }
@@ -263,10 +269,6 @@ public class Requests implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return true;
-    }
 
     public Request getCounterOffer() {
         if (getResults() == null || getResults().length == 0)

@@ -75,6 +75,9 @@ public class WorkOrderRatingsBuyer implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -101,10 +104,10 @@ public class WorkOrderRatingsBuyer implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_blocks != null && _blocks.isSet())
-            return _blocks;
+        if (_blocks == null)
+            _blocks = new Blocks();
 
-        return null;
+            return _blocks;
     }
 
     public WorkOrderRatingsBuyer blocks(Blocks blocks) throws ParseException {
@@ -126,10 +129,10 @@ public class WorkOrderRatingsBuyer implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_company != null && _company.isSet())
-            return _company;
+        if (_company == null)
+            _company = new WorkOrderRatingsBuyerCompany();
 
-        return null;
+            return _company;
     }
 
     public WorkOrderRatingsBuyer company(WorkOrderRatingsBuyerCompany company) throws ParseException {
@@ -151,10 +154,10 @@ public class WorkOrderRatingsBuyer implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_manager != null && _manager.isSet())
-            return _manager;
+        if (_manager == null)
+            _manager = new User();
 
-        return null;
+            return _manager;
     }
 
     public WorkOrderRatingsBuyer manager(User manager) throws ParseException {
@@ -176,10 +179,10 @@ public class WorkOrderRatingsBuyer implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_overall != null && _overall.isSet())
-            return _overall;
+        if (_overall == null)
+            _overall = new WorkOrderRatingsBuyerOverall();
 
-        return null;
+            return _overall;
     }
 
     public WorkOrderRatingsBuyer overall(WorkOrderRatingsBuyerOverall overall) throws ParseException {
@@ -201,10 +204,10 @@ public class WorkOrderRatingsBuyer implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_workOrder != null && _workOrder.isSet())
-            return _workOrder;
+        if (_workOrder == null)
+            _workOrder = new WorkOrderRatingsBuyerWorkOrder();
 
-        return null;
+            return _workOrder;
     }
 
     public WorkOrderRatingsBuyer workOrder(WorkOrderRatingsBuyerWorkOrder workOrder) throws ParseException {
@@ -318,7 +321,4 @@ public class WorkOrderRatingsBuyer implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

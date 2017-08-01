@@ -1,7 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/CardContainer"
-    android:layout_marginBottom="0dp">
+    android:layout_marginBottom="0dp"
+    android:paddingBottom="8dp">
+
+    <View
+        android:id="@+id/warninginbar_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignBottom="@+id/titleseperator_view"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/fn_red" />
 
     <TextView
         android:id="@+id/amount_textview"
@@ -11,8 +23,8 @@
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:text=""
-        android:textColor="#FF333333"
+        android:text="@string/placeholder_phrase"
+        android:textColor="@color/fn_gray_dark"
         android:textSize="20sp" />
 
     <TextView
@@ -25,8 +37,8 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/amount_textview"
-        android:text=""
-        android:textColor="#FF555555"
+        android:text="@string/placeholder_phrase"
+        android:textColor="@color/fn_gray_light"
         android:textSize="10sp" />
 
     <TextView
@@ -34,18 +46,18 @@
         style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/titleseperator_view"
         android:layout_alignBaseline="@+id/amount_textview"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="3dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
-        android:layout_toRightOf="@+id/paytype_textview"
         android:ellipsize="end"
         android:gravity="right"
         android:maxLines="1"
-        android:text=""
-        android:textColor="#FF555555"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_light"
         android:textSize="10sp" />
 
     <View
@@ -70,8 +82,8 @@
         android:layout_marginRight="10dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text=""
-        android:textColor="#FF333333"
+        android:text="@string/placeholder_phrase"
+        android:textColor="@color/fn_gray_dark"
         android:textSize="14sp" />
 
     <TextView
@@ -82,8 +94,8 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
-        android:text=""
-        android:textColor="#FF333333"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_dark"
         android:textSize="14sp" />
 
     <TextView
@@ -95,8 +107,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date_textview"
-        android:text=""
-        android:textColor="#FF555555"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_light"
         android:textSize="14sp" />
 
     <TextView
@@ -110,7 +122,7 @@
         android:layout_marginRight="8dp"
         android:layout_toRightOf="@+id/time_textview"
         android:text="-"
-        android:textColor="#FF333333"
+        android:textColor="@color/fn_gray_dark"
         android:textSize="14sp" />
 
     <TextView
@@ -121,8 +133,8 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginBottom="5dp"
         android:layout_toRightOf="@+id/hyphen_textview"
-        android:text=""
-        android:textColor="#FF333333"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_dark"
         android:textSize="14sp" />
 
     <TextView
@@ -134,8 +146,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date2_textview"
-        android:text=""
-        android:textColor="#FF555555"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_light"
         android:textSize="14sp" />
 
 
@@ -147,8 +159,8 @@
         android:layout_below="@+id/date_textview"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:text=""
-        android:textColor="#FF333333"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_dark"
         android:textSize="14sp" />
 
     <TextView
@@ -159,8 +171,8 @@
         android:layout_alignBaseline="@+id/location_textview"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/location_textview"
-        android:text=""
-        android:textColor="#FF555555"
+        android:text="@string/placeholder_word"
+        android:textColor="@color/fn_gray_light"
         android:textSize="14sp" />
 
     <com.fieldnation.ui.IconFontButton
@@ -195,7 +207,6 @@
         style="@style/Material.Button.Raised.Green"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/location_textview"
-        android:layout_marginBottom="10dp"
         android:layout_marginRight="10dp"
         android:minWidth="130dp"
         android:text="@string/placeholder_phrase" />
@@ -205,7 +216,6 @@
         style="@style/Material.Button.Raised.Green"
         android:layout_width="match_parent"
         android:layout_below="@+id/primary_button"
-        android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:text="TEST BUTTON"

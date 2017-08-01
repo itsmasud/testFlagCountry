@@ -2,32 +2,26 @@
 <resources>
 
     <string name="added_new_feature">
-&lt;center&gt;&lt;h3&gt;Introducing Flightboard&lt;/h3&gt;We have updated our confirmation process to optimize communication between Buyer and Provider.&lt;br/&gt;&lt;br/&gt;&lt;/center&gt;
-&lt;b&gt;What\'s included with Flightboard:&lt;/b&gt;
+&lt;b&gt;What\'s New with Field Nation&lt;/b&gt;&lt;br/&gt;
+&lt;br/&gt;
+Improved overall performance, made updates to our counter offer dialog, and added Android O support to improve your experience.
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;b&gt;What we added:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;The day before an assigned work order you will get a notification at 6am to confirm your work.&lt;/li&gt;
-&lt;li&gt;For each assigned work order, you will be required to tap \"Confirm\" by noon. Failure to confirm work may result in removal from that work order.&lt;/li&gt;
-&lt;li&gt;The day of the work order you can mark \"On My Way\" when heading to the job to inform Buyer of your location. You may also mark \"Running Late\" if necessary.&lt;/li&gt;
+&lt;li&gt;Problem reported status indicator&lt;/li&gt;
+&lt;li&gt;Work order on hold status indicator&lt;/li&gt;
+&lt;li&gt;Ability to review profile photo before submitting&lt;/li&gt;
+&lt;li&gt;Choose which work order contact to dial&lt;/li&gt;
+&lt;li&gt;Payment information enhancements&lt;/li&gt;
+&lt;li&gt;Android O support&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;a href="https://www.fieldnation.com/flightboard/flightboard-is-coming-serviceprovider"&gt;Learn more about Flightboard&lt;/a&gt;&lt;br/&gt;&lt;br/&gt;
-
-&lt;b&gt;GPS&lt;/b&gt;&lt;br/&gt;
-We highly encourage you to enable GPS to take advantage of the new process and potentially avoid dispatcher calls. We will only send your location to the Buyer after you tap \"On My Way\" and will stop once you tap \"Check In\".
-    </string>
-
-    <string name="bugs_fixed">
+&lt;b&gt;Bugs we fixed:&lt;/b&gt;
 &lt;ul&gt;
-&lt;li&gt;Fixed crashes caused by rotating the phone while uploading photos&lt;/li&gt;
-&lt;li&gt;Fixed app getting stuck in retry loop while downloading files&lt;/li&gt;
-&lt;li&gt;Bullet points now show up in work order descriptions&lt;/li&gt;
-&lt;/ul&gt;
-    </string>
-
-    <string name="working_on_feature">
-&lt;ul&gt;
-&lt;li&gt;New look and feel&lt;/li&gt;
-&lt;li&gt;More work order search options&lt;/li&gt;
+&lt;li&gt;Allow users to submit a counter offer&lt;/li&gt;
+&lt;li&gt;Crash around sharing files with app&lt;/li&gt;
+&lt;li&gt;Numerous small bugs&lt;/li&gt;
 &lt;/ul&gt;
     </string>
 </resources>

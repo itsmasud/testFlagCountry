@@ -1,42 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Tile.Material"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/fn_list_bg">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/month_textview"
-        style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:paddingBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:paddingTop="16dp"
+        android:textColor="@color/fn_light_text"
         android:text="December" />
 
     <TextView
         android:id="@+id/year_textview"
-        style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:paddingBottom="16dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginTop="8dp"
+        android:paddingTop="16dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
         android:layout_toRightOf="@+id/month_textview"
         android:text="2015"
         android:textColor="@color/fn_light_text" />
 
-    <TextView
-        android:id="@+id/money_textview"
-        style="@style/Text_Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
-        android:text="$20,840.00" />
+    <!--<TextView-->
+    <!--android:id="@+id/money_textview"-->
+    <!--style="@style/Text_Subhead"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_marginRight="16dp"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:text="$20,840.00" />-->
 
 
     <View

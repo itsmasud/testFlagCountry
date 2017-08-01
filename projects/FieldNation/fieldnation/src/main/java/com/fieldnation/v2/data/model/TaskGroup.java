@@ -152,7 +152,4 @@ public class TaskGroup implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getId());
     }
-}

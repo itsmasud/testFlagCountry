@@ -9,15 +9,18 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 import com.fieldnation.v2.data.model.Shipment;
-import com.fieldnation.v2.data.model.Shipments;
 import com.fieldnation.v2.data.model.Task;
 import com.fieldnation.v2.data.model.WorkOrder;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class TaskShipmentAddDialog extends SimpleDialog {
     private static final String TAG = "TaskShipmentAddDialog";
@@ -44,11 +47,11 @@ public class TaskShipmentAddDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_task_add_shipment, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _shipmentsLayout = (LinearLayout) v.findViewById(R.id.shipments_linearlayout);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _shipmentsLayout = v.findViewById(R.id.shipments_linearlayout);
 
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _addButton = (Button) v.findViewById(R.id.add_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
+        _addButton = v.findViewById(R.id.add_button);
 
         return v;
     }
@@ -83,14 +86,22 @@ public class TaskShipmentAddDialog extends SimpleDialog {
 
         try {
             _shipmentsLayout.removeAllViews();
-            Shipments shipments = _workOrder.getShipments();
-            if (shipments == null || shipments.getResults() == null || shipments.getResults().length == 0)
+
+            if (_workOrder.getShipments().getResults().length == 0)
                 return;
 
-            for (int i = 0; i < shipments.getResults().length; i++) {
+            List<Shipment> shipments = new LinkedList();
+            for (Shipment shipment : _workOrder.getShipments().getResults()) {
+                if (shipment.getDirection().equals(Shipment.DirectionEnum.FROM_SITE))
+                    shipments.add(shipment);
+                else if (shipment.getUser().getId().longValue() == App.getProfileId()) // && To Site
+                    shipments.add(shipment);
+            }
+
+            for (int i = 0; i < shipments.size(); i++) {
                 ShipmentRowView view = new ShipmentRowView(getView().getContext());
                 _shipmentsLayout.addView(view);
-                view.setData(_workOrder, shipments.getResults()[i]);
+                view.setData(_workOrder, shipments.get(i));
                 view.hideForTaskShipmentDialog();
                 view.setListener(_summaryListener);
             }

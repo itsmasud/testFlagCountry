@@ -6,8 +6,8 @@ import android.os.Bundle;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 
 /**

@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 
 /**

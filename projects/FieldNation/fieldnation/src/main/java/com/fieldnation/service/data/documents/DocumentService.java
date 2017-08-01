@@ -2,6 +2,7 @@ package com.fieldnation.service.data.documents;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
@@ -53,11 +54,11 @@ public class DocumentService extends MultiThreadedService implements DocumentCon
         if (obj != null) {
             try {
 
-                String name = obj.getFile().getName();
-                name = name.substring(name.indexOf("_") + 1);
+                Uri uri = obj.getUri();
+                String name = FileUtils.getFileNameFromUri(context, uri);
                 File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
                 if (!dlFolder.exists())
-                    FileUtils.copyFile(obj.getFile(), dlFolder);
+                    FileUtils.writeStream(context.getContentResolver().openInputStream(uri), dlFolder);
 
                 DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, isSync);
             } catch (Exception ex) {

@@ -13,8 +13,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.v2.data.model.Attachment;
 
-import java.io.File;
-
 /**
  * Created by mc on 4/19/17.
  */
@@ -28,7 +26,6 @@ public class AttachmentService extends MultiThreadedService {
     public static final String PARAM_DESCRIPTION = "PARAM_DESCRIPTION";
     public static final String PARAM_FILE_NAME = "PARAM_FILE_NAME";
     public static final String PARAM_URI = "PARAM_URI";
-    public static final String PARAM_PATH = "PARAM_PATH";
 
     @Override
     public int getMaxWorkerCount() {
@@ -40,11 +37,10 @@ public class AttachmentService extends MultiThreadedService {
         int workOrderId = intent.getIntExtra(PARAM_WORKORDER_ID, 0);
         Attachment attachment = intent.getParcelableExtra(PARAM_ATTACHMENT);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
-        String filePath = intent.getStringExtra(PARAM_PATH);
         Uri uri = intent.getParcelableExtra(PARAM_URI);
 
         Log.v(TAG, "processIntent " + workOrderId + ", " + attachment.getFolderId() + ", "
-                + filename + ", " + filePath + ", " + (uri == null ? "null" : uri.toString()));
+                + filename + ", " + (uri == null ? "null" : uri.toString()));
 
         try {
             attachment.file(new com.fieldnation.v2.data.model.File().name(filename));
@@ -63,19 +59,12 @@ public class AttachmentService extends MultiThreadedService {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-        } else
-            WorkordersWebApi.addAttachment(this, workOrderId, attachment.getFolderId(), attachment, new File(filePath), App.get().getSpUiContext());
+        }
     }
 
 
     public static void addAttachment(final Context context, final int workOrderId, final Attachment attachment, Intent data) {
-
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
-            @Override
-            public void fileReady(String filename, File file) {
-                addAttachment(context, workOrderId, attachment, filename, file.getPath());
-            }
-
             @Override
             public void fromUri(String filename, Uri uri) {
                 addAttachment(context, workOrderId, attachment, filename, uri);
@@ -97,14 +86,4 @@ public class AttachmentService extends MultiThreadedService {
         intent.putExtra(PARAM_URI, uri);
         context.startService(intent);
     }
-
-    public static void addAttachment(Context context, int workOrderId, Attachment attachment, String filename, String path) {
-        Intent intent = new Intent(context, AttachmentService.class);
-        intent.putExtra(PARAM_WORKORDER_ID, workOrderId);
-        intent.putExtra(PARAM_ATTACHMENT, attachment);
-        intent.putExtra(PARAM_FILE_NAME, filename);
-        intent.putExtra(PARAM_PATH, path);
-        context.startService(intent);
-    }
-
 }

@@ -23,7 +23,9 @@ public class WorkOrderPickerScreen extends FrameLayout {
 
     static {
         try {
-            _searchParams = new SavedList().id("workorders_assignments");
+            _searchParams = new SavedList()
+                    .id("workorders_assignments")
+                    .label("assigned");
         } catch (Exception ex) {
         }
     }
@@ -64,6 +66,14 @@ public class WorkOrderPickerScreen extends FrameLayout {
         _workOrderScreen = (SearchResultScreen) findViewById(R.id.recyclerView);
         _workOrderScreen.setOnChildClickListener(_searchResultScreen_listener);
         _workOrderScreen.startSearch(_searchParams);
+    }
+
+    public void onResume() {
+        _workOrderScreen.onResume();
+    }
+
+    public void onPause() {
+        _workOrderScreen.onPause();
     }
 
     public void setListener(Listener listener) {

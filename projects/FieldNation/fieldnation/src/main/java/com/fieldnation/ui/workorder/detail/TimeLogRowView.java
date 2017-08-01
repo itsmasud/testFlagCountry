@@ -86,8 +86,7 @@ public class TimeLogRowView extends RelativeLayout {
         try {
             Calendar cal = _timeLog.getIn().getCreated().getCalendar();
             Calendar ecal = null;
-            if (_timeLog.getOut() != null
-                    && _timeLog.getOut().getCreated() != null) {
+            if (_timeLog.getOut().getCreated().getUtc() != null) {
                 ecal = _timeLog.getOut().getCreated().getCalendar();
             }
             if (ecal != null && !DateUtils.isSameDay(cal, ecal)) {
@@ -104,9 +103,7 @@ public class TimeLogRowView extends RelativeLayout {
 
             String date = DateUtils.formatTime(cal, false);
 
-            if (_timeLog.getOut() != null
-                    && _timeLog.getOut().getCreated() != null
-                    && _timeLog.getOut().getCreated().getCalendar() != null) {
+            if (_timeLog.getOut().getCreated().getUtc() != null) {
                 cal = _timeLog.getOut().getCreated().getCalendar();
 
                 date += " - " + DateUtils.formatTime(cal, false);
@@ -126,7 +123,7 @@ public class TimeLogRowView extends RelativeLayout {
             Log.v(TAG, ex);
         }
 
-        if (_workOrder.getPay() != null && _workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
+        if (_workOrder.getPay().getType() == Pay.TypeEnum.DEVICE) {
             _devicesTextView.setVisibility(VISIBLE);
             _devicesTextView.setText(_timeLog.getDevices() + " devices");
         } else {
@@ -156,7 +153,6 @@ public class TimeLogRowView extends RelativeLayout {
         @Override
         public boolean onLongClick(View v) {
             if (_listener != null
-                    && _timeLog.getActionsSet() != null
                     && _timeLog.getActionsSet().contains(TimeLog.ActionsEnum.DELETE)) {
                 _listener.deleteTimeLog(TimeLogRowView.this, _workOrder, _timeLog);
                 return true;

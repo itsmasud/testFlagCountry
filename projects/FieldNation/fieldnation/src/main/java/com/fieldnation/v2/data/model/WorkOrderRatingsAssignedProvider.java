@@ -72,6 +72,9 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -98,10 +101,10 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_blocks != null && _blocks.isSet())
-            return _blocks;
+        if (_blocks == null)
+            _blocks = new Blocks();
 
-        return null;
+            return _blocks;
     }
 
     public WorkOrderRatingsAssignedProvider blocks(Blocks blocks) throws ParseException {
@@ -123,10 +126,10 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_overall != null && _overall.isSet())
-            return _overall;
+        if (_overall == null)
+            _overall = new WorkOrderRatingsAssignedProviderOverall();
 
-        return null;
+            return _overall;
     }
 
     public WorkOrderRatingsAssignedProvider overall(WorkOrderRatingsAssignedProviderOverall overall) throws ParseException {
@@ -148,10 +151,10 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_user != null && _user.isSet())
-            return _user;
+        if (_user == null)
+            _user = new User();
 
-        return null;
+            return _user;
     }
 
     public WorkOrderRatingsAssignedProvider user(User user) throws ParseException {
@@ -173,10 +176,10 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_workOrder != null && _workOrder.isSet())
-            return _workOrder;
+        if (_workOrder == null)
+            _workOrder = new WorkOrderRatingsAssignedProviderWorkOrder();
 
-        return null;
+            return _workOrder;
     }
 
     public WorkOrderRatingsAssignedProvider workOrder(WorkOrderRatingsAssignedProviderWorkOrder workOrder) throws ParseException {
@@ -292,7 +295,4 @@ public class WorkOrderRatingsAssignedProvider implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

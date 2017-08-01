@@ -152,7 +152,4 @@ public class Map implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return !misc.isEmptyOrNull(getHref()) && !misc.isEmptyOrNull(getUrl());
-    }
 }

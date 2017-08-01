@@ -35,7 +35,7 @@ import com.fieldnation.v2.ui.workorder.WorkOrderCard;
  * Created by Michael on 7/27/2016.
  */
 public class ConfirmResultScreen extends RelativeLayout {
-    private static final String TAG = "SearchResultScreen";
+    private static final String TAG = "ConfirmResultScreen";
 
     // Dialogs
     private static final String DIALOG_FILTER_DRAWER = TAG + "filterDrawerDialog";
@@ -101,18 +101,22 @@ public class ConfirmResultScreen extends RelativeLayout {
 
     @Override
     protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+    }
+
+    public void onResume() {
         _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+    }
 
-        super.onAttachedToWindow();
-
-        FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
+    public void onPause() {
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
 
@@ -135,6 +139,10 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
+        }
     };
 
     public WoPagingAdapter getAdapter() {
@@ -146,10 +154,10 @@ public class ConfirmResultScreen extends RelativeLayout {
             return;
 
         _workOrdersOptions = _filterParams.applyFilter(_workOrdersOptions);
-        _workOrdersOptions.setPerPage(65);
+        _workOrdersOptions.setPerPage(25);
 
         // this is locked down so that we don't have multiple pages
-        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(1), true, false);
+        WorkordersWebApi.getWorkOrders(App.get(), _workOrdersOptions.page(page), true, false);
 
         if (_refreshView != null)
             _refreshView.startRefreshing();
@@ -208,35 +216,28 @@ public class ConfirmResultScreen extends RelativeLayout {
         public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
             Log.v(TAG, "onWorkordersWebApi: " + methodName);
             if (methodName.equals("getWorkOrders")) {
+                if (!success || successObject == null) {
+                    _refreshView.refreshComplete();
+                    return;
+                }
+
                 WorkOrders workOrders = (WorkOrders) successObject;
                 if (_savedList == null || !_savedList.getId().equals(workOrders.getMetadata().getList()))
-                    return;
-
-                if (workOrders.getMetadata().getPerPage() != 65)
                     return;
 
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
-                if (workOrders == null || workOrders.getMetadata() == null || workOrders.getResults() == null || !success) {
-                    _refreshView.refreshComplete();
-                    return;
-                }
-
                 ListEnvelope envelope = workOrders.getMetadata();
-
-                Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();
                 } else if (workOrders.getResults().length > 0
                         && envelope.getPerPage() > 0
-                        && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1) {
-                    _adapter.addObjects(1, workOrders.getResults());
-                    _adapter.addObjects(2, (WorkOrder[]) null);
-                } else {
-                    _adapter.addObjects(1, (WorkOrder[]) null);
-                }
+                        && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage() + 1)
+                    _adapter.addObjects(envelope.getPage(), workOrders.getResults());
+                else
+                    _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
 
                 _refreshView.refreshComplete();
             } else {

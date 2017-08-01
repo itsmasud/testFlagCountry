@@ -96,6 +96,9 @@ public class WorkOrderOverviewValues implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -149,6 +152,9 @@ public class WorkOrderOverviewValues implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_clients == null)
+            _clients = new WorkOrderOverviewValuesClients[0];
+
         return _clients;
     }
 
@@ -181,6 +187,9 @@ public class WorkOrderOverviewValues implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_networkId == null)
+            _networkId = new Integer[0];
+
         return _networkId;
     }
 
@@ -211,6 +220,9 @@ public class WorkOrderOverviewValues implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_networks == null)
+            _networks = new WorkOrderOverviewValuesNetworks[0];
 
         return _networks;
     }
@@ -261,6 +273,9 @@ public class WorkOrderOverviewValues implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_projects == null)
+            _projects = new WorkOrderOverviewValuesProjects[0];
+
         return _projects;
     }
 
@@ -309,6 +324,9 @@ public class WorkOrderOverviewValues implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_serviceContracts == null)
+            _serviceContracts = new WorkOrderOverviewValuesServiceContracts[0];
 
         return _serviceContracts;
     }
@@ -359,6 +377,9 @@ public class WorkOrderOverviewValues implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_teams == null)
+            _teams = new WorkOrderOverviewValuesTeams[0];
+
         return _teams;
     }
 
@@ -407,6 +428,9 @@ public class WorkOrderOverviewValues implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_typesOfWork == null)
+            _typesOfWork = new WorkOrderOverviewValuesTypesOfWork[0];
 
         return _typesOfWork;
     }
@@ -526,7 +550,4 @@ public class WorkOrderOverviewValues implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

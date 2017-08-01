@@ -95,19 +95,14 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
 
         Pay pay = _workOrder.getPay();
 
-        if (pay == null
-                || pay.getBase() == null
-                || pay.getBase().getAmount() == null
-                || pay.getBase().getAmount() == 0) {
-            this.setVisibility(GONE);
+        if (pay.getBase().getAmount() == null
+                || pay.getBase().getAmount() == 0
+                || _workOrder.getStatus().getId() == 2
+                || _workOrder.getStatus().getId() == 9) {
+            setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
-        }
-
-        if (_workOrder.getStatus().getId() == 2 || _workOrder.getStatus().getId() == 9) {
-            setVisibility(GONE);
-            return;
         }
 
         // Labor
@@ -117,33 +112,25 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             _laborTextView.setText(misc.toCurrency(0));
 
         // Expenses approved
-        if (pay.getExpenses() != null
-                && pay.getExpenses().getSum() != null
-                && pay.getExpenses().getSum().getCharged() != null)
+        if (pay.getExpenses().getSum().getCharged() != null)
             _expensesTextView.setText(misc.toCurrency(pay.getExpenses().getSum().getCharged()));
         else
             _expensesTextView.setText(misc.toCurrency(0));
 
         // Discounts
-        if (pay.getDiscounts() != null
-                && pay.getDiscounts().getSum() != null
-                && pay.getDiscounts().getSum().getAll() != null)
+        if (pay.getDiscounts().getSum().getAll() != null)
             _discountsTextView.setText(misc.toCurrency(-pay.getDiscounts().getSum().getAll()));
         else
             _discountsTextView.setText(misc.toCurrency(0));
 
         // Bonus
-        if (pay.getBonuses() != null
-                && pay.getBonuses().getSum() != null
-                && pay.getBonuses().getSum().getCharged() != null)
+        if (pay.getBonuses().getSum().getCharged() != null)
             _bonusTextView.setText(misc.toCurrency(pay.getBonuses().getSum().getCharged()));
         else
             _bonusTextView.setText(misc.toCurrency(0));
 
         // Penalty
-        if (pay.getPenalties() != null
-                && pay.getPenalties().getSum() != null
-                && pay.getPenalties().getSum().getCharged() != null)
+        if (pay.getPenalties().getSum().getCharged() != null)
             _penaltyTextView.setText(misc.toCurrency(-pay.getPenalties().getSum().getCharged()));
         else
             _penaltyTextView.setText(misc.toCurrency(0));
@@ -189,10 +176,9 @@ public class ExpectedPaymentView extends LinearLayout implements WorkOrderRender
             _totalTextView.setText(misc.toCurrency(0));
         }
 
-        if (_workOrder.getStatus() != null && _workOrder.getStatus().getId() == 5) {
+        if (_workOrder.getStatus().getId() == 5) {
             _payStatusTextView.setText("Pending");
-        } else if (pay.getPayment() != null
-                && pay.getPayment().getCharged() != null
+        } else if (pay.getPayment().getCharged() != null
                 && pay.getPayment().getCharged()) {
             _payStatusTextView.setText("Paid");
         } else {

@@ -57,10 +57,10 @@ public class WorkflowCompletion implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-            return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+            return _metadata;
     }
 
     public WorkflowCompletion metadata(ListEnvelope metadata) throws ParseException {
@@ -91,6 +91,9 @@ public class WorkflowCompletion implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new String[0];
 
         return _results;
     }
@@ -232,7 +235,4 @@ public class WorkflowCompletion implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

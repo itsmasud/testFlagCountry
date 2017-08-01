@@ -126,5 +126,5 @@
         android:layout_height="?attr/actionBarSize"
         android:elevation="0dp"
         app:layout_scrollFlags="scroll|enterAlways"
-        app:theme="@style/FieldNation.Material.ToolBar" />
+        android:theme="@style/FieldNation.Material.ToolBar" />
 </RelativeLayout>

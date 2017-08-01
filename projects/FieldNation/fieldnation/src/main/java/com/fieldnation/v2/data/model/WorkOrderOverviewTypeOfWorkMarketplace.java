@@ -152,7 +152,4 @@ public class WorkOrderOverviewTypeOfWorkMarketplace implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

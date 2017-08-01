@@ -69,6 +69,9 @@ public class Contacts implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -117,10 +120,10 @@ public class Contacts implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public Contacts metadata(ListEnvelope metadata) throws ParseException {
@@ -146,6 +149,9 @@ public class Contacts implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new Contact[0];
 
         return _results;
     }
@@ -259,7 +265,4 @@ public class Contacts implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

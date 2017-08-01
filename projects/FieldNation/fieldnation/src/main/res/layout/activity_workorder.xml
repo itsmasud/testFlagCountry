@@ -24,7 +24,7 @@
                 android:layout_height="?attr/actionBarSize"
                 android:layout_alignParentTop="true"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:theme="@style/FieldNation.Material.ToolBar" />
+                android:theme="@style/FieldNation.Material.ToolBar" />
 
             <com.fieldnation.ui.workorder.WorkorderTabView
                 android:id="@+id/tabview"

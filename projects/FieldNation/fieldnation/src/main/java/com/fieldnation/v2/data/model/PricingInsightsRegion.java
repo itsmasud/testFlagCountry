@@ -63,10 +63,10 @@ public class PricingInsightsRegion implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_averageRate != null && _averageRate.isSet())
-        return _averageRate;
+        if (_averageRate == null)
+            _averageRate = new PricingInsightsRegionAverageRate();
 
-        return null;
+        return _averageRate;
     }
 
     public PricingInsightsRegion averageRate(PricingInsightsRegionAverageRate averageRate) throws ParseException {
@@ -154,10 +154,10 @@ public class PricingInsightsRegion implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_providers != null && _providers.isSet())
-        return _providers;
+        if (_providers == null)
+            _providers = new PricingInsightsRegionProviders();
 
-        return null;
+        return _providers;
     }
 
     public PricingInsightsRegion providers(PricingInsightsRegionProviders providers) throws ParseException {
@@ -233,7 +233,4 @@ public class PricingInsightsRegion implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

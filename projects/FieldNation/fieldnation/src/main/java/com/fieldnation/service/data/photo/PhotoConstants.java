@@ -9,10 +9,9 @@ public interface PhotoConstants {
     String PARAM_ACTION = "PARAM_ACTION";
     String PARAM_ACTION_GET = "PARAM_ACTION_GET";
 
-    String PARAM_URL = "URL";
-    String PARAM_CIRCLE = "CIRCLE";
-    String PARAM_IS_SYNC = "PARAM_IS_SYNC";
-    String PARAM_ERROR = "PARAM_ERROR";
-
-    String RESULT_IMAGE_FILE = "IMAGE_FILE";
+    String PARAM_SOURCE_URL = "sourceUrl";
+    String PARAM_CACHE_URI = "cacheUri";
+    String PARAM_IS_CIRCLE = "isCircle";
+    String PARAM_IS_SYNC = "isSync";
+    String PARAM_SUCCESS = "success";
 }

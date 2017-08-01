@@ -62,7 +62,14 @@
                 android:layout_height="32dp"
                 android:text="View Bundle Details"
                 android:textSize="14sp" />
+
         </LinearLayout>
+
+        <com.fieldnation.ui.workorder.detail.ProblemSummaryView
+            android:id="@+id/problemsummary_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
 
         <LinearLayout
             android:id="@+id/description_container"

@@ -15,7 +15,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.FnNumberPicker;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by Shoaib on 1/1/17.

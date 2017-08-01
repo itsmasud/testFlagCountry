@@ -120,7 +120,6 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     public void setPhoto(String url, Drawable photo) {
         Log.v(TAG, "setPhoto");
         if (_attachment != null
-                && _attachment.getFile() != null
                 && _attachment.getFile().getThumbnail() != null
 // TODO               && _attachment.getThumbNail().startsWith(url)
                 ) {
@@ -132,7 +131,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
 
     public void setData(WorkOrder workOrder, Attachment attachment) {
         setLoading(false, R.string.uploading);
-        _attachment = attachment;
+        this._attachment = attachment;
         this._workOrder = workOrder;
         populateUi();
     }
@@ -190,14 +189,14 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
             Log.v(TAG, e);
         }
 
-        if (_attachment.getAuthor() != null) {
+        if (misc.isEmptyOrNull(_attachment.getAuthor().getFirstName()) && misc.isEmptyOrNull(_attachment.getAuthor().getLastName())) {
+            _byTextView.setVisibility(GONE);
+            _usernameTextView.setText("");
+        } else {
             String firstName = _attachment.getAuthor().getFirstName();
             String lastName = _attachment.getAuthor().getLastName();
             _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
             _byTextView.setVisibility(VISIBLE);
-        } else {
-            _byTextView.setVisibility(GONE);
-            _usernameTextView.setText("");
         }
 
         try {
@@ -209,9 +208,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
                     case "png":
                     case "jpg":
                     case "jpeg":
-                        if (_listener != null
-                                && _attachment.getFile() != null
-                                && !misc.isEmptyOrNull(_attachment.getFile().getThumbnail())) {
+                        if (_listener != null && !misc.isEmptyOrNull(_attachment.getFile().getThumbnail())) {
                             Drawable result = _listener.getPhoto(this, _attachment.getFile().getThumbnail(), true);
                             if (result != null) {
                                 setPhoto(_attachment.getFile().getThumbnail(), result);
@@ -290,9 +287,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
                 return;
             }
 
-            if (_attachment.getFile() != null
-                    && _attachment.getFile().getType() != null
-                    && _attachment.getFile().getType().equals(com.fieldnation.v2.data.model.File.TypeEnum.LINK)) {
+            if (_attachment.getFile().getType().equals(com.fieldnation.v2.data.model.File.TypeEnum.LINK)) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_attachment.getFile().getLink()));
                 getContext().startActivity(intent);
             } else if (_attachment.getId() != null) {

@@ -18,7 +18,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 public class DiscountDialog extends SimpleDialog {
     private static String TAG = "DiscountDialog";

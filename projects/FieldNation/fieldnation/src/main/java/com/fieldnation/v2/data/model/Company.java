@@ -132,6 +132,9 @@ public class Company implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_features == null)
+            _features = new String[0];
+
         return _features;
     }
 
@@ -180,10 +183,10 @@ public class Company implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_jobs != null && _jobs.isSet())
-            return _jobs;
+        if (_jobs == null)
+            _jobs = new CompanyJobs();
 
-        return null;
+            return _jobs;
     }
 
     public Company jobs(CompanyJobs jobs) throws ParseException {
@@ -205,10 +208,10 @@ public class Company implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_location != null && _location.isSet())
-            return _location;
+        if (_location == null)
+            _location = new Location();
 
-        return null;
+            return _location;
     }
 
     public Company location(Location location) throws ParseException {
@@ -296,10 +299,10 @@ public class Company implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_rating != null && _rating.isSet())
-            return _rating;
+        if (_rating == null)
+            _rating = new Rating();
 
-        return null;
+            return _rating;
     }
 
     public Company rating(Rating rating) throws ParseException {
@@ -375,7 +378,4 @@ public class Company implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

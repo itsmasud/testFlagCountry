@@ -87,6 +87,9 @@ public class ETA implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -113,10 +116,10 @@ public class ETA implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_condition != null && _condition.isSet())
-            return _condition;
+        if (_condition == null)
+            _condition = new Condition();
 
-        return null;
+            return _condition;
     }
 
     public ETA condition(Condition condition) throws ParseException {
@@ -138,10 +141,10 @@ public class ETA implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_end != null && _end.isSet())
-            return _end;
+        if (_end == null)
+            _end = new Date();
 
-        return null;
+            return _end;
     }
 
     public ETA end(Date end) throws ParseException {
@@ -229,10 +232,10 @@ public class ETA implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_start != null && _start.isSet())
-            return _start;
+        if (_start == null)
+            _start = new Date();
 
-        return null;
+            return _start;
     }
 
     public ETA start(Date start) throws ParseException {
@@ -254,10 +257,10 @@ public class ETA implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_status != null && _status.isSet())
-            return _status;
+        if (_status == null)
+            _status = new ETAStatus();
 
-        return null;
+            return _status;
     }
 
     public ETA status(ETAStatus status) throws ParseException {
@@ -279,10 +282,10 @@ public class ETA implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_user != null && _user.isSet())
-            return _user;
+        if (_user == null)
+            _user = new User();
 
-        return null;
+            return _user;
     }
 
     public ETA user(User user) throws ParseException {
@@ -466,10 +469,6 @@ public class ETA implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getMode() != null;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

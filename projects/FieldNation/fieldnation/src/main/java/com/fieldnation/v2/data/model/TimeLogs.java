@@ -84,6 +84,9 @@ public class TimeLogs implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -110,10 +113,10 @@ public class TimeLogs implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_confirmed != null && _confirmed.isSet())
-            return _confirmed;
+        if (_confirmed == null)
+            _confirmed = new Date();
 
-        return null;
+            return _confirmed;
     }
 
     public TimeLogs confirmed(Date confirmed) throws ParseException {
@@ -157,10 +160,10 @@ public class TimeLogs implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-            return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+            return _metadata;
     }
 
     public TimeLogs metadata(ListEnvelope metadata) throws ParseException {
@@ -182,10 +185,10 @@ public class TimeLogs implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_onmyway != null && _onmyway.isSet())
-            return _onmyway;
+        if (_onmyway == null)
+            _onmyway = new OnMyWay();
 
-        return null;
+            return _onmyway;
     }
 
     public TimeLogs onmyway(OnMyWay onmyway) throws ParseException {
@@ -207,10 +210,10 @@ public class TimeLogs implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_openTimeLog != null && _openTimeLog.isSet())
-            return _openTimeLog;
+        if (_openTimeLog == null)
+            _openTimeLog = new TimeLog();
 
-        return null;
+            return _openTimeLog;
     }
 
     public TimeLogs openTimeLog(TimeLog openTimeLog) throws ParseException {
@@ -236,6 +239,9 @@ public class TimeLogs implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new TimeLog[0];
 
         return _results;
     }
@@ -281,10 +287,10 @@ public class TimeLogs implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public TimeLogs timeZone(TimeZone timeZone) throws ParseException {
@@ -399,10 +405,6 @@ public class TimeLogs implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return true;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

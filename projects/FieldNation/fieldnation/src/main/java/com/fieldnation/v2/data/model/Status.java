@@ -295,10 +295,10 @@ public class Status implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_problem != null && _problem.isSet())
-            return _problem;
+        if (_problem == null)
+            _problem = new Problem();
 
-        return null;
+            return _problem;
     }
 
     public Status problem(Problem problem) throws ParseException {
@@ -418,7 +418,4 @@ public class Status implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

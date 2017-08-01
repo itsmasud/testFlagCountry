@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -60,9 +61,9 @@ public class TaskRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
-        _progressBar = (ProgressBar) findViewById(R.id.progress_view);
+        _iconView = findViewById(R.id.icon_view);
+        _descriptionTextView = findViewById(R.id.description_textview);
+        _progressBar = findViewById(R.id.progress_view);
 
         setOnClickListener(_checkbox_onClick);
 
@@ -73,7 +74,6 @@ public class TaskRowView extends RelativeLayout {
     protected void onDetachedFromWindow() {
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
         _workOrderApi = null;
-
 
         super.onDetachedFromWindow();
     }
@@ -86,7 +86,7 @@ public class TaskRowView extends RelativeLayout {
         _task = task;
         _workOrder = workOrder;
 
-        if (_task.getAttachments() != null && _task.getAttachments().getId() != null) {
+        if (_task.getAttachments().getId() != null) {
             subscribeUpload();
         }
 
@@ -147,33 +147,30 @@ public class TaskRowView extends RelativeLayout {
                 _progressBar.setVisibility(VISIBLE);
             }
 
-        } else if (_task.getCustomField() != null) {
+            // custom fields
+        } else if (_task.getType().getId() == 7) {
             _progressBar.setVisibility(GONE);
+            _descriptionTextView.setText(_task.getDescription());
+        } else if (_task.getType().getId() == 8) {
+            _descriptionTextView.setText("Call " + _task.getPhone() + "\n" + _task.getLabel());
+        } else if (_task.getType().getId() == 9) {
+            _descriptionTextView.setText("Email " + _task.getEmail() + "\n" + _task.getLabel());
+        } else if (_task.getType().getId() == 10) {
+            _descriptionTextView.setText("Complete Task\n" + _task.getLabel());
 
-            boolean isDescriptionSet = false;
-            if (_task.getCustomField() != null
-                    && _task.getCustomField().getName() != null) {
-                // do not remove the casting here!
-                _descriptionTextView.setText(_task.getType().getName() + ": " + _task.getCustomField().getName());
-                isDescriptionSet = true;
-            }
-
-            if (!isDescriptionSet) {
-                _descriptionTextView.setText(_task.getType().getName());
-            }
-
+            // normals
         } else {
             _progressBar.setVisibility(GONE);
-            String description = (_task.getType().getId() == 1 || _task.getType().getId() == 2
-                    || _task.getType().getId() == 3 || _task.getType().getId() == 4)
-                    ? _task.getType().getName() : _task.getType().getName() + "\n" + _task.getLabel();
-            _descriptionTextView.setText(description);
+            if (misc.isEmptyOrNull(_task.getLabel()) || _task.getLabel().equals(_task.getType().getName()))
+                _descriptionTextView.setText(_task.getType().getName());
+            else
+                _descriptionTextView.setText(_task.getType().getName() + "\n" + _task.getLabel());
         }
         updateCheckBox();
     }
 
     private void updateCheckBox() {
-        if (_task != null && _task.getActionsSet() != null
+        if (_task != null
                 && (_task.getActionsSet().contains(Task.ActionsEnum.EDIT)
                 || _task.getActionsSet().contains(Task.ActionsEnum.COMPLETE))) {
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
@@ -183,7 +180,8 @@ public class TaskRowView extends RelativeLayout {
             setEnabled(false);
         }
 
-        if (_task.getStatus() != null && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
+        if (_task.getStatus() != null
+                && _task.getStatus().equals(Task.StatusEnum.COMPLETE)) {
             _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
             _iconView.setText(R.string.icon_task_done);
         } else {

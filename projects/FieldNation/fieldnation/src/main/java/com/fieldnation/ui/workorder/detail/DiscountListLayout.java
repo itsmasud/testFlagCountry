@@ -82,31 +82,24 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
         if (_workOrder == null)
             return;
 
-        if (_workOrder.getPay() == null)
-            return;
-
-
-        if (_workOrder.getStatus() == null
-                || _workOrder.getStatus().getId() == 2
+        if (_workOrder.getStatus().getId() == 2
                 || _workOrder.getStatus().getId() == 9
-                || _workOrder.getPay() == null
-                || _workOrder.getPay().getDiscounts() == null) {
+                || (_workOrder.getPay().getDiscounts().getResults().length == 0
+                && _workOrder.getPay().getDiscounts().getActions().length == 0)) {
             setVisibility(GONE);
             return;
         } else {
             setVisibility(VISIBLE);
         }
 
-        if (_workOrder.getPay() != null
-                && _workOrder.getPay().getDiscounts().getActionsSet() != null
-                && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
+        if (_workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
         }
 
         final PayModifier[] list = _workOrder.getPay().getDiscounts().getResults();
-        if (list == null || list.length == 0) {
+        if (list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
             return;
@@ -114,7 +107,6 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
 
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
-
 
         if (_listView.getChildCount() > list.length) {
             _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
@@ -161,10 +153,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
         @Override
         public boolean onLongClick(View v) {
             PayModifier payModifier = ((DiscountView) v).getDiscount();
-            if (_listener != null
-                    && payModifier != null
-                    && payModifier.getActionsSet() != null
-                    && payModifier.getActionsSet().contains(PayModifier.ActionsEnum.DELETE)) {
+            if (_listener != null && payModifier.getActionsSet().contains(PayModifier.ActionsEnum.DELETE)) {
                 _listener.discountLongClick(payModifier);
                 return true;
             }
@@ -175,11 +164,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkOrderRende
     private final OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null
-                    && _workOrder.getPay() != null
-                    && _workOrder.getPay().getDiscounts() != null
-                    && _workOrder.getPay().getDiscounts().getActionsSet() != null
-                    && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
+            if (_listener != null && _workOrder.getPay().getDiscounts().getActionsSet().contains(PayModifiers.ActionsEnum.ADD)) {
                 _listener.addDiscount();
             }
         }

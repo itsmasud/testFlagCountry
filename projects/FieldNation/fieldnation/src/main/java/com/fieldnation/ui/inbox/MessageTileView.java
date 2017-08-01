@@ -56,12 +56,12 @@ public class MessageTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _picView = (ProfilePicView) findViewById(R.id.pic_view);
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _timeBoldTextView = (TextView) findViewById(R.id.timebold_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _workorderTextView = (TextView) findViewById(R.id.workorder_textview);
-        _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
+        _picView = findViewById(R.id.pic_view);
+        _titleTextView = findViewById(R.id.title_textview);
+        _timeBoldTextView = findViewById(R.id.timebold_textview);
+        _timeTextView = findViewById(R.id.time_textview);
+        _workorderTextView = findViewById(R.id.workorder_textview);
+        _messageBodyTextView = findViewById(R.id.messagebody_textview);
 
         setOnClickListener(_this_onClick);
 
@@ -132,7 +132,7 @@ public class MessageTileView extends RelativeLayout {
 
         if (App.get().isLowMemDevice()) {
             if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoThumbUrl())) {
-                Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoThumbUrl(), true);
+                Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoThumbUrl());
                 if (result == null) {
                     postDelayed(new Runnable() {
                         @Override
@@ -148,7 +148,7 @@ public class MessageTileView extends RelativeLayout {
             }
         } else {
             if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
-                Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
+                Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl());
                 if (result == null && !_imageRetried) {
                     _imageRetried = true;
                     postDelayed(new Runnable() {
@@ -178,7 +178,7 @@ public class MessageTileView extends RelativeLayout {
     };
 
     public interface Listener {
-        Drawable getPhoto(MessageTileView view, String url, boolean circle);
+        Drawable getPhoto(MessageTileView view, String url);
     }
 }
 

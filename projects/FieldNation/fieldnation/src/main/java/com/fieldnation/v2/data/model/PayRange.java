@@ -152,7 +152,4 @@ public class PayRange implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getMax() != null && getMin() != null && getMax() != 0 && getMin() != 0;
-    }
 }

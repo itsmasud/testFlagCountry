@@ -9,8 +9,8 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.InboxTracker;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 
 import java.util.List;

@@ -94,8 +94,5 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
 
         public void onDownload(long documentId, File file, int state) {
         }
-
-
     }
-
 }

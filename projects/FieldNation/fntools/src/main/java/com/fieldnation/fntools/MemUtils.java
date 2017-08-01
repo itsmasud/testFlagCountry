@@ -8,9 +8,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Debug;
+import android.os.Environment;
 
 import com.fieldnation.fnlog.Log;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 public class MemUtils {
     private static final String TAG = "MemUtils";
@@ -28,6 +35,22 @@ public class MemUtils {
         }
 
         return subSampleImage(0, res, sourceImage);
+    }
+
+    public static Bitmap getMemoryEfficientBitmap(Context context, Uri uri, int destWidth) throws FileNotFoundException {
+        BitmapFactory.Options srcOptions = new BitmapFactory.Options();
+        srcOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, srcOptions);
+
+        BitmapFactory.Options dstOption = new BitmapFactory.Options();
+        dstOption.inJustDecodeBounds = false;
+        dstOption.inSampleSize = calculateInSampleSize(srcOptions.outWidth, destWidth);
+
+        Log.v("MemUtils", "inSampleSize: " + dstOption.inSampleSize);
+
+        return rotateImageIfRequired(context,
+                BitmapFactory.decodeStream(context.getContentResolver().openInputStream(uri), null, dstOption),
+                uri);
     }
 
     public static Bitmap getMemoryEfficientBitmap(String pathName, int destWidth) {
@@ -52,7 +75,6 @@ public class MemUtils {
      * @return The resulted Bitmap after manipulation
      */
     private static Bitmap rotateImageIfRequired(Bitmap img, String selectedImage) {
-
         try {
             ExifInterface ei = new ExifInterface(selectedImage);
             int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
@@ -69,6 +91,73 @@ public class MemUtils {
             }
         } catch (Exception ex) {
             return img;
+        }
+    }
+
+    private static String getStoragePath(Context context) {
+        File externalPath = Environment.getExternalStorageDirectory();
+        String packageName = context.getPackageName();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
+        temppath.mkdirs();
+        return temppath.getAbsolutePath();
+    }
+
+    private static String getTempFolder(Context context) {
+        File tempFolder = new File(getStoragePath(context) + "/temp");
+        tempFolder.mkdirs();
+        return tempFolder.getAbsolutePath();
+    }
+
+    /**
+     * Rotate an image if required.
+     *
+     * @param context Application context
+     * @param img     The image bitmap
+     * @param uri     Image URI
+     * @return The resulted Bitmap after manipulation
+     */
+    private static Bitmap rotateImageIfRequired(Context context, Bitmap img, Uri uri) {
+        InputStream in = null;
+        File tempFile = null;
+        try {
+            ExifInterface ei = null;
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                ei = new ExifInterface(context.getContentResolver().openInputStream(uri));
+            } else {
+                in = context.getContentResolver().openInputStream(uri);
+                tempFile = File.createTempFile("img", "dat", new File(getTempFolder(context)));
+                FileUtils.writeStream(in, tempFile);
+                in.close();
+                in = null;
+                ei = new ExifInterface(tempFile.getAbsolutePath());
+            }
+
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(img, 270);
+                default:
+                    return img;
+            }
+        } catch (Exception ex) {
+            return img;
+        } finally {
+            try {
+                if (in != null) in.close();
+            } catch (Exception ex) {
+            }
+            try {
+                if (tempFile != null && tempFile.exists()) {
+                    tempFile.delete();
+                }
+            } catch (Exception ex) {
+            }
         }
     }
 

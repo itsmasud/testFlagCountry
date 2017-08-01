@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -123,6 +120,9 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -154,6 +154,9 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_alerts == null)
+            _alerts = new TaskAlert[0];
+
         return _alerts;
     }
 
@@ -176,10 +179,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_attachment != null && _attachment.isSet())
-            return _attachment;
+        if (_attachment == null)
+            _attachment = new Attachment();
 
-        return null;
+        return _attachment;
     }
 
     public Task attachment(Attachment attachment) throws ParseException {
@@ -201,10 +204,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_attachments != null && _attachments.isSet())
-            return _attachments;
+        if (_attachments == null)
+            _attachments = new AttachmentFolder();
 
-        return null;
+        return _attachments;
     }
 
     public Task attachments(AttachmentFolder attachments) throws ParseException {
@@ -226,10 +229,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-            return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+        return _author;
     }
 
     public Task author(User author) throws ParseException {
@@ -251,10 +254,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_checkIn != null && _checkIn.isSet())
-            return _checkIn;
+        if (_checkIn == null)
+            _checkIn = new TimeLog();
 
-        return null;
+        return _checkIn;
     }
 
     public Task checkIn(TimeLog checkIn) throws ParseException {
@@ -276,10 +279,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_checkOut != null && _checkOut.isSet())
-            return _checkOut;
+        if (_checkOut == null)
+            _checkOut = new TimeLog();
 
-        return null;
+        return _checkOut;
     }
 
     public Task checkOut(TimeLog checkOut) throws ParseException {
@@ -323,10 +326,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_completed != null && _completed.isSet())
-            return _completed;
+        if (_completed == null)
+            _completed = new Date();
 
-        return null;
+        return _completed;
     }
 
     public Task completed(Date completed) throws ParseException {
@@ -348,10 +351,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+        return _created;
     }
 
     public Task created(Date created) throws ParseException {
@@ -373,10 +376,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_customField != null && _customField.isSet())
-            return _customField;
+        if (_customField == null)
+            _customField = new CustomField();
 
-        return null;
+        return _customField;
     }
 
     public Task customField(CustomField customField) throws ParseException {
@@ -442,10 +445,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_eta != null && _eta.isSet())
-            return _eta;
+        if (_eta == null)
+            _eta = new ETA();
 
-        return null;
+        return _eta;
     }
 
     public Task eta(ETA eta) throws ParseException {
@@ -467,10 +470,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_group != null && _group.isSet())
-            return _group;
+        if (_group == null)
+            _group = new TaskGroup();
 
-        return null;
+        return _group;
     }
 
     public Task group(TaskGroup group) throws ParseException {
@@ -558,10 +561,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_shipment != null && _shipment.isSet())
-            return _shipment;
+        if (_shipment == null)
+            _shipment = new Shipment();
 
-        return null;
+        return _shipment;
     }
 
     public Task shipment(Shipment shipment) throws ParseException {
@@ -583,10 +586,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_signature != null && _signature.isSet())
-            return _signature;
+        if (_signature == null)
+            _signature = new Signature();
 
-        return null;
+        return _signature;
     }
 
     public Task signature(Signature signature) throws ParseException {
@@ -630,10 +633,10 @@ public class Task implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_type != null && _type.isSet())
-            return _type;
+        if (_type == null)
+            _type = new TaskType();
 
-        return null;
+        return _type;
     }
 
     public Task type(TaskType type) throws ParseException {
@@ -785,10 +788,6 @@ public class Task implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

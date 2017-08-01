@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
-import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.ui.search.SearchEditText;
 import com.fieldnation.ui.workorder.WorkOrderActivity;
 

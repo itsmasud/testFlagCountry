@@ -82,12 +82,10 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
         if (_workOrder == null)
             return;
 
-        if (_workOrder.getPay() == null)
-            return;
-
         if (_workOrder.getStatus().getId() == 2
                 || _workOrder.getStatus().getId() == 9
-                || _workOrder.getPay().getExpenses() == null) {
+                || (_workOrder.getPay().getExpenses().getResults().length == 0
+                && _workOrder.getPay().getExpenses().getActions().length == 0)) {
             setVisibility(GONE);
             return;
         } else {
@@ -95,8 +93,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
         }
 
 
-        if (_workOrder.getPay().getExpenses() != null
-                && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
+        if (_workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
             _addButton.setVisibility(VISIBLE);
         } else {
             _addButton.setVisibility(GONE);
@@ -104,7 +101,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
 
 
         final Expense[] list = _workOrder.getPay().getExpenses().getResults();
-        if (list == null || list.length == 0) {
+        if (list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
             return;
@@ -149,10 +146,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
     private final View.OnClickListener _expense_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null
-                    && _workOrder.getPay() != null
-                    && _workOrder.getPay().getExpenses() != null
-                    && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
+            if (_listener != null && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
                 _listener.expenseOnClick(((ExpenseView) v).getExpense());
             }
         }
@@ -175,10 +169,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkOrderRender
     private final View.OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null
-                    && _workOrder.getPay() != null
-                    && _workOrder.getPay().getExpenses() != null
-                    && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
+            if (_listener != null && _workOrder.getPay().getExpenses().getActionsSet().contains(Expenses.ActionsEnum.ADD)) {
                 _listener.addExpense();
             }
         }

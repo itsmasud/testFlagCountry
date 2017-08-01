@@ -76,6 +76,10 @@ public abstract class FullScreenDialog implements Dialog {
 
     public abstract View onCreateView(LayoutInflater inflater, Context context, ViewGroup container);
 
+    public Context getContext() {
+        return _root.getContext();
+    }
+
     @Override
     public void onStart() {
     }

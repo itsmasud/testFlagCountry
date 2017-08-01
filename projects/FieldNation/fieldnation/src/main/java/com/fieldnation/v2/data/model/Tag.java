@@ -81,6 +81,9 @@ public class Tag implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -107,10 +110,10 @@ public class Tag implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-            return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+            return _author;
     }
 
     public Tag author(User author) throws ParseException {
@@ -132,10 +135,10 @@ public class Tag implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Tag created(Date created) throws ParseException {
@@ -232,6 +235,9 @@ public class Tag implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_types == null)
+            _types = new TypesEnum[0];
+
         return _types;
     }
 
@@ -266,6 +272,9 @@ public class Tag implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_validStatuses == null)
+            _validStatuses = new ValidStatusesEnum[0];
 
         return _validStatuses;
     }
@@ -477,7 +486,4 @@ public class Tag implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

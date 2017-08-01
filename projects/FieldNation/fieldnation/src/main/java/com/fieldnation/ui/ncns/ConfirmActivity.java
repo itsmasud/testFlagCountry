@@ -66,7 +66,9 @@ public class ConfirmActivity extends AuthSimpleActivity {
         App.get().getSpUiContext().page = "Confirm Work";
 
         try {
-            _savedList = new SavedList().id("workorders_assignments");
+            _savedList = new SavedList()
+                    .id("workorders_assignments")
+                    .label("assigned");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -88,7 +90,14 @@ public class ConfirmActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _recyclerView.onResume();
         _recyclerView.startSearch(_savedList, _options);
+    }
+
+    @Override
+    protected void onPause() {
+        _recyclerView.onPause();
+        super.onPause();
     }
 
     @Override
@@ -119,14 +128,14 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     @Override
     public void onBackPressed() {
+        getDialogManager().onBackPressed();
         // do nothing, you're stuck here.... muhahahah
     }
 
     private final ConfirmResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new ConfirmResultScreen.OnWorkOrderListReceivedListener() {
         @Override
         public void OnWorkOrderListReceived(final WorkOrders workOrders) {
-            if (workOrders == null
-                    || workOrders.getResults() == null) {
+            if (workOrders == null) {
                 return;
             }
 

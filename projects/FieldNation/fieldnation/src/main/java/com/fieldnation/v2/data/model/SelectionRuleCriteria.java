@@ -84,10 +84,10 @@ public class SelectionRuleCriteria implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_customField != null && _customField.isSet())
-        return _customField;
+        if (_customField == null)
+            _customField = new CustomField();
 
-        return null;
+        return _customField;
     }
 
     public SelectionRuleCriteria customField(CustomField customField) throws ParseException {
@@ -571,7 +571,4 @@ public class SelectionRuleCriteria implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

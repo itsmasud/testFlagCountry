@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 
 /**
  * Created by Michael on 9/26/2016.

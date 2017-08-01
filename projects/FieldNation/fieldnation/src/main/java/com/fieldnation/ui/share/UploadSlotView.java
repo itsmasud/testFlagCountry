@@ -12,6 +12,7 @@ import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.v2.data.model.AttachmentFolder;
 
 public class UploadSlotView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("UploadSlotView");
@@ -22,7 +23,7 @@ public class UploadSlotView extends RelativeLayout {
     private RelativeLayout _Layout;
 
     // Data
-    private UploadSlot _slot;
+    private AttachmentFolder _slot;
     private Listener _listener;
     boolean _checked;
 
@@ -88,7 +89,7 @@ public class UploadSlotView extends RelativeLayout {
     }
 
 
-    public void setData(UploadSlot slot) {
+    public void setData(AttachmentFolder slot) {
         Log.v(TAG, "setData");
 
         _slot = slot;
@@ -102,7 +103,7 @@ public class UploadSlotView extends RelativeLayout {
         if (_slot == null)
             return;
 
-        _titleTextView.setText(_slot.getSlotName().toUpperCase());
+        _titleTextView.setText(_slot.getName().toUpperCase());
     }
 
     /*-*************************-*/
@@ -117,6 +118,6 @@ public class UploadSlotView extends RelativeLayout {
     };
 
     public interface Listener {
-        void onClick(UploadSlotView view, UploadSlot slot);
+        void onClick(UploadSlotView view, AttachmentFolder slot);
     }
 }

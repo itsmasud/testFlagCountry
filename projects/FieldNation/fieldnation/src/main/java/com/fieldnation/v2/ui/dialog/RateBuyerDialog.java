@@ -3,6 +3,7 @@ package com.fieldnation.v2.ui.dialog;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -82,18 +83,18 @@ public class RateBuyerDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_rate_buyer, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _rateStarView = (StarView) v.findViewById(R.id.star_rating);
-        _picView = (ProfilePicView) v.findViewById(R.id.pic_view);
-        _companyNameTextView = (TextView) v.findViewById(R.id.company_name_textview);
-        _locationTextView = (TextView) v.findViewById(R.id.location_textview);
-        _expectationNoTextView = (TextView) v.findViewById(R.id.expectation_no_textview);
-        _expectationYesTextView = (TextView) v.findViewById(R.id.expectation_yes_textview);
-        _chkProfessionalNoTextView = (TextView) v.findViewById(R.id.chk_professional_no_textview);
-        _chkProfessionalYesTextView = (TextView) v.findViewById(R.id.chk_professinal_yes_textview);
-        _otherThoughtsEditText = (EditText) v.findViewById(R.id.other_thoughts_edittext);
-        _submitButton = (Button) v.findViewById(R.id.submit_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _rateStarView = v.findViewById(R.id.star_rating);
+        _picView = v.findViewById(R.id.pic_view);
+        _companyNameTextView = v.findViewById(R.id.company_name_textview);
+        _locationTextView = v.findViewById(R.id.location_textview);
+        _expectationNoTextView = v.findViewById(R.id.expectation_no_textview);
+        _expectationYesTextView = v.findViewById(R.id.expectation_yes_textview);
+        _chkProfessionalNoTextView = v.findViewById(R.id.chk_professional_no_textview);
+        _chkProfessionalYesTextView = v.findViewById(R.id.chk_professinal_yes_textview);
+        _otherThoughtsEditText = v.findViewById(R.id.other_thoughts_edittext);
+        _submitButton = v.findViewById(R.id.submit_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }
@@ -166,8 +167,10 @@ public class RateBuyerDialog extends FullScreenDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         Log.v(TAG, "show");
-        _workOrder = payload.getParcelable(PARAM_WORKORDER);
         super.show(payload, animate);
+        _workOrder = payload.getParcelable(PARAM_WORKORDER);
+
+        populateUi();
     }
 
     @Override
@@ -226,8 +229,7 @@ public class RateBuyerDialog extends FullScreenDialog {
 
         _titleTextView.setText(getView().getResources().getString(R.string.dialog_rate_buyer_title, _workOrder.getId()));
 
-        if (_workOrder.getCompany() != null
-                && _workOrder.getCompany().getName() != null) {
+        if (!misc.isEmptyOrNull(_workOrder.getCompany().getName())) {
             _companyNameTextView.setText(_workOrder.getCompany().getName());
         }
 
@@ -248,7 +250,6 @@ public class RateBuyerDialog extends FullScreenDialog {
             String url = _workOrder.getCompany().getPhoto();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
-                _photos.subGet(url, true, false);
             }
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
@@ -303,7 +304,6 @@ public class RateBuyerDialog extends FullScreenDialog {
                 _submitButton.setEnabled(true);
             else
                 _submitButton.setEnabled(false);
-
         }
     };
 
@@ -330,18 +330,31 @@ public class RateBuyerDialog extends FullScreenDialog {
 
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
-        public void onConnected() {
-            populateUi();
+        public PhotoClient getClient() {
+            return _photos;
         }
 
         @Override
-        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
-            if (bitmapDrawable == null) {
+        public void imageDownloaded(String sourceUri, Uri localUri, boolean isCircle, boolean success) {
+        }
+
+        @Override
+        public boolean doGetImage(String sourceUri, boolean isCircle) {
+            return isCircle
+                    && _workOrder != null
+                    && _workOrder.getCompany() != null
+                    && !misc.isEmptyOrNull(_workOrder.getCompany().getPhoto())
+                    && sourceUri.equals(_workOrder.getCompany().getPhoto());
+        }
+
+        @Override
+        public void onImageReady(String sourceUri, Uri localUri, BitmapDrawable drawable, boolean isCircle, boolean success) {
+            if (drawable == null) {
                 _picView.setProfilePic(R.drawable.missing_circle);
                 return;
             }
 
-            Drawable pic = bitmapDrawable;
+            Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
         }
@@ -350,10 +363,8 @@ public class RateBuyerDialog extends FullScreenDialog {
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            WorkorderClient.sendRating(App.get(), _workOrder.getId(),
-                    _goldStar, _hasSelectedScopeRating == true ? 1 : 0,
-                    _hasSelectedRespectRating == true ? 1 : 0, _commentText);
+            WorkorderClient.sendRating(App.get(), _workOrder.getId(), _goldStar,
+                    _hasSelectedScopeRating == true ? 1 : 0, _hasSelectedRespectRating == true ? 1 : 0, _commentText);
             dismiss(true);
         }
     };

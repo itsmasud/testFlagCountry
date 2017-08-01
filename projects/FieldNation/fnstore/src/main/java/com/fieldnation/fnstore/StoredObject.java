@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcel;
@@ -108,12 +109,22 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return _lastupdated;
     }
 
-    public boolean isFile() {
+    public boolean isUri() {
         return _isFile;
     }
 
-    public File getFile() {
-        return _file;
+    public Uri getUri() {
+        return Uri.fromFile(_file);
+    }
+
+    public long size() {
+        if (_file != null)
+            return _file.length();
+
+        if (_data != null)
+            return _data.length;
+
+        return -1;
     }
 
     public void setFile(File file) {
@@ -258,72 +269,94 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, File file, String filename) {
-        return put(context, profileId, objectTypeName, objectKey + "", file, filename, true);
+    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, Uri uri, String filename) {
+        return put(context, profileId, objectTypeName, objectKey + "", uri, filename, true);
     }
 
-    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, File file, String filename, boolean expires) {
-        return put(context, profileId, objectTypeName, objectKey + "", file, filename, expires);
+    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, Uri uri, String filename, boolean expires) {
+        return put(context, profileId, objectTypeName, objectKey + "", uri, filename, expires);
     }
 
-    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, File file, String filename) {
-        return put(context, profileId, objectTypeName, objectKey, file, filename, true);
+    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, Uri uri, String filename) {
+        return put(context, profileId, objectTypeName, objectKey, uri, filename, true);
     }
 
-    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, File file, String filename, boolean expires) {
-        Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", " + file + ", " + filename + ", " + expires + ")");
-        // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
-        StoredObject result = get(context, profileId, objectTypeName, objectKey);
-        if (result != null) {
-            delete(context, result);
+    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, Uri uri, String filename, boolean expires) {
+        Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", " + uri + ", " + filename + ", " + expires + ")");
+        try {
+            return put(context, profileId, objectTypeName, objectKey, context.getContentResolver().openInputStream(uri), filename, expires);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
-
-        ContentValues v = new ContentValues();
-        v.put(Column.PROFILE_ID.getName(), profileId);
-        v.put(Column.OBJ_NAME.getName(), objectTypeName);
-        v.put(Column.OBJ_KEY.getName(), objectKey);
-        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
-        v.put(Column.IS_FILE.getName(), true);
-        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
-
-        long id = -1;
-        synchronized (TAG) {
-            ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
-            SQLiteDatabase db = helper.getWritableDatabase();
-            id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
-        }
-        if (id != -1) {
-            // Log.v(TAG, "put2, copy file, " + id);
-            // copy the file to the file store
-            String appFileStore = getStoragePath(context) + "/FileStore";
-            new File(appFileStore).mkdirs();
-            File dest = new File(appFileStore + "/" + id + "_" + filename);
-
-            if (dest.exists())
-                dest.delete();
-
-            boolean copySuccess = false;
-            try {
-                copySuccess = FileUtils.copyFile(file, dest);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-
-            if (!copySuccess) {
-                // Log.v(TAG, "put2, copy failed");
-                delete(context, id);
-                dest.delete();
-            } else {
-                // Log.v(TAG, "put2, copy success");
-                result = get(context, id);
-                result.setFile(dest);
-                result = result.save(context);
-                return result;
-            }
-        }
-
         return null;
     }
+
+//    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, File file, String filename) {
+//        return put(context, profileId, objectTypeName, objectKey + "", file, filename, true);
+//    }
+//
+//    public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, File file, String filename, boolean expires) {
+//        return put(context, profileId, objectTypeName, objectKey + "", file, filename, expires);
+//    }
+//
+//    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, File file, String filename) {
+//        return put(context, profileId, objectTypeName, objectKey, file, filename, true);
+//    }
+//
+//    public static StoredObject put(Context context, long profileId, String objectTypeName, String objectKey, File file, String filename, boolean expires) {
+//        Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", " + file + ", " + filename + ", " + expires + ")");
+//        // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
+//        StoredObject result = get(context, profileId, objectTypeName, objectKey);
+//        if (result != null) {
+//            delete(context, result);
+//        }
+//
+//        ContentValues v = new ContentValues();
+//        v.put(Column.PROFILE_ID.getName(), profileId);
+//        v.put(Column.OBJ_NAME.getName(), objectTypeName);
+//        v.put(Column.OBJ_KEY.getName(), objectKey);
+//        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
+//        v.put(Column.IS_FILE.getName(), true);
+//        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
+//
+//        long id = -1;
+//        synchronized (TAG) {
+//            ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(context);
+//            SQLiteDatabase db = helper.getWritableDatabase();
+//            id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+//        }
+//        if (id != -1) {
+//            // Log.v(TAG, "put2, copy file, " + id);
+//            // copy the file to the file store
+//            String appFileStore = getStoragePath(context) + "/FileStore";
+//            new File(appFileStore).mkdirs();
+//            File dest = new File(appFileStore + "/" + id + "_" + filename);
+//
+//            if (dest.exists())
+//                dest.delete();
+//
+//            boolean copySuccess = false;
+//            try {
+//                copySuccess = FileUtils.copyFile(file, dest);
+//            } catch (Exception ex) {
+//                Log.v(TAG, ex);
+//            }
+//
+//            if (!copySuccess) {
+//                // Log.v(TAG, "put2, copy failed");
+//                delete(context, id);
+//                dest.delete();
+//            } else {
+//                // Log.v(TAG, "put2, copy success");
+//                result = get(context, id);
+//                result.setFile(dest);
+//                result = result.save(context);
+//                return result;
+//            }
+//        }
+//
+//        return null;
+//    }
 
     public static StoredObject put(Context context, long profileId, String objectTypeName, long objectKey, InputStream inputStream, String filename) {
         return put(context, profileId, objectTypeName, objectKey + "", inputStream, filename, true);

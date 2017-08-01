@@ -11,10 +11,13 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.ui.EmptyCardView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.v2.data.client.GetWorkOrdersOptions;
@@ -46,6 +49,7 @@ public class SearchResultScreen extends RelativeLayout {
     // Service
     private SimpleGps _simpleGps;
     private WorkordersWebApi _workOrderClient;
+    private GlobalTopicClient _globalTopicClient;
 
     // Data
     private GetWorkOrdersOptions _workOrdersOptions;
@@ -100,18 +104,27 @@ public class SearchResultScreen extends RelativeLayout {
 
     @Override
     protected void onAttachedToWindow() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
-
         super.onAttachedToWindow();
 
         FilterDrawerDialog.addOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
     }
 
+    public void onResume() {
+        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
+        _workOrderClient.connect(App.get());
+
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(App.get());
+    }
+
+    public void onPause() {
+        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
 
         FilterDrawerDialog.removeOnOkListener(DIALOG_FILTER_DRAWER, _filterDrawer_onOk);
 
@@ -133,6 +146,10 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onFail(SimpleGps simpleGps) {
             ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+
+        @Override
+        public void onPermissionDenied(SimpleGps simpleGps) {
         }
     };
 
@@ -194,6 +211,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onConnected() {
             _workOrderClient.subWorkordersWebApi();
+            _adapter.refreshAll();
         }
 
         @Override
@@ -218,14 +236,7 @@ public class SearchResultScreen extends RelativeLayout {
                 if (_onListReceivedListener != null)
                     _onListReceivedListener.OnWorkOrderListReceived(workOrders);
 
-                if (workOrders.getMetadata() == null || workOrders.getResults() == null) {
-                    _refreshView.refreshComplete();
-                    return;
-                }
-
                 ListEnvelope envelope = workOrders.getMetadata();
-
-                //Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
 
                 if (envelope.getTotal() == 0) {
                     _adapter.clear();
@@ -237,20 +248,32 @@ public class SearchResultScreen extends RelativeLayout {
                     _adapter.addObjects(envelope.getPage(), (WorkOrder[]) null);
 
                 _refreshView.refreshComplete();
+            } else {
+                if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
+                    return;
+
+                WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
+
+                _adapter.refreshAll();
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _refreshView.startRefreshing();
+                    }
+                });
             }
+        }
+    };
 
-            if (methodName.startsWith("get") || methodName.toLowerCase().contains("attachment"))
-                return;
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalTopicClient.subUserSwitched();
+        }
 
-            WorkordersWebApi.getWorkOrderLists(App.get(), false, false);
-
+        @Override
+        public void onUserSwitched(Profile profile) {
             _adapter.refreshAll();
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    _refreshView.startRefreshing();
-                }
-            });
         }
     };
 
@@ -297,13 +320,49 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
+            EmptyCardView v = new EmptyCardView(getContext());
+
+            if (_savedList.getLabel().equalsIgnoreCase("available")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_AVAILABLE);
+            } else if (_savedList.getLabel().equalsIgnoreCase("routed")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_ROUTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("requested")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_REQUESTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("counter")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_COUNTER);
+            } else if (_savedList.getLabel().equalsIgnoreCase("assigned")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_ASSIGNED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("pending")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_PENDING);
+            } else if (_savedList.getLabel().equalsIgnoreCase("completed")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_COMPLETED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("declined")) {
+                v.setData(EmptyCardView.PARAM_VIEW_TYPE_DECLINED);
+            }
+
             return new BaseHolder(v, BaseHolder.TYPE_EMPTY);
         }
 
         @Override
         public void onBindEmptyViewHolder(BaseHolder holder) {
-            // nothing
+            EmptyCardView view = (EmptyCardView) holder.itemView;
+            if (_savedList.getLabel().equalsIgnoreCase("available")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_AVAILABLE);
+            } else if (_savedList.getLabel().equalsIgnoreCase("routed")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_ROUTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("requested")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_REQUESTED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("counter")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_COUNTER);
+            } else if (_savedList.getLabel().equalsIgnoreCase("assigned")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_ASSIGNED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("pending")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_PENDING);
+            } else if (_savedList.getLabel().equalsIgnoreCase("completed")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_COMPLETED);
+            } else if (_savedList.getLabel().equalsIgnoreCase("declined")) {
+                view.setData(EmptyCardView.PARAM_VIEW_TYPE_DECLINED);
+            }
         }
     };
 

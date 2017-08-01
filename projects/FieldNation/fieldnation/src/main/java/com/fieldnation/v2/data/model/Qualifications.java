@@ -63,6 +63,9 @@ public class Qualifications implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -89,10 +92,10 @@ public class Qualifications implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_selectionRule != null && _selectionRule.isSet())
-        return _selectionRule;
+        if (_selectionRule == null)
+            _selectionRule = new SelectionRule();
 
-        return null;
+        return _selectionRule;
     }
 
     public Qualifications selectionRule(SelectionRule selectionRule) throws ParseException {
@@ -206,7 +209,4 @@ public class Qualifications implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

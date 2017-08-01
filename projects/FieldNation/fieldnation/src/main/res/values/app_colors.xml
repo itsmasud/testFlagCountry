@@ -13,7 +13,7 @@
 
     <color name="fn_yellow">#FFFF983D</color>
 
-    <color name="fn_red">#FFa21623</color>
+    <color name="fn_red">#FFE00000</color>
 
     <color name="fn_leaving_grad_start">#FF671d26</color>
     <color name="fn_leaving_grad_end">#FF6c4416</color>
@@ -126,6 +126,9 @@
     <color name="fn_dark_text_50">#801e1e1e</color>
     <color name="fn_dark_text_25">#3F1e1e1e</color>
     <color name="fn_dark_text_0">#001e1e1e</color>
+
+    <color name="fn_gray_dark">#FF333333</color>
+    <color name="fn_gray_light">#FF555555</color>
 
     <color name="fn_clickable_text">#FF2196F3</color>
     <color name="fn_clickable_text_50">#802196F3</color>

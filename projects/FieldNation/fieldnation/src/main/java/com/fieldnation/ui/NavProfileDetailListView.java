@@ -42,7 +42,7 @@ public class NavProfileDetailListView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _profileList = (LinearLayout) findViewById(R.id.profile_list);
+        _profileList = findViewById(R.id.profile_list);
 
         populateUi();
     }

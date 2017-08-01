@@ -81,6 +81,9 @@ public class AvailableColumn implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_items == null)
+            _items = new AvailableColumnItems[0];
+
         return _items;
     }
 
@@ -157,7 +160,4 @@ public class AvailableColumn implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

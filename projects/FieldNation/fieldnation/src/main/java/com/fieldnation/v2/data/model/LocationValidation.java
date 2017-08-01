@@ -86,6 +86,9 @@ public class LocationValidation implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_messages == null)
+            _messages = new String[0];
+
         return _messages;
     }
 
@@ -166,7 +169,4 @@ public class LocationValidation implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

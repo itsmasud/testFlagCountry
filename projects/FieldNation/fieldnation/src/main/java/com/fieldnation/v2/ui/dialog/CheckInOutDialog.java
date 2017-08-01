@@ -4,7 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -29,7 +29,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -371,10 +371,17 @@ public class CheckInOutDialog extends FullScreenDialog {
                         if (timeLog.getStatus() == TimeLog.StatusEnum.CHECKED_IN) {
                             if (_itemSelectedPosition > INVALID_NUMBER) {
                                 timeLog.devices((double) _itemSelectedPosition);
+                                if (timeLog.getIn().getCreated().getCalendar().after(_startCalendar)) {
+                                    ToastClient.toast(App.get(), "Check Out Failed. Check your mobile date and time.", Toast.LENGTH_SHORT);
+                                    setLoading(false);
+                                    return false;
+                                }
+
                             }
                             timeLog.out(cio);
                             SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                             uiContext.page += " - Check Out Dialog";
+                            Log.e(TAG, "check out: " + timeLog.getJson());
                             WorkordersWebApi.updateTimeLog(App.get(), _workOrder.getId(), timeLog.getId(), timeLog, uiContext);
                             callMade = true;
                             break;

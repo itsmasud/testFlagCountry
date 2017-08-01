@@ -41,7 +41,7 @@ public class RemindMeService extends Service {
             _workOrdersApi.subWorkordersWebApi();
 
             GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
-            opts.setPerPage(65);
+            opts.setPerPage(25);
             opts.setList("workorders_assignments");
             opts.setFFlightboardTomorrow(true);
             opts.setPage(1);
@@ -66,8 +66,11 @@ public class RemindMeService extends Service {
 
                 WorkOrders workOrders = (WorkOrders) successObject;
 
-                if (workOrders.getMetadata() != null
-                        && workOrders.getMetadata().getTotal() != null
+                if (!"workorders_assignments".equals(workOrders.getMetadata().getList())) {
+                    return;
+                }
+
+                if (workOrders.getMetadata().getTotal() != null
                         && workOrders.getMetadata().getTotal() > 0) {
                     Log.v(TAG, "onComplete setNeedsConfirmation");
                     App.get().setNeedsConfirmation(true);

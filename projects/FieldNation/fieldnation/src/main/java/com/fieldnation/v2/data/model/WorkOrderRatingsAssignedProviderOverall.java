@@ -54,10 +54,10 @@ public class WorkOrderRatingsAssignedProviderOverall implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_company != null && _company.isSet())
-            return _company;
+        if (_company == null)
+            _company = new ProviderRatings();
 
-        return null;
+            return _company;
     }
 
     public WorkOrderRatingsAssignedProviderOverall company(ProviderRatings company) throws ParseException {
@@ -79,10 +79,10 @@ public class WorkOrderRatingsAssignedProviderOverall implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_marketplace != null && _marketplace.isSet())
-            return _marketplace;
+        if (_marketplace == null)
+            _marketplace = new ProviderRatings();
 
-        return null;
+            return _marketplace;
     }
 
     public WorkOrderRatingsAssignedProviderOverall marketplace(ProviderRatings marketplace) throws ParseException {
@@ -158,7 +158,4 @@ public class WorkOrderRatingsAssignedProviderOverall implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

@@ -19,10 +19,10 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
@@ -191,12 +191,14 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
             if (resultCode == Activity.RESULT_OK && requestCode == ActivityResultConstants.RESULT_CODE_VOICE_REQUEST) {
                 ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                 String firstMatch = (String) matches.get(0);
                 _searchTermEditText.setText(misc.extractNumbers(firstMatch));
+                return true;
             }
+            return false;
         }
     };
 

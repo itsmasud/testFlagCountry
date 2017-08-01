@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Text_Display_4">
+        <item name="android:textSize">112sp</item>
+        <item name="android:alpha">0.54</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="Text_Display_3">
+        <item name="android:textSize">56sp</item>
+        <item name="android:alpha">0.54</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="Text_Display_2">
+        <item name="android:textSize">45sp</item>
+        <item name="android:alpha">0.54</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="Text_Display_1">
+        <item name="android:textSize">34sp</item>
+        <item name="android:alpha">0.54</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="Text_Headline">
+        <item name="android:textSize">24sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:alpha">0.87</item>
+        <!--<item name="android:maxLines">1</item>-->
+    </style>
+
+    <style name="Text_Subhead">
+        <item name="android:textSize">16sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Body_2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Body_1">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Body_1_Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
+    <style name="Text_Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
+    <style name="Text_Caption_Small">
+        <item name="android:textSize">10sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
+    <style name="Text_Menu">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.87</item>
+    </style>
+
+    <style name="Text_Button" parent="@android:style/Widget.Button">
+        <item name="android:textSize">14sp</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="Text_Roboto_Medium">
+        <item name="android:alpha">1</item>
+    </style>
+
+    <color name="fn_dark_text">#FF1e1e1e</color>
+    <color name="fn_dark_text_80">#CC1e1e1e</color>
+    <color name="fn_dark_text_50">#801e1e1e</color>
+    <color name="fn_dark_text_25">#3F1e1e1e</color>
+    <color name="fn_dark_text_0">#001e1e1e</color>
+    <color name="fn_clickable_text">#FF2196F3</color>
+
+    <dimen name="button_height">40dp</dimen>
+    <dimen name="button_horr_padding">12dp</dimen>
+    <dimen name="button_horr_margin">1dp</dimen>
+    <dimen name="button_vert_margin">4dp</dimen>
+    <dimen name="button_min_width">88dp</dimen>
+
+    <style name="Material.Button" parent="Text_Button">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:layout_marginLeft">@dimen/button_horr_margin</item>
+        <item name="android:layout_marginRight">@dimen/button_horr_margin</item>
+        <item name="android:layout_marginTop">@dimen/button_vert_margin</item>
+        <item name="android:layout_marginBottom">@dimen/button_vert_margin</item>
+        <item name="android:paddingLeft">@dimen/button_horr_padding</item>
+        <item name="android:paddingRight">@dimen/button_horr_padding</item>
+    </style>
+
+    <style name="Material.Button.Flat" parent="Material.Button">
+        <item name="android:background">@null</item>
+        <item name="android:textColor">@color/btn_fg_flat</item>
+    </style>
+</resources>

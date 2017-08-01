@@ -54,10 +54,10 @@ public class UpdateModelParams implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_model != null && _model.isSet())
-            return _model;
+        if (_model == null)
+            _model = new UpdateModelParamsModel();
 
-        return null;
+            return _model;
     }
 
     public UpdateModelParams model(UpdateModelParamsModel model) throws ParseException {
@@ -79,10 +79,10 @@ public class UpdateModelParams implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_updateScheduleByWorkOrder != null && _updateScheduleByWorkOrder.isSet())
-            return _updateScheduleByWorkOrder;
+        if (_updateScheduleByWorkOrder == null)
+            _updateScheduleByWorkOrder = new EventUpdateScheduleByWorkOrder();
 
-        return null;
+            return _updateScheduleByWorkOrder;
     }
 
     public UpdateModelParams updateScheduleByWorkOrder(EventUpdateScheduleByWorkOrder updateScheduleByWorkOrder) throws ParseException {
@@ -158,7 +158,4 @@ public class UpdateModelParams implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

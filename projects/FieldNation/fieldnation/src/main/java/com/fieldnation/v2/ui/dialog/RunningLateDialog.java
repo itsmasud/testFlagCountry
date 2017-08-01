@@ -1,8 +1,6 @@
 package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -24,13 +22,12 @@ import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Condition;
-import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -109,22 +106,22 @@ public class RunningLateDialog extends SimpleDialog {
 
         Calendar cal = null;
         try {
-            if (_workOrder.getEta() != null && _workOrder.getEta().getStart() != null) {
+            if (_workOrder.getEta().getStatus().getName() != null
+                    && _workOrder.getEta().getStatus().getName() != ETAStatus.NameEnum.UNCONFIRMED
+                    && _workOrder.getEta().getStart().getUtc() != null) {
                 cal = _workOrder.getEta().getStart().getCalendar();
-            } else if (_workOrder.getSchedule() != null
-                    && _workOrder.getSchedule().getServiceWindow() != null
-                    && _workOrder.getSchedule().getServiceWindow().getStart() != null) {
+
+            } else if (_workOrder.getSchedule().getServiceWindow().getStart().getUtc() != null) {
                 cal = _workOrder.getSchedule().getServiceWindow().getStart().getCalendar();
             }
-            _bodyTextView.setText(
-                    _workOrder.getTitle()
-                            + " is scheduled to begin at "
-                            + DateUtils.formatTime2(cal) + ".");
+            _bodyTextView.setText(_workOrder.getTitle()
+                    + " is scheduled to begin at "
+                    + DateUtils.formatTime2(cal) + ".");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if (_workOrder.getContacts() == null || _workOrder.getContacts().getResults() == null || _workOrder.getContacts().getResults().length == 0) {
+        if (_workOrder.getContacts().getResults().length == 0) {
             _callButton.setVisibility(View.GONE);
         } else {
             _callButton.setVisibility(View.VISIBLE);
@@ -162,15 +159,7 @@ public class RunningLateDialog extends SimpleDialog {
     private final View.OnClickListener _call_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                Contact contact = _workOrder.getContacts().getResults()[0];
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + contact.getPhone()));
-                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                App.get().startActivity(callIntent);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            ContactListDialog.show(App.get(), "", _workOrder);
         }
     };
 
@@ -199,10 +188,8 @@ public class RunningLateDialog extends SimpleDialog {
 
                 ETA eta = new ETA()
                         .condition(new Condition()
-                                        .estimatedDelay(delayMin * 60)
-                                        .status(Condition.StatusEnum.DELAYED));
-
-                Log.e(TAG, "eta: " + eta.getJson());
+                                .estimatedDelay(delayMin * 60)
+                                .status(Condition.StatusEnum.DELAYED));
 
                 SpUIContext uiContext = (SpUIContext) App.get().getSpUiContext().clone();
                 uiContext.page += " - Running Late Dialog";

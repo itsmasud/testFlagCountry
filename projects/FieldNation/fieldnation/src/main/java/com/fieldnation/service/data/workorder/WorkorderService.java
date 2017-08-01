@@ -234,24 +234,20 @@ public class WorkorderService extends MultiThreadedService implements WorkorderC
     private void uploadDeliverable(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
-        String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
         String photoDescription = intent.getStringExtra(PARAM_FILE_DESCRIPTION);
         Uri uri = intent.getParcelableExtra(PARAM_URI);
 
-        if (uri != null) {
-            try {
-                StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
-                if (cache != null) {
-                    WorkorderTransactionBuilder.uploadDeliverable(this, cache, filename, photoDescription, workorderId, uploadSlotId);
-                } else {
-                    WorkorderTransactionBuilder.uploadDeliverable(this, this.getContentResolver().openInputStream(uri), filename, photoDescription, workorderId, uploadSlotId);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+        try {
+            StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
+            if (cache != null) {
+                WorkorderTransactionBuilder.uploadDeliverable(this, cache, filename, photoDescription, workorderId, uploadSlotId);
+            } else {
+                WorkorderTransactionBuilder.uploadDeliverable(this, this.getContentResolver().openInputStream(uri), filename, photoDescription, workorderId, uploadSlotId);
             }
-        } else
-            WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, photoDescription, workorderId, uploadSlotId);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     private void getDeliverable(Intent intent) {

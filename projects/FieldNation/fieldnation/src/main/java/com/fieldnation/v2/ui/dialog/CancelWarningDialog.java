@@ -15,11 +15,11 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.model.Problem;
 

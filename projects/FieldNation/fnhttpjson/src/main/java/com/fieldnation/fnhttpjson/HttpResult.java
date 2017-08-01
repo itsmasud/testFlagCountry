@@ -51,6 +51,7 @@ public class HttpResult {
         if (_baResults != null && _baResults.length >= FILE_THREASHHOLD) {
             // temp file
             File tempFolder = new File(HttpJson.TEMP_FOLDER);
+            tempFolder.mkdirs();
             File tempFile = File.createTempFile("web", "dat", tempFolder);
             FileOutputStream fout = new FileOutputStream(tempFile, false);
             fout.write(_baResults);

@@ -81,6 +81,9 @@ public class LocationProviders implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_results == null)
+            _results = new User[0];
+
         return _results;
     }
 
@@ -157,7 +160,4 @@ public class LocationProviders implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

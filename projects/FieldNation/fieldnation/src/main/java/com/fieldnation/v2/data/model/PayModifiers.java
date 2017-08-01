@@ -69,6 +69,9 @@ public class PayModifiers implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -95,10 +98,10 @@ public class PayModifiers implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-            return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+            return _metadata;
     }
 
     public PayModifiers metadata(ListEnvelope metadata) throws ParseException {
@@ -125,6 +128,9 @@ public class PayModifiers implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_results == null)
+            _results = new PayModifier[0];
+
         return _results;
     }
 
@@ -147,10 +153,10 @@ public class PayModifiers implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_sum != null && _sum.isSet())
-            return _sum;
+        if (_sum == null)
+            _sum = new PayModifiersSum();
 
-        return null;
+            return _sum;
     }
 
     public PayModifiers sum(PayModifiersSum sum) throws ParseException {
@@ -263,10 +269,6 @@ public class PayModifiers implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return true;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

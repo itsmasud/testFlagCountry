@@ -63,10 +63,10 @@ public class UpdateModel implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-            return _metadata;
+        if (_metadata == null)
+            _metadata = new UpdateModelMetadata();
 
-        return null;
+            return _metadata;
     }
 
     public UpdateModel metadata(UpdateModelMetadata metadata) throws ParseException {
@@ -88,10 +88,10 @@ public class UpdateModel implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_params != null && _params.isSet())
-            return _params;
+        if (_params == null)
+            _params = new UpdateModelParams();
 
-        return null;
+            return _params;
     }
 
     public UpdateModel params(UpdateModelParams params) throws ParseException {
@@ -233,7 +233,4 @@ public class UpdateModel implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

@@ -25,7 +25,6 @@ import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.v2.data.model.ExpenseCategory;
 
-import java.io.File;
 import java.io.InputStream;
 
 /**
@@ -804,11 +803,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns the deliverable details
+/*
     public static void uploadDeliverable(Context context, String filePath, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable file");
         StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
         uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
+*/
 
     public static void uploadDeliverable(Context context, InputStream inputStream, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
@@ -827,8 +828,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
 
 
-        if (upFile.isFile() && upFile.getFile() != null) {
-            if (upFile.getFile().length() > 100000000) { // 100 MB?
+        if (upFile.isUri() && upFile.getUri() != null) {
+            if (upFile.size() > 100000000) { // 100 MB?
                 StoredObject.delete(context, upFile);
                 ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
                 WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);

@@ -468,6 +468,9 @@ public class UserTaxInfo implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_technicianW9Status == null)
+            _technicianW9Status = new TechnicianW9Status[0];
+
         return _technicianW9Status;
     }
 
@@ -632,7 +635,4 @@ public class UserTaxInfo implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

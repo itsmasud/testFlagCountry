@@ -78,6 +78,9 @@ public class Blocks implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -104,10 +107,10 @@ public class Blocks implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-            return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+            return _author;
     }
 
     public Blocks author(User author) throws ParseException {
@@ -173,10 +176,10 @@ public class Blocks implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Blocks created(Date created) throws ParseException {
@@ -228,6 +231,9 @@ public class Blocks implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_types == null)
+            _types = new TypesEnum[0];
 
         return _types;
     }
@@ -390,7 +396,4 @@ public class Blocks implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

@@ -85,10 +85,10 @@ public class CustomFieldCategory implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_metadata != null && _metadata.isSet())
-        return _metadata;
+        if (_metadata == null)
+            _metadata = new ListEnvelope();
 
-        return null;
+        return _metadata;
     }
 
     public CustomFieldCategory metadata(ListEnvelope metadata) throws ParseException {
@@ -136,6 +136,9 @@ public class CustomFieldCategory implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new CustomField[0];
 
         return _results;
     }
@@ -235,7 +238,4 @@ public class CustomFieldCategory implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 }

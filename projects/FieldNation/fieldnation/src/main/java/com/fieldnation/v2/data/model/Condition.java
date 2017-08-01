@@ -69,10 +69,10 @@ public class Condition implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_coords != null && _coords.isSet())
-            return _coords;
+        if (_coords == null)
+            _coords = new Coords();
 
-        return null;
+            return _coords;
     }
 
     public Condition coords(Coords coords) throws ParseException {
@@ -94,10 +94,10 @@ public class Condition implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Condition created(Date created) throws ParseException {
@@ -207,10 +207,10 @@ public class Condition implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_user != null && _user.isSet())
-            return _user;
+        if (_user == null)
+            _user = new User();
 
-        return null;
+            return _user;
     }
 
     public Condition user(User user) throws ParseException {
@@ -324,7 +324,4 @@ public class Condition implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

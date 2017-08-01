@@ -16,7 +16,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.TimeLog;
@@ -58,14 +58,14 @@ public class WorkLogDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_add_worklog, container, false);
 
-        _startButton = (Button) v.findViewById(R.id.start_spinner);
-        _endButton = (Button) v.findViewById(R.id.end_spinner);
+        _startButton = v.findViewById(R.id.start_spinner);
+        _endButton = v.findViewById(R.id.end_spinner);
 
-        _devicesLayout = (LinearLayout) v.findViewById(R.id.devices_layout);
-        _devicesEditText = (EditText) v.findViewById(R.id.devices_edittext);
+        _devicesLayout = v.findViewById(R.id.devices_layout);
+        _devicesEditText = v.findViewById(R.id.devices_edittext);
 
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _okButton = v.findViewById(R.id.ok_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }
@@ -128,31 +128,29 @@ public class WorkLogDialog extends SimpleDialog {
         }
 
         try {
-            if (!_startIsSet && _timeLog != null && _timeLog.getIn() != null && _timeLog.getIn().getCreated() != null) {
+            if (!_startIsSet && _timeLog != null && _timeLog.getIn().getCreated().getUtc() != null) {
                 _startCalendar = _timeLog.getIn().getCreated().getCalendar();
                 _startIsSet = true;
             }
 
-            if (_startIsSet)
-                _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
+            if (_startIsSet) _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
         } catch (ParseException ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            if (!_endIsSet && _timeLog != null && _timeLog.getOut() != null && _timeLog.getOut().getCreated() != null) {
+            if (!_endIsSet && _timeLog != null && _timeLog.getOut().getCreated().getUtc() != null) {
                 _endCalendar = _timeLog.getOut().getCreated().getCalendar();
                 _endIsSet = true;
             }
 
-            if (_endIsSet)
-                _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
+            if (_endIsSet) _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
         try {
-            if (_timeLog != null && _timeLog.getDevices() != null)
+            if (_timeLog.getDevices() != null)
                 _devicesEditText.setText(_timeLog.getDevices().toString());
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -182,6 +180,7 @@ public class WorkLogDialog extends SimpleDialog {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             String tag = (String) _datePicker.getTag();
+            if (tag == null) return;
             if (tag.equals("start")) {
                 _startCalendar.set(year, monthOfYear, dayOfMonth);
             } else if (tag.equals("end")) {
@@ -198,6 +197,7 @@ public class WorkLogDialog extends SimpleDialog {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             String tag = (String) _timePicker.getTag();
+            if (tag == null) return;
             if (tag.equals("start")) {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
                         _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
@@ -217,7 +217,7 @@ public class WorkLogDialog extends SimpleDialog {
         public void onClick(View v) {
             int deviceCount = -1;
             try {
-                deviceCount = Integer.parseInt(_devicesEditText.getText().toString());
+                deviceCount = (int) Double.parseDouble(_devicesEditText.getText().toString());
             } catch (Exception ex) {
             }
 

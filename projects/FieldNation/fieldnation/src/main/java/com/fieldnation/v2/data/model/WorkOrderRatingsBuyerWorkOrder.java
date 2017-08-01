@@ -77,6 +77,9 @@ public class WorkOrderRatingsBuyerWorkOrder implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_categories == null)
+            _categories = new WorkOrderRatingsBuyerWorkOrderCategories[0];
+
         return _categories;
     }
 
@@ -121,10 +124,10 @@ public class WorkOrderRatingsBuyerWorkOrder implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public WorkOrderRatingsBuyerWorkOrder created(Date created) throws ParseException {
@@ -348,7 +351,4 @@ public class WorkOrderRatingsBuyerWorkOrder implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

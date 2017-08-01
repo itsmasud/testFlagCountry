@@ -81,80 +81,95 @@
                 android:id="@+id/details_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp">
+                android:paddingBottom="8dp">
 
-                <TextView
-                    android:id="@+id/textview_1"
-                    style="@style/Text_Body_1"
-                    android:layout_width="120dp"
-                    android:layout_height="16dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginRight="8dp"
-                    android:text="@string/clear_expectations" />
-
-                <TextView
-                    android:id="@+id/textview_2"
-                    style="@style/Text_Body_1"
-                    android:layout_width="120dp"
-                    android:layout_height="16dp"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@+id/textview_1"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginRight="8dp"
-                    android:text="@string/professionalism" />
-
-
-                <ProgressBar
-                    android:id="@+id/expectations_progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
+                <RelativeLayout
+                    android:id="@+id/expectations_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginBottom="6dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_toLeftOf="@+id/expectations_textView"
-                    android:layout_toRightOf="@+id/textview_1"
-                    android:max="100"
-                    android:progress="89"
-                    android:progressDrawable="@drawable/custom_progress" />
+                    android:layout_height="wrap_content">
 
-                <ProgressBar
-                    android:id="@+id/professionalism_progressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
+                    <TextView
+                        android:id="@+id/textview_1"
+                        style="@style/Text_Body_1"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="4dp"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="@string/clear_expectations"
+                        android:textSize="12sp" />
+
+                    <ProgressBar
+                        android:id="@+id/expectations_progressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/expectations_textView"
+                        android:layout_toRightOf="@+id/textview_1"
+                        android:max="100"
+                        android:progress="89"
+                        android:progressDrawable="@drawable/custom_progress" />
+
+                    <TextView
+                        android:id="@+id/expectations_textView"
+                        style="@style/Text_Body_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="89%" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/professionalism_layout"
                     android:layout_width="match_parent"
-                    android:layout_height="8dp"
-                    android:layout_below="@id/expectations_progressBar"
-                    android:layout_marginBottom="6dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="6dp"
-                    android:layout_toLeftOf="@+id/professionalism_textView"
-                    android:layout_toRightOf="@+id/textview_2"
-                    android:max="100"
-                    android:progress="98"
-                    android:progressDrawable="@drawable/custom_progress" />
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expectations_layout">
 
+                    <TextView
+                        android:id="@+id/textview_2"
+                        style="@style/Text_Body_1"
+                        android:layout_width="130dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="4dp"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="@string/professionalism"
+                        android:textSize="12sp" />
 
-                <TextView
-                    android:id="@+id/expectations_textView"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="16dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="4dp"
-                    android:text="89%" />
+                    <ProgressBar
+                        android:id="@+id/professionalism_progressBar"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="8dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="4dp"
+                        android:layout_toLeftOf="@+id/professionalism_textView"
+                        android:layout_toRightOf="@+id/textview_2"
+                        android:max="100"
+                        android:progress="98"
+                        android:progressDrawable="@drawable/custom_progress" />
 
-                <TextView
-                    android:id="@+id/professionalism_textView"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="16dp"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@+id/expectations_textView"
-                    android:layout_marginBottom="4dp"
-                    android:text="98%" />
-
+                    <TextView
+                        android:id="@+id/professionalism_textView"
+                        style="@style/Text_Body_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:text="98%" />
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout

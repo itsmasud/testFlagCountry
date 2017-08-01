@@ -5,9 +5,12 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -87,6 +90,9 @@ public class CustomField implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -135,10 +141,10 @@ public class CustomField implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_dependency != null && _dependency.isSet())
-            return _dependency;
+        if (_dependency == null)
+            _dependency = new CustomFieldDependency();
 
-        return null;
+            return _dependency;
     }
 
     public CustomField dependency(CustomFieldDependency dependency) throws ParseException {
@@ -168,6 +174,9 @@ public class CustomField implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_flags == null)
+            _flags = new FlagsEnum[0];
 
         return _flags;
     }
@@ -248,6 +257,9 @@ public class CustomField implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_options == null)
+            _options = new String[0];
 
         return _options;
     }
@@ -585,10 +597,6 @@ public class CustomField implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

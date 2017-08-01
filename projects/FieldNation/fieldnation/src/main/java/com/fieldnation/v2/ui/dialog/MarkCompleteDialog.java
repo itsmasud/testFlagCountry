@@ -12,7 +12,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.v2.data.model.WorkOrder;
 
 /**
@@ -111,7 +111,6 @@ public class MarkCompleteDialog extends SimpleDialog {
         public void onClick(View v) {
             _onContinueClickDispatcher.dispatch(getUid());
             dismiss(true);
-
 
             if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workOrder.getW2()) {
                 RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_YESNO, _workOrder, _workOrder.getCompany().getName());

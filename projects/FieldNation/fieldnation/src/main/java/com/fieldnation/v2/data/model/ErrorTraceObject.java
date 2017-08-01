@@ -102,7 +102,4 @@ public class ErrorTraceObject implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

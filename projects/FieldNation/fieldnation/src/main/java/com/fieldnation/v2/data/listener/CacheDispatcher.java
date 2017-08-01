@@ -13,8 +13,6 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.StreamUtils;
 
-import java.io.FileInputStream;
-
 /**
  * Created by mc on 2/1/17.
  */
@@ -47,8 +45,8 @@ public class CacheDispatcher extends AsyncTaskEx<Object, Object, Bundle> {
             Bundle bundle = new Bundle();
             bundle.putParcelable("params", _transactionParams);
             bundle.putBoolean("success", true);
-            if (obj.isFile()) {
-                bundle.putByteArray("data", StreamUtils.readAllFromStream(new FileInputStream(obj.getFile()), (int) obj.getFile().length(), 1000));
+            if (obj.isUri()) {
+                bundle.putByteArray("data", StreamUtils.readAllFromStream(_context.getContentResolver().openInputStream(obj.getUri()), (int) obj.size(), 1000));
             } else {
                 bundle.putByteArray("data", obj.getData());
             }

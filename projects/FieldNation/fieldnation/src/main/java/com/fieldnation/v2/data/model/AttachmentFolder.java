@@ -78,6 +78,9 @@ public class AttachmentFolder implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -175,6 +178,9 @@ public class AttachmentFolder implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_results == null)
+            _results = new Attachment[0];
+
         return _results;
     }
 
@@ -197,10 +203,10 @@ public class AttachmentFolder implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_task != null && _task.isSet())
-            return _task;
+        if (_task == null)
+            _task = new Task();
 
-        return null;
+            return _task;
     }
 
     public AttachmentFolder task(Task task) throws ParseException {
@@ -372,10 +378,6 @@ public class AttachmentFolder implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 

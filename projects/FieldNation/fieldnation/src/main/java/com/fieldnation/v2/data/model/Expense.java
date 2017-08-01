@@ -5,12 +5,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -93,6 +90,9 @@ public class Expense implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -119,10 +119,10 @@ public class Expense implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_added != null && _added.isSet())
-        return _added;
+        if (_added == null)
+            _added = new Date();
 
-        return null;
+        return _added;
     }
 
     public Expense added(Date added) throws ParseException {
@@ -166,10 +166,10 @@ public class Expense implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_author != null && _author.isSet())
-        return _author;
+        if (_author == null)
+            _author = new User();
 
-        return null;
+        return _author;
     }
 
     public Expense author(User author) throws ParseException {
@@ -191,10 +191,10 @@ public class Expense implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_category != null && _category.isSet())
-        return _category;
+        if (_category == null)
+            _category = new ExpenseCategory();
 
-        return null;
+        return _category;
     }
 
     public Expense category(ExpenseCategory category) throws ParseException {
@@ -216,10 +216,10 @@ public class Expense implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_companyExpense != null && _companyExpense.isSet())
-        return _companyExpense;
+        if (_companyExpense == null)
+            _companyExpense = new ExpenseCompanyExpense();
 
-        return null;
+        return _companyExpense;
     }
 
     public Expense companyExpense(ExpenseCompanyExpense companyExpense) throws ParseException {
@@ -507,11 +507,6 @@ public class Expense implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
-
     private Set<ActionsEnum> _actionsSet = null;
 
     public Set<ActionsEnum> getActionsSet() {
@@ -520,5 +515,28 @@ public class Expense implements Parcelable {
             if (getActions() != null) _actionsSet.addAll(Arrays.asList(getActions()));
         }
         return _actionsSet;
+    }
+
+    public Expense(String description, Double amount) {
+        this();
+        try {
+            setDescription(description);
+            setAmount(amount);
+            setStatus(StatusEnum.NEW);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    public Expense(String description, Double amount, ExpenseCategory category) {
+        this();
+        try {
+            setDescription(description);
+            setAmount(amount);
+            setStatus(StatusEnum.NEW);
+            setCategory(category);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 }

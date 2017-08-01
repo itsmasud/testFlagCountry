@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/key"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="16dp"
+        android:text="Key"
+        android:textColor="@color/fn_dark_text"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/key"
+        android:layout_marginLeft="24dp"
+        android:gravity="right"
+        android:text="Value"
+        android:textColor="@color/fn_dark_text_50"
+        android:textSize="16sp" />
+
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/action"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:padding="16dp"
+        android:text="@string/icon_x"
+        android:textColor="@color/fn_dark_text"
+        android:textSize="16sp" />
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/value"
+        android:layout_marginTop="16dp" />
+
+
+</RelativeLayout>

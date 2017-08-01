@@ -102,17 +102,13 @@ public class ImageUtils {
         float aspectRatio = 0f;
 
         if (bitmap.getWidth() <= bitmap.getHeight()) {
-            aspectRatio = bitmap.getWidth() /
-                    (float) bitmap.getHeight();
+            aspectRatio = bitmap.getWidth() / (float) bitmap.getHeight();
         } else {
-            aspectRatio = bitmap.getHeight() /
-                    (float) bitmap.getWidth();
+            aspectRatio = bitmap.getHeight() / (float) bitmap.getWidth();
         }
 
         int requestedWidth = Math.round(requestedHeight / aspectRatio);
 
-        return Bitmap.createScaledBitmap(
-                bitmap, requestedWidth, requestedHeight, false);
-
+        return Bitmap.createScaledBitmap(bitmap, requestedWidth, requestedHeight, false);
     }
 }

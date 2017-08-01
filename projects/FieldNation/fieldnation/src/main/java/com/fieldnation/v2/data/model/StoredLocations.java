@@ -72,6 +72,9 @@ public class StoredLocations implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -124,6 +127,9 @@ public class StoredLocations implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        if (_results == null)
+            _results = new Location[0];
 
         return _results;
     }
@@ -318,7 +324,4 @@ public class StoredLocations implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

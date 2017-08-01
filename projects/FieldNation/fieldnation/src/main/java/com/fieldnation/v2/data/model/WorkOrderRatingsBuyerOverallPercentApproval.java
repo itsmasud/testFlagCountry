@@ -152,7 +152,4 @@ public class WorkOrderRatingsBuyerOverallPercentApproval implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

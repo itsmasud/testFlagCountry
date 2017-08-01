@@ -57,8 +57,6 @@ public class ExpenseView extends LinearLayout {
     /*-*********************************-*/
     /*-				Event				-*/
     /*-*********************************-*/
-
-
     private final ExpenseCategories.Listener _categoriesListener = new ExpenseCategories.Listener() {
         @Override
         public void onHaveCategories(ExpenseCategory[] categories) {
@@ -66,7 +64,6 @@ public class ExpenseView extends LinearLayout {
             refresh();
         }
     };
-
 
     /*-*************************************-*/
     /*-				Mutators				-*/
@@ -94,7 +91,7 @@ public class ExpenseView extends LinearLayout {
             _descriptionTextView.setText("NA");
 
         _categoryTextView.setVisibility(View.GONE);
-        if (_categories != null && _expense.getId() != null && _expense.getCategory() != null && _expense.getCategory().getId() != null) {
+        if (_categories != null && _expense.getId() != null && _expense.getCategory().getId() != null) {
             for (ExpenseCategory _category : _categories) {
                 if (_category.getId().equals(_expense.getCategory().getId())) {
                     _categoryTextView.setText(_category.getName());

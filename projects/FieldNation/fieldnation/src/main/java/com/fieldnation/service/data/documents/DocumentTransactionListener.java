@@ -1,6 +1,7 @@
 package com.fieldnation.service.data.documents;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.fnhttpjson.HttpResult;
@@ -12,6 +13,7 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -79,19 +81,18 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
         if (result == Result.CONTINUE) {
             StoredObject obj = null;
             if (httpResult.isFile()) {
-                obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getFile(), filename);
+                obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, new FileInputStream(httpResult.getFile()), filename);
             } else {
                 obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getByteArray(), filename);
             }
 
-            String name = obj.getFile().getName();
-            name = name.substring(name.indexOf("_") + 1);
+            Uri uri = obj.getUri();
+            String name = FileUtils.getFileNameFromUri(context, uri);
             File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
             if (!dlFolder.exists())
-                FileUtils.copyFile(obj.getFile(), dlFolder);
+                FileUtils.writeStream(context.getContentResolver().openInputStream(uri), dlFolder);
 
-            DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH,
-                    transaction.isSync());
+            DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, transaction.isSync());
 
             return Result.CONTINUE;
 

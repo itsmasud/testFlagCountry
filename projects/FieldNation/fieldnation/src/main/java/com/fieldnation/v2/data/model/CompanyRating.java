@@ -51,10 +51,10 @@ public class CompanyRating implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_rating != null && _rating.isSet())
-        return _rating;
+        if (_rating == null)
+            _rating = new CompanyRatingRating();
 
-        return null;
+        return _rating;
     }
 
     public CompanyRating rating(CompanyRatingRating rating) throws ParseException {
@@ -130,7 +130,4 @@ public class CompanyRating implements Parcelable {
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

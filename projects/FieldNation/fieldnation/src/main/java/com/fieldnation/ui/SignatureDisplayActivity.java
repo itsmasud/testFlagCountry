@@ -7,8 +7,8 @@ import android.os.Bundle;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnactivityresult.ActivityResultClient;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.v2.data.model.Signature;
 import com.fieldnation.v2.data.model.WorkOrder;
 
@@ -109,8 +109,7 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         if (_workOrder == null)
             return;
 
-        if (_workOrder.getSignatures() == null
-                || _workOrder.getSignatures().getResults() == null
+        if (_workOrder.getSignatures().getResults() == null
                 || _workOrder.getSignatures().getResults().length == 0)
             return;
 

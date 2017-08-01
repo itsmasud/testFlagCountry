@@ -194,7 +194,4 @@ public class WorkOrderRatingsAssignedProviderWorkOrderCategories implements Parc
     /*-         Human Code          -*/
     /*-*****************************-*/
 
-    public boolean isSet() {
-        return true;
-    }
 }

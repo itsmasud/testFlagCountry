@@ -16,7 +16,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.fntools.KeyedDispatcher;
 
 /**
  * Created by Michael on 9/21/2016.

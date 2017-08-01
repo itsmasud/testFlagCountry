@@ -1,91 +1,400 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/dialogStyle"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:clickable="true">
+    android:layout_height="match_parent"
+    android:background="@color/fn_primary_bg">
 
-    <TabHost
-        android:id="@+id/tabhost"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:animateLayoutChanges="true">
 
-            <HorizontalScrollView
-                android:id="@+id/tabscroll_view"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:fillViewport="true"
-                android:scrollbars="none">
 
-                <TabWidget
-                    android:id="@android:id/tabs"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </HorizontalScrollView>
-
-            <ScrollView
-                android:id="@android:id/tabcontent"
+            <LinearLayout
+                android:id="@+id/empty_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="28dp"
+                android:visibility="gone">
 
-                <FrameLayout
+                <TextView
+                    style="@style/Text_Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="5dp">
+                    android:gravity="center_horizontal"
+                    android:text="Build Your Counter Offer"
+                    android:textStyle="bold" />
 
+                <TextView
+                    android:id="@+id/caption_textview"
+                    style="@style/Text_Subhead"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="Add counter offer parameters by tapping on the plus icon below."
+                    android:textColor="@color/fn_dark_text"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
-                    <com.fieldnation.v2.ui.dialog.PaymentCoView
-                        android:id="@+id/payment_view"
+            <RelativeLayout
+                android:id="@+id/pay_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/empty_view">
+
+                <TextView
+                    android:id="@+id/pay_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/pay_menu"
+                    android:padding="16dp"
+                    android:text="@string/pay"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/pay_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/pay_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/pay_title_textview" />
+
+                <com.fieldnation.v2.ui.PayView
+                    android:id="@+id/pay_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pay_title_divider" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/schedule_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/pay_layout">
+
+                <TextView
+                    android:id="@+id/schedule_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/schedule_menu"
+                    android:padding="16dp"
+                    android:text="@string/schedule"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/schedule_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/schedule_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/schedule_title_textview" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/scheduleType_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/schedule_title_divider" />
+
+                <com.fieldnation.v2.ui.ScheduleView
+                    android:id="@+id/schedule_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/scheduleType_view" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/expense_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/schedule_layout">
+
+                <TextView
+                    android:id="@+id/expenses_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/expenses"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/expenses_title_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/expenses_title_textview" />
+
+                <LinearLayout
+                    android:id="@+id/expenses_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expenses_title_divider"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/expires_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expense_layout">
+
+                <TextView
+                    android:id="@+id/expires_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/expires_menu"
+                    android:padding="16dp"
+                    android:text="Expire"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/expires_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/expires_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/expires_title_textview" />
+
+                <com.fieldnation.v2.ui.KeyValuePairView
+                    android:id="@+id/expires_kvp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expires_divider" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/reason_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expires_layout"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/reasons_title_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@+id/reasons_menu"
+                    android:padding="16dp"
+                    android:text="Reason"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textStyle="bold" />
+
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/reasons_menu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:padding="16dp"
+                    android:text="@string/icon_overflow"
+                    android:textColor="@color/fn_dark_text_50"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/expenses_top_divider"
+                    style="@style/DividerFull"
+                    android:layout_below="@+id/reasons_title_textview" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/expenses_top_divider"
+                    android:background="@color/fn_clickable_bg">
+
+                    <TextView
+                        android:id="@+id/reason_textview"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginRight="10dp"
+                        android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
+                        android:textColor="@color/fn_dark_text"
+                        android:textSize="16sp"
+                        android:visibility="gone" />
 
-                    <com.fieldnation.v2.ui.dialog.ScheduleCoView
-                        android:id="@+id/schedule_view"
+                    <EditText
+                        android:id="@+id/reason_edittext"
+                        style="@style/EditText"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:hint="@string/reason_for_request"
+                        android:imeOptions="actionDone"
+                        android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
+                        android:padding="16dp"
+                        android:textColor="@color/fn_dark_text_50" />
 
-                    <com.fieldnation.v2.ui.dialog.ExpenseCoView
-                        android:id="@+id/expenses_view"
+                    <TextView
+                        android:id="@+id/disclaimer_textview"
+                        style="?attr/tileTextStatusStyle"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/reason_edittext"
+                        android:paddingBottom="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:text="@string/disclaimer_to_counter_offer" />
 
-                    <com.fieldnation.v2.ui.dialog.ReasonCoView
-                        android:id="@+id/reasons_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
-                </FrameLayout>
-            </ScrollView>
-        </LinearLayout>
-    </TabHost>
+                    <View
+                        style="@style/DividerFull"
+                        android:layout_alignParentBottom="true" />
+                </RelativeLayout>
+            </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/actionbar_view"
-        style="?attr/dialogActionBarStyle"
-        android:layout_below="@+id/tabhost"
-        android:orientation="horizontal">
+            <TextView
+                android:id="@+id/termswarning_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/reason_layout"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="16dp"
+                android:text="By countering this work order you are agreeing to our Work Order Terms and Conditions" />
 
-        <Button
-            android:id="@+id/back_button"
-            style="?attr/dialogCancelButtonStyle"
-            android:text="@string/btn_back" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_below="@+id/termswarning_textview" />
 
-        <Button
-            android:id="@+id/ok_button"
-            style="?attr/dialogOkButtonStyle"
-            android:text="@string/btn_next" />
-    </LinearLayout>
 
+        </RelativeLayout>
+    </ScrollView>
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/refresh_view"
         android:layout_width="wrap_content"
         android:layout_height="250dp"
+        android:layout_below="@id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        android:theme="@style/FieldNation.Material.ToolBar" />
+
+    <Button
+        android:id="@+id/action_button"
+        style="@style/Material.Button.Circle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:padding="0dp"
+        android:paddingBottom="0dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="0dp"
+        android:paddingTop="0dp"
+        android:text="+"
+        android:textSize="32sp" />
+
+    <View
+        android:id="@+id/bottomSheet_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/fn_shadow"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/bottomsheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/fn_clickable_bg"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/changePay_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Change Pay" />
+
+        <View style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/changeSchedule_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Change Schedule" />
+
+        <View style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/addExpense_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Add Expense" />
+
+        <View style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/addexpiration_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Set Expiration" />
+
+        <View style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/addreason_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Set Reason" />
+
+    </LinearLayout>
 </RelativeLayout>

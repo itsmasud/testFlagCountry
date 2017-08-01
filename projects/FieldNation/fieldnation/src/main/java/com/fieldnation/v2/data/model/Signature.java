@@ -90,6 +90,9 @@ public class Signature implements Parcelable {
             Log.v(TAG, ex);
         }
 
+        if (_actions == null)
+            _actions = new ActionsEnum[0];
+
         return _actions;
     }
 
@@ -138,10 +141,10 @@ public class Signature implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_created != null && _created.isSet())
-            return _created;
+        if (_created == null)
+            _created = new Date();
 
-        return null;
+            return _created;
     }
 
     public Signature created(Date created) throws ParseException {
@@ -273,10 +276,10 @@ public class Signature implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_task != null && _task.isSet())
-            return _task;
+        if (_task == null)
+            _task = new Task();
 
-        return null;
+            return _task;
     }
 
     public Signature task(Task task) throws ParseException {
@@ -298,10 +301,10 @@ public class Signature implements Parcelable {
             Log.v(TAG, ex);
         }
 
-        if (_timeZone != null && _timeZone.isSet())
-            return _timeZone;
+        if (_timeZone == null)
+            _timeZone = new TimeZone();
 
-        return null;
+            return _timeZone;
     }
 
     public Signature timeZone(TimeZone timeZone) throws ParseException {
@@ -434,10 +437,6 @@ public class Signature implements Parcelable {
     /*-*****************************-*/
     /*-         Human Code          -*/
     /*-*****************************-*/
-
-    public boolean isSet() {
-        return getId() != null && getId() != 0;
-    }
 
     private Set<ActionsEnum> _actionsSet = null;
 
