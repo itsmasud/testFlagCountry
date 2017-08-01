@@ -20,10 +20,10 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.CustomField;
@@ -230,7 +230,9 @@ public class CustomFieldDialog extends SimpleDialog {
         }
 
         _pickerCal = Calendar.getInstance();
+        _pickerCal.set(Calendar.SECOND, 0);
         final Calendar c = Calendar.getInstance();
+        c.set(Calendar.SECOND, 0);
         _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }

@@ -141,6 +141,7 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         _etaStart = Calendar.getInstance();
+        _etaStart.set(Calendar.SECOND, 0);
 
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 

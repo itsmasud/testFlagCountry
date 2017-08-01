@@ -98,7 +98,9 @@ public class ScheduleCoView extends RelativeLayout {
         initializeTimePicker();
 
         _startCal = Calendar.getInstance();
+        _startCal.set(Calendar.SECOND, 0);
         _endCal = Calendar.getInstance();
+        _endCal.set(Calendar.SECOND, 0);
 
         _typeSpinner.setOnItemSelectedListener(_type_selected);
         _startDateButton.setOnClickListener(_startDateButton_onClick);
@@ -220,6 +222,7 @@ public class ScheduleCoView extends RelativeLayout {
 
     private void initializeTimePicker() {
         final Calendar c = Calendar.getInstance();
+        c.set(Calendar.SECOND, 0);
         _datePicker = new DatePickerDialog(getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _timePicker = new TimePickerDialog(getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }
@@ -304,7 +307,7 @@ public class ScheduleCoView extends RelativeLayout {
 
             } else if (tag.equals("end")) {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),
-                        _endCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                        _endCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute, 0);
 
                 // truncate milliseconds to seconds
                 if (_endCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
