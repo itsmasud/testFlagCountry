@@ -59,6 +59,10 @@ public class SignatureActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
+
+        _arriveCal.set(Calendar.SECOND, 0);
+        _departCal.set(Calendar.SECOND, 0);
+
         setContentView(R.layout.activity_signature);
 
         _sigView = (SignatureView) findViewById(R.id.sig_view);
@@ -110,6 +114,7 @@ public class SignatureActivity extends FragmentActivity {
         }
 
         final Calendar c = Calendar.getInstance();
+        c.set(Calendar.SECOND, 0);
         _datePicker = new DatePickerDialog(this, _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _timePicker = new TimePickerDialog(this, _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }
