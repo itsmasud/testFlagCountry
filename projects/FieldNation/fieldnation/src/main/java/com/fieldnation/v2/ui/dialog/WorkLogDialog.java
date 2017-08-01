@@ -74,11 +74,14 @@ public class WorkLogDialog extends SimpleDialog {
     public void onStart() {
         super.onStart();
         final Calendar c = Calendar.getInstance();
+        c.set(Calendar.SECOND, 0);
         _datePicker = new DatePickerDialog(getView().getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _timePicker = new TimePickerDialog(getView().getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         _startCalendar = Calendar.getInstance();
+        _startCalendar.set(Calendar.SECOND, 0);
         _endCalendar = Calendar.getInstance();
+        _endCalendar.set(Calendar.SECOND, 0);
 
         _startButton.setOnClickListener(_start_onClick);
         _endButton.setOnClickListener(_end_onClick);
