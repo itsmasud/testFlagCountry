@@ -66,15 +66,20 @@ public class PhotoService extends MultiThreadedService implements PhotoConstants
         StoredObject obj = StoredObject.get(this, App.getProfileId(), objectName, sourceUrl);
 
         if (obj != null) {
-            PhotoDispatch.get(this, sourceUrl, obj.getUri(), makeCircle, true);
+            try {
+                PhotoDispatch.get(this, sourceUrl, obj.getUri(), makeCircle, true);
 
-            if (!_requireWifi || App.get().haveWifi()) {
-                if (_imageDaysToLive > -1) {
-                    if (obj.getLastUpdated() + _imageDaysToLive * DAY < System.currentTimeMillis()) {
-                        Log.v(TAG, "updating photo");
-                        PhotoTransactionBuilder.get(this, objectName, sourceUrl, makeCircle, isSync);
+                if (!_requireWifi || App.get().haveWifi()) {
+                    if (_imageDaysToLive > -1) {
+                        if (obj.getLastUpdated() + _imageDaysToLive * DAY < System.currentTimeMillis()) {
+                            Log.v(TAG, "updating photo");
+                            PhotoTransactionBuilder.get(this, objectName, sourceUrl, makeCircle, isSync);
+                        }
                     }
                 }
+            } catch (Exception ex){
+                Log.v(TAG, ex);
+                PhotoTransactionBuilder.get(this, objectName, sourceUrl, makeCircle, isSync);
             }
         } else if (obj == null && (!_requireWifi || App.get().haveWifi())) {
             // doesn't exist, try to grab it.
