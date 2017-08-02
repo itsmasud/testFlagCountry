@@ -33,6 +33,7 @@ public class GpsTrackingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // TODO need to figure this out for Android O
             return START_NOT_STICKY;
         }
 
