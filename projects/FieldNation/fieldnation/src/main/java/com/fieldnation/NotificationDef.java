@@ -13,20 +13,23 @@ import android.os.Build;
 public class NotificationDef {
 
     private static final long[] default_ringtone = new long[]{0, 500};
-
+    public static String FILE_UPLOAD_CHANNEL = "fn_channel_file_upload";
+    public static String PHOTO_UPLOAD_CHANNEL = "fn_channel_photo_upload";
+    public static String PUSH_NOTIFICATION_CHANNEL = "fn_channel_push_notification";
+    public static String OTHER_CHANNEL = "fn_channel_other";
 
     public static void configureNotifications(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.createNotificationChannelGroup(new NotificationChannelGroup("fn_group_01", "Field Nation Group"));
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
 
-            buildChannelFileUpload(mNotificationManager, context);
-            buildChannelPhotoUpload(mNotificationManager, context);
-            buildChannelPushNotification(mNotificationManager, context);
-        }
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.createNotificationChannelGroup(new NotificationChannelGroup("fn_group_01", "Field Nation Group"));
+
+        buildChannelFileUpload(mNotificationManager, context);
+        buildChannelPhotoUpload(mNotificationManager, context);
+        buildChannelPushNotification(mNotificationManager, context);
+        buildChannelOther(mNotificationManager, context);
     }
-
-    public static String FILE_UPLOAD_CHANNEL = "fn_channel_file_upload";
 
     private static void buildChannelFileUpload(NotificationManager mNotificationManager, Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
@@ -41,8 +44,6 @@ public class NotificationDef {
         mNotificationManager.createNotificationChannel(mChannel);
     }
 
-    public static String PHOTO_UPLOAD_CHANNEL = "fn_channel_photo_upload";
-
     private static void buildChannelPhotoUpload(NotificationManager mNotificationManager, Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
@@ -55,8 +56,6 @@ public class NotificationDef {
         mChannel.setDescription(description);
         mNotificationManager.createNotificationChannel(mChannel);
     }
-
-    public static String PUSH_NOTIFICATION_CHANNEL = "fn_channel_push_notification";
 
     private static void buildChannelPushNotification(NotificationManager mNotificationManager, Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
@@ -71,8 +70,6 @@ public class NotificationDef {
         mChannel.setVibrationPattern(default_ringtone);
         mNotificationManager.createNotificationChannel(mChannel);
     }
-
-    public static String OTHER_CHANNEL = "fn_channel_other";
 
     private static void buildChannelOther(NotificationManager mNotificationManager, Context context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
