@@ -1,0 +1,89 @@
+package com.fieldnation;
+
+import android.app.NotificationChannel;
+import android.app.NotificationChannelGroup;
+import android.app.NotificationManager;
+import android.content.Context;
+import android.os.Build;
+
+/**
+ * Created by mc on 8/2/17.
+ */
+
+public class NotificationDef {
+
+    private static final long[] default_ringtone = new long[]{0, 500};
+
+
+    public static void configureNotifications(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.createNotificationChannelGroup(new NotificationChannelGroup("fn_group_01", "Field Nation Group"));
+
+            buildChannelFileUpload(mNotificationManager, context);
+            buildChannelPhotoUpload(mNotificationManager, context);
+            buildChannelPushNotification(mNotificationManager, context);
+        }
+    }
+
+    public static String FILE_UPLOAD_CHANNEL = "fn_channel_file_upload";
+
+    private static void buildChannelFileUpload(NotificationManager mNotificationManager, Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+
+        String name = "File Upload Notifications";
+        String description = "Notifications around uploading files";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+        NotificationChannel mChannel = new NotificationChannel(FILE_UPLOAD_CHANNEL, name, importance);
+        mChannel.setDescription(description);
+        mNotificationManager.createNotificationChannel(mChannel);
+    }
+
+    public static String PHOTO_UPLOAD_CHANNEL = "fn_channel_photo_upload";
+
+    private static void buildChannelPhotoUpload(NotificationManager mNotificationManager, Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+
+        String name = "Photo Upload Notifications";
+        String description = "Notifications around uploading profile photos";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+        NotificationChannel mChannel = new NotificationChannel(FILE_UPLOAD_CHANNEL, name, importance);
+        mChannel.setDescription(description);
+        mNotificationManager.createNotificationChannel(mChannel);
+    }
+
+    public static String PUSH_NOTIFICATION_CHANNEL = "fn_channel_push_notification";
+
+    private static void buildChannelPushNotification(NotificationManager mNotificationManager, Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+
+        String name = "Push Notifications";
+        String description = "Notifications sent to you from Field Nation";
+        int importance = NotificationManager.IMPORTANCE_MAX;
+
+        NotificationChannel mChannel = new NotificationChannel(FILE_UPLOAD_CHANNEL, name, importance);
+        mChannel.setDescription(description);
+        mChannel.setVibrationPattern(default_ringtone);
+        mNotificationManager.createNotificationChannel(mChannel);
+    }
+
+    public static String OTHER_CHANNEL = "fn_channel_other";
+
+    private static void buildChannelOther(NotificationManager mNotificationManager, Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+            return;
+
+        String name = "General Notifications";
+        String description = "Generic notifications";
+        int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+        NotificationChannel mChannel = new NotificationChannel(FILE_UPLOAD_CHANNEL, name, importance);
+        mChannel.setDescription(description);
+        mNotificationManager.createNotificationChannel(mChannel);
+    }
+}

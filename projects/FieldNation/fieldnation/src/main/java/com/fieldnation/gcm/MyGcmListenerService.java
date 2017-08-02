@@ -17,14 +17,17 @@
 package com.fieldnation.gcm;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
 import com.fieldnation.App;
+import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.EventAction;
@@ -65,7 +68,8 @@ public class MyGcmListenerService extends GcmListenerService {
 
     /**
      * Called when message is received.
-     ** @param from SenderID of the sender.
+     * * @param from SenderID of the sender.
+     *
      * @param data Data bundle containing message data as key/value pairs.
      *             For Set of keys use data.keySet().
      */
@@ -147,43 +151,82 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private void buildPushNotification(GcmMessage gcmMessage) {
         int id = 0;
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-        builder.setSmallIcon(R.drawable.ic_notif_logo);
-        builder.setContentTitle(gcmMessage.title);
-        builder.setContentText(gcmMessage.body);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification.Builder builder = new Notification.Builder(this, NotificationDef.PUSH_NOTIFICATION_CHANNEL);
+            builder.setSmallIcon(R.drawable.ic_notif_logo);
+            builder.setContentTitle(gcmMessage.title);
+            builder.setContentText(gcmMessage.body);
 
-        // workOrderId
-        // confirm or ready?
-        PendingIntent primaryIntent = null;
-        Action primaryAction = null;
+            // workOrderId
+            // confirm or ready?
+            PendingIntent primaryIntent = null;
+            Action primaryAction = null;
 
-        if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
-            primaryAction = gcmMessage.actions[0];
-            primaryIntent = getIntentFromAction(primaryAction, id);
+            if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
+                primaryAction = gcmMessage.actions[0];
+                primaryIntent = getIntentFromAction(primaryAction, id);
+            }
+
+            if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
+                id = CONFIRM_PUSH_NOTIFICATION;
+            else
+                id = App.secureRandom.nextInt();
+
+            // no buttons
+            if (primaryIntent == null) {
+
+                // primary only
+            } else if (primaryIntent != null) {
+                builder.setContentIntent(primaryIntent);
+            }
+
+            Notification.BigTextStyle bigTextStyle = new Notification.BigTextStyle();
+            bigTextStyle.setBigContentTitle(gcmMessage.title);
+            bigTextStyle.bigText(gcmMessage.body);
+            builder.setStyle(bigTextStyle);
+
+            Notification notification = builder.build();
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).notify(id, notification);
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setSmallIcon(R.drawable.ic_notif_logo);
+            builder.setContentTitle(gcmMessage.title);
+            builder.setContentText(gcmMessage.body);
+
+            // workOrderId
+            // confirm or ready?
+            PendingIntent primaryIntent = null;
+            Action primaryAction = null;
+
+            if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
+                primaryAction = gcmMessage.actions[0];
+                primaryIntent = getIntentFromAction(primaryAction, id);
+            }
+
+            if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
+                id = CONFIRM_PUSH_NOTIFICATION;
+            else
+                id = App.secureRandom.nextInt();
+
+            // no buttons
+            if (primaryIntent == null) {
+
+                // primary only
+            } else if (primaryIntent != null) {
+                builder.setContentIntent(primaryIntent);
+            }
+
+            NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+            bigTextStyle.setBigContentTitle(gcmMessage.title);
+            bigTextStyle.bigText(gcmMessage.body);
+            builder.setStyle(bigTextStyle);
+            builder.setPriority(NotificationCompat.PRIORITY_MAX);
+            builder.setVibrate(default_ringtone);
+
+            Notification notification = builder.build();
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+            NotificationManagerCompat.from(this).notify(id, notification);
         }
-
-        if ((primaryAction != null && primaryAction.getType() == Action.ActionType.CONFIRM_TOMORROW))
-            id = CONFIRM_PUSH_NOTIFICATION;
-        else
-            id = App.secureRandom.nextInt();
-
-        // no buttons
-        if (primaryIntent == null) {
-
-            // primary only
-        } else if (primaryIntent != null) {
-            builder.setContentIntent(primaryIntent);
-        }
-
-        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
-        bigTextStyle.setBigContentTitle(gcmMessage.title);
-        bigTextStyle.bigText(gcmMessage.body);
-        builder.setStyle(bigTextStyle);
-        builder.setPriority(NotificationCompat.PRIORITY_MAX);
-        builder.setVibrate(default_ringtone);
-
-        Notification notification = builder.build();
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
-        NotificationManagerCompat.from(this).notify(id, notification);
     }
 }
