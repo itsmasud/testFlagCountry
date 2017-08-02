@@ -79,7 +79,6 @@ public class PhotoService extends MultiThreadedService implements PhotoConstants
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
-                PhotoTransactionBuilder.get(this, objectName, sourceUrl, makeCircle, isSync);
             }
         } else if (obj == null && (!_requireWifi || App.get().haveWifi())) {
             // doesn't exist, try to grab it.
