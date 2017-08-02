@@ -20,10 +20,10 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.v2.data.model.CustomField;
@@ -292,6 +292,11 @@ public class CustomFieldDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+            if (_customField.getType() == null) {
+                _onOkDispatcher.dispatch(getUid(), _customField, _textEditText.getText().toString());
+                return;
+            }
+
             switch (_customField.getType()) {
                 case PREDEFINED:
                     _onOkDispatcher.dispatch(getUid(), _customField, (String) _spinner.getAdapter().getItem(_itemSelectedPosition));
