@@ -40,6 +40,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.gcm.RegistrationIntentService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -148,14 +149,14 @@ public class App extends Application {
 
         super.onCreate();
 
+        HttpJson.setTempFolder(getTempFolder());
+        HttpJson.setVersionName(BuildConfig.VERSION_NAME);
+
         try {
             ProviderInstaller.installIfNeeded(this);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-
-        HttpJson.setTempFolder(getTempFolder());
-        HttpJson.setVersionName(BuildConfig.VERSION_NAME);
 
         Stopwatch mwatch = new Stopwatch(true);
         Stopwatch watch = new Stopwatch(true);
@@ -485,8 +486,7 @@ public class App extends Application {
                 }
 
                 try {
-                    Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
-                    Intent intent = new Intent(App.this, clazz);
+                    Intent intent = new Intent(App.this, RegistrationIntentService.class);
                     startService(intent);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -746,22 +746,20 @@ public class App extends Application {
     }
 
     public String getStoragePath() {
-        File externalPath = Environment.getExternalStorageDirectory();
-        String packageName = getPackageName();
-        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
+        File temppath = getFilesDir();
         temppath.mkdirs();
         return temppath.getAbsolutePath();
     }
 
     public String getDownloadsFolder() {
-        File externalPath = Environment.getExternalStorageDirectory();
-        File temppath = new File(externalPath.getAbsolutePath() + "/Download/FieldNation");
+        File externalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File temppath = new File(externalPath.getAbsolutePath() + "/FieldNation");
         temppath.mkdirs();
         return temppath.getAbsolutePath();
     }
 
     public String getTempFolder() {
-        File tempFolder = new File(getStoragePath() + "/temp");
+        File tempFolder = getCacheDir();
         tempFolder.mkdirs();
         return tempFolder.getAbsolutePath();
     }
