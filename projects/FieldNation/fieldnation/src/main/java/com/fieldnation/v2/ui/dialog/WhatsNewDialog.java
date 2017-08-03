@@ -9,6 +9,7 @@ import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -36,11 +37,11 @@ public class WhatsNewDialog extends FullScreenDialog {
         Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_whats_new, container, false);
 
-        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
-        _toolbar.setTitle("4.0.6");
+        _toolbar = _root.findViewById(R.id.toolbar);
+        _toolbar.setTitle((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
-        _newWebView = (WebView) _root.findViewById(R.id.new_webview);
+        _newWebView = _root.findViewById(R.id.new_webview);
 
         return _root;
     }
