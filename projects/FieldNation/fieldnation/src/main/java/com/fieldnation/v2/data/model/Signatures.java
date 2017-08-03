@@ -12,9 +12,11 @@ import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Set;
 
 /**
@@ -233,16 +235,14 @@ public class Signatures implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
+    private static Hashtable<Integer, WeakReference<Signatures>> CACHE = new Hashtable<>();
+    private static int CACHE_NEXT = 0;
+
     public static final Parcelable.Creator<Signatures> CREATOR = new Parcelable.Creator<Signatures>() {
 
         @Override
         public Signatures createFromParcel(Parcel source) {
-            try {
-                return Signatures.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                return null;
-            }
+            return CACHE.get(source.readInt()).get();
         }
 
         @Override
@@ -258,7 +258,12 @@ public class Signatures implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(getJson(), flags);
+        synchronized (TAG) {
+            Log.v(TAG, "CACHE_NEXT " + CACHE_NEXT);
+            dest.writeInt(CACHE_NEXT);
+            CACHE.put(CACHE_NEXT, new WeakReference<>(this));
+            CACHE_NEXT++;
+        }
     }
 
     /*-*****************************-*/

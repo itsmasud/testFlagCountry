@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -31,6 +32,11 @@ public class GpsTrackingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // TODO need to figure this out for Android O
+            return START_NOT_STICKY;
+        }
+
         if (intent != null && intent.getAction() != null) {
             if (intent.getAction().equals("STOP")) {
                 if (_simpleGps != null) {

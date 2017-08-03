@@ -1,14 +1,18 @@
 package com.fieldnation.service.transaction;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.fnanalytics.Timing;
@@ -289,18 +293,27 @@ class TransactionThread extends ThreadManager.ManagedThread {
         if (notif == null)
             return;
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ContextProvider.get())
-                .setLargeIcon(null)
-                .setSmallIcon(notif.icon)
-                .setContentTitle(notif.title)
-                .setTicker(notif.ticker)
-                .setContentText(notif.body);
-
         NotificationManager mNotifyMgr = (NotificationManager) ContextProvider.get().getSystemService(Service.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification notification = new Notification.Builder(ContextProvider.get(), NotificationDef.OTHER_CHANNEL)
+                    .setLargeIcon((Bitmap) null)
+                    .setSmallIcon(notif.icon)
+                    .setContentTitle(notif.title)
+                    .setTicker(notif.ticker)
+                    .setContentText(notif.body)
+                    .build();
 
-//        Log.v(TAG, "notification created");
+            mNotifyMgr.notify(notifyId, notification);
+        } else {
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ContextProvider.get())
+                    .setLargeIcon(null)
+                    .setSmallIcon(notif.icon)
+                    .setContentTitle(notif.title)
+                    .setTicker(notif.ticker)
+                    .setContentText(notif.body);
 
-        mNotifyMgr.notify(notifyId, mBuilder.build());
+            mNotifyMgr.notify(notifyId, mBuilder.build());
+        }
     }
 
     private boolean allowSync() {

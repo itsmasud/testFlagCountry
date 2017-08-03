@@ -802,6 +802,7 @@
     <string name="approved">Approved</string>
     <string name="paid">Paid</string>
     <string name="confirm">Confirm</string>
+    <string name="accept">Accept</string>
 
     <!-- Preferences -->
     <!-- location settings -->
