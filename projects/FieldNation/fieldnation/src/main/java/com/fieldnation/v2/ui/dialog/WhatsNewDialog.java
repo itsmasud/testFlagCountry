@@ -36,7 +36,7 @@ public class WhatsNewDialog extends FullScreenDialog {
         _root = inflater.inflate(R.layout.dialog_v2_whats_new, container, false);
 
         _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
-        _toolbar.setTitle("4.0.5");
+        _toolbar.setTitle("4.0.6");
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _newWebView = (WebView) _root.findViewById(R.id.new_webview);
