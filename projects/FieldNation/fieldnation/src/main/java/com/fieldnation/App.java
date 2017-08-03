@@ -33,7 +33,6 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -42,9 +41,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -189,6 +186,7 @@ public class App extends Application {
         Debug.setInt("memory_class", _memoryClass);
 
         // trigger authentication and web crawler
+/*
         new AsyncTaskEx<Context, Object, Object>() {
             @Override
             protected Object doInBackground(Context... params) {
@@ -199,6 +197,7 @@ public class App extends Application {
                 return null;
             }
         }.executeEx(this);
+*/
         Log.v(TAG, "start services time: " + watch.finishAndRestart());
 
         // load the icon fonts
@@ -231,6 +230,7 @@ public class App extends Application {
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
 
+        NotificationDef.configureNotifications(this);
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 

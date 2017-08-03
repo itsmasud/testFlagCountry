@@ -294,6 +294,11 @@ public class CustomFieldDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+            if (_customField.getType() == null) {
+                _onOkDispatcher.dispatch(getUid(), _customField, _textEditText.getText().toString());
+                return;
+            }
+
             switch (_customField.getType()) {
                 case PREDEFINED:
                     _onOkDispatcher.dispatch(getUid(), _customField, (String) _spinner.getAdapter().getItem(_itemSelectedPosition));

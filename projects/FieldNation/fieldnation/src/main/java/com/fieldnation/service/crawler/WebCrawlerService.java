@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 
@@ -79,6 +80,12 @@ public class WebCrawlerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //TODO make work with O
+            Log.v(TAG, "Running on O, can't operate in background");
+            return START_NOT_STICKY;
+        }
 
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);

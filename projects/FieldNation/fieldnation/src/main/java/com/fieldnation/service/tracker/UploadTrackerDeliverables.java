@@ -1,12 +1,16 @@
 package com.fieldnation.service.tracker;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
+import com.fieldnation.NotificationDef;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 
@@ -84,65 +88,121 @@ public class UploadTrackerDeliverables implements UploadTrackerConstants, Upload
     private void populateNotification(Context context) {
         // running
         if (_uploadRunning > 0) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                    .setLargeIcon(null)
-                    .setSmallIcon(R.drawable.ic_anim_upload_start)
-                    .setContentTitle(context.getResources().getQuantityString(
-                            R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
-                    .setContentText(context.getResources().getQuantityString(
-                            R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
-                    .setColor(context.getResources().getColor(R.color.fn_clickable_text));
-
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(_notificationId, builder.build());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Notification notification = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
+                        .setLargeIcon((Bitmap) null)
+                        .setSmallIcon(R.drawable.ic_anim_upload_start)
+                        .setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
+                        .setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
+                        .setColor(context.getResources().getColor(R.color.fn_clickable_text))
+                        .build();
+
+                manager.notify(_notificationId, notification);
+            } else {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                        .setLargeIcon(null)
+                        .setSmallIcon(R.drawable.ic_anim_upload_start)
+                        .setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
+                        .setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
+                        .setColor(context.getResources().getColor(R.color.fn_clickable_text));
+
+                manager.notify(_notificationId, builder.build());
+            }
 
             // queued
         } else if (_uploadQueued > 0) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                    .setLargeIcon(null)
-                    .setSmallIcon(R.drawable.ic_notif_queued)
-                    .setContentTitle(context.getResources().getQuantityString(
-                            R.plurals.num_files_to_upload, _uploadQueued, _uploadQueued))
-                    .setContentText(context.getResources().getQuantityString(
-                            R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
-                    .setColor(context.getResources().getColor(R.color.fn_clickable_text));
-
-            if (_uploadFailed > 0) {
-                builder.setContentText(context.getString(R.string.num_failed, _uploadFailed));
-            }
-
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(_notificationId, builder.build());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Notification.Builder builder = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
+                        .setLargeIcon((Bitmap) null)
+                        .setSmallIcon(R.drawable.ic_notif_queued)
+                        .setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_files_to_upload, _uploadQueued, _uploadQueued))
+                        .setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
+                        .setColor(context.getResources().getColor(R.color.fn_clickable_text));
 
+                if (_uploadFailed > 0) {
+                    builder.setContentText(context.getString(R.string.num_failed, _uploadFailed));
+                }
+
+                manager.notify(_notificationId, builder.build());
+            } else {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                        .setLargeIcon(null)
+                        .setSmallIcon(R.drawable.ic_notif_queued)
+                        .setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_files_to_upload, _uploadQueued, _uploadQueued))
+                        .setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
+                        .setColor(context.getResources().getColor(R.color.fn_clickable_text));
+
+                if (_uploadFailed > 0) {
+                    builder.setContentText(context.getString(R.string.num_failed, _uploadFailed));
+                }
+
+                manager.notify(_notificationId, builder.build());
+            }
             // complete
         } else if (_uploadQueued == 0 && _uploadRunning == 0) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                    .setLargeIcon(null)
-                    .setSmallIcon(R.drawable.ic_notif_success)
-                    .setContentTitle(context.getResources().getQuantityString(
-                            R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess))
-                    .setContentText(context.getResources().getQuantityString(
-                            R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
-                    .setColor(context.getResources().getColor(R.color.fn_accent_color));
-
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(_notificationId, builder.build());
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Notification notification = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
+                        .setLargeIcon((Bitmap) null)
+                        .setSmallIcon(R.drawable.ic_notif_success)
+                        .setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess))
+                        .setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
+                        .setColor(context.getResources().getColor(R.color.fn_accent_color))
+                        .build();
 
+                manager.notify(_notificationId, notification);
+            } else {
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                        .setLargeIcon(null)
+                        .setSmallIcon(R.drawable.ic_notif_success)
+                        .setContentTitle(context.getResources().getQuantityString(
+                                R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess))
+                        .setContentText(context.getResources().getQuantityString(
+                                R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
+                        .setColor(context.getResources().getColor(R.color.fn_accent_color));
+
+                manager.notify(_notificationId, builder.build());
+            }
             _resetTimer = System.currentTimeMillis() + 10000;
         }
     }
 
     public void createFailedNotification(Context context, PendingIntent failIntent) {
-        NotificationCompat.Builder
-                builder = new NotificationCompat.Builder(App.get())
-                .setLargeIcon(null)
-                .setSmallIcon(R.drawable.ic_notif_fail)
-                .setContentText("File upload has failed")
-                .setContentIntent(failIntent)
-                .setContentTitle(context.getString(R.string.failed))
-                .setColor(context.getResources().getColor(R.color.fn_red));
-
         NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-        manager.notify(App.secureRandom.nextInt(), builder.build());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Notification notification = new Notification.Builder(App.get(), NotificationDef.FILE_UPLOAD_CHANNEL)
+                    .setLargeIcon((Bitmap) null)
+                    .setSmallIcon(R.drawable.ic_notif_fail)
+                    .setContentText("File upload has failed")
+                    .setContentIntent(failIntent)
+                    .setContentTitle(context.getString(R.string.failed))
+                    .setColor(context.getResources().getColor(R.color.fn_red))
+                    .build();
+
+            manager.notify(App.secureRandom.nextInt(), notification);
+        } else {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                    .setLargeIcon(null)
+                    .setSmallIcon(R.drawable.ic_notif_fail)
+                    .setContentText("File upload has failed")
+                    .setContentIntent(failIntent)
+                    .setContentTitle(context.getString(R.string.failed))
+                    .setColor(context.getResources().getColor(R.color.fn_red));
+
+            manager.notify(App.secureRandom.nextInt(), builder.build());
+        }
     }
 }
