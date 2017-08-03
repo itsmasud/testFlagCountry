@@ -81,7 +81,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         Log.v(TAG, "onDestroy");
         _authTopicClient.disconnect(App.get());
         _globalTopicClient.disconnect(App.get());
-        setState(AuthState.NOT_AUTHENTICATED);
+        //setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
         }

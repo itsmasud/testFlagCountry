@@ -5,16 +5,15 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.Serializer;
-import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnjson.annotations.Source;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.misc;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Set;
 
 /**
@@ -144,7 +143,7 @@ public class Signature implements Parcelable {
         if (_created == null)
             _created = new Date();
 
-            return _created;
+        return _created;
     }
 
     public Signature created(Date created) throws ParseException {
@@ -279,7 +278,7 @@ public class Signature implements Parcelable {
         if (_task == null)
             _task = new Task();
 
-            return _task;
+        return _task;
     }
 
     public Signature task(Task task) throws ParseException {
@@ -304,7 +303,7 @@ public class Signature implements Parcelable {
         if (_timeZone == null)
             _timeZone = new TimeZone();
 
-            return _timeZone;
+        return _timeZone;
     }
 
     public Signature timeZone(TimeZone timeZone) throws ParseException {
@@ -406,16 +405,13 @@ public class Signature implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation           -*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Signature> CREATOR = new Parcelable.Creator<Signature>() {
+    private static Hashtable<Integer, WeakReference<Signature>> CACHE = new Hashtable<>();
+    private static int CACHE_NEXT = 0;
 
+    public static final Parcelable.Creator<Signature> CREATOR = new Parcelable.Creator<Signature>() {
         @Override
         public Signature createFromParcel(Parcel source) {
-            try {
-                return Signature.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                return null;
-            }
+            return CACHE.get(source.readInt()).get();
         }
 
         @Override
@@ -431,7 +427,12 @@ public class Signature implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(getJson(), flags);
+        synchronized (TAG) {
+            Log.v(TAG, "CACHE_NEXT " + CACHE_NEXT);
+            dest.writeInt(CACHE_NEXT);
+            CACHE.put(CACHE_NEXT, new WeakReference<>(this));
+            CACHE_NEXT++;
+        }
     }
 
     /*-*****************************-*/

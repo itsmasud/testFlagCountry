@@ -67,7 +67,7 @@ public class ProfilePhotoService extends MultiThreadedService implements Profile
 
     private void doGetImage() {
         if (_currentProfileImage == null) {
-            ProfileClient.get(this);
+            ProfilePhotoClient.get(this);
         } else {
             ProfilePhotoClient.dispatchGet(this, _currentProfileImage);
         }
