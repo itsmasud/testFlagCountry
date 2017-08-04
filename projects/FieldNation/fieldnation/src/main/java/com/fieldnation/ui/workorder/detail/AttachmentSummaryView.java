@@ -83,7 +83,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         }
 
         setVisibility(VISIBLE);
-        _countTextView.setText(count);
+        _countTextView.setText(String.valueOf(count));
     }
 
     private final OnClickListener _this_onClick = new OnClickListener() {

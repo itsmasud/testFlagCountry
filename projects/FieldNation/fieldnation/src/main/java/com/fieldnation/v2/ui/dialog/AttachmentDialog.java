@@ -44,6 +44,7 @@ import com.fieldnation.ui.workorder.detail.UploadSlotView;
 import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
 import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
@@ -111,19 +112,11 @@ public class AttachmentDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _refreshView = view.findViewById(R.id.refresh_view);
-        _refreshView.setListener(_refreshView_listener);
-
         _scrollView = view.findViewById(R.id.scroll_view);
-        _scrollView.setOnOverScrollListener(_refreshView);
-
         _reviewList = view.findViewById(R.id.review_list);
-
         _filesLayout = view.findViewById(R.id.files_layout);
-
         _noDocsTextView = view.findViewById(R.id.nodocs_textview);
-
         _actionButton = view.findViewById(R.id.action_button);
-        _actionButton.setOnClickListener(_actionButton_onClick);
 
         checkMedia();
         return view;
@@ -135,10 +128,12 @@ public class AttachmentDialog extends FullScreenDialog {
         super.onResume();
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
-//        _adapter.notifyDataSetChanged();
+        _scrollView.setOnOverScrollListener(_refreshView);
+        _actionButton.setOnClickListener(_actionButton_onClick);
+        _refreshView.setListener(_refreshView_listener);
 
-//        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-//        _workOrderApi.connect(App.get());
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
 
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
@@ -338,6 +333,7 @@ public class AttachmentDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         _workOrder = params.getParcelable("workOrder");
+        _workOrderId = _workOrder.getId();
         populateUi();
         super.show(params, animate);
     }
@@ -355,7 +351,6 @@ public class AttachmentDialog extends FullScreenDialog {
 
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_YES_NO, _yesNoDialog_onSecondary);
-
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -367,27 +362,28 @@ public class AttachmentDialog extends FullScreenDialog {
     };
 
 
-//    private WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-//        @Override
-//        public void onConnected() {
-//            _workOrderApi.subWorkordersWebApi();
-//        }
-//
-//        @Override
-//        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
-//            return true;
-//        }
-//
-//        @Override
-//        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-//            if (successObject != null && successObject instanceof WorkOrder) {
-//                WorkOrder workOrder = (WorkOrder) successObject;
-//                if (_workOrder.getId().equals(workOrder.getId())) {
-//                    _workOrder = workOrder;
-//                }
-//            }
-//        }
-//    };
+    private WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return true;
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject != null && successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (_workOrder.getId().equals(workOrder.getId())) {
+                    _workOrder = workOrder;
+                    populateUi();
+                }
+            }
+        }
+    };
 
 
     /*-*********************************-*/
@@ -631,6 +627,14 @@ public class AttachmentDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
+            Log.e(TAG, "onPrimary");
+
+            if (_document == null) {
+                Log.e(TAG, "_document is null");
+            } else {
+                Log.e(TAG, "_document is not null");
+            }
+
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _document.getFolderId(), _document.getId(), App.get().getSpUiContext());
             setLoading(true);
         }
@@ -639,6 +643,7 @@ public class AttachmentDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnSecondaryListener _yesNoDialog_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
         @Override
         public void onSecondary() {
+            Log.e(TAG, "onSecondary");
 //            _profileBounceProtect = false;
 //            App.get().setNeverRemindCoi();
 //            new Handler().post(new Runnable() {
