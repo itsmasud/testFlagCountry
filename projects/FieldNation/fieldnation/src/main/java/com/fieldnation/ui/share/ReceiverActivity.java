@@ -25,6 +25,7 @@ import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.AttachmentDialog;
 
 import java.util.ArrayList;
 
@@ -290,9 +291,11 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     private void startWorkOrderDetails() {
         Intent intent = WorkOrderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId().intValue());
-        intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DELIVERABLES);
+        intent.putExtra(WorkOrderActivity.INTENT_FIELD_CURRENT_TAB, WorkOrderActivity.TAB_DETAILS);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
+        AttachmentDialog.show(App.get(), null, _selectedWorkOrder);
+
         finish();
     }
 
