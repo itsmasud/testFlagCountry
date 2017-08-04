@@ -2,6 +2,7 @@ package com.fieldnation.v2.ui;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
@@ -51,11 +52,17 @@ public class AttachedFilesAdapter extends RecyclerView.Adapter<AttachedFilesView
         AttachedFilesViewHolder holder = null;
         switch (viewType) {
             case AttachedFilesViewHolder.TYPE_HEADER:
+                holder = new AttachedFilesViewHolder(new ListHeader(parent.getContext()));
+                holder.type = viewType;
                 break;
             case AttachedFilesViewHolder.TYPE_ATTACHMENT: {
+                holder = new AttachedFilesViewHolder(new TwoLineActionTile(parent.getContext()));
+                holder.type = viewType;
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ADD_VIEW:
+                holder = new AttachedFilesViewHolder(new TextView(parent.getContext()));
+                holder.type = viewType;
                 break;
         }
         return holder;
