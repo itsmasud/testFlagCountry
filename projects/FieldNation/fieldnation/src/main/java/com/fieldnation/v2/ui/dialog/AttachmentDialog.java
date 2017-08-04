@@ -35,7 +35,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.detail.DocumentView;
@@ -131,8 +130,6 @@ public class AttachmentDialog extends FullScreenDialog {
         _workOrderApi.connect(App.get());
 
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.addOnSecondaryListener(DIALOG_YES_NO, _yesNoDialog_onSecondary);
 
@@ -329,8 +326,6 @@ public class AttachmentDialog extends FullScreenDialog {
         if (_photoClient != null) _photoClient.disconnect(App.get());
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
         TwoButtonDialog.removeOnSecondaryListener(DIALOG_YES_NO, _yesNoDialog_onSecondary);
     }
@@ -369,6 +364,7 @@ public class AttachmentDialog extends FullScreenDialog {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+/* TODO
     private final AttachmentFolderDialog.OnFolderSelectedListener _attachmentFolderDialog_onSelected = new AttachmentFolderDialog.OnFolderSelectedListener() {
         @Override
         public void onFolderSelected(AttachmentFolder folder) {
@@ -383,6 +379,7 @@ public class AttachmentDialog extends FullScreenDialog {
             }
         }
     };
+*/
     private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -395,7 +392,7 @@ public class AttachmentDialog extends FullScreenDialog {
             }
 
             if (slots.size() > 1) {
-                AttachmentFolderDialog.show(App.get(), DIALOG_UPLOAD_SLOTS, slots.toArray(new AttachmentFolder[slots.size()]));
+                //AttachmentFolderDialog.show(App.get(), DIALOG_UPLOAD_SLOTS, slots.toArray(new AttachmentFolder[slots.size()]));
             } else if (slots.size() == 1) {
                 AttachmentFolder folder = slots.get(0);
                 if (checkMedia()) {

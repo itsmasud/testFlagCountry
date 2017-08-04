@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,12 +22,15 @@ public class ListItemTwoVertView extends RelativeLayout {
     private TextView _keyTextView;
     private TextView _valueTextView;
     private TextView _actionTextView;
+    private ProgressBar _progressBar;
 
     // Data
     private String _key;
     private String _value;
     private String _action;
     private boolean _actionVisible = true;
+    private boolean _progressVisible = false;
+    private int _progress = -1;
 
     // Listener
     private OnActionClickListener _actionOnclickListener;
@@ -56,6 +60,7 @@ public class ListItemTwoVertView extends RelativeLayout {
         _valueTextView = findViewById(R.id.value);
         _actionTextView = findViewById(R.id.action);
         _actionTextView.setOnClickListener(_action_onClick);
+        _progressBar = findViewById(R.id.progressBar);
 
         populateUi();
     }
@@ -69,6 +74,15 @@ public class ListItemTwoVertView extends RelativeLayout {
         _action = action;
 
         populateUi();
+    }
+
+    public void setProgressVisible(boolean visible) {
+        _progressVisible = visible;
+        populateUi();
+    }
+
+    public void setProgress(int progress) {
+        _progress = progress;
     }
 
     public void setOnActionClickedListener(OnActionClickListener onActionClickedListener) {
@@ -92,8 +106,9 @@ public class ListItemTwoVertView extends RelativeLayout {
         }
 
         if (misc.isEmptyOrNull(_value)) {
-            _valueTextView.setText("");
+            _valueTextView.setVisibility(GONE);
         } else {
+            _valueTextView.setVisibility(VISIBLE);
             _valueTextView.setText(_value);
         }
 
@@ -106,6 +121,18 @@ public class ListItemTwoVertView extends RelativeLayout {
             }
         } else {
             _actionTextView.setVisibility(GONE);
+        }
+
+        if (_progressVisible) {
+            _progressBar.setVisibility(VISIBLE);
+            if (_progress == -1) {
+                _progressBar.setIndeterminate(true);
+            } else {
+                _progressBar.setIndeterminate(false);
+                _progressBar.setProgress(_progress);
+            }
+        } else {
+            _progressBar.setVisibility(GONE);
         }
     }
 

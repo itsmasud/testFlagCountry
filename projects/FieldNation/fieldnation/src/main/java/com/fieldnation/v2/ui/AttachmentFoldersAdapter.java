@@ -3,12 +3,12 @@ package com.fieldnation.v2.ui;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,8 +17,32 @@ import java.util.List;
  */
 
 public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFilesViewHolder> {
+    private static final String TAG = "AttachmentFoldersAdapter";
 
     private List<Tuple> objects = new LinkedList<>();
+    private Listener _listener;
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    private static class UploadTuple {
+        int folderId;
+        String name;
+        int progress;
+    }
+
+    private Hashtable<String, UploadTuple> uploads = new Hashtable<>();
+
+    public void startUpload(int folderId, String name) {
+    }
+
+    public void progressUpload(int folderId, String name, int progress) {
+    }
+
+    public void stopDownload(int folderId, String name) {
+    }
+
 
     public void setAttachments(AttachmentFolders folders) {
         objects.clear();
@@ -46,6 +70,8 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 objects.add(t);
             }
         }
+
+        notifyDataSetChanged();
     }
 
     @Override
@@ -61,14 +87,18 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 ListItemTwoVertView listItemTwoVertView = new ListItemTwoVertView(parent.getContext());
                 listItemTwoVertView.setOnClickListener(_attachment_onClick);
                 listItemTwoVertView.setOnLongClickListener(_attachment_onLongClick);
+                listItemTwoVertView.setActionVisible(false);
                 holder = new AttachedFilesViewHolder(listItemTwoVertView);
                 holder.type = viewType;
                 break;
             }
-            case AttachedFilesViewHolder.TYPE_ADD_VIEW:
-                holder = new AttachedFilesViewHolder(new TextView(parent.getContext()));
+            case AttachedFilesViewHolder.TYPE_ADD_VIEW: {
+                ListItemLinkView view = new ListItemLinkView(parent.getContext());
+                view.setOnClickListener(_addNew_onClick);
+                holder = new AttachedFilesViewHolder(view);
                 holder.type = viewType;
                 break;
+            }
         }
         return holder;
     }
@@ -90,8 +120,10 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ADD_VIEW: {
-                TextView view = (TextView) holder.itemView;
-                view.setText("Add New...");
+                AttachmentFolder af = (AttachmentFolder) objects.get(position).object;
+                ListItemLinkView view = (ListItemLinkView) holder.itemView;
+                view.setTitle("Add New...");
+                view.setTag(af);
                 break;
             }
         }
@@ -103,7 +135,8 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
             ListItemTwoVertView v = (ListItemTwoVertView) view;
             Attachment a = (Attachment) v.getTag();
             if (a.getActionsSet().contains(Attachment.ActionsEnum.VIEW)) {
-                // TODO download and show
+                if (_listener != null)
+                    _listener.onShowAttachment(a);
             }
         }
     };
@@ -113,11 +146,19 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
         public boolean onLongClick(View view) {
             ListItemTwoVertView v = (ListItemTwoVertView) view;
             Attachment a = (Attachment) v.getTag();
-            if (a.getActionsSet().contains(Attachment.ActionsEnum.DELETE)) {
-                // TODO ask delete and delete
+            if (a.getActionsSet().contains(Attachment.ActionsEnum.DELETE) && _listener != null) {
+                _listener.onDeleteAttachment(a);
                 return true;
             }
             return false;
+        }
+    };
+
+    private final View.OnClickListener _addNew_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            if (_listener != null)
+                _listener.onAdd((AttachmentFolder) view.getTag());
         }
     };
 
@@ -134,5 +175,13 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
     private static class Tuple {
         public int type;
         public Object object;
+    }
+
+    public interface Listener {
+        void onShowAttachment(Attachment attachment);
+
+        void onDeleteAttachment(Attachment attachment);
+
+        void onAdd(AttachmentFolder attachmentFolder);
     }
 }
