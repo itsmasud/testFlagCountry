@@ -2,21 +2,21 @@ package com.fieldnation.v2.ui.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.KeyedDispatcher;
-import com.fieldnation.ui.TileTextView;
 import com.fieldnation.v2.data.model.AttachmentFolder;
+import com.fieldnation.v2.data.model.AttachmentFolders;
+import com.fieldnation.v2.ui.AttachmentFoldersAdapter;
 
 /**
  * Created by mc on 3/9/17.
@@ -26,11 +26,12 @@ public class AttachmentFolderDialog extends SimpleDialog {
     private static final String TAG = "AttachmentFolderDialog";
 
     // Ui
-    private TextView _titleTextView;
-    private ListView _items;
+    private Toolbar _toolbar;
+    private RecyclerView _list;
 
     // Data
-    private AttachmentFolder[] folders = null;
+    private AttachmentFolders folders = null;
+    private AttachmentFoldersAdapter adapter = null;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -41,10 +42,14 @@ public class AttachmentFolderDialog extends SimpleDialog {
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_item_list, container, false);
+        View v = inflater.inflate(R.layout.dialog_v2_attachment_folder, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _items = (ListView) v.findViewById(R.id.apps_listview);
+        _toolbar = v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setTitle("Attachments");
+
+        _list = v.findViewById(R.id.list);
+        _list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
         return v;
     }
@@ -53,61 +58,30 @@ public class AttachmentFolderDialog extends SimpleDialog {
     public void show(Bundle payload, boolean animate) {
         super.show(payload, animate);
 
-        Parcelable[] parcels = payload.getParcelableArray("folders");
-        folders = new AttachmentFolder[parcels.length];
-
-        for (int i = 0; i < parcels.length; i++) {
-            folders[i] = (AttachmentFolder) parcels[i];
-        }
-
-        _titleTextView.setText(R.string.select_upload_slot);
-
-        _items.setAdapter(_adapter);
+        folders = payload.getParcelable("folders");
+        adapter = new AttachmentFoldersAdapter();
+        adapter.setAttachments(folders);
     }
 
-    private final BaseAdapter _adapter = new BaseAdapter() {
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
+        _list.setAdapter(adapter);
+    }
+
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
-        public int getCount() {
-            if (folders == null)
-                return 0;
-
-            return folders.length;
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return folders[position];
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            TileTextView v = new TileTextView(parent.getContext());
-
-            v.setText(folders[position].getName());
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onItemClick(position);
-                }
-            });
-            return v;
+        public void onClick(View view) {
+            dismiss(true);
         }
     };
 
-    private void onItemClick(int position) {
-        Log.v(TAG, "onItemClick");
-        _onFolderSelectedDispatcher.dispatch(getUid(), folders[position]);
-        dismiss(true);
-    }
-
-    public static void show(Context context, String uid, AttachmentFolder[] folders) {
+    public static void show(Context context, String uid, AttachmentFolders folders) {
         Bundle params = new Bundle();
-        params.putParcelableArray("folders", folders);
+        params.putParcelable("folders", folders);
 
         Controller.show(context, uid, AttachmentFolderDialog.class, params);
     }

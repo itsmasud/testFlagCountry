@@ -4,12 +4,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/schedule1_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <com.fieldnation.v2.ui.KeyValuePairView
+    <com.fieldnation.v2.ui.ListItemTwoHorizView
         android:id="@+id/schedule2_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

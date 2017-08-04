@@ -12,8 +12,8 @@ import com.fieldnation.R;
  * Created by mc on 8/4/17.
  */
 
-public class ListHeader extends RelativeLayout {
-    private static final String TAG = "ListHeader";
+public class ListItemGroupView extends RelativeLayout {
+    private static final String TAG = "ListItemGroupView";
 
     // Ui
     private TextView _titleTextView;
@@ -21,23 +21,23 @@ public class ListHeader extends RelativeLayout {
     // Data
     private String _title;
 
-    public ListHeader(Context context) {
+    public ListItemGroupView(Context context) {
         super(context);
         init();
     }
 
-    public ListHeader(Context context, AttributeSet attrs) {
+    public ListItemGroupView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ListHeader(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ListItemGroupView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_v3_list_header, this, true);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_v3_list_group, this, true);
 
         if (isInEditMode())
             return;

@@ -14,8 +14,8 @@ import com.fieldnation.fntools.misc;
  * Created by mc on 7/11/17.
  */
 
-public class TwoLineActionTile extends RelativeLayout {
-    private static final String TAG = "TwoLineActionTile";
+public class ListItemTwoVertView extends RelativeLayout {
+    private static final String TAG = "ListItemTwoVertView";
 
     // Ui
     private TextView _keyTextView;
@@ -26,21 +26,22 @@ public class TwoLineActionTile extends RelativeLayout {
     private String _key;
     private String _value;
     private String _action;
+    private boolean _actionVisible = true;
 
     // Listener
     private OnActionClickListener _actionOnclickListener;
 
-    public TwoLineActionTile(Context context) {
+    public ListItemTwoVertView(Context context) {
         super(context);
         init();
     }
 
-    public TwoLineActionTile(Context context, AttributeSet attrs) {
+    public ListItemTwoVertView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TwoLineActionTile(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ListItemTwoVertView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -56,6 +57,11 @@ public class TwoLineActionTile extends RelativeLayout {
         _actionTextView = findViewById(R.id.action);
         _actionTextView.setOnClickListener(_action_onClick);
 
+        populateUi();
+    }
+
+    public void setActionVisible(boolean visible) {
+        _actionVisible = visible;
         populateUi();
     }
 
@@ -91,10 +97,15 @@ public class TwoLineActionTile extends RelativeLayout {
             _valueTextView.setText(_value);
         }
 
-        if (misc.isEmptyOrNull(_action)) {
-            _actionTextView.setText(R.string.icon_x);
+        if (_actionVisible) {
+            _actionTextView.setVisibility(VISIBLE);
+            if (misc.isEmptyOrNull(_action)) {
+                _actionTextView.setText(R.string.icon_x);
+            } else {
+                _actionTextView.setText(_action);
+            }
         } else {
-            _actionTextView.setText(_action);
+            _actionTextView.setVisibility(GONE);
         }
     }
 
@@ -102,7 +113,7 @@ public class TwoLineActionTile extends RelativeLayout {
         @Override
         public void onClick(View view) {
             if (_actionOnclickListener != null)
-                _actionOnclickListener.onClick(TwoLineActionTile.this, view);
+                _actionOnclickListener.onClick(ListItemTwoVertView.this, view);
         }
     };
 
