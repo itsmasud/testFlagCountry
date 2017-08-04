@@ -69,14 +69,8 @@ public class AttachmentDialog extends FullScreenDialog {
     private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
     private static final String DIALOG_YES_NO = TAG + ".yesNoDialog";
 
-    // State
-    private static final String STATE_UPLOAD_FOLDER = "STATE_UPLOAD_FOLDER";
-    private static final String STATE_WORK_ORDER_ID = "STATE_WORK_ORDER_ID";
-
-
     // Ui
     private Toolbar _toolbar;
-    private OverScrollRecyclerView _recyclerView;
     private OverScrollView _scrollView;
     private LinearLayout _reviewList;
     private LinearLayout _filesLayout;
@@ -90,6 +84,7 @@ public class AttachmentDialog extends FullScreenDialog {
     private DocumentClient _docClient;
     private PhotoClient _photoClient;
     private AttachmentFolder _folder;
+    private Attachment _document;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -176,19 +171,6 @@ public class AttachmentDialog extends FullScreenDialog {
     private boolean checkMedia() {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
-
-//    @Override
-//    public void update() {
-//        App.get().getSpUiContext().page(WorkOrderTracker.Tab.ATTACHMENTS.name());
-//        checkMedia();
-//    }
-//
-//    @Override
-//    public void setWorkOrder(WorkOrder workOrder) {
-//        _workOrder = workOrder;
-//        _workOrderId = workOrder.getId();
-//        populateUi();
-//    }
 
     public void setLoading(boolean isLoading) {
         if (_refreshView != null) {
@@ -361,7 +343,6 @@ public class AttachmentDialog extends FullScreenDialog {
         }
     };
 
-
     private WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
         @Override
         public void onConnected() {
@@ -384,7 +365,6 @@ public class AttachmentDialog extends FullScreenDialog {
             }
         }
     };
-
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -439,33 +419,10 @@ public class AttachmentDialog extends FullScreenDialog {
     };
 
 
-    private Attachment _document;
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, final Attachment document) {
-
             _document = document;
-//            _yesNoDialog.setData(getView().getResources().getString(R.string.delete_file),
-//                    getView().getResources().getString(R.string.dialog_delete_message), getView().getResources().getString(R.string.btn_yes), getView().getResources().getString(R.string.btn_no),
-//                    new TwoButtonDialog.Listener() {
-//                        @Override
-//                        public void onPositive() {
-//                            WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, document.getFolderId(), documentId, App.get().getSpUiContext());
-//                            setLoading(true);
-//                        }
-//
-//                        @Override
-//                        public void onNegative() {
-//                        }
-//
-//                        @Override
-//                        public void onCancel() {
-//                        }
-//                    });
-//            _yesNoDialog.show();
-
-
-            Log.v(TAG, "Asking coi");
             TwoButtonDialog.show(App.get(), DIALOG_YES_NO, getView().getResources().getString(R.string.delete_file),
                     getView().getResources().getString(R.string.dialog_delete_message),
                     getView().getResources().getString(R.string.btn_yes), getView().getResources().getString(R.string.btn_no), false, null);
@@ -627,14 +584,6 @@ public class AttachmentDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
         public void onPrimary() {
-            Log.e(TAG, "onPrimary");
-
-            if (_document == null) {
-                Log.e(TAG, "_document is null");
-            } else {
-                Log.e(TAG, "_document is not null");
-            }
-
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _document.getFolderId(), _document.getId(), App.get().getSpUiContext());
             setLoading(true);
         }
@@ -643,17 +592,6 @@ public class AttachmentDialog extends FullScreenDialog {
     private final TwoButtonDialog.OnSecondaryListener _yesNoDialog_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
         @Override
         public void onSecondary() {
-            Log.e(TAG, "onSecondary");
-//            _profileBounceProtect = false;
-//            App.get().setNeverRemindCoi();
-//            new Handler().post(new Runnable() {
-//                @Override
-//                public void run() {
-//                    gotProfile();
-//                }
-//            });
-
-
         }
     };
 
