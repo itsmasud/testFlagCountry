@@ -157,13 +157,13 @@ public class WorkFragment extends WorkorderFragment {
     private CounterOfferSummaryView _coSummaryView;
     private ExpenseListLayout _expenseListView;
     private DiscountListLayout _discountListView;
+    private AttachmentSummaryView _attachmentSummaryView;
     private RefreshView _refreshView;
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Dialogs
     private TermsScrollingDialog _termsScrollingDialog;
     private TwoButtonDialog _yesNoDialog;
-    private ReportProblemDialog _reportProblemDialog;
 
     // Data
     private WorkordersWebApi _workOrderApi;
@@ -266,6 +266,9 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView = view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signatureList_listener);
         _renderers.add(_signatureView);
+
+        _attachmentSummaryView = view.findViewById(R.id.attachment_summary_view);
+        _renderers.add(_attachmentSummaryView);
 
         if (!BuildConfig.DEBUG || BuildConfig.FLAVOR.contains("ncns"))
             _testButton.setVisibility(View.GONE);
@@ -1221,6 +1224,8 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(true);
         }
     };
+
+
 
     /*-*********************************-*/
     /*-				Dialogs				-*/

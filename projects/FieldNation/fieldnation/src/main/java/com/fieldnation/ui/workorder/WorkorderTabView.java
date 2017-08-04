@@ -17,7 +17,6 @@ public class WorkorderTabView extends RelativeLayout {
     //    private RelativeLayout _tasksLayout;
     private TextView _messagesTextView;
     private RelativeLayout _messagesLayout;
-    private RelativeLayout _attachmentsLayout;
 
     // Data
     private Listener _listener;
@@ -61,20 +60,15 @@ public class WorkorderTabView extends RelativeLayout {
         _messagesLayout = (RelativeLayout) findViewById(R.id.messages_layout);
         _messagesLayout.setOnClickListener(_messagesLayout_onClick);
 
-        _attachmentsLayout = (RelativeLayout) findViewById(R.id.attachments_layout);
-        _attachmentsLayout.setOnClickListener(_attachmentsLayout_onClick);
-
-        _buttons = new View[3];
+        _buttons = new View[2];
         _buttons[0] = _detailLayout;
 //        _buttons[1] = _tasksLayout;
         _buttons[1] = _messagesLayout;
-        _buttons[2] = _attachmentsLayout;
 
         _layouts = new RelativeLayout[5];
         _layouts[0] = _detailLayout;
 //        _layouts[1] = _tasksLayout;
         _layouts[1] = _messagesLayout;
-        _layouts[2] = _attachmentsLayout;
 
         setSelected(0);
     }
@@ -97,15 +91,6 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(1);
             if (_listener != null)
                 _listener.onChange(1);
-        }
-    };
-
-    private final View.OnClickListener _attachmentsLayout_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            setSelected(2);
-            if (_listener != null)
-                _listener.onChange(2);
         }
     };
 

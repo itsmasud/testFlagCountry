@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@color/fn_clickable_bg">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/additional_information"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:id="@+id/attachment_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:background="@android:color/white">
+
+        <View
+            android:id="@+id/upper_divider"
+            style="@style/DividerFull" />
+
+        <TextView
+            android:id="@+id/summary_attached_files_textview"
+            style="@style/Text_Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/upper_divider"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_toLeftOf="@+id/count_textview"
+            android:text="@string/attached_files" />
+
+        <TextView
+            android:id="@+id/count_textview"
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/round_rect_gray"
+            android:gravity="center"
+            android:paddingBottom="2dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:text="3"
+            android:textColor="@color/fn_white_text" />
+
+        <View
+            style="@style/DividerFull"
+            android:layout_below="@+id/count_textview" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
