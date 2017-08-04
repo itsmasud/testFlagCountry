@@ -358,6 +358,7 @@
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
     <string name="add_profile">Add Profile</string>
+    <string name="additional_information">Addional Information</string>
     <string name="add_time">Add Time</string>
     <string name="address">Address</string>
     <string name="address_1">Address 1</string>
@@ -371,6 +372,8 @@
     <string name="tv_date">Date</string>
     <string name="tv_start_time">Start Time</string>
     <string name="assign_add_new">Assign/Add New</string>
+    <string name="attached_files">Attached Files</string>
+    <string name="attachment_files">Attachment Files</string>
     <string name="between">Between</string>
     <string name="earliest_arrival">Earliest Arrival</string>
     <string name="latest_arrival">Latest Arrival</string>

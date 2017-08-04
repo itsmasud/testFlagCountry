@@ -1,6 +1,7 @@
-package com.fieldnation.ui.workorder.detail;
+package com.fieldnation.v2.ui.dialog;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,6 +13,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +24,8 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
@@ -32,19 +35,20 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.ui.workorder.detail.DocumentView;
+import com.fieldnation.ui.workorder.detail.PhotoReceiver;
+import com.fieldnation.ui.workorder.detail.UploadSlotView;
+import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
 import com.fieldnation.v2.data.client.AttachmentService;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
+import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.GetFileIntent;
-import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
-import com.fieldnation.v2.ui.dialog.GetFileDialog;
-import com.fieldnation.v2.ui.dialog.PhotoUploadDialog;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -52,19 +56,21 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DeliverableFragment extends WorkorderFragment {
-    private static final String TAG = "DeliverableFragment";
+/**
+ * Created by shoaib.ahmed on 08/02/17.
+ */
+
+public class AttachmentDialog extends FullScreenDialog {
+    private static final String TAG = "AttachmentDialog";
 
     // Dialog
     private static final String DIALOG_GET_FILE = TAG + ".getFileDialog";
     private static final String DIALOG_UPLOAD_SLOTS = TAG + ".attachmentFolderDialog";
     private static final String DIALOG_PHOTO_UPLOAD = TAG + ".photoUploadDialog";
+    private static final String DIALOG_YES_NO = TAG + ".yesNoDialog";
 
-    // State
-    private static final String STATE_UPLOAD_FOLDER = "STATE_UPLOAD_FOLDER";
-    private static final String STATE_WORK_ORDER_ID = "STATE_WORK_ORDER_ID";
-
-    // UI
+    // Ui
+    private Toolbar _toolbar;
     private OverScrollView _scrollView;
     private LinearLayout _reviewList;
     private LinearLayout _filesLayout;
@@ -72,96 +78,73 @@ public class DeliverableFragment extends WorkorderFragment {
     private RefreshView _refreshView;
     private Button _actionButton;
 
-    // Dialog
-    private TwoButtonDialog _yesNoDialog;
-
     // Data
     private WorkOrder _workOrder;
     private int _workOrderId = 0;
     private DocumentClient _docClient;
     private PhotoClient _photoClient;
     private AttachmentFolder _folder;
+    private Attachment _document;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
     private ForLoopRunnable _reviewRunnable = null;
 
-    /*-*************************************-*/
-    /*-				LifeCycle				-*/
-    /*-*************************************-*/
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_UPLOAD_FOLDER))
-                _folder = savedInstanceState.getParcelable(STATE_UPLOAD_FOLDER);
 
-            if (savedInstanceState.containsKey(STATE_WORK_ORDER_ID))
-                _workOrderId = savedInstanceState.getInt(STATE_WORK_ORDER_ID);
-        }
+    // Services
+    private WorkordersWebApi _workOrderApi;
 
-        return inflater.inflate(R.layout.fragment_workorder_deliverables, container, false);
+    public AttachmentDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.v(TAG, "onViewCreated");
-        super.onViewCreated(view, savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        View view = inflater.inflate(R.layout.dialog_v2_attachments, container, false);
+
+        _toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        _toolbar.setTitle(view.getResources().getString(R.string.attachment_files));
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
 
         _refreshView = view.findViewById(R.id.refresh_view);
-        _refreshView.setListener(_refreshView_listener);
-
         _scrollView = view.findViewById(R.id.scroll_view);
-        _scrollView.setOnOverScrollListener(_refreshView);
-
         _reviewList = view.findViewById(R.id.review_list);
-
         _filesLayout = view.findViewById(R.id.files_layout);
-
         _noDocsTextView = view.findViewById(R.id.nodocs_textview);
-
         _actionButton = view.findViewById(R.id.action_button);
-        _actionButton.setOnClickListener(_actionButton_onClick);
 
         checkMedia();
-        populateUi();
+        return view;
     }
 
+
     @Override
-    public void onStart() {
-        super.onStart();
-        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+    public void onResume() {
+        super.onResume();
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
+        _scrollView.setOnOverScrollListener(_refreshView);
+        _actionButton.setOnClickListener(_actionButton_onClick);
+        _refreshView.setListener(_refreshView_listener);
+
+        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
+        _workOrderApi.connect(App.get());
 
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         AttachmentFolderDialog.addOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
+
+        TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
+        TwoButtonDialog.addOnSecondaryListener(DIALOG_YES_NO, _yesNoDialog_onSecondary);
+
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
+
     }
 
-    @Override
-    public void onStop() {
-        if (_docClient != null) _docClient.disconnect(App.get());
-        if (_photoClient != null) _photoClient.disconnect(App.get());
-
-        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
-        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
-        super.onStop();
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        if (_folder != null)
-            outState.putParcelable(STATE_UPLOAD_FOLDER, _folder);
-
-        outState.putInt(STATE_WORK_ORDER_ID, _workOrderId);
-
-        super.onSaveInstanceState(outState);
-    }
 
     /*-*******************************************************************************-*/
     /*-*******************************************************************************-*/
@@ -176,7 +159,7 @@ public class DeliverableFragment extends WorkorderFragment {
         }
         GetFileIntent intent1 = new GetFileIntent(intent, "Get Content");
 
-        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
+        if (App.get().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             GetFileIntent intent2 = new GetFileIntent(intent, "Take Picture");
             GetFileDialog.show(App.get(), DIALOG_GET_FILE, new GetFileIntent[]{intent1, intent2});
@@ -189,22 +172,8 @@ public class DeliverableFragment extends WorkorderFragment {
         return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
-    @Override
-    public void update() {
-        App.get().getSpUiContext().page(WorkOrderTracker.Tab.ATTACHMENTS.name());
-        checkMedia();
-    }
-
-    @Override
-    public void setWorkOrder(WorkOrder workOrder) {
-        _workOrder = workOrder;
-        _workOrderId = workOrder.getId();
-        populateUi();
-    }
-
-    @Override
     public void setLoading(boolean isLoading) {
-        if (_refreshView != null && getActivity() != null) {
+        if (_refreshView != null) {
             if (isLoading) {
                 _refreshView.startRefreshing();
             } else {
@@ -212,6 +181,7 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     }
+
 
     private void populateUi() {
         misc.hideKeyboard(getView());
@@ -222,9 +192,6 @@ public class DeliverableFragment extends WorkorderFragment {
             return;
 
         if (App.get().getProfile() == null)
-            return;
-
-        if (getActivity() == null)
             return;
 
         if (_workOrder.getAttachments() == null) {
@@ -258,7 +225,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         @Override
                         public void next(int i) throws Exception {
                             Attachment doc = _docs[i];
-                            DocumentView v = new DocumentView(getActivity());
+                            DocumentView v = new DocumentView(getView().getContext());
                             v.setListener(_document_listener);
                             v.setData(_workOrder, doc);
                             _views.add(v);
@@ -310,7 +277,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         if (views.size() > 0)
                             v = (UploadSlotView) views.remove(0);
                         else {
-                            v = new UploadSlotView(getActivity());
+                            v = new UploadSlotView(getView().getContext());
                         }
 
                         AttachmentFolder slot = _slots[i];
@@ -344,6 +311,61 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
+
+    @Override
+    public void show(Bundle params, boolean animate) {
+        _workOrder = params.getParcelable("workOrder");
+        _workOrderId = _workOrder.getId();
+        populateUi();
+        super.show(params, animate);
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        if (_docClient != null) _docClient.disconnect(App.get());
+        if (_photoClient != null) _photoClient.disconnect(App.get());
+
+        GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
+        AttachmentFolderDialog.removeOnFolderSelectedListener(DIALOG_UPLOAD_SLOTS, _attachmentFolderDialog_onSelected);
+
+        TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
+        TwoButtonDialog.removeOnSecondaryListener(DIALOG_YES_NO, _yesNoDialog_onSecondary);
+    }
+
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            cancel();
+            dismiss(true);
+        }
+    };
+
+    private WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
+        @Override
+        public void onConnected() {
+            _workOrderApi.subWorkordersWebApi();
+        }
+
+        @Override
+        public boolean processTransaction(TransactionParams transactionParams, String methodName) {
+            return true;
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (successObject != null && successObject instanceof WorkOrder) {
+                WorkOrder workOrder = (WorkOrder) successObject;
+                if (_workOrder.getId().equals(workOrder.getId())) {
+                    _workOrder = workOrder;
+                    populateUi();
+                }
+            }
+        }
+    };
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -356,7 +378,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 startAppPickerDialog();
             } else {
                 ToastClient.toast(App.get(),
-                        getString(R.string.toast_external_storage_needed),
+                        getView().getResources().getString(R.string.toast_external_storage_needed),
                         Toast.LENGTH_LONG);
             }
         }
@@ -382,7 +404,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     startAppPickerDialog();
                 } else {
                     ToastClient.toast(App.get(),
-                            getString(R.string.toast_external_storage_needed),
+                            getView().getResources().getString(R.string.toast_external_storage_needed),
                             Toast.LENGTH_LONG);
                 }
             }
@@ -396,29 +418,15 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
+
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, final Attachment document) {
+            _document = document;
+            TwoButtonDialog.show(App.get(), DIALOG_YES_NO, getView().getResources().getString(R.string.delete_file),
+                    getView().getResources().getString(R.string.dialog_delete_message),
+                    getView().getResources().getString(R.string.btn_yes), getView().getResources().getString(R.string.btn_no), false, null);
 
-            final int documentId = document.getId();
-            _yesNoDialog.setData(getString(R.string.delete_file),
-                    getString(R.string.dialog_delete_message), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, document.getFolderId(), documentId, App.get().getSpUiContext());
-                            setLoading(true);
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
 
         }
 
@@ -506,7 +514,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                    startActivity(intent);
+                    App.get().startActivity(intent);
                 } else {
                     String name = file.getName();
                     name = name.substring(name.indexOf("_") + 1);
@@ -572,4 +580,26 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     };
+
+    private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
+        @Override
+        public void onPrimary() {
+            WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _document.getFolderId(), _document.getId(), App.get().getSpUiContext());
+            setLoading(true);
+        }
+    };
+
+    private final TwoButtonDialog.OnSecondaryListener _yesNoDialog_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
+        @Override
+        public void onSecondary() {
+        }
+    };
+
+
+    public static void show(Context context, String uid, WorkOrder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable("workOrder", workOrder);
+
+        Controller.show(context, uid, AttachmentDialog.class, params);
+    }
 }
