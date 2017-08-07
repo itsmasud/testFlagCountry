@@ -24,6 +24,7 @@ import com.fieldnation.ui.workorder.detail.WorkFragment;
 import com.fieldnation.v2.data.client.WorkordersWebApi;
 import com.fieldnation.v2.data.listener.TransactionParams;
 import com.fieldnation.v2.data.model.WorkOrder;
+import com.fieldnation.v2.ui.dialog.AttachmentFolderDialog;
 
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_CURRENT_TAB = TAG + ".currentTab";
     public static final String INTENT_FIELD_ACTION = TAG + ".action";
     public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
+    public static final String ACTION_ATTACHMENTS = "ACTION_ATTACHMENTS";
 
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;
@@ -57,6 +59,8 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private boolean _created = false;
     private WorkOrder _workOrder = null;
     private boolean _hidingTasks;
+
+    private boolean _showAttachments = false;
 
     // Services
     private PagerAdapter _pagerAdapter;
@@ -89,6 +93,13 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             if (intent.hasExtra(INTENT_FIELD_ACTION)) {
                 if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_CONFIRM)) {
                     Log.v(TAG, "INTENT_FIELD_ACTION/ACTION_CONFIRM");
+                } else if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_ATTACHMENTS)) {
+                    if (_workOrder != null) {
+                        AttachmentFolderDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        _showAttachments = false;
+                    } else {
+                        _showAttachments = true;
+                    }
                 }
             }
 
@@ -380,6 +391,12 @@ public class WorkOrderActivity extends AuthSimpleActivity {
                 if (_workOrderId == (int) workOrder.getId()) {
                     Debug.setLong("last_workorder", workOrder.getId());
                     _workOrder = workOrder;
+
+                    if (_showAttachments) {
+                        AttachmentFolderDialog.show(App.get(), null, _workOrder.getId(), _workOrder.getAttachments());
+                        _showAttachments = false;
+                    }
+
                     populateUi();
                 }
             } else if (!methodName.startsWith("get")) {
@@ -415,6 +432,16 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
+        return intent;
+    }
+
+    public static Intent makeIntentAttachments(Context context, int workOrderId) {
+        Log.v(TAG, "makeIntentAttachments");
+        Intent intent = new Intent(context, WorkOrderActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_ACTION, ACTION_ATTACHMENTS);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         return intent;
     }
 
