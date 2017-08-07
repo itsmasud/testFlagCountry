@@ -83,6 +83,7 @@ public class ListItemTwoVertView extends RelativeLayout {
 
     public void setProgress(int progress) {
         _progress = progress;
+        populateUi();
     }
 
     public void setOnActionClickedListener(OnActionClickListener onActionClickedListener) {

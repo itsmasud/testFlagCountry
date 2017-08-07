@@ -38,6 +38,8 @@
         android:layout_marginBottom="4dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:max="100"
+        android:min="0"
         android:visibility="gone" />
 
 

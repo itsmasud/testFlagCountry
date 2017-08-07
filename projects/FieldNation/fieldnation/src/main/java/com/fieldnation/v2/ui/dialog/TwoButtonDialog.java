@@ -15,8 +15,8 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
-import com.fieldnation.fntools.misc;
 import com.fieldnation.fntools.KeyedDispatcher;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 9/21/2016.
@@ -50,10 +50,10 @@ public class TwoButtonDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = LayoutInflater.from(context).inflate(R.layout.dialog_v2_two_button, container, false);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
-        _primaryButton = (Button) v.findViewById(R.id.primary_button);
-        _secondaryButton = (Button) v.findViewById(R.id.secondary_button);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _bodyTextView = v.findViewById(R.id.body_textview);
+        _primaryButton = v.findViewById(R.id.primary_button);
+        _secondaryButton = v.findViewById(R.id.secondary_button);
 
         return v;
     }

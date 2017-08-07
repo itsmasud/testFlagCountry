@@ -22,6 +22,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
@@ -163,6 +164,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
             } else if (attachment.getId() != null) {
                 DocumentClient.downloadDocument(getContext(), attachment.getId(),
                         attachment.getFile().getLink(), attachment.getFile().getName(), false);
+                adapter.downloadStart(attachment.getId());
             }
         }
 
@@ -250,6 +252,8 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                 return;
             }
 
+            adapter.downloadComplete((int) documentId);
+
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(App.getUriFromFile(file),
@@ -292,28 +296,88 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onStart(TransactionParams transactionParams, String methodName) {
-            super.onStart(transactionParams, methodName);
-        }
-
-        @Override
-        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
-            super.onProgress(transactionParams, methodName, pos, size, time);
-        }
-
-        @Override
-        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
-            super.onComplete(transactionParams, methodName, successObject, success, failObject);
-        }
-
-        @Override
         public void onQueued(TransactionParams transactionParams, String methodName) {
-            super.onQueued(transactionParams, methodName);
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onQueued");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+                adapter.uploadStart(folderId, name);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onStart(TransactionParams transactionParams, String methodName) {
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onStart");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+                adapter.uploadProgress(folderId, name, 0);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
         @Override
         public void onPaused(TransactionParams transactionParams, String methodName) {
-            super.onPaused(transactionParams, methodName);
+            if (!methodName.equals("addAttachment"))
+                return;
+            Log.v(TAG, "onPaused");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+                adapter.uploadProgress(folderId, name, -1);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onProgress(TransactionParams transactionParams, String methodName, long pos, long size, long time) {
+            if (!methodName.equals("addAttachment"))
+                return;
+
+            Log.v(TAG, "onProgress");
+            try {
+                JsonObject obj = new JsonObject(transactionParams.methodParams);
+                String name = obj.getString("attachment.file.name");
+                int folderId = obj.getInt("attachment.folder_id");
+
+                Double percent = pos * 1.0 / size;
+                Log.v(TAG, "onProgress(" + folderId + "," + name + "," + (pos * 100 / size) + "," + (int) (time / percent));
+                adapter.uploadProgress(folderId, name, (int) (pos * 100 / size));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onComplete(TransactionParams transactionParams, String methodName, Object successObject, boolean success, Object failObject) {
+            if (methodName.equals("addAttachment")) {
+                Log.v(TAG, "onComplete");
+                try {
+                    JsonObject obj = new JsonObject(transactionParams.methodParams);
+                    String name = obj.getString("attachment.file.name");
+                    int folderId = obj.getInt("attachment.folder_id");
+                    adapter.uploadStop(folderId, name);
+                    WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else if (methodName.equals("deleteAttachment")) {
+                WorkordersWebApi.getAttachments(App.get(), _workOrderId, false, false);
+            } else if (methodName.equals("getAttachments")) {
+                folders = (AttachmentFolders) successObject;
+                adapter.setAttachments(folders);
+            }
         }
     };
 

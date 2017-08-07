@@ -8,7 +8,6 @@ import com.fieldnation.v2.data.model.Attachment;
 import com.fieldnation.v2.data.model.AttachmentFolder;
 import com.fieldnation.v2.data.model.AttachmentFolders;
 
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import java.util.List;
 public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFilesViewHolder> {
     private static final String TAG = "AttachmentFoldersAdapter";
 
+    private AttachmentFolders folders = null;
     private List<Tuple> objects = new LinkedList<>();
     private Listener _listener;
 
@@ -26,25 +26,120 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
         _listener = listener;
     }
 
+    /*-*****************************-*/
+    /*-         Downloads           -*/
+    /*-*****************************-*/
+    public void downloadStart(int attachmentId) {
+        for (int i = 0; i < objects.size(); i++) {
+            Tuple tuple = objects.get(i);
+            if (tuple.type == AttachedFilesViewHolder.TYPE_ATTACHMENT) {
+                Attachment attachment = (Attachment) tuple.object;
+                if (attachment.getId() == attachmentId) {
+                    tuple.downloading = true;
+                    notifyItemChanged(i);
+                    return;
+                }
+            }
+        }
+    }
+
+    public void downloadProgress(int attachmentId, int progress) {
+    }
+
+    public void downloadComplete(int attachmentId) {
+        for (int i = 0; i < objects.size(); i++) {
+            Tuple tuple = objects.get(i);
+            if (tuple.type == AttachedFilesViewHolder.TYPE_ATTACHMENT) {
+                Attachment attachment = (Attachment) tuple.object;
+                if (attachment.getId() == attachmentId) {
+                    tuple.downloading = false;
+                    notifyItemChanged(i);
+                    return;
+                }
+            }
+        }
+    }
+
+    /*-*********+****************-*/
+    /*-         Uploads          -*/
+    /*-**************************-*/
+
     private static class UploadTuple {
         int folderId;
         String name;
-        int progress;
+        int progress = -1;
+        int index = -1;
+
+        public UploadTuple(int folderId, String name, int progress) {
+            this.folderId = folderId;
+            this.name = name;
+            this.progress = progress;
+        }
     }
 
-    private Hashtable<String, UploadTuple> uploads = new Hashtable<>();
+    private List<UploadTuple> uploads = new LinkedList<>();
 
-    public void startUpload(int folderId, String name) {
+    public void uploadStart(int folderId, String name) {
+        for (UploadTuple ut : uploads) {
+            if (ut.name.equals(name)) {
+                rebuild();
+                notifyDataSetChanged();
+                return;
+            }
+        }
+        UploadTuple t = new UploadTuple(folderId, name, -1);
+        uploads.add(t);
+        // TODO find position and notify accordingly
+        rebuild();
+        notifyDataSetChanged();
     }
 
-    public void progressUpload(int folderId, String name, int progress) {
+    public void uploadProgress(int folderId, String name, int progress) {
+        for (UploadTuple ut : uploads) {
+            if (ut.name.equals(name)) {
+                ut.progress = progress;
+                rebuild();
+                notifyDataSetChanged();
+                return;
+            }
+        }
+        UploadTuple t = new UploadTuple(folderId, name, progress);
+        uploads.add(t);
+        // TODO find location and notify accordingly
+        rebuild();
+        notifyDataSetChanged();
     }
 
-    public void stopDownload(int folderId, String name) {
+    public void uploadStop(int folderId, String name) {
+        UploadTuple t = null;
+        for (UploadTuple ut : uploads) {
+            if (ut.name.equals(name)) {
+                t = ut;
+                break;
+            }
+        }
+        uploads.remove(t);
+        // TODO find location and upload accordingly
+        rebuild();
+        notifyDataSetChanged();
     }
 
+    /*-*****************************-*/
+    /*-         Main Parser         -*/
+    /*-*****************************-*/
+    private static class Tuple {
+        public int type;
+        public Object object;
+        public boolean downloading = false;
+    }
 
     public void setAttachments(AttachmentFolders folders) {
+        this.folders = folders;
+        rebuild();
+        notifyDataSetChanged();
+    }
+
+    private void rebuild() {
         objects.clear();
 
         Tuple t;
@@ -55,8 +150,19 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
             t.object = attachmentFolder;
             objects.add(t);
 
+            //Add uploads
+            for (UploadTuple ut : uploads) {
+                if (ut.folderId == attachmentFolder.getId()) {
+                    t = new Tuple();
+                    t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
+                    t.object = ut;
+                    objects.add(t);
+                }
+            }
+
             Attachment[] attachments = attachmentFolder.getResults();
             for (Attachment attachment : attachments) {
+                // check if downloading...
                 t = new Tuple();
                 t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
                 t.object = attachment;
@@ -70,19 +176,18 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 objects.add(t);
             }
         }
-
-        notifyDataSetChanged();
     }
 
     @Override
     public AttachedFilesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         AttachedFilesViewHolder holder = null;
         switch (viewType) {
-            case AttachedFilesViewHolder.TYPE_HEADER:
+            case AttachedFilesViewHolder.TYPE_HEADER: {
                 ListItemGroupView listItemGroupView = new ListItemGroupView(parent.getContext());
                 holder = new AttachedFilesViewHolder(listItemGroupView);
                 holder.type = viewType;
                 break;
+            }
             case AttachedFilesViewHolder.TYPE_ATTACHMENT: {
                 ListItemTwoVertView listItemTwoVertView = new ListItemTwoVertView(parent.getContext());
                 listItemTwoVertView.setOnClickListener(_attachment_onClick);
@@ -99,6 +204,14 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 holder.type = viewType;
                 break;
             }
+            case AttachedFilesViewHolder.TYPE_UPLOAD: {
+                ListItemTwoVertView view = new ListItemTwoVertView(parent.getContext());
+                view.setProgressVisible(true);
+                view.setActionVisible(false);
+                holder = new AttachedFilesViewHolder(view);
+                holder.type = viewType;
+                break;
+            }
         }
         return holder;
     }
@@ -109,14 +222,24 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
             case AttachedFilesViewHolder.TYPE_HEADER: {
                 ListItemGroupView view = (ListItemGroupView) holder.itemView;
                 AttachmentFolder af = (AttachmentFolder) objects.get(position).object;
-                view.setTitle(af.getName());
+                if (af.getType().equals(AttachmentFolder.TypeEnum.DOCUMENT))
+                    view.setTitle("Documents to Review");
+                else
+                    view.setTitle(af.getName());
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ATTACHMENT: {
                 ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
                 Attachment a = (Attachment) objects.get(position).object;
-                view.set(a.getFile().getName(), a.getNotes());
                 view.setTag(a);
+
+                if (objects.get(position).downloading) {
+                    view.set(a.getFile().getName(), null);
+                    view.setProgressVisible(true);
+                } else {
+                    view.set(a.getFile().getName(), a.getNotes());
+                    view.setProgressVisible(false);
+                }
                 break;
             }
             case AttachedFilesViewHolder.TYPE_ADD_VIEW: {
@@ -124,6 +247,13 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
                 ListItemLinkView view = (ListItemLinkView) holder.itemView;
                 view.setTitle("Add New...");
                 view.setTag(af);
+                break;
+            }
+            case AttachedFilesViewHolder.TYPE_UPLOAD: {
+                UploadTuple ut = (UploadTuple) objects.get(position).object;
+                ListItemTwoVertView view = (ListItemTwoVertView) holder.itemView;
+                view.set(ut.name, "");
+                view.setProgress(ut.progress);
                 break;
             }
         }
@@ -170,11 +300,6 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
     @Override
     public int getItemViewType(int position) {
         return objects.get(position).type;
-    }
-
-    private static class Tuple {
-        public int type;
-        public Object object;
     }
 
     public interface Listener {
