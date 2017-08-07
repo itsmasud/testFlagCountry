@@ -37,6 +37,7 @@ import com.fieldnation.v2.data.model.Bundle;
 import com.fieldnation.v2.data.model.Condition;
 import com.fieldnation.v2.data.model.Contact;
 import com.fieldnation.v2.data.model.Coords;
+import com.fieldnation.v2.data.model.Declines;
 import com.fieldnation.v2.data.model.ETA;
 import com.fieldnation.v2.data.model.ETAStatus;
 import com.fieldnation.v2.data.model.Hold;
@@ -577,8 +578,7 @@ public class WorkOrderCard extends RelativeLayout {
 
         // decline
         if (!isBundle
-                && (_workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.ADD)
-                || _workOrder.getRequests().getActionsSet().contains(Requests.ActionsEnum.COUNTER_OFFER))) {
+                && _workOrder.getDeclines().getActionsSet().contains(Declines.ActionsEnum.ADD)) {
             button.setVisibility(VISIBLE);
             button.setText(R.string.icon_circle_x_solid);
             button.setOnClickListener(_decline_onClick);
