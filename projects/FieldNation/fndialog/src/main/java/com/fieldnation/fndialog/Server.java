@@ -3,6 +3,7 @@ package com.fieldnation.fndialog;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Pigeon;
 import com.fieldnation.fnpigeon.PigeonRoost;
 
@@ -13,11 +14,13 @@ abstract class Server extends Pigeon implements Constants {
     private static final String TAG = "Server";
 
     public void sub() {
+        Log.v(TAG, "sub");
         PigeonRoost.register(this, TOPIC_ID_SHOW_DIALOG);
         PigeonRoost.register(this, TOPIC_ID_DISMISS_DIALOG);
     }
 
     public void unSub() {
+        Log.v(TAG, "unSub");
         PigeonRoost.unregister(this, TOPIC_ID_SHOW_DIALOG);
         PigeonRoost.unregister(this, TOPIC_ID_DISMISS_DIALOG);
     }
