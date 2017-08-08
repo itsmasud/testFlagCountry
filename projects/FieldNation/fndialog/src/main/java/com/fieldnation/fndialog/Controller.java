@@ -10,10 +10,10 @@ public abstract class Controller {
     private static final String TAG = "Controller";
 
     public static void show(Context context, String uid, Class<? extends Dialog> klass, Bundle params) {
-        Client.show(context, uid, klass, params);
+        Client.show(uid, klass, params);
     }
 
     public static void dismiss(Context context, String uid) {
-        Client.dismiss(context, uid);
+        Client.dismiss(uid);
     }
 }

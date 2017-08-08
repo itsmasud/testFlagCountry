@@ -1,6 +1,8 @@
 package com.fieldnation.ui;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -48,7 +50,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
-    private ToastClient _toastClient;
     private AuthTopicClient _authTopicClient;
     private ActivityResultClient _activityResultClient;
     private PermissionsClient _permissionsClient;
@@ -122,8 +123,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _toastClient = new ToastClient(_toastClient_listener);
-        _toastClient.connect(App.get());
+        _toastClient.subSnackbar();
+        _toastClient.subToast();
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
         _authTopicClient.connect(App.get());
         _globalClient = new GlobalTopicClient(_globalClient_listener);
@@ -146,7 +147,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         Log.v(TAG, "onPause");
         if (_globalClient != null) _globalClient.disconnect(App.get());
         if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
-        if (_toastClient != null) _toastClient.disconnect(App.get());
+        _toastClient.unSubToast();
+        _toastClient.unSubSnackbar();
         if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
 
         DialogManager dialogManager = getDialogManager();
@@ -406,15 +408,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final ToastClient.Listener _toastClient_listener = new ToastClient.Listener() {
+    private final ToastClient _toastClient = new ToastClient() {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
-        }
-
-        @Override
-        public ToastClient getToastClient() {
-            return _toastClient;
         }
 
         @Override
@@ -432,6 +429,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public PermissionsClient getClient() {
             return _permissionsClient;
+        }
+    };
+
+    private final BroadcastReceiver testReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
         }
     };
 }

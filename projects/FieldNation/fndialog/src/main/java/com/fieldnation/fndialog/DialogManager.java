@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ContextProvider;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -23,9 +22,6 @@ import java.util.List;
  */
 public class DialogManager extends FrameLayout implements Constants {
     private static final String TAG = "DialogManager";
-
-    // Service
-    private Server _dialogReceiver;
 
     // Stores the instantiated dialogs
     private List<DialogHolder> _dialogStack = new LinkedList<>();
@@ -203,11 +199,7 @@ public class DialogManager extends FrameLayout implements Constants {
     public void onResume() {
         Log.v(TAG, "onResume");
         _lastState = STATE_RESUME;
-        if (_dialogReceiver != null) {
-            _dialogReceiver.disconnect(ContextProvider.get());
-        }
-        _dialogReceiver = new Server(_dialogReceiver_listener);
-        _dialogReceiver.connect(ContextProvider.get());
+        _dialogServer.sub();
 
         for (DialogHolder holder : _dialogStack) {
             holder.dialog.onResume();
@@ -221,9 +213,7 @@ public class DialogManager extends FrameLayout implements Constants {
             holder.dialog.onPause();
         }
 
-        if (_dialogReceiver != null) {
-            _dialogReceiver.disconnect(ContextProvider.get());
-        }
+        _dialogServer.unSub();
     }
 
     public void onStop() {
@@ -259,20 +249,13 @@ public class DialogManager extends FrameLayout implements Constants {
     @Override
     protected void onDetachedFromWindow() {
         Log.v(TAG, "onDetachedFromWindow");
-        if (_dialogReceiver != null) {
-            _dialogReceiver.disconnect(ContextProvider.get());
-        }
+        _dialogServer.unSub();
 
         removeAllViews();
         super.onDetachedFromWindow();
     }
 
-    private Server.Listener _dialogReceiver_listener = new Server.Listener() {
-        @Override
-        public Server getClient() {
-            return _dialogReceiver;
-        }
-
+    private final Server _dialogServer = new Server() {
         @Override
         public void onShowDialog(String uid, String className, ClassLoader classLoader, Bundle params) {
             try {

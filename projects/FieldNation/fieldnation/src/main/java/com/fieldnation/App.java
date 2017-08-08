@@ -33,6 +33,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ContextProvider;
@@ -816,6 +817,7 @@ public class App extends Application {
         Log.i(TAG, "Memory Trim Level: " + level);
 
         PhotoClient.clearPhotoClientCache();
+        PigeonRoost.pruneStickies();
         switch (level) {
             case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
                 break;
