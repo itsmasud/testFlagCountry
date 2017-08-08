@@ -12,8 +12,8 @@ import com.fieldnation.R;
  * Created by mc on 6/29/17.
  */
 
-public class KeyValuePairView extends RelativeLayout {
-    private static final String TAG = "KeyValuePairView";
+public class ListItemTwoHorizView extends RelativeLayout {
+    private static final String TAG = "ListItemTwoHorizView";
 
     // Ui
     private TextView _keyTextView;
@@ -23,23 +23,23 @@ public class KeyValuePairView extends RelativeLayout {
     private String _key;
     private String _value;
 
-    public KeyValuePairView(Context context) {
+    public ListItemTwoHorizView(Context context) {
         super(context);
         init();
     }
 
-    public KeyValuePairView(Context context, AttributeSet attrs) {
+    public ListItemTwoHorizView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public KeyValuePairView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ListItemTwoHorizView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_key_value_pair, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_v3_list_two_horiz, this);
 
         if (isInEditMode())
             return;

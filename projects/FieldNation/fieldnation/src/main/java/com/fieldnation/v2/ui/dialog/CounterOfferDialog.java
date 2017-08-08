@@ -48,10 +48,10 @@ import com.fieldnation.v2.data.model.Pay;
 import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
-import com.fieldnation.v2.ui.KeyValuePairView;
+import com.fieldnation.v2.ui.ListItemTwoHorizView;
 import com.fieldnation.v2.ui.PayView;
 import com.fieldnation.v2.ui.ScheduleView;
-import com.fieldnation.v2.ui.TwoLineActionTile;
+import com.fieldnation.v2.ui.ListItemTwoVertView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -82,7 +82,7 @@ public class CounterOfferDialog extends FullScreenDialog {
 
     // Ui - Schedule
     private RelativeLayout _scheduleLayout;
-    private KeyValuePairView _scheduleTypeView;
+    private ListItemTwoHorizView _scheduleTypeView;
     private IconFontTextView _scheduleMenu;
     private PopupMenu _schedulePopUp;
     private ScheduleView _scheduleView;
@@ -95,7 +95,7 @@ public class CounterOfferDialog extends FullScreenDialog {
     // Ui - Expires
     private RelativeLayout _expiresLayout;
     private IconFontTextView _expiresMenu;
-    private KeyValuePairView _expiresView;
+    private ListItemTwoHorizView _expiresView;
     private PopupMenu _expiresPopUp;
 
     // Ui - Reason
@@ -428,7 +428,7 @@ public class CounterOfferDialog extends FullScreenDialog {
             _expensesList.removeAllViews();
 
             for (int i = 0; i < _expenses.size(); i++) {
-                TwoLineActionTile v = new TwoLineActionTile(getContext());
+                ListItemTwoVertView v = new ListItemTwoVertView(getContext());
                 v.set(_expenses.get(i).getDescription(), misc.toCurrency(_expenses.get(i).getAmount()));
                 v.setActionString(getContext().getString(R.string.icon_overflow));
                 v.setOnActionClickedListener(_expense_onClick);
@@ -753,7 +753,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final TwoLineActionTile.OnActionClickListener _expense_onClick = new TwoLineActionTile.OnActionClickListener() {
+    private final ListItemTwoVertView.OnActionClickListener _expense_onClick = new ListItemTwoVertView.OnActionClickListener() {
         @Override
         public void onClick(View twoLineActionTile, View actionView) {
             _expenseMenuClickedView = twoLineActionTile;

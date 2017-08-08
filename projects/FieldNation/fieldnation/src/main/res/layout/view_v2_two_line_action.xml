@@ -8,9 +8,9 @@
         android:id="@+id/key"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="10dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:text="Key"
         android:textColor="@color/fn_dark_text"
@@ -21,11 +21,26 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/key"
-        android:layout_marginLeft="24dp"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:gravity="right"
         android:text="Value"
         android:textColor="@color/fn_dark_text_50"
         android:textSize="16sp" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/value"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:max="100"
+        android:min="0"
+        android:visibility="gone" />
 
 
     <com.fieldnation.ui.IconFontTextView
@@ -40,8 +55,6 @@
 
     <View
         style="@style/DividerFull"
-        android:layout_below="@+id/value"
-        android:layout_marginTop="16dp" />
-
-
+        android:layout_below="@+id/progressBar"
+        android:layout_marginTop="12dp" />
 </RelativeLayout>

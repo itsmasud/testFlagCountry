@@ -158,7 +158,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             return;
         }
 
-
         _statusTextView.setText("Uploading...");
         _progressBar.setIndeterminate(false);
         _progressBar.setMax(100);
@@ -230,7 +229,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             String lastName = _doc.getAuthor().getLastName();
             _usernameTextView.setText((firstName == null ? "" : firstName) + " " + (lastName == null ? "" : lastName));
         }
-
 
         if (_doc.getActionsSet().contains(Attachment.ActionsEnum.DELETE))
             setOnLongClickListener(_delete_onClick);
@@ -359,6 +357,5 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         void onDelete(UploadedDocumentView v, Attachment document);
 
         Drawable getPhoto(UploadedDocumentView view, String url, boolean circle);
-
     }
 }
