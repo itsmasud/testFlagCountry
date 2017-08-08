@@ -201,7 +201,7 @@ public class PermissionsClient extends TopicClient {
             }
 
             // if we have requested... but no response we need to store these and wait
-            if (!requesting) {
+            if (!requesting && requestable.size() > 0) {
                 ActivityCompat.requestPermissions(getActivity(), requestable.toArray(new String[requestable.size()]), 0);
                 requesting = true;
             }
