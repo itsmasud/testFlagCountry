@@ -22,6 +22,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
     private static final String TAG = "AttachmentSummaryView";
 
     // Ui
+    private View _attachmentView;
     private TextView _countTextView;
 
     // Data
@@ -48,9 +49,10 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         if (isInEditMode())
             return;
 
+        _attachmentView = findViewById(R.id.attachment_layout);
         _countTextView = (TextView) findViewById(R.id.count_textview);
 
-        setOnClickListener(_this_onClick);
+        _attachmentView.setOnClickListener(_this_onClick);
         setVisibility(GONE);
 
         populateUi();
