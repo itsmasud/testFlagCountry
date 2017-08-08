@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -14,33 +15,37 @@ import com.fieldnation.fntools.misc;
  * Created by mc on 7/11/17.
  */
 
-public class TwoLineActionTile extends RelativeLayout {
-    private static final String TAG = "TwoLineActionTile";
+public class ListItemTwoVertView extends RelativeLayout {
+    private static final String TAG = "ListItemTwoVertView";
 
     // Ui
     private TextView _keyTextView;
     private TextView _valueTextView;
     private TextView _actionTextView;
+    private ProgressBar _progressBar;
 
     // Data
     private String _key;
     private String _value;
     private String _action;
+    private boolean _actionVisible = true;
+    private boolean _progressVisible = false;
+    private int _progress = -1;
 
     // Listener
     private OnActionClickListener _actionOnclickListener;
 
-    public TwoLineActionTile(Context context) {
+    public ListItemTwoVertView(Context context) {
         super(context);
         init();
     }
 
-    public TwoLineActionTile(Context context, AttributeSet attrs) {
+    public ListItemTwoVertView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public TwoLineActionTile(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ListItemTwoVertView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -55,13 +60,29 @@ public class TwoLineActionTile extends RelativeLayout {
         _valueTextView = findViewById(R.id.value);
         _actionTextView = findViewById(R.id.action);
         _actionTextView.setOnClickListener(_action_onClick);
+        _progressBar = findViewById(R.id.progressBar);
 
+        populateUi();
+    }
+
+    public void setActionVisible(boolean visible) {
+        _actionVisible = visible;
         populateUi();
     }
 
     public void setActionString(String action) {
         _action = action;
 
+        populateUi();
+    }
+
+    public void setProgressVisible(boolean visible) {
+        _progressVisible = visible;
+        populateUi();
+    }
+
+    public void setProgress(int progress) {
+        _progress = progress;
         populateUi();
     }
 
@@ -86,15 +107,33 @@ public class TwoLineActionTile extends RelativeLayout {
         }
 
         if (misc.isEmptyOrNull(_value)) {
-            _valueTextView.setText("");
+            _valueTextView.setVisibility(GONE);
         } else {
+            _valueTextView.setVisibility(VISIBLE);
             _valueTextView.setText(_value);
         }
 
-        if (misc.isEmptyOrNull(_action)) {
-            _actionTextView.setText(R.string.icon_x);
+        if (_actionVisible) {
+            _actionTextView.setVisibility(VISIBLE);
+            if (misc.isEmptyOrNull(_action)) {
+                _actionTextView.setText(R.string.icon_x);
+            } else {
+                _actionTextView.setText(_action);
+            }
         } else {
-            _actionTextView.setText(_action);
+            _actionTextView.setVisibility(GONE);
+        }
+
+        if (_progressVisible) {
+            _progressBar.setVisibility(VISIBLE);
+            if (_progress == -1) {
+                _progressBar.setIndeterminate(true);
+            } else {
+                _progressBar.setIndeterminate(false);
+                _progressBar.setProgress(_progress);
+            }
+        } else {
+            _progressBar.setVisibility(GONE);
         }
     }
 
@@ -102,7 +141,7 @@ public class TwoLineActionTile extends RelativeLayout {
         @Override
         public void onClick(View view) {
             if (_actionOnclickListener != null)
-                _actionOnclickListener.onClick(TwoLineActionTile.this, view);
+                _actionOnclickListener.onClick(ListItemTwoVertView.this, view);
         }
     };
 

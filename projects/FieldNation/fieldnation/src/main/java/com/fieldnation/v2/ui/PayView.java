@@ -19,11 +19,11 @@ public class PayView extends LinearLayout {
     private static final String TAG = "PayView";
 
     // Ui
-    private KeyValuePairView _pay1View;
-    private KeyValuePairView _pay2View;
-    private KeyValuePairView _pay3View;
-    private KeyValuePairView _pay4View;
-    private KeyValuePairView _pay5View;
+    private ListItemTwoHorizView _pay1View;
+    private ListItemTwoHorizView _pay2View;
+    private ListItemTwoHorizView _pay3View;
+    private ListItemTwoHorizView _pay4View;
+    private ListItemTwoHorizView _pay5View;
 
     // Data
     private Pay _pay;

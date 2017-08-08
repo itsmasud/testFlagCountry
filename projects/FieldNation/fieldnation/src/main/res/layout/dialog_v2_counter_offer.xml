@@ -119,7 +119,7 @@
                     style="@style/DividerFull"
                     android:layout_below="@+id/schedule_title_textview" />
 
-                <com.fieldnation.v2.ui.KeyValuePairView
+                <com.fieldnation.v2.ui.ListItemTwoHorizView
                     android:id="@+id/scheduleType_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -195,7 +195,7 @@
                     style="@style/DividerFull"
                     android:layout_below="@+id/expires_title_textview" />
 
-                <com.fieldnation.v2.ui.KeyValuePairView
+                <com.fieldnation.v2.ui.ListItemTwoHorizView
                     android:id="@+id/expires_kvp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
