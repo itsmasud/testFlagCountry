@@ -23,6 +23,7 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
 
     // Ui
     private TextView _countTextView;
+    private View _attachmentView;
 
     // Data
     private WorkOrder _workOrder;
@@ -48,9 +49,10 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         if (isInEditMode())
             return;
 
-        _countTextView = (TextView) findViewById(R.id.count_textview);
+        _attachmentView = findViewById(R.id.attachment_layout);
+        _countTextView = findViewById(R.id.count_textview);
 
-        setOnClickListener(_this_onClick);
+        _attachmentView.setOnClickListener(_this_onClick);
         setVisibility(GONE);
 
         populateUi();
@@ -74,12 +76,6 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
         final AttachmentFolder[] slots = _workOrder.getAttachments().getResults();
         for (AttachmentFolder ob : slots) {
             count += ob.getResults().length;
-        }
-
-
-        if (count == 0) {
-            setVisibility(GONE);
-            return;
         }
 
         setVisibility(VISIBLE);

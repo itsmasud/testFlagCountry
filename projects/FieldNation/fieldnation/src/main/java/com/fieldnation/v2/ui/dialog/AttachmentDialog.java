@@ -316,7 +316,7 @@ public class AttachmentDialog extends FullScreenDialog {
     public void show(Bundle params, boolean animate) {
         _workOrder = params.getParcelable("workOrder");
         _workOrderId = _workOrder.getId();
-        populateUi();
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
         super.show(params, animate);
     }
 
