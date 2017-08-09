@@ -15,29 +15,29 @@ abstract class Server extends Pigeon implements Constants {
 
     public void sub() {
         Log.v(TAG, "sub");
-        PigeonRoost.register(this, TOPIC_ID_SHOW_DIALOG);
-        PigeonRoost.register(this, TOPIC_ID_DISMISS_DIALOG);
+        PigeonRoost.sub(this, ADDRESS_SHOW_DIALOG);
+        PigeonRoost.sub(this, ADDRESS_DISMISS_DIALOG);
     }
 
     public void unSub() {
         Log.v(TAG, "unSub");
-        PigeonRoost.unregister(this, TOPIC_ID_SHOW_DIALOG);
-        PigeonRoost.unregister(this, TOPIC_ID_DISMISS_DIALOG);
+        PigeonRoost.unregister(this, ADDRESS_SHOW_DIALOG);
+        PigeonRoost.unregister(this, ADDRESS_DISMISS_DIALOG);
     }
 
     @Override
-    public void onTopic(String topicId, Parcelable payload) {
+    public void onMessage(String address, Parcelable message) {
 
-        Bundle bundle = (Bundle) payload;
-        if (topicId.startsWith(TOPIC_ID_SHOW_DIALOG)) {
-            PigeonRoost.clearTopic(TOPIC_ID_SHOW_DIALOG);
+        Bundle bundle = (Bundle) message;
+        if (address.startsWith(ADDRESS_SHOW_DIALOG)) {
+            PigeonRoost.clearAddressCache(ADDRESS_SHOW_DIALOG);
             onShowDialog(
                     bundle.getString(PARAM_DIALOG_UID),
                     bundle.getString(PARAM_DIALOG_CLASS_NAME),
                     bundle.getClassLoader(),
                     bundle.getBundle(PARAM_DIALOG_PARAMS));
 
-        } else if (topicId.startsWith(TOPIC_ID_DISMISS_DIALOG)) {
+        } else if (address.startsWith(ADDRESS_DISMISS_DIALOG)) {
             onDismissDialog(bundle.getString(PARAM_DIALOG_UID));
         }
     }

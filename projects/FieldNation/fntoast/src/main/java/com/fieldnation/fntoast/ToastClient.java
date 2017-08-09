@@ -30,8 +30,8 @@ public abstract class ToastClient extends Pigeon {
     private static final String STAG = "ToastClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    private static final String TOPIC_ID_SNACKBAR = "ToastClient:TOPIC_ID_SNACKBAR";
-    private static final String TOPIC_ID_TOAST = "ToastClient:TOPIC_ID_TOAST";
+    private static final String ADDRESS_SNACKBAR = "ToastClient:ADDRESS_SNACKBAR";
+    private static final String ADDRESS_TOAST = "ToastClient:ADDRESS_TOAST";
 
     private static final String PARAM_ACTION = "PARAM_ACTION";
     private static final String PARAM_ACTION_SNACKBAR = "PARAM_ACTION_SNACKBAR";
@@ -76,56 +76,56 @@ public abstract class ToastClient extends Pigeon {
     }
 
     public static void snackbar(Context context, long id, String title, String buttonText, PendingIntent buttonIntent, int duration) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
-        bundle.putString(PARAM_TITLE, title);
-        bundle.putInt(PARAM_DURATION, duration);
-        bundle.putString(PARAM_BUTTON_TEXT, buttonText);
-        bundle.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
-        bundle.putLong(PARAM_MESSAGE_ID, id);
+        Bundle message = new Bundle();
+        message.putString(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
+        message.putString(PARAM_TITLE, title);
+        message.putInt(PARAM_DURATION, duration);
+        message.putString(PARAM_BUTTON_TEXT, buttonText);
+        message.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
+        message.putLong(PARAM_MESSAGE_ID, id);
 
-        PigeonRoost.dispatchEvent(TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
+        PigeonRoost.sendMessage(ADDRESS_SNACKBAR, message, Sticky.NONE);
     }
 
     public static void dismissSnackbar(Context context, long id) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_DISMISS_SNACKBAR);
-        bundle.putLong(PARAM_MESSAGE_ID, id);
-        PigeonRoost.dispatchEvent(TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
+        Bundle message = new Bundle();
+        message.putString(PARAM_ACTION, PARAM_ACTION_DISMISS_SNACKBAR);
+        message.putLong(PARAM_MESSAGE_ID, id);
+        PigeonRoost.sendMessage(ADDRESS_SNACKBAR, message, Sticky.NONE);
     }
 
     public void subSnackbar() {
-        PigeonRoost.register(this, TOPIC_ID_SNACKBAR);
+        PigeonRoost.sub(this, ADDRESS_SNACKBAR);
     }
 
     public void unSubSnackbar() {
-        PigeonRoost.unregister(this, TOPIC_ID_SNACKBAR);
+        PigeonRoost.unregister(this, ADDRESS_SNACKBAR);
     }
 
     public static void toast(Context context, String title, int duration) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_TOAST);
-        bundle.putString(PARAM_TITLE, title);
-        bundle.putInt(PARAM_DURATION, duration);
+        Bundle message = new Bundle();
+        message.putString(PARAM_ACTION, PARAM_ACTION_TOAST);
+        message.putString(PARAM_TITLE, title);
+        message.putInt(PARAM_DURATION, duration);
 
-        PigeonRoost.dispatchEvent(TOPIC_ID_TOAST, bundle, Sticky.NONE);
+        PigeonRoost.sendMessage(ADDRESS_TOAST, message, Sticky.NONE);
     }
 
     public static void toast(Context context, int resId, int duration) {
-        Bundle bundle = new Bundle();
-        bundle.putString(PARAM_ACTION, PARAM_ACTION_TOAST);
-        bundle.putString(PARAM_TITLE, context.getString(resId));
-        bundle.putInt(PARAM_DURATION, duration);
+        Bundle message = new Bundle();
+        message.putString(PARAM_ACTION, PARAM_ACTION_TOAST);
+        message.putString(PARAM_TITLE, context.getString(resId));
+        message.putInt(PARAM_DURATION, duration);
 
-        PigeonRoost.dispatchEvent(TOPIC_ID_TOAST, bundle, Sticky.NONE);
+        PigeonRoost.sendMessage(ADDRESS_TOAST, message, Sticky.NONE);
     }
 
     public void subToast() {
-        PigeonRoost.register(this, TOPIC_ID_TOAST);
+        PigeonRoost.sub(this, ADDRESS_TOAST);
     }
 
     public void unSubToast() {
-        PigeonRoost.unregister(this, TOPIC_ID_TOAST);
+        PigeonRoost.unregister(this, ADDRESS_TOAST);
     }
 
     private Snackbar _snackbar = null;
@@ -134,22 +134,22 @@ public abstract class ToastClient extends Pigeon {
     public abstract Activity getActivity();
 
     @Override
-    public void onTopic(String topicId, Parcelable payload) {
+    public void onMessage(String address, Parcelable message) {
 
-        switch (topicId) {
-            case TOPIC_ID_SNACKBAR:
-                String action = ((Bundle) payload).getString(PARAM_ACTION);
+        switch (address) {
+            case ADDRESS_SNACKBAR:
+                String action = ((Bundle) message).getString(PARAM_ACTION);
                 switch (action) {
                     case PARAM_ACTION_DISMISS_SNACKBAR:
-                        dismissSnackBar(((Bundle) payload).getLong(PARAM_MESSAGE_ID));
+                        dismissSnackBar(((Bundle) message).getLong(PARAM_MESSAGE_ID));
                         break;
                     default:
-                        preShowSnackBar((Bundle) payload);
+                        preShowSnackBar((Bundle) message);
                         break;
                 }
                 break;
-            case TOPIC_ID_TOAST:
-                preShowToast((Bundle) payload);
+            case ADDRESS_TOAST:
+                preShowToast((Bundle) message);
                 break;
         }
     }

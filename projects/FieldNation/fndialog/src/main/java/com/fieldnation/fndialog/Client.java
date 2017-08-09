@@ -17,13 +17,13 @@ abstract class Client extends Pigeon implements Constants {
 
 
     public static void show(String uid, String className, ClassLoader classLoader, Bundle params) {
-        Bundle payload = new Bundle();
-        payload.putString(PARAM_DIALOG_CLASS_NAME, className);
-        payload.putBundle(PARAM_DIALOG_PARAMS, params);
-        payload.putString(PARAM_DIALOG_UID, uid);
-        payload.setClassLoader(classLoader);
+        Bundle message = new Bundle();
+        message.putString(PARAM_DIALOG_CLASS_NAME, className);
+        message.putBundle(PARAM_DIALOG_PARAMS, params);
+        message.putString(PARAM_DIALOG_UID, uid);
+        message.setClassLoader(classLoader);
 
-        PigeonRoost.dispatchEvent(TOPIC_ID_SHOW_DIALOG, payload, Sticky.TEMP);
+        PigeonRoost.sendMessage(ADDRESS_SHOW_DIALOG, message, Sticky.TEMP);
     }
 
     public static void show(String uid, Class<? extends Dialog> klass, Bundle params) {
@@ -32,18 +32,18 @@ abstract class Client extends Pigeon implements Constants {
 
     // uid cannot be null when calling this method
     public static void dismiss(String uid) {
-        Bundle payload = new Bundle();
-        payload.putString(PARAM_DIALOG_UID, uid);
+        Bundle message = new Bundle();
+        message.putString(PARAM_DIALOG_UID, uid);
 
-        PigeonRoost.dispatchEvent(TOPIC_ID_DISMISS_DIALOG, payload, Sticky.TEMP);
+        PigeonRoost.sendMessage(ADDRESS_DISMISS_DIALOG, message, Sticky.TEMP);
     }
 
     public void sub() {
-        PigeonRoost.register(this, TOPIC_ID_DIALOG_COMPLETE + "/" + getDialogClass().getName());
+        PigeonRoost.sub(this, ADDRESS_DIALOG_COMPLETE + "/" + getDialogClass().getName());
     }
 
     public void unsub() {
-        PigeonRoost.unregister(this, TOPIC_ID_DIALOG_COMPLETE + "/" + getDialogClass().getName());
+        PigeonRoost.unregister(this, ADDRESS_DIALOG_COMPLETE + "/" + getDialogClass().getName());
     }
 
     abstract Class<? extends Dialog> getDialogClass();
@@ -51,8 +51,8 @@ abstract class Client extends Pigeon implements Constants {
     abstract String getUid();
 
     @Override
-    public void onTopic(String topicId, Parcelable payload) {
-        Bundle bundle = (Bundle) payload;
+    public void onMessage(String address, Parcelable message) {
+        Bundle bundle = (Bundle) message;
 
         if (getUid() != null && bundle.containsKey(PARAM_DIALOG_UID) && bundle.getString(PARAM_DIALOG_UID) != null) {
             String uid = bundle.getString(PARAM_DIALOG_UID);
@@ -60,7 +60,7 @@ abstract class Client extends Pigeon implements Constants {
                 return;
         }
 
-        if (topicId.startsWith(TOPIC_ID_DIALOG_COMPLETE)) {
+        if (address.startsWith(ADDRESS_DIALOG_COMPLETE)) {
             onComplete(bundle.getBundle(PARAM_DIALOG_RESPONSE));
         }
     }
