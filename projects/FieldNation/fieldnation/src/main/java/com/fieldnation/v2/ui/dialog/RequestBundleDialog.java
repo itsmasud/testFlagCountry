@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -187,7 +187,7 @@ public class RequestBundleDialog extends SimpleDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -196,7 +196,7 @@ public class RequestBundleDialog extends SimpleDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 

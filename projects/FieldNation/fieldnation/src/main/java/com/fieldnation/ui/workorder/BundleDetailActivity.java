@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
@@ -454,7 +454,7 @@ public class BundleDetailActivity extends AuthSimpleActivity {
     public static void startNew(Context context, int bundleId) {
         Intent intent = new Intent(context, BundleDetailActivity.class);
         intent.putExtra(BundleDetailActivity.INTENT_FIELD_BUNDLE_ID, bundleId);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        ActivityClient.startActivity(intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }
 

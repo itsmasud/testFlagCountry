@@ -9,7 +9,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -104,6 +104,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, AdditionalOptionsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        ActivityClient.startActivity(intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }

@@ -99,7 +99,7 @@ public abstract class ToastClient extends Pigeon {
     }
 
     public void unSubSnackbar() {
-        PigeonRoost.unregister(this, ADDRESS_SNACKBAR);
+        PigeonRoost.unsub(this, ADDRESS_SNACKBAR);
     }
 
     public static void toast(Context context, String title, int duration) {
@@ -125,7 +125,7 @@ public abstract class ToastClient extends Pigeon {
     }
 
     public void unSubToast() {
-        PigeonRoost.unregister(this, ADDRESS_TOAST);
+        PigeonRoost.unsub(this, ADDRESS_TOAST);
     }
 
     private Snackbar _snackbar = null;

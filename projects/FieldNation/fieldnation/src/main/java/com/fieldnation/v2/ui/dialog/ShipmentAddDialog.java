@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,7 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -73,7 +72,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     private int _directionPosition = -1;
     private String _shipmentDescription;
     private Task _task;
-    private ActivityResultClient _activityResultClient;
     private PermissionsClient _permissionsClient;
 
     // Barcode stuff
@@ -139,8 +137,7 @@ public class ShipmentAddDialog extends SimpleDialog {
     public void onResume() {
         super.onResume();
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_onListener);
-        _activityResultClient.connect(App.get());
+        _activityResultListener.sub();
 
         if (_title != null) {
             _titleTextView.setText(_title);
@@ -202,7 +199,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
+        _activityResultListener.unsub();
         super.onPause();
     }
 
@@ -495,26 +492,9 @@ public class ShipmentAddDialog extends SimpleDialog {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_onListener = new ActivityResultClient.ResultListener() {
-        @Override
-        public void onConnected() {
-            _activityResultClient.subOnActivityResult();
-        }
-
-        @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            Log.v(TAG, topicId);
-            super.onEvent(topicId, payload);
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
-        }
-
+    private final ActivityResultListener _activityResultListener = new ActivityResultListener() {
         @Override
         public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-            _activityResultClient.clearOnActivityResult();
             Log.v(TAG, "onActivityResult");
 
             IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);

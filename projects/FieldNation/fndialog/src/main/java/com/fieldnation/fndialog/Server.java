@@ -21,8 +21,8 @@ abstract class Server extends Pigeon implements Constants {
 
     public void unSub() {
         Log.v(TAG, "unSub");
-        PigeonRoost.unregister(this, ADDRESS_SHOW_DIALOG);
-        PigeonRoost.unregister(this, ADDRESS_DISMISS_DIALOG);
+        PigeonRoost.unsub(this, ADDRESS_SHOW_DIALOG);
+        PigeonRoost.unsub(this, ADDRESS_DISMISS_DIALOG);
     }
 
     @Override

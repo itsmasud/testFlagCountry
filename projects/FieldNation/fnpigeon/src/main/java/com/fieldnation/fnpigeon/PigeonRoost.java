@@ -51,7 +51,7 @@ public class PigeonRoost {
         }
     }
 
-    public static void unregister(Pigeon pigeon, String address) {
+    public static void unsub(Pigeon pigeon, String address) {
         synchronized (TAG) {
             if (_pigeonByAddress.containsKey(address)) {
                 _pigeonByAddress.get(address).remove(pigeon);
@@ -63,7 +63,7 @@ public class PigeonRoost {
         }
     }
 
-    public static void unregister(Pigeon pigeon) {
+    public static void unsub(Pigeon pigeon) {
         if (_addressByPigeon.containsKey(pigeon)) {
             Set<String> topics = _addressByPigeon.get(pigeon);
 

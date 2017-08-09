@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -303,7 +303,7 @@ public class EtaDialog extends FullScreenDialog {
         // Wod request work, Woc Request work
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
             _toolbar.setTitle("Request " + _workOrder.getId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+            _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
@@ -321,7 +321,7 @@ public class EtaDialog extends FullScreenDialog {
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)
                 || _dialogType.equals(PARAM_DIALOG_TYPE_MASS_ACCEPT)) {
             _toolbar.setTitle("Accept " + _workOrder.getId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
+            _finishMenu.setText(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -352,7 +352,7 @@ public class EtaDialog extends FullScreenDialog {
             // Add eta from WoC
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ADD)) {
             _toolbar.setTitle("Set ETA " + _workOrder.getId());
-            _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+            _finishMenu.setText(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -364,7 +364,7 @@ public class EtaDialog extends FullScreenDialog {
             // from WoD. change the eta
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
             _toolbar.setTitle(R.string.dialog_eta_title);
-            _finishMenu.setTitle(App.get().getString(R.string.btn_save));
+            _finishMenu.setText(App.get().getString(R.string.btn_save));
             _expirationLayout.setVisibility(View.GONE);
 
             _etaSwitch.setChecked(true);
@@ -589,7 +589,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -598,7 +598,7 @@ public class EtaDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 

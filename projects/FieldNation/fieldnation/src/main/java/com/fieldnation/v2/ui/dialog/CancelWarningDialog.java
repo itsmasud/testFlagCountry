@@ -15,7 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
@@ -84,7 +84,7 @@ public class CancelWarningDialog extends FullScreenDialog {
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 

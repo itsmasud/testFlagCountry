@@ -19,7 +19,7 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -1002,7 +1002,7 @@ public class WorkOrderCard extends RelativeLayout {
                     Uri _uri = Uri.parse(_uriString);
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(_uri);
-                    ActivityResultClient.startActivity(App.get(), intent);
+                    ActivityClient.startActivity(intent);
                 } catch (Exception e) {
                     Log.v(TAG, e);
                     ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
@@ -1022,8 +1022,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ActivityResultClient.startActivity(App.get(),
-                    WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getId()),
+            ActivityClient.startActivity(WorkOrderActivity.makeIntentShow(App.get(), _workOrder.getId()),
                     R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
         }
     };

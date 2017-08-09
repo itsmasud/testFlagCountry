@@ -12,7 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
@@ -332,15 +332,15 @@ public class SignOffActivity extends AuthSimpleActivity {
             intent.putExtra(INTENT_COMPLETE_WORKORDER, true);
 
         if (markComplete)
-            ActivityResultClient.startActivityForResult(context, intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+            ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
         else
-            ActivityResultClient.startActivity(context, intent);
+            ActivityClient.startActivity(intent);
     }
 
     public static void startSignOff(Context context, WorkOrder workOrder, int taskId) {
         Intent intent = new Intent(context, SignOffActivity.class);
         intent.putExtra(INTENT_PARAM_WORKORDER, workOrder);
         intent.putExtra(INTENT_PARAM_TASK_ID, taskId);
-        ActivityResultClient.startActivity(context, intent);
+        ActivityClient.startActivity(intent);
     }
 }

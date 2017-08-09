@@ -12,7 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -111,7 +112,7 @@ public class PermissionsDialog extends FullScreenDialog {
         @Override
         public void onClick(View view) {
             if (_permissionTuple.secondTry && _permissionTuple.required) {
-                ActivityResultClient.startActivity(getContext(), new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                ActivityClient.startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                         Uri.fromParts("package", getContext().getPackageName(), null)));
             } else {
                 _permissionTuple.secondTry(true).save(getContext());

@@ -15,7 +15,7 @@ import com.fieldnation.Debug;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -421,7 +421,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workOrderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, tab);
-        ActivityResultClient.startActivity(context, intent);
+        ActivityClient.startActivity(intent);
     }
 
     public static Intent makeIntentConfirm(Context context, int workOrderId) {

@@ -43,7 +43,7 @@ abstract class Client extends Pigeon implements Constants {
     }
 
     public void unsub() {
-        PigeonRoost.unregister(this, ADDRESS_DIALOG_COMPLETE + "/" + getDialogClass().getName());
+        PigeonRoost.unsub(this, ADDRESS_DIALOG_COMPLETE + "/" + getDialogClass().getName());
     }
 
     abstract Class<? extends Dialog> getDialogClass();

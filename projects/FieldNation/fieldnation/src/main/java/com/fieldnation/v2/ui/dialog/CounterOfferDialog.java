@@ -30,7 +30,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -49,9 +49,9 @@ import com.fieldnation.v2.data.model.Request;
 import com.fieldnation.v2.data.model.Schedule;
 import com.fieldnation.v2.data.model.WorkOrder;
 import com.fieldnation.v2.ui.ListItemTwoHorizView;
+import com.fieldnation.v2.ui.ListItemTwoVertView;
 import com.fieldnation.v2.ui.PayView;
 import com.fieldnation.v2.ui.ScheduleView;
-import com.fieldnation.v2.ui.ListItemTwoVertView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -573,7 +573,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=workorder"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 
@@ -582,7 +582,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         public void onClick(View widget) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
-            ActivityResultClient.startActivity(App.get(), intent);
+            ActivityClient.startActivity(intent);
         }
     };
 

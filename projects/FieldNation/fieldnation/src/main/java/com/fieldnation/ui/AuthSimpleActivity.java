@@ -17,7 +17,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityRequestHandler;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
@@ -51,7 +51,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     // Services
     private GlobalTopicClient _globalClient;
     private AuthTopicClient _authTopicClient;
-    private ActivityResultClient _activityResultClient;
     private PermissionsClient _permissionsClient;
 
     // Data
@@ -129,8 +128,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _authTopicClient.connect(App.get());
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
+        _activityRequestHandler.sub();
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onResume();
@@ -149,7 +147,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (_authTopicClient != null) _authTopicClient.disconnect(App.get());
         _toastClient.unSubToast();
         _toastClient.unSubSnackbar();
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
+        _activityRequestHandler.unsub();
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
@@ -252,7 +250,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult " + requestCode + ", " + resultCode);
         super.onActivityResult(requestCode, resultCode, data);
-        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+        ActivityRequestHandler.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -338,15 +336,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
+    private final ActivityRequestHandler _activityRequestHandler = new ActivityRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
         }
     };
 

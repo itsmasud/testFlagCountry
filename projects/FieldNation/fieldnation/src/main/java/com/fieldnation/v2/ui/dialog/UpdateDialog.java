@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
 
 /**
  * Created by Michael on 9/26/2016.
@@ -23,7 +23,7 @@ public class UpdateDialog extends OneButtonDialog {
     @Override
     public boolean onPrimaryClick() {
         Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
-        ActivityResultClient.startActivity(App.get(), new Intent(Intent.ACTION_VIEW).setData(marketUri));
+        ActivityClient.startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
         return false;
     }
 

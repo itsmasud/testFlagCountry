@@ -29,7 +29,8 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.fnactivityresult.ActivityResultClient;
+import com.fieldnation.fnactivityresult.ActivityClient;
+import com.fieldnation.fnactivityresult.ActivityRequestHandler;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
@@ -40,7 +41,6 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.ui.ncns.RemindMeService;
 import com.fieldnation.v2.ui.dialog.UpdateDialog;
 
 /**
@@ -74,7 +74,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
-    private ActivityResultClient _activityResultClient;
     private PermissionsClient _permissionsClient;
 
 	/*-*************************************-*/
@@ -159,8 +158,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
+        _activityRequestHandler.sub();
 
         _dialogManager.onResume();
     }
@@ -170,8 +168,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onPause");
 
         if (_globalClient != null) _globalClient.disconnect(App.get());
-        if (_activityResultClient != null) _activityResultClient.disconnect(App.get());
-
+        _activityRequestHandler.unsub();
         _dialogManager.onPause();
 
         super.onPause();
@@ -208,7 +205,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+        ActivityRequestHandler.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -251,15 +248,10 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
+    private final ActivityRequestHandler _activityRequestHandler = new ActivityRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthActivity.this;
-        }
-
-        @Override
-        public ActivityResultClient getClient() {
-            return _activityResultClient;
         }
     };
 
@@ -405,7 +397,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 | Intent.FLAG_ACTIVITY_CLEAR_TASK
                 | Intent.FLAG_ACTIVITY_NEW_TASK);
 
-        ActivityResultClient.startActivity(context, intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        ActivityClient.startActivity(intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 }
 
