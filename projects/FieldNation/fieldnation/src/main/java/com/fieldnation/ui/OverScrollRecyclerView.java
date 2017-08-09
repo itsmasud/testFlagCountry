@@ -69,7 +69,7 @@ public class OverScrollRecyclerView extends RecyclerView {
             case MotionEvent.ACTION_DOWN:
                 // Log.v(TAG, "onTouchEvent ACTION_DOWN" + ev.getAction());
                 // if (getCount() == 0)
-                    // _startingPull = true;
+                // _startingPull = true;
                 break;
             case MotionEvent.ACTION_UP:
                 // Log.v(TAG, "onTouchEvent ACTION_UP" + ev.getAction());
