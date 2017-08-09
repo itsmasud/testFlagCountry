@@ -83,8 +83,6 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setTitle("Attachments");
 
-        _list = v.findViewById(R.id.list);
-        _list.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
 
         return v;
     }
@@ -92,6 +90,10 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     @Override
     public void onStart() {
         super.onStart();
+
+        _list = getView().findViewById(R.id.list);
+        _list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
     }
 
