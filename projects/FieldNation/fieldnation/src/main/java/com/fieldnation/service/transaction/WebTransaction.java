@@ -13,7 +13,6 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.TrackerEnum;
-import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
 import java.text.ParseException;
@@ -385,6 +384,25 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return obj;
     }
 
+    public static void list() {
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.query(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    WebTransactionSqlHelper.getColumnNames(),
+                    null, null, null, null, null, "1");
+
+            try {
+                while (cursor.moveToNext()) {
+                    WebTransaction trans = new WebTransaction(cursor);
+                    Log.v(TAG, trans._id + " " + trans._key + " " + trans._state);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+    }
 
     private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
     private static final String GET_NEXT_SORT = Column.QUEUE_TIME + " ASC, " + Column.PRIORITY + " DESC, " + Column.ID + " ASC";

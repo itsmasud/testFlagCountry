@@ -76,6 +76,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onFinishCreate");
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
@@ -140,6 +141,9 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             // epic fail!
             Log.e(TAG, "must have a workorder id!");
             finish();
+        } else {
+            Log.v(TAG, "Opening work order " + _workOrderId);
+            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         if (!_created) {
@@ -165,6 +169,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         if (_workOrderId != 0)
             outState.putInt(STATE_WORKORDERID, _workOrderId);
 
@@ -175,6 +180,12 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             outState.putInt(STATE_CURRENTFRAG, _currentFragment);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(TAG, "onRestoreInstanceState");
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -239,19 +250,23 @@ public class WorkOrderActivity extends AuthSimpleActivity {
 
     @Override
     protected void onResume() {
+        Log.v(TAG, "onResume");
         super.onResume();
         _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
         _workOrderApi.connect(App.get());
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
 
         super.onPause();
     }
 
     private void populateUi() {
+        Log.v(TAG, "populateUi");
         setTitle("WO:");
         if (_workOrder == null)
             return;
@@ -272,6 +287,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     }
 
     private void setLoading(boolean loading) {
+        Log.v(TAG, "setLoading");
         for (int i = 0; i < _fragments.length; i++) {
             _fragments[i].setLoading(loading);
         }
@@ -370,7 +386,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
             //Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
             _workOrderApi.subWorkordersWebApi();
             setLoading(true);
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
         }
 
         @Override
