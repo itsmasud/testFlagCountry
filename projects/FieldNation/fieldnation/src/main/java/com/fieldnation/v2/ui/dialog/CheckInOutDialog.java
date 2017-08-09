@@ -1,9 +1,13 @@
 package com.fieldnation.v2.ui.dialog;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v7.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -20,6 +24,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -157,6 +162,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public void show(Bundle params, boolean animate) {
         Log.v(TAG, "Show");
+
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
         _workOrder = params.getParcelable(PARAM_WORK_ORDER);
 
@@ -240,6 +246,12 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         if (_spinner == null)
             return;
+
+        if (!App.get().isLocationEnabled()) {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            PendingIntent PI = PendingIntent.getActivity(App.get(), ActivityResultConstants.RESULT_CODE_ENABLE_GPS, intent, PendingIntent.FLAG_ONE_SHOT);
+            ToastClient.snackbar(App.get(), getView().getResources().getString(R.string.snackbar_location_disabled), "LOCATION SETTINGS", PI, Snackbar.LENGTH_INDEFINITE);
+        }
 
         if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
             _toolbar.setTitle(getView().getResources().getString(R.string.title_check_in));
