@@ -34,6 +34,7 @@ import com.fieldnation.fnactivityresult.ActivityRequestHandler;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
@@ -74,7 +75,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
-    private PermissionsClient _permissionsClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -147,8 +147,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _dialogManager.onStart();
 
-        _permissionsClient = new PermissionsClient(_permissionsListener);
-        _permissionsClient.connect(App.get());
+        _permissionsListener.sub();
         PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
     }
 
@@ -176,7 +175,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     protected void onStop() {
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        _permissionsListener.unsub();
 
         super.onStop();
 
@@ -210,7 +209,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+        PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /*-*********************************-*/
@@ -236,15 +235,10 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+    private final PermissionsRequestHandler _permissionsListener = new PermissionsRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthActivity.this;
-        }
-
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
         }
     };
 

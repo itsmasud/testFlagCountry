@@ -21,6 +21,7 @@ import com.fieldnation.fnactivityresult.ActivityRequestHandler;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsRequestHandler;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
@@ -54,7 +55,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     // Services
     private GlobalTopicClient _globalClient;
     private AuthTopicClient _authTopicClient;
-    private PermissionsClient _permissionsClient;
 
     // Data
     private Profile _profile;
@@ -142,8 +142,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (dialogManager != null) dialogManager.onResume();
 
         if (doPermissionsChecks()) {
-            _permissionsClient = new PermissionsClient(_permissionsListener);
-            _permissionsClient.connect(App.get());
+            _permissionsListener.sub();
             PermissionsClient.checkSelfPermissionAndRequest(this, App.getPermissions(), App.getPermissionsRequired());
         }
     }
@@ -161,7 +160,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (dialogManager != null) dialogManager.onPause();
 
         if (doPermissionsChecks()) {
-            if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+            _permissionsListener.unsub();
         }
 
         super.onPause();
@@ -264,7 +263,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (doPermissionsChecks()) {
-            PermissionsClient.onRequestPermissionsResult(App.get(), requestCode, permissions, grantResults);
+            PermissionsClient.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
@@ -421,15 +420,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-    private final PermissionsClient.Listener _permissionsListener = new PermissionsClient.RequestListener() {
+    private final PermissionsRequestHandler _permissionsListener = new PermissionsRequestHandler() {
         @Override
         public Activity getActivity() {
             return AuthSimpleActivity.this;
-        }
-
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
         }
     };
 

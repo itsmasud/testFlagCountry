@@ -26,6 +26,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -72,7 +73,6 @@ public class ShipmentAddDialog extends SimpleDialog {
     private int _directionPosition = -1;
     private String _shipmentDescription;
     private Task _task;
-    private PermissionsClient _permissionsClient;
 
     // Barcode stuff
     private Uri _scannedImageUri;
@@ -129,8 +129,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         getDirectionSpinner().setHint(App.get().getString(R.string.dialog_shipment_direction_spinner_default_text));
         getDirectionSpinner().clearSelection();
 
-        _permissionsClient = new PermissionsClient(_permissions_response);
-        _permissionsClient.connect(App.get());
+        _permissionsListener.sub();
     }
 
     @Override
@@ -205,7 +204,7 @@ public class ShipmentAddDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        _permissionsListener.unsub();
         super.onStop();
     }
 
@@ -452,7 +451,7 @@ public class ShipmentAddDialog extends SimpleDialog {
             int grant = PermissionsClient.checkSelfPermission(App.get(), Manifest.permission.CAMERA);
 
             if (grant == PackageManager.PERMISSION_DENIED) {
-                PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
+                PermissionsClient.requestPermissions(new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
             } else {
                 IntentIntegrator integrator = new IntentIntegrator((Activity) getContext());
                 integrator.setPrompt(App.get().getString(R.string.dialog_scan_barcode_title));
@@ -474,12 +473,7 @@ public class ShipmentAddDialog extends SimpleDialog {
         Controller.show(context, uid, ShipmentAddDialog.class, params);
     }
 
-    private final PermissionsClient.ResponseListener _permissions_response = new PermissionsClient.ResponseListener() {
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
-        }
-
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
             if (permission.equals(Manifest.permission.CAMERA)) {

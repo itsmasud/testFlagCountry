@@ -13,7 +13,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fieldnation.fnactivityresult.ActivityClient;
-import com.fieldnation.fnactivityresult.ActivityResultListener;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
@@ -43,10 +42,10 @@ public class PermissionsDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_permissions, container, false);
 
-        _imageView = (ImageView) v.findViewById(R.id.imageView);
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _descriptionTextView = (TextView) v.findViewById(R.id.description_textviews);
-        _accessButton = (TextView) v.findViewById(R.id.access_button);
+        _imageView = v.findViewById(R.id.imageView);
+        _titleTextView = v.findViewById(R.id.title_textview);
+        _descriptionTextView = v.findViewById(R.id.description_textviews);
+        _accessButton = v.findViewById(R.id.access_button);
 
         return v;
     }
@@ -99,8 +98,8 @@ public class PermissionsDialog extends FullScreenDialog {
     @Override
     public void cancel() {
         super.cancel();
-        PermissionsClient.setPermissionDenied(_permissionTuple.permission);
-        PermissionsClient.onComplete(getContext(), _permissionTuple.permission, PackageManager.PERMISSION_DENIED);
+        State.setPermissionDenied(_permissionTuple.permission);
+        PermissionsClient.onComplete(_permissionTuple.permission, PackageManager.PERMISSION_DENIED);
     }
 
     @Override
@@ -116,7 +115,7 @@ public class PermissionsDialog extends FullScreenDialog {
                         Uri.fromParts("package", getContext().getPackageName(), null)));
             } else {
                 _permissionTuple.secondTry(true).save(getContext());
-                PermissionsClient.requestPermissions(getContext(), new String[]{_permissionTuple.permission}, new boolean[]{_permissionTuple.required});
+                PermissionsClient.requestPermissions(new String[]{_permissionTuple.permission}, new boolean[]{_permissionTuple.required});
             }
             dismiss(true);
         }

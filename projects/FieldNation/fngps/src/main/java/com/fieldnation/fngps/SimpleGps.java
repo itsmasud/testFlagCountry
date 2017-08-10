@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntools.ContextProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,9 +37,6 @@ public class SimpleGps {
     // Data
     private boolean _isRunning = false;
     private Listener _listener = null;
-
-    // Services
-    private PermissionsClient _permissionsClient;
 
     // Constructors
     public SimpleGps(Context context) {
@@ -131,10 +129,8 @@ public class SimpleGps {
 
         if (permissionCheck == PackageManager.PERMISSION_DENIED) {
             Log.v(TAG, "Waiting for permission");
-            _permissionsClient = new PermissionsClient(_permissionsListener);
-            _permissionsClient.connect(ContextProvider.get());
+            _permissionsListener.sub();
             PermissionsClient.requestPermissions(
-                    context,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     new boolean[]{false});
 
@@ -164,7 +160,7 @@ public class SimpleGps {
             return this;
         }
 
-        if (_permissionsClient != null) _permissionsClient.disconnect(ContextProvider.get());
+        _permissionsListener.unsub();
 
         if (_gglApiClient.isConnected()) {
             _providerApi.removeLocationUpdates(_gglApiClient, _locationUpdate_listener);
@@ -175,12 +171,7 @@ public class SimpleGps {
         return this;
     }
 
-    private final PermissionsClient.ResponseListener _permissionsListener = new PermissionsClient.ResponseListener() {
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
-        }
-
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
             if (permission.equals(Manifest.permission.ACCESS_FINE_LOCATION)) {

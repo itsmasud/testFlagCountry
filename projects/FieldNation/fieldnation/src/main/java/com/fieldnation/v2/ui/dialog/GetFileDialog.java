@@ -27,6 +27,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpermissions.PermissionsClient;
+import com.fieldnation.fnpermissions.PermissionsResponseListener;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
@@ -52,9 +53,6 @@ public class GetFileDialog extends SimpleDialog {
     private Set<String> _packages = new HashSet<>();
     private Uri _sourceUri;
     private Intent _cameraIntent = null;
-
-    // Clients
-    private PermissionsClient _permissionsClient;
 
     public GetFileDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -114,7 +112,7 @@ public class GetFileDialog extends SimpleDialog {
 
     @Override
     public void onStop() {
-        if (_permissionsClient != null) _permissionsClient.disconnect(App.get());
+        _permissionsListener.unsub();
         _activityResultListener.unsub();
         super.onStop();
     }
@@ -170,9 +168,8 @@ public class GetFileDialog extends SimpleDialog {
                 }
 
                 if (grant == PackageManager.PERMISSION_DENIED) {
-                    _permissionsClient = new PermissionsClient(_permissionsClient_listener);
-                    _permissionsClient.connect(App.get());
-                    PermissionsClient.requestPermissions(App.get(), new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
+                    _permissionsListener.sub();
+                    PermissionsClient.requestPermissions(new String[]{Manifest.permission.CAMERA}, new boolean[]{false});
                     _cameraIntent = intent;
                 } else {
                     ActivityClient.startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
@@ -188,12 +185,7 @@ public class GetFileDialog extends SimpleDialog {
         Controller.show(context, uid, GetFileDialog.class, params);
     }
 
-    private final PermissionsClient.ResponseListener _permissionsClient_listener = new PermissionsClient.ResponseListener() {
-        @Override
-        public PermissionsClient getClient() {
-            return _permissionsClient;
-        }
-
+    private final PermissionsResponseListener _permissionsListener = new PermissionsResponseListener() {
         @Override
         public void onComplete(String permission, int grantResult) {
             if (permission.equals(Manifest.permission.CAMERA) && _cameraIntent != null) {
@@ -204,6 +196,7 @@ public class GetFileDialog extends SimpleDialog {
                     ToastClient.toast(App.get(), "Camera Permission denied. Please try again.", Toast.LENGTH_SHORT);
                 }
             }
+
         }
     };
 
