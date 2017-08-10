@@ -170,6 +170,7 @@
     <string name="snackbar_feedback_success_message">Success! Your feedback has been sent.</string>
     <string name="snackbar_feedback_connection_failed">Could not send your feedback. Please check your connection.</string>
     <string name="snackbar_feedback_sent_failed">Failed. Your feedback could not be sent.</string>
+    <string name="snackbar_location_disabled">We would like to use your location to provide more accurate status information to the buyer.</string>
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
