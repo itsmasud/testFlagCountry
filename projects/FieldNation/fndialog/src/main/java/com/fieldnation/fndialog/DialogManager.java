@@ -122,9 +122,10 @@ public class DialogManager extends FrameLayout implements Constants {
         addView(dialogHolder.dialog.getView());
 
         // move to correct state
-        if (_lastState == STATE_START)
+        if (_lastState == STATE_START) {
             dialogHolder.dialog.onStart();
-        else if (_lastState == STATE_RESUME) {
+            return;
+        } else if (_lastState == STATE_RESUME) {
             dialogHolder.dialog.onStart();
             dialogHolder.dialog.onResume();
         }
@@ -211,6 +212,12 @@ public class DialogManager extends FrameLayout implements Constants {
 
         for (DialogHolder holder : _dialogStack) {
             holder.dialog.onResume();
+
+            // call show
+            holder.dialog.show(holder.params, false);
+            // call restoreDialogState
+            if (holder.savedState != null)
+                holder.dialog.onRestoreDialogState(holder.savedState);
         }
     }
 
