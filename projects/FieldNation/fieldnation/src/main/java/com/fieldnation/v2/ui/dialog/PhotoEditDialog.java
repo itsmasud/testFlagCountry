@@ -69,7 +69,6 @@ public class PhotoEditDialog extends FullScreenDialog {
         _uCropView = v.findViewById(R.id.ucrop);
         _progressBar = v.findViewById(R.id.progressBar);
 
-
         return v;
     }
 
