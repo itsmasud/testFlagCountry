@@ -262,8 +262,6 @@ public class DialogManager extends FrameLayout implements Constants {
         if (_dialogReceiver != null) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
-
-        removeAllViews();
         super.onDetachedFromWindow();
     }
 

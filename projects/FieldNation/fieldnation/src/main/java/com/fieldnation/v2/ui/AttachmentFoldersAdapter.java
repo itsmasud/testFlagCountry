@@ -145,35 +145,40 @@ public class AttachmentFoldersAdapter extends RecyclerView.Adapter<AttachedFiles
         Tuple t;
         AttachmentFolder[] attachmentFolders = folders.getResults();
         for (AttachmentFolder attachmentFolder : attachmentFolders) {
-            t = new Tuple();
-            t.type = AttachedFilesViewHolder.TYPE_HEADER;
-            t.object = attachmentFolder;
-            objects.add(t);
-
-            //Add uploads
-            for (UploadTuple ut : uploads) {
-                if (ut.folderId == attachmentFolder.getId()) {
-                    t = new Tuple();
-                    t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
-                    t.object = ut;
-                    objects.add(t);
-                }
-            }
-
-            Attachment[] attachments = attachmentFolder.getResults();
-            for (Attachment attachment : attachments) {
-                // check if downloading...
+            if (attachmentFolder.getResults().length > 0
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                    || attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)) {
                 t = new Tuple();
-                t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
-                t.object = attachment;
-                objects.add(t);
-            }
-
-            if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
-                t = new Tuple();
-                t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
+                t.type = AttachedFilesViewHolder.TYPE_HEADER;
                 t.object = attachmentFolder;
                 objects.add(t);
+
+                //Add uploads
+                for (UploadTuple ut : uploads) {
+                    if (ut.folderId == attachmentFolder.getId()) {
+                        t = new Tuple();
+                        t.type = AttachedFilesViewHolder.TYPE_UPLOAD;
+                        t.object = ut;
+                        objects.add(t);
+                    }
+                }
+
+                Attachment[] attachments = attachmentFolder.getResults();
+                for (Attachment attachment : attachments) {
+                    // check if downloading...
+                    t = new Tuple();
+                    t.type = AttachedFilesViewHolder.TYPE_ATTACHMENT;
+                    t.object = attachment;
+                    objects.add(t);
+                }
+
+                if (attachmentFolder.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD)) {
+                    t = new Tuple();
+                    t.type = AttachedFilesViewHolder.TYPE_ADD_VIEW;
+                    t.object = attachmentFolder;
+                    objects.add(t);
+                }
             }
         }
     }

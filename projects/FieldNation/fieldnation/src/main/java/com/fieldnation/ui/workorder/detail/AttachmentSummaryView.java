@@ -72,14 +72,22 @@ public class AttachmentSummaryView extends RelativeLayout implements WorkOrderRe
             return;
 
         int count = 0;
+        boolean canModify = false;
 
         final AttachmentFolder[] slots = _workOrder.getAttachments().getResults();
         for (AttachmentFolder ob : slots) {
+            canModify = ob.getActionsSet().contains(AttachmentFolder.ActionsEnum.EDIT)
+                    || ob.getActionsSet().contains(AttachmentFolder.ActionsEnum.DELETE)
+                    || ob.getActionsSet().contains(AttachmentFolder.ActionsEnum.UPLOAD);
             count += ob.getResults().length;
         }
 
-        setVisibility(VISIBLE);
-        _countTextView.setText(String.valueOf(count));
+        if (!canModify && count == 0) {
+            setVisibility(GONE);
+        } else {
+            setVisibility(VISIBLE);
+            _countTextView.setText(String.valueOf(count));
+        }
     }
 
     private final OnClickListener _this_onClick = new OnClickListener() {
