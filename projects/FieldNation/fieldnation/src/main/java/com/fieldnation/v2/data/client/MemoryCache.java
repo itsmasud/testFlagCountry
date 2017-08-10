@@ -39,7 +39,7 @@ public class MemoryCache {
         }
     }
 
-    private static void purgeNodes() {
+    public static void purgeNodes() {
         Set<Integer> keys = CACHE.keySet();
         for (Integer key : keys) {
             Node node = CACHE.get(key);
