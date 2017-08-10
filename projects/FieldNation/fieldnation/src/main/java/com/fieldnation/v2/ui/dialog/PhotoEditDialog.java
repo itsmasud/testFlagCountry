@@ -93,7 +93,10 @@ public class PhotoEditDialog extends FullScreenDialog {
         super.show(params, animate);
         if (params.containsKey("uri")) {
             _sourceUri = params.getParcelable("uri");
-            FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
+
+            if (getSavedState() == null
+                    || !getSavedState().containsKey("_cachedUri"))
+                FileCacheClient.cacheFileUpload(App.get(), _sourceUri.toString(), _sourceUri);
         }
         _name = params.getString("name");
     }

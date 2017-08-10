@@ -36,6 +36,7 @@ public abstract class FullScreenDialog implements Dialog {
 
     // Data
     private String _uid;
+    private Bundle _savedState;
 
     public FullScreenDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -78,6 +79,16 @@ public abstract class FullScreenDialog implements Dialog {
 
     public Context getContext() {
         return _root.getContext();
+    }
+
+    @Override
+    public void setSavedState(Bundle savedState) {
+        this._savedState = savedState;
+    }
+
+    @Override
+    public Bundle getSavedState() {
+        return _savedState;
     }
 
     @Override
