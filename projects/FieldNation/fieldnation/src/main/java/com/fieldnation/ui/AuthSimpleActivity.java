@@ -29,7 +29,6 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.v2.ui.dialog.OneButtonDialog;
 import com.fieldnation.v2.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.v2.ui.dialog.TwoButtonDialog;
@@ -48,9 +47,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String DIALOG_WHATS_NEW_DIALOG = TAG_BASE + ".whatsNewDialog";
     private static final String DIALOG_NOT_PROVIDER = TAG_BASE + ".notProviderDialog";
     private static final String DIALOG_COI = TAG_BASE + ".certOfInsuranceDialog";
-
-    // UI
-    private ContactUsDialog _contactUsDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -88,8 +84,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (TAG.equals(TAG_BASE)) {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
-
-        _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         onFinishCreate(savedInstanceState);
     }
@@ -215,15 +209,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             Log.v(TAG, "show release notes");
-            _profileBounceProtect = false;
-            App.get().setReleaseNoteShownReminded();
             WhatsNewDialog.show(App.get(), DIALOG_WHATS_NEW_DIALOG);
             return;
         }
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {
             Log.v(TAG, "_termsAndConditionsDialog");
-            _profileBounceProtect = false;
             TermsAndConditionsDialog.show(this, DIALOG_TOC);
             return;
         }
@@ -273,6 +264,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final TermsAndConditionsDialog.OnOkListener _termsAndConditionsDialog_onOk = new TermsAndConditionsDialog.OnOkListener() {
         @Override
         public void onOk() {
+            _profileBounceProtect = false;
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -285,6 +277,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private final WhatsNewDialog.OnClosedListener _whatsNewDialog_onClosed = new WhatsNewDialog.OnClosedListener() {
         @Override
         public void onClosed() {
+            _profileBounceProtect = false;
+            App.get().setReleaseNoteShownReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -317,7 +311,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     private final TwoButtonDialog.OnPrimaryListener _coiDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
-        public void onPrimary() {
+        public void onPrimary(Parcelable extraData) {
             _profileBounceProtect = false;
             App.get().setCoiReminded();
             new Handler().post(new Runnable() {
@@ -331,7 +325,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     private final TwoButtonDialog.OnSecondaryListener _coiDialog_onSecondary = new TwoButtonDialog.OnSecondaryListener() {
         @Override
-        public void onSecondary() {
+        public void onSecondary(Parcelable extraData) {
             _profileBounceProtect = false;
             App.get().setNeverRemindCoi();
             new Handler().post(new Runnable() {
@@ -368,7 +362,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subGotProfile();
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
-            _globalClient.subShowContactUsDialog();
             _globalClient.subProfileInvalid(App.get());
             ProfileClient.get(App.get());
         }
@@ -392,15 +385,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onShutdown() {
             finish();
-        }
-
-        @Override
-        public void onShowContactUsDialog(String source) {
-            try {
-                _contactUsDialog.show(source);
-            } catch (Exception ex) {
-                Log.logException(ex);
-            }
         }
 
         @Override

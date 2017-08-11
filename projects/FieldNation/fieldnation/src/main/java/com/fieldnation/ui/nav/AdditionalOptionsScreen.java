@@ -16,7 +16,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.analytics.trackers.TestTrackers;
@@ -30,6 +29,7 @@ import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
+import com.fieldnation.v2.ui.dialog.ContactUsDialog;
 import com.fieldnation.v2.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.v2.ui.dialog.WhatsNewDialog;
 
@@ -201,7 +201,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             if (_profileListView != null)
                 _profileListView.setProfile(_profile);
         }
-        
+
         addProfilePhoto();
     }
 
@@ -325,7 +325,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.CONTACT_US);
-            GlobalTopicClient.showContactUsDialog(getContext(), "LeftNavDrawer");
+            ContactUsDialog.show(getContext(), null, "LeftNavDrawer");
         }
     };
 

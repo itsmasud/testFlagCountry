@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -123,6 +124,15 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        if (savedState.containsKey("folders")) {
+            folders = savedState.getParcelable("folders");
+            adapter.setAttachments(folders);
+        }
+        super.onRestoreDialogState(savedState);
+    }
+
+    @Override
     public void onPause() {
         if (_docClient != null) _docClient.disconnect(App.get());
         if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
@@ -131,6 +141,13 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
         super.onPause();
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        outState.putParcelable("folders", folders);
+
+        super.onSaveDialogState(outState);
     }
 
     // Utils
@@ -177,7 +194,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
                     getView().getResources().getString(R.string.delete_file),
                     getView().getResources().getString(R.string.dialog_delete_message),
                     getView().getResources().getString(R.string.btn_yes),
-                    getView().getResources().getString(R.string.btn_no), false, null);
+                    getView().getResources().getString(R.string.btn_no), true, null);
         }
 
         @Override
@@ -234,7 +251,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
 
     private final TwoButtonDialog.OnPrimaryListener _yesNoDialog_onPrimary = new TwoButtonDialog.OnPrimaryListener() {
         @Override
-        public void onPrimary() {
+        public void onPrimary(Parcelable extraData) {
             WorkordersWebApi.deleteAttachment(App.get(), _workOrderId, _selectedAttachment.getFolderId(),
                     _selectedAttachment.getId(), App.get().getSpUiContext());
         }

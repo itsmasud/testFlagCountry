@@ -21,17 +21,17 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp">
 
             <WebView
-                android:id="@+id/new_webview"
+                android:id="@+id/webview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:minHeight="16dp"
-                android:text=""
-                android:visibility="gone" />
+                android:text="" />
         </RelativeLayout>
     </com.fieldnation.ui.OverScrollView>
 </RelativeLayout>

@@ -1,15 +1,12 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.v2.ui.dialog;
 
-import android.content.DialogInterface;
+import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,17 +16,20 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.fndialog.Controller;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.KeyedDispatcher;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 
 /**
- * Created by Shoaib on 4/27/2016.
+ * Created by mc on 8/11/17.
  */
-public class ContactUsDialog extends DialogFragmentBase {
+
+public class ContactUsDialog extends FullScreenDialog {
     private static final String TAG = "ContactUsDialog";
 
     // State
@@ -50,100 +50,43 @@ public class ContactUsDialog extends DialogFragmentBase {
 
     // Data
     private String _message;
-    private Listener _listener;
     private String _source;
     private int _spinnerPosition = -1;
     private String _internalTeamParam;
-    private boolean _clear = false;
 
-    /*-*****************************-*/
+    /*-*********----------**********-*/
     /*-         Life Cycle          -*/
-    /*-*****************************-*/
-    public static ContactUsDialog getInstance(FragmentManager fm, String tag) {
-        Log.v(TAG, "getInstance");
-        return getInstance(fm, tag, ContactUsDialog.class);
+    /*-*********----------**********-*/
+    public ContactUsDialog(Context context, ViewGroup container) {
+        super(context, container);
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        if (_explanationEditText != null && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
-            _message = _explanationEditText.getText().toString();
-            outState.putString(STATE_MESSAGE, _message);
-        }
-        if (!misc.isEmptyOrNull(_source))
-            outState.putString(STATE_SOURCE, _source);
-
-        if (_spinnerPosition != -1)
-            outState.putInt(STATE_SPINNER_SELECTION, _spinnerPosition);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_contact_us, container, false);
 
-        _reasonSpinner = (HintSpinner) v.findViewById(R.id.reason_spinner);
-        _reasonSpinner.setOnItemSelectedListener(_reasonSpinner_onItemClick);
-
-        _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
-        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
-
-        _additionalHelpTextView = (TextView) v.findViewById(R.id.additionalHelp_textview);
-
-        _sendButton = (Button) v.findViewById(R.id.send_button);
-        _sendButton.setOnClickListener(_send_onClick);
-
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        _reasonSpinner = v.findViewById(R.id.reason_spinner);
+        _explanationEditText = v.findViewById(R.id.explanation_edittext);
+        _additionalHelpTextView = v.findViewById(R.id.additionalHelp_textview);
+        _sendButton = v.findViewById(R.id.send_button);
+        _cancelButton = v.findViewById(R.id.cancel_button);
 
         return v;
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.v(TAG, "onViewStateRestored");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_MESSAGE))
-                _message = savedInstanceState.getString(STATE_MESSAGE);
-            if (savedInstanceState.containsKey(STATE_SOURCE))
-                _source = savedInstanceState.getString(STATE_SOURCE);
-            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION)) {
-                populateSpinners();
-                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
-                _reasonSpinner.setSelection(_spinnerPosition);
-                onSpinnerSelection(_spinnerPosition);
-            }
-        } else {
-            _clear = true;
-        }
+    public void onStart() {
+        super.onStart();
+        _reasonSpinner.setOnItemSelectedListener(_reasonSpinner_onItemClick);
+        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
+        _sendButton.setOnClickListener(_send_onClick);
+        _cancelButton.setOnClickListener(_cancel_onClick);
     }
 
     @Override
     public void onResume() {
-        Log.v(TAG, "onResume");
         super.onResume();
         populateSpinners();
-        if (_clear) {
-            _reasonSpinner.clearSelection();
-            _explanationEditText.setText("");
-            _explanationEditText.setHint(getString(R.string.dialog_explanation_default));
-            _reasonSpinner_onItemClick.onItemSelected(null, null, -1, 0);
-            _clear = false;
-            return;
-        }
 
         if (!misc.isEmptyOrNull(_message))
             _explanationEditText.setText(_message);
@@ -155,20 +98,44 @@ public class ContactUsDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogFragment) {
-//        Log.e(TAG, "onDismiss");
-        super.onDismiss(dialogFragment);
+    public void show(Bundle params, boolean animate) {
+        _source = params.getString("source");
+        super.show(params, animate);
     }
 
-    public void show(String source) {
-        _source = source;
-        _clear = true;
-        super.show();
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        super.onRestoreDialogState(savedState);
+
+        if (savedState != null) {
+            if (savedState.containsKey(STATE_MESSAGE))
+                _message = savedState.getString(STATE_MESSAGE);
+            if (savedState.containsKey(STATE_SOURCE))
+                _source = savedState.getString(STATE_SOURCE);
+            if (savedState.containsKey(STATE_SPINNER_SELECTION)) {
+                populateSpinners();
+                _spinnerPosition = savedState.getInt(STATE_SPINNER_SELECTION);
+                _reasonSpinner.setSelection(_spinnerPosition);
+                onSpinnerSelection(_spinnerPosition);
+            }
+        }
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        if (_explanationEditText != null && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
+            _message = _explanationEditText.getText().toString();
+            outState.putString(STATE_MESSAGE, _message);
+        }
+        if (!misc.isEmptyOrNull(_source))
+            outState.putString(STATE_SOURCE, _source);
+
+        if (_spinnerPosition != -1)
+            outState.putInt(STATE_SPINNER_SELECTION, _spinnerPosition);
+
+        super.onSaveDialogState(outState);
     }
+
 
     private void onSpinnerSelection(int position) {
         _spinnerPosition = position;
@@ -195,7 +162,7 @@ public class ContactUsDialog extends DialogFragmentBase {
     private HintSpinner populateSpinners() {
         if (_reasonSpinner != null && _reasonSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
-                    getActivity(),
+                    getContext(),
                     R.array.reason_list,
                     R.layout.view_spinner_item);
 
@@ -238,14 +205,12 @@ public class ContactUsDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
-                ToastClient.toast(App.get(), getString(R.string.toast_empty_feedback), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.toast_empty_feedback, Toast.LENGTH_SHORT);
                 return;
             }
 
-            dismiss();
-            if (_listener != null) {
-                _listener.onOk(_explanationEditText.getText().toString());
-            }
+            dismiss(true);
+            _onOkDispatcher.dispatch(getUid(), _explanationEditText.getText().toString());
 
             try {
                 HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +
@@ -260,18 +225,68 @@ public class ContactUsDialog extends DialogFragmentBase {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
-            if (_listener != null) {
-                _listener.onCancel();
-            }
+            dismiss(true);
+            _onCancelDispatcher.dispatch(getUid());
         }
     };
 
-    public interface Listener {
-        void onOk(String message);
 
+    public static void show(Context context, String uid, String source) {
+        Bundle params = new Bundle();
+        params.putString("source", source);
+        Controller.show(context, uid, ContactUsDialog.class, params);
+    }
+
+    /*-*********************-*/
+    /*-         Ok          -*/
+    /*-*********************-*/
+    public interface OnOkListener {
+        void onOk(String message);
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
+        @Override
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk((String) parameters[0]);
+        }
+    };
+
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
+    }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-*************************-*/
+    /*-         Cancel          -*/
+    /*-*************************-*/
+    public interface OnCancelListener {
         void onCancel();
     }
 
+    private static KeyedDispatcher<OnCancelListener> _onCancelDispatcher = new KeyedDispatcher<OnCancelListener>() {
+        @Override
+        public void onDispatch(OnCancelListener listener, Object... parameters) {
+            listener.onCancel();
+        }
+    };
+
+    public static void addOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.add(uid, onCancelListener);
+    }
+
+    public static void removeOnCancelListener(String uid, OnCancelListener onCancelListener) {
+        _onCancelDispatcher.remove(uid, onCancelListener);
+    }
+
+    public static void removeAllOnCancelListener(String uid) {
+        _onCancelDispatcher.removeAll(uid);
+    }
 
 }
