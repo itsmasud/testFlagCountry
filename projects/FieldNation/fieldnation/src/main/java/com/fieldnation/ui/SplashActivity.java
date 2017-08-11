@@ -15,7 +15,6 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.ncns.ConfirmActivity;
@@ -39,7 +38,6 @@ public class SplashActivity extends AuthSimpleActivity {
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
     private AuthTopicClient _authClient;
-    private WorkordersWebApi _workOrdersApi;
     private boolean _gotConfirmList = false;
 
     public SplashActivity() {
@@ -125,8 +123,13 @@ public class SplashActivity extends AuthSimpleActivity {
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(App.get());
 
-        _workOrdersApi = new WorkordersWebApi(_workOrdersApi_listener);
-        _workOrdersApi.connect(App.get());
+        _workOrdersApi.sub();
+        GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
+        opts.setPerPage(25);
+        opts.setList("workorders_assignments");
+        opts.setFFlightboardTomorrow(true);
+        opts.setPage(1);
+        WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
 
         AuthTopicClient.requestCommand(App.get());
     }
@@ -134,7 +137,7 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         if (_authClient != null) _authClient.disconnect(App.get());
-        if (_workOrdersApi != null) _workOrdersApi.disconnect(App.get());
+        _workOrdersApi.unsub();
         super.onStop();
     }
 
@@ -198,21 +201,7 @@ public class SplashActivity extends AuthSimpleActivity {
         }
     }
 
-    private final WorkordersWebApi.Listener _workOrdersApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "onConnected");
-            _workOrdersApi.subWorkordersWebApi();
-
-            GetWorkOrdersOptions opts = new GetWorkOrdersOptions();
-            opts.setPerPage(25);
-            opts.setList("workorders_assignments");
-            opts.setFFlightboardTomorrow(true);
-            opts.setPage(1);
-
-            WorkordersWebApi.getWorkOrders(App.get(), opts, false, false);
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders");

@@ -43,9 +43,6 @@ public class UploadSlotPickerScreen extends FrameLayout {
     private WorkOrder _workOrder;
     private Listener _listener;
 
-    // Services
-    private WorkordersWebApi _workOrderApi;
-
 
     public UploadSlotPickerScreen(Context context) {
         super(context);
@@ -87,7 +84,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.sub();
         super.onDetachedFromWindow();
     }
 
@@ -97,8 +94,8 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
     public void setWorkOrderId(int workOrderId) {
         _workOrderId = workOrderId;
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.unsub();
+        WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, false, false);
 
         postDelayed(new Runnable() {
             @Override
@@ -153,14 +150,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
         post(r);
     }
 
-
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-            WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return !methodName.equals("getWorkOrders");

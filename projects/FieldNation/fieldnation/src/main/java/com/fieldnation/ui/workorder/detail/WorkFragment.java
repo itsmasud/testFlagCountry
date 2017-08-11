@@ -169,7 +169,6 @@ public class WorkFragment extends WorkorderFragment {
     private List<WorkOrderRenderer> _renderers = new LinkedList<>();
 
     // Data
-    private WorkordersWebApi _workOrderApi;
     private WorkOrder _workOrder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
@@ -344,8 +343,7 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onStart() {
         super.onStart();
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -416,7 +414,7 @@ public class WorkFragment extends WorkorderFragment {
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_EXPENSE, _twoButtonDialog_deleteExpense);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_DELETE_DISCOUNT, _twoButtonDialog_deleteDiscount);
 
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.unsub();
         super.onStop();
     }
 
@@ -1520,12 +1518,7 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.contains("TimeLog");

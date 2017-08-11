@@ -105,8 +105,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         GetFileDialog.addOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.addOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
@@ -135,7 +134,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         if (_docClient != null) _docClient.disconnect(App.get());
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
 
         GetFileDialog.removeOnFileListener(DIALOG_GET_FILE, _getFile_onFile);
         TwoButtonDialog.removeOnPrimaryListener(DIALOG_YES_NO, _yesNoDialog_onPrimary);
@@ -303,12 +302,7 @@ public class AttachmentFolderDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.toLowerCase().contains("attachment");

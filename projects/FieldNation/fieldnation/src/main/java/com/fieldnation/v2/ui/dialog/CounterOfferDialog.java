@@ -301,8 +301,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         _bottomSheet.clearAnimation();
         _bottomSheet.startAnimation(_bsSlideOut);
 
-        _workOrderApi = new WorkordersWebApi(_workOrdersWebApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrdersApi.sub();
 
         ExpenseDialog.addOnOkListener(DIALOG_UID_EXPENSE, _expenseDialog_onOk);
         ScheduleDialog.addOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
@@ -360,7 +359,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         ScheduleDialog.removeOnCompleteListener(DIALOG_UID_SCHEDULE, _scheduleDialog_onOk);
         PayDialog.removeOnCompleteListener(DIALOG_UID_PAY, _payDialog_onOk);
         ExpireDialog.removeOnOkListener(DIALOG_UID_EXPIRE, _expireDialog_onOk);
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrdersApi.unsub();
         super.onStop();
     }
 
@@ -917,12 +916,7 @@ public class CounterOfferDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrdersWebApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("request")

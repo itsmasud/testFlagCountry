@@ -70,8 +70,8 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrdersApi.sub();
+        WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(App.get());
@@ -79,7 +79,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrdersApi.unsub();
         if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
@@ -197,13 +197,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     };
 
-    private WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-            WorkordersWebApi.getWorkOrderLists(App.get(), true, false);
-        }
-
+    private WorkordersWebApi _workOrdersApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrderLists");

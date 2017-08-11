@@ -44,7 +44,6 @@ public class SearchEditText extends RelativeLayout {
     private ProgressBar _progressBar;
 
     // Data
-    private WorkordersWebApi _workOrderApi;
     private Listener _listener;
     private Integer _lastLookup = null;
 
@@ -83,8 +82,7 @@ public class SearchEditText extends RelativeLayout {
 
         _activityResultListener.sub();
 
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workOrderApi.sub();
 
         _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
     }
@@ -109,7 +107,7 @@ public class SearchEditText extends RelativeLayout {
 
         _activityResultListener.unsub();
 
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workOrderApi.unsub();
     }
 
     private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {
@@ -190,12 +188,7 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrder");

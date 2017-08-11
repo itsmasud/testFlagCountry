@@ -53,9 +53,6 @@ public class BundleEtaDialog extends FullScreenDialog {
     private LinearLayout _incompleteList;
     private LinearLayout _completeList;
 
-    // Services
-    private BundlesWebApi _bundlesApi;
-
     // Data
     private Hashtable<Integer, WorkOrder> _completeWorkOrders = new Hashtable();
     Hashtable<Integer, ETA> _etaList = new Hashtable();
@@ -90,7 +87,6 @@ public class BundleEtaDialog extends FullScreenDialog {
         return v;
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -99,11 +95,8 @@ public class BundleEtaDialog extends FullScreenDialog {
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
-        _bundlesApi = new BundlesWebApi(_bundlesWebApi_listener);
-        _bundlesApi.connect(App.get());
-
+        _bundlesApi.sub();
     }
-
 
     @Override
     public void onResume() {
@@ -122,7 +115,7 @@ public class BundleEtaDialog extends FullScreenDialog {
     @Override
     public void onStop() {
         EtaDialog.removeOnBundleEtaListener(UID_DIALOG_ETA, _etaDialog_onBundleEta);
-        if (_bundlesApi != null) _bundlesApi.disconnect(App.get());
+        _bundlesApi.unsub();
 
         super.onStop();
     }
@@ -180,7 +173,7 @@ public class BundleEtaDialog extends FullScreenDialog {
         }
 
         _toolbar.setTitle("Set ETAs");
-        _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
+        _finishMenu.setText(App.get().getString(R.string.btn_submit));
 
 
         if (_completeWorkOrders.isEmpty())
@@ -283,12 +276,7 @@ public class BundleEtaDialog extends FullScreenDialog {
         }
     };
 
-    private final BundlesWebApi.Listener _bundlesWebApi_listener = new BundlesWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _bundlesApi.subBundlesWebApi();
-        }
-
+    private final BundlesWebApi _bundlesApi = new BundlesWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getBundleWorkOrders");

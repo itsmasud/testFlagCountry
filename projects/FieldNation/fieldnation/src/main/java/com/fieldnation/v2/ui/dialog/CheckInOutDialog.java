@@ -28,6 +28,7 @@ import com.fieldnation.fnactivityresult.ActivityResultConstants;
 import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.PigeonRoost;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.KeyedDispatcher;
@@ -101,9 +102,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     private long _expiringDurationMilliseconds = INVALID_NUMBER;
     private int _itemSelectedPosition;
 
-    // Services
-    private WorkordersWebApi _workOrderClient;
-
     /*-*************************************-*/
     /*-             Life cycle              -*/
     /*-*************************************-*/
@@ -155,8 +153,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         _startTimeButton.setOnClickListener(startTime_onClick);
         _spinner.setOnItemSelectedListener(_spinner_selected);
 
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrderApi.sub();
     }
 
     @Override
@@ -202,8 +199,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     @Override
     public void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
-
+        _workOrderApi.unsub();
         super.onPause();
     }
 
@@ -427,12 +423,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("addTimeLog")
@@ -440,9 +431,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         @Override
-        public void onEvent(String topicId, Parcelable payload) {
-            _workOrderClient.clearTopicAll(topicId);
-            super.onEvent(topicId, payload);
+        public void onMessage(String address, Parcelable message) {
+            PigeonRoost.clearAddressCacheAll(address);
+            super.onMessage(address, message);
         }
 
         @Override

@@ -8,7 +8,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -33,7 +32,6 @@ public class TaskRowView extends RelativeLayout {
 
     // Data
     private WorkOrder _workOrder;
-    private WorkordersWebApi _workOrderApi;
     private Task _task;
     private Listener _listener = null;
 
@@ -72,8 +70,7 @@ public class TaskRowView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
-        _workOrderApi = null;
+        _workOrderApi.unsub();
 
         super.onDetachedFromWindow();
     }
@@ -197,10 +194,7 @@ public class TaskRowView extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        if (_workOrderApi == null || !_workOrderApi.isConnected()) {
-            _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-            _workOrderApi.connect(App.get());
-        }
+        _workOrderApi.sub();
     }
 
     private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
@@ -214,12 +208,7 @@ public class TaskRowView extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            if (_workOrderApi != null) _workOrderApi.subWorkordersWebApi();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("addAttachment");

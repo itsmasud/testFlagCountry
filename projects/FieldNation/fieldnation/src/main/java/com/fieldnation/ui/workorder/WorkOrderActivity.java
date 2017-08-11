@@ -52,7 +52,6 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     private WorkorderTabView _tabview;
 
     // Data
-    private WorkordersWebApi _workOrderApi;
     private int _workOrderId = 0;
     private int _currentTab = 0;
     private int _currentFragment = 0;
@@ -252,15 +251,15 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _workOrderApi = new WorkordersWebApi(_workOrderApi_listener);
-        _workOrderApi.connect(App.get());
+        _workorderApi.sub();
+        setLoading(true);
         WorkordersWebApi.getWorkOrder(App.get(), _workOrderId, true, false);
     }
 
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        if (_workOrderApi != null) _workOrderApi.disconnect(App.get());
+        _workorderApi.unsub();
 
         super.onPause();
     }
@@ -380,14 +379,7 @@ public class WorkOrderActivity extends AuthSimpleActivity {
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
-    private final WorkordersWebApi.Listener _workOrderApi_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            //Log.v(TAG, "_workOrderApi_listener.onConnected " + _workOrderId);
-            _workOrderApi.subWorkordersWebApi();
-            setLoading(true);
-        }
-
+    private final WorkordersWebApi _workorderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return !methodName.equals("getWorkOrders");

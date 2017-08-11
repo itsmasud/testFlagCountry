@@ -48,7 +48,6 @@ public class SearchResultScreen extends RelativeLayout {
 
     // Service
     private SimpleGps _simpleGps;
-    private WorkordersWebApi _workOrderClient;
     private GlobalTopicClient _globalTopicClient;
 
     // Data
@@ -110,15 +109,15 @@ public class SearchResultScreen extends RelativeLayout {
     }
 
     public void onResume() {
-        _workOrderClient = new WorkordersWebApi(_workOrderClient_listener);
-        _workOrderClient.connect(App.get());
+        _workOrderApi.sub();
+        _adapter.refreshAll();
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(App.get());
     }
 
     public void onPause() {
-        if (_workOrderClient != null) _workOrderClient.disconnect(App.get());
+        _workOrderApi.unsub();
         if (_globalTopicClient != null) _globalTopicClient.disconnect(App.get());
     }
 
@@ -207,13 +206,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final WorkordersWebApi.Listener _workOrderClient_listener = new WorkordersWebApi.Listener() {
-        @Override
-        public void onConnected() {
-            _workOrderClient.subWorkordersWebApi();
-            _adapter.refreshAll();
-        }
-
+    private final WorkordersWebApi _workOrderApi = new WorkordersWebApi() {
         @Override
         public boolean processTransaction(TransactionParams transactionParams, String methodName) {
             return methodName.equals("getWorkOrders")
